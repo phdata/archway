@@ -3,6 +3,7 @@
 * Simplify collaboration on Hadoop
 
 ## Developers
+* https://github.com/agis/git-style-guide
 * Branch and create pull requests for all work
 * Each acceptance criteria item should have a test
 * Use your Jotunn email address for committing
