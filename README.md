@@ -1,4 +1,5 @@
 # Heimdali
+[![Build Status](http://45.76.24.152/api/badges/bennythomps/heimdali-api/status.svg)](http://45.76.24.152/bennythomps/heimdali-api)
 * Simplify collaboration on Hadoop
 
 ## Developers
