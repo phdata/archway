@@ -3,6 +3,7 @@
 * Simplify collaboration on Hadoop
 
 ## Developers
+* We'll be using GitFlow http://nvie.com/posts/a-successful-git-branching-model/
 * https://github.com/agis/git-style-guide
 * Branch and create pull requests for all work
 * Each acceptance criteria item should have a test
