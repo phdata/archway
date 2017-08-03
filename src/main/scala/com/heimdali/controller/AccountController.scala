@@ -8,4 +8,5 @@ import play.api.mvc.{AbstractController, ControllerComponents}
 class AccountController @Inject() (controllerComponents: ControllerComponents)
   extends AbstractController(controllerComponents) {
 
+
 }
