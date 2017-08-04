@@ -1,5 +1,5 @@
 # Heimdali
-[![Build Status](http://45.76.24.152/api/badges/bennythomps/heimdali-api/status.svg)](http://45.76.24.152/bennythomps/heimdali-api)
+[![wercker status](https://app.wercker.com/status/8942260df56fe0147caa5e8a5be71e23/m/ "wercker status")](https://app.wercker.com/project/byKey/8942260df56fe0147caa5e8a5be71e23)
 * Simplify collaboration on Hadoop
 
 ## Developers
