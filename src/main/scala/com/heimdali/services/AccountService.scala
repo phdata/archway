@@ -24,12 +24,6 @@ trait AccountService {
   def login(username: String, password: String): Future[Option[User]]
 }
 
-case class LDAPUser(name: String, username: String, password: String, memberships: Seq[String])
-
-trait LDAPClient {
-  def findUser(username: String): Future[Option[LDAPUser]]
-}
-
 class LDAPAccountService @Inject() (ldapClient: LDAPClient)(implicit val executionContext: ExecutionContext)
   extends AccountService {
 
