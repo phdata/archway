@@ -1,31 +1,17 @@
 package com.heimdali.services
 
-import com.unboundid.ldap.listener.{InMemoryDirectoryServer, InMemoryDirectoryServerConfig, InMemoryListenerConfig}
+import com.heimdali.LDAPTest
 import org.scalamock.scalatest.AsyncMockFactory
-import org.scalatest.{AsyncFlatSpec, Matchers}
+import org.scalatest.{AsyncFlatSpec, BeforeAndAfterAll, Matchers}
 import play.api.{ConfigLoader, Configuration}
 
-class LDAPClientImplSpec extends AsyncFlatSpec with Matchers with AsyncMockFactory {
+class LDAPClientImplSpec extends AsyncFlatSpec with Matchers with AsyncMockFactory with LDAPTest with BeforeAndAfterAll {
 
   behavior of "LDAPClientImpl"
 
   it should "pull the correct values from configuration" in {
-    val baseDN = "dc=jotunn,dc=io"
-    val userDN = "ou=marketing"
-    val username = "username"
-    val password = "password"
-
     val configuration = mock[Configuration]
     val innerConfiguration = mock[Configuration]
-
-    val listenerConfig = new InMemoryListenerConfig("test", null, 12345, null, null, null)
-    val ldapConfig = new InMemoryDirectoryServerConfig(baseDN)
-    ldapConfig.setListenerConfigs(listenerConfig)
-    ldapConfig.setSchema(null)
-    val inMemoryDatabase = new InMemoryDirectoryServer(ldapConfig)
-    inMemoryDatabase.startListening()
-    val file = getClass.getResource("/basicUser.ldif")
-    inMemoryDatabase.importFromLDIF(false, file.getPath)
 
     (configuration.get[Configuration](_: String)(_: ConfigLoader[Configuration]))
       .expects("ldap", *)
@@ -35,7 +21,7 @@ class LDAPClientImplSpec extends AsyncFlatSpec with Matchers with AsyncMockFacto
       .returning("localhost")
     (innerConfiguration.get[Int](_: String)(_: ConfigLoader[Int]))
       .expects("port", *)
-      .returning(12345)
+      .returning(ldapPort)
     (innerConfiguration.getOptional[Int](_: String)(_: ConfigLoader[Int]))
       .expects("connections", *)
       .returning(None)
@@ -58,4 +44,9 @@ class LDAPClientImplSpec extends AsyncFlatSpec with Matchers with AsyncMockFacto
     }
   }
 
+  override val ldapPort = 12345
+
+  override protected def beforeAll(): Unit = {
+    inMemoryServer.startListening()
+  }
 }

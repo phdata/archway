@@ -7,6 +7,7 @@ scalaVersion := "2.12.1"
 lazy val root = (project in file(".")).enablePlugins(PlayScala)
 
 libraryDependencies ++= Seq(
+  ehcache,
   guice,
   "be.objectify" %% "deadbolt-scala" % "2.6.0",
   "com.pauldijou" %% "jwt-play-json" % "0.14.0",

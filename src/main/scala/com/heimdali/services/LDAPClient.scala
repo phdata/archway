@@ -28,7 +28,7 @@ class LDAPClientImpl @Inject()(configuration: Configuration)(implicit executionC
     val dn = s"${ldapConfiguration.get[String]("users-path")},${ldapConfiguration.get[String]("base-dn")}"
 
     connectionPool.getConnection()
-      .search(dn, SearchScope.ONE, Filter.createEqualityFilter("cn", username), "sn", "givenName", "userPassword")
+      .search(dn, SearchScope.ONE, Filter.createEqualityFilter("cn", username), "sn", "cn", "givenName", "userPassword")
       .getSearchEntries.asScala.toList match {
       case user :: Nil =>
         Some(LDAPUser(s"${user.getAttributeValue("givenName")} ${user.getAttributeValue("sn")}",
