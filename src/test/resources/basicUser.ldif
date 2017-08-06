@@ -1,0 +1,15 @@
+dn: dc=jotunn,dc=io
+objectClass: top
+objectClass: domain
+dc: jotunn
+
+dn: ou=marketing,dc=jotunn,dc=io
+objectClass: organizationalUnit
+objectClass: top
+ou: marketing
+
+dn: cn=username,ou=marketing,dc=jotunn,dc=io
+objectClass: inetOrgPerson
+sn: Doe
+givenName: Dude
+userPassword: password
