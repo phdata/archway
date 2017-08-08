@@ -6,6 +6,7 @@ import com.heimdali.models.Project
 import org.joda.time.DateTime
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import com.github.tototoshi.slick.MySQLJodaSupport._
+import slick.dbio.DBIOAction
 import slick.jdbc.JdbcProfile
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -39,5 +40,9 @@ class ProjectRepositoryImpl @Inject() (val dbConfigProvider: DatabaseConfigProvi
 
   def create(project: Project): Future[Project] =
     db.run(projectInc += project)
+
+  def createTable() = db.run {DBIOAction.seq(
+    query.schema.create
+  )}
 
 }

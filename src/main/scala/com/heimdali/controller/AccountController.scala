@@ -11,7 +11,6 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class AccountController @Inject()(controllerComponents: MessagesControllerComponents,
-                                  actionBuilder: ActionBuilders,
                                   accountService: AccountService)
                                  (implicit executionContext: ExecutionContext)
   extends MessagesAbstractController(controllerComponents) {
