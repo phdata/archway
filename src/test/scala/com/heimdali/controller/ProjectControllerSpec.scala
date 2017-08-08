@@ -23,7 +23,7 @@ class ProjectControllerSpec
     with BaseOneAppPerSuite
     with FakeApplicationFactory {
 
-  behavior of "AccountController"
+  behavior of "ProjectController"
 
   it should "do something" in {
     val json = Json.obj(

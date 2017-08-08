@@ -2,13 +2,10 @@ package com.heimdali
 
 import javax.inject.Inject
 
-import be.objectify.deadbolt.scala.ConstraintPoint.ConstraintPoint
 import be.objectify.deadbolt.scala.cache.HandlerCache
-import be.objectify.deadbolt.scala.models.Subject
 import be.objectify.deadbolt.scala.{AuthenticatedRequest, DeadboltHandler, DynamicResourceHandler, HandlerKey}
 import com.heimdali.repositories.{ProjectRepository, ProjectRepositoryImpl}
 import com.heimdali.services._
-import play.api.db.slick.{DatabaseConfigProvider, SlickApi}
 import play.api.inject.{Binding, Module}
 import play.api.libs.json.Json
 import play.api.mvc.{Request, Result, Results}
