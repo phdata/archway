@@ -1,1 +1,4 @@
++ nocsrf
+POST    /projects           @com.heimdali.controller.ProjectController.requestNew
+
 GET     /account/token      @com.heimdali.controller.AccountController.token

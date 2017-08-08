@@ -4,7 +4,7 @@ import javax.inject.Inject
 
 import be.objectify.deadbolt.scala.models.{Permission, Role, Subject}
 import pdi.jwt.{JwtAlgorithm, JwtJson}
-import play.api.Configuration
+import play.api.{Application, Configuration}
 import play.api.libs.json.{Format, Json}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -28,6 +28,8 @@ object Token {
 }
 
 trait AccountService {
+  def validate(token: String): Future[Option[User]]
+
   def login(username: String, password: String): Future[Option[User]]
 
   def refresh(user: User): Future[Token]
@@ -64,4 +66,6 @@ class LDAPAccountService @Inject()(ldapClient: LDAPClient,
       Token(accessToken, refreshToken)
     }
   }
+
+  override def validate(token: String): Future[Option[User]] = ???
 }
