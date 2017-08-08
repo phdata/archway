@@ -34,7 +34,6 @@ trait TestApplicationFactory extends FakeApplicationFactory with LDAPTest {
   def fakeApplication(): Application = {
     new GuiceApplicationBuilder()
       .configure("ldap" -> ldapConfig)
-      .configure(inMemoryDatabase(""))
       .build()
   }
 }
