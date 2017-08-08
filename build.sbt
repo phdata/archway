@@ -12,6 +12,8 @@ libraryDependencies ++= Seq(
   "be.objectify" %% "deadbolt-scala" % "2.6.0",
   "com.pauldijou" %% "jwt-play-json" % "0.14.0",
   "com.unboundid" % "unboundid-ldapsdk" % "4.0.0",
+  "com.typesafe.play" %% "play-slick" % "3.0.0",
+  "com.github.tototoshi" %% "slick-joda-mapper" % "2.3.0",
   "org.scalamock" %% "scalamock-scalatest-support" % "3.6.0" % Test,
   "org.scalatestplus.play" %% "scalatestplus-play" % "3.0.0" % Test)
 
