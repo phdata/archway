@@ -6,7 +6,9 @@ trait LDAPTest {
   def ldapPort: Int
 
   val baseDN = "dc=jotunn,dc=io"
-  val userDN = "ou=marketing"
+  val userDN = "ou=edp"
+  val bindDN = "cn=readonly,dc=jotunn,dc=io"
+  val bindPassword = "readonly"
   val username = "username"
   val password = "password"
 

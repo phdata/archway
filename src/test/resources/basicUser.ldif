@@ -3,6 +3,12 @@ objectClass: top
 objectClass: domain
 dc: jotunn
 
+dn: cn=readonly,dc=jotunn,dc=io
+cn: readonly
+objectClass: simpleSecurityObject
+objectClass: organizationalRole
+userPassword: readonly
+
 dn: ou=edp,dc=jotunn,dc=io
 objectClass: organizationalUnit
 objectClass: top
