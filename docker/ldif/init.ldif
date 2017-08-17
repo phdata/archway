@@ -1,14 +1,11 @@
-dn: dc=jotunn,dc=io
-objectClass: top
-objectClass: domain
-dc: jotunn
-
 dn: ou=edp,dc=jotunn,dc=io
+changetype: add
 objectClass: organizationalUnit
 objectClass: top
 ou: edp
 
 dn: cn=username,ou=edp,dc=jotunn,dc=io
+changetype: add
 objectClass: inetOrgPerson
 sn: Doe
 givenName: Dude

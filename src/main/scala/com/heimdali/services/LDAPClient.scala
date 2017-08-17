@@ -20,8 +20,14 @@ class LDAPClientImpl @Inject()(configuration: Configuration)(implicit executionC
   val ldapConfiguration: Configuration = configuration.get[Configuration]("ldap")
 
   val connectionPool: LDAPConnectionPool = {
-    val connection = new LDAPConnection(ldapConfiguration.get[String]("server"), ldapConfiguration.get[Int]("port"))
-    new LDAPConnectionPool(connection, ldapConfiguration.getOptional[Int]("connections").getOrElse(10))
+    val server = ldapConfiguration.get[String]("server")
+    val port = ldapConfiguration.get[Int]("port")
+    val username = ldapConfiguration.get[String]("bind-dn")
+    val password = ldapConfiguration.get[String]("bind-password")
+    val connections = ldapConfiguration.getOptional[Int]("connections").getOrElse(10)
+
+    val connection = new LDAPConnection(server, port, username, password)
+    new LDAPConnectionPool(connection, connections)
   }
 
   override def findUser(username: String): Future[Option[LDAPUser]] = Future {
