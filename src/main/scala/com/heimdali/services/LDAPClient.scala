@@ -7,11 +7,12 @@ import play.api.Configuration
 
 import scala.collection.JavaConverters._
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Try
 
 case class LDAPUser(name: String, username: String, password: String, memberships: Seq[String])
 
 trait LDAPClient {
-  def findUser(username: String): Future[Option[LDAPUser]]
+  def findUser(username: String, password: String): Future[Option[LDAPUser]]
 }
 
 class LDAPClientImpl @Inject()(configuration: Configuration)(implicit executionContext: ExecutionContext)
@@ -30,17 +31,19 @@ class LDAPClientImpl @Inject()(configuration: Configuration)(implicit executionC
     new LDAPConnectionPool(connection, connections)
   }
 
-  override def findUser(username: String): Future[Option[LDAPUser]] = Future {
+  override def findUser(username: String, password: String): Future[Option[LDAPUser]] = Future {
     val dn = s"${ldapConfiguration.get[String]("users-path")},${ldapConfiguration.get[String]("base-dn")}"
 
-    connectionPool.getConnection()
-      .search(dn, SearchScope.ONE, Filter.createEqualityFilter("cn", username), "sn", "cn", "givenName", "userPassword")
+    val connection = connectionPool.getConnection()
+    connection.search(dn, SearchScope.ONE, Filter.createEqualityFilter("cn", username))
       .getSearchEntries.asScala.toList match {
       case user :: Nil =>
-        Some(LDAPUser(s"${user.getAttributeValue("givenName")} ${user.getAttributeValue("sn")}",
-        user.getAttributeValue("cn"),
-        user.getAttributeValue("userPassword"),
-        Seq.empty[String]))
+        Try(connection.bind(new SimpleBindRequest(user.getDN, password)))
+          .map(_ =>
+            Some(LDAPUser(s"${user.getAttributeValue("givenName")} ${user.getAttributeValue("sn")}",
+              user.getAttributeValue("cn"),
+              user.getAttributeValue("userPassword"),
+              Seq.empty[String]))).getOrElse(None)
       case _ => None
     }
   }

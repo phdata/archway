@@ -41,8 +41,8 @@ class LDAPAccountService @Inject()(ldapClient: LDAPClient,
   extends AccountService {
 
   override def login(username: String, password: String): Future[Option[User]] =
-    ldapClient.findUser(username) map {
-      case Some(user) if user.password == password => Some(User(user.name, user.username, HeimdaliRole.BasicUser))
+    ldapClient.findUser(username, password) map {
+      case Some(user) => Some(User(user.name, user.username, HeimdaliRole.BasicUser))
       case _ => None
     }
 

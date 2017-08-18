@@ -39,7 +39,7 @@ class LDAPClientImplSpec extends AsyncFlatSpec with Matchers with AsyncMockFacto
       .returning(userDN)
 
     val client = new LDAPClientImpl(configuration)
-    client.findUser(username) map { maybeUser =>
+    client.findUser(username, password) map { maybeUser =>
       maybeUser shouldBe defined
 
       maybeUser.get should have {
