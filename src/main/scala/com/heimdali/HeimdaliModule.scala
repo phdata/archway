@@ -20,7 +20,8 @@ class HeimdaliModule extends Module {
     bind[LDAPClient].to[LDAPClientImpl],
     bind[AccountService].to[LDAPAccountService],
     bind[ProjectService].to[ProjectServiceImpl],
-    bind[ProjectRepository].to[ProjectRepositoryImpl]
+    bind[ProjectRepository].to[ProjectRepositoryImpl],
+    bind[ClusterService].to[CDHClusterService]
   )
 
 }
