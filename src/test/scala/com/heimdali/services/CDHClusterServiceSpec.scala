@@ -1,7 +1,7 @@
 package com.heimdali.services
 
-import org.scalamock.scalatest.AsyncMockFactory
-import org.scalatest.{AsyncFlatSpec, Matchers}
+import org.scalamock.scalatest.{AsyncMockFactory, MockFactory}
+import org.scalatest.{AsyncFlatSpec, FlatSpec, Matchers}
 import play.api.libs.ws.WSClient
 import play.api.mvc.{Action, Results}
 import play.api.routing.Router
@@ -11,13 +11,16 @@ import play.api.{BuiltInComponentsFromContext, ConfigLoader, Configuration}
 import play.core.server.Server
 import play.filters.HttpFiltersComponents
 
-class ClusterServiceSpec extends AsyncFlatSpec with Matchers with AsyncMockFactory {
+import scala.concurrent.{Await, ExecutionContext}
+import scala.concurrent.duration.Duration
+
+class CDHClusterServiceSpec extends FlatSpec with Matchers with MockFactory {
 
   behavior of "CDH Cluster service"
 
   it should "return a cluster" in {
     withCDHClient { client =>
-      val url = "http://example.com"
+      val url = ""
       val id = "ABC"
       val version = "5.5.3"
 
@@ -29,25 +32,22 @@ class ClusterServiceSpec extends AsyncFlatSpec with Matchers with AsyncMockFacto
         .expects("base-url", *)
         .returning(url)
       (odinConfiguration.get[String](_: String)(_: ConfigLoader[String]))
-        .expects("version", *)
-        .returning(version)
-      (odinConfiguration.get[String](_: String)(_: ConfigLoader[String]))
         .expects("id", *)
         .returning(id)
 
       (clusterConfiguration.get[Configuration](_: String)(_: ConfigLoader[Configuration]))
         .expects("odin", *)
         .returning(odinConfiguration)
+      (clusterConfiguration.keys _).expects().returning(Set("odin"))
 
       (configuration.get[Configuration](_: String)(_: ConfigLoader[Configuration]))
         .expects("clusters", *)
         .returning(clusterConfiguration)
 
-      val service = new CDHClusterService(client, configuration)
-      service.list map { list =>
-        list should have length 1
-        list should be(Seq(Cluster(id, "Odin", CDH(version))))
-      }
+      val service = new CDHClusterService(client, configuration)(ExecutionContext.global)
+      val list = Await.result(service.list, Duration.Inf)
+      list should have length 1
+      list should be(Seq(Cluster(id, "Odin", CDH(version))))
     }
   }
 
@@ -56,7 +56,7 @@ class ClusterServiceSpec extends AsyncFlatSpec with Matchers with AsyncMockFacto
     Server.withApplicationFromContext() { context =>
       new BuiltInComponentsFromContext(context) with HttpFiltersComponents {
         override def router: Router = Router.from {
-          case GET(p"/clusters") => Action { _ => Results.Ok.sendResource("cloudera/clusters.json")(fileMimeTypes) }
+          case GET(p"/clusters/odin") => Action { _ => Results.Ok.sendResource("cloudera/cluster.json")(fileMimeTypes) }
         }
       }.application
     } { implicit port =>
