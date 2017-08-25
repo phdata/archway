@@ -9,7 +9,9 @@ lazy val root = (project in file(".")).enablePlugins(PlayScala)
 libraryDependencies ++= Seq(
   ehcache,
   guice,
+  ws,
   jdbc % Test,
+  "org.julienrf" %% "play-json-derived-codecs" % "4.0.0",
   "be.objectify" %% "deadbolt-scala" % "2.6.0" withSources(),
   "com.pauldijou" %% "jwt-play-json" % "0.14.0",
   "com.typesafe.play" %% "play-json-joda" % "2.6.0",
