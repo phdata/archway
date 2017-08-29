@@ -1,10 +1,22 @@
 pipeline:
-  api:
+  build:
     image: hseeberger/scala-sbt
     commands:
       - sbt test
+    when:
+      event: [ push, tag ]
 
-  notify:
+  publish:
+    image: plugins/docker
+    repo: jotunn/heimdali-api
+    tags:
+      - ${DRONE_TAG}
+      - latest
+    secrets: [ docker_username, docker_password ]
+    when:
+      event: tag
+
+  nnotifyotify:
     image: plugins/slack
     channel: heimdali
     username: drone
