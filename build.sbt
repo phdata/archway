@@ -18,7 +18,8 @@ libraryDependencies ++= Seq(
   "com.unboundid" % "unboundid-ldapsdk" % "4.0.0",
   "com.typesafe.play" %% "play-slick" % "3.0.0",
   "com.github.tototoshi" %% "slick-joda-mapper" % "2.3.0",
-  "com.h2database" % "h2" % "1.4.196",
+  "org.postgresql" % "postgresql" % "42.1.4",
+  "com.h2database" % "h2" % "1.4.196" % Test,
   "org.scalamock" %% "scalamock-scalatest-support" % "3.6.0" % Test,
   "org.scalatestplus.play" %% "scalatestplus-play" % "3.0.0" % Test)
 
@@ -31,3 +32,5 @@ unmanagedSourceDirectories in Test += baseDirectory.value / "src" / "test" / "sc
 unmanagedResourceDirectories in Test += baseDirectory.value / "src" / "test" / "resources"
 
 unmanagedClasspath in Compile ++= (unmanagedResources in Compile).value
+
+packageName in Universal := "heimdali-api"

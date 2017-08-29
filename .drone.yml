@@ -3,6 +3,8 @@ pipeline:
     image: hseeberger/scala-sbt
     commands:
       - sbt test
+      - sbt dist
+      - unzip target/universal/heimdali-api-${DRONE_TAG}.zip
     when:
       event: [ push, tag ]
 
