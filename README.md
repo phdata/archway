@@ -1,6 +1,5 @@
 # Heimdali
-[![wercker status](https://app.wercker.com/status/8942260df56fe0147caa5e8a5be71e23/m/ "wercker status")](https://app.wercker.com/project/byKey/8942260df56fe0147caa5e8a5be71e23)
-* Simplify collaboration on Hadoop
+[![Build Status](http://ci.jotunn.io/api/badges/bennythomps/heimdali-api/status.svg)](http://ci.jotunn.io/bennythomps/heimdali-api)
 
 ## Developers
 * We'll be using GitFlow http://nvie.com/posts/a-successful-git-branching-model/
