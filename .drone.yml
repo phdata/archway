@@ -4,7 +4,7 @@ pipeline:
     commands:
       - sbt test
       - sbt dist
-      - unzip target/universal/heimdali-api-${DRONE_TAG}.zip
+      - unzip target/universal/heimdali-api.zip
     when:
       event: [ push, tag ]
 
