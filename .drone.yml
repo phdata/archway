@@ -1,6 +1,18 @@
 pipeline:
+
+  restore-cache:
+    image: drillster/drone-volume-cache
+    restore: true
+    mount: [ /drone/.m2, /drone/.sbt ]
+    volumes:
+      - /tmp/cache:/cache
+
   build:
     image: hseeberger/scala-sbt
+    environment:
+      - M2_HOME=/drone/.m2
+      - MAVEN_HOME=/drone/.m2
+      - SBT_HOME=/drone/.sbt
     commands:
       - sbt test
       - sbt dist
@@ -17,6 +29,13 @@ pipeline:
     secrets: [ docker_username, docker_password ]
     when:
       event: tag
+
+  rebuild-cache:
+    image: drillster/drone-volume-cache
+    rebuild: true
+    mount: [ /drone/.sbt, /drone/.m2 ]
+    volumes: 
+      - /tmp/cache:/cache
 
   notify:
     image: plugins/slack
