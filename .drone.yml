@@ -3,15 +3,16 @@ pipeline:
   restore-cache:
     image: drillster/drone-volume-cache
     restore: true
-    mount: [ /root/.ivy, /root/.sbt ]
+    mount: [ /drone/.ivy, /drone/.sbt ]
     volumes:
       - /tmp/cache:/cache
 
   build:
     image: hseeberger/scala-sbt
+      - MY_ARGS=-sbt-dir /drone/.sbt -ivy /drone/.ivy
     commands:
-      - sbt test
-      - sbt dist
+      - sbt $MY_ARGS test
+      - sbt $MY_ARGS dist
       - unzip target/universal/heimdali-api.zip
     when:
       event: [ push, tag ]
@@ -29,7 +30,7 @@ pipeline:
   rebuild-cache:
     image: drillster/drone-volume-cache
     rebuild: true
-    mount: [ /root/.sbt, /root/.ivy ]
+    mount: [ /drone/.sbt, /drone/.ivy ]
     volumes: 
       - /tmp/cache:/cache
 
