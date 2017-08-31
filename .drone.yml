@@ -23,4 +23,5 @@ pipeline:
     channel: heimdali
     username: drone
     webhook: https://hooks.slack.com/services/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
-    when: [ success, failure ]
+    when:
+      status: [ success, failure ]
