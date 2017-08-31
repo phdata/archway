@@ -9,6 +9,7 @@ pipeline:
 
   build:
     image: hseeberger/scala-sbt
+    environment:
       - MY_ARGS=-sbt-dir /drone/.sbt -ivy /drone/.ivy
     commands:
       - sbt $MY_ARGS test
