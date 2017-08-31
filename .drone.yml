@@ -3,15 +3,14 @@ pipeline:
   restore-cache:
     image: drillster/drone-volume-cache
     restore: true
-    mount: [ /drone/.m2, /drone/.sbt ]
+    mount: [ /drone/.ivy, /drone/.sbt ]
     volumes:
       - /tmp/cache:/cache
 
   build:
     image: hseeberger/scala-sbt
     environment:
-      - M2_HOME=/drone/.m2
-      - MAVEN_HOME=/drone/.m2
+      - IVY_HOME=/drone/.ivy
       - SBT_HOME=/drone/.sbt
     commands:
       - sbt test
@@ -33,7 +32,7 @@ pipeline:
   rebuild-cache:
     image: drillster/drone-volume-cache
     rebuild: true
-    mount: [ /drone/.sbt, /drone/.m2 ]
+    mount: [ /drone/.sbt, /drone/.ivy ]
     volumes: 
       - /tmp/cache:/cache
 
