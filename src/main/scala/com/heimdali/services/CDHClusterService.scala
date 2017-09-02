@@ -12,8 +12,8 @@ import scala.concurrent.{ExecutionContext, Future}
 class CDHClusterService @Inject()(wsClient: WSClient, configuration: Configuration)
                                  (implicit val executionContext: ExecutionContext) extends ClusterService {
 
-  def clusterReads(id: String): Reads[Cluster] = (
-    Reads.pure(id) ~
+  implicit val clusterReads: Reads[Cluster] = (
+    (__ \ "name").read[String] ~
       (__ \ "displayName").read[String] ~
       (__ \ "fullVersion").read[String].map(CDH)
     ) (Cluster)
@@ -22,12 +22,10 @@ class CDHClusterService @Inject()(wsClient: WSClient, configuration: Configurati
     val clusters = configuration.get[Configuration]("clusters")
     Future.sequence {
       clusters.keys.map { cluster =>
-        val clusterConfig = clusters.get[Configuration](cluster)
-        val id = clusterConfig.get[String]("id")
-        val baseUrl = clusterConfig.get[String]("base_url")
+        val baseUrl = clusters.get[String](cluster)
         wsClient.url(s"$baseUrl/clusters/$cluster")
           .get()
-          .map(_.json.as[Cluster](clusterReads(id)))
+          .map(_.json.as[Cluster])
       }.toSeq
     }
   }

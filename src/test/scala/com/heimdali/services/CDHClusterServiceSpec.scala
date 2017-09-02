@@ -21,24 +21,16 @@ class CDHClusterServiceSpec extends FlatSpec with Matchers with MockFactory {
   it should "return a cluster" in {
     withCDHClient { client =>
       val url = ""
-      val id = "ABC"
+      val name = "odin"
       val version = "5.12.0"
 
       val configuration = mock[Configuration]
       val clusterConfiguration = mock[Configuration]
-      val odinConfiguration = mock[Configuration]
 
-      (odinConfiguration.get[String](_: String)(_: ConfigLoader[String]))
-        .expects("base_url", *)
-        .returning(url)
-      (odinConfiguration.get[String](_: String)(_: ConfigLoader[String]))
-        .expects("id", *)
-        .returning(id)
-
-      (clusterConfiguration.get[Configuration](_: String)(_: ConfigLoader[Configuration]))
+      (clusterConfiguration.get[String](_: String)(_: ConfigLoader[String]))
         .expects("odin", *)
-        .returning(odinConfiguration)
-      (clusterConfiguration.keys _).expects().returning(Set("odin"))
+        .returning(url)
+      (clusterConfiguration.keys _).expects().returning(Set(name))
 
       (configuration.get[Configuration](_: String)(_: ConfigLoader[Configuration]))
         .expects("clusters", *)
@@ -47,7 +39,7 @@ class CDHClusterServiceSpec extends FlatSpec with Matchers with MockFactory {
       val service = new CDHClusterService(client, configuration)(ExecutionContext.global)
       val list = Await.result(service.list, Duration.Inf)
       list should have length 1
-      list should be(Seq(Cluster(id, "Odin", CDH(version))))
+      list should be(Seq(Cluster(name, "Odin", CDH(version))))
     }
   }
 
