@@ -1,5 +1,12 @@
 {
-  "name": "odin",
-  "displayName": "Odin",
-  "fullVersion": "5.5.3"
+  "name" : "odin",
+  "displayName" : "Odin",
+  "version" : "CDH5",
+  "fullVersion" : "5.12.0",
+  "maintenanceMode" : false,
+  "maintenanceOwners" : [ ],
+  "clusterUrl" : "http://cdh-manager:7180/cmf/clusterRedirect/cluster",
+  "hostsUrl" : "http://cdh-manager:7180/cmf/clusterRedirect/cluster/hosts",
+  "entityStatus" : "UNKNOWN_HEALTH",
+  "uuid" : "e471ccef-1d5c-46df-a2a8-84475108c515"
 }

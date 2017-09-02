@@ -22,7 +22,7 @@ class CDHClusterServiceSpec extends FlatSpec with Matchers with MockFactory {
     withCDHClient { client =>
       val url = ""
       val id = "ABC"
-      val version = "5.5.3"
+      val version = "5.12.0"
 
       val configuration = mock[Configuration]
       val clusterConfiguration = mock[Configuration]
