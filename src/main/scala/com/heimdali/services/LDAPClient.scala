@@ -3,7 +3,7 @@ package com.heimdali.services
 import javax.inject.Inject
 
 import com.unboundid.ldap.sdk._
-import play.api.Configuration
+import play.api.{Configuration, Logger}
 
 import scala.collection.JavaConverters._
 import scala.concurrent.{ExecutionContext, Future}
@@ -26,6 +26,13 @@ class LDAPClientImpl @Inject()(configuration: Configuration)(implicit executionC
     val username = ldapConfiguration.get[String]("bind-dn")
     val password = ldapConfiguration.get[String]("bind-password")
     val connections = ldapConfiguration.getOptional[Int]("connections").getOrElse(10)
+
+    Logger.info("Logging into LDAP")
+    Logger.warn(s"server: $server")
+    Logger.warn(s"port: $port")
+    Logger.warn(s"username: $username")
+    Logger.warn(s"password: $password")
+    Logger.warn(s"connections: $connections")
 
     val connection = new LDAPConnection(server, port, username, password)
     new LDAPConnectionPool(connection, connections)

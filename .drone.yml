@@ -1,22 +1,45 @@
 pipeline:
+
+  restore-cache:
+    image: drillster/drone-volume-cache
+    restore: true
+    mount: [ /drone/.ivy, /drone/.sbt ]
+    volumes:
+      - /tmp/cache:/cache
+
   build:
     image: hseeberger/scala-sbt
+    environment:
+      - MY_ARGS=-sbt-dir /drone/.sbt -ivy /drone/.ivy
     commands:
-      - sbt test
-      - sbt dist
+      - sbt $MY_ARGS test
+      - sbt $MY_ARGS dist
       - unzip target/universal/heimdali-api.zip
-    when:
-      event: [ push, tag ]
+
+  rebuild-cache:
+    image: drillster/drone-volume-cache
+    rebuild: true
+    mount: [ /drone/.sbt, /drone/.ivy ]
+    volumes:
+      - /tmp/cache:/cache
 
   publish:
     image: plugins/docker
     repo: jotunn/heimdali-api
     tags:
-      - ${DRONE_TAG}
+      - ${DRONE_COMMIT_SHA:0:5}
       - latest
     secrets: [ docker_username, docker_password ]
-    when:
-      event: tag
+
+  deploy:
+    image: quay.io/honestbee/drone-kubernetes
+    deployment: heimdali-api
+    namespace: heimdali
+    repo: jotunn/heimdali-api
+    container: heimdali-api
+    secrets: [ kubernetes_server, kubernetes_cert, kubernetes_token ]
+    tag:
+      - ${DRONE_COMMIT_SHA:0:5}
 
   notify:
     image: plugins/slack
