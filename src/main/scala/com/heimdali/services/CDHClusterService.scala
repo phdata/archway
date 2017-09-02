@@ -24,7 +24,8 @@ class CDHClusterService @Inject()(wsClient: WSClient, configuration: Configurati
       clusters.keys.map { cluster =>
         val clusterConfig = clusters.get[Configuration](cluster)
         val id = clusterConfig.get[String]("id")
-        wsClient.url(s"${clusterConfig.get[String]("base-url")}/clusters/$cluster")
+        val baseUrl = clusterConfig.get[String]("base_url")
+        wsClient.url(s"$baseUrl/clusters/$cluster")
           .get()
           .map(_.json.as[Cluster](clusterReads(id)))
       }.toSeq

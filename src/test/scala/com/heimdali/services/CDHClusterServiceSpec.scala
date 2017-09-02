@@ -29,7 +29,7 @@ class CDHClusterServiceSpec extends FlatSpec with Matchers with MockFactory {
       val odinConfiguration = mock[Configuration]
 
       (odinConfiguration.get[String](_: String)(_: ConfigLoader[String]))
-        .expects("base-url", *)
+        .expects("base_url", *)
         .returning(url)
       (odinConfiguration.get[String](_: String)(_: ConfigLoader[String]))
         .expects("id", *)

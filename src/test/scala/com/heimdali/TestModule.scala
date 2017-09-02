@@ -15,10 +15,10 @@ trait TestApplicationFactory extends FakeApplicationFactory with LDAPTest {
     "server" -> "localhost",
     "port" -> ldapPort,
     "connections" -> 1,
-    "base-dn" -> "dc=jotunn,dc=io",
-    "users-path" -> "ou=edp",
-    "bind-dn" -> "cn=readonly,dc=jotunn,dc=io",
-    "bind-password" -> "readonly"
+    "base_dn" -> "dc=jotunn,dc=io",
+    "users_path" -> "ou=edp",
+    "bind_dn" -> "cn=readonly,dc=jotunn,dc=io",
+    "bind_password" -> "readonly"
   )
 
   val dbConfig = Map(
