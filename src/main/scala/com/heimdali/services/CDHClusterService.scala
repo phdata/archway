@@ -5,7 +5,7 @@ import javax.inject.Inject
 import play.api.Configuration
 import play.api.libs.functional.syntax._
 import play.api.libs.json.{Reads, _}
-import play.api.libs.ws.WSClient
+import play.api.libs.ws.{WSAuthScheme, WSClient}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -22,8 +22,14 @@ class CDHClusterService @Inject()(wsClient: WSClient, configuration: Configurati
     val clusters = configuration.get[Configuration]("clusters")
     Future.sequence {
       clusters.keys.map { cluster =>
-        val baseUrl = clusters.get[String](cluster)
-        wsClient.url(s"$baseUrl/clusters/$cluster")
+        val clusterConfig = clusters.get[Configuration](cluster)
+        val baseUrl = clusterConfig.get[String]("url")
+        val username = clusterConfig.get[String]("username")
+        val password = clusterConfig.get[String]("password")
+
+        wsClient
+          .url(s"$baseUrl/clusters/$cluster")
+          .withAuth(username, password, WSAuthScheme.BASIC)
           .get()
           .map(_.json.as[Cluster])
       }.toSeq

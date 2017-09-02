@@ -19,6 +19,7 @@ libraryDependencies ++= Seq(
   "com.typesafe.play" %% "play-slick" % "3.0.0",
   "com.github.tototoshi" %% "slick-joda-mapper" % "2.3.0",
   "org.postgresql" % "postgresql" % "42.1.4",
+  "org.mockito" % "mockito-core" % "2.+" % Test,
   "com.h2database" % "h2" % "1.4.196" % Test,
   "org.scalamock" %% "scalamock-scalatest-support" % "3.6.0" % Test,
   "org.scalatestplus.play" %% "scalatestplus-play" % "3.0.0" % Test)

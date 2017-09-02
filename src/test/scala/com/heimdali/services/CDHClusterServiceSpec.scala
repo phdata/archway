@@ -1,60 +1,67 @@
 package com.heimdali.services
 
-import org.scalamock.scalatest.{AsyncMockFactory, MockFactory}
+import org.mockito.ArgumentMatchers._
+import org.mockito.Mockito._
+import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{AsyncFlatSpec, FlatSpec, Matchers}
-import play.api.libs.ws.WSClient
-import play.api.mvc.{Action, Results}
-import play.api.routing.Router
-import play.api.routing.sird._
-import play.api.test.WsTestClient
-import play.api.{BuiltInComponentsFromContext, ConfigLoader, Configuration}
-import play.core.server.Server
-import play.filters.HttpFiltersComponents
+import play.api.libs.json.Json
+import play.api.libs.ws.{WSAuthScheme, WSClient, WSRequest, WSResponse}
+import play.api.{ConfigLoader, Configuration}
 
-import scala.concurrent.{Await, ExecutionContext}
 import scala.concurrent.duration.Duration
+import scala.concurrent.{Await, ExecutionContext, Future}
+import scala.io.Source
 
-class CDHClusterServiceSpec extends FlatSpec with Matchers with MockFactory {
+class CDHClusterServiceSpec extends AsyncFlatSpec with Matchers with MockitoSugar {
 
   behavior of "CDH Cluster service"
 
   it should "return a cluster" in {
-    withCDHClient { client =>
-      val url = ""
-      val name = "odin"
-      val version = "5.12.0"
+    val url = ""
+    val name = "odin"
+    val version = "5.12.0"
 
-      val configuration = mock[Configuration]
-      val clusterConfiguration = mock[Configuration]
+    val username = "admin"
+    val password = "admin"
 
-      (clusterConfiguration.get[String](_: String)(_: ConfigLoader[String]))
-        .expects("odin", *)
-        .returning(url)
-      (clusterConfiguration.keys _).expects().returning(Set(name))
+    val configuration = mock[Configuration]
+    val clusterConfiguration = mock[Configuration]
+    val odinConfiguration = mock[Configuration]
 
-      (configuration.get[Configuration](_: String)(_: ConfigLoader[Configuration]))
-        .expects("clusters", *)
-        .returning(clusterConfiguration)
+    when(odinConfiguration.get[String](matches("url"))(any[ConfigLoader[String]]))
+      .thenReturn(url)
+    when(odinConfiguration.get[String](matches("username"))(any[ConfigLoader[String]]))
+      .thenReturn(username)
+    when(odinConfiguration.get[String](matches("password"))(any[ConfigLoader[String]]))
+      .thenReturn(password)
 
-      val service = new CDHClusterService(client, configuration)(ExecutionContext.global)
-      val list = Await.result(service.list, Duration.Inf)
+    when(clusterConfiguration.get[Configuration](matches(name))(any[ConfigLoader[Configuration]]))
+      .thenReturn(odinConfiguration)
+    when(clusterConfiguration.keys)
+      .thenReturn(Set(name))
+
+    when(configuration.get[Configuration](matches("clusters"))(any[ConfigLoader[Configuration]]))
+      .thenReturn(clusterConfiguration)
+
+    val wsResponse = mock[WSResponse]
+    when(wsResponse.json).thenReturn(Json.parse(Source.fromResource("cloudera/cluster.json").getLines().mkString))
+
+    val wsReqeuest = mock[WSRequest]
+    when(wsReqeuest.withAuth(username, password, WSAuthScheme.BASIC)).thenReturn(wsReqeuest)
+    when(wsReqeuest.get).thenReturn(Future {
+      wsResponse
+    })
+
+    val cdhClient = mock[WSClient]
+    when(cdhClient.url(s"$url/clusters/$name")).thenReturn(wsReqeuest)
+
+    val service = new CDHClusterService(cdhClient, configuration)(ExecutionContext.global)
+    service.list map { list =>
+
+      verify(wsReqeuest).withAuth(username, password, WSAuthScheme.BASIC)
+
       list should have length 1
       list should be(Seq(Cluster(name, "Odin", CDH(version))))
-    }
-  }
-
-
-  def withCDHClient[T](block: WSClient => T): T = {
-    Server.withApplicationFromContext() { context =>
-      new BuiltInComponentsFromContext(context) with HttpFiltersComponents {
-        override def router: Router = Router.from {
-          case GET(p"/clusters/odin") => Action { _ => Results.Ok.sendResource("cloudera/cluster.json")(fileMimeTypes) }
-        }
-      }.application
-    } { implicit port =>
-      WsTestClient.withClient { client =>
-        block(client)
-      }
     }
   }
 }
