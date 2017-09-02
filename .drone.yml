@@ -18,6 +18,13 @@ pipeline:
     when:
       event: [ push, tag ]
 
+  rebuild-cache:
+    image: drillster/drone-volume-cache
+    rebuild: true
+    mount: [ /drone/.sbt, /drone/.ivy ]
+    volumes:
+      - /tmp/cache:/cache
+
   publish:
     image: plugins/docker
     repo: jotunn/heimdali-api
@@ -28,12 +35,17 @@ pipeline:
     when:
       event: tag
 
-  rebuild-cache:
-    image: drillster/drone-volume-cache
-    rebuild: true
-    mount: [ /drone/.sbt, /drone/.ivy ]
-    volumes: 
-      - /tmp/cache:/cache
+  deploy:
+    image: quay.io/honestbee/drone-kubernetes
+    deployment: heimdali-api
+    namespace: heimdali
+    repo: jotunn/heimdali-api
+    container: heimdali-api
+    secrets: [ kubernetes_server, kubernetes_cert, kubernetes_token ]
+    tag:
+      - ${DRONE_TAG}
+    when:
+      event: tag
 
   notify:
     image: plugins/slack
