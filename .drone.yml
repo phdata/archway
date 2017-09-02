@@ -27,7 +27,7 @@ pipeline:
     image: plugins/docker
     repo: jotunn/heimdali-api
     tags:
-      - ${DRONE_COMMIT_SHA:0:5}
+      - "${DRONE_COMMIT_SHA:0:5}"
       - latest
     secrets: [ docker_username, docker_password ]
 
@@ -39,7 +39,7 @@ pipeline:
     container: heimdali-api
     secrets: [ kubernetes_server, kubernetes_cert, kubernetes_token ]
     tag:
-      - ${DRONE_COMMIT_SHA:0:5}
+      - "${DRONE_COMMIT_SHA:0:5}"
 
   notify:
     image: plugins/slack
