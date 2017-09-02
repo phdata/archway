@@ -4,8 +4,9 @@ import javax.inject.Inject
 
 import be.objectify.deadbolt.scala.models.{Permission, Role, Subject}
 import pdi.jwt.{JwtAlgorithm, JwtJson}
-import play.api.{Application, Configuration}
-import play.api.libs.json.{Format, Json}
+import play.api.Configuration
+import play.api.libs.functional.syntax._
+import play.api.libs.json._
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -40,8 +41,11 @@ class LDAPAccountService @Inject()(ldapClient: LDAPClient,
                                   (implicit val executionContext: ExecutionContext)
   extends AccountService {
 
+  val algo: JwtAlgorithm.HS256.type = JwtAlgorithm.HS256
+  val secret: String = configuration.get[String]("play.crypto.secret")
+
   override def login(username: String, password: String): Future[Option[User]] =
-    ldapClient.findUser(username, password) map {
+  ldapClient.findUser(username, password) map {
       case Some(user) => Some(User(user.name, user.username, HeimdaliRole.BasicUser))
       case _ => None
     }
@@ -59,13 +63,22 @@ class LDAPAccountService @Inject()(ldapClient: LDAPClient,
       "username" -> user.username
     )
 
-    val accessToken = JwtJson.encode(accessJson, secret, JwtAlgorithm.HS256)
-    val refreshToken = JwtJson.encode(refreshJson, secret, JwtAlgorithm.HS256)
+    val accessToken = JwtJson.encode(accessJson, secret, algo)
+    val refreshToken = JwtJson.encode(refreshJson, secret, algo)
 
     Future {
       Token(accessToken, refreshToken)
     }
   }
 
-  override def validate(token: String): Future[Option[User]] = ???
+  override def validate(token: String): Future[Option[User]] = Future {
+    implicit val reads: Reads[User] = (
+      (__ \ "name").read[String] ~
+        (__ \ "username").read[String] ~
+        (__ \ "role").read[String].map(HeimdaliRole(_))
+      ) (User)
+
+    JwtJson.decodeJson(token, secret, Seq(algo)).toOption.map(_.asOpt[User]).getOrElse(None)
+  }
+
 }

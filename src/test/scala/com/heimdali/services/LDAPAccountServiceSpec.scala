@@ -86,4 +86,20 @@ class LDAPAccountServiceSpec extends AsyncFlatSpec with Matchers with AsyncMockF
     }
   }
 
+  it should "validate a valid token" in {
+    val secret = "1yR2kSbv$gE@xkQRdlTtuecW"
+    val user = User("Dude Doe", "username", HeimdaliRole.BasicUser)
+    val token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJuYW1lIjoiRHVkZSBEb2UiLCJ1c2VybmFtZSI6InVzZXJuYW1lIiwicm9sZSI6InVzZXIifQ.ArnfmWsJCLLoqGR2jKWQGJAf5kxP7Um2njCykIM5XXQ"
+
+    val configuration = mock[Configuration]
+    (configuration.get[String](_: String)(_: ConfigLoader[String]))
+      .expects("play.crypto.secret", *).returning(secret)
+
+    val lDAPAccountService = new LDAPAccountService(null, configuration)
+    lDAPAccountService.validate(token).map { maybeUser =>
+      maybeUser shouldBe defined
+      maybeUser.get should be (user)
+    }
+  }
+
 }
