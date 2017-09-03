@@ -9,7 +9,8 @@ import play.api.libs.ws.{WSAuthScheme, WSClient}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class CDHClusterService @Inject()(wsClient: WSClient, configuration: Configuration)
+class CDHClusterService @Inject()(wsClient: WSClient,
+                                  configuration: Configuration)
                                  (implicit val executionContext: ExecutionContext) extends ClusterService {
 
   implicit val clusterReads: Reads[Cluster] = (
@@ -18,22 +19,21 @@ class CDHClusterService @Inject()(wsClient: WSClient, configuration: Configurati
       (__ \ "fullVersion").read[String].map(CDH)
     ) (Cluster)
 
-  override def list: Future[Seq[Cluster]] = {
-    val clusters = configuration.get[Configuration]("clusters")
-    Future.sequence {
-      clusters.keys.map { cluster =>
-        val clusterConfig = clusters.get[Configuration](cluster)
-        val baseUrl = clusterConfig.get[String]("url")
-        val username = clusterConfig.get[String]("username")
-        val password = clusterConfig.get[String]("password")
+  def clusterDetails(baseUrl: String, username: String, password: String): Future[Cluster] =
+    wsClient
+      .url(s"$baseUrl")
+      .withAuth(username, password, WSAuthScheme.BASIC)
+      .get()
+      .map(_.json.as[Cluster])
 
-        wsClient
-          .url(s"$baseUrl/clusters/$cluster")
-          .withAuth(username, password, WSAuthScheme.BASIC)
-          .get()
-          .map(_.json.as[Cluster])
-      }.toSeq
-    }
+  override def list: Future[Seq[Cluster]] = {
+    val clusterConfig = configuration.get[Configuration]("cluster")
+    val baseUrl = clusterConfig.get[String]("url")
+    val username = clusterConfig.get[String]("username")
+    val password = clusterConfig.get[String]("password")
+
+    clusterDetails(baseUrl, username, password)
+      .map(Seq(_))
   }
 
 }

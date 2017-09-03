@@ -2,14 +2,19 @@ package com.heimdali.services
 
 import javax.inject.Inject
 
+import play.api.Configuration
+
 import scala.concurrent.{ExecutionContext, Future}
 
-class FakeClusterService @Inject()(implicit executionContext: ExecutionContext) extends ClusterService {
-  override def list: Future[Seq[Cluster]] = Future {
-    Seq(FakeClusterService.odin)
-  }
+class FakeClusterService @Inject()(configuration: Configuration)
+                                  (implicit executionContext: ExecutionContext)
+  extends CDHClusterService(null, configuration) {
+  override def clusterDetails(baseUrl: String, username: String, password: String) =
+    Future {
+      Cluster(username, username, FakeClusterService.cdh)
+    }
 }
 
 object FakeClusterService {
-  val odin = Cluster("ABC", "Odin", CDH("5.3"))
+  val cdh = CDH("1.0")
 }

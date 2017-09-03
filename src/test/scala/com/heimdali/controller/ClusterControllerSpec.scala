@@ -31,10 +31,10 @@ class ClusterControllerSpec
     items.size should be(1)
     val cluster = items.head
 
-    (cluster \ "name").as[String] should be (FakeClusterService.odin.name)
-    (cluster \ "id").as[String] should be (FakeClusterService.odin.id)
-    (cluster \ "distribution" \ "name").as[String] should be (FakeClusterService.odin.distribution.getClass.getSimpleName)
-    (cluster \ "distribution" \ "version").as[String] should be (FakeClusterService.odin.distribution.version)
+    (cluster \ "name").as[String] should be ("admin")
+    (cluster \ "id").as[String] should be ("admin")
+    (cluster \ "distribution" \ "name").as[String] should be (FakeClusterService.cdh.getClass.getSimpleName)
+    (cluster \ "distribution" \ "version").as[String] should be (FakeClusterService.cdh.version)
   }
 
   override def fakeApplication(): Application =

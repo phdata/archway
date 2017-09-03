@@ -3,13 +3,12 @@ package com.heimdali.services
 import org.mockito.ArgumentMatchers._
 import org.mockito.Mockito._
 import org.scalatest.mockito.MockitoSugar
-import org.scalatest.{AsyncFlatSpec, FlatSpec, Matchers}
+import org.scalatest.{AsyncFlatSpec, Matchers}
 import play.api.libs.json.Json
 import play.api.libs.ws.{WSAuthScheme, WSClient, WSRequest, WSResponse}
 import play.api.{ConfigLoader, Configuration}
 
-import scala.concurrent.duration.Duration
-import scala.concurrent.{Await, ExecutionContext, Future}
+import scala.concurrent.{ExecutionContext, Future}
 import scala.io.Source
 
 class CDHClusterServiceSpec extends AsyncFlatSpec with Matchers with MockitoSugar {
@@ -25,7 +24,6 @@ class CDHClusterServiceSpec extends AsyncFlatSpec with Matchers with MockitoSuga
     val password = "admin"
 
     val configuration = mock[Configuration]
-    val clusterConfiguration = mock[Configuration]
     val odinConfiguration = mock[Configuration]
 
     when(odinConfiguration.get[String](matches("url"))(any[ConfigLoader[String]]))
@@ -35,13 +33,8 @@ class CDHClusterServiceSpec extends AsyncFlatSpec with Matchers with MockitoSuga
     when(odinConfiguration.get[String](matches("password"))(any[ConfigLoader[String]]))
       .thenReturn(password)
 
-    when(clusterConfiguration.get[Configuration](matches(name))(any[ConfigLoader[Configuration]]))
+    when(configuration.get[Configuration](matches("cluster"))(any[ConfigLoader[Configuration]]))
       .thenReturn(odinConfiguration)
-    when(clusterConfiguration.keys)
-      .thenReturn(Set(name))
-
-    when(configuration.get[Configuration](matches("clusters"))(any[ConfigLoader[Configuration]]))
-      .thenReturn(clusterConfiguration)
 
     val wsResponse = mock[WSResponse]
     when(wsResponse.json).thenReturn(Json.parse(Source.fromResource("cloudera/cluster.json").getLines().mkString))
@@ -53,7 +46,7 @@ class CDHClusterServiceSpec extends AsyncFlatSpec with Matchers with MockitoSuga
     })
 
     val cdhClient = mock[WSClient]
-    when(cdhClient.url(s"$url/clusters/$name")).thenReturn(wsReqeuest)
+    when(cdhClient.url(s"$url")).thenReturn(wsReqeuest)
 
     val service = new CDHClusterService(cdhClient, configuration)(ExecutionContext.global)
     service.list map { list =>
