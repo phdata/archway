@@ -2,12 +2,13 @@ package com.heimdali.controller
 
 import com.google.common.base.Charsets
 import com.google.common.io.BaseEncoding
-import com.heimdali.TestApplicationFactory
-import com.heimdali.services.HeimdaliRole
+import com.heimdali.LDAPTest
+import com.heimdali.services._
 import org.scalatest.{BeforeAndAfterAll, FlatSpec, Matchers}
-import org.scalatestplus.play.{BaseOneAppPerSuite, WsScalaTestClient}
+import org.scalatestplus.play.WsScalaTestClient
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import pdi.jwt.{JwtAlgorithm, JwtJson}
-import play.api.libs.json.JsString
+import play.api.libs.json.{JsObject, JsString}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 
@@ -15,20 +16,16 @@ class AccountControllerSpec
   extends FlatSpec
     with WsScalaTestClient
     with Matchers
-    with BaseOneAppPerSuite
     with BeforeAndAfterAll
-    with TestApplicationFactory {
+    with LDAPTest
+    with GuiceOneAppPerSuite {
+
+  lazy val secret: String = app.configuration.get[String]("play.crypto.secret")
 
   behavior of "AccountController"
 
   it should "do something" in {
-    val secret = app.configuration.get[String]("play.crypto.secret")
-    val auth = "username:password".getBytes(Charsets.UTF_8)
-    val encoded = BaseEncoding.base64().encode(auth)
-    val request = FakeRequest(GET, "/account/token")
-      .withHeaders(AUTHORIZATION -> s"Basic $encoded")
-
-    val rootCall = route(app, request).get
+    val rootCall = login
 
     status(rootCall) should be(OK)
 
@@ -38,18 +35,49 @@ class AccountControllerSpec
     accessToken shouldBe defined
     val accessTokenPayload = JwtJson.decodeJson(accessToken.get, secret, Seq(JwtAlgorithm.HS256))
     accessTokenPayload.get.value should be (Map(
-      "name" -> JsString("Dude Doe"),
-      "username" -> JsString("username"),
-      "role" -> JsString(HeimdaliRole.BasicUser.name)
+    "name" -> JsString("Dude Doe"),
+    "username" -> JsString("username"),
+    "role" -> JsString(HeimdaliRole.BasicUser.name)
     ))
 
     val refreshToken = (json \ "refreshToken").asOpt[String]
     refreshToken shouldBe defined
     val refreshTokenPayload = JwtJson.decodeJson(refreshToken.get, secret, Seq(JwtAlgorithm.HS256))
     refreshTokenPayload.get.value should be (Map(
-      "username" -> JsString("username")
+    "username" -> JsString("username")
     ))
   }
+
+  it should "get a profile" in {
+    val request = FakeRequest(GET, "/account/profile")
+      .withHeaders(AUTHORIZATION -> s"Bearer $accessToken")
+    val rootCall = route(app, request).get
+
+    status(rootCall) should be (OK)
+
+    contentAsJson(rootCall).as[JsObject].value should be (Map(
+      "name" -> JsString("Dude Doe"),
+      "username" -> JsString("username"),
+      "role" -> JsString(HeimdaliRole.BasicUser.name)
+    ))
+  }
+
+  private def accessToken = {
+    val result = contentAsJson(login)
+
+    (result \ "accessToken").as[String]
+  }
+
+  private def login = {
+    val auth = "username:password".getBytes(Charsets.UTF_8)
+    val encoded = BaseEncoding.base64().encode(auth)
+    val request = FakeRequest(GET, "/account/token")
+      .withHeaders(AUTHORIZATION -> s"Basic $encoded")
+
+    route(app, request).get
+  }
+
+  override def ldapPort = 1234
 
   override protected def beforeAll(): Unit = {
     inMemoryServer.startListening()
