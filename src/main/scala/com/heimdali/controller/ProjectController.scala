@@ -2,7 +2,7 @@ package com.heimdali.controller
 
 import javax.inject.{Inject, Singleton}
 
-import be.objectify.deadbolt.scala.DeadboltActions
+import be.objectify.deadbolt.scala.{AuthenticatedRequest, DeadboltActions}
 import com.heimdali.models.Project
 import com.heimdali.services.ProjectService
 import org.joda.time.DateTime
@@ -19,12 +19,12 @@ class ProjectController @Inject()(controllerComponents: MessagesControllerCompon
                                  (implicit executionContext: ExecutionContext)
   extends MessagesAbstractController(controllerComponents) {
 
-  implicit val projectReads: Reads[Project] = (
+  implicit def projectReads(implicit request: AuthenticatedRequest[_]): Reads[Project] = (
     Reads.pure(None) and
       (__ \ "name").read[String] and
       (__ \ "purpose").read[String] and
       Reads.pure(DateTime.now()) and
-      Reads.pure("")
+      Reads.pure(request.subject.get.identifier)
     ) (Project.apply _)
 
   import play.api.libs.json.JodaWrites._
@@ -37,14 +37,13 @@ class ProjectController @Inject()(controllerComponents: MessagesControllerCompon
     ) (unlift(Project.unapply)
   )
 
-  def requestNew: Action[JsValue] = actionBuilder.SubjectPresent()(parse.json) { request =>
+  def requestNew: Action[JsValue] = actionBuilder.SubjectPresent()(parse.json) { implicit request =>
     request.body.validate[Project].fold(
       errors => {
         Future(BadRequest(Json.obj("errors" -> JsError.toJson(errors))))
       },
       project => {
-        val projectWithUsername = project.copy(createdBy = request.subject.get.identifier)
-        projectService.create(projectWithUsername).map { newProject =>
+        projectService.create(project).map { newProject =>
           Created(Json.toJson(newProject))
         }
       }
