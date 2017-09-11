@@ -1,7 +1,6 @@
 package com.heimdali.controller
 
 import com.heimdali.services._
-import org.flywaydb.core.Flyway
 import org.joda.time.DateTime
 import org.scalatest.{BeforeAndAfterAll, FlatSpec, Matchers}
 import org.scalatestplus.play.{BaseOneAppPerSuite, FakeApplicationFactory}
@@ -88,11 +87,4 @@ class ProjectControllerSpec
     new GuiceApplicationBuilder()
       .overrides(bind[AccountService].to[PassiveAccountService])
       .build()
-
-  override protected def beforeAll(): Unit = {
-    val flyway = new Flyway()
-    flyway.setDataSource("jdbc:postgresql://localhost:5432/heimdali", "postgres", "postgres")
-    flyway.setValidateOnMigrate(false)
-    flyway.migrate()
-  }
 }
