@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+CAUTION: Do not modify this file unless you know what you are doing.
+         Unexpected results may occur if the code is changed deliberately.
+-->
+<dbmodel pgmodeler-ver="0.9.0-beta2" last-position="0,0" last-zoom="1"
+	 default-schema="public" default-owner="postgres">
+<database name="new_database">
+</database>
+
+<schema name="public" fill-color="#e1e1e1" sql-disabled="true">
+</schema>
+
+<table name="projects">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="120" y="120"/>
+	<column name="id" not-null="true">
+		<type name="bigserial" length="0"/>
+	</column>
+	<column name="name" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="purpose" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="created" not-null="true">
+		<type name="timestamp" length="0"/>
+	</column>
+	<column name="created_by" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="projects_pk" type="pk-constr" table="public.projects">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+</dbmodel>

@@ -1,3 +1,9 @@
+services:
+  database:
+    image: postgres
+    environment:
+      - POSTGRES_DB: heimdali
+
 pipeline:
 
   restore-cache:

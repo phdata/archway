@@ -1,20 +1,17 @@
 package com.heimdali.controller
 
-import com.heimdali.repositories.ProjectRepositoryImpl
 import com.heimdali.services._
+import org.flywaydb.core.Flyway
 import org.joda.time.DateTime
 import org.scalatest.{BeforeAndAfterAll, FlatSpec, Matchers}
 import org.scalatestplus.play.{BaseOneAppPerSuite, FakeApplicationFactory}
 import play.api.Application
-import play.api.db.slick.DatabaseConfigProvider
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.libs.json.JodaWrites._
 import play.api.libs.json.JodaReads._
+import play.api.libs.json.JodaWrites._
 import play.api.libs.json._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import slick.dbio.DBIOAction
-import slick.jdbc.JdbcProfile
 
 class ProjectControllerSpec
   extends FlatSpec
@@ -93,8 +90,9 @@ class ProjectControllerSpec
       .build()
 
   override protected def beforeAll(): Unit = {
-    val db = fakeApplication.injector.instanceOf[DatabaseConfigProvider].get.db
-    val repo = fakeApplication.injector.instanceOf[ProjectRepositoryImpl]
-    repo.createTable()
+    val flyway = new Flyway()
+    flyway.setDataSource("jdbc:postgresql://localhost:5432/heimdali", "postgres", "postgres")
+    flyway.setValidateOnMigrate(false)
+    flyway.migrate()
   }
 }

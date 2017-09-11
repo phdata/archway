@@ -1,5 +1,5 @@
 package com.heimdali.models
 
-import org.joda.time.DateTime
+import java.time.LocalDateTime
 
-case class Project(id: Option[Long], name: String, purpose: String, created: DateTime, createdBy: String)
+case class Project(id: Long, name: String, purpose: String, created: LocalDateTime, createdBy: String)

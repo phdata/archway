@@ -1,0 +1,4 @@
+<configuration>
+    <logger name="org.flywaydb" level="DEBUG"/>
+    <root level="debug" />
+</configuration>

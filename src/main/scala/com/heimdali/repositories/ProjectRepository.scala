@@ -3,11 +3,7 @@ package com.heimdali.repositories
 import javax.inject.Inject
 
 import com.heimdali.models.Project
-import org.joda.time.DateTime
-import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
-import com.github.tototoshi.slick.MySQLJodaSupport._
-import slick.dbio.DBIOAction
-import slick.jdbc.JdbcProfile
+import io.getquill._
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -17,32 +13,19 @@ trait ProjectRepository {
 
 }
 
-class ProjectRepositoryImpl @Inject() (val dbConfigProvider: DatabaseConfigProvider)
-                                      (implicit ec: ExecutionContext)
-  extends ProjectRepository
-    with HasDatabaseConfigProvider[JdbcProfile] {
+class ProjectRepositoryImpl @Inject() (implicit ec: ExecutionContext)
+  extends ProjectRepository {
 
-  import profile.api._
+  val ctx = new PostgresAsyncContext[SnakeCase]("ctx") with ImplicitQuery
 
-  private class ProjectTable(tag: Tag) extends Table[Project](tag, "projects") {
+  import ctx._
 
-    val id = column[Long]("id", O.PrimaryKey, O.AutoInc)
-    val name = column[String]("name")
-    val purpose = column[String]("purpose")
-    val created = column[DateTime]("created")
-    val createdBy = column[String]("created_by")
-
-    def * = (id.?, name, purpose, created, createdBy) <> (Project.tupled, Project.unapply)
+  val projects: ctx.Quoted[ctx.EntityQuery[Project]] = quote {
+    querySchema[Project]("projects")
   }
 
-  private val query = TableQuery[ProjectTable]
-  private val projectInc = query returning query.map(_.id) into ((project, id) => project.copy(id = Some(id)))
-
-  def create(project: Project): Future[Project] =
-    db.run(projectInc += project)
-
-  def createTable() = db.run {DBIOAction.seq(
-    query.schema.create
-  )}
+  def create(project: Project): Future[Project] = run {
+    projects.insert(lift(project)).returning(_.id)
+  }.map(res => project.copy(id = res))
 
 }

@@ -1,11 +1,11 @@
 package com.heimdali.controller
 
+import java.time.LocalDateTime
 import javax.inject.{Inject, Singleton}
 
 import be.objectify.deadbolt.scala.{AuthenticatedRequest, DeadboltActions}
 import com.heimdali.models.Project
 import com.heimdali.services.ProjectService
-import org.joda.time.DateTime
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import play.api.mvc._
@@ -20,19 +20,18 @@ class ProjectController @Inject()(controllerComponents: MessagesControllerCompon
   extends MessagesAbstractController(controllerComponents) {
 
   implicit def projectReads(implicit request: AuthenticatedRequest[_]): Reads[Project] = (
-    Reads.pure(None) and
+    Reads.pure(0L) and
       (__ \ "name").read[String] and
       (__ \ "purpose").read[String] and
-      Reads.pure(DateTime.now()) and
+      Reads.pure(LocalDateTime.now()) and
       Reads.pure(request.subject.get.identifier)
     ) (Project.apply _)
 
-  import play.api.libs.json.JodaWrites._
   implicit val projectWrites: Writes[Project] = (
-    (__ \ "id").writeNullable[Long] and
+    (__ \ "id").write[Long] and
       (__ \ "name").write[String] and
       (__ \ "purpose").write[String] and
-      (__ \ "created").write[DateTime] and
+      (__ \ "created").write[LocalDateTime] and
       (__ \ "created_by").write[String]
     ) (unlift(Project.unapply)
   )
