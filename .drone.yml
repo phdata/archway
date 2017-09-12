@@ -2,7 +2,7 @@ services:
   database:
     image: postgres
     environment:
-      - POSTGRES_DB: heimdali
+      - POSTGRES_DB=heimdali
 
 pipeline:
 
