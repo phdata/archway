@@ -31,4 +31,20 @@ class ProjectServiceImplSpec extends AsyncFlatSpec with Matchers with AsyncMockF
     }
   }
 
+  it should "list projects" in {
+    val repo = mock[ProjectRepository]
+    val username = "username"
+    val Array(project1, project2) = Array(
+      Project(123L, "Project 1", "Stuff", LocalDateTime.now(), "username"),
+      Project(321L, "Project 2", "Stuff", LocalDateTime.now(), "someone")
+    )
+    repo.list _ expects username returning Future { Seq(project1) }
+
+    val projectServiceImpl = new ProjectServiceImpl(repo)
+    projectServiceImpl.list(username) map { projects =>
+      projects.length should be (1)
+      projects.head should be (project1)
+    }
+  }
+
 }

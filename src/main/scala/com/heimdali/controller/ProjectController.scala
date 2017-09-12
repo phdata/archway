@@ -49,4 +49,10 @@ class ProjectController @Inject()(controllerComponents: MessagesControllerCompon
     )
   }
 
+  def list: Action[AnyContent] = actionBuilder.SubjectPresent()() { implicit request =>
+    projectService.list(request.subject.get.identifier) map { projects =>
+      Ok(Json.toJson(projects))
+    }
+  }
+
 }

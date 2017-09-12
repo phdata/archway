@@ -1,3 +1,4 @@
+GET     /projects           @com.heimdali.controller.ProjectController.list
 POST    /projects           @com.heimdali.controller.ProjectController.requestNew
 
 GET     /clusters           @com.heimdali.controller.ClusterController.list
