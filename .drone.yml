@@ -17,7 +17,9 @@ pipeline:
     image: hseeberger/scala-sbt
     environment:
       - MY_ARGS=-sbt-dir /drone/.sbt -ivy /drone/.ivy
+      - DB_URL=jdbc:postgresql://postgres/heimdali
     commands:
+      - sleep 10
       - sbt $MY_ARGS test
       - sbt $MY_ARGS dist
       - unzip target/universal/heimdali-api.zip
