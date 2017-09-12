@@ -1,5 +1,5 @@
 services:
-  database:
+  postgres:
     image: postgres
     environment:
       - POSTGRES_DB=heimdali
