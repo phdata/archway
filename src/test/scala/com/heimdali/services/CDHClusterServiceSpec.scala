@@ -1,5 +1,6 @@
 package com.heimdali.services
 
+import com.typesafe.config.ConfigFactory
 import org.mockito.ArgumentMatchers._
 import org.mockito.Mockito._
 import org.scalatest.mockito.MockitoSugar
@@ -23,18 +24,7 @@ class CDHClusterServiceSpec extends AsyncFlatSpec with Matchers with MockitoSuga
     val username = "admin"
     val password = "admin"
 
-    val configuration = mock[Configuration]
-    val odinConfiguration = mock[Configuration]
-
-    when(odinConfiguration.get[String](matches("url"))(any[ConfigLoader[String]]))
-      .thenReturn(url)
-    when(odinConfiguration.get[String](matches("username"))(any[ConfigLoader[String]]))
-      .thenReturn(username)
-    when(odinConfiguration.get[String](matches("password"))(any[ConfigLoader[String]]))
-      .thenReturn(password)
-
-    when(configuration.get[Configuration](matches("cluster"))(any[ConfigLoader[Configuration]]))
-      .thenReturn(odinConfiguration)
+    val configuration = new Configuration(ConfigFactory.defaultApplication())
 
     val wsResponse = mock[WSResponse]
     when(wsResponse.json).thenReturn(Json.parse(Source.fromResource("cloudera/cluster.json").getLines().mkString))

@@ -2,8 +2,11 @@ package com.heimdali.services
 
 import java.time.LocalDateTime
 
-import com.heimdali.models.Project
+import akka.actor.ActorSystem
+import akka.testkit.TestProbe
+import com.heimdali.actors.ProjectProvisioner.Request
 import com.heimdali.repositories.ProjectRepository
+import com.heimdali.test.fixtures._
 import org.scalamock.scalatest.AsyncMockFactory
 import org.scalatest.{AsyncFlatSpec, Matchers}
 
@@ -14,15 +17,19 @@ class ProjectServiceImplSpec extends AsyncFlatSpec with Matchers with AsyncMockF
   behavior of "ProjectServiceImpl"
 
   it should "create a project" in {
+    implicit val actorSystem = ActorSystem()
+    val probe = TestProbe()
     val repo = mock[ProjectRepository]
     val date = LocalDateTime.now
-    val project = Project(0L, "sesame", "something", date, "username")
+    val project = TestProject(id = 0L, createdDate = date)
     repo.create _ expects project returning Future { project.copy(id = 123L) }
 
-    val projectServiceImpl = new ProjectServiceImpl(repo)
+    val projectServiceImpl = new ProjectServiceImpl(repo, probe.ref)
     projectServiceImpl.create(project) map { newProject =>
+      probe.expectMsg(Request(newProject))
+
       newProject should have (
-        'id (123),
+        'id (123L),
         'name (project.name),
         'purpose (project.purpose),
         'created (date),
@@ -32,16 +39,17 @@ class ProjectServiceImplSpec extends AsyncFlatSpec with Matchers with AsyncMockF
   }
 
   it should "list projects" in {
+    implicit val actorSystem = ActorSystem()
+    val probe = TestProbe()
     val repo = mock[ProjectRepository]
-    val username = "username"
     val Array(project1, project2) = Array(
-      Project(123L, "Project 1", "Stuff", LocalDateTime.now(), "username"),
-      Project(321L, "Project 2", "Stuff", LocalDateTime.now(), "someone")
+      TestProject(id = 123L),
+      TestProject(id = 321L)
     )
-    repo.list _ expects username returning Future { Seq(project1) }
+    repo.list _ expects standardUsername returning Future { Seq(project1) }
 
-    val projectServiceImpl = new ProjectServiceImpl(repo)
-    projectServiceImpl.list(username) map { projects =>
+    val projectServiceImpl = new ProjectServiceImpl(repo, probe.ref)
+    projectServiceImpl.list(standardUsername) map { projects =>
       projects.length should be (1)
       projects.head should be (project1)
     }

@@ -3,6 +3,11 @@ services:
     image: postgres
     environment:
       - POSTGRES_DB=heimdali
+  openldap:
+    image: jotunn/openldap
+    environment:
+      - LDAP_DOMAIN=jotunn.io
+      - LDAP_READONLY=true
 
 pipeline:
 
@@ -18,6 +23,7 @@ pipeline:
     environment:
       - MY_ARGS=-sbt-dir /drone/.sbt -ivy /drone/.ivy
       - DB_URL=jdbc:postgresql://postgres/heimdali
+      - LDAP_HOST=openldap
     commands:
       - sleep 10
       - sbt $MY_ARGS test
@@ -38,6 +44,9 @@ pipeline:
       - "${DRONE_COMMIT_SHA:0:5}"
       - latest
     secrets: [ docker_username, docker_password ]
+    when:
+      branch: master
+      event: [ push ]
 
   deploy:
     image: quay.io/honestbee/drone-kubernetes
@@ -48,6 +57,9 @@ pipeline:
     secrets: [ kubernetes_server, kubernetes_cert, kubernetes_token ]
     tag:
       - "${DRONE_COMMIT_SHA:0:5}"
+    when:
+      branch: master
+      event: [ push ]
 
   notify:
     image: plugins/slack

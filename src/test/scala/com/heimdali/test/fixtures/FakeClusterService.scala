@@ -1,7 +1,8 @@
-package com.heimdali.services
+package com.heimdali.test.fixtures
 
 import javax.inject.Inject
 
+import com.heimdali.services.{CDH, CDHClusterService, Cluster}
 import play.api.Configuration
 
 import scala.concurrent.{ExecutionContext, Future}

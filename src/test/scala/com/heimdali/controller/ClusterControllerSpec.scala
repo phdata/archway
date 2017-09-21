@@ -1,6 +1,7 @@
 package com.heimdali.controller
 
 import com.heimdali.services._
+import com.heimdali.test.fixtures.{FakeClusterService, LDAPTest, PassiveAccountService}
 import org.scalatest.{FlatSpec, Matchers}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
@@ -13,6 +14,7 @@ import play.api.test.Helpers._
 class ClusterControllerSpec
   extends FlatSpec
     with Matchers
+    with LDAPTest
     with GuiceOneAppPerSuite {
 
   behavior of "Configuration Controller"

@@ -1,6 +1,8 @@
-package com.heimdali.services
+package com.heimdali.test.fixtures
 
 import javax.inject.Inject
+
+import com.heimdali.services.{AccountService, HeimdaliRole, Token, User}
 
 import scala.concurrent.{ExecutionContext, Future}
 

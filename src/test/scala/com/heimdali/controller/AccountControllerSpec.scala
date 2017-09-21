@@ -2,8 +2,8 @@ package com.heimdali.controller
 
 import com.google.common.base.Charsets
 import com.google.common.io.BaseEncoding
-import com.heimdali.LDAPTest
 import com.heimdali.services._
+import com.heimdali.test.fixtures.LDAPTest
 import org.scalatest.{BeforeAndAfterAll, FlatSpec, Matchers}
 import org.scalatestplus.play.WsScalaTestClient
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
@@ -16,7 +16,6 @@ class AccountControllerSpec
   extends FlatSpec
     with WsScalaTestClient
     with Matchers
-    with BeforeAndAfterAll
     with LDAPTest
     with GuiceOneAppPerSuite {
 
@@ -27,6 +26,7 @@ class AccountControllerSpec
   it should "do something" in {
     val rootCall = login
 
+    val content = contentAsString(rootCall)
     status(rootCall) should be(OK)
 
     val json = contentAsJson(rootCall)
@@ -75,11 +75,5 @@ class AccountControllerSpec
       .withHeaders(AUTHORIZATION -> s"Basic $encoded")
 
     route(app, request).get
-  }
-
-  override def ldapPort = 1234
-
-  override protected def beforeAll(): Unit = {
-    inMemoryServer.startListening()
   }
 }

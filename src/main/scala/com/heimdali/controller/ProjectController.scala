@@ -23,14 +23,18 @@ class ProjectController @Inject()(controllerComponents: MessagesControllerCompon
     Reads.pure(0L) and
       (__ \ "name").read[String] and
       (__ \ "purpose").read[String] and
+      Reads.pure(None) and
+      Reads.pure("") and
       Reads.pure(LocalDateTime.now()) and
       Reads.pure(request.subject.get.identifier)
-    ) (Project.apply _)
+    ) (Project.apply _).map(existing => existing.copy(systemName = existing.generatedName))
 
   implicit val projectWrites: Writes[Project] = (
     (__ \ "id").write[Long] and
       (__ \ "name").write[String] and
       (__ \ "purpose").write[String] and
+      (__ \ "ldap_dn").writeNullable[String] and
+      (__ \ "system_name").write[String] and
       (__ \ "created").write[LocalDateTime] and
       (__ \ "created_by").write[String]
     ) (unlift(Project.unapply)
