@@ -285,7 +285,7 @@ podTemplate(
                         """
                                 }
                             }
-                            sh """kubectl update heimdali-api --image=$image:$version"""
+                            kubernetesApply file: deployment, environment: 'default'
                         }
                     }
 
