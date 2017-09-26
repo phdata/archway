@@ -71,7 +71,7 @@ def slackSend(attachments) {
 }
 
 def isPublishingBranch = { ->
-    return env.BRANCH_NAME == 'origin/master' || env.BRANCH_NAME =~ /release.+/
+    return env.BRANCH_NAME == 'master' || env.BRANCH_NAME =~ /release.+/
 }
 
 def isResultGoodForPublishing = { ->
