@@ -266,6 +266,26 @@ podTemplate(
                             ]
                     ])
                 } else {
+
+                    if (isPublishingBranch() && isResultGoodForPublishing()) {
+                        stage('Publish the API') {
+                            container('docker') {
+                                withCredentials([usernamePassword(credentialsId: 'docker-hub-creds', passwordVariable: 'docker_password', usernameVariable: 'docker_username')]) {
+                                    sh """
+                        unzip target/universal/heimdali-api.zip
+                        docker login -u $docker_username -p $docker_password
+                        docker build -t $image .
+                        docker tag $image $image:latest
+                        docker tag $image $image:$version
+                        docker push $image:$version
+                        docker push $image:latest
+                        """
+                                }
+                                sh """kubectl update heimdali-api --image=$image:$version"""
+                            }
+                        }
+                    }
+
                     slackSend([
                             [
                                     title      : "${jobName}, build #${env.BUILD_NUMBER}",
@@ -292,25 +312,6 @@ podTemplate(
                                     ]
                             ]
                     ])
-                }
-            }
-
-            if (isPublishingBranch() && isResultGoodForPublishing()) {
-                stage('Publish the API') {
-                    container('docker') {
-                        withCredentials([usernamePassword(credentialsId: 'docker-hub-creds', passwordVariable: 'docker_password', usernameVariable: 'docker_username')]) {
-                            sh """
-                        unzip target/universal/heimdali-api.zip
-                        docker login -u $docker_username -p $docker_password
-                        docker build -t $image .
-                        docker tag $image $image:latest
-                        docker tag $image $image:$version
-                        docker push $image:$version
-                        docker push $image:latest
-                        """
-                        }
-                        sh """kubectl update heimdali-api --image=$image:$version"""
-                    }
                 }
             }
         } catch (hudson.AbortException ae) {
