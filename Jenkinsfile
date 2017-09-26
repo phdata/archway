@@ -209,7 +209,7 @@ podTemplate(
 
             stage('Build') {
                 container('sbt') {
-                    sh "sbt $sbt_params test dist"
+                    sh "sbt $sbt_params test"
 
                     step $class: 'JUnitResultArchiver', testResults: '**/*Spec.xml'
 
@@ -269,6 +269,9 @@ podTemplate(
 
                     if (isPublishingBranch() && isResultGoodForPublishing()) {
                         stage('Publish the API') {
+                            container('sbt') {
+                                sh "sbt $sbt_params dist"
+                            }
                             container('docker') {
                                 withCredentials([usernamePassword(credentialsId: 'docker-hub-creds', passwordVariable: 'docker_password', usernameVariable: 'docker_username')]) {
                                     sh """
@@ -281,8 +284,8 @@ podTemplate(
                         docker push $image:latest
                         """
                                 }
-                                sh """kubectl update heimdali-api --image=$image:$version"""
                             }
+                            sh """kubectl update heimdali-api --image=$image:$version"""
                         }
                     }
 
