@@ -209,7 +209,7 @@ podTemplate(
 
             stage('Build') {
                 container('sbt') {
-                    sh "sbt $sbt_params dist"
+                    sh "sbt $sbt_params test dist"
 
                     step $class: 'JUnitResultArchiver', testResults: '**/*Spec.xml'
 
