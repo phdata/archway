@@ -17,6 +17,7 @@ libraryDependencies ++= Seq(
   "io.getquill" %% "quill" % "1.4.0",
   "org.postgresql" % "postgresql" % "42.1.4",
   "org.flywaydb" % "flyway-core" % "4.2.0",
+  "com.novocode" % "junit-interface" % "0.11" % Test,
   "com.typesafe.akka" %% "akka-testkit" % "2.5.3" % Test,
   "org.mockito" % "mockito-core" % "2.+" % Test,
   "org.scalamock" %% "scalamock-scalatest-support" % "3.6.0" % Test,
