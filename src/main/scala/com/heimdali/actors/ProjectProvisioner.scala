@@ -2,7 +2,7 @@ package com.heimdali.actors
 
 import javax.inject.{Inject, Named}
 
-import akka.actor.{Actor, ActorRef, FSM}
+import akka.actor.{Actor, ActorLogging, ActorRef, FSM}
 import com.heimdali.actors
 import com.heimdali.models.Project
 
@@ -35,7 +35,7 @@ object ProjectProvisioner {
 
 class ProjectProvisioner @Inject()(@Named("ldap-actor") ldapActor: ActorRef,
                                    @Named("project-saver") saveActor: ActorRef)
-  extends FSM[State, Data] {
+  extends FSM[State, Data] with ActorLogging {
 
   import LDAPActor._
   import ProjectProvisioner._
@@ -48,6 +48,7 @@ class ProjectProvisioner @Inject()(@Named("ldap-actor") ldapActor: ActorRef,
       stay() using NotProvisioned(ref)
 
     case Event(Request(project), NotProvisioned(ref)) =>
+      log.info("received a request to provision {}", project)
       val create = CreateEntry(project.systemName, Seq(project.createdBy))
       ldapActor ! create
       goto(Provisioning) using Provision(ref, ListBuffer(CreateLDAPEntry), project)

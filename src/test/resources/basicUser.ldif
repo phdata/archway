@@ -22,3 +22,4 @@ objectClass: inetOrgPerson
 sn: Doe
 givenName: Dude
 userPassword: password
+cn: username
