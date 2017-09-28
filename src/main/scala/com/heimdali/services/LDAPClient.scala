@@ -58,13 +58,18 @@ class LDAPClientImpl @Inject()(configuration: Configuration)(implicit executionC
   override def createGroup(groupName: String, initialMember: String): Future[String] = Future {
     val connection = connectionPool.getConnection()
     val dn = s"cn=edh_sw_$groupName,${ldapConfiguration.get[String]("group_path")},${ldapConfiguration.get[String]("base_dn")}"
-    val entry = connection.add(
-      s"dn: $dn",
-      "objectClass: top",
-      "objectClass: groupOfNames",
-      s"cn: edh_sw_$groupName",
-      s"member: cn=$initialMember,$usersPath,$baseDN"
-    )
+    try {
+      val entry = connection.add(
+        s"dn: $dn",
+        "objectClass: top",
+        "objectClass: groupOfNames",
+        s"cn: edh_sw_$groupName",
+        s"member: cn=$initialMember,$usersPath,$baseDN"
+      )
+
+    } catch {
+      case exception => exception.printStackTrace()
+    }
     dn
   }
 }
