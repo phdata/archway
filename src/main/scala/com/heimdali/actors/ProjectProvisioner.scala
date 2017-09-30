@@ -50,6 +50,7 @@ class ProjectProvisioner @Inject()(@Named("ldap-actor") ldapActor: ActorRef,
     case Event(Request(project), NotProvisioned(ref)) =>
       log.info("received a request to provision {}", project)
       val create = CreateEntry(project.systemName, Seq(project.createdBy))
+      log.info("sending {} to {}", create, ldapActor)
       ldapActor ! create
       goto(Provisioning) using Provision(ref, ListBuffer(CreateLDAPEntry), project)
   }
