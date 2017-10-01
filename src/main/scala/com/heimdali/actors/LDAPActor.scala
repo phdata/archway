@@ -4,6 +4,7 @@ import javax.inject.Inject
 
 import akka.actor.{Actor, ActorLogging}
 import com.heimdali.services.LDAPClient
+import akka.pattern.pipe
 
 import scala.concurrent.ExecutionContext
 
@@ -24,11 +25,10 @@ class LDAPActor @Inject()(ldapClient: LDAPClient)
   override def receive: Receive = {
     case request@CreateEntry(name, users) =>
       log.info("creating group {}", name)
-      val replyTo = sender()
-      ldapClient.createGroup(name, users.head) map { dn =>
-        log.info("created LDAP group {}", name)
-        replyTo ! LDAPDone(dn)
-      }
+      ldapClient
+        .createGroup(name, users.head)
+        .map(LDAPDone.apply)
+        .pipeTo(sender())
   }
 
 }
