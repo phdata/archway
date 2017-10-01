@@ -160,6 +160,8 @@ spec:
           value: "dc=jotunn,dc=io"
         - name: LDAP_USER_PATH
           value: "ou=edp"
+        - name: LDAP_GROUP_PATH
+          value: "ou=groups,ou=hadoop"
         - name: LDAP_BIND_DN
           valueFrom:
             secretKeyRef:
