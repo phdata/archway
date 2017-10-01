@@ -2,11 +2,14 @@ package com.heimdali.models
 
 import java.time.LocalDateTime
 
+import io.getquill.Embedded
+
 case class Project(id: Long,
                    name: String,
                    purpose: String,
                    ldapDn: Option[String],
                    systemName: String,
+                   compliance: Compliance,
                    created: LocalDateTime,
                    createdBy: String) {
   val generatedName =
@@ -16,3 +19,7 @@ case class Project(id: Long,
       .replaceAll("""\s+""", "_")
       .toLowerCase
 }
+
+case class Compliance(phiData: Boolean,
+                      pciData: Boolean,
+                      piiData: Boolean) extends Embedded

@@ -32,6 +32,7 @@ class ProjectServiceImplSpec extends AsyncFlatSpec with Matchers with AsyncMockF
         'id (123L),
         'name (project.name),
         'purpose (project.purpose),
+        'compliance (project.compliance),
         'created (date),
         'createdBy (project.createdBy)
       )

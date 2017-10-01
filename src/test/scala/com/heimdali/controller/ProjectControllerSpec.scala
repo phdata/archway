@@ -2,7 +2,7 @@ package com.heimdali.controller
 
 import java.time.LocalDateTime
 
-import com.heimdali.models.Project
+import com.heimdali.models.{Compliance, Project}
 import com.heimdali.services._
 import com.heimdali.test.fixtures.{LDAPTest, PassiveAccountService, TestProject}
 import io.getquill._
@@ -35,7 +35,12 @@ class ProjectControllerSpec
   it should "create a project" in {
     val json = Json.obj(
       "name" -> "Sesame",
-      "purpose" -> "to do something cool"
+      "purpose" -> "to do something cool",
+      "compliance" -> Json.obj(
+        "pii_data" -> false,
+        "phi_data" -> false,
+        "pci_data" -> false
+      )
     )
 
     val request = FakeRequest(POST, "/projects")
@@ -52,8 +57,11 @@ class ProjectControllerSpec
     (jsonResponse \ "id").asOpt[Long] shouldBe defined
     val id = (jsonResponse \ "id").as[Long]
     (jsonResponse \ "name").as[String] should be("Sesame")
+    (jsonResponse \ "compliance" \ "pci_data").as[Boolean] should be(false)
+    (jsonResponse \ "compliance" \ "pii_data").as[Boolean] should be(false)
+    (jsonResponse \ "compliance" \ "phi_data").as[Boolean] should be(false)
     (jsonResponse \ "purpose").as[String] should be("to do something cool")
-    (jsonResponse \ "system_name").as[String] should be ("sesame")
+    (jsonResponse \ "system_name").as[String] should be("sesame")
 
     val date = (jsonResponse \ "created").asOpt[DateTime]
     date shouldBe defined
@@ -79,6 +87,11 @@ class ProjectControllerSpec
       "id" -> fakeId,
       "name" -> "sesame",
       "purpose" -> "to do something cool",
+      "compliance" -> Json.obj(
+        "pii_data" -> false,
+        "phi_data" -> false,
+        "pci_data" -> false
+      ),
       "created" -> oldDate,
       "created_by" -> wrongUser
     )
@@ -112,12 +125,19 @@ class ProjectControllerSpec
 
     status(rootCall) should be(OK)
 
+    implicit val complianceReads: Reads[Compliance] = (
+      (__ \ "phi_data").read[Boolean] and
+        (__ \ "pci_data").read[Boolean] and
+        (__ \ "pii_data").read[Boolean]
+      ) (Compliance.apply _)
+
     implicit val projectRead = (
       (__ \ "id").read[Long] ~
         (__ \ "name").read[String] ~
         (__ \ "purpose").read[String] ~
         (__ \ "ldap_dn").readNullable[String] ~
         (__ \ "system_name").read[String] ~
+        (__ \ "compliance").read[Compliance] ~
         (__ \ "created").read[LocalDateTime] ~
         (__ \ "created_by").read[String]
       ) (Project.apply _)
