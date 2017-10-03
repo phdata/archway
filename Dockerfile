@@ -10,7 +10,7 @@ RUN apt-key add archive.key && \
     apt-get update && \
     apt-get install -y -f hadoop-client
 
-RUN alternatives-update --install /etc/hadoop/conf hadoop-conf /etc/hadoop/conf.odin 99
+RUN update-alternatives --install /etc/hadoop/conf hadoop-conf /etc/hadoop/conf.odin 99
 
 RUN export CLASSPATH="/etc/hadoop/conf.odin/*:`hadoop classpath`"
 
