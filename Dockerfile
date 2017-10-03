@@ -2,7 +2,7 @@ FROM java:8
 
 COPY ./heimdali-api /opt/heimdali-api
 COPY ./docker/cloudera.list /etc/apt/sources.list.d/cloudera.list
-COPY ./docker/hadoop/* /etc/hadoop/conf.odin/
+COPY ./docker/hdfs/* /etc/hadoop/conf.odin/
 
 ADD https://archive.cloudera.com/cdh5/debian/jessie/amd64/cdh/archive.key archive.key
 
