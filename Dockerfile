@@ -14,4 +14,4 @@ RUN update-alternatives --install /etc/hadoop/conf hadoop-conf /etc/hadoop/conf.
 
 RUN export CLASSPATH="/etc/hadoop/conf.odin/*:`hadoop classpath`"
 
-CMD /opt/heimdali-api/bin/heimdali-api
+CMD java -Duser.dir=/opt/heimdali-api -cp `hadoop classpath`:/opt/heimdali-api/conf/:/opt/heimdali-api/lib/* play.core.server.ProdServerStart
