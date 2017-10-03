@@ -167,6 +167,7 @@ class ProjectControllerSpec
   import play.api.inject.bind
 
   val cluster = {
+    System.setProperty("hadoop.home.dir", "C:\\tools")
     val conf = new Configuration
     conf.set(MiniDFSCluster.HDFS_MINIDFS_BASEDIR, Files.createTempDirectory("test_hdfs").toFile.getAbsoluteFile.getAbsolutePath)
     new MiniDFSCluster.Builder(conf).build()
