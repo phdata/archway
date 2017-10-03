@@ -1,4 +1,4 @@
-FROM java:8
+FROM openjdk:8u141-jdk
 
 COPY ./heimdali-api /opt/heimdali-api
 COPY ./docker/cloudera.list /etc/apt/sources.list.d/cloudera.list
