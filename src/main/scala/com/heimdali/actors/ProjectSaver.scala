@@ -7,10 +7,15 @@ import com.heimdali.models.Project
 import com.heimdali.repositories.ProjectRepository
 
 import scala.concurrent.ExecutionContext
+import akka.pattern.pipe
 
 object ProjectSaver {
 
-  final case class UpdateProject(project: Project)
+  sealed trait Update { def project: Project }
+
+  final case class LDAPUpdate(project: Project) extends Update
+  final case class HDFSUpdate(project: Project) extends Update
+
   case object ProjectSaved
 
 }
@@ -22,11 +27,17 @@ class ProjectSaver @Inject() (projectRepository: ProjectRepository)
   import ProjectSaver._
 
   override def receive: Receive = {
-    case up @ UpdateProject(project) =>
-      val respondTo = sender()
-      projectRepository.setLDAP(project.id, project.systemName, project.ldapDn.get) map { _ =>
-        respondTo ! ProjectSaved
-      }
+    case update: LDAPUpdate =>
+      val project = update.project
+      projectRepository.setLDAP(project.id, project.systemName, project.ldapDn.get)
+        .map(_ => ProjectSaved)
+        .pipeTo(sender())
+
+    case update: HDFSUpdate =>
+      val project = update.project
+      projectRepository.setHDFS(project.id, project.hdfs.location.get)
+        .map(_ => ProjectSaved)
+        .pipeTo(sender())
   }
 
 }

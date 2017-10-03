@@ -21,15 +21,13 @@ trait LDAPTest extends BeforeAndAfterEach {
   val config = new Configuration(ConfigFactory.load())
   val ldapConnection = new LDAPConnection(config.get[String]("ldap.server"), config.get[Int]("ldap.port"), config.get[String]("ldap.bind_dn"), config.get[String]("ldap.bind_password"))
 
-  override protected def beforeEach(): Unit = {
-    val result = Try(ldapConnection.add(
+  override protected def beforeEach(): Unit =
+    Try(ldapConnection.add(
       s"dn: cn=$username,$userDN,$baseDN",
       "objectClass: inetOrgPerson",
       "sn: Doe",
       "givenName: Dude",
       "userPassword: password"))
-    result
-  }
 
   override protected def afterEach(): Unit = {
     val users = ldapConnection.search("ou=edp,dc=jotunn,dc=io", SearchScope.SUB, "(objectClass=person)").getSearchEntries.asScala

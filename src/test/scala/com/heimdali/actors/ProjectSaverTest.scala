@@ -2,7 +2,7 @@ package com.heimdali.actors
 
 import akka.actor.{ActorSystem, Props}
 import akka.testkit.TestProbe
-import com.heimdali.actors.ProjectSaver.{ProjectSaved, UpdateProject}
+import com.heimdali.actors.ProjectSaver.{LDAPUpdate, ProjectSaved}
 import com.heimdali.repositories.ProjectRepository
 import com.heimdali.test.fixtures.TestProject
 import org.scalamock.scalatest.MockFactory
@@ -20,7 +20,7 @@ class ProjectSaverTest extends FlatSpec with Matchers with MockFactory {
 
     val probe = TestProbe()
     val project = TestProject(ldapDn = Some("mydn"))
-    val request = UpdateProject(project)
+    val request = LDAPUpdate(project)
 
     val projectRepository = mock[ProjectRepository]
     (projectRepository.setLDAP _).expects(project.id, project.generatedName, project.ldapDn.get).returning(Future { project })

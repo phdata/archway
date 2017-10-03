@@ -1,11 +1,16 @@
 package com.heimdali.controller
 
+import java.nio.file.Files
 import java.time.LocalDateTime
 
-import com.heimdali.models.{Compliance, Project}
+import com.heimdali.models.{Compliance, HDFSProvision, Project}
 import com.heimdali.services._
 import com.heimdali.test.fixtures.{LDAPTest, PassiveAccountService, TestProject}
+import com.unboundid.ldap.sdk.SearchScope
 import io.getquill._
+import org.apache.hadoop.conf.Configuration
+import org.apache.hadoop.fs.FileSystem
+import org.apache.hadoop.hdfs.MiniDFSCluster
 import org.joda.time.DateTime
 import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach, FlatSpec, Matchers}
 import org.scalatestplus.play.{BaseOneAppPerSuite, FakeApplicationFactory}
@@ -40,6 +45,9 @@ class ProjectControllerSpec
         "pii_data" -> false,
         "phi_data" -> false,
         "pci_data" -> false
+      ),
+      "hdfs" -> Json.obj(
+        "requested_gb" -> .01
       )
     )
 
@@ -73,10 +81,11 @@ class ProjectControllerSpec
     creator shouldBe defined
     creator.get shouldBe "username"
 
-    Thread.sleep((2 seconds).toMillis) // let the actor system update LDAP
+    Thread.sleep((5 seconds).toMillis) // let the actor system update LDAP and HDFS
 
     val result = db.find(id)
     result.ldapDn shouldBe defined
+    result.hdfs.location shouldBe defined
   }
 
   it should "not accept read-only fields" in {
@@ -91,6 +100,9 @@ class ProjectControllerSpec
         "pii_data" -> false,
         "phi_data" -> false,
         "pci_data" -> false
+      ),
+      "hdfs" -> Json.obj(
+        "requested_gb" -> .01
       ),
       "created" -> oldDate,
       "created_by" -> wrongUser
@@ -131,6 +143,11 @@ class ProjectControllerSpec
         (__ \ "pii_data").read[Boolean]
       ) (Compliance.apply _)
 
+    implicit val hdfsReads: Reads[HDFSProvision] = (
+      (__ \ "location").readNullable[String] and
+        (__ \ "requested_gb").read[Double]
+      ) (HDFSProvision.apply _)
+
     implicit val projectRead = (
       (__ \ "id").read[Long] ~
         (__ \ "name").read[String] ~
@@ -138,6 +155,7 @@ class ProjectControllerSpec
         (__ \ "ldap_dn").readNullable[String] ~
         (__ \ "system_name").read[String] ~
         (__ \ "compliance").read[Compliance] ~
+        (__ \ "hdfs").read[HDFSProvision] ~
         (__ \ "created").read[LocalDateTime] ~
         (__ \ "created_by").read[String]
       ) (Project.apply _)
@@ -148,13 +166,25 @@ class ProjectControllerSpec
 
   import play.api.inject.bind
 
+  val cluster = {
+    val conf = new Configuration
+    conf.set(MiniDFSCluster.HDFS_MINIDFS_BASEDIR, Files.createTempDirectory("test_hdfs").toFile.getAbsoluteFile.getAbsolutePath)
+    new MiniDFSCluster.Builder(conf).build()
+  }
+
   override val fakeApplication: Application =
     new GuiceApplicationBuilder()
       .overrides(bind[AccountService].to[PassiveAccountService])
+      .overrides(bind[FileSystem].toInstance(cluster.getFileSystem))
       .build()
 
-  override protected def afterEach(): Unit =
+  override protected def afterEach(): Unit = {
+    import scala.collection.JavaConverters._
     db.clear
+    val users = ldapConnection.search("ou=edp,dc=jotunn,dc=io", SearchScope.SUB, "(objectClass=person)").getSearchEntries.asScala
+    val groups = ldapConnection.search("ou=groups,ou=hadoop,dc=jotunn,dc=io", SearchScope.SUB, "(objectClass=groupOfNames)").getSearchEntries.asScala
+    (users ++ groups).map(_.getDN).map(ldapConnection.delete)
+  }
 
   import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -166,12 +196,23 @@ class DB(implicit executionContext: ExecutionContext) {
 
   import ctx._
 
+  val projectQuery = quote {
+    querySchema[Project](
+      "projects",
+      _.compliance.pciData -> "pci_data",
+      _.compliance.phiData -> "phi_data",
+      _.compliance.piiData -> "pii_data",
+      _.hdfs.location -> "hdfs_location",
+      _.hdfs.requestedSizeInGB -> "hdfs_requested_size_in_gb"
+    )
+  }
+
   def load(project: Project) =
-    project.copy(id = Await.result(run(query[Project].insert(lift(project)).returning(_.id)), Duration.Inf))
+    project.copy(id = Await.result(run(projectQuery.insert(lift(project)).returning(_.id)), Duration.Inf))
 
   def clear =
-    Await.ready(run(query[Project].delete), Duration.Inf)
+    Await.ready(run(projectQuery.delete), Duration.Inf)
 
   def find(id: Long) =
-    Await.result(run(query[Project].filter(_.id == lift(id))), Duration.Inf).head
+    Await.result(run(projectQuery.filter(_.id == lift(id))), Duration.Inf).head
 }

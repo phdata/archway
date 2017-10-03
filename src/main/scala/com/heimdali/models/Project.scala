@@ -10,6 +10,7 @@ case class Project(id: Long,
                    ldapDn: Option[String],
                    systemName: String,
                    compliance: Compliance,
+                   hdfs: HDFSProvision,
                    created: LocalDateTime,
                    createdBy: String) {
   val generatedName =
@@ -23,3 +24,6 @@ case class Project(id: Long,
 case class Compliance(phiData: Boolean,
                       pciData: Boolean,
                       piiData: Boolean) extends Embedded
+
+case class HDFSProvision(location: Option[String],
+                         requestedSizeInGB: Double) extends Embedded

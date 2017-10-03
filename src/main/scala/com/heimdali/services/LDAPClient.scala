@@ -60,7 +60,7 @@ class LDAPClientImpl @Inject()(configuration: Configuration)(implicit executionC
     val dn = s"cn=edh_sw_$groupName,${ldapConfiguration.get[String]("group_path")},${ldapConfiguration.get[String]("base_dn")}"
     try {
       Logger.info(s"Creating $dn")
-      val entry = connection.add(
+      connection.add(
         s"dn: $dn",
         "objectClass: top",
         "objectClass: groupOfNames",
@@ -69,7 +69,7 @@ class LDAPClientImpl @Inject()(configuration: Configuration)(implicit executionC
       )
       Logger.info(s"Created $dn")
     } catch {
-      case exception => Logger.info(s"Couldn't create $dn", exception)
+      case exception: Throwable => Logger.info(s"Couldn't create $dn", exception)
     }
     dn
   }

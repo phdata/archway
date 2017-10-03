@@ -4,7 +4,7 @@ import java.time.LocalDateTime
 import javax.inject.{Inject, Singleton}
 
 import be.objectify.deadbolt.scala.{AuthenticatedRequest, DeadboltActions}
-import com.heimdali.models.{Compliance, Project}
+import com.heimdali.models.{Compliance, HDFSProvision, Project}
 import com.heimdali.services.ProjectService
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
@@ -25,6 +25,11 @@ class ProjectController @Inject()(controllerComponents: MessagesControllerCompon
       (__ \ "pii_data").read[Boolean]
     ) (Compliance.apply _)
 
+  implicit val hdfsReads: Reads[HDFSProvision] = (
+    Reads.pure(None) and
+      (__ \ "requested_gb").read[Double]
+  ) (HDFSProvision.apply _)
+
   implicit def projectReads(implicit request: AuthenticatedRequest[_]): Reads[Project] = (
     Reads.pure(0L) and
       (__ \ "name").read[String] and
@@ -32,6 +37,7 @@ class ProjectController @Inject()(controllerComponents: MessagesControllerCompon
       Reads.pure(None) and
       Reads.pure("") and
       (__ \ "compliance").read[Compliance] and
+      (__ \ "hdfs").read[HDFSProvision] and
       Reads.pure(LocalDateTime.now()) and
       Reads.pure(request.subject.get.identifier)
     ) (Project.apply _).map(existing => existing.copy(systemName = existing.generatedName))
@@ -42,6 +48,11 @@ class ProjectController @Inject()(controllerComponents: MessagesControllerCompon
       (__ \ "pii_data").write[Boolean]
   ) (unlift(Compliance.unapply))
 
+  implicit val hdfsWrites: Writes[HDFSProvision] = (
+    (__ \ "location").writeNullable[String] and
+      (__ \ "requested_gb").write[Double]
+  ) (unlift(HDFSProvision.unapply))
+
   implicit val projectWrites: Writes[Project] = (
     (__ \ "id").write[Long] and
       (__ \ "name").write[String] and
@@ -49,6 +60,7 @@ class ProjectController @Inject()(controllerComponents: MessagesControllerCompon
       (__ \ "ldap_dn").writeNullable[String] and
       (__ \ "system_name").write[String] and
       (__ \ "compliance").write[Compliance] and
+      (__ \ "hdfs").write[HDFSProvision] and
       (__ \ "created").write[LocalDateTime] and
       (__ \ "created_by").write[String]
     ) (unlift(Project.unapply)

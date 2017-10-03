@@ -2,9 +2,10 @@ package com.heimdali.actors
 
 import javax.inject.{Inject, Named}
 
-import akka.actor.{Actor, ActorLogging, ActorRef, FSM}
+import akka.actor.{ActorLogging, ActorRef, FSM}
 import com.heimdali.actors
-import com.heimdali.models.Project
+import com.heimdali.models.{HDFSProvision, Project}
+import com.heimdali.services.HDFSAllocation
 
 import scala.collection.mutable.ListBuffer
 
@@ -18,28 +19,44 @@ object ProjectProvisioner {
 
   case object CreateLDAPEntry extends Step
 
+  case object CreateHDFSAllocations extends Step
+
   final case class Request(project: Project)
+
   case object ProvisionCompleted
+
   final case class RegisterCaller(ref: ActorRef)
 
   case object Ready extends State
+
   case object Provisioning extends State
+
   case object Saving extends State
+
   case object Completed extends State
 
   case class NotProvisioned(ref: ActorRef) extends Data
+
   case class Provision(ref: ActorRef, remaining: ListBuffer[Step], project: Project) extends Data
+
   case class Save(ref: ActorRef, project: Project) extends Data
 
 }
 
 class ProjectProvisioner @Inject()(@Named("ldap-actor") ldapActor: ActorRef,
-                                   @Named("project-saver") saveActor: ActorRef)
+                                   @Named("project-saver") saveActor: ActorRef,
+                                   @Named("hdfs-actor") hDFSActor: ActorRef)
   extends FSM[State, Data] with ActorLogging {
 
   import LDAPActor._
   import ProjectProvisioner._
   import ProjectSaver._
+  import HDFSActor._
+
+  val initialSteps: ListBuffer[Step] = ListBuffer(
+    CreateLDAPEntry,
+    CreateHDFSAllocations
+  )
 
   startWith(Ready, NotProvisioned(ActorRef.noSender))
 
@@ -52,17 +69,33 @@ class ProjectProvisioner @Inject()(@Named("ldap-actor") ldapActor: ActorRef,
       val create = CreateEntry(project.systemName, Seq(project.createdBy))
       log.info("sending {} to {}", create, ldapActor)
       ldapActor ! create
-      goto(Provisioning) using Provision(ref, ListBuffer(CreateLDAPEntry), project)
+      goto(Provisioning) using Provision(ref, initialSteps, project)
   }
 
   when(Provisioning) {
     case Event(LDAPDone(dn), Provision(ref, remaining, project)) =>
-      next(CreateLDAPEntry, ref, remaining, project.copy(ldapDn = Some(dn)))
+      log.info("done creating ldap group {}", dn)
+      val updatedProject = project.copy(ldapDn = Some(dn))
+      saveActor ! LDAPUpdate(updatedProject)
+      goto(Saving) using Provision(ref, remaining - CreateLDAPEntry, updatedProject)
+    case Event(HDFSDone(location), Provision(ref, remaining, project)) =>
+      log.info("done creating HDFS directory {}", location)
+      val updatedProject = project.copy(hdfs = HDFSProvision(Some(location), project.hdfs.requestedSizeInGB))
+      saveActor ! HDFSUpdate(updatedProject)
+      goto(Saving) using Provision(ref, remaining - CreateHDFSAllocations, updatedProject)
   }
 
   when(Saving) {
-    case Event(ProjectSaved, stateData) =>
-      goto(Completed) using stateData
+    case Event(ProjectSaved, provision@Provision(ref, remaining, project)) =>
+      remaining.toSeq match {
+        case List() =>
+          log.info("everything is saved for {}", project)
+          goto(Completed) using Save(ref, project)
+        case CreateHDFSAllocations :: _ =>
+          log.info("creating HDFS provisions for {}", project)
+          hDFSActor ! CreateDirectory(project.systemName, project.hdfs.requestedSizeInGB)
+          goto(Provisioning) using provision
+      }
   }
 
   when(Completed) {
@@ -73,7 +106,7 @@ class ProjectProvisioner @Inject()(@Named("ldap-actor") ldapActor: ActorRef,
 
     case Saving -> Completed =>
       stateData match {
-        case Save(ref, _) if ref != null =>
+        case Provision(ref, _, _) if ref != null =>
           ref ! ProvisionCompleted
         case _ =>
       }
@@ -81,14 +114,5 @@ class ProjectProvisioner @Inject()(@Named("ldap-actor") ldapActor: ActorRef,
   }
 
   initialize()
-
-  def next(thisStep: Step, ref: ActorRef, remaining: ListBuffer[Step], project: Project): FSM.State[actors.State, Data] = {
-    val newRemaining = remaining - thisStep
-    if (newRemaining.isEmpty) {
-      saveActor ! UpdateProject(project)
-      goto(Saving) using Save(ref, project)
-    } else
-      stay() using Provision(ref, newRemaining, project)
-  }
 
 }
