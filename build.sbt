@@ -17,6 +17,7 @@ libraryDependencies ++= Seq(
   "io.getquill" %% "quill" % "1.4.0",
   "org.postgresql" % "postgresql" % "42.1.4",
   "org.flywaydb" % "flyway-core" % "4.2.0",
+  "com.typesafe.akka" %% "akka-slf4j" % "2.5.3",
   "org.apache.hadoop" % "hadoop-client" % "2.6.0" % "provided" excludeAll(ExclusionRule(organization = "org.slf4j"),
                                                                           ExclusionRule(organization = "com.google.guava")),
   "com.novocode" % "junit-interface" % "0.11" % Test,
