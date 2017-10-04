@@ -45,7 +45,7 @@ def dockerContainer = containerTemplate(
 
 def sbt = containerTemplate(
         name: 'sbt',
-        image: 'hseeberger/scala-sbt',
+        image: 'java:8',
         ttyEnabled: true,
         command: 'cat')
 
@@ -211,7 +211,9 @@ podTemplate(
 
             stage('Build') {
                 container('sbt') {
-                    sh "sbt $sbt_params test"
+                    sh """
+                    ./sbt $sbt_params test
+                    """
 
                     step $class: 'JUnitResultArchiver', testResults: '**/*Spec.xml'
 
@@ -272,7 +274,7 @@ podTemplate(
                     if (isPublishingBranch() && isResultGoodForPublishing()) {
                         stage('Publish the API') {
                             container('sbt') {
-                                sh "sbt $sbt_params dist"
+                                sh "./sbt $sbt_params dist"
                             }
                             container('docker') {
                                 withCredentials([usernamePassword(credentialsId: 'docker-hub-creds', passwordVariable: 'docker_password', usernameVariable: 'docker_username')]) {

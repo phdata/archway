@@ -1,4 +1,4 @@
-FROM openjdk:8u141-jdk
+FROM java:8
 
 COPY ./heimdali-api /opt/heimdali-api
 COPY ./docker/cloudera.list /etc/apt/sources.list.d/cloudera.list
@@ -12,6 +12,4 @@ RUN apt-key add archive.key && \
 
 RUN update-alternatives --install /etc/hadoop/conf hadoop-conf /etc/hadoop/conf.odin 99
 
-RUN export CLASSPATH="/etc/hadoop/conf.odin/*:`hadoop classpath`"
-
-CMD java -Duser.dir=/opt/heimdali-api -cp `hadoop classpath`:/opt/heimdali-api/conf/:/opt/heimdali-api/lib/* play.core.server.ProdServerStart
+CMD java -Duser.dir=/opt/heimdali-api -cp /etc/hadoop/conf.odin/:`hadoop classpath`:/opt/heimdali-api/conf/:/opt/heimdali-api/lib/* play.core.server.ProdServerStart
