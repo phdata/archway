@@ -17,11 +17,6 @@ import play.api.libs.concurrent.AkkaGuiceSupport
 class HeimdaliModule extends AbstractModule with AkkaGuiceSupport {
 
   override def configure(): Unit = {
-    bindListener(Matchers.any, new ProvisionListener() {
-      override def onProvision[A](provision: ProvisionListener.ProvisionInvocation[A]): Unit = {
-        Logger.warn(s"Provisioning: ${provision.getBinding}")
-      }
-    })
     bind(classOf[HandlerCache]).to(classOf[HeimdaliCache])
     bind(classOf[LDAPClient]).to(classOf[LDAPClientImpl])
     bind(classOf[AccountService]).to(classOf[LDAPAccountService])
