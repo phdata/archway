@@ -1,9 +1,9 @@
 FROM java:8
 
 COPY ./heimdali-api /opt/heimdali-api
-COPY ./docker/cloudera.list /etc/apt/sources.list.d/cloudera.list
-COPY ./docker/cloudera.pref /etc/apt/preferences.d/cloudera.pref
-COPY ./docker/hdfs/* /etc/hadoop/conf.odin/
+COPY ./cloudera.list /etc/apt/sources.list.d/cloudera.list
+COPY ./cloudera.pref /etc/apt/preferences.d/cloudera.pref
+COPY ./hdfs/* /etc/hadoop/conf.odin/
 
 ADD https://archive.cloudera.com/cdh5/debian/jessie/amd64/cdh/archive.key archive.key
 

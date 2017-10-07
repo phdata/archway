@@ -279,7 +279,7 @@ podTemplate(
                             container('docker') {
                                 withCredentials([usernamePassword(credentialsId: 'docker-hub-creds', passwordVariable: 'docker_password', usernameVariable: 'docker_username')]) {
                                     sh """
-                        unzip target/universal/heimdali-api.zip
+                        unzip target/universal/heimdali-api.zip -d docker
                         docker login -u $docker_username -p $docker_password
                         docker build -t $image .
                         docker tag $image $image:latest

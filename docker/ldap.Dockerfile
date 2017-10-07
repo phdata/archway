@@ -13,4 +13,4 @@ RUN apt-get update && apt-get install -y krb5-kdc-ldap && \
 RUN gzip -d /usr/share/doc/krb5-kdc-ldap/kerberos.schema.gz && \
     cp /usr/share/doc/krb5-kdc-ldap/kerberos.schema /container/service/slapd/assets/config/bootstrap/schema/
 
-COPY ./src/test/resources/ldap/*.ldif /container/service/slapd/assets/config/bootstrap/ldif/custom/
+COPY ./ldif/*.ldif /container/service/slapd/assets/config/bootstrap/ldif/custom/
