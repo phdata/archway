@@ -1,9 +1,3 @@
-dn: ou=edp,dc=jotunn,dc=io
-changetype: add
-objectClass: organizationalUnit
-objectClass: top
-ou: edp
-
 dn: ou=hadoop,dc=jotunn,dc=io
 changetype: add
 objectClass: organizationalUnit
@@ -16,10 +10,8 @@ objectClass: organizationalUnit
 objectClass: top
 ou: groups
 
-dn: cn=username,ou=edp,dc=jotunn,dc=io
+dn: ou=users,ou=hadoop,dc=jotunn,dc=io
 changetype: add
-objectClass: inetOrgPerson
-sn: Doe
-givenName: Dude
-userPassword: password
-cn: username
+objectClass: organizationalUnit
+objectClass: top
+ou: users

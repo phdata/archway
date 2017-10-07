@@ -1,0 +1,12 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: ldap-ext
+spec:
+  type: LoadBalancer
+  selector:
+    app: ldap
+  ports:
+  - protocol: TCP
+    port: 389
+    targetPort: 389
