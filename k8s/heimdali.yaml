@@ -1,0 +1,31 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: heimdali-ui
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: heimdali-ui
+    spec:
+      containers:
+      - image: jotunn/heimdali-ui
+        name: heimdali-ui
+        ports:
+        - containerPort: 80
+      imagePullSecrets:
+      - name: myregistrykey
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: heimdali-ui
+spec:
+  ports:
+  - port: 80
+  selector:
+    app: heimdali-ui
+  type: LoadBalancer

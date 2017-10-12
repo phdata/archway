@@ -1,0 +1,35 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: ldap
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: ldap
+    spec:
+      containers:
+      - image: jotunn/openldap
+        name: ldap
+        env:
+        - name: LDAP_DOMAIN
+          value: jotunn.io
+        - name: LDAP_READONLY_USER
+          value: "true" 
+        ports:
+        - containerPort: 389
+      imagePullSecrets:
+      - name: myregistrykey
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: ldap
+spec:
+  ports:
+  - port: 389
+  selector:
+    app: ldap

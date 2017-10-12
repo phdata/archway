@@ -1,0 +1,78 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: kerberos
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: kerberos
+    spec:
+      containers:
+      - image: jotunn/kerberos-kdc
+        name: kerberos-kdc
+        command:
+        - "/usr/bin/kdc_init.sh"
+        args:
+        - "krb5kdc"
+        - "-n"
+        ports:
+        - containerPort: 88
+        env:
+        - name: LDAP_BASE_DN
+          value: "dc=jotunn,dc=io"
+        - name: LDAP_BIND_DN
+          valueFrom:
+            secretKeyRef:
+              name: ldap-creds
+              key: username
+        - name: LDAP_BIND_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: ldap-creds
+              key: password
+        - name: LDAP_CRED_KEY
+          valueFrom:
+            secretKeyRef:
+              name: ldap-creds
+              key: key
+      - image: jotunn/kerberos-admin
+        name: kerberos-admin
+        command:
+        - "/usr/bin/admin_init.sh"
+        args:
+        - "kadmind"
+        ports:
+        - containerPort: 749
+        env:
+        - name: LDAP_BASE_DN
+          value: "dc=jotunn,dc=io"
+        - name: LDAP_BIND_DN
+          valueFrom:
+            secretKeyRef:
+              name: ldap-creds
+              key: username
+        - name: LDAP_BIND_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: ldap-creds
+              key: password
+        - name: LDAP_CRED_KEY
+          valueFrom:
+            secretKeyRef:
+              name: ldap-creds
+              key: key
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: kerberos-kdc
+spec:
+  ports:
+  - port: 88
+  selector:
+    app: kerberos-kdc
+

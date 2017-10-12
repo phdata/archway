@@ -1,0 +1,45 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: jenkins
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: jenkins
+    spec:
+      containers:
+      - image: jenkins/jenkins:lts
+        name: jenkins
+        ports:
+        - containerPort: 8080
+        - containerPort: 50000
+        
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: jenkins
+spec:
+  ports:
+  - port: 80
+    targetPort: 8080
+  selector:
+    app: jenkins
+  type: LoadBalancer
+
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: jenkins-slaves
+spec:
+  ports:
+  - port: 50000
+    targetPort: 50000
+  selector:
+    app: jenkins

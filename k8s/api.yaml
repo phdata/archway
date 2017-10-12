@@ -1,0 +1,61 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: heimdali-api
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: heimdali-api
+    spec:
+      containers:
+      - image: jotunn/heimdali-api:2017.09.16
+        name: heimdali-api
+        ports:
+        - containerPort: 9000
+        env:
+        - name: LDAP_BASE_DN
+          value: "dc=jotunn,dc=io"
+        - name: LDAP_USER_PATH
+          value: "ou=edp"
+        - name: LDAP_GROUP_PATH
+          value: "ou=groups,ou=hadoop"
+        - name: LDAP_BIND_DN
+          valueFrom:
+            secretKeyRef:
+              name: ldap-creds
+              key: username
+        - name: LDAP_BIND_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: ldap-creds
+              key: password
+        - name: DB_NAME
+          value: heimdali
+        - name: DB_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: db-creds
+              key: username
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: db-creds
+              key: password
+      imagePullSecrets:
+      - name: myregistrykey
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: heimdali-api
+spec:
+  ports:
+  - port: 9000
+  selector:
+    app: heimdali-api
+  type: LoadBalancer
+
