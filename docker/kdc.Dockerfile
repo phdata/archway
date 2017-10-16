@@ -1,10 +1,10 @@
-FROM ubuntu:14.04
+FROM ubuntu:artful
 
 RUN apt-get update && \
     apt-get install -y krb5-kdc krb5-kdc-ldap
 
 ADD ./scripts/krb5.conf /etc/krb5.conf
-RUN rm /etc/krb5kdc/kdc.conf
+ADD ./scripts/kdc.conf /tmp/kdc.conf
 
 ADD ./scripts/kdc_init.sh /usr/bin/kdc_init.sh
 ADD ./scripts/conf_setup.sh /usr/bin/conf_setup.sh

@@ -1,3 +1,32 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: kerberos-kdc
+spec:
+  ports:
+  - port: 88
+    nodePort: 30088
+    protocol: UDP
+  selector:
+    app: kerberos-kdc
+  type: NodePort
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: kerberos-admin
+spec:
+  ports:
+  - port: 749
+    nodePort: 30749
+  selector:
+    app: kerberos-admin
+  type: NodePort
+
+---
+
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -7,8 +36,11 @@ spec:
   template:
     metadata:
       labels:
-        app: kerberos
+        app: kerberos-kdc
     spec:
+      volumes:
+      - name: kdc-data
+        emptyDir: {}
       containers:
       - image: jotunn/kerberos-kdc
         name: kerberos-kdc
@@ -17,8 +49,12 @@ spec:
         args:
         - "krb5kdc"
         - "-n"
+        volumeMounts:
+        - name: kdc-data
+          mountPath: /etc/krb5kdc
         ports:
-        - containerPort: 88
+        - protocol: UDP
+          containerPort: 88
         env:
         - name: LDAP_BASE_DN
           value: "dc=jotunn,dc=io"
@@ -42,9 +78,12 @@ spec:
         command:
         - "/usr/bin/admin_init.sh"
         args:
-        - "kadmind"
+        - "cat"
         ports:
         - containerPort: 749
+        volumeMounts:
+        - name: kdc-data
+          mountPath: /etc/krb5kdc
         env:
         - name: LDAP_BASE_DN
           value: "dc=jotunn,dc=io"
@@ -63,16 +102,3 @@ spec:
             secretKeyRef:
               name: ldap-creds
               key: key
-
----
-
-apiVersion: v1
-kind: Service
-metadata:
-  name: kerberos-kdc
-spec:
-  ports:
-  - port: 88
-  selector:
-    app: kerberos-kdc
-
