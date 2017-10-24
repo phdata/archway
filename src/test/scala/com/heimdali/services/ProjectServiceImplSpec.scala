@@ -1,10 +1,14 @@
 package com.heimdali.services
 
 import java.time.LocalDateTime
+import java.util.concurrent.LinkedBlockingDeque
 
-import akka.actor.ActorSystem
-import akka.testkit.TestProbe
+import akka.actor.{Actor, ActorRef, ActorSystem, Props}
+import akka.testkit.TestActor.Message
+import akka.testkit.{TestActor, TestActorRef, TestKit, TestKitBase, TestProbe}
+import com.heimdali.actors.ProjectProvisioner
 import com.heimdali.actors.ProjectProvisioner.Request
+import com.heimdali.models.Project
 import com.heimdali.repositories.ProjectRepository
 import com.heimdali.test.fixtures._
 import org.scalamock.scalatest.AsyncMockFactory
@@ -24,10 +28,8 @@ class ProjectServiceImplSpec extends AsyncFlatSpec with Matchers with AsyncMockF
     val project = TestProject(id = 0L, createdDate = date)
     repo.create _ expects project returning Future { project.copy(id = 123L) }
 
-    val projectServiceImpl = new ProjectServiceImpl(repo, probe.ref)
+    val projectServiceImpl = new ProjectServiceImpl(repo, new Factory())
     projectServiceImpl.create(project) map { newProject =>
-      probe.expectMsg(Request(newProject))
-
       newProject should have (
         'id (123L),
         'name (project.name),
@@ -41,7 +43,6 @@ class ProjectServiceImplSpec extends AsyncFlatSpec with Matchers with AsyncMockF
 
   it should "list projects" in {
     implicit val actorSystem = ActorSystem()
-    val probe = TestProbe()
     val repo = mock[ProjectRepository]
     val Array(project1, project2) = Array(
       TestProject(id = 123L),
@@ -49,11 +50,18 @@ class ProjectServiceImplSpec extends AsyncFlatSpec with Matchers with AsyncMockF
     )
     repo.list _ expects standardUsername returning Future { Seq(project1) }
 
-    val projectServiceImpl = new ProjectServiceImpl(repo, probe.ref)
+    val projectServiceImpl = new ProjectServiceImpl(repo, new Factory())
     projectServiceImpl.list(standardUsername) map { projects =>
       projects.length should be (1)
       projects.head should be (project1)
     }
+  }
+
+  class Factory extends ProjectProvisioner.Factory {
+    implicit val system: ActorSystem = ActorSystem()
+
+    val actorRef = TestActorRef.create(system, Props(classOf[TestActor], new LinkedBlockingDeque[Message]()))
+    override def apply(project: Project): Actor = actorRef.underlyingActor
   }
 
 }

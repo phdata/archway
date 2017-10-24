@@ -2,7 +2,7 @@ package com.heimdali.actors
 
 import akka.actor.{ActorSystem, Props}
 import akka.testkit.TestProbe
-import com.heimdali.actors.HDFSActor.{CreateDirectory, HDFSDone}
+import com.heimdali.actors.HDFSActor.{CreateDirectory, HDFSUpdate}
 import com.heimdali.services.{HDFSAllocation, HDFSClient}
 import com.heimdali.test.fixtures.TestProject
 import com.typesafe.config.ConfigFactory
@@ -32,9 +32,9 @@ class HDFSActorSpec extends FlatSpec with MockFactory {
     (ldapClient.setQuota _).expects(path, 10).returning(Future(HDFSAllocation(location, 10)))
 
     val actor = actorSystem.actorOf(Props(classOf[HDFSActor], ldapClient, config, executionContext))
-    val request = CreateDirectory(project.systemName, project.hdfs.requestedSizeInGB)
+    val request = CreateDirectory(project.id, project.systemName, project.hdfs.requestedSizeInGB)
     actor.tell(request, probe.ref)
-    probe.expectMsgClass(classOf[HDFSDone])
+    probe.expectMsgClass(classOf[HDFSUpdate])
   }
 
 }

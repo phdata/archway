@@ -2,29 +2,38 @@ package com.heimdali.actors
 
 import akka.actor.{ActorSystem, Props}
 import akka.testkit.{TestActorRef, TestProbe}
-import com.heimdali.actors.HDFSActor.{CreateDirectory, HDFSDone}
-import com.heimdali.actors.LDAPActor.{CreateEntry, LDAPDone}
+import com.heimdali.actors.HDFSActor.{CreateDirectory, HDFSUpdate}
+import com.heimdali.actors.KeytabActor.{GenerateKeytab, KeytabCreated}
+import com.heimdali.actors.LDAPActor.{CreateEntry, LDAPUpdate}
 import com.heimdali.actors.ProjectProvisioner.{ProvisionCompleted, RegisterCaller, Request}
-import com.heimdali.actors.ProjectSaver.{HDFSUpdate, LDAPUpdate, ProjectSaved}
+import com.heimdali.actors.ProjectSaver.ProjectSaved
 import com.heimdali.test.fixtures.TestProject
+import org.apache.hadoop.fs.Path
 import org.scalatest.{FlatSpec, Matchers}
 
-import scala.collection.mutable.ListBuffer
+import scala.collection.immutable.Queue
 
 class ProjectProvisionerSpec extends FlatSpec with Matchers {
 
   behavior of "Project Provisioner"
 
   it should "have correct default tasks" in {
+    import HDFSActor._
+    import KeytabActor._
+    import LDAPActor._
+
     implicit val actorSystem = ActorSystem()
 
     val testProb = TestProbe()
 
-    val provisioner = TestActorRef[ProjectProvisioner](Props(classOf[ProjectProvisioner], testProb.ref, testProb.ref, testProb.ref)).underlyingActor
+    val project = TestProject()
 
-    provisioner.initialSteps should be (ListBuffer(
-      ProjectProvisioner.CreateLDAPEntry,
-      ProjectProvisioner.CreateHDFSAllocations
+    val provisioner = TestActorRef[ProjectProvisioner](Props(classOf[ProjectProvisioner], testProb.ref, testProb.ref, testProb.ref, testProb.ref, project)).underlyingActor
+
+    provisioner.initialSteps should be(Queue(
+      testProb.ref -> CreateEntry(project.id, project.systemName, Seq(project.createdBy)),
+      testProb.ref -> CreateDirectory(project.id, project.systemName, project.hdfs.requestedSizeInGB),
+      testProb.ref -> GenerateKeytab(project.id, project.systemName)
     ))
   }
 
@@ -35,25 +44,33 @@ class ProjectProvisionerSpec extends FlatSpec with Matchers {
     val ldapProbe = TestProbe("ldap")
     val saveProbe = TestProbe("save")
     val hdfsProbe = TestProbe("hdfs")
+    val keytabProbe = TestProbe("keytab")
 
     val project = TestProject()
     val dn = s"cn=edh_sw_${project.generatedName},ou=groups,ou=hadoop,dc=jotunn,dc=io"
-    val ldapProject = project.copy(ldapDn = Some(dn))
     val directory = s"/projects/${project.systemName}"
-    val hdfsProject = ldapProject.copy(hdfs = project.hdfs.copy(location = Some(directory)))
+    val keytab = new Path(s"$directory/${project.systemName}.keytab")
 
-    val provisioner = actorSystem.actorOf(Props(classOf[ProjectProvisioner], ldapProbe.ref, saveProbe.ref, hdfsProbe.ref))
+    val provisioner = actorSystem.actorOf(Props(classOf[ProjectProvisioner], ldapProbe.ref, saveProbe.ref, hdfsProbe.ref, keytabProbe.ref, project))
 
     provisioner ! RegisterCaller(mainProbe.ref)
-    provisioner ! Request(project)
-    ldapProbe.expectMsg(CreateEntry(project.generatedName, Seq(project.createdBy)))
-    ldapProbe.reply(LDAPDone(dn))
-    saveProbe.expectMsg(LDAPUpdate(ldapProject))
+    provisioner ! Request
+
+    ldapProbe.expectMsg(CreateEntry(project.id, project.generatedName, Seq(project.createdBy)))
+    ldapProbe.reply(LDAPUpdate(project.id, project.systemName))
+    saveProbe.expectMsg(LDAPUpdate(project.id, project.systemName))
     saveProbe.reply(ProjectSaved)
-    hdfsProbe.expectMsg(CreateDirectory(project.systemName, project.hdfs.requestedSizeInGB))
-    hdfsProbe.reply(HDFSDone(directory))
-    saveProbe.expectMsg(HDFSUpdate(hdfsProject))
+
+    hdfsProbe.expectMsg(CreateDirectory(project.id, project.systemName, project.hdfs.requestedSizeInGB))
+    hdfsProbe.reply(HDFSUpdate(project.id, directory))
+    saveProbe.expectMsg(HDFSUpdate(project.id, directory))
     saveProbe.reply(ProjectSaved)
+
+    keytabProbe.expectMsg(GenerateKeytab(project.id, project.systemName))
+    keytabProbe.reply(KeytabCreated(project.id, keytab))
+    saveProbe.expectMsg(KeytabCreated(project.id, keytab))
+    saveProbe.reply(ProjectSaved)
+
     mainProbe.expectMsg(ProvisionCompleted)
   }
 }

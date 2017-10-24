@@ -2,10 +2,11 @@ package com.heimdali.controller
 
 import java.nio.file.Files
 import java.time.LocalDateTime
+import javax.inject.Inject
 
 import com.heimdali.models.{Compliance, HDFSProvision, Project}
 import com.heimdali.services._
-import com.heimdali.test.fixtures.{LDAPTest, PassiveAccountService, TestProject}
+import com.heimdali.test.fixtures.{FakeKeytabService, LDAPTest, PassiveAccountService, TestProject}
 import com.unboundid.ldap.sdk.SearchScope
 import io.getquill._
 import org.apache.hadoop.conf.Configuration
@@ -24,7 +25,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 
 import scala.concurrent.duration._
-import scala.concurrent.{Await, ExecutionContext}
+import scala.concurrent.{Await, ExecutionContext, Future}
 
 class ProjectControllerSpec
   extends FlatSpec
@@ -47,7 +48,7 @@ class ProjectControllerSpec
         "pci_data" -> false
       ),
       "hdfs" -> Json.obj(
-        "requested_gb" -> .01
+        "requested_gb" -> .2
       )
     )
 
@@ -86,6 +87,7 @@ class ProjectControllerSpec
     val result = db.find(id)
     result.ldapDn shouldBe defined
     result.hdfs.location shouldBe defined
+    result.keytabLocation shouldBe defined
   }
 
   it should "not accept read-only fields" in {
@@ -96,6 +98,7 @@ class ProjectControllerSpec
       "id" -> fakeId,
       "name" -> "sesame",
       "purpose" -> "to do something cool",
+      "system_name" -> "blahblah",
       "compliance" -> Json.obj(
         "pii_data" -> false,
         "phi_data" -> false,
@@ -122,6 +125,7 @@ class ProjectControllerSpec
     (jsonResponse \ "id").as[Int] should not be fakeId
     (jsonResponse \ "created").as[DateTime] should not be oldDate
     (jsonResponse \ "created_by").as[String] should not be wrongUser
+    (jsonResponse \ "system_name").as[String] should be("sesame")
   }
 
   it should "list all projects" in {
@@ -156,6 +160,7 @@ class ProjectControllerSpec
         (__ \ "system_name").read[String] ~
         (__ \ "compliance").read[Compliance] ~
         (__ \ "hdfs").read[HDFSProvision] ~
+        (__ \ "keytab_location").readNullable[String] ~
         (__ \ "created").read[LocalDateTime] ~
         (__ \ "created_by").read[String]
       ) (Project.apply _)
@@ -167,7 +172,6 @@ class ProjectControllerSpec
   import play.api.inject.bind
 
   val cluster = {
-    System.setProperty("hadoop.home.dir", "C:\\tools")
     val conf = new Configuration
     conf.set(MiniDFSCluster.HDFS_MINIDFS_BASEDIR, Files.createTempDirectory("test_hdfs").toFile.getAbsoluteFile.getAbsolutePath)
     new MiniDFSCluster.Builder(conf).build()
@@ -177,12 +181,13 @@ class ProjectControllerSpec
     new GuiceApplicationBuilder()
       .overrides(bind[AccountService].to[PassiveAccountService])
       .overrides(bind[FileSystem].toInstance(cluster.getFileSystem))
+      .overrides(bind[KeytabService].to[FakeKeytabService])
       .build()
 
   override protected def afterEach(): Unit = {
     import scala.collection.JavaConverters._
     db.clear
-    val users = ldapConnection.search("ou=edp,dc=jotunn,dc=io", SearchScope.SUB, "(objectClass=person)").getSearchEntries.asScala
+    val users = ldapConnection.search("ou=users,ou=hadoop,dc=jotunn,dc=io", SearchScope.SUB, "(objectClass=person)").getSearchEntries.asScala
     val groups = ldapConnection.search("ou=groups,ou=hadoop,dc=jotunn,dc=io", SearchScope.SUB, "(objectClass=groupOfNames)").getSearchEntries.asScala
     (users ++ groups).map(_.getDN).map(ldapConnection.delete)
   }

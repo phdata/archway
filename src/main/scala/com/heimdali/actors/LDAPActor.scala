@@ -3,16 +3,21 @@ package com.heimdali.actors
 import javax.inject.Inject
 
 import akka.actor.{Actor, ActorLogging}
-import com.heimdali.services.LDAPClient
 import akka.pattern.pipe
+import com.heimdali.actors.ProjectSaver.ProjectUpdate
+import com.heimdali.models.Project
+import com.heimdali.services.LDAPClient
 
 import scala.concurrent.ExecutionContext
 
 object LDAPActor {
 
-  case class CreateEntry(name: String, initialMembers: Seq[String])
+  case class CreateEntry(id: Long, name: String, initialMembers: Seq[String])
 
-  case class LDAPDone(projectDn: String)
+  case class LDAPUpdate(id: Long, projectDn: String) extends ProjectUpdate {
+    def updateProject(project: Project): Project =
+      project.copy(ldapDn = Some(projectDn))
+  }
 
 }
 
@@ -23,11 +28,11 @@ class LDAPActor @Inject()(ldapClient: LDAPClient)
   import LDAPActor._
 
   override def receive: Receive = {
-    case request@CreateEntry(name, users) =>
+    case CreateEntry(id, name, users) =>
       log.info("creating group {}", name)
       ldapClient
         .createGroup(name, users.head)
-        .map(LDAPDone.apply)
+        .map(LDAPUpdate(id, _))
         .pipeTo(sender())
   }
 

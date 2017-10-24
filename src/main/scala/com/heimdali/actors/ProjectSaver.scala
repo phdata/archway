@@ -8,13 +8,13 @@ import com.heimdali.repositories.ProjectRepository
 
 import scala.concurrent.ExecutionContext
 import akka.pattern.pipe
+import com.heimdali.actors.HDFSActor.HDFSUpdate
+import com.heimdali.actors.KeytabActor.KeytabCreated
+import com.heimdali.actors.LDAPActor.LDAPUpdate
 
 object ProjectSaver {
 
-  sealed trait Update { def project: Project }
-
-  final case class LDAPUpdate(project: Project) extends Update
-  final case class HDFSUpdate(project: Project) extends Update
+  trait ProjectUpdate { def updateProject(project: Project): Project }
 
   case object ProjectSaved
 
@@ -27,15 +27,18 @@ class ProjectSaver @Inject() (projectRepository: ProjectRepository)
   import ProjectSaver._
 
   override def receive: Receive = {
-    case update: LDAPUpdate =>
-      val project = update.project
-      projectRepository.setLDAP(project.id, project.systemName, project.ldapDn.get)
+    case LDAPUpdate(id, dn) =>
+      projectRepository.setLDAP(id, dn)
         .map(_ => ProjectSaved)
         .pipeTo(sender())
 
-    case update: HDFSUpdate =>
-      val project = update.project
-      projectRepository.setHDFS(project.id, project.hdfs.location.get)
+    case HDFSUpdate(id, location) =>
+      projectRepository.setHDFS(id, location)
+        .map(_ => ProjectSaved)
+        .pipeTo(sender())
+
+    case KeytabCreated(id, location) =>
+      projectRepository.setKeytab(id, location.toUri.toString)
         .map(_ => ProjectSaved)
         .pipeTo(sender())
   }

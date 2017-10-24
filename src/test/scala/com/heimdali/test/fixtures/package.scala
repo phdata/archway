@@ -20,7 +20,8 @@ package object fixtures {
     val hdfsLocation = None
     val hdfsRequestedSize = 10
     val hdfs = HDFSProvision(hdfsLocation, hdfsRequestedSize)
-    val systemName = Project(1, name, purpose, ldapDn, "", compliance, hdfs, LocalDateTime.now, standardUsername).generatedName
+    val keytabLocation = None
+    val systemName = Project(1, name, purpose, ldapDn, "", compliance, hdfs, keytabLocation, LocalDateTime.now, standardUsername).generatedName
 
     def apply(id: Long = TestProject.id,
               name: String = TestProject.name,
@@ -29,9 +30,10 @@ package object fixtures {
               systemName: String = TestProject.systemName,
               compliance: Compliance = TestProject.compliance,
               hdfs: HDFSProvision = TestProject.hdfs,
+              keytabLocation: Option[String] = TestProject.keytabLocation,
               createdDate: LocalDateTime = LocalDateTime.now(),
               createdBy: String = standardUsername): Project =
-      Project(id, name, purpose, ldapDn, systemName, compliance, hdfs, createdDate, createdBy)
+      Project(id, name, purpose, ldapDn, systemName, compliance, hdfs, keytabLocation, createdDate, createdBy)
   }
 
 }

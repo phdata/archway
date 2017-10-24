@@ -2,12 +2,11 @@ package com.heimdali.actors
 
 import javax.inject.{Inject, Named}
 
-import akka.actor.{ActorLogging, ActorRef, FSM}
-import com.heimdali.actors
-import com.heimdali.models.{HDFSProvision, Project}
-import com.heimdali.services.HDFSAllocation
+import akka.actor.{Actor, ActorLogging, ActorRef, FSM}
+import com.google.inject.assistedinject.Assisted
+import com.heimdali.models.Project
 
-import scala.collection.mutable.ListBuffer
+import scala.collection.immutable.Queue
 
 sealed trait State
 
@@ -17,11 +16,7 @@ sealed trait Step
 
 object ProjectProvisioner {
 
-  case object CreateLDAPEntry extends Step
-
-  case object CreateHDFSAllocations extends Step
-
-  final case class Request(project: Project)
+  case object Request
 
   case object ProvisionCompleted
 
@@ -35,66 +30,70 @@ object ProjectProvisioner {
 
   case object Completed extends State
 
-  case class NotProvisioned(ref: ActorRef) extends Data
+  final case class NotProvisioned(ref: ActorRef, queue: Queue[(ActorRef, Any)]) extends Data
 
-  case class Provision(ref: ActorRef, remaining: ListBuffer[Step], project: Project) extends Data
+  final case class Provision(ref: ActorRef, queue: Queue[(ActorRef, Any)]) extends Data
 
-  case class Save(ref: ActorRef, project: Project) extends Data
+  final case class Saved(ref: ActorRef) extends Data
+
+  trait Factory {
+    def apply(project: Project): Actor
+  }
 
 }
 
 class ProjectProvisioner @Inject()(@Named("ldap-actor") ldapActor: ActorRef,
                                    @Named("project-saver") saveActor: ActorRef,
-                                   @Named("hdfs-actor") hDFSActor: ActorRef)
+                                   @Named("hdfs-actor") hDFSActor: ActorRef,
+                                   @Named("keytab-actor") keytabActor: ActorRef,
+                                   @Assisted var project: Project)
   extends FSM[State, Data] with ActorLogging {
 
+  import HDFSActor._
+  import KeytabActor._
   import LDAPActor._
   import ProjectProvisioner._
   import ProjectSaver._
-  import HDFSActor._
 
-  val initialSteps: ListBuffer[Step] = ListBuffer(
-    CreateLDAPEntry,
-    CreateHDFSAllocations
+  val initialSteps: Queue[(ActorRef, AnyRef)] = Queue(
+    ldapActor -> CreateEntry(project.id, project.systemName, Seq(project.createdBy)),
+    hDFSActor -> CreateDirectory(project.id, project.systemName, project.hdfs.requestedSizeInGB),
+    keytabActor -> GenerateKeytab(project.id, project.systemName)
   )
 
-  startWith(Ready, NotProvisioned(ActorRef.noSender))
+  def dequeue(queue: Queue[(ActorRef, Any)]): Queue[(ActorRef, Any)] = {
+    val ((actor, message), newQueue) = queue.dequeue
+    log.info("sending {} to {}", message, actor)
+    actor ! message
+    newQueue
+  }
+
+  startWith(Ready, NotProvisioned(ActorRef.noSender, initialSteps))
 
   when(Ready) {
-    case Event(RegisterCaller(ref), _) =>
-      stay() using NotProvisioned(ref)
+    case Event(RegisterCaller(ref), NotProvisioned(_, queue)) =>
+      stay() using NotProvisioned(ref, queue)
 
-    case Event(Request(project), NotProvisioned(ref)) =>
+    case Event(Request, NotProvisioned(ref, queue)) =>
       log.info("received a request to provision {}", project)
-      val create = CreateEntry(project.systemName, Seq(project.createdBy))
-      log.info("sending {} to {}", create, ldapActor)
-      ldapActor ! create
-      goto(Provisioning) using Provision(ref, initialSteps, project)
+      goto(Provisioning) using Provision(ref, dequeue(queue))
   }
 
   when(Provisioning) {
-    case Event(LDAPDone(dn), Provision(ref, remaining, project)) =>
-      log.info("done creating ldap group {}", dn)
-      val updatedProject = project.copy(ldapDn = Some(dn))
-      saveActor ! LDAPUpdate(updatedProject)
-      goto(Saving) using Provision(ref, remaining - CreateLDAPEntry, updatedProject)
-    case Event(HDFSDone(location), Provision(ref, remaining, project)) =>
-      log.info("done creating HDFS directory {}", location)
-      val updatedProject = project.copy(hdfs = HDFSProvision(Some(location), project.hdfs.requestedSizeInGB))
-      saveActor ! HDFSUpdate(updatedProject)
-      goto(Saving) using Provision(ref, remaining - CreateHDFSAllocations, updatedProject)
+    case Event(projectUpdate: ProjectUpdate, existingState) =>
+      log.info("saving project with {}", projectUpdate)
+      saveActor ! projectUpdate
+      project = projectUpdate.updateProject(project)
+      goto(Saving) using existingState
   }
 
   when(Saving) {
-    case Event(ProjectSaved, provision@Provision(ref, remaining, project)) =>
-      remaining.toSeq match {
-        case List() =>
-          log.info("everything is saved for {}", project)
-          goto(Completed) using Save(ref, project)
-        case CreateHDFSAllocations :: _ =>
-          log.info("creating HDFS provisions for {}", project)
-          hDFSActor ! CreateDirectory(project.systemName, project.hdfs.requestedSizeInGB)
-          goto(Provisioning) using provision
+    case Event(ProjectSaved, Provision(ref, queue)) =>
+      if (queue.isEmpty) {
+        log.info("everything is saved for {}", project)
+        goto(Completed) using Saved(ref)
+      } else {
+        goto(Provisioning) using Provision(ref, dequeue(queue))
       }
   }
 
@@ -106,7 +105,7 @@ class ProjectProvisioner @Inject()(@Named("ldap-actor") ldapActor: ActorRef,
 
     case Saving -> Completed =>
       stateData match {
-        case Provision(ref, _, _) if ref != null =>
+        case Provision(ref, _) if ref != null =>
           ref ! ProvisionCompleted
         case _ =>
       }

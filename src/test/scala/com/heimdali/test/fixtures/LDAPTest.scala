@@ -12,7 +12,7 @@ trait LDAPTest extends BeforeAndAfterEach {
   this: Suite =>
 
   val baseDN = "dc=jotunn,dc=io"
-  val userDN = "ou=edp"
+  val userDN = "ou=users,ou=hadoop"
   val bindDN = "cn=readonly,dc=jotunn,dc=io"
   val bindPassword = "readonly"
   val username = "username"
@@ -23,14 +23,14 @@ trait LDAPTest extends BeforeAndAfterEach {
 
   override protected def beforeEach(): Unit =
     Try(ldapConnection.add(
-      s"dn: cn=$username,$userDN,$baseDN",
-      "objectClass: inetOrgPerson",
-      "sn: Doe",
-      "givenName: Dude",
-      "userPassword: password"))
+        s"dn: cn=$username,$userDN,$baseDN",
+        "objectClass: inetOrgPerson",
+        "sn: Doe",
+        "givenName: Dude",
+        "userPassword: password"))
 
   override protected def afterEach(): Unit = {
-    val users = ldapConnection.search("ou=edp,dc=jotunn,dc=io", SearchScope.SUB, "(objectClass=person)").getSearchEntries.asScala
+    val users = ldapConnection.search("ou=users,ou=hadoop,dc=jotunn,dc=io", SearchScope.SUB, "(objectClass=person)").getSearchEntries.asScala
     val groups = ldapConnection.search("ou=groups,ou=hadoop,dc=jotunn,dc=io", SearchScope.SUB, "(objectClass=groupOfNames)").getSearchEntries.asScala
     (users ++ groups).map(_.getDN).map(ldapConnection.delete)
   }

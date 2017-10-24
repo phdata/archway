@@ -1,17 +1,13 @@
 package com.heimdali
 
-import akka.routing.RoundRobinPool
 import be.objectify.deadbolt.scala.cache.HandlerCache
-import com.google.inject.matcher.Matchers
-import com.google.inject.spi.ProvisionListener
 import com.google.inject.{AbstractModule, Provides}
-import com.heimdali.actors.{HDFSActor, LDAPActor, ProjectProvisioner, ProjectSaver}
+import com.heimdali.actors._
 import com.heimdali.repositories.{ProjectRepository, ProjectRepositoryImpl}
 import com.heimdali.services._
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.fs.FileSystem
 import org.apache.hadoop.hdfs.client.HdfsAdmin
-import play.api.Logger
 import play.api.libs.concurrent.AkkaGuiceSupport
 
 class HeimdaliModule extends AbstractModule with AkkaGuiceSupport {
@@ -27,10 +23,12 @@ class HeimdaliModule extends AbstractModule with AkkaGuiceSupport {
     bind(classOf[HDFSClient]).to(classOf[HDFSClientImpl])
     bind(classOf[FileSystem]).toInstance(FileSystem.get(new Configuration()))
     bind(classOf[Startup]).to(classOf[HeimdaliStartup]).asEagerSingleton()
+    bind(classOf[KeytabService]).to(classOf[KeytabServiceImpl])
     bindActor[LDAPActor]("ldap-actor")
     bindActor[ProjectSaver]("project-saver")
     bindActor[HDFSActor]("hdfs-actor")
-    bindActor[ProjectProvisioner]("provisioning-actor", RoundRobinPool(5).props)
+    bindActor[KeytabActor]("keytab-actor")
+    bindActorFactory[ProjectProvisioner, ProjectProvisioner.Factory]
   }
 
   @Provides

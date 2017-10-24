@@ -11,6 +11,7 @@ case class Project(id: Long,
                    systemName: String,
                    compliance: Compliance,
                    hdfs: HDFSProvision,
+                   keytabLocation: Option[String],
                    created: LocalDateTime,
                    createdBy: String) {
   val generatedName =

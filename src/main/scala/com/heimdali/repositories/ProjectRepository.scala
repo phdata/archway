@@ -9,12 +9,17 @@ import scala.concurrent.{ExecutionContext, Future}
 
 trait ProjectRepository {
   def list(username: String): Future[Seq[Project]]
+
   def create(project: Project): Future[Project]
-  def setLDAP(id: Long, name: String, dn: String): Future[Project]
+
+  def setLDAP(id: Long, dn: String): Future[Project]
+
   def setHDFS(id: Long, location: String): Future[Project]
+
+  def setKeytab(id: Long, location: String): Future[Project]
 }
 
-class ProjectRepositoryImpl @Inject() (implicit ec: ExecutionContext)
+class ProjectRepositoryImpl @Inject()(implicit ec: ExecutionContext)
   extends ProjectRepository {
 
   val ctx = new PostgresAsyncContext[SnakeCase with PluralizedTableNames]("ctx") with ImplicitQuery
@@ -40,15 +45,21 @@ class ProjectRepositoryImpl @Inject() (implicit ec: ExecutionContext)
     projectQuery.insert(lift(project)).returning(_.id)
   }.map(res => project.copy(id = res))
 
-  def setLDAP(id: Long, name: String, dn: String): Future[Project] =
+  def setLDAP(id: Long, dn: String): Future[Project] =
     for (
-      _ <- run(projectQuery.filter(_.id == lift(id)).update(_.systemName -> lift(name), _.ldapDn -> lift(Option(dn))));
+      _ <- run(projectQuery.filter(_.id == lift(id)).update(_.ldapDn -> lift(Option(dn))));
       project <- run(projectQuery.filter(_.id == lift(id)))
     ) yield project.head
 
   def setHDFS(id: Long, location: String): Future[Project] =
     for (
       _ <- run(projectQuery.filter(_.id == lift(id)).update(_.hdfs.location -> lift(Option(location))));
+      project <- run(projectQuery.filter(_.id == lift(id)))
+    ) yield project.head
+
+  def setKeytab(id: Long, location: String): Future[Project] =
+    for (
+      _ <- run(projectQuery.filter(_.id == lift(id)).update(_.keytabLocation -> lift(Option(location))));
       project <- run(projectQuery.filter(_.id == lift(id)))
     ) yield project.head
 

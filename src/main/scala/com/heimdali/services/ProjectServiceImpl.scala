@@ -1,14 +1,15 @@
 package com.heimdali.services
 
-import javax.inject.{Inject, Named}
+import javax.inject.Inject
 
-import akka.actor.{ActorRef, ActorSystem}
+import akka.actor.{ActorSystem, Props}
+import com.heimdali.actors.ProjectProvisioner
 import com.heimdali.actors.ProjectProvisioner.Request
 import com.heimdali.models.Project
 import com.heimdali.repositories.ProjectRepository
 
-import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.duration._
+import scala.concurrent.{ExecutionContext, Future}
 
 trait ProjectService {
   def create(project: Project): Future[Project]
@@ -17,14 +18,15 @@ trait ProjectService {
 }
 
 class ProjectServiceImpl @Inject()(projectRepository: ProjectRepository,
-                                   @Named("provisioning-actor") provisionActor: ActorRef)
+                                   provisioningFactory: ProjectProvisioner.Factory)
                                   (implicit val executionContext: ExecutionContext,
                                    val actorSystem: ActorSystem) extends ProjectService {
   override def list(username: String): Future[Seq[Project]] = projectRepository.list(username)
 
   override def create(project: Project): Future[Project] = {
     projectRepository.create(project) map { updated =>
-      actorSystem.scheduler.scheduleOnce(0 seconds, provisionActor, Request(updated))
+      val actorRef = actorSystem.actorOf(Props(provisioningFactory(updated)), updated.name)
+      actorSystem.scheduler.scheduleOnce(0 seconds, actorRef, Request)
       updated
     }
   }

@@ -38,6 +38,7 @@ class ProjectController @Inject()(controllerComponents: MessagesControllerCompon
       Reads.pure("") and
       (__ \ "compliance").read[Compliance] and
       (__ \ "hdfs").read[HDFSProvision] and
+      Reads.pure(None) and
       Reads.pure(LocalDateTime.now()) and
       Reads.pure(request.subject.get.identifier)
     ) (Project.apply _).map(existing => existing.copy(systemName = existing.generatedName))
@@ -61,6 +62,7 @@ class ProjectController @Inject()(controllerComponents: MessagesControllerCompon
       (__ \ "system_name").write[String] and
       (__ \ "compliance").write[Compliance] and
       (__ \ "hdfs").write[HDFSProvision] and
+      (__ \ "keytab_location").writeNullable[String] and
       (__ \ "created").write[LocalDateTime] and
       (__ \ "created_by").write[String]
     ) (unlift(Project.unapply)
