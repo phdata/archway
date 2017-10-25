@@ -25,7 +25,7 @@ class ProjectServiceImpl @Inject()(projectRepository: ProjectRepository,
 
   override def create(project: Project): Future[Project] = {
     projectRepository.create(project) map { updated =>
-      val actorRef = actorSystem.actorOf(Props(provisioningFactory(updated)), updated.generatedName)
+      val actorRef = actorSystem.actorOf(Props(provisioningFactory(updated)), updated.generatedName + updated.id.toString)
       actorSystem.scheduler.scheduleOnce(0 seconds, actorRef, Request)
       updated
     }
