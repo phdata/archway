@@ -281,7 +281,7 @@ podTemplate(
                                     sh """
                         unzip target/universal/heimdali-api.zip -d docker
                         docker login -u $docker_username -p $docker_password
-                        docker build -t $image .
+                        docker build -t $image docker
                         docker tag $image $image:latest
                         docker tag $image $image:$version
                         docker push $image:$version
