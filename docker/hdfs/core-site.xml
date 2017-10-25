@@ -4,7 +4,7 @@
 <configuration>
   <property>
     <name>fs.defaultFS</name>
-    <value>hdfs://172.20.63.252:8020</value>
+    <value>hdfs://ip-172-20-44-157.us-west-2.compute.internal:8020</value>
   </property>
   <property>
     <name>fs.trash.interval</name>
@@ -16,11 +16,11 @@
   </property>
   <property>
     <name>hadoop.security.authentication</name>
-    <value>simple</value>
+    <value>kerberos</value>
   </property>
   <property>
     <name>hadoop.security.authorization</name>
-    <value>false</value>
+    <value>true</value>
   </property>
   <property>
     <name>hadoop.rpc.protection</name>

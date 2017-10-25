@@ -8,11 +8,11 @@
   </property>
   <property>
     <name>dfs.namenode.servicerpc-address</name>
-    <value>172.20.63.252:8022</value>
+    <value>ip-172-20-44-157.us-west-2.compute.internal:8022</value>
   </property>
   <property>
     <name>dfs.https.address</name>
-    <value>172.20.63.252:50470</value>
+    <value>ip-172-20-44-157.us-west-2.compute.internal:50470</value>
   </property>
   <property>
     <name>dfs.https.port</name>
@@ -20,7 +20,7 @@
   </property>
   <property>
     <name>dfs.namenode.http-address</name>
-    <value>172.20.63.252:50070</value>
+    <value>ip-172-20-44-157.us-west-2.compute.internal:50070</value>
   </property>
   <property>
     <name>dfs.replication</name>
@@ -37,6 +37,18 @@
   <property>
     <name>fs.permissions.umask-mode</name>
     <value>022</value>
+  </property>
+  <property>
+    <name>dfs.encrypt.data.transfer.algorithm</name>
+    <value>3des</value>
+  </property>
+  <property>
+    <name>dfs.encrypt.data.transfer.cipher.suites</name>
+    <value>AES/CTR/NoPadding</value>
+  </property>
+  <property>
+    <name>dfs.encrypt.data.transfer.cipher.key.bitlength</name>
+    <value>256</value>
   </property>
   <property>
     <name>dfs.namenode.acls.enabled</name>
@@ -65,5 +77,21 @@
   <property>
     <name>dfs.datanode.hdfs-blocks-metadata.enabled</name>
     <value>true</value>
+  </property>
+  <property>
+    <name>dfs.block.access.token.enable</name>
+    <value>true</value>
+  </property>
+  <property>
+    <name>dfs.namenode.kerberos.principal</name>
+    <value>hdfs/_HOST@JOTUNN.IO</value>
+  </property>
+  <property>
+    <name>dfs.namenode.kerberos.internal.spnego.principal</name>
+    <value>HTTP/_HOST@JOTUNN.IO</value>
+  </property>
+  <property>
+    <name>dfs.datanode.kerberos.principal</name>
+    <value>hdfs/_HOST@JOTUNN.IO</value>
   </property>
 </configuration>
