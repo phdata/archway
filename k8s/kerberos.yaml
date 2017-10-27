@@ -1,29 +1,24 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: kerberos-kdc
+  name: kerberos
 spec:
   ports:
   - port: 88
     nodePort: 30088
-    protocol: UDP
-  selector:
-    app: kerberos-kdc
-  type: NodePort
-
----
-
-apiVersion: v1
-kind: Service
-metadata:
-  name: kerberos-admin
-spec:
-  ports:
+    protocol: TCP
+    name: kdctcp
+  - port: 464
+    nodePort: 30464
+    protocol: TCP
+    name: pwtcp
   - port: 749
     nodePort: 30749
+    protocol: TCP
+    name: admin
   selector:
-    app: kerberos-admin
-  type: NodePort
+    app: kerberos
+  type: LoadBalancer
 
 ---
 
@@ -36,54 +31,21 @@ spec:
   template:
     metadata:
       labels:
-        app: kerberos-kdc
+        app: kerberos
     spec:
-      volumes:
-      - name: kdc-data
-        emptyDir: {}
       containers:
       - image: jotunn/kerberos-kdc
-        name: kerberos-kdc
+        name: kerberos
         command:
         - "/usr/bin/kdc_init.sh"
         args:
-        - "krb5kdc"
-        - "-n"
-        volumeMounts:
-        - name: kdc-data
-          mountPath: /etc/krb5kdc
+        - "/bin/bash"
+        - "-c"
+        - "krb5kdc -n & kadmind -nofork"
         ports:
-        - protocol: UDP
-          containerPort: 88
-        env:
-        - name: LDAP_BASE_DN
-          value: "dc=jotunn,dc=io"
-        - name: LDAP_BIND_DN
-          valueFrom:
-            secretKeyRef:
-              name: ldap-creds
-              key: username
-        - name: LDAP_BIND_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: ldap-creds
-              key: password
-        - name: LDAP_CRED_KEY
-          valueFrom:
-            secretKeyRef:
-              name: ldap-creds
-              key: key
-      - image: jotunn/kerberos-admin
-        name: kerberos-admin
-        command:
-        - "/usr/bin/admin_init.sh"
-        args:
-        - "cat"
-        ports:
+        - containerPort: 464
+        - containerPort: 88
         - containerPort: 749
-        volumeMounts:
-        - name: kdc-data
-          mountPath: /etc/krb5kdc
         env:
         - name: LDAP_BASE_DN
           value: "dc=jotunn,dc=io"

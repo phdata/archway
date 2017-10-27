@@ -6,6 +6,8 @@ COPY ./cloudera.pref /etc/apt/preferences.d/cloudera.pref
 COPY ./hdfs/* /etc/hadoop/conf.odin/
 COPY ./krb5.conf /etc/krb5.conf
 
+RUN sed -i 's/#KERBEROS_SERVICE_HOST#/$KERBEROS_SERVICE_HOST/' /etc/krb5.conf
+
 ADD https://archive.cloudera.com/cdh5/debian/jessie/amd64/cdh/archive.key archive.key
 
 RUN apt-key add archive.key && \
