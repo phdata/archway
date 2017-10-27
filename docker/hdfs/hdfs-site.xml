@@ -8,11 +8,11 @@
   </property>
   <property>
     <name>dfs.namenode.servicerpc-address</name>
-    <value>ip-172-20-44-157.us-west-2.compute.internal:8022</value>
+    <value>cdh.jotunn.io:8022</value>
   </property>
   <property>
     <name>dfs.https.address</name>
-    <value>ip-172-20-44-157.us-west-2.compute.internal:50470</value>
+    <value>cdh.jotunn.io:50470</value>
   </property>
   <property>
     <name>dfs.https.port</name>
@@ -20,7 +20,7 @@
   </property>
   <property>
     <name>dfs.namenode.http-address</name>
-    <value>ip-172-20-44-157.us-west-2.compute.internal:50070</value>
+    <value>cdh.jotunn.io:50070</value>
   </property>
   <property>
     <name>dfs.replication</name>

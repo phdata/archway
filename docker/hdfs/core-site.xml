@@ -4,7 +4,7 @@
 <configuration>
   <property>
     <name>fs.defaultFS</name>
-    <value>hdfs://ip-172-20-44-157.us-west-2.compute.internal:8020</value>
+    <value>hdfs://cdh.jotunn.io:8020</value>
   </property>
   <property>
     <name>fs.trash.interval</name>
