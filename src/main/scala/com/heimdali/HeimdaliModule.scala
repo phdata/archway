@@ -5,6 +5,7 @@ import com.google.inject.{AbstractModule, Provides}
 import com.heimdali.actors._
 import com.heimdali.repositories.{ProjectRepository, ProjectRepositoryImpl}
 import com.heimdali.services._
+import com.heimdali.startup._
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.fs.FileSystem
 import org.apache.hadoop.hdfs.client.HdfsAdmin
@@ -23,6 +24,9 @@ class HeimdaliModule extends AbstractModule with AkkaGuiceSupport {
     bind(classOf[HDFSClient]).to(classOf[HDFSClientImpl])
     bind(classOf[FileSystem]).toInstance(FileSystem.get(new Configuration()))
     bind(classOf[Startup]).to(classOf[HeimdaliStartup]).asEagerSingleton()
+    bind(classOf[DBMigration]).to(classOf[FlywayMigration])
+    bind(classOf[SecurityContext]).to(classOf[UGISecurityContext])
+    bind(classOf[LoginContextProvider]).to(classOf[UGILoginContextProvider])
     bind(classOf[KeytabService]).to(classOf[KeytabServiceImpl])
     bindActor[LDAPActor]("ldap-actor")
     bindActor[ProjectSaver]("project-saver")

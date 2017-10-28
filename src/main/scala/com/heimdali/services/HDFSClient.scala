@@ -3,7 +3,6 @@ package com.heimdali.services
 import java.io.{InputStream, OutputStream}
 import javax.inject.Inject
 
-import org.apache.commons.io.IOUtils
 import org.apache.hadoop.fs.{FileSystem, Path}
 import org.apache.hadoop.hdfs.client.HdfsAdmin
 
@@ -22,11 +21,13 @@ trait HDFSClient {
 class HDFSClientImpl @Inject()(fileSystem: FileSystem,
                                hdfsAdmin: HdfsAdmin)
                               (implicit val executionContext: ExecutionContext) extends HDFSClient {
-  override def createDirectory(location: String): Future[Path] = Future {
-    val path = new Path(location)
-    fileSystem.mkdirs(path)
-    path
-  }
+
+  override def createDirectory(location: String): Future[Path] =
+    Future {
+      val path = new Path(location)
+      fileSystem.mkdirs(path)
+      path
+    }
 
   override def setQuota(path: Path, maxSizeInGB: Double): Future[HDFSAllocation] = Future {
     hdfsAdmin.setSpaceQuota(path, (maxSizeInGB * 1024 * 1024 * 1024).toLong)

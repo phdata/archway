@@ -1,7 +1,11 @@
 package com.heimdali
 
+import com.heimdali.startup.Startup
+import com.heimdali.test.fixtures.TestStartup
 import org.scalatest.{FlatSpec, Matchers}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import play.api.Application
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsNumber, JsObject, JsString}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -33,5 +37,11 @@ class ErrorHandlerSpec extends FlatSpec with Matchers with GuiceOneAppPerSuite {
       "error_code" -> JsNumber(404)
     ))
   }
+
+  import play.api.inject.bind
+  override val fakeApplication: Application =
+    new GuiceApplicationBuilder()
+      .overrides(bind[Startup].to[TestStartup])
+      .build()
 
 }

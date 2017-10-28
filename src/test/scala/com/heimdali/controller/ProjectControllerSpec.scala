@@ -6,7 +6,8 @@ import javax.inject.Inject
 
 import com.heimdali.models.{Compliance, HDFSProvision, Project}
 import com.heimdali.services._
-import com.heimdali.test.fixtures.{FakeKeytabService, LDAPTest, PassiveAccountService, TestProject}
+import com.heimdali.startup.{SecurityContext, Startup}
+import com.heimdali.test.fixtures._
 import com.unboundid.ldap.sdk.SearchScope
 import io.getquill._
 import org.apache.hadoop.conf.Configuration
@@ -141,32 +142,9 @@ class ProjectControllerSpec
 
     status(rootCall) should be(OK)
 
-    implicit val complianceReads: Reads[Compliance] = (
-      (__ \ "phi_data").read[Boolean] and
-        (__ \ "pci_data").read[Boolean] and
-        (__ \ "pii_data").read[Boolean]
-      ) (Compliance.apply _)
-
-    implicit val hdfsReads: Reads[HDFSProvision] = (
-      (__ \ "location").readNullable[String] and
-        (__ \ "requested_gb").read[Double]
-      ) (HDFSProvision.apply _)
-
-    implicit val projectRead = (
-      (__ \ "id").read[Long] ~
-        (__ \ "name").read[String] ~
-        (__ \ "purpose").read[String] ~
-        (__ \ "ldap_dn").readNullable[String] ~
-        (__ \ "system_name").read[String] ~
-        (__ \ "compliance").read[Compliance] ~
-        (__ \ "hdfs").read[HDFSProvision] ~
-        (__ \ "keytab_location").readNullable[String] ~
-        (__ \ "created").read[LocalDateTime] ~
-        (__ \ "created_by").read[String]
-      ) (Project.apply _)
-    val jsonResponse = contentAsJson(rootCall).as[Seq[Project]]
+    val jsonResponse = contentAsJson(rootCall).as[Seq[JsObject]]
     jsonResponse.size should be(1)
-    jsonResponse.head should be(project1)
+    (jsonResponse.head \ "id").as[Long] should be(project1.id)
   }
 
   import play.api.inject.bind
@@ -182,6 +160,7 @@ class ProjectControllerSpec
       .overrides(bind[AccountService].to[PassiveAccountService])
       .overrides(bind[FileSystem].toInstance(cluster.getFileSystem))
       .overrides(bind[KeytabService].to[FakeKeytabService])
+      .overrides(bind[Startup].to[TestStartup])
       .build()
 
   override protected def afterEach(): Unit = {

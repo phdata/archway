@@ -3,11 +3,14 @@ package com.heimdali.controller
 import com.google.common.base.Charsets
 import com.google.common.io.BaseEncoding
 import com.heimdali.services._
-import com.heimdali.test.fixtures.LDAPTest
+import com.heimdali.startup.Startup
+import com.heimdali.test.fixtures.{LDAPTest, TestStartup}
 import org.scalatest.{BeforeAndAfterAll, FlatSpec, Matchers}
 import org.scalatestplus.play.WsScalaTestClient
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import pdi.jwt.{JwtAlgorithm, JwtJson}
+import play.api.Application
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsObject, JsString}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -76,4 +79,10 @@ class AccountControllerSpec
 
     route(app, request).get
   }
+
+  import play.api.inject.bind
+  override val fakeApplication: Application =
+    new GuiceApplicationBuilder()
+      .overrides(bind[Startup].to[TestStartup])
+      .build()
 }
