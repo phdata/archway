@@ -184,6 +184,16 @@ spec:
             secretKeyRef:
               name: db-creds
               key: password
+        - name: KRB_PRINCIPAL_USER
+          valueFrom:
+            secretKeyRef:
+              name: kerberos-creds
+              key: username
+        - name: KRB_PRINCIPAL_PASS
+          valueFrom:
+            secretKeyRef:
+              name: kerberos-creds
+              key: password
       imagePullSecrets:
       - name: myregistrykey
 """
