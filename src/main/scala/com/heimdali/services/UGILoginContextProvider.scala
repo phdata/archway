@@ -14,7 +14,7 @@ class UGILoginContextProvider extends LoginContextProvider {
   }
 
   def login(username: String, password: String): Subject = {
-    val context = new LoginContext(getClass.getSimpleName, new LoginHandler(username, password))
+    val context = new LoginContext("heimdali", new LoginHandler(username, password))
     context.login()
     context.getSubject
   }
