@@ -10,7 +10,7 @@ spec:
         app: heimdali-api
     spec:
       containers:
-      - image: jotunn/heimdali-api:2017.09.16
+      - image: jotunn/heimdali-api
         name: heimdali-api
         ports:
         - containerPort: 9000
