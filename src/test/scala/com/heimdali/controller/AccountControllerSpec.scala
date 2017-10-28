@@ -83,6 +83,6 @@ class AccountControllerSpec
   import play.api.inject.bind
   override val fakeApplication: Application =
     new GuiceApplicationBuilder()
-      .overrides(bind[Startup].to[TestStartup])
+      .overrides(bind[Startup].to[TestStartup].eagerly())
       .build()
 }

@@ -160,7 +160,7 @@ class ProjectControllerSpec
       .overrides(bind[AccountService].to[PassiveAccountService])
       .overrides(bind[FileSystem].toInstance(cluster.getFileSystem))
       .overrides(bind[KeytabService].to[FakeKeytabService])
-      .overrides(bind[Startup].to[TestStartup])
+      .overrides(bind[Startup].to[TestStartup].eagerly())
       .build()
 
   override protected def afterEach(): Unit = {

@@ -41,7 +41,7 @@ class ErrorHandlerSpec extends FlatSpec with Matchers with GuiceOneAppPerSuite {
   import play.api.inject.bind
   override val fakeApplication: Application =
     new GuiceApplicationBuilder()
-      .overrides(bind[Startup].to[TestStartup])
+      .overrides(bind[Startup].to[TestStartup].eagerly())
       .build()
 
 }

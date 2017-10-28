@@ -44,7 +44,7 @@ class ClusterControllerSpec
     new GuiceApplicationBuilder()
       .overrides(bind[ClusterService].to[FakeClusterService])
       .overrides(bind[AccountService].to[PassiveAccountService])
-      .overrides(bind[Startup].to[TestStartup])
+      .overrides(bind[Startup].to[TestStartup].eagerly())
       .build()
 
 }
