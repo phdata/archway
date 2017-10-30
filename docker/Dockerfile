@@ -21,4 +21,4 @@ RUN update-alternatives --install /etc/hadoop/conf hadoop-conf /etc/hadoop/conf.
 
 ENTRYPOINT ["/usr/bin/api_init.sh"]
 
-CMD java -Djava.security.auth.login.config=/etc/jaas.conf -Duser.dir=/opt/heimdali-api -cp /opt/heimdali-api/lib/*:/etc/hadoop/conf.odin/:/opt/heimdali-api/conf/ play.core.server.ProdServerStart
+CMD java -Djava.security.auth.login.config=/etc/jaas.conf -Duser.dir=/opt/heimdali-api -cp /opt/heimdali-api/lib/*:`hadoop classpath`:/etc/hadoop/conf.odin/:/opt/heimdali-api/conf/ play.core.server.ProdServerStart

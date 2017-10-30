@@ -14,13 +14,6 @@ spec:
         name: heimdali-api
         ports:
         - containerPort: 9000
-        args:
-        - java
-        - -Duser.dir=/opt/heimdali-api
-        - -Djava.security.auth.login.config=/jaas.conf
-        - -cp
-        - /opt/heimdali-api/lib/*:/etc/hadoop/conf.odin/:/opt/heimdali-api/conf/
-        - play.core.server.ProdServerStart
         env:
         - name: LDAP_BASE_DN
           value: "dc=jotunn,dc=io"
