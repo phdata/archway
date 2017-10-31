@@ -6,7 +6,7 @@ import akka.actor.Actor
 import akka.pattern.pipe
 import com.heimdali.actors.ProjectSaver.ProjectUpdate
 import com.heimdali.models.Project
-import com.heimdali.services.HDFSClient
+import com.heimdali.services.{HDFSClient, LoginContextProvider}
 import play.api.Configuration
 
 import scala.concurrent.ExecutionContext
@@ -23,7 +23,8 @@ object HDFSActor {
 }
 
 class HDFSActor @Inject()(hdfsClient: HDFSClient,
-                          configuration: Configuration)
+                          configuration: Configuration,
+                          loginContextProvider: LoginContextProvider)
                          (implicit val executionContext: ExecutionContext) extends Actor {
 
   import HDFSActor._
@@ -35,9 +36,11 @@ class HDFSActor @Inject()(hdfsClient: HDFSClient,
 
   override def receive: Receive = {
     case CreateDirectory(id, name, size) =>
-      (for (
-        path <- hdfsClient.createDirectory(location(name));
-        _ <- hdfsClient.setQuota(path, size)
-      ) yield HDFSUpdate(id, path.toUri.getPath)).pipeTo(sender())
+      loginContextProvider.elevate {
+        (for (
+          path <- hdfsClient.createDirectory(location(name));
+          _ <- hdfsClient.setQuota(path, size)
+        ) yield HDFSUpdate(id, path.toUri.getPath)).pipeTo(sender())
+      }
   }
 }
