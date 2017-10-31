@@ -1,27 +1,3 @@
-apiVersion: v1
-kind: Service
-metadata:
-  name: kerberos
-spec:
-  ports:
-  - port: 88
-    nodePort: 30088
-    protocol: TCP
-    name: kdctcp
-  - port: 464
-    nodePort: 30464
-    protocol: TCP
-    name: pwtcp
-  - port: 749
-    nodePort: 30749
-    protocol: TCP
-    name: admin
-  selector:
-    app: kerberos
-  type: LoadBalancer
-
----
-
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:

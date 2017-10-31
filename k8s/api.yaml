@@ -55,17 +55,3 @@ spec:
               key: password
       imagePullSecrets:
       - name: myregistrykey
-
----
-
-apiVersion: v1
-kind: Service
-metadata:
-  name: heimdali-api
-spec:
-  ports:
-  - port: 9000
-  selector:
-    app: heimdali-api
-  type: LoadBalancer
-
