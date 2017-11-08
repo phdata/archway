@@ -22,7 +22,6 @@ pipeline {
                 sh "./sbt ${params.sbt_params} test"
                 script {
                     def testResultAction = currentBuild.rawBuild.getAction(AbstractTestResultAction.class)
-                    def summary = ""
 
                     if (testResultAction != null) {
                         total = testResultAction.getTotalCount()
@@ -66,7 +65,7 @@ pipeline {
             }
         }
         stage('deploy') {
-            agent node
+            agent any
             steps {
                 sh "kubectl set image deployment heimdali-api heimdali-api=jotunn/heimdali-api:$VERSION"
             }
