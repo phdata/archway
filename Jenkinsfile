@@ -26,7 +26,7 @@ pipeline {
             steps {
                 sh "./sbt ${params.sbt_params} test"
                 script {
-                    def testResultAction = currentBuild.rawBuild.getAction(AbstractTestResultAction.class)
+                    def testResultAction = currentBuild.rawBuild.getAction(hudson.tasks.test.AbstractTestResultAction.class)
 
                     if (testResultAction != null) {
                         total = testResultAction.getTotalCount()
