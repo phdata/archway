@@ -14,7 +14,7 @@ pipeline {
             agent {
                 kubernetes {
                     cloud "kubernetes"
-                    label 'main'
+                    label 'altered-mule-jenkins-slave'
                     containerTemplate {
                         name 'jdk'
                         image 'java:8-jdk'
@@ -47,7 +47,7 @@ pipeline {
             agent {
                 kubernetes {
                     cloud "kubernetes"
-                    label 'main'
+                    label 'altered-mule-jenkins-slave'
                     containerTemplate {
                         name 'jdk'
                         image 'java:8-jdk'
@@ -65,7 +65,7 @@ pipeline {
             agent {
                 kubernetes {
                     cloud "kubernetes"
-                    label 'main'
+                    label 'altered-mule-jenkins-slave'
                     containerTemplate {
                         name 'docker'
                         image 'docker:1.11'
