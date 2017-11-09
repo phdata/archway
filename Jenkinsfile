@@ -1,8 +1,12 @@
 pipeline {
-    agent none
+    agent {
+        kubernetes {
+            cloud "kubernetes"
+        }
+    }
     environment {
         VERSION = VersionNumber({
-            versionNumberString: '${BUILD_DATE_FORMATTED, "yyyy.MM."}.${BUILDS_THIS_MONTH}'
+            versionNumberString: '${BUILD_DATE_FORMATTED, "yyyy.MM"}.${BUILDS_THIS_MONTH}'
         })
     }
     parameters {
@@ -11,12 +15,6 @@ pipeline {
     }
     stages {
         stage('build') {
-            agent {
-                docker {
-                    image 'java:jdk-8'
-                    args '-v $HOME/sbt:/sbt'
-                }
-            }
             steps {
                 sh "./sbt ${params.sbt_params} test"
                 script {
@@ -38,21 +36,12 @@ pipeline {
             }
         }
         stage('prepare') {
-            agent {
-                docker {
-                    image 'java:jdk-8'
-                    args '-v $HOME/sbt:/sbt'
-                }
-            }
             steps {
                 sh "./sbt ${params.sbt_params} \"set test in dist := {}\" dist"
                 sh "unzip target/universal/heimdali-api.zip -d docker"
             }
         }
         stage('publish') {
-            agent {
-                docker { image 'docker:1.11' }
-            }
             steps {
                 sh """
                 docker login -u $docker_username -p $docker_password
