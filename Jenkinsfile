@@ -23,44 +23,47 @@ pipeline {
     }
     stages {
         stage('build') {
-            agent { label 'jdk' }
             steps {
-                sh "./sbt ${params.sbt_params} test"
-                script {
-                    def testResultAction = currentBuild.rawBuild.getAction(hudson.tasks.test.AbstractTestResultAction.class)
+                container("jdk") {
+                    sh "./sbt ${params.sbt_params} test"
+                    script {
+                        def testResultAction = currentBuild.rawBuild.getAction(hudson.tasks.test.AbstractTestResultAction.class)
 
-                    if (testResultAction != null) {
-                        total = testResultAction.getTotalCount()
-                        failed = testResultAction.getFailCount()
-                        skipped = testResultAction.getSkipCount()
+                        if (testResultAction != null) {
+                            total = testResultAction.getTotalCount()
+                            failed = testResultAction.getFailCount()
+                            skipped = testResultAction.getSkipCount()
 
-                        summary = "Passed: " + (total - failed - skipped)
-                        summary = summary + (", Failed: " + failed)
-                        summary = summary + (", Skipped: " + skipped)
-                    } else {
-                        summary = "No tests found"
+                            summary = "Passed: " + (total - failed - skipped)
+                            summary = summary + (", Failed: " + failed)
+                            summary = summary + (", Skipped: " + skipped)
+                        } else {
+                            summary = "No tests found"
+                        }
+                        env.summary = summary
                     }
-                    env.summary = summary
                 }
             }
         }
         stage('prepare') {
-            agent { label 'jdk' }
             steps {
-                sh "./sbt ${params.sbt_params} \"set test in dist := {}\" dist"
-                sh "unzip target/universal/heimdali-api.zip -d docker"
+                container("jdk") {
+                    sh "./sbt ${params.sbt_params} \"set test in dist := {}\" dist"
+                    sh "unzip target/universal/heimdali-api.zip -d docker"
+                }
             }
         }
         stage('publish') {
-            agent { label 'docker' }
             steps {
-                sh """
-                docker login -u ${DOCKER_CRED_USR} -p ${DOCKER_CRED_PSW}
-                docker build -t ${params.image_name} docker
-                docker tag ${params.image_name} ${params.image_name}:$VERSION
-                docker push ${params.image_name}:$VERSION
-                docker push ${params.image_name}:latest
-                """
+                container("docker") {
+                    sh """
+                    docker login -u ${DOCKER_CRED_USR} -p ${DOCKER_CRED_PSW}
+                    docker build -t ${params.image_name} docker
+                    docker tag ${params.image_name} ${params.image_name}:$VERSION
+                    docker push ${params.image_name}:$VERSION
+                    docker push ${params.image_name}:latest
+                    """
+                }
             }
         }
         stage('deploy') {
