@@ -4,6 +4,7 @@ pipeline {
         VERSION = VersionNumber({
             versionNumberString: '${BUILD_DATE_FORMATTED, "yyyy.MM"}.${BUILDS_THIS_MONTH}'
         })
+        DOCKER_CRED = credentials('docker')
     }
     parameters {
         string(name: 'image_name', defaultValue: 'jotunn/heimdali-api')
@@ -76,7 +77,7 @@ pipeline {
             }
             steps {
                 sh """
-                docker login -u $docker_username -p $docker_password
+                docker login -u ${DOCKER_CRED_USR} -p ${DOCKER_CRED_PSW}
                 docker build -t ${params.image_name} docker
                 docker tag ${params.image_name} ${params.image_name}:$VERSION
                 docker push ${params.image_name}:$VERSION
