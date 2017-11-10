@@ -1,5 +1,16 @@
 pipeline {
-    agent none
+    agent {
+        kubernetes {
+            cloud "kubernetes"
+            label 'altered-mule-jenkins-slave'
+            containerTemplate {
+                name 'jdk'
+                image 'java:8-jdk'
+                ttyEnabled true
+                command 'cat'
+            }
+        }
+    }
     environment {
         VERSION = VersionNumber({
             versionNumberString: '${BUILD_DATE_FORMATTED, "yyyy.MM"}.${BUILDS_THIS_MONTH}'
@@ -12,18 +23,7 @@ pipeline {
     }
     stages {
         stage('build') {
-            agent {
-                kubernetes {
-                    cloud "kubernetes"
-                    label 'altered-mule-jenkins-slave'
-                    containerTemplate {
-                        name 'jdk'
-                        image 'java:8-jdk'
-                        ttyEnabled true
-                        command 'cat'
-                    }
-                }
-            }
+            agent { label 'jdk' }
             steps {
                 sh "./sbt ${params.sbt_params} test"
                 script {
@@ -45,36 +45,14 @@ pipeline {
             }
         }
         stage('prepare') {
-            agent {
-                kubernetes {
-                    cloud "kubernetes"
-                    label 'altered-mule-jenkins-slave'
-                    containerTemplate {
-                        name 'jdk'
-                        image 'java:8-jdk'
-                        ttyEnabled true
-                        command 'cat'
-                    }
-                }
-            }
+            agent { label 'jdk' }
             steps {
                 sh "./sbt ${params.sbt_params} \"set test in dist := {}\" dist"
                 sh "unzip target/universal/heimdali-api.zip -d docker"
             }
         }
         stage('publish') {
-            agent {
-                kubernetes {
-                    cloud "kubernetes"
-                    label 'altered-mule-jenkins-slave'
-                    containerTemplate {
-                        name 'docker'
-                        image 'docker:1.11'
-                        ttyEnabled true
-                        command 'cat'
-                    }
-                }
-            }
+            agent { label 'docker' }
             steps {
                 sh """
                 docker login -u ${DOCKER_CRED_USR} -p ${DOCKER_CRED_PSW}
