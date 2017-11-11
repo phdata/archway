@@ -70,7 +70,7 @@ pipeline {
             steps {
                 container("jdk") {
                     sh """
-                    curl -X GET -H 'Content-Type: application/strategic-merge-patch+json' \\
+                    curl -X POST -H 'Content-Type: application/strategic-merge-patch+json' \\
                     --cacert /var/run/secrets/kubernetes.io/serviceaccount/ca.crt \\
                     -H "Authorization: Bearer \$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)" \\
                     --data '{"spec":{"template":{"spec":{"containers":[{"name":"${params.image_name}","image":"${params.image_name}:$VERSION"}]}}}}' \\
@@ -81,6 +81,9 @@ pipeline {
         }
     }
     post {
+        always {
+            junit 'target/test-reports/*.xml'
+        }
         failure {
             slackSend([
                     [
@@ -109,8 +112,33 @@ pipeline {
                     ]
             ])
         }
-        always {
-            junit '**/*Spec.xml'
+        success {
+            slackSend([
+                    [
+                            title      : "Heimdali API, build #${BUILD_NUMBER}",
+                            title_link : "${BUILD_URL}",
+                            color      : "success",
+                            author_name: "${GIT_AUTHOR_NAME}",
+                            text       : "Success",
+                            fields     : [
+                                    [
+                                            title: "Branch",
+                                            value: "${BRANCH_NAME}",
+                                            short: true
+                                    ],
+                                    [
+                                            title: "Test Results",
+                                            value: "${env.summary}",
+                                            short: true
+                                    ],
+                                    [
+                                            title: "Last Commit",
+                                            value: "${LAST_MESSAGE}",
+                                            short: false
+                                    ]
+                            ]
+                    ]
+            ])
         }
     }
 }
