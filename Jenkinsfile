@@ -74,7 +74,7 @@ pipeline {
                     --cacert /var/run/secrets/kubernetes.io/serviceaccount/ca.crt \\
                     -H "Authorization: Bearer \$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)" \\
                     --data '{"spec":{"template":{"spec":{"containers":[{"name":"${params.image_name}","image":"${params.image_name}:$VERSION"}]}}}}' \\
-                    https://kubernetes/apis/apps/v1beta1/namespaces/default/deployments/heimdali-api'
+                    https://kubernetes/apis/apps/v1beta1/namespaces/default/deployments/heimdali-api
                     """
                 }
             }
