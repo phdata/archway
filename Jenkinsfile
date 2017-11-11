@@ -70,10 +70,10 @@ pipeline {
             steps {
                 container("jdk") {
                     sh """
-                    curl -X POST -H 'Content-Type: application/strategic-merge-patch+json' \\
+                    curl -X PATCH -H 'Content-Type: application/strategic-merge-patch+json' \\
                     --cacert /var/run/secrets/kubernetes.io/serviceaccount/ca.crt \\
                     -H "Authorization: Bearer \$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)" \\
-                    --data '{"spec":{"template":{"spec":{"containers":[{"name":"${params.image_name}","image":"${params.image_name}:$VERSION"}]}}}}' \\
+                    --data '{"spec":{"template":{"spec":{"containers":[{"name":"heimdali-api","image":"${params.image_name}:$VERSION"}]}}}}' \\
                     https://kubernetes/apis/apps/v1beta1/namespaces/default/deployments/heimdali-api
                     """
                 }
