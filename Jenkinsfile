@@ -67,9 +67,15 @@ pipeline {
             }
         }
         stage('deploy') {
-            agent any
+            agent "jdk"
             steps {
-                sh "kubectl set image deployment heimdali-api heimdali-api=jotunn/heimdali-api:$VERSION"
+                sh """
+                curl -X GET -H 'Content-Type: application/strategic-merge-patch+json'  
+                    --cacert /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+                    -H "Authorization: Bearer $$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)"
+                    --data '{"spec":{"template":{"spec":{"containers":[{"name":"${params.image_name}","image":"${params.image_name}:$VERSION"}]}}}}'
+                    https://kubernetes/apis/apps/v1beta1/namespaces/default/deployments/heimdali-api'
+                """
             }
         }
     }
