@@ -87,10 +87,10 @@ pipeline {
             junit 'target/test-reports/*.xml'
         }
         failure {
-            slackSend(message: "Heimdali API, build #${BUILD_NUMBER}", attachments: """[{"title":"Heimdali API, build #${BUILD_NUMBER}","title_link":"${BUILD_URL}","color":"#a64f36","author_name":"${GIT_AUTHOR_NAME}","author_link":"https://github.com/${GIT_AUTHOR_NAME}","author_url":"https://github.com/${GIT_AUTHOR_NAME}.png","pretext":"Build failed","fields":[{"title":"Last Commit","value":"${LAST_MESSAGE}","short":false},{"title":"Branch","value":"${BRANCH_NAME}","short":true},{"title":"Test Results","value":"${env.summary}","short":true}]}]""")
+            slackSend(message: "Heimdali API, build #${BUILD_NUMBER}", attachments: """[{"title":"Heimdali API, build #${BUILD_NUMBER}","title_link":"${BUILD_URL}","color":"#a64f36","pretext":"Build failed","fields":[{"title":"Last Commit","value":"${LAST_MESSAGE}","short":false},{"title":"Branch","value":"${BRANCH_NAME}","short":true},{"title":"Test Results","value":"${env.summary}","short":true}]}]""")
         }
         success {
-            slackSend(message: "Heimdali API, build #${BUILD_NUMBER}", attachments: """[{"title":"Heimdali API, build #${BUILD_NUMBER}","title_link":"${BUILD_URL}","color":"#36a64f","author_name":"${GIT_AUTHOR_NAME}","author_link":"https://github.com/${GIT_AUTHOR_NAME}","author_url":"https://github.com/${GIT_AUTHOR_NAME}.png","pretext":"Build succeeded","fields":[{"title":"Last Commit","value":"${LAST_MESSAGE}","short":false},{"title":"Branch","value":"${BRANCH_NAME}","short":true},{"title":"Test Results","value":"${env.summary}","short":true}]}]""")
+            slackSend(message: "Heimdali API, build #${BUILD_NUMBER}", attachments: """[{"title":"Heimdali API, build #${BUILD_NUMBER}","title_link":"${BUILD_URL}","color":"#36a64f","pretext":"Build succeeded","fields":[{"title":"Last Commit","value":"${LAST_MESSAGE}","short":false},{"title":"Branch","value":"${BRANCH_NAME}","short":true},{"title":"Test Results","value":"${env.summary}","short":true}]}]""")
         }
     }
 }
