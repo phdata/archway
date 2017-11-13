@@ -26,6 +26,7 @@ pipeline {
             steps {
                 container("jdk") {
                     sh "./sbt ${params.sbt_params} test"
+                    junit 'target/test-reports/*.xml'
                     script {
                         def testResultAction = currentBuild.rawBuild.getAction(hudson.tasks.test.AbstractTestResultAction.class)
 
@@ -83,9 +84,6 @@ pipeline {
         }
     }
     post {
-        always {
-            junit 'target/test-reports/*.xml'
-        }
         failure {
             slackSend(message: "Heimdali API, build #${BUILD_NUMBER}", attachments: """[{"title":"Heimdali API, build #${BUILD_NUMBER}","title_link":"${BUILD_URL}","color":"#a64f36","pretext":"Build failed","fields":[{"title":"Test Results","value":"${env.summary}","short":true}]}]""")
         }
