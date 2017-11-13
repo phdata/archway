@@ -87,7 +87,7 @@ pipeline {
             junit 'target/test-reports/*.xml'
         }
         failure {
-            slackSend(attachments: """
+            slackSend(message: "Heimdali API, build #${BUILD_NUMBER}", attachments: """
                 [
                     {
                         "title"       : "Heimdali API, build #${BUILD_NUMBER}",
@@ -117,7 +117,7 @@ pipeline {
             """)
         }
         success {
-            slackSend(attachments: """
+            slackSend(message: "Heimdali API, build #${BUILD_NUMBER}", attachments: """
                 [
                     {
                         "title"       : "Heimdali API, build #${BUILD_NUMBER}",
