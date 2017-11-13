@@ -73,7 +73,9 @@ pipeline {
                     curl -X PATCH -H 'Content-Type: application/strategic-merge-patch+json' \\
                     --cacert /var/run/secrets/kubernetes.io/serviceaccount/ca.crt \\
                     -H "Authorization: Bearer \$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)" \\
-                    --data '{"spec":{"template":{"spec":{"containers":[{"name":"heimdali-api","image":"${params.image_name}:$VERSION"}]}}}}' \\
+                    --data '{"spec":{"template":{"spec":{"containers":[{"name":"heimdali-api","image":"${
+                        params.image_name
+                    }:$VERSION"}]}}}}' \\
                     https://kubernetes/apis/apps/v1beta1/namespaces/default/deployments/heimdali-api
                     """
                 }
@@ -85,60 +87,64 @@ pipeline {
             junit 'target/test-reports/*.xml'
         }
         failure {
-            slackSend([
-                    [
-                            title      : "Heimdali API, build #${BUILD_NUMBER}",
-                            title_link : "${BUILD_URL}",
-                            color      : "warning",
-                            author_name: "${GIT_AUTHOR_NAME}",
-                            text       : "Failed",
-                            fields     : [
-                                    [
-                                            title: "Branch",
-                                            value: "${BRANCH_NAME}",
-                                            short: true
-                                    ],
-                                    [
-                                            title: "Test Results",
-                                            value: "${env.summary}",
-                                            short: true
-                                    ],
-                                    [
-                                            title: "Last Commit",
-                                            value: "${LAST_MESSAGE}",
-                                            short: false
-                                    ]
+            slackSend(attachments: """
+                [
+                    {
+                        "title"       : "Heimdali API, build #${BUILD_NUMBER}",
+                        "title_link"  : "${BUILD_URL}",
+                        "color"       : "#a64f36",
+                        "author_name" : "${GIT_AUTHOR_NAME}",
+                        "text"        : "Failed",
+                        "fields"      : [
+                            [
+                                    "title": "Branch",
+                                    "value": "${BRANCH_NAME}",
+                                    "short": true
+                            ],
+                            [
+                                    "title": "Test Results",
+                                    "value": "${env.summary}",
+                                    "short": true
+                            ],
+                            [
+                                    "title": "Last Commit",
+                                    "value": "${LAST_MESSAGE}",
+                                    "short": false
                             ]
-                    ]
-            ])
+                        ]
+                    }
+                ]
+            """)
         }
         success {
-            slackSend([
-                    [
-                            title      : "Heimdali API, build #${BUILD_NUMBER}",
-                            title_link : "${BUILD_URL}",
-                            color      : "success",
-                            author_name: "${GIT_AUTHOR_NAME}",
-                            text       : "Success",
-                            fields     : [
-                                    [
-                                            title: "Branch",
-                                            value: "${BRANCH_NAME}",
-                                            short: true
-                                    ],
-                                    [
-                                            title: "Test Results",
-                                            value: "${env.summary}",
-                                            short: true
-                                    ],
-                                    [
-                                            title: "Last Commit",
-                                            value: "${LAST_MESSAGE}",
-                                            short: false
-                                    ]
+            slackSend(attachments: """
+                [
+                    {
+                        "title"       : "Heimdali API, build #${BUILD_NUMBER}",
+                        "title_link"  : "${BUILD_URL}",
+                        "color"       : "#36a64f",
+                        "author_name" : "${GIT_AUTHOR_NAME}",
+                        "text"        : "Success",
+                        "fields"      : [
+                            [
+                                    "title": "Branch",
+                                    "value": "${BRANCH_NAME}",
+                                    "short": true
+                            ],
+                            [
+                                    "title": "Test Results",
+                                    "value": "${env.summary}",
+                                    "short": true
+                            ],
+                            [
+                                    "title": "Last Commit",
+                                    "value": "${LAST_MESSAGE}",
+                                    "short": false
                             ]
-                    ]
-            ])
+                        ]
+                    }
+                ]
+            """)
         }
     }
 }
