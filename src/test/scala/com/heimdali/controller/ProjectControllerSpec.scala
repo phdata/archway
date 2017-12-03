@@ -1,12 +1,10 @@
 package com.heimdali.controller
 
 import java.nio.file.Files
-import java.time.LocalDateTime
-import javax.inject.Inject
 
-import com.heimdali.models.{Compliance, HDFSProvision, Project}
+import com.heimdali.models.Project
 import com.heimdali.services._
-import com.heimdali.startup.{SecurityContext, Startup}
+import com.heimdali.startup.Startup
 import com.heimdali.test.fixtures._
 import com.unboundid.ldap.sdk.SearchScope
 import io.getquill._
@@ -18,7 +16,6 @@ import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach, FlatSpec, Matchers}
 import org.scalatestplus.play.{BaseOneAppPerSuite, FakeApplicationFactory}
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.libs.functional.syntax._
 import play.api.libs.json.JodaReads._
 import play.api.libs.json.JodaWrites._
 import play.api.libs.json._
@@ -26,7 +23,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 
 import scala.concurrent.duration._
-import scala.concurrent.{Await, ExecutionContext, Future}
+import scala.concurrent.{Await, ExecutionContext}
 
 class ProjectControllerSpec
   extends FlatSpec
@@ -188,7 +185,8 @@ class DB(implicit executionContext: ExecutionContext) {
       _.compliance.phiData -> "phi_data",
       _.compliance.piiData -> "pii_data",
       _.hdfs.location -> "hdfs_location",
-      _.hdfs.requestedSizeInGB -> "hdfs_requested_size_in_gb"
+      _.hdfs.requestedSizeInGB -> "hdfs_requested_size_in_gb",
+      _.hdfs.actualGB -> "hdfs_actual_size_in_gb"
     )
   }
 

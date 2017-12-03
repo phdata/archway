@@ -57,7 +57,7 @@ class ProjectProvisioner @Inject()(@Named("ldap-actor") ldapActor: ActorRef,
 
   val initialSteps: Queue[(ActorRef, AnyRef)] = Queue(
     ldapActor -> CreateEntry(project.id, project.systemName, Seq(project.createdBy)),
-    hDFSActor -> CreateDirectory(project.id, project.systemName, project.hdfs.requestedSizeInGB),
+    hDFSActor -> CreateDirectory(project.id, project.systemName, project.hdfs.requestedSizeInGB, project.hdfs.actualGB),
     keytabActor -> GenerateKeytab(project.id, project.systemName)
   )
 

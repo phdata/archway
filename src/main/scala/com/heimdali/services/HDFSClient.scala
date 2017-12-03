@@ -1,6 +1,7 @@
 package com.heimdali.services
 
 import java.io.{InputStream, OutputStream}
+import java.text.DecimalFormat
 import javax.inject.Inject
 
 import org.apache.hadoop.fs.{FileSystem, Path}
@@ -16,6 +17,8 @@ trait HDFSClient {
   def createDirectory(location: String): Future[Path]
 
   def setQuota(path: Path, maxSizeInGB: Double): Future[HDFSAllocation]
+
+  def getQuota(path: Path): Future[Double]
 }
 
 class HDFSClientImpl @Inject()(fileSystem: FileSystem,
@@ -32,6 +35,11 @@ class HDFSClientImpl @Inject()(fileSystem: FileSystem,
   override def setQuota(path: Path, maxSizeInGB: Double): Future[HDFSAllocation] = Future {
     hdfsAdmin.setSpaceQuota(path, (maxSizeInGB * 1024 * 1024 * 1024).toLong)
     HDFSAllocation(path.toUri.getPath, maxSizeInGB)
+  }
+
+  override def getQuota(path: Path): Future[Double] = Future {
+    val dec = new DecimalFormat("0.00")
+    dec.format(((fileSystem.getContentSummary(path).getSpaceQuota/1024.0)/1024.0)/1024.0).toDouble
   }
 
   override def uploadFile(stream: InputStream, hdfsLocation: Path): Future[Path] = Future {

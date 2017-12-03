@@ -1,0 +1,1 @@
+ALTER TABLE public.projects ADD COLUMN hdfs_actual_size_in_gb REAL;

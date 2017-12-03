@@ -14,7 +14,7 @@ trait ProjectRepository {
 
   def setLDAP(id: Long, dn: String): Future[Project]
 
-  def setHDFS(id: Long, location: String): Future[Project]
+  def setHDFS(id: Long, location: String, actualGB: Double): Future[Project]
 
   def setKeytab(id: Long, location: String): Future[Project]
 }
@@ -33,7 +33,8 @@ class ProjectRepositoryImpl @Inject()(implicit ec: ExecutionContext)
       _.compliance.phiData -> "phi_data",
       _.compliance.piiData -> "pii_data",
       _.hdfs.location -> "hdfs_location",
-      _.hdfs.requestedSizeInGB -> "hdfs_requested_size_in_gb"
+      _.hdfs.requestedSizeInGB -> "hdfs_requested_size_in_gb",
+      _.hdfs.actualGB -> "hdfs_actual_size_in_gb"
     )
   }
 
@@ -51,9 +52,10 @@ class ProjectRepositoryImpl @Inject()(implicit ec: ExecutionContext)
       project <- run(projectQuery.filter(_.id == lift(id)))
     ) yield project.head
 
-  def setHDFS(id: Long, location: String): Future[Project] =
+  def setHDFS(id: Long, location: String, actualGB: Double): Future[Project] =
     for (
       _ <- run(projectQuery.filter(_.id == lift(id)).update(_.hdfs.location -> lift(Option(location))));
+      _ <- run(projectQuery.filter(_.id == lift(id)).update(_.hdfs.actualGB -> lift(Option(actualGB))));
       project <- run(projectQuery.filter(_.id == lift(id)))
     ) yield project.head
 

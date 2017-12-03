@@ -32,7 +32,7 @@ class ProjectProvisionerSpec extends FlatSpec with Matchers {
 
     provisioner.initialSteps should be(Queue(
       testProb.ref -> CreateEntry(project.id, project.systemName, Seq(project.createdBy)),
-      testProb.ref -> CreateDirectory(project.id, project.systemName, project.hdfs.requestedSizeInGB),
+      testProb.ref -> CreateDirectory(project.id, project.systemName, project.hdfs.requestedSizeInGB, project.hdfs.actualGB),
       testProb.ref -> GenerateKeytab(project.id, project.systemName)
     ))
   }
@@ -61,9 +61,9 @@ class ProjectProvisionerSpec extends FlatSpec with Matchers {
     saveProbe.expectMsg(LDAPUpdate(project.id, project.systemName))
     saveProbe.reply(ProjectSaved)
 
-    hdfsProbe.expectMsg(CreateDirectory(project.id, project.systemName, project.hdfs.requestedSizeInGB))
-    hdfsProbe.reply(HDFSUpdate(project.id, directory))
-    saveProbe.expectMsg(HDFSUpdate(project.id, directory))
+    hdfsProbe.expectMsg(CreateDirectory(project.id, project.systemName, project.hdfs.requestedSizeInGB, project.hdfs.actualGB))
+    hdfsProbe.reply(HDFSUpdate(project.id, directory, 10.0))
+    saveProbe.expectMsg(HDFSUpdate(project.id, directory, 10.0))
     saveProbe.reply(ProjectSaved)
 
     keytabProbe.expectMsg(GenerateKeytab(project.id, project.systemName))

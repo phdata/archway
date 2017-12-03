@@ -19,7 +19,8 @@ package object fixtures {
     val compliance = Compliance(phiCompliance, piiCompliance, pciCompliance)
     val hdfsLocation = None
     val hdfsRequestedSize = 10
-    val hdfs = HDFSProvision(hdfsLocation, hdfsRequestedSize)
+    val actualGB = None
+    val hdfs = HDFSProvision(hdfsLocation, hdfsRequestedSize, actualGB)
     val keytabLocation = None
     val systemName = Project(1, name, purpose, ldapDn, "", compliance, hdfs, keytabLocation, LocalDateTime.now, standardUsername).generatedName
 

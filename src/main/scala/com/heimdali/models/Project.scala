@@ -27,4 +27,4 @@ case class Compliance(phiData: Boolean,
                       piiData: Boolean) extends Embedded
 
 case class HDFSProvision(location: Option[String],
-                         requestedSizeInGB: Double) extends Embedded
+                         requestedSizeInGB: Double, actualGB: Option[Double]) extends Embedded

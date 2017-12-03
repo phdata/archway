@@ -32,8 +32,8 @@ class ProjectSaver @Inject() (projectRepository: ProjectRepository)
         .map(_ => ProjectSaved)
         .pipeTo(sender())
 
-    case HDFSUpdate(id, location) =>
-      projectRepository.setHDFS(id, location)
+    case HDFSUpdate(id, location, actualGB) =>
+      projectRepository.setHDFS(id, location, actualGB)
         .map(_ => ProjectSaved)
         .pipeTo(sender())
 

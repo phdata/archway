@@ -27,7 +27,8 @@ class ProjectController @Inject()(controllerComponents: MessagesControllerCompon
 
   implicit val hdfsReads: Reads[HDFSProvision] = (
     Reads.pure(None) and
-      (__ \ "requested_gb").read[Double]
+      (__ \ "requested_gb").read[Double] and
+      Reads.pure(None)
   ) (HDFSProvision.apply _)
 
   implicit def projectReads(implicit request: AuthenticatedRequest[_]): Reads[Project] = (
@@ -51,7 +52,8 @@ class ProjectController @Inject()(controllerComponents: MessagesControllerCompon
 
   implicit val hdfsWrites: Writes[HDFSProvision] = (
     (__ \ "location").writeNullable[String] and
-      (__ \ "requested_gb").write[Double]
+      (__ \ "requested_gb").write[Double] and
+      (__ \ "actualGB").writeNullable[Double]
   ) (unlift(HDFSProvision.unapply))
 
   implicit val projectWrites: Writes[Project] = (

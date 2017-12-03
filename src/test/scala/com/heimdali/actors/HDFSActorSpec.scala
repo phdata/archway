@@ -30,12 +30,13 @@ class HDFSActorSpec extends FlatSpec with MockFactory {
     implicit val executionContext = scala.concurrent.ExecutionContext.global
     (ldapClient.createDirectory _).expects(location).returning(Future(path))
     (ldapClient.setQuota _).expects(path, 10).returning(Future(HDFSAllocation(location, 10)))
+    (ldapClient.getQuota _).expects(path).returning(Future(10.0))
 
     val context = mock[LoginContextProvider]
     (context.elevate[HDFSUpdate] _).expects(*).onCall((r: Future[HDFSUpdate]) => r)
 
     val actor = actorSystem.actorOf(Props(classOf[HDFSActor], ldapClient, config, context, executionContext))
-    val request = CreateDirectory(project.id, project.systemName, project.hdfs.requestedSizeInGB)
+    val request = CreateDirectory(project.id, project.systemName, project.hdfs.requestedSizeInGB, project.hdfs.actualGB)
     actor.tell(request, probe.ref)
     probe.expectMsgClass(classOf[HDFSUpdate])
   }

@@ -13,11 +13,11 @@ import scala.concurrent.ExecutionContext
 
 object HDFSActor {
 
-  case class CreateDirectory(id: Long, name: String, requestedSizeInGB: Double)
+  case class CreateDirectory(id: Long, name: String, requestedSizeInGB: Double, actualGB: Option[Double])
 
-  case class HDFSUpdate(id: Long, directory: String) extends ProjectUpdate {
+  case class HDFSUpdate(id: Long, directory: String, actualGB: Double) extends ProjectUpdate {
     override def updateProject(project: Project): Project =
-      project.copy(hdfs = project.hdfs.copy(location = Some(directory)))
+      project.copy(hdfs = project.hdfs.copy(location = Some(directory))).copy(hdfs = project.hdfs.copy(actualGB = Some(actualGB)))
   }
 
 }
@@ -35,12 +35,13 @@ class HDFSActor @Inject()(hdfsClient: HDFSClient,
   def location(name: String) = s"$projectRoot/$name"
 
   override def receive: Receive = {
-    case CreateDirectory(id, name, size) =>
+    case CreateDirectory(id, name, size, actualGB) =>
       loginContextProvider.elevate {
         (for (
           path <- hdfsClient.createDirectory(location(name));
-          _ <- hdfsClient.setQuota(path, size)
-        ) yield HDFSUpdate(id, path.toUri.getPath)).pipeTo(sender())
+          _ <- hdfsClient.setQuota(path, size);
+          actualGB <- hdfsClient.getQuota(path)
+        ) yield HDFSUpdate(id, path.toUri.getPath, actualGB)).pipeTo(sender())
       }
   }
 }
