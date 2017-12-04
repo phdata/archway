@@ -1,27 +1,23 @@
 package com.heimdali.startup
 
-import javax.inject.Inject
-
-import play.api.Configuration
+import com.typesafe.config.Config
 
 trait Startup {
   def start(): Unit
-
-  start()
 }
 
-class HeimdaliStartup @Inject()(configuration: Configuration,
-                        dbMigration: DBMigration,
-                        securityContext: SecurityContext) extends Startup {
+class HeimdaliStartup(configuration: Config,
+                      dbMigration: DBMigration,
+                      securityContext: SecurityContext) extends Startup {
   def start(): Unit = {
-    val url = configuration.get[String]("ctx.url")
-    val user = configuration.get[String]("ctx.user")
-    val pass = configuration.get[String]("ctx.password")
+    val url = configuration.getString("ctx.url")
+    val user = configuration.getString("ctx.user")
+    val pass = configuration.getString("ctx.password")
 
     dbMigration.migrate(url, user, pass)
 
-    val adminUser = configuration.get[String]("kerberos.username")
-    val adminPassword = configuration.get[String]("kerberos.password")
+    val adminUser = configuration.getString("kerberos.username")
+    val adminPassword = configuration.getString("kerberos.password")
 
     securityContext.login(adminUser, adminPassword)
   }

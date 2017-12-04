@@ -1,39 +1,40 @@
 package com.heimdali.services
 
-import javax.inject.Inject
-
-import play.api.Configuration
-import play.api.libs.functional.syntax._
-import play.api.libs.json.{Reads, _}
-import play.api.libs.ws.{WSAuthScheme, WSClient}
+import akka.http.scaladsl.HttpExt
+import akka.http.scaladsl.client.RequestBuilding._
+import akka.http.scaladsl.model.headers.BasicHttpCredentials
+import akka.http.scaladsl.model.{HttpResponse, StatusCodes}
+import akka.http.scaladsl.unmarshalling.Unmarshal
+import akka.stream.Materializer
+import com.typesafe.config.Config
+import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class CDHClusterService @Inject()(wsClient: WSClient,
-                                  configuration: Configuration)
-                                 (implicit val executionContext: ExecutionContext) extends ClusterService {
+class CDHClusterService(http: HttpExt,
+                        configuration: Config)
+                       (implicit executionContext: ExecutionContext,
+                        materializer: Materializer)
+  extends ClusterService with FailFastCirceSupport {
 
-  implicit val clusterReads: Reads[Cluster] = (
-    (__ \ "name").read[String] ~
-      (__ \ "displayName").read[String] ~
-      (__ \ "fullVersion").read[String].map(CDH)
-    ) (Cluster)
+  import io.circe.generic.auto._
 
-  def clusterDetails(baseUrl: String, username: String, password: String): Future[Cluster] =
-    wsClient
-      .url(s"$baseUrl")
-      .withAuth(username, password, WSAuthScheme.BASIC)
-      .get()
-      .map(_.json.as[Cluster])
+  def clusterDetails(baseUrl: String, username: String, password: String): Future[Cluster] = {
+    val request = Get(baseUrl).addCredentials(BasicHttpCredentials(username, password))
+    http.singleRequest(request)
+      .flatMap {
+        case HttpResponse(StatusCodes.OK, _, entity, _) =>
+          Unmarshal(entity).to[Cluster]
+      }
+  }
 
   override def list: Future[Seq[Cluster]] = {
-    val clusterConfig = configuration.get[Configuration]("cluster")
-    val baseUrl = clusterConfig.get[String]("url")
-    val username = clusterConfig.get[String]("username")
-    val password = clusterConfig.get[String]("password")
+    val clusterConfig = configuration.getConfig("cluster")
+    val baseUrl = clusterConfig.getString("url")
+    val username = clusterConfig.getString("username")
+    val password = clusterConfig.getString("password")
 
-    clusterDetails(baseUrl, username, password)
-      .map(Seq(_))
+    clusterDetails(baseUrl, username, password).map(Seq(_))
   }
 
 }

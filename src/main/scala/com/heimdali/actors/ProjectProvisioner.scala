@@ -1,9 +1,6 @@
 package com.heimdali.actors
 
-import javax.inject.{Inject, Named}
-
 import akka.actor.{Actor, ActorLogging, ActorRef, FSM}
-import com.google.inject.assistedinject.Assisted
 import com.heimdali.models.Project
 
 import scala.collection.immutable.Queue
@@ -42,11 +39,11 @@ object ProjectProvisioner {
 
 }
 
-class ProjectProvisioner @Inject()(@Named("ldap-actor") ldapActor: ActorRef,
-                                   @Named("project-saver") saveActor: ActorRef,
-                                   @Named("hdfs-actor") hDFSActor: ActorRef,
-                                   @Named("keytab-actor") keytabActor: ActorRef,
-                                   @Assisted var project: Project)
+class ProjectProvisioner(ldapActor: ActorRef,
+                         saveActor: ActorRef,
+                         hDFSActor: ActorRef,
+                         keytabActor: ActorRef,
+                         var project: Project)
   extends FSM[State, Data] with ActorLogging {
 
   import HDFSActor._

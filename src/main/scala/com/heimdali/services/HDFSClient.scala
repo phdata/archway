@@ -18,9 +18,10 @@ trait HDFSClient {
   def setQuota(path: Path, maxSizeInGB: Double): Future[HDFSAllocation]
 }
 
-class HDFSClientImpl @Inject()(fileSystem: FileSystem,
-                               hdfsAdmin: HdfsAdmin)
-                              (implicit val executionContext: ExecutionContext) extends HDFSClient {
+class HDFSClientImpl(fileSystem: FileSystem,
+                     hdfsAdmin: HdfsAdmin)
+                    (implicit val executionContext: ExecutionContext)
+  extends HDFSClient {
 
   override def createDirectory(location: String): Future[Path] =
     Future {

@@ -1,29 +1,21 @@
 package com.heimdali.controller
 
 import java.nio.file.Files
-import java.time.LocalDateTime
-import javax.inject.Inject
 
-import com.heimdali.models.{Compliance, HDFSProvision, Project}
+import akka.http.scaladsl.model.headers.OAuth2BearerToken
+import akka.http.scaladsl.testkit.ScalatestRouteTest
+import com.heimdali.HeimdaliAPI
+import com.heimdali.models.Project
 import com.heimdali.services._
-import com.heimdali.startup.{SecurityContext, Startup}
 import com.heimdali.test.fixtures._
 import com.unboundid.ldap.sdk.SearchScope
 import io.getquill._
+import jawn.Parser._
 import org.apache.hadoop.conf.Configuration
-import org.apache.hadoop.fs.FileSystem
 import org.apache.hadoop.hdfs.MiniDFSCluster
 import org.joda.time.DateTime
+import org.scalamock.scalatest.MockFactory
 import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach, FlatSpec, Matchers}
-import org.scalatestplus.play.{BaseOneAppPerSuite, FakeApplicationFactory}
-import play.api.Application
-import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.libs.functional.syntax._
-import play.api.libs.json.JodaReads._
-import play.api.libs.json.JodaWrites._
-import play.api.libs.json._
-import play.api.test.FakeRequest
-import play.api.test.Helpers._
 
 import scala.concurrent.duration._
 import scala.concurrent.{Await, ExecutionContext, Future}
@@ -33,62 +25,59 @@ class ProjectControllerSpec
     with Matchers
     with BeforeAndAfterAll
     with LDAPTest
-    with BaseOneAppPerSuite
-    with FakeApplicationFactory
+    with MockFactory
+    with ScalatestRouteTest
     with BeforeAndAfterEach {
 
   behavior of "ProjectController"
 
   it should "create a project" in {
-    val json = Json.obj(
-      "name" -> "Sesame",
-      "purpose" -> "to do something cool",
-      "compliance" -> Json.obj(
-        "pii_data" -> false,
-        "phi_data" -> false,
-        "pci_data" -> false
-      ),
-      "hdfs" -> Json.obj(
-        "requested_gb" -> .2
-      )
-    )
+    val json = parseFromString(
+      """
+         {
+      "name": "Sesame",
+      "purpose": "to do something cool",
+      "compliance": {
+        "pii_data": false,
+        "phi_data": false,
+        "pci_data": false
+      },
+      "hdfs": {
+        "requested_gb": 0.2
+      }
+    """)
 
-    val request = FakeRequest(POST, "/projects")
-      .withHeaders(AUTHORIZATION -> "Bearer AbCdEf123456")
-      .withHeaders(CONTENT_TYPE -> "application/json")
-      .withJsonBody(json)
+    val clusterService = mock[ClusterService]
+    val projectService = mock[ProjectService]
+    val accountService = mock[AccountService]
+    val restApi = new HeimdaliAPI(clusterService, projectService, accountService)
 
-    val rootCall = route(app, request).get
+    Post("/projects", json) ~> addCredentials(OAuth2BearerToken("AbCdEf123456")) ~> restApi.route ~> check {
+      status should be (201)
+      val response = responseAs[Project]
 
-    status(rootCall) should be(CREATED)
+      val id = response.id
+      id shouldBe defined
+      response.name should be ("Sesame")
+      response.purpose should be ("to do something cool")
+      response.systemName should be ("sesame")
 
-    val jsonResponse = contentAsJson(rootCall).as[JsObject]
+      response.compliance.piiData should be (false)
+      response.compliance.phiData should be (false)
+      response.compliance.pciData should be (false)
 
-    (jsonResponse \ "id").asOpt[Long] shouldBe defined
-    val id = (jsonResponse \ "id").as[Long]
-    (jsonResponse \ "name").as[String] should be("Sesame")
-    (jsonResponse \ "compliance" \ "pci_data").as[Boolean] should be(false)
-    (jsonResponse \ "compliance" \ "pii_data").as[Boolean] should be(false)
-    (jsonResponse \ "compliance" \ "phi_data").as[Boolean] should be(false)
-    (jsonResponse \ "purpose").as[String] should be("to do something cool")
-    (jsonResponse \ "system_name").as[String] should be("sesame")
+      implicit val dateOrdering: Ordering[DateTime] = Ordering.fromLessThan(_ isBefore _)
+      response.created should be < DateTime.now
 
-    val date = (jsonResponse \ "created").asOpt[DateTime]
-    date shouldBe defined
+      response.createdBy should be ("username")
 
-    implicit val dateOrdering: Ordering[DateTime] = Ordering.fromLessThan(_ isBefore _)
-    date.get should be < DateTime.now
+      Thread.sleep((5 seconds).toMillis) // let the actor system update LDAP and HDFS
 
-    val creator = (jsonResponse \ "created_by").asOpt[String]
-    creator shouldBe defined
-    creator.get shouldBe "username"
-
-    Thread.sleep((5 seconds).toMillis) // let the actor system update LDAP and HDFS
-
-    val result = db.find(id)
-    result.ldapDn shouldBe defined
-    result.hdfs.location shouldBe defined
-    result.keytabLocation shouldBe defined
+      val result = db.find(id)
+      result.ldapDn shouldBe defined
+      result.hdfs.location shouldBe defined
+      result.keytabLocation shouldBe defined
+    }
   }
 
   it should "not accept read-only fields" in {
@@ -130,38 +119,31 @@ class ProjectControllerSpec
   }
 
   it should "list all projects" in {
-    val Array(project1, project2) = Array(
+    val projects@Seq(project1, project2) = Seq(
       db.load(TestProject(id = 123L, name = "Project 1", createdBy = "username")),
       db.load(TestProject(id = 321L, name = "Project 2"))
     )
 
-    val request = FakeRequest(GET, "/projects")
-      .withHeaders(AUTHORIZATION -> "Bearer AbCdEf123456")
+    val clusterService = mock[ClusterService]
+    val accountService = mock[AccountService]
+    val projectService = mock[ProjectService]
+    (projectService.list _).expects("username").returning(Future(projects))
 
-    val rootCall = route(app, request).get
+    val restApi = new HeimdaliAPI(clusterService, projectService, accountService)
 
-    status(rootCall) should be(OK)
-
-    val jsonResponse = contentAsJson(rootCall).as[Seq[JsObject]]
-    jsonResponse.size should be(1)
-    (jsonResponse.head \ "id").as[Long] should be(project1.id)
+    Get("/projects") ~> addCredentials(OAuth2BearerToken("AbCdEf123456")) ~> restApi.route ~> check {
+      status should be (200)
+      val result = responseAs[Seq[Project]]
+      result.size should be (1)
+      result.head.id should be (project1.id)
+    }
   }
-
-  import play.api.inject.bind
 
   val cluster = {
     val conf = new Configuration
     conf.set(MiniDFSCluster.HDFS_MINIDFS_BASEDIR, Files.createTempDirectory("test_hdfs").toFile.getAbsoluteFile.getAbsolutePath)
     new MiniDFSCluster.Builder(conf).build()
   }
-
-  override val fakeApplication: Application =
-    new GuiceApplicationBuilder()
-      .overrides(bind[AccountService].to[PassiveAccountService])
-      .overrides(bind[FileSystem].toInstance(cluster.getFileSystem))
-      .overrides(bind[KeytabService].to[FakeKeytabService])
-      .overrides(bind[Startup].to[TestStartup].eagerly())
-      .build()
 
   override protected def afterEach(): Unit = {
     import scala.collection.JavaConverters._
@@ -170,8 +152,6 @@ class ProjectControllerSpec
     val groups = ldapConnection.search("ou=groups,ou=hadoop,dc=jotunn,dc=io", SearchScope.SUB, "(objectClass=groupOfNames)").getSearchEntries.asScala
     (users ++ groups).map(_.getDN).map(ldapConnection.delete)
   }
-
-  import scala.concurrent.ExecutionContext.Implicits.global
 
   lazy val db = new DB
 }

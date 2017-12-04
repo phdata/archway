@@ -7,7 +7,7 @@ import akka.pattern.pipe
 import com.heimdali.actors.ProjectSaver.ProjectUpdate
 import com.heimdali.models.Project
 import com.heimdali.services.{HDFSClient, LoginContextProvider}
-import play.api.Configuration
+import com.typesafe.config.Config
 
 import scala.concurrent.ExecutionContext
 
@@ -23,14 +23,14 @@ object HDFSActor {
 }
 
 class HDFSActor @Inject()(hdfsClient: HDFSClient,
-                          configuration: Configuration,
+                          configuration: Config,
                           loginContextProvider: LoginContextProvider)
                          (implicit val executionContext: ExecutionContext) extends Actor {
 
   import HDFSActor._
 
-  val hdfsConfig: Configuration = configuration.get[Configuration]("hdfs")
-  val projectRoot: String = hdfsConfig.get[String]("project_root")
+  val hdfsConfig: Config = configuration.getConfig("hdfs")
+  val projectRoot: String = hdfsConfig.getString("project_root")
 
   def location(name: String) = s"$projectRoot/$name"
 
