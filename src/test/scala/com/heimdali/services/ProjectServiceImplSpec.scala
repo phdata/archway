@@ -21,16 +21,17 @@ class ProjectServiceImplSpec extends AsyncFlatSpec with Matchers with AsyncMockF
   behavior of "ProjectServiceImpl"
 
   it should "create a project" in {
-    implicit val actorSystem = ActorSystem()
     val probe = TestProbe()
     val repo = mock[ProjectRepository]
     val date = LocalDateTime.now
     val project = TestProject(id = 0L, createdDate = date)
-    repo.create _ expects project returning Future { project.copy(id = 123L) }
+    repo.create _ expects project returning Future {
+      project.copy(id = 123L)
+    }
 
-    val projectServiceImpl = new ProjectServiceImpl(repo, new Factory())
+    val projectServiceImpl = new ProjectServiceImpl(repo, factory)
     projectServiceImpl.create(project) map { newProject =>
-      newProject should have (
+      newProject should have(
         'id (123L),
         'name (project.name),
         'purpose (project.purpose),
@@ -42,26 +43,25 @@ class ProjectServiceImplSpec extends AsyncFlatSpec with Matchers with AsyncMockF
   }
 
   it should "list projects" in {
-    implicit val actorSystem = ActorSystem()
     val repo = mock[ProjectRepository]
     val Array(project1, project2) = Array(
       TestProject(id = 123L),
       TestProject(id = 321L)
     )
-    repo.list _ expects standardUsername returning Future { Seq(project1) }
+    repo.list _ expects standardUsername returning Future {
+      Seq(project1)
+    }
 
-    val projectServiceImpl = new ProjectServiceImpl(repo, new Factory())
+    val projectServiceImpl = new ProjectServiceImpl(repo, factory)
     projectServiceImpl.list(standardUsername) map { projects =>
-      projects.length should be (1)
-      projects.head should be (project1)
+      projects.length should be(1)
+      projects.head should be(project1)
     }
   }
 
-  class Factory extends ProjectProvisioner.Factory {
-    implicit val system: ActorSystem = ActorSystem()
+  implicit val system: ActorSystem = ActorSystem()
 
-    val actorRef = TestActorRef.create(system, Props(classOf[TestActor], new LinkedBlockingDeque[Message]()))
-    override def apply(project: Project): Actor = actorRef.underlyingActor
-  }
+  def factory(project: Project): ActorRef =
+    TestActorRef.create(system, Props(classOf[TestActor], new LinkedBlockingDeque[Message]()))
 
 }

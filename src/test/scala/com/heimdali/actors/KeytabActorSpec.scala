@@ -8,7 +8,6 @@ import com.typesafe.config.ConfigFactory
 import org.apache.hadoop.fs.Path
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FlatSpec, Matchers}
-import play.api.Configuration
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -27,7 +26,7 @@ class KeytabActorSpec extends FlatSpec with MockFactory with Matchers {
     val location = new Path("/projects/project")
     val keytabContent = "keytab content"
     val fullPath = new Path("/projects/project/project.keytab")
-    val configuration = new Configuration(ConfigFactory.load())
+    val configuration = ConfigFactory.load()
 
     (keytabService.generateKeytab _).expects(principal).returning(Future(keytabContent))
     (hdfsClient.uploadFile _).expects(*, fullPath).returning(Future(fullPath))

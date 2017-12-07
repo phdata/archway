@@ -1,19 +1,22 @@
 package com.heimdali.controller
 
 import java.nio.file.Files
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 import akka.http.scaladsl.model.headers.OAuth2BearerToken
 import akka.http.scaladsl.testkit.ScalatestRouteTest
 import com.heimdali.HeimdaliAPI
+import io.circe.parser._
 import com.heimdali.models.Project
 import com.heimdali.services._
 import com.heimdali.test.fixtures._
 import com.unboundid.ldap.sdk.SearchScope
-import io.getquill._
+import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport
+import io.getquill.{ImplicitQuery, PluralizedTableNames, PostgresAsyncContext, SnakeCase}
 import jawn.Parser._
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.hdfs.MiniDFSCluster
-import org.joda.time.DateTime
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach, FlatSpec, Matchers}
 
@@ -27,12 +30,16 @@ class ProjectControllerSpec
     with LDAPTest
     with MockFactory
     with ScalatestRouteTest
+    with FailFastCirceSupport
     with BeforeAndAfterEach {
+
+  import io.circe.java8.time._
+  import io.circe.generic.auto._
 
   behavior of "ProjectController"
 
   it should "create a project" in {
-    val json = parseFromString(
+    val json = parse(
       """
          {
       "name": "Sesame",
@@ -53,23 +60,22 @@ class ProjectControllerSpec
     val restApi = new HeimdaliAPI(clusterService, projectService, accountService)
 
     Post("/projects", json) ~> addCredentials(OAuth2BearerToken("AbCdEf123456")) ~> restApi.route ~> check {
-      status should be (201)
+      status should be(201)
       val response = responseAs[Project]
 
       val id = response.id
-      id shouldBe defined
-      response.name should be ("Sesame")
-      response.purpose should be ("to do something cool")
-      response.systemName should be ("sesame")
+      response.name should be("Sesame")
+      response.purpose should be("to do something cool")
+      response.systemName should be("sesame")
 
-      response.compliance.piiData should be (false)
-      response.compliance.phiData should be (false)
-      response.compliance.pciData should be (false)
+      response.compliance.piiData should be(false)
+      response.compliance.phiData should be(false)
+      response.compliance.pciData should be(false)
 
-      implicit val dateOrdering: Ordering[DateTime] = Ordering.fromLessThan(_ isBefore _)
-      response.created should be < DateTime.now
+      implicit val dateOrdering: Ordering[LocalDateTime] = Ordering.fromLessThan(_ isBefore _)
+      response.created should be < LocalDateTime.now
 
-      response.createdBy should be ("username")
+      response.createdBy should be("username")
 
       Thread.sleep((5 seconds).toMillis) // let the actor system update LDAP and HDFS
 
@@ -81,41 +87,42 @@ class ProjectControllerSpec
   }
 
   it should "not accept read-only fields" in {
-    val oldDate = new DateTime(2010, 1, 1, 0, 0, 0)
+    val oldDate = LocalDateTime.of(2010, 1, 1, 0, 0, 0)
+    val oldDateString = oldDate.format(DateTimeFormatter.ISO_DATE_TIME)
     val wrongUser = "johnsmith"
     val fakeId = 999
-    val json = Json.obj(
-      "id" -> fakeId,
-      "name" -> "sesame",
-      "purpose" -> "to do something cool",
-      "system_name" -> "blahblah",
-      "compliance" -> Json.obj(
-        "pii_data" -> false,
-        "phi_data" -> false,
-        "pci_data" -> false
-      ),
-      "hdfs" -> Json.obj(
-        "requested_gb" -> .01
-      ),
-      "created" -> oldDate,
-      "created_by" -> wrongUser
-    )
+    val json = parse(s"""{
+      "id: $fakeId,
+      "name": "sesame",
+      "purpose": "to do something cool",
+      "system_name": "blahblah",
+      "compliance": {
+        "pii_data"" false,
+        "phi_data": false,
+        "pci_data": false
+      },
+      "hdfs": {
+        "requested_gb": 0.01
+      },
+      "created": $oldDateString,
+      "created_by": $wrongUser
+      }""")
 
-    val request = FakeRequest(POST, "/projects")
-      .withHeaders(AUTHORIZATION -> "Bearer AbCdEf123456")
-      .withHeaders(CONTENT_TYPE -> "application/json")
-      .withJsonBody(json)
 
-    val rootCall = route(app, request).get
+    val clusterService = mock[ClusterService]
+    val projectService = mock[ProjectService]
+    val accountService = mock[AccountService]
+    val restApi = new HeimdaliAPI(clusterService, projectService, accountService)
 
-    status(rootCall) should be(CREATED)
+    Post("/projects", json) ~> addCredentials(OAuth2BearerToken("AbCdEf123456")) ~> restApi.route ~> check {
+      status should be(201)
 
-    val jsonResponse = contentAsJson(rootCall).as[JsObject]
-
-    (jsonResponse \ "id").as[Int] should not be fakeId
-    (jsonResponse \ "created").as[DateTime] should not be oldDate
-    (jsonResponse \ "created_by").as[String] should not be wrongUser
-    (jsonResponse \ "system_name").as[String] should be("sesame")
+      val result = responseAs[Project]
+      result.id should not be fakeId
+      result.created should not be oldDate
+      result.createdBy should not be wrongUser
+      result.systemName should not be "blahblah"
+    }
   }
 
   it should "list all projects" in {
@@ -132,10 +139,10 @@ class ProjectControllerSpec
     val restApi = new HeimdaliAPI(clusterService, projectService, accountService)
 
     Get("/projects") ~> addCredentials(OAuth2BearerToken("AbCdEf123456")) ~> restApi.route ~> check {
-      status should be (200)
+      status should be(200)
       val result = responseAs[Seq[Project]]
-      result.size should be (1)
-      result.head.id should be (project1.id)
+      result.size should be(1)
+      result.head.id should be(project1.id)
     }
   }
 

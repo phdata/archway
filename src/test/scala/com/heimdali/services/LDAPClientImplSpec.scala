@@ -1,10 +1,8 @@
 package com.heimdali.services
 
 import com.heimdali.test.fixtures.LDAPTest
-import com.typesafe.config.ConfigFactory
 import org.scalamock.scalatest.AsyncMockFactory
-import org.scalatest.{AsyncFlatSpec, BeforeAndAfterAll, Matchers}
-import play.api.Configuration
+import org.scalatest.{AsyncFlatSpec, Matchers}
 
 class LDAPClientImplSpec extends AsyncFlatSpec
   with Matchers

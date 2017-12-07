@@ -1,7 +1,5 @@
 package com.heimdali.services
 
-import javax.inject.Inject
-
 import com.typesafe.config.Config
 import io.circe.Json
 import pdi.jwt.{JwtAlgorithm, JwtCirce}
@@ -21,9 +19,9 @@ trait AccountService {
   def refresh(user: User): Future[Token]
 }
 
-class LDAPAccountService @Inject()(ldapClient: LDAPClient,
-                                   configuration: Config)
-                                  (implicit val executionContext: ExecutionContext)
+class LDAPAccountService(ldapClient: LDAPClient,
+                         configuration: Config)
+                        (implicit val executionContext: ExecutionContext)
   extends AccountService {
 
   val algo: JwtAlgorithm.HS256.type = JwtAlgorithm.HS256

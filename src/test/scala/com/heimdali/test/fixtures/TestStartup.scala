@@ -3,14 +3,14 @@ package com.heimdali.test.fixtures
 import javax.inject.Inject
 
 import com.heimdali.startup.{DBMigration, Startup}
-import play.api.Configuration
+import com.typesafe.config.Config
 
-class TestStartup @Inject()(configuration: Configuration,
+class TestStartup @Inject()(configuration: Config,
                             dbMigration: DBMigration) extends Startup {
   def start(): Unit = {
-    val url = configuration.get[String]("ctx.url")
-    val user = configuration.get[String]("ctx.user")
-    val pass = configuration.get[String]("ctx.password")
+    val url = configuration.getString("ctx.url")
+    val user = configuration.getString("ctx.user")
+    val pass = configuration.getString("ctx.password")
 
     dbMigration.migrate(url, user, pass)
   }

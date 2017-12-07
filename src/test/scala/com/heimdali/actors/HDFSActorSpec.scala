@@ -9,7 +9,6 @@ import com.typesafe.config.ConfigFactory
 import org.apache.hadoop.fs.Path
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.FlatSpec
-import play.api.Configuration
 
 import scala.concurrent.Future
 
@@ -24,7 +23,7 @@ class HDFSActorSpec extends FlatSpec with MockFactory {
     val probe = TestProbe()
     val location = s"/projects/${project.systemName}"
     val path = new Path(location)
-    val config = Configuration(ConfigFactory.load())
+    val config = ConfigFactory.load()
 
     val ldapClient = mock[HDFSClient]
     implicit val executionContext = scala.concurrent.ExecutionContext.global
