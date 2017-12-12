@@ -25,7 +25,7 @@ class LDAPAccountService(ldapClient: LDAPClient,
   extends AccountService {
 
   val algo: JwtAlgorithm.HS256.type = JwtAlgorithm.HS256
-  lazy val secret: String = configuration.getString("play.crypto.secret")
+  lazy val secret: String = configuration.getString("rest.secret")
 
   override def login(username: String, password: String): Future[Option[Token]] =
     ldapClient.findUser(username, password) flatMap {

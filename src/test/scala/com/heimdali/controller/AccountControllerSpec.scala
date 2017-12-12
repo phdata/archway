@@ -21,7 +21,7 @@ class AccountControllerSpec
 
   import io.circe.generic.auto._
 
-  lazy val secret: String = ConfigFactory.load().getString("play.crypto.secret")
+  lazy val secret: String = ConfigFactory.load().getString("rest.secret")
 
   behavior of "AccountController"
 

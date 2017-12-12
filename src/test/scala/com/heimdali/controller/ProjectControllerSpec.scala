@@ -8,7 +8,7 @@ import akka.http.scaladsl.model.headers.OAuth2BearerToken
 import akka.http.scaladsl.testkit.ScalatestRouteTest
 import com.heimdali.HeimdaliAPI
 import io.circe.parser._
-import com.heimdali.models.Project
+import com.heimdali.models.{Compliance, HDFSProvision, Project}
 import com.heimdali.services._
 import com.heimdali.test.fixtures._
 import com.unboundid.ldap.sdk.SearchScope
@@ -41,25 +41,28 @@ class ProjectControllerSpec
   it should "create a project" in {
     val json = parse(
       """
-         {
-      "name": "Sesame",
-      "purpose": "to do something cool",
-      "compliance": {
-        "pii_data": false,
-        "phi_data": false,
-        "pci_data": false
-      },
-      "hdfs": {
-        "requested_gb": 0.2
-      }
-    """)
+      | {
+      |   "name": "Sesame",
+      |   "purpose": "to do something cool",
+      |   "compliance": {
+      |     "pii_data": false,
+      |     "phi_data": false,
+      |     "pci_data": false
+      |   },
+      |   "hdfs": {
+      |     "requested_gb": 0.2
+      |   }
+      | }
+    """.stripMargin)
 
     val clusterService = mock[ClusterService]
     val projectService = mock[ProjectService]
+    (projectService.create _).expects(*).returning(Future(Project(123, "", "", Some(""), "", Compliance(true, true, true), HDFSProvision(None, 0.2), None, LocalDateTime.now(), "")))
     val accountService = mock[AccountService]
+    (accountService.validate _).expects("AbCdEf123456").returning(Future(Some(User("", ""))))
     val restApi = new HeimdaliAPI(clusterService, projectService, accountService)
 
-    Post("/projects", json) ~> addCredentials(OAuth2BearerToken("AbCdEf123456")) ~> restApi.route ~> check {
+    Post("/workspaces", json) ~> addCredentials(OAuth2BearerToken("AbCdEf123456")) ~> restApi.route ~> check {
       status should be(201)
       val response = responseAs[Project]
 
@@ -91,8 +94,9 @@ class ProjectControllerSpec
     val oldDateString = oldDate.format(DateTimeFormatter.ISO_DATE_TIME)
     val wrongUser = "johnsmith"
     val fakeId = 999
-    val json = parse(s"""{
-      "id: $fakeId,
+    val json = parse(
+      s"""{
+      "id": $fakeId,
       "name": "sesame",
       "purpose": "to do something cool",
       "system_name": "blahblah",

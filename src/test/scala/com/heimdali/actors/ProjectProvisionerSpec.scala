@@ -7,6 +7,7 @@ import com.heimdali.actors.KeytabActor.{GenerateKeytab, KeytabCreated}
 import com.heimdali.actors.LDAPActor.{CreateEntry, LDAPUpdate}
 import com.heimdali.actors.ProjectProvisioner.{ProvisionCompleted, RegisterCaller, Request}
 import com.heimdali.actors.ProjectSaver.ProjectSaved
+import com.heimdali.models.Project
 import com.heimdali.test.fixtures.TestProject
 import org.apache.hadoop.fs.Path
 import org.scalatest.{FlatSpec, Matchers}
@@ -47,7 +48,7 @@ class ProjectProvisionerSpec extends FlatSpec with Matchers {
     val keytabProbe = TestProbe("keytab")
 
     val project = TestProject()
-    val dn = s"cn=edh_sw_${project.generatedName},ou=groups,ou=hadoop,dc=jotunn,dc=io"
+    val dn = s"cn=edh_sw_${project.systemName},ou=groups,ou=hadoop,dc=jotunn,dc=io"
     val directory = s"/projects/${project.systemName}"
     val keytab = new Path(s"$directory/${project.systemName}.keytab")
 
@@ -56,7 +57,7 @@ class ProjectProvisionerSpec extends FlatSpec with Matchers {
     provisioner ! RegisterCaller(mainProbe.ref)
     provisioner ! Request
 
-    ldapProbe.expectMsg(CreateEntry(project.id, project.generatedName, Seq(project.createdBy)))
+    ldapProbe.expectMsg(CreateEntry(project.id, project.systemName, Seq(project.createdBy)))
     ldapProbe.reply(LDAPUpdate(project.id, project.systemName))
     saveProbe.expectMsg(LDAPUpdate(project.id, project.systemName))
     saveProbe.reply(ProjectSaved)

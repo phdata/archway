@@ -13,8 +13,17 @@ case class Project(id: Long,
                    hdfs: HDFSProvision,
                    keytabLocation: Option[String],
                    created: LocalDateTime,
-                   createdBy: String) {
-  val generatedName =
+                   createdBy: String)
+
+object Project {
+  def apply(name: String,
+            purpose: String,
+            compliance: Compliance,
+            hdfs: HDFSProvision,
+            createdBy: String): Project =
+    new Project(123, name, purpose, None, generateName(name), compliance, hdfs, None, LocalDateTime.now(), createdBy)
+
+  def generateName(name: String) =
     name
       .replaceAll("""[^a-zA-Z\d\s]""", " ") //replace with space to remove multiple underscores
       .trim //if we have leading or trailing spaces, clean them up

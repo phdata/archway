@@ -16,8 +16,7 @@ class ProjectSpec extends PropSpec with Matchers with TableDrivenPropertyChecks 
 
   property("a project's system name should replace illegal characters") {
     forAll(variations) { (projectName, systemName) =>
-      val project = TestProject(name = projectName)
-      project.generatedName should be (systemName)
+      Project.generateName(projectName) should be (systemName)
     }
   }
 

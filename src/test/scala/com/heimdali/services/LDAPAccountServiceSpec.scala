@@ -1,11 +1,12 @@
 package com.heimdali.services
 
-import com.typesafe.config.Config
+import com.typesafe.config.{Config, ConfigFactory}
 import org.scalamock.scalatest.AsyncMockFactory
 import org.scalatest.{AsyncFlatSpec, Matchers}
 import pdi.jwt.{JwtAlgorithm, JwtCirce}
 
 import scala.concurrent.Future
+import scala.util.Success
 
 class LDAPAccountServiceSpec extends AsyncFlatSpec with Matchers with AsyncMockFactory {
 
@@ -22,7 +23,7 @@ class LDAPAccountServiceSpec extends AsyncFlatSpec with Matchers with AsyncMockF
       .returning(Future {
         Some(ldapUser)
       })
-    val ldapAccountService = new LDAPAccountService(ldapClient, null)
+    val ldapAccountService = new LDAPAccountService(ldapClient, ConfigFactory.load())
     ldapAccountService.login(username, password) map { maybeUser =>
       maybeUser shouldBe defined
     }
@@ -65,21 +66,22 @@ class LDAPAccountServiceSpec extends AsyncFlatSpec with Matchers with AsyncMockF
     val user = User("Dude Doe", "username")
 
     val configuration = mock[Config]
-    (configuration.getString _)
-      .expects("play.crypto.secret").returning(secret)
+    (configuration.getString _).expects("rest.secret").returning(secret)
 
     val lDAPAccountService = new LDAPAccountService(null, configuration)
     lDAPAccountService.refresh(user).map { token =>
       val accessToken = JwtCirce.decodeJson(token.accessToken, secret, Seq(JwtAlgorithm.HS256))
       accessToken.toOption shouldBe defined
-      accessToken.get.as[Map[String, String]] should be (Map(
+      accessToken.get.as[Map[String, String]] should be (Right(Map(
         "name" -> user.name,
         "username" -> user.username
-      ))
+      )))
 
       val refreshToken = JwtCirce.decodeJson(token.refreshToken, secret, Seq(JwtAlgorithm.HS256))
       refreshToken.toOption shouldBe defined
-      refreshToken.get.as[Map[String, String]] should be (Map("username" -> user.username))
+      refreshToken.get.as[Map[String, String]] should be (Right(Map(
+        "username" -> user.username
+      )))
     }
   }
 
@@ -89,8 +91,7 @@ class LDAPAccountServiceSpec extends AsyncFlatSpec with Matchers with AsyncMockF
     val token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJuYW1lIjoiRHVkZSBEb2UiLCJ1c2VybmFtZSI6InVzZXJuYW1lIiwicm9sZSI6InVzZXIifQ.ArnfmWsJCLLoqGR2jKWQGJAf5kxP7Um2njCykIM5XXQ"
 
     val configuration = mock[Config]
-    (configuration.getString _)
-      .expects("play.crypto.secret").returning(secret)
+    (configuration.getString _).expects("rest.secret").returning(secret)
 
     val lDAPAccountService = new LDAPAccountService(null, configuration)
     lDAPAccountService.validate(token).map { maybeUser =>

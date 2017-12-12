@@ -6,9 +6,10 @@ import akka.http.scaladsl.{HttpConnectionContext, HttpExt, HttpsConnectionContex
 import akka.http.scaladsl.model.{HttpRequest, HttpResponse, ResponseEntity}
 import akka.http.scaladsl.settings.ConnectionPoolSettings
 import akka.http.scaladsl.testkit.ScalatestRouteTest
-import akka.stream.Materializer
+import akka.stream.{ActorMaterializer, Materializer}
 import com.typesafe.config.ConfigFactory
 import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport
+import io.circe.Printer
 import org.mockito.ArgumentMatchers._
 import org.mockito.Mockito._
 import org.scalamock.scalatest.MockFactory
@@ -37,17 +38,16 @@ class CDHClusterServiceSpec
 
     val configuration = ConfigFactory.defaultApplication()
 
-
     import io.circe.generic.auto._
-    val json = io.circe.parser.parse(Source.fromResource("cloudera/cluster.json").getLines().mkString)
-    val response = HttpResponse(akka.http.scaladsl.model.StatusCodes.OK).withEntity(json)
+    val Right(json) = io.circe.parser.parse(Source.fromResource("cloudera/cluster.json").getLines().mkString)
+    val response = HttpResponse(akka.http.scaladsl.model.StatusCodes.OK).withEntity(json.pretty(Printer.spaces2))
 
     val http = mock[HttpExt]
-    (http.singleRequest(_: HttpRequest, _: HttpsConnectionContext, _: ConnectionPoolSettings, _: LoggingAdapter)(_: Materializer))
-        .expects(*, *, *, *)
+    (http.singleRequest(_: HttpRequest)(_: Materializer))
+        .expects(*, *)
         .returning(Future(response))
 
-    val service = new CDHClusterService(http, configuration)(ExecutionContext.global)
+    val service = new CDHClusterService(http, configuration)(ExecutionContext.global, ActorMaterializer())
     service.list map { list =>
       list should have length 1
       list should be(Seq(Cluster(name, "Odin", CDH(version))))

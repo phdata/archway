@@ -40,7 +40,7 @@ class LDAPClientImpl(configuration: Config)
     val port = ldapConfiguration.getInt("port")
     val username = ldapConfiguration.getString("bind_dn")
     val password = ldapConfiguration.getString("bind_password")
-    val connections = Option(ldapConfiguration.getInt("connections")).getOrElse(10)
+    val connections = Try(ldapConfiguration.getInt("connections")).getOrElse(10)
 
     val connection = new LDAPConnection(server, port, username, password)
     new LDAPConnectionPool(connection, connections)

@@ -21,7 +21,7 @@ package object fixtures {
     val hdfsRequestedSize = 10
     val hdfs = HDFSProvision(hdfsLocation, hdfsRequestedSize)
     val keytabLocation = None
-    val systemName = Project(1, name, purpose, ldapDn, "", compliance, hdfs, keytabLocation, LocalDateTime.now, standardUsername).generatedName
+    val systemName = Project.generateName(name)
 
     def apply(id: Long = TestProject.id,
               name: String = TestProject.name,
