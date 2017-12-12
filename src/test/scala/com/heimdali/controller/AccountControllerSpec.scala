@@ -1,5 +1,6 @@
 package com.heimdali.controller
 
+import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.model.headers.OAuth2BearerToken
 import akka.http.scaladsl.testkit.ScalatestRouteTest
 import com.heimdali.HeimdaliAPI
@@ -11,13 +12,14 @@ import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FlatSpec, Matchers}
 import pdi.jwt.JwtAlgorithm
 
+import scala.concurrent.Future
+
 class AccountControllerSpec
   extends FlatSpec
     with Matchers
     with ScalatestRouteTest
     with MockFactory
-    with FailFastCirceSupport
-    with LDAPTest {
+    with FailFastCirceSupport {
 
   import io.circe.generic.auto._
 
@@ -29,10 +31,11 @@ class AccountControllerSpec
     val clusterService = mock[ClusterService]
     val projectService = mock[ProjectService]
     val accountService = mock[AccountService]
+    (accountService.validate _).expects(*).returning(Future(Some(User("Dude Doe", "username"))))
     val restApi = new HeimdaliAPI(clusterService, projectService, accountService)
     Get("/account/profile") ~> addCredentials(OAuth2BearerToken("AbCdEf123456")) ~> restApi.route ~> check {
-      status should be(200)
-      responseAs[Token]
+      status should be(StatusCodes.OK)
+      responseAs[User] should be(User("Dude Doe", "username"))
     }
   }
 
@@ -40,10 +43,11 @@ class AccountControllerSpec
     val clusterService = mock[ClusterService]
     val projectService = mock[ProjectService]
     val accountService = mock[AccountService]
+    (accountService.validate _).expects(*).returning(Future(Some(User("Dude Doe", "username"))))
     val restApi = new HeimdaliAPI(clusterService, projectService, accountService)
 
     Get("/account/profile") ~> addCredentials(OAuth2BearerToken("AbCdEf123456")) ~> restApi.route ~> check {
-      status should be(200)
+      status should be(StatusCodes.OK)
       responseAs[User] should be(User("Dude Doe", "username"))
     }
   }

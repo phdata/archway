@@ -6,7 +6,6 @@ import org.scalatest.{AsyncFlatSpec, Matchers}
 import pdi.jwt.{JwtAlgorithm, JwtCirce}
 
 import scala.concurrent.Future
-import scala.util.Success
 
 class LDAPAccountServiceSpec extends AsyncFlatSpec with Matchers with AsyncMockFactory {
 

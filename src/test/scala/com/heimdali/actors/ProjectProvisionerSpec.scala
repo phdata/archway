@@ -7,7 +7,6 @@ import com.heimdali.actors.KeytabActor.{GenerateKeytab, KeytabCreated}
 import com.heimdali.actors.LDAPActor.{CreateEntry, LDAPUpdate}
 import com.heimdali.actors.ProjectProvisioner.{ProvisionCompleted, RegisterCaller, Request}
 import com.heimdali.actors.ProjectSaver.ProjectSaved
-import com.heimdali.models.Project
 import com.heimdali.test.fixtures.TestProject
 import org.apache.hadoop.fs.Path
 import org.scalatest.{FlatSpec, Matchers}

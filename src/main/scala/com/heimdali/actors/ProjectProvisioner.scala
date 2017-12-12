@@ -1,7 +1,7 @@
 package com.heimdali.actors
 
 import akka.actor.{Actor, ActorLogging, ActorRef, FSM}
-import com.heimdali.models.Project
+import com.heimdali.Model._
 
 import scala.collection.immutable.Queue
 

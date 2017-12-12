@@ -2,7 +2,7 @@ package com.heimdali.repositories
 
 import javax.inject.Inject
 
-import com.heimdali.models.Project
+import com.heimdali.Model._
 import io.getquill._
 
 import scala.concurrent.{ExecutionContext, Future}

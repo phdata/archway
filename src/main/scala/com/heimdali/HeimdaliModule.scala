@@ -1,17 +1,19 @@
 package com.heimdali
 
+import java.time.LocalDateTime
+
 import akka.actor.ActorSystem
 import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.model.headers._
-import akka.http.scaladsl.server.Directives.{AuthenticationResult, _}
-import akka.http.scaladsl.server.directives.{AuthenticationDirective, AuthenticationResult, Credentials, SecurityDirectives}
-import akka.http.scaladsl.server.{Directive1, Route}
-import akka.http.scaladsl.unmarshalling.Unmarshal
+import akka.http.scaladsl.server.Directives._
+import akka.http.scaladsl.server.Route
+import akka.http.scaladsl.server.directives.{AuthenticationResult, Credentials, SecurityDirectives}
 import akka.stream.Materializer
-import com.heimdali.models.{Compliance, HDFSProvision, Project}
+import com.heimdali.Model._
 import com.heimdali.services._
 import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport
-import io.circe.{Decoder, Encoder, HCursor, Json}
+import io.circe.generic.extras.Configuration
+import io.circe.{Decoder, HCursor}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -23,16 +25,17 @@ class HeimdaliAPI(clusterService: ClusterService,
                   val materializer: Materializer)
   extends FailFastCirceSupport {
 
+
   import io.circe.java8.time._
   import io.circe.generic.auto._
 
-  def decodeProject(username: String): Decoder[Project] = (c: HCursor) => for {
+  implicit val decodeProject: Decoder[Project] = (c: HCursor) => for {
     name <- c.downField("name").as[String]
     purpose <- c.downField("purpose").as[String]
     compliance <- c.downField("compliance").as[Compliance]
     hdfs <- c.downField("hdfs").as[HDFSProvision]
   } yield {
-    Project(name, purpose, compliance, hdfs, username)
+    Project(123, name, purpose, None, "", compliance, hdfs, None, LocalDateTime.now(), "")
   }
 
   def validateCredentials(creds: Option[HttpCredentials]): Future[Either[HttpChallenge, SecurityDirectives.AuthenticationResult[Token]]] =
@@ -61,7 +64,14 @@ class HeimdaliAPI(clusterService: ClusterService,
             case Left(challenge) => reject()
           }
         }
-      }
+      } ~
+        path("profile") {
+          get {
+            authenticateOAuth2Async("heimdali", authenticator = validateToken) { user =>
+              complete(user)
+            }
+          }
+        }
     } ~
       path("clusters") {
         get {
@@ -74,14 +84,16 @@ class HeimdaliAPI(clusterService: ClusterService,
         post {
           authenticateOAuth2Async("heimdali", authenticator = validateToken) { user =>
             entity(as[Project]) { project =>
-              onSuccess(projectService.create(project)) { newProject =>
+              onSuccess(projectService.create(project.copy(createdBy = user.username))) { newProject =>
                 complete(StatusCodes.Created -> newProject)
               }
             }
           } ~
             get {
-              onSuccess(projectService.list("")) { projects =>
-                complete(projects)
+              authenticateOAuth2Async("heimdali", authenticator = validateToken) { user =>
+                onSuccess(projectService.list(user.username)) { projects =>
+                  complete(projects)
+                }
               }
             }
         }

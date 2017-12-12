@@ -2,7 +2,7 @@ package com.heimdali.services
 
 import akka.actor.{ActorRef, ActorSystem}
 import com.heimdali.actors.ProjectProvisioner.Request
-import com.heimdali.models.Project
+import com.heimdali.Model._
 import com.heimdali.repositories.ProjectRepository
 
 import scala.concurrent.duration._

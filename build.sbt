@@ -18,6 +18,7 @@ libraryDependencies ++= Seq(
   "io.circe" %% "circe-generic" % circeVersion,
   "io.circe" %% "circe-parser" % circeVersion,
   "io.circe" %% "circe-java8" % circeVersion,
+  "io.circe" %% "circe-generic-extras" % circeVersion,
 
   "de.heikoseeberger" %% "akka-http-circe" % "1.18.0",
   "com.pauldijou" %% "jwt-core" % "0.14.1",
@@ -33,6 +34,9 @@ libraryDependencies ++= Seq(
   "org.apache.hadoop" % "hadoop-client" % "2.6.0" % "provided" excludeAll(ExclusionRule(organization = "org.slf4j"),
                                                                           ExclusionRule(organization = "com.google.guava")),
 
+  "com.whisk" %% "docker-testkit-scalatest" % "0.9.5" % Test,
+  "com.whisk" %% "docker-testkit-impl-docker-java" % "0.9.5" % Test,
+  "com.whisk" %% "docker-testkit-config" % "0.9.5" % Test,
   "com.novocode" % "junit-interface" % "0.11" % Test,
   "com.typesafe.akka" %% "akka-testkit" % akkaVersion % Test,
   "com.typesafe.akka" %% "akka-http-testkit" % akkaHttpVersion % Test,
@@ -47,19 +51,9 @@ libraryDependencies ++= Seq(
 ).map(_.excludeAll(ExclusionRule(organization = "javax.servlet"),
   ExclusionRule(organization = "com.google.guava")))
 
-dependencyOverrides += "com.google.guava" % "guava" % "19.0"
-
-unmanagedSourceDirectories in Compile += baseDirectory.value / "src" / "main" / "scala"
-
-unmanagedResourceDirectories in Compile += baseDirectory.value / "src" / "main" / "resources"
-
-unmanagedSourceDirectories in Test += baseDirectory.value / "src" / "test" / "scala"
-
-unmanagedResourceDirectories in Test += baseDirectory.value / "src" / "test" / "resources"
-
-unmanagedClasspath in Compile ++= (unmanagedResources in Compile).value
-
-unmanagedClasspath in Test ++= (unmanagedResources in Test).value
+dependencyOverrides ++= Set(
+  "com.google.guava" % "guava" % "19.0"
+)
 
 packageName in Universal := "heimdali-api"
 

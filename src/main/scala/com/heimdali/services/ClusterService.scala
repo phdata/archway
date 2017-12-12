@@ -10,6 +10,9 @@ case class Cluster(id: String, name: String, distribution: Distribution)
 
 sealed trait Distribution {
   def version: String
+  def name: String
 }
 
-case class CDH(version: String) extends Distribution
+case class CDH(version: String) extends Distribution {
+  val name = "CDH"
+}

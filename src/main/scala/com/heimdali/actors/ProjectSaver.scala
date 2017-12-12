@@ -3,7 +3,7 @@ package com.heimdali.actors
 import javax.inject.Inject
 
 import akka.actor.Actor
-import com.heimdali.models.Project
+import com.heimdali.Model._
 import com.heimdali.repositories.ProjectRepository
 
 import scala.concurrent.ExecutionContext

@@ -5,7 +5,7 @@ import javax.inject.Inject
 import akka.actor.Actor
 import akka.pattern.pipe
 import com.heimdali.actors.ProjectSaver.ProjectUpdate
-import com.heimdali.models.Project
+import com.heimdali.Model._
 import com.heimdali.services.{HDFSClient, LoginContextProvider}
 import com.typesafe.config.Config
 
