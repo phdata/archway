@@ -7,7 +7,7 @@ scalaVersion := "2.12.1"
 lazy val root = (project in file("."))
 
 val akkaVersion = "2.5.6"
-val circeVersion = "0.9.0-M2"
+val circeVersion = "0.8.0"
 val akkaHttpVersion = "10.0.10"
 
 libraryDependencies ++= Seq(

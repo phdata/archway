@@ -34,7 +34,7 @@ class HDFSActorSpec extends FlatSpec with MockFactory {
     (context.elevate[HDFSUpdate] _).expects(*).onCall((r: Future[HDFSUpdate]) => r)
 
     val actor = actorSystem.actorOf(Props(classOf[HDFSActor], ldapClient, config, context, executionContext))
-    val request = CreateDirectory(project.id.get, project.systemName.get, project.hdfs.requestedSizeInGB)
+    val request = CreateDirectory(project.id, project.systemName, project.hdfs.requestedSizeInGB)
     actor.tell(request, probe.ref)
     probe.expectMsgClass(classOf[HDFSUpdate])
   }

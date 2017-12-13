@@ -3,24 +3,27 @@ package com.heimdali.models
 import java.time.LocalDateTime
 
 import com.heimdali.repositories.SharedWorkspaceRecord
-import io.circe.generic.extras.{Configuration, ConfiguredJsonCodec}
 
 object ViewModel {
 
-  implicit val configuration: Configuration = Configuration.default.withSnakeCaseMemberNames
+  case class Compliance(phiData: Boolean,
+                        pciData: Boolean,
+                        piiData: Boolean)
 
-  @ConfiguredJsonCodec case class Compliance(phiData: Boolean,
-                                             pciData: Boolean,
-                                             piiData: Boolean)
-
-  @ConfiguredJsonCodec case class HDFSProvision(location: Option[String],
+  case class HDFSProvision(location: Option[String],
                            requestedSizeInGB: Double)
 
-  @ConfiguredJsonCodec case class SharedWorkspace(id: Option[Long],
+  case class SharedWorkspaceRequest(name: String,
+                                    purpose: String,
+                                    compliance: Compliance,
+                                    hdfs: HDFSProvision,
+                                    createdBy: Option[String])
+
+  case class SharedWorkspace(id: Long,
                              name: String,
                              purpose: String,
                              ldapDn: Option[String],
-                             systemName: Option[String],
+                             systemName: String,
                              compliance: Compliance,
                              hdfs: HDFSProvision,
                              keytabLocation: Option[String],
@@ -37,16 +40,17 @@ object ViewModel {
 
     def apply(sharedWorkspaceRecord: SharedWorkspaceRecord): SharedWorkspace =
       SharedWorkspace(
-        Some(sharedWorkspaceRecord.id),
+        sharedWorkspaceRecord.id,
         sharedWorkspaceRecord.name,
         sharedWorkspaceRecord.purpose,
         sharedWorkspaceRecord.ldapDn,
-        Some(sharedWorkspaceRecord.systemName),
+        sharedWorkspaceRecord.systemName,
         Compliance(sharedWorkspaceRecord.piiData, sharedWorkspaceRecord.pciData, sharedWorkspaceRecord.piiData),
         HDFSProvision(sharedWorkspaceRecord.hdfsLocation, sharedWorkspaceRecord.hdfsRequestedSizeInGb),
         sharedWorkspaceRecord.keytabLocation,
         sharedWorkspaceRecord.created,
         sharedWorkspaceRecord.createdBy)
   }
+
 
 }

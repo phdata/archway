@@ -53,9 +53,9 @@ class WorkspaceProvisioner(ldapActor: ActorRef,
   import WorkspaceSaver._
 
   val initialSteps: Queue[(ActorRef, AnyRef)] = Queue(
-    ldapActor -> CreateEntry(project.id.get, project.systemName.get, Seq(project.createdBy)),
-    hDFSActor -> CreateDirectory(project.id.get, project.systemName.get, project.hdfs.requestedSizeInGB),
-    keytabActor -> GenerateKeytab(project.id.get, project.systemName.get)
+    ldapActor -> CreateEntry(project.id, project.systemName, Seq(project.createdBy)),
+    hDFSActor -> CreateDirectory(project.id, project.systemName, project.hdfs.requestedSizeInGB),
+    keytabActor -> GenerateKeytab(project.id, project.systemName)
   )
 
   def dequeue(queue: Queue[(ActorRef, Any)]): Queue[(ActorRef, Any)] = {

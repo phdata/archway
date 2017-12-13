@@ -21,10 +21,10 @@ class SharedWorkspaceSaverTest extends FlatSpec with Matchers with MockFactory {
 
     val probe = TestProbe()
     val project = TestProject(ldapDn = Some("mydn"))
-    val request = LDAPUpdate(project.id.get, project.ldapDn.get)
+    val request = LDAPUpdate(project.id, project.ldapDn.get)
 
     val projectRepository = mock[WorkspaceRepository]
-    (projectRepository.setLDAP _).expects(project.id.get, project.ldapDn.get).returning(Future { project })
+    (projectRepository.setLDAP _).expects(project.id, project.ldapDn.get).returning(Future { project })
 
     val actor = actorSystem.actorOf(Props(classOf[WorkspaceSaver], projectRepository, executionContext))
     actor.tell(request, probe.ref)

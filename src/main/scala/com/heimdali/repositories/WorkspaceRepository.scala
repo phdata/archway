@@ -10,7 +10,7 @@ import scala.concurrent.{ExecutionContext, Future}
 trait WorkspaceRepository {
   def list(username: String): Future[Seq[SharedWorkspace]]
 
-  def create(sharedWorkspace: SharedWorkspace): Future[SharedWorkspace]
+  def create(sharedWorkspace: SharedWorkspaceRequest): Future[SharedWorkspace]
 
   def setLDAP(id: Long, dn: String): Future[SharedWorkspace]
 
@@ -34,21 +34,21 @@ case class SharedWorkspaceRecord(id: Long,
                                  keytabLocation: Option[String])
 
 object SharedWorkspaceRecord {
-  def apply(sharedWorkspace: SharedWorkspace): SharedWorkspaceRecord =
+  def apply(sharedWorkspace: SharedWorkspaceRequest): SharedWorkspaceRecord =
     SharedWorkspaceRecord(
-      sharedWorkspace.id.getOrElse(123),
+      123L,
       sharedWorkspace.name,
       sharedWorkspace.purpose,
-      sharedWorkspace.createdBy,
-      sharedWorkspace.created,
-      sharedWorkspace.systemName.getOrElse(""),
-      sharedWorkspace.ldapDn,
+      sharedWorkspace.createdBy.get,
+      LocalDateTime.now(),
+      SharedWorkspace.generateName(sharedWorkspace.name),
+      None,
       sharedWorkspace.compliance.phiData,
       sharedWorkspace.compliance.pciData,
       sharedWorkspace.compliance.piiData,
-      sharedWorkspace.hdfs.location,
+      None,
       sharedWorkspace.hdfs.requestedSizeInGB,
-      sharedWorkspace.keytabLocation)
+      None)
 }
 
 class WorkspaceRepositoryImpl(implicit ec: ExecutionContext)
@@ -62,7 +62,7 @@ class WorkspaceRepositoryImpl(implicit ec: ExecutionContext)
     query[SharedWorkspaceRecord].filter(_.createdBy == lift(username))
   }.map(_.map(SharedWorkspace.apply))
 
-  def create(sharedWorkspace: SharedWorkspace): Future[SharedWorkspace] = {
+  def create(sharedWorkspace: SharedWorkspaceRequest): Future[SharedWorkspace] = {
     val workspace = SharedWorkspaceRecord(sharedWorkspace)
     run {
       query[SharedWorkspaceRecord].insert(lift(workspace)).returning(_.id)

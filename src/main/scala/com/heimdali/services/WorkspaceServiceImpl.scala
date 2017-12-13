@@ -9,7 +9,7 @@ import scala.concurrent.duration._
 import scala.concurrent.{ExecutionContext, Future}
 
 trait WorkspaceService {
-  def create(workspace: SharedWorkspace): Future[SharedWorkspace]
+  def create(workspace: SharedWorkspaceRequest): Future[SharedWorkspace]
 
   def list(username: String): Future[Seq[SharedWorkspace]]
 }
@@ -20,9 +20,9 @@ class WorkspaceServiceImpl(workspaceRepository: WorkspaceRepository,
                            actorSystem: ActorSystem) extends WorkspaceService {
   override def list(username: String): Future[Seq[SharedWorkspace]] = workspaceRepository.list(username)
 
-  override def create(workspace: SharedWorkspace): Future[SharedWorkspace] = {
+  override def create(workspace: SharedWorkspaceRequest): Future[SharedWorkspace] = {
     workspaceRepository.create(workspace) map { updated =>
-      actorSystem.scheduler.scheduleOnce(0 seconds, provisioningFactory(workspace), Request)
+      actorSystem.scheduler.scheduleOnce(0 seconds, provisioningFactory(updated), Request)
       updated
     }
   }

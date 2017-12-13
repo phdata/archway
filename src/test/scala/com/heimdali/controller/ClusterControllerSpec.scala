@@ -41,7 +41,7 @@ class ClusterControllerSpec
 
       result.hcursor
         .downField("distribution")
-        .get[String]("name").toOption.get should be(FakeClusterService.cdh.getClass.getSimpleName)
+        .get[String]("name").toOption.get should be(FakeClusterService.cdh.name)
 
       result.hcursor
         .downField("distribution")
