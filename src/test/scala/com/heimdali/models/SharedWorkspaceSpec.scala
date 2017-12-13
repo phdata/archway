@@ -4,7 +4,7 @@ import com.heimdali.test.fixtures.TestProject
 import org.scalatest.prop.TableDrivenPropertyChecks
 import org.scalatest.{Matchers, PropSpec}
 
-class ProjectSpec extends PropSpec with Matchers with TableDrivenPropertyChecks {
+class SharedWorkspaceSpec extends PropSpec with Matchers with TableDrivenPropertyChecks {
 
   val variations = Table(
     ("project name", "system name"),

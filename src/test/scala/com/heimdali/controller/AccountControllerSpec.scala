@@ -29,7 +29,7 @@ class AccountControllerSpec
 
   it should "do something" in {
     val clusterService = mock[ClusterService]
-    val projectService = mock[ProjectService]
+    val projectService = mock[WorkspaceService]
     val accountService = mock[AccountService]
     (accountService.validate _).expects(*).returning(Future(Some(User("Dude Doe", "username"))))
     val restApi = new HeimdaliAPI(clusterService, projectService, accountService)
@@ -41,7 +41,7 @@ class AccountControllerSpec
 
   it should "get a profile" in {
     val clusterService = mock[ClusterService]
-    val projectService = mock[ProjectService]
+    val projectService = mock[WorkspaceService]
     val accountService = mock[AccountService]
     (accountService.validate _).expects(*).returning(Future(Some(User("Dude Doe", "username"))))
     val restApi = new HeimdaliAPI(clusterService, projectService, accountService)

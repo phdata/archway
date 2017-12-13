@@ -16,7 +16,7 @@ import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach, FlatSpec, Matchers}
 
 import scala.concurrent.Future
 
-class ProjectControllerSpec
+class SharedWorkspaceControllerSpec
   extends FlatSpec
     with Matchers
     with BeforeAndAfterAll
@@ -48,7 +48,7 @@ class ProjectControllerSpec
     """.stripMargin)
 
     val clusterService = mock[ClusterService]
-    val projectService = mock[ProjectService]
+    val projectService = mock[WorkspaceService]
     (projectService.create _).expects(*).returning(Future(Project(123, "", "", Some(""), "", Compliance(true, true, true), HDFSProvision(None, 0.2), None, LocalDateTime.now(), "")))
     val accountService = mock[AccountService]
     (accountService.validate _).expects("AbCdEf123456").returning(Future(Some(User("", ""))))
@@ -99,7 +99,7 @@ class ProjectControllerSpec
 
 
     val clusterService = mock[ClusterService]
-    val projectService = mock[ProjectService]
+    val projectService = mock[WorkspaceService]
     val accountService = mock[AccountService]
     val restApi = new HeimdaliAPI(clusterService, projectService, accountService)
 
@@ -122,7 +122,7 @@ class ProjectControllerSpec
 
     val clusterService = mock[ClusterService]
     val accountService = mock[AccountService]
-    val projectService = mock[ProjectService]
+    val projectService = mock[WorkspaceService]
     (projectService.list _).expects("username").returning(Future(projects))
 
     val restApi = new HeimdaliAPI(clusterService, projectService, accountService)

@@ -5,15 +5,15 @@ import akka.testkit.{TestActorRef, TestProbe}
 import com.heimdali.actors.HDFSActor.{CreateDirectory, HDFSUpdate}
 import com.heimdali.actors.KeytabActor.{GenerateKeytab, KeytabCreated}
 import com.heimdali.actors.LDAPActor.{CreateEntry, LDAPUpdate}
-import com.heimdali.actors.ProjectProvisioner.{ProvisionCompleted, RegisterCaller, Request}
-import com.heimdali.actors.ProjectSaver.ProjectSaved
+import com.heimdali.actors.WorkspaceProvisioner.{ProvisionCompleted, RegisterCaller, Request}
+import com.heimdali.actors.WorkspaceSaver.WorkspaceSaved
 import com.heimdali.test.fixtures.TestProject
 import org.apache.hadoop.fs.Path
 import org.scalatest.{FlatSpec, Matchers}
 
 import scala.collection.immutable.Queue
 
-class ProjectProvisionerSpec extends FlatSpec with Matchers {
+class SharedWorkspaceProvisionerSpec extends FlatSpec with Matchers {
 
   behavior of "Project Provisioner"
 
@@ -28,7 +28,7 @@ class ProjectProvisionerSpec extends FlatSpec with Matchers {
 
     val project = TestProject()
 
-    val provisioner = TestActorRef[ProjectProvisioner](Props(classOf[ProjectProvisioner], testProb.ref, testProb.ref, testProb.ref, testProb.ref, project)).underlyingActor
+    val provisioner = TestActorRef[WorkspaceProvisioner](Props(classOf[WorkspaceProvisioner], testProb.ref, testProb.ref, testProb.ref, testProb.ref, project)).underlyingActor
 
     provisioner.initialSteps should be(Queue(
       testProb.ref -> CreateEntry(project.id, project.systemName, Seq(project.createdBy)),
@@ -51,7 +51,7 @@ class ProjectProvisionerSpec extends FlatSpec with Matchers {
     val directory = s"/projects/${project.systemName}"
     val keytab = new Path(s"$directory/${project.systemName}.keytab")
 
-    val provisioner = actorSystem.actorOf(Props(classOf[ProjectProvisioner], ldapProbe.ref, saveProbe.ref, hdfsProbe.ref, keytabProbe.ref, project))
+    val provisioner = actorSystem.actorOf(Props(classOf[WorkspaceProvisioner], ldapProbe.ref, saveProbe.ref, hdfsProbe.ref, keytabProbe.ref, project))
 
     provisioner ! RegisterCaller(mainProbe.ref)
     provisioner ! Request
@@ -59,17 +59,17 @@ class ProjectProvisionerSpec extends FlatSpec with Matchers {
     ldapProbe.expectMsg(CreateEntry(project.id, project.systemName, Seq(project.createdBy)))
     ldapProbe.reply(LDAPUpdate(project.id, project.systemName))
     saveProbe.expectMsg(LDAPUpdate(project.id, project.systemName))
-    saveProbe.reply(ProjectSaved)
+    saveProbe.reply(WorkspaceSaved)
 
     hdfsProbe.expectMsg(CreateDirectory(project.id, project.systemName, project.hdfs.requestedSizeInGB))
     hdfsProbe.reply(HDFSUpdate(project.id, directory))
     saveProbe.expectMsg(HDFSUpdate(project.id, directory))
-    saveProbe.reply(ProjectSaved)
+    saveProbe.reply(WorkspaceSaved)
 
     keytabProbe.expectMsg(GenerateKeytab(project.id, project.systemName))
     keytabProbe.reply(KeytabCreated(project.id, keytab))
     saveProbe.expectMsg(KeytabCreated(project.id, keytab))
-    saveProbe.reply(ProjectSaved)
+    saveProbe.reply(WorkspaceSaved)
 
     mainProbe.expectMsg(ProvisionCompleted)
   }

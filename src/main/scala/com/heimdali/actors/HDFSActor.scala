@@ -4,8 +4,8 @@ import javax.inject.Inject
 
 import akka.actor.Actor
 import akka.pattern.pipe
-import com.heimdali.actors.ProjectSaver.ProjectUpdate
-import com.heimdali.Model._
+import com.heimdali.actors.WorkspaceSaver.ProjectUpdate
+import com.heimdali.models.ViewModel._
 import com.heimdali.services.{HDFSClient, LoginContextProvider}
 import com.typesafe.config.Config
 
@@ -16,7 +16,7 @@ object HDFSActor {
   case class CreateDirectory(id: Long, name: String, requestedSizeInGB: Double)
 
   case class HDFSUpdate(id: Long, directory: String) extends ProjectUpdate {
-    override def updateProject(project: Project): Project =
+    override def updateProject(project: SharedWorkspace): SharedWorkspace =
       project.copy(hdfs = project.hdfs.copy(location = Some(directory)))
   }
 

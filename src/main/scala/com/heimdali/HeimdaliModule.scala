@@ -9,7 +9,7 @@ import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.server.directives.{AuthenticationResult, Credentials, SecurityDirectives}
 import akka.stream.Materializer
-import com.heimdali.Model._
+import com.heimdali.models.ViewModel._
 import com.heimdali.services._
 import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport
 import io.circe.generic.extras.Configuration
@@ -18,7 +18,7 @@ import io.circe.{Decoder, HCursor}
 import scala.concurrent.{ExecutionContext, Future}
 
 class HeimdaliAPI(clusterService: ClusterService,
-                  projectService: ProjectService,
+                  workspaceService: WorkspaceService,
                   accountService: AccountService)
                  (implicit val actorSystem: ActorSystem,
                   val executionContext: ExecutionContext,
@@ -29,13 +29,13 @@ class HeimdaliAPI(clusterService: ClusterService,
   import io.circe.java8.time._
   import io.circe.generic.auto._
 
-  implicit val decodeProject: Decoder[Project] = (c: HCursor) => for {
+  implicit val decodeProject: Decoder[SharedWorkspace] = (c: HCursor) => for {
     name <- c.downField("name").as[String]
     purpose <- c.downField("purpose").as[String]
     compliance <- c.downField("compliance").as[Compliance]
     hdfs <- c.downField("hdfs").as[HDFSProvision]
   } yield {
-    Project(123, name, purpose, None, "", compliance, hdfs, None, LocalDateTime.now(), "")
+    SharedWorkspace(123, name, purpose, None, "", compliance, hdfs, None, LocalDateTime.now(), "")
   }
 
   def validateCredentials(creds: Option[HttpCredentials]): Future[Either[HttpChallenge, SecurityDirectives.AuthenticationResult[Token]]] =
@@ -56,23 +56,7 @@ class HeimdaliAPI(clusterService: ClusterService,
     }
 
   val route: Route =
-    pathPrefix("account") {
-      path("token") {
-        get {
-          authenticateOrRejectWithChallenge(validateCredentials _) {
-            case Right(user) => complete(user)
-            case Left(challenge) => reject()
-          }
-        }
-      } ~
-        path("profile") {
-          get {
-            authenticateOAuth2Async("heimdali", authenticator = validateToken) { user =>
-              complete(user)
-            }
-          }
-        }
-    } ~
+     ~
       path("clusters") {
         get {
           onSuccess(clusterService.list) { clusters =>
@@ -83,16 +67,16 @@ class HeimdaliAPI(clusterService: ClusterService,
       path("workspaces") {
         post {
           authenticateOAuth2Async("heimdali", authenticator = validateToken) { user =>
-            entity(as[Project]) { project =>
-              onSuccess(projectService.create(project.copy(createdBy = user.username))) { newProject =>
-                complete(StatusCodes.Created -> newProject)
+            entity(as[SharedWorkspace]) { workspace =>
+              onSuccess(workspaceService.create(workspace.copy(createdBy = user.username))) { newWorkspace =>
+                complete(StatusCodes.Created -> newWorkspace)
               }
             }
           } ~
             get {
               authenticateOAuth2Async("heimdali", authenticator = validateToken) { user =>
-                onSuccess(projectService.list(user.username)) { projects =>
-                  complete(projects)
+                onSuccess(workspaceService.list(user.username)) { workspaces =>
+                  complete(workspaces)
                 }
               }
             }

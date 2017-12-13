@@ -26,7 +26,7 @@ class ClusterControllerSpec
   it should "get a list of clusters" in {
     val clusterService = mock[ClusterService]
     (clusterService.list _).expects().returning(Future(Seq(Cluster("admin", "admin", CDH("1.0")))))
-    val projectService = mock[ProjectService]
+    val projectService = mock[WorkspaceService]
     val accountService = mock[AccountService]
     (accountService.validate _).expects(*).returning(Future(Some(User("", ""))))
     val restApi = new HeimdaliAPI(clusterService, projectService, accountService)
