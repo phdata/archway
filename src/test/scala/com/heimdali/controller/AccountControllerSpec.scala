@@ -35,14 +35,14 @@ class AccountControllerSpec
     val accountController = new AccountController(authService)
     Get("/account/token") ~> addCredentials(OAuth2BearerToken("abc123")) ~> accountController.route ~> check {
       status should be(StatusCodes.OK)
-      responseAs[User] should be(User("Dude Doe", "username"))
+      responseAs[Token] should be(Token("", ""))
     }
   }
 
   it should "get a profile" in {
     val authService = mock[AuthService]
     (authService.validateToken _)
-      .expects(Credentials.Provided("abc123"))
+      .expects(*)
       .returning(Future(Option(User("Dude Doe", "username"))))
 
     val accountController = new AccountController(authService)

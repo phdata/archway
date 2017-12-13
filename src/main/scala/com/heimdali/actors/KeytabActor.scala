@@ -1,7 +1,6 @@
 package com.heimdali.actors
 
 import java.io.ByteArrayInputStream
-import javax.inject.Inject
 
 import akka.actor.Actor
 import akka.pattern.pipe
@@ -24,14 +23,15 @@ object KeytabActor {
 
 }
 
-class KeytabActor @Inject()(hdfsClient: HDFSClient,
-                            keytabService: KeytabService,
-                            configuration: Config)
-                           (implicit val executionContext: ExecutionContext) extends Actor {
+class KeytabActor(hdfsClient: HDFSClient,
+                  keytabService: KeytabService,
+                  configuration: Config)
+                 (implicit val executionContext: ExecutionContext) extends Actor {
 
   import KeytabActor._
 
   val basePath: String = configuration.getString("hdfs.project_root")
+
   def projectPath(principal: String): Path = new Path(basePath, s"$principal/$principal.keytab")
 
   override val receive: Receive = {

@@ -1,7 +1,5 @@
 package com.heimdali.actors
 
-import javax.inject.Inject
-
 import akka.actor.{Actor, ActorLogging}
 import akka.pattern.pipe
 import com.heimdali.actors.WorkspaceSaver.ProjectUpdate
@@ -21,8 +19,8 @@ object LDAPActor {
 
 }
 
-class LDAPActor @Inject()(ldapClient: LDAPClient)
-                         (implicit val executionContext: ExecutionContext)
+class LDAPActor(ldapClient: LDAPClient)
+               (implicit val executionContext: ExecutionContext)
   extends Actor with ActorLogging {
 
   import LDAPActor._

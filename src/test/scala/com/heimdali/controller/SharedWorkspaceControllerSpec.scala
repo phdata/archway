@@ -5,8 +5,8 @@ import java.time.format.DateTimeFormatter
 
 import akka.http.scaladsl.model.headers.OAuth2BearerToken
 import akka.http.scaladsl.testkit.ScalatestRouteTest
-import com.heimdali.HeimdaliAPI
-import com.heimdali.models.{Compliance, HDFSProvision, Project}
+import com.heimdali.models.ViewModel.SharedWorkspace
+import com.heimdali.{AuthService, WorkspaceController}
 import com.heimdali.services._
 import com.heimdali.test.fixtures._
 import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport
@@ -47,21 +47,20 @@ class SharedWorkspaceControllerSpec
       | }
     """.stripMargin)
 
-    val clusterService = mock[ClusterService]
-    val projectService = mock[WorkspaceService]
-    (projectService.create _).expects(*).returning(Future(Project(123, "", "", Some(""), "", Compliance(true, true, true), HDFSProvision(None, 0.2), None, LocalDateTime.now(), "")))
-    val accountService = mock[AccountService]
-    (accountService.validate _).expects("AbCdEf123456").returning(Future(Some(User("", ""))))
-    val restApi = new HeimdaliAPI(clusterService, projectService, accountService)
+    val workspaceService = mock[WorkspaceService]
+    (workspaceService.create _).expects(*).returning(Future(TestProject()))
+    val authService = mock[AuthService]
+    (authService.validateToken _).expects(*).returning(Future(Some(User("", ""))))
+    val restApi = new WorkspaceController(authService, workspaceService)
 
     Post("/workspaces", json) ~> addCredentials(OAuth2BearerToken("AbCdEf123456")) ~> restApi.route ~> check {
       status should be(201)
-      val response = responseAs[Project]
+      val response = responseAs[SharedWorkspace]
 
       val id = response.id
-      response.name should be("Sesame")
-      response.purpose should be("to do something cool")
-      response.systemName should be("sesame")
+      response.name should be(TestProject.name)
+      response.purpose should be(TestProject.purpose)
+      response.systemName should be(TestProject.systemName)
 
       response.compliance.piiData should be(false)
       response.compliance.phiData should be(false)
@@ -97,16 +96,16 @@ class SharedWorkspaceControllerSpec
       |   "created_by": "$wrongUser"
       | }""".stripMargin)
 
-
-    val clusterService = mock[ClusterService]
-    val projectService = mock[WorkspaceService]
-    val accountService = mock[AccountService]
-    val restApi = new HeimdaliAPI(clusterService, projectService, accountService)
+    val workspaceService = mock[WorkspaceService]
+    (workspaceService.list _).expects(*).returning(Future(Seq(TestProject())))
+    val authService = mock[AuthService]
+    (authService.validateToken _).expects(*).returning(Future(Some(User("", ""))))
+    val restApi = new WorkspaceController(authService, workspaceService)
 
     Post("/workspaces", json) ~> addCredentials(OAuth2BearerToken("AbCdEf123456")) ~> restApi.route ~> check {
       status should be(201)
 
-      val result = responseAs[Project]
+      val result = responseAs[SharedWorkspace]
       result.id should not be fakeId
       result.created should not be oldDate
       result.createdBy should not be wrongUser
@@ -115,21 +114,20 @@ class SharedWorkspaceControllerSpec
   }
 
   it should "list all projects" in {
-    val projects@Seq(project1, project2) = Seq(
-      TestProject(id = 123L, name = "Project 1", createdBy = "username"),
-      TestProject(id = 321L, name = "Project 2")
+    val projects@Seq(project1, _) = Seq(
+      TestProject(id = Some(123L), name = "Project 1", createdBy = "username"),
+      TestProject(id = Some(321L), name = "Project 2")
     )
 
-    val clusterService = mock[ClusterService]
-    val accountService = mock[AccountService]
-    val projectService = mock[WorkspaceService]
-    (projectService.list _).expects("username").returning(Future(projects))
-
-    val restApi = new HeimdaliAPI(clusterService, projectService, accountService)
+    val workspaceService = mock[WorkspaceService]
+    (workspaceService.list _).expects(*).returning(Future(projects))
+    val authService = mock[AuthService]
+    (authService.validateToken _).expects(*).returning(Future(Some(User("", ""))))
+    val restApi = new WorkspaceController(authService, workspaceService)
 
     Get("/workspaces") ~> addCredentials(OAuth2BearerToken("AbCdEf123456")) ~> restApi.route ~> check {
       status should be(200)
-      val result = responseAs[Seq[Project]]
+      val result = responseAs[Seq[SharedWorkspace]]
       result.size should be(1)
       result.head.id should be(project1.id)
     }

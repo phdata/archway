@@ -1,5 +1,7 @@
 package com.heimdali.repositories
 
+import java.time.LocalDateTime
+
 import com.heimdali.models.ViewModel._
 import io.getquill._
 
@@ -8,7 +10,7 @@ import scala.concurrent.{ExecutionContext, Future}
 trait WorkspaceRepository {
   def list(username: String): Future[Seq[SharedWorkspace]]
 
-  def create(name: String, purpose: String, phi: Boolean, pci: Boolean, pii: Boolean, requestedSizeInGB: Double): Future[SharedWorkspace]
+  def create(sharedWorkspace: SharedWorkspace): Future[SharedWorkspace]
 
   def setLDAP(id: Long, dn: String): Future[SharedWorkspace]
 
@@ -20,11 +22,34 @@ trait WorkspaceRepository {
 case class SharedWorkspaceRecord(id: Long,
                                  name: String,
                                  purpose: String,
-                                 phi: Boolean,
-                                 pci: Boolean,
-                                 pii: Boolean,
-                                 requestedSizeInGB: Double,
-                                 createdBy: String)
+                                 createdBy: String,
+                                 created: LocalDateTime,
+                                 systemName: String,
+                                 ldapDn: Option[String],
+                                 phiData: Boolean,
+                                 pciData: Boolean,
+                                 piiData: Boolean,
+                                 hdfsLocation: Option[String],
+                                 hdfsRequestedSizeInGb: Double,
+                                 keytabLocation: Option[String])
+
+object SharedWorkspaceRecord {
+  def apply(sharedWorkspace: SharedWorkspace): SharedWorkspaceRecord =
+    SharedWorkspaceRecord(
+      sharedWorkspace.id.getOrElse(123),
+      sharedWorkspace.name,
+      sharedWorkspace.purpose,
+      sharedWorkspace.createdBy,
+      sharedWorkspace.created,
+      sharedWorkspace.systemName.getOrElse(""),
+      sharedWorkspace.ldapDn,
+      sharedWorkspace.compliance.phiData,
+      sharedWorkspace.compliance.pciData,
+      sharedWorkspace.compliance.piiData,
+      sharedWorkspace.hdfs.location,
+      sharedWorkspace.hdfs.requestedSizeInGB,
+      sharedWorkspace.keytabLocation)
+}
 
 class WorkspaceRepositoryImpl(implicit ec: ExecutionContext)
   extends WorkspaceRepository {
@@ -33,34 +58,38 @@ class WorkspaceRepositoryImpl(implicit ec: ExecutionContext)
 
   import ctx._
 
-  val projectQuery = query[SharedWorkspaceRecord]
-
   def list(username: String): Future[Seq[SharedWorkspace]] = run {
-    projectQuery.filter(_.createdBy == lift(username))
-  }.map(_.map { w =>
-    SharedWorkspace(id)
-  })
+    query[SharedWorkspaceRecord].filter(_.createdBy == lift(username))
+  }.map(_.map(SharedWorkspace.apply))
 
-  def create(project: SharedWorkspace): Future[SharedWorkspace] = run {
-    projectQuery.insert(lift(project)).returning(_.id)
-  }.map(res => project.copy(id = res))
+  def create(sharedWorkspace: SharedWorkspace): Future[SharedWorkspace] = {
+    val workspace = SharedWorkspaceRecord(sharedWorkspace)
+    run {
+      query[SharedWorkspaceRecord].insert(lift(workspace)).returning(_.id)
+    }
+      .map(res => workspace.copy(id = res))
+      .map(SharedWorkspace.apply)
+  }
 
   def setLDAP(id: Long, dn: String): Future[SharedWorkspace] =
-    for (
-      _ <- run(projectQuery.filter(_.id == lift(id)).update(_.ldapDn -> lift(Option(dn))));
-      project <- run(projectQuery.filter(_.id == lift(id)))
-    ) yield project.head
+    (for (
+      _ <- run(query[SharedWorkspaceRecord].filter(_.id == lift(id)).update(_.ldapDn -> lift(Option(dn))));
+      project <- run(query[SharedWorkspaceRecord].filter(_.id == lift(id)))
+    ) yield project.head)
+      .map(SharedWorkspace.apply)
 
   def setHDFS(id: Long, location: String): Future[SharedWorkspace] =
-    for (
-      _ <- run(projectQuery.filter(_.id == lift(id)).update(_.hdfs.location -> lift(Option(location))));
-      project <- run(projectQuery.filter(_.id == lift(id)))
-    ) yield project.head
+    (for (
+      _ <- run(query[SharedWorkspaceRecord].filter(_.id == lift(id)).update(_.hdfsLocation -> lift(Option(location))));
+      project <- run(query[SharedWorkspaceRecord].filter(_.id == lift(id)))
+    ) yield project.head)
+      .map(SharedWorkspace.apply)
 
   def setKeytab(id: Long, location: String): Future[SharedWorkspace] =
-    for (
-      _ <- run(projectQuery.filter(_.id == lift(id)).update(_.keytabLocation -> lift(Option(location))));
-      project <- run(projectQuery.filter(_.id == lift(id)))
-    ) yield project.head
+    (for (
+      _ <- run(query[SharedWorkspaceRecord].filter(_.id == lift(id)).update(_.keytabLocation -> lift(Option(location))));
+      project <- run(query[SharedWorkspaceRecord].filter(_.id == lift(id)))
+    ) yield project.head)
+      .map(SharedWorkspace.apply)
 
 }

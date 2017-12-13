@@ -3,12 +3,10 @@ package com.heimdali.services
 import java.time.LocalDateTime
 import java.util.concurrent.LinkedBlockingDeque
 
-import akka.actor.{Actor, ActorRef, ActorSystem, Props}
+import akka.actor.{ActorRef, ActorSystem, Props}
 import akka.testkit.TestActor.Message
-import akka.testkit.{TestActor, TestActorRef, TestKit, TestKitBase, TestProbe}
-import com.heimdali.actors.WorkspaceProvisioner
-import com.heimdali.actors.WorkspaceProvisioner.Request
-import com.heimdali.models.Project
+import akka.testkit.{TestActor, TestActorRef, TestProbe}
+import com.heimdali.models.ViewModel.SharedWorkspace
 import com.heimdali.repositories.WorkspaceRepository
 import com.heimdali.test.fixtures._
 import org.scalamock.scalatest.AsyncMockFactory
@@ -24,29 +22,27 @@ class SharedWorkspaceServiceImplSpec extends AsyncFlatSpec with Matchers with As
     val probe = TestProbe()
     val repo = mock[WorkspaceRepository]
     val date = LocalDateTime.now
-    val project = TestProject(id = 0L, createdDate = date)
-    repo.create _ expects project returning Future {
-      project.copy(id = 123L)
-    }
+    val workspace = TestProject(id = None, createdDate = date)
+    repo.create _ expects workspace returning Future(workspace.copy(id = Some(123L)))
 
     val projectServiceImpl = new WorkspaceServiceImpl(repo, factory)
-    projectServiceImpl.create(project) map { newProject =>
+    projectServiceImpl.create(workspace) map { newProject =>
       newProject should have(
-        'id (123L),
-        'name (project.name),
-        'purpose (project.purpose),
-        'compliance (project.compliance),
+        'id (Some(123L)),
+        'name (workspace.name),
+        'purpose (workspace.purpose),
+        'compliance (workspace.compliance),
         'created (date),
-        'createdBy (project.createdBy)
+        'createdBy (workspace.createdBy)
       )
     }
   }
 
   it should "list projects" in {
     val repo = mock[WorkspaceRepository]
-    val Array(project1, project2) = Array(
-      TestProject(id = 123L),
-      TestProject(id = 321L)
+    val Array(project1, _) = Array(
+      TestProject(id = Some(123L)),
+      TestProject(id = Some(321L))
     )
     repo.list _ expects standardUsername returning Future {
       Seq(project1)
@@ -61,7 +57,7 @@ class SharedWorkspaceServiceImplSpec extends AsyncFlatSpec with Matchers with As
 
   implicit val system: ActorSystem = ActorSystem()
 
-  def factory(project: Project): ActorRef =
+  def factory(project: SharedWorkspace): ActorRef =
     TestActorRef.create(system, Props(classOf[TestActor], new LinkedBlockingDeque[Message]()))
 
 }

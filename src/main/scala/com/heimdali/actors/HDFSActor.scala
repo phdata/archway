@@ -1,7 +1,5 @@
 package com.heimdali.actors
 
-import javax.inject.Inject
-
 import akka.actor.Actor
 import akka.pattern.pipe
 import com.heimdali.actors.WorkspaceSaver.ProjectUpdate
@@ -22,10 +20,10 @@ object HDFSActor {
 
 }
 
-class HDFSActor @Inject()(hdfsClient: HDFSClient,
-                          configuration: Config,
-                          loginContextProvider: LoginContextProvider)
-                         (implicit val executionContext: ExecutionContext) extends Actor {
+class HDFSActor(hdfsClient: HDFSClient,
+                configuration: Config,
+                loginContextProvider: LoginContextProvider)
+               (implicit val executionContext: ExecutionContext) extends Actor {
 
   import HDFSActor._
 

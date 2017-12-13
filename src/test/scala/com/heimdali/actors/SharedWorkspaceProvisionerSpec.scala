@@ -31,9 +31,9 @@ class SharedWorkspaceProvisionerSpec extends FlatSpec with Matchers {
     val provisioner = TestActorRef[WorkspaceProvisioner](Props(classOf[WorkspaceProvisioner], testProb.ref, testProb.ref, testProb.ref, testProb.ref, project)).underlyingActor
 
     provisioner.initialSteps should be(Queue(
-      testProb.ref -> CreateEntry(project.id, project.systemName, Seq(project.createdBy)),
-      testProb.ref -> CreateDirectory(project.id, project.systemName, project.hdfs.requestedSizeInGB),
-      testProb.ref -> GenerateKeytab(project.id, project.systemName)
+      testProb.ref -> CreateEntry(project.id.get, project.systemName.get, Seq(project.createdBy)),
+      testProb.ref -> CreateDirectory(project.id.get, project.systemName.get, project.hdfs.requestedSizeInGB),
+      testProb.ref -> GenerateKeytab(project.id.get, project.systemName.get)
     ))
   }
 
@@ -56,19 +56,19 @@ class SharedWorkspaceProvisionerSpec extends FlatSpec with Matchers {
     provisioner ! RegisterCaller(mainProbe.ref)
     provisioner ! Request
 
-    ldapProbe.expectMsg(CreateEntry(project.id, project.systemName, Seq(project.createdBy)))
-    ldapProbe.reply(LDAPUpdate(project.id, project.systemName))
-    saveProbe.expectMsg(LDAPUpdate(project.id, project.systemName))
+    ldapProbe.expectMsg(CreateEntry(project.id.get, project.systemName.get, Seq(project.createdBy)))
+    ldapProbe.reply(LDAPUpdate(project.id.get, project.systemName.get))
+    saveProbe.expectMsg(LDAPUpdate(project.id.get, project.systemName.get))
     saveProbe.reply(WorkspaceSaved)
 
-    hdfsProbe.expectMsg(CreateDirectory(project.id, project.systemName, project.hdfs.requestedSizeInGB))
-    hdfsProbe.reply(HDFSUpdate(project.id, directory))
-    saveProbe.expectMsg(HDFSUpdate(project.id, directory))
+    hdfsProbe.expectMsg(CreateDirectory(project.id.get, project.systemName.get, project.hdfs.requestedSizeInGB))
+    hdfsProbe.reply(HDFSUpdate(project.id.get, directory))
+    saveProbe.expectMsg(HDFSUpdate(project.id.get, directory))
     saveProbe.reply(WorkspaceSaved)
 
-    keytabProbe.expectMsg(GenerateKeytab(project.id, project.systemName))
-    keytabProbe.reply(KeytabCreated(project.id, keytab))
-    saveProbe.expectMsg(KeytabCreated(project.id, keytab))
+    keytabProbe.expectMsg(GenerateKeytab(project.id.get, project.systemName.get))
+    keytabProbe.reply(KeytabCreated(project.id.get, keytab))
+    saveProbe.expectMsg(KeytabCreated(project.id.get, keytab))
     saveProbe.reply(WorkspaceSaved)
 
     mainProbe.expectMsg(ProvisionCompleted)
