@@ -2,8 +2,6 @@ package com.heimdali.models
 
 import java.time.LocalDateTime
 
-import io.circe.generic.extras.ConfiguredJsonCodec
-
 object ViewModel {
 
   case class Compliance(phiData: Boolean,

@@ -1,7 +1,5 @@
 package com.heimdali.repositories
 
-import javax.inject.Inject
-
 import com.heimdali.models.ViewModel._
 import io.getquill._
 
@@ -10,7 +8,7 @@ import scala.concurrent.{ExecutionContext, Future}
 trait WorkspaceRepository {
   def list(username: String): Future[Seq[SharedWorkspace]]
 
-  def create(project: SharedWorkspace): Future[SharedWorkspace]
+  def create(name: String, purpose: String, phi: Boolean, pci: Boolean, pii: Boolean, requestedSizeInGB: Double): Future[SharedWorkspace]
 
   def setLDAP(id: Long, dn: String): Future[SharedWorkspace]
 
@@ -19,27 +17,29 @@ trait WorkspaceRepository {
   def setKeytab(id: Long, location: String): Future[SharedWorkspace]
 }
 
-class WorkspaceRepositoryImpl @Inject()(implicit ec: ExecutionContext)
+case class SharedWorkspaceRecord(id: Long,
+                                 name: String,
+                                 purpose: String,
+                                 phi: Boolean,
+                                 pci: Boolean,
+                                 pii: Boolean,
+                                 requestedSizeInGB: Double,
+                                 createdBy: String)
+
+class WorkspaceRepositoryImpl(implicit ec: ExecutionContext)
   extends WorkspaceRepository {
 
   val ctx = new PostgresAsyncContext[SnakeCase with PluralizedTableNames]("ctx") with ImplicitQuery
 
   import ctx._
 
-  val projectQuery = quote {
-    querySchema[SharedWorkspace](
-      "projects",
-      _.compliance.pciData -> "pci_data",
-      _.compliance.phiData -> "phi_data",
-      _.compliance.piiData -> "pii_data",
-      _.hdfs.location -> "hdfs_location",
-      _.hdfs.requestedSizeInGB -> "hdfs_requested_size_in_gb"
-    )
-  }
+  val projectQuery = query[SharedWorkspaceRecord]
 
   def list(username: String): Future[Seq[SharedWorkspace]] = run {
     projectQuery.filter(_.createdBy == lift(username))
-  }
+  }.map(_.map { w =>
+    SharedWorkspace(id)
+  })
 
   def create(project: SharedWorkspace): Future[SharedWorkspace] = run {
     projectQuery.insert(lift(project)).returning(_.id)
