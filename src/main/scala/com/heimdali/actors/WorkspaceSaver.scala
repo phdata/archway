@@ -1,45 +1,45 @@
 package com.heimdali.actors
 
-import javax.inject.Inject
-
 import akka.actor.Actor
-import com.heimdali.models.Project
-import com.heimdali.repositories.ProjectRepository
-
-import scala.concurrent.ExecutionContext
 import akka.pattern.pipe
 import com.heimdali.actors.HDFSActor.HDFSUpdate
 import com.heimdali.actors.KeytabActor.KeytabCreated
 import com.heimdali.actors.LDAPActor.LDAPUpdate
+import com.heimdali.models.ViewModel._
+import com.heimdali.repositories.WorkspaceRepository
 
-object ProjectSaver {
+import scala.concurrent.ExecutionContext
 
-  trait ProjectUpdate { def updateProject(project: Project): Project }
+object WorkspaceSaver {
 
-  case object ProjectSaved
+  trait ProjectUpdate {
+    def updateProject(project: SharedWorkspace): SharedWorkspace
+  }
+
+  case object WorkspaceSaved
 
 }
 
-class ProjectSaver @Inject() (projectRepository: ProjectRepository)
-                             (implicit val executionContext: ExecutionContext)
+class WorkspaceSaver(projectRepository: WorkspaceRepository)
+                    (implicit val executionContext: ExecutionContext)
   extends Actor {
 
-  import ProjectSaver._
+  import WorkspaceSaver._
 
   override def receive: Receive = {
     case LDAPUpdate(id, dn) =>
       projectRepository.setLDAP(id, dn)
-        .map(_ => ProjectSaved)
+        .map(_ => WorkspaceSaved)
         .pipeTo(sender())
 
     case HDFSUpdate(id, location, actualGB) =>
       projectRepository.setHDFS(id, location, actualGB)
-        .map(_ => ProjectSaved)
+        .map(_ => WorkspaceSaved)
         .pipeTo(sender())
 
     case KeytabCreated(id, location) =>
       projectRepository.setKeytab(id, location.toUri.toString)
-        .map(_ => ProjectSaved)
+        .map(_ => WorkspaceSaved)
         .pipeTo(sender())
   }
 

@@ -1,10 +1,7 @@
 package com.heimdali.actors
 
-import javax.inject.{Inject, Named}
-
 import akka.actor.{Actor, ActorLogging, ActorRef, FSM}
-import com.google.inject.assistedinject.Assisted
-import com.heimdali.models.Project
+import com.heimdali.models.ViewModel._
 
 import scala.collection.immutable.Queue
 
@@ -14,7 +11,7 @@ sealed trait Data
 
 sealed trait Step
 
-object ProjectProvisioner {
+object WorkspaceProvisioner {
 
   case object Request
 
@@ -37,27 +34,27 @@ object ProjectProvisioner {
   final case class Saved(ref: ActorRef) extends Data
 
   trait Factory {
-    def apply(project: Project): Actor
+    def apply(project: SharedWorkspace): Actor
   }
 
 }
 
-class ProjectProvisioner @Inject()(@Named("ldap-actor") ldapActor: ActorRef,
-                                   @Named("project-saver") saveActor: ActorRef,
-                                   @Named("hdfs-actor") hDFSActor: ActorRef,
-                                   @Named("keytab-actor") keytabActor: ActorRef,
-                                   @Assisted var project: Project)
+class WorkspaceProvisioner(ldapActor: ActorRef,
+                           saveActor: ActorRef,
+                           hDFSActor: ActorRef,
+                           keytabActor: ActorRef,
+                           var project: SharedWorkspace)
   extends FSM[State, Data] with ActorLogging {
 
   import HDFSActor._
   import KeytabActor._
   import LDAPActor._
-  import ProjectProvisioner._
-  import ProjectSaver._
+  import WorkspaceProvisioner._
+  import WorkspaceSaver._
 
   val initialSteps: Queue[(ActorRef, AnyRef)] = Queue(
     ldapActor -> CreateEntry(project.id, project.systemName, Seq(project.createdBy)),
-    hDFSActor -> CreateDirectory(project.id, project.systemName, project.hdfs.requestedSizeInGB, project.hdfs.actualGB),
+    hDFSActor -> CreateDirectory(project.id, project.systemName, project.hdfs.requestedSizeInGB),
     keytabActor -> GenerateKeytab(project.id, project.systemName)
   )
 
@@ -88,7 +85,7 @@ class ProjectProvisioner @Inject()(@Named("ldap-actor") ldapActor: ActorRef,
   }
 
   when(Saving) {
-    case Event(ProjectSaved, Provision(ref, queue)) =>
+    case Event(WorkspaceSaved, Provision(ref, queue)) =>
       if (queue.isEmpty) {
         log.info("everything is saved for {}", project)
         goto(Completed) using Saved(ref)

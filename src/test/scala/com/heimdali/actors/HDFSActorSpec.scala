@@ -9,7 +9,6 @@ import com.typesafe.config.ConfigFactory
 import org.apache.hadoop.fs.Path
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.FlatSpec
-import play.api.Configuration
 
 import scala.concurrent.Future
 
@@ -24,7 +23,7 @@ class HDFSActorSpec extends FlatSpec with MockFactory {
     val probe = TestProbe()
     val location = s"/projects/${project.systemName}"
     val path = new Path(location)
-    val config = Configuration(ConfigFactory.load())
+    val config = ConfigFactory.load()
 
     val ldapClient = mock[HDFSClient]
     implicit val executionContext = scala.concurrent.ExecutionContext.global
@@ -36,7 +35,7 @@ class HDFSActorSpec extends FlatSpec with MockFactory {
     (context.elevate[HDFSUpdate] _).expects(*).onCall((r: Future[HDFSUpdate]) => r)
 
     val actor = actorSystem.actorOf(Props(classOf[HDFSActor], ldapClient, config, context, executionContext))
-    val request = CreateDirectory(project.id, project.systemName, project.hdfs.requestedSizeInGB, project.hdfs.actualGB)
+    val request = CreateDirectory(project.id, project.systemName, project.hdfs.requestedSizeInGB)
     actor.tell(request, probe.ref)
     probe.expectMsgClass(classOf[HDFSUpdate])
   }

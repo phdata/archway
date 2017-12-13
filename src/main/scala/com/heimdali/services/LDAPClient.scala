@@ -2,8 +2,8 @@ package com.heimdali.services
 
 import javax.inject.Inject
 
+import com.typesafe.config.Config
 import com.unboundid.ldap.sdk._
-import play.api.{Configuration, Logger}
 
 import scala.collection.JavaConverters._
 import scala.concurrent.{ExecutionContext, Future}
@@ -25,21 +25,22 @@ trait LDAPClient {
   def createGroup(groupName: String, initialMember: String): Future[String]
 }
 
-class LDAPClientImpl @Inject()(configuration: Configuration)(implicit executionContext: ExecutionContext)
+class LDAPClientImpl(configuration: Config)
+                    (implicit executionContext: ExecutionContext)
   extends LDAPClient {
 
-  val ldapConfiguration: Configuration = configuration.get[Configuration]("ldap")
+  val ldapConfiguration: Config = configuration.getConfig("ldap")
 
-  val usersPath = ldapConfiguration.get[String]("users_path")
+  val usersPath = ldapConfiguration.getString("users_path")
 
-  val baseDN = ldapConfiguration.get[String]("base_dn")
+  val baseDN = ldapConfiguration.getString("base_dn")
 
   val connectionPool: LDAPConnectionPool = {
-    val server = ldapConfiguration.get[String]("server")
-    val port = ldapConfiguration.get[Int]("port")
-    val username = ldapConfiguration.get[String]("bind_dn")
-    val password = ldapConfiguration.get[String]("bind_password")
-    val connections = ldapConfiguration.getOptional[Int]("connections").getOrElse(10)
+    val server = ldapConfiguration.getString("server")
+    val port = ldapConfiguration.getInt("port")
+    val username = ldapConfiguration.getString("bind_dn")
+    val password = ldapConfiguration.getString("bind_password")
+    val connections = Try(ldapConfiguration.getInt("connections")).getOrElse(10)
 
     val connection = new LDAPConnection(server, port, username, password)
     new LDAPConnectionPool(connection, connections)
@@ -57,9 +58,8 @@ class LDAPClientImpl @Inject()(configuration: Configuration)(implicit executionC
 
   override def createGroup(groupName: String, initialMember: String): Future[String] = Future {
     val connection = connectionPool.getConnection()
-    val dn = s"cn=edh_sw_$groupName,${ldapConfiguration.get[String]("group_path")},${ldapConfiguration.get[String]("base_dn")}"
+    val dn = s"cn=edh_sw_$groupName,${ldapConfiguration.getString("group_path")},${ldapConfiguration.getString("base_dn")}"
     try {
-      Logger.info(s"Creating $dn")
       connection.add(
         s"dn: $dn",
         "objectClass: top",
@@ -67,9 +67,8 @@ class LDAPClientImpl @Inject()(configuration: Configuration)(implicit executionC
         s"cn: edh_sw_$groupName",
         s"member: cn=$initialMember,$usersPath,$baseDN"
       )
-      Logger.info(s"Created $dn")
     } catch {
-      case exception: Throwable => Logger.info(s"Couldn't create $dn", exception)
+      case exception: Throwable => exception.printStackTrace()
     }
     dn
   }

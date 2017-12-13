@@ -1,50 +1,52 @@
 package com.heimdali.controller
 
+import akka.http.scaladsl.model.StatusCodes
+import akka.http.scaladsl.model.headers.OAuth2BearerToken
+import akka.http.scaladsl.testkit.ScalatestRouteTest
+import com.heimdali.ClusterController
 import com.heimdali.services._
-import com.heimdali.startup.Startup
-import com.heimdali.test.fixtures.{FakeClusterService, LDAPTest, PassiveAccountService, TestStartup}
+import com.heimdali.test.fixtures.FakeClusterService
+import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport
+import io.circe.Json
+import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FlatSpec, Matchers}
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.Application
-import play.api.inject.bind
-import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.libs.json._
-import play.api.test.FakeRequest
-import play.api.test.Helpers._
+
+import scala.concurrent.Future
 
 class ClusterControllerSpec
   extends FlatSpec
     with Matchers
-    with LDAPTest
-    with GuiceOneAppPerSuite {
+    with ScalatestRouteTest
+    with MockFactory
+    with FailFastCirceSupport {
 
-  behavior of "Configuration Controller"
+  behavior of "Cluster Controller"
 
   it should "get a list of clusters" in {
-    val request = FakeRequest(GET, "/clusters").withHeaders(AUTHORIZATION -> "Bearer ABC")
-    val response = route(app, request).get
+    val clusterService = mock[ClusterService]
+    (clusterService.list _).expects().returning(Future(Seq(Cluster("admin", "admin", CDH("1.0")))))
 
-    status(response) should be(OK)
+    val restApi = new ClusterController(clusterService)
 
-    val json = contentAsJson(response)
+    Get("/clusters") ~> addCredentials(OAuth2BearerToken("AbCdEf123456")) ~> restApi.route ~> check {
+      status should be(StatusCodes.OK)
 
-    json shouldBe a[JsArray]
-    val items = json.as[JsArray].value
+      val Some(Vector(result)) = responseAs[Json].asArray
+      println(result)
+      result.hcursor
+        .get[String]("id").toOption.get should be("admin")
 
-    items.size should be(1)
-    val cluster = items.head
+      result.hcursor
+        .get[String]("name").toOption.get should be("admin")
 
-    (cluster \ "name").as[String] should be("admin")
-    (cluster \ "id").as[String] should be("admin")
-    (cluster \ "distribution" \ "name").as[String] should be(FakeClusterService.cdh.getClass.getSimpleName)
-    (cluster \ "distribution" \ "version").as[String] should be(FakeClusterService.cdh.version)
+      result.hcursor
+        .downField("distribution")
+        .get[String]("name").toOption.get should be(FakeClusterService.cdh.name)
+
+      result.hcursor
+        .downField("distribution")
+        .get[String]("version").toOption.get should be(FakeClusterService.cdh.version)
+    }
   }
-
-  override def fakeApplication(): Application =
-    new GuiceApplicationBuilder()
-      .overrides(bind[ClusterService].to[FakeClusterService])
-      .overrides(bind[AccountService].to[PassiveAccountService])
-      .overrides(bind[Startup].to[TestStartup].eagerly())
-      .build()
 
 }

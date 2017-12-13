@@ -1,10 +1,10 @@
 package com.heimdali.models
 
-import com.heimdali.test.fixtures.TestProject
+import com.heimdali.models.ViewModel.SharedWorkspace
 import org.scalatest.prop.TableDrivenPropertyChecks
 import org.scalatest.{Matchers, PropSpec}
 
-class ProjectSpec extends PropSpec with Matchers with TableDrivenPropertyChecks {
+class SharedWorkspaceSpec extends PropSpec with Matchers with TableDrivenPropertyChecks {
 
   val variations = Table(
     ("project name", "system name"),
@@ -16,8 +16,7 @@ class ProjectSpec extends PropSpec with Matchers with TableDrivenPropertyChecks 
 
   property("a project's system name should replace illegal characters") {
     forAll(variations) { (projectName, systemName) =>
-      val project = TestProject(name = projectName)
-      project.generatedName should be (systemName)
+      SharedWorkspace.generateName(projectName) should be (systemName)
     }
   }
 

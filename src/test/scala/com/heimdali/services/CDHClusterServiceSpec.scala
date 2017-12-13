@@ -1,18 +1,24 @@
 package com.heimdali.services
 
+import akka.http.scaladsl.HttpExt
+import akka.http.scaladsl.model.{HttpRequest, HttpResponse}
+import akka.http.scaladsl.testkit.ScalatestRouteTest
+import akka.stream.{ActorMaterializer, Materializer}
 import com.typesafe.config.ConfigFactory
-import org.mockito.ArgumentMatchers._
-import org.mockito.Mockito._
-import org.scalatest.mockito.MockitoSugar
+import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport
+import io.circe.Printer
+import org.scalamock.scalatest.MockFactory
 import org.scalatest.{AsyncFlatSpec, Matchers}
-import play.api.libs.json.Json
-import play.api.libs.ws.{WSAuthScheme, WSClient, WSRequest, WSResponse}
-import play.api.{ConfigLoader, Configuration}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.io.Source
 
-class CDHClusterServiceSpec extends AsyncFlatSpec with Matchers with MockitoSugar {
+class CDHClusterServiceSpec
+  extends AsyncFlatSpec
+    with Matchers
+    with ScalatestRouteTest
+    with FailFastCirceSupport
+    with MockFactory {
 
   behavior of "CDH Cluster service"
 
@@ -24,25 +30,17 @@ class CDHClusterServiceSpec extends AsyncFlatSpec with Matchers with MockitoSuga
     val username = "admin"
     val password = "admin"
 
-    val configuration = new Configuration(ConfigFactory.defaultApplication())
+    val configuration = ConfigFactory.defaultApplication()
+    val Right(json) = io.circe.parser.parse(Source.fromResource("cloudera/cluster.json").getLines().mkString)
+    val response = HttpResponse(akka.http.scaladsl.model.StatusCodes.OK).withEntity(json.pretty(Printer.spaces2))
 
-    val wsResponse = mock[WSResponse]
-    when(wsResponse.json).thenReturn(Json.parse(Source.fromResource("cloudera/cluster.json").getLines().mkString))
+    val http = mock[HttpExt]
+    (http.singleRequest(_: HttpRequest)(_: Materializer))
+        .expects(*, *)
+        .returning(Future(response))
 
-    val wsReqeuest = mock[WSRequest]
-    when(wsReqeuest.withAuth(username, password, WSAuthScheme.BASIC)).thenReturn(wsReqeuest)
-    when(wsReqeuest.get).thenReturn(Future {
-      wsResponse
-    })
-
-    val cdhClient = mock[WSClient]
-    when(cdhClient.url(s"$url")).thenReturn(wsReqeuest)
-
-    val service = new CDHClusterService(cdhClient, configuration)(ExecutionContext.global)
+    val service = new CDHClusterService(http, configuration)(ExecutionContext.global, ActorMaterializer())
     service.list map { list =>
-
-      verify(wsReqeuest).withAuth(username, password, WSAuthScheme.BASIC)
-
       list should have length 1
       list should be(Seq(Cluster(name, "Odin", CDH(version))))
     }

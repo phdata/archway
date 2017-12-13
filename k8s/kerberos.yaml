@@ -40,3 +40,5 @@ spec:
             secretKeyRef:
               name: ldap-creds
               key: key
+      imagePullSecrets:
+      - name: myregistrykey

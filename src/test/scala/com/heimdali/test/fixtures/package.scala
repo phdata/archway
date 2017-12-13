@@ -2,7 +2,7 @@ package com.heimdali.test
 
 import java.time.LocalDateTime
 
-import com.heimdali.models.{Compliance, HDFSProvision, Project}
+import com.heimdali.models.ViewModel._
 
 package object fixtures {
 
@@ -12,17 +12,17 @@ package object fixtures {
     val id = 123L
     val name = "Sesame"
     val purpose = "World Peace"
-    val ldapDn = None
+    val ldapDn: Option[String] = None
     val phiCompliance = false
     val piiCompliance = false
     val pciCompliance = false
     val compliance = Compliance(phiCompliance, piiCompliance, pciCompliance)
-    val hdfsLocation = None
-    val hdfsRequestedSize = 10
+    val hdfsLocation: Option[String] = None
+    val hdfsRequestedSize: Double = 10.0
     val actualGB = None
     val hdfs = HDFSProvision(hdfsLocation, hdfsRequestedSize, actualGB)
-    val keytabLocation = None
-    val systemName = Project(1, name, purpose, ldapDn, "", compliance, hdfs, keytabLocation, LocalDateTime.now, standardUsername).generatedName
+    val keytabLocation: Option[String] = None
+    val systemName: String = SharedWorkspace.generateName(name)
 
     def apply(id: Long = TestProject.id,
               name: String = TestProject.name,
@@ -33,8 +33,8 @@ package object fixtures {
               hdfs: HDFSProvision = TestProject.hdfs,
               keytabLocation: Option[String] = TestProject.keytabLocation,
               createdDate: LocalDateTime = LocalDateTime.now(),
-              createdBy: String = standardUsername): Project =
-      Project(id, name, purpose, ldapDn, systemName, compliance, hdfs, keytabLocation, createdDate, createdBy)
+              createdBy: String = standardUsername): SharedWorkspace =
+      SharedWorkspace(id, name, purpose, ldapDn, systemName, compliance, hdfs, keytabLocation, createdDate, createdBy)
   }
 
 }

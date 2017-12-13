@@ -1,10 +1,9 @@
 package com.heimdali.services
 
+import com.typesafe.config.{Config, ConfigFactory}
 import org.scalamock.scalatest.AsyncMockFactory
 import org.scalatest.{AsyncFlatSpec, Matchers}
-import pdi.jwt.{JwtAlgorithm, JwtJson}
-import play.api.libs.json.JsString
-import play.api.{ConfigLoader, Configuration}
+import pdi.jwt.{JwtAlgorithm, JwtCirce}
 
 import scala.concurrent.Future
 
@@ -23,10 +22,9 @@ class LDAPAccountServiceSpec extends AsyncFlatSpec with Matchers with AsyncMockF
       .returning(Future {
         Some(ldapUser)
       })
-    val ldapAccountService = new LDAPAccountService(ldapClient, null)
+    val ldapAccountService = new LDAPAccountService(ldapClient, ConfigFactory.load())
     ldapAccountService.login(username, password) map { maybeUser =>
       maybeUser shouldBe defined
-      maybeUser.get.username should be(username)
     }
   }
 
@@ -64,36 +62,35 @@ class LDAPAccountServiceSpec extends AsyncFlatSpec with Matchers with AsyncMockF
 
   it should "generate a token" in {
     val secret = "abc"
-    val user = User("Dude Doe", "username", HeimdaliRole.BasicUser)
+    val user = User("Dude Doe", "username")
 
-    val configuration = mock[Configuration]
-    (configuration.get[String](_: String)(_: ConfigLoader[String]))
-      .expects("play.crypto.secret", *).returning(secret)
+    val configuration = mock[Config]
+    (configuration.getString _).expects("rest.secret").returning(secret)
 
     val lDAPAccountService = new LDAPAccountService(null, configuration)
     lDAPAccountService.refresh(user).map { token =>
-      val accessToken = JwtJson.decodeJson(token.accessToken, secret, Seq(JwtAlgorithm.HS256))
+      val accessToken = JwtCirce.decodeJson(token.accessToken, secret, Seq(JwtAlgorithm.HS256))
       accessToken.toOption shouldBe defined
-      accessToken.get.value should be (Map(
-        "name" -> JsString(user.name),
-        "username" -> JsString(user.username),
-        "role" -> JsString(user.role.name)
-      ))
+      accessToken.get.as[Map[String, String]] should be (Right(Map(
+        "name" -> user.name,
+        "username" -> user.username
+      )))
 
-      val refreshToken = JwtJson.decodeJson(token.refreshToken, secret, Seq(JwtAlgorithm.HS256))
+      val refreshToken = JwtCirce.decodeJson(token.refreshToken, secret, Seq(JwtAlgorithm.HS256))
       refreshToken.toOption shouldBe defined
-      refreshToken.get.value should be (Map("username" -> JsString(user.username)))
+      refreshToken.get.as[Map[String, String]] should be (Right(Map(
+        "username" -> user.username
+      )))
     }
   }
 
   it should "validate a valid token" in {
     val secret = "1yR2kSbv$gE@xkQRdlTtuecW"
-    val user = User("Dude Doe", "username", HeimdaliRole.BasicUser)
+    val user = User("Dude Doe", "username")
     val token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJuYW1lIjoiRHVkZSBEb2UiLCJ1c2VybmFtZSI6InVzZXJuYW1lIiwicm9sZSI6InVzZXIifQ.ArnfmWsJCLLoqGR2jKWQGJAf5kxP7Um2njCykIM5XXQ"
 
-    val configuration = mock[Configuration]
-    (configuration.get[String](_: String)(_: ConfigLoader[String]))
-      .expects("play.crypto.secret", *).returning(secret)
+    val configuration = mock[Config]
+    (configuration.getString _).expects("rest.secret").returning(secret)
 
     val lDAPAccountService = new LDAPAccountService(null, configuration)
     lDAPAccountService.validate(token).map { maybeUser =>

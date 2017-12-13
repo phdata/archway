@@ -1,88 +1,55 @@
 package com.heimdali.controller
 
-import com.google.common.base.Charsets
-import com.google.common.io.BaseEncoding
+import akka.http.scaladsl.model.StatusCodes
+import akka.http.scaladsl.model.headers.OAuth2BearerToken
+import akka.http.scaladsl.server.directives.{AuthenticationResult, Credentials}
+import akka.http.scaladsl.testkit.ScalatestRouteTest
+import com.heimdali.{AccountController, AuthService}
 import com.heimdali.services._
-import com.heimdali.startup.Startup
-import com.heimdali.test.fixtures.{LDAPTest, TestStartup}
-import org.scalatest.{BeforeAndAfterAll, FlatSpec, Matchers}
-import org.scalatestplus.play.WsScalaTestClient
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import pdi.jwt.{JwtAlgorithm, JwtJson}
-import play.api.Application
-import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.libs.json.{JsObject, JsString}
-import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import com.typesafe.config.ConfigFactory
+import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport
+import org.scalamock.scalatest.MockFactory
+import org.scalatest.{FlatSpec, Matchers}
+
+import scala.concurrent.Future
 
 class AccountControllerSpec
   extends FlatSpec
-    with WsScalaTestClient
     with Matchers
-    with LDAPTest
-    with GuiceOneAppPerSuite {
+    with ScalatestRouteTest
+    with MockFactory
+    with FailFastCirceSupport {
 
-  lazy val secret: String = app.configuration.get[String]("play.crypto.secret")
+  import io.circe.generic.auto._
+
+  lazy val secret: String = ConfigFactory.load().getString("rest.secret")
 
   behavior of "AccountController"
 
   it should "do something" in {
-    val rootCall = login
+    val authService = mock[AuthService]
+    (authService.validateCredentials _)
+      .expects(*)
+      .returning(Future(Right(AuthenticationResult.success(Token("", "")))))
 
-    val content = contentAsString(rootCall)
-    status(rootCall) should be(OK)
-
-    val json = contentAsJson(rootCall)
-
-    val accessToken = (json \ "accessToken").asOpt[String]
-    accessToken shouldBe defined
-    val accessTokenPayload = JwtJson.decodeJson(accessToken.get, secret, Seq(JwtAlgorithm.HS256))
-    accessTokenPayload.get.value should be (Map(
-    "name" -> JsString("Dude Doe"),
-    "username" -> JsString("username"),
-    "role" -> JsString(HeimdaliRole.BasicUser.name)
-    ))
-
-    val refreshToken = (json \ "refreshToken").asOpt[String]
-    refreshToken shouldBe defined
-    val refreshTokenPayload = JwtJson.decodeJson(refreshToken.get, secret, Seq(JwtAlgorithm.HS256))
-    refreshTokenPayload.get.value should be (Map(
-    "username" -> JsString("username")
-    ))
+    val accountController = new AccountController(authService)
+    Get("/account/token") ~> addCredentials(OAuth2BearerToken("abc123")) ~> accountController.route ~> check {
+      status should be(StatusCodes.OK)
+      responseAs[Token] should be(Token("", ""))
+    }
   }
 
   it should "get a profile" in {
-    val request = FakeRequest(GET, "/account/profile")
-      .withHeaders(AUTHORIZATION -> s"Bearer $accessToken")
-    val rootCall = route(app, request).get
+    val authService = mock[AuthService]
+    (authService.validateToken _)
+      .expects(*)
+      .returning(Future(Option(User("Dude Doe", "username"))))
 
-    status(rootCall) should be (OK)
-
-    contentAsJson(rootCall).as[JsObject].value should be (Map(
-      "name" -> JsString("Dude Doe"),
-      "username" -> JsString("username"),
-      "role" -> JsString(HeimdaliRole.BasicUser.name)
-    ))
+    val accountController = new AccountController(authService)
+    Get("/account/profile") ~> addCredentials(OAuth2BearerToken("abc123")) ~> accountController.route ~> check {
+      status should be(StatusCodes.OK)
+      responseAs[User] should be(User("Dude Doe", "username"))
+    }
   }
 
-  private def accessToken = {
-    val result = contentAsJson(login)
-
-    (result \ "accessToken").as[String]
-  }
-
-  private def login = {
-    val auth = "username:password".getBytes(Charsets.UTF_8)
-    val encoded = BaseEncoding.base64().encode(auth)
-    val request = FakeRequest(GET, "/account/token")
-      .withHeaders(AUTHORIZATION -> s"Basic $encoded")
-
-    route(app, request).get
-  }
-
-  import play.api.inject.bind
-  override val fakeApplication: Application =
-    new GuiceApplicationBuilder()
-      .overrides(bind[Startup].to[TestStartup].eagerly())
-      .build()
 }
