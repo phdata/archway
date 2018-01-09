@@ -2,8 +2,8 @@ package com.heimdali.services
 
 import java.io.{InputStream, OutputStream}
 import java.text.DecimalFormat
-import javax.inject.Inject
 
+import com.typesafe.scalalogging.LazyLogging
 import org.apache.hadoop.fs.{FileSystem, Path}
 import org.apache.hadoop.hdfs.client.HdfsAdmin
 
@@ -24,14 +24,15 @@ trait HDFSClient {
 class HDFSClientImpl(fileSystem: FileSystem,
                      hdfsAdmin: HdfsAdmin)
                     (implicit val executionContext: ExecutionContext)
-  extends HDFSClient {
+  extends HDFSClient with LazyLogging {
+  logger.info("filesystem looks like {}", fileSystem)
 
-  override def createDirectory(location: String): Future[Path] =
-    Future {
-      val path = new Path(location)
-      fileSystem.mkdirs(path)
-      path
-    }
+  override def createDirectory(location: String): Future[Path] = Future {
+    logger.info("Creating {} in {}", location, fileSystem)
+    val path = new Path(location)
+    val result = fileSystem.mkdirs(path)
+    path
+  }
 
   override def setQuota(path: Path, maxSizeInGB: Double): Future[HDFSAllocation] = Future {
     hdfsAdmin.setSpaceQuota(path, (maxSizeInGB * 1024 * 1024 * 1024).toLong)
@@ -40,7 +41,7 @@ class HDFSClientImpl(fileSystem: FileSystem,
 
   override def getQuota(path: Path): Future[Double] = Future {
     val dec = new DecimalFormat("0.00")
-    dec.format(((fileSystem.getContentSummary(path).getSpaceQuota/1024.0)/1024.0)/1024.0).toDouble
+    dec.format(((fileSystem.getContentSummary(path).getSpaceQuota / 1024.0) / 1024.0) / 1024.0).toDouble
   }
 
   override def uploadFile(stream: InputStream, hdfsLocation: Path): Future[Path] = Future {

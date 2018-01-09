@@ -15,7 +15,7 @@ class LDAPAccountServiceSpec extends AsyncFlatSpec with Matchers with AsyncMockF
     val (name, username, password) = ("name", "username", "password")
     val ldapClient = mock[LDAPClient]
 
-    val ldapUser = LDAPUser(name, username, password, Seq.empty)
+    val ldapUser = LDAPUser(name, username, Seq.empty)
 
     (ldapClient.findUser _)
       .expects(username, password)
@@ -32,7 +32,7 @@ class LDAPAccountServiceSpec extends AsyncFlatSpec with Matchers with AsyncMockF
     val (name, username, actualPassword, wrongPassword) = ("name", "username", "password", "passw0rd")
     val ldapClient = mock[LDAPClient]
 
-    val ldapUser = LDAPUser(name, username, actualPassword, Seq.empty)
+    val ldapUser = LDAPUser(name, username, Seq.empty)
 
     (ldapClient.findUser _)
       .expects(username, wrongPassword)

@@ -1,6 +1,6 @@
 package com.heimdali.services
 
-import com.heimdali.test.fixtures.{DockerLDAPService, LDAPTest}
+import com.heimdali.test.fixtures.LDAPTest
 import org.scalamock.scalatest.AsyncMockFactory
 import org.scalatest.{AsyncFlatSpec, Matchers}
 
@@ -12,22 +12,21 @@ class LDAPClientImplSpec extends AsyncFlatSpec
   behavior of "LDAPClientImpl"
 
   it should "find a user" in {
-    val client = new LDAPClientImpl(config)(executionContext)
+    val client = new LDAPClientImpl(config)(executionContext) with OpenLDAPClient
     client.findUser(username, password).map { maybeUser =>
       maybeUser shouldBe defined
 
       maybeUser.get should have {
         'username ("username")
         'name ("Dude Doe")
-        'password ("password")
       }
     }(executionContext)
   }
 
   it should "create a group" in {
-    val client = new LDAPClientImpl(config)(executionContext)
+    val client = new LDAPClientImpl(config)(executionContext) with OpenLDAPClient
     client.createGroup("sesame", "username").map { _ =>
-      val entry = client.connectionPool.getConnection.getEntry("CN=edh_sw_sesame,OU=groups,OU=hadoop,DC=jotunn,DC=io")
+      val entry = client.adminConnectionPool.getConnection.getEntry(s"cn=edh_sw_sesame,$groupDN,$baseDN")
       entry should not be null
     }(executionContext)
   }

@@ -22,7 +22,7 @@ class WorkspaceServiceImpl(workspaceRepository: WorkspaceRepository,
 
   override def create(workspace: SharedWorkspaceRequest): Future[SharedWorkspace] = {
     workspaceRepository.create(workspace) map { updated =>
-      actorSystem.scheduler.scheduleOnce(0 seconds, provisioningFactory(updated), Request)
+      provisioningFactory(updated) ! Request
       updated
     }
   }

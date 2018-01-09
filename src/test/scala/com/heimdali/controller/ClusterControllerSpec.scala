@@ -3,7 +3,7 @@ package com.heimdali.controller
 import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.model.headers.OAuth2BearerToken
 import akka.http.scaladsl.testkit.ScalatestRouteTest
-import com.heimdali.ClusterController
+import com.heimdali.rest.ClusterController
 import com.heimdali.services._
 import com.heimdali.test.fixtures.FakeClusterService
 import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport

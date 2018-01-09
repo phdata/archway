@@ -2,7 +2,7 @@ pipeline {
     agent {
         kubernetes {
             cloud "kubernetes"
-            label 'altered-mule-jenkins-slave'
+            label "heimdali"
             containerTemplate {
                 name 'jdk'
                 image 'java:8-jdk'
@@ -49,8 +49,8 @@ pipeline {
         stage('prepare') {
             steps {
                 container("jdk") {
-                    sh "./sbt ${params.sbt_params} \"set test in dist := {}\" dist"
-                    sh "unzip target/universal/heimdali-api.zip -d docker"
+                    sh "./sbt ${params.sbt_params} \"set test in assembly := {}\" assembly"
+                    sh "mv target/scala-2.12/heimdali-api.jar docker"
                 }
             }
         }

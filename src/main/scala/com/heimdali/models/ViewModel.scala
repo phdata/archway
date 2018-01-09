@@ -14,10 +14,15 @@ object ViewModel {
                            requestedSizeInGB: Double,
                            actualGB: Option[Double])
 
+  case class YarnProvision(poolName: Option[String],
+                           maxCores: Int,
+                           maxMemoryInGB: Double)
+
   case class SharedWorkspaceRequest(name: String,
                                     purpose: String,
                                     compliance: Compliance,
                                     hdfs: HDFSProvision,
+                                    yarn: YarnProvision,
                                     createdBy: Option[String])
 
   case class SharedWorkspace(id: Long,
@@ -27,6 +32,7 @@ object ViewModel {
                              systemName: String,
                              compliance: Compliance,
                              hdfs: HDFSProvision,
+                             yarn: YarnProvision,
                              keytabLocation: Option[String],
                              created: LocalDateTime,
                              createdBy: String)
@@ -47,7 +53,8 @@ object ViewModel {
         sharedWorkspaceRecord.ldapDn,
         sharedWorkspaceRecord.systemName,
         Compliance(sharedWorkspaceRecord.piiData, sharedWorkspaceRecord.pciData, sharedWorkspaceRecord.piiData),
-        HDFSProvision(sharedWorkspaceRecord.hdfsLocation, sharedWorkspaceRecord.hdfsRequestedSizeInGb, sharedWorkspaceRecord.hdfsAcutalSizeInGb),
+        HDFSProvision(sharedWorkspaceRecord.hdfsLocation, sharedWorkspaceRecord.hdfsRequestedSizeInGb, sharedWorkspaceRecord.hdfsActualSizeInGb),
+        YarnProvision(sharedWorkspaceRecord.yarnPoolName, sharedWorkspaceRecord.yarnMaxCores, sharedWorkspaceRecord.yarnMaxMemoryInGb),
         sharedWorkspaceRecord.keytabLocation,
         sharedWorkspaceRecord.created,
         sharedWorkspaceRecord.createdBy)

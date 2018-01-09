@@ -43,10 +43,14 @@ class WorkspaceProvisioner(ldapActor: ActorRef,
                            saveActor: ActorRef,
                            hDFSActor: ActorRef,
                            keytabActor: ActorRef,
+                           yarnActor: ActorRef,
                            var project: SharedWorkspace)
   extends FSM[State, Data] with ActorLogging {
 
+  log.info("starting up")
+
   import HDFSActor._
+  import YarnActor._
   import KeytabActor._
   import LDAPActor._
   import WorkspaceProvisioner._
@@ -54,8 +58,9 @@ class WorkspaceProvisioner(ldapActor: ActorRef,
 
   val initialSteps: Queue[(ActorRef, AnyRef)] = Queue(
     ldapActor -> CreateEntry(project.id, project.systemName, Seq(project.createdBy)),
-    hDFSActor -> CreateDirectory(project.id, project.systemName, project.hdfs.requestedSizeInGB),
-    keytabActor -> GenerateKeytab(project.id, project.systemName)
+    hDFSActor -> CreateDirectory(project.id, project.systemName, project.hdfs.requestedSizeInGB)
+//    keytabActor -> GenerateKeytab(project.id, project.systemName),
+//    yarnActor -> CreatePool(project.id, project.systemName, project.yarn.maxCores, project.yarn.maxMemoryInGB)
   )
 
   def dequeue(queue: Queue[(ActorRef, Any)]): Queue[(ActorRef, Any)] = {

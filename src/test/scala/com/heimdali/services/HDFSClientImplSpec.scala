@@ -5,10 +5,12 @@ import org.apache.hadoop.fs.{FSDataOutputStream, FileSystem, Path}
 import org.apache.hadoop.hdfs.client.HdfsAdmin
 import org.mockito.ArgumentMatchers._
 import org.mockito.Mockito._
+import org.mockito.invocation.InvocationOnMock
+import org.mockito.stubbing.Answer
 import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{FlatSpec, Matchers}
 
-import scala.concurrent.Await
+import scala.concurrent.{Await, Future}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.Duration
 
@@ -26,8 +28,8 @@ class HDFSClientImplSpec extends FlatSpec with Matchers with MockitoSugar {
     val result = Await.result(client.setQuota(path, 10), Duration.Inf)
     val bytes = 10L * 1024L * 1024L * 1024L
     verify(admin).setSpaceQuota(path, bytes)
-    result.location should be (location)
-    result.maxSizeInGB should be (10)
+    result.location should be(location)
+    result.maxSizeInGB should be(10)
   }
 
   it should "upload a file" in new Context {
@@ -43,7 +45,7 @@ class HDFSClientImplSpec extends FlatSpec with Matchers with MockitoSugar {
     verify(outputStream).close()
     verify(outputStream, times(dataBytes.length)).write(any)
 
-    result.toString should be (path.toString)
+    result.toString should be(path.toString)
   }
 
   trait Context {

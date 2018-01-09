@@ -17,6 +17,8 @@ trait WorkspaceRepository {
   def setHDFS(id: Long, location: String, actualGB: Double): Future[SharedWorkspace]
 
   def setKeytab(id: Long, location: String): Future[SharedWorkspace]
+
+  def setYarn(id: Long, poolName: String): Future[SharedWorkspace]
 }
 
 case class SharedWorkspaceRecord(id: Long,
@@ -31,8 +33,11 @@ case class SharedWorkspaceRecord(id: Long,
                                  piiData: Boolean,
                                  hdfsLocation: Option[String],
                                  hdfsRequestedSizeInGb: Double,
-                                 hdfsAcutalSizeInGb: Option[Double],
-                                 keytabLocation: Option[String])
+                                 hdfsActualSizeInGb: Option[Double],
+                                 keytabLocation: Option[String],
+                                 yarnPoolName: Option[String],
+                                 yarnMaxCores: Int,
+                                 yarnMaxMemoryInGb: Double)
 
 object SharedWorkspaceRecord {
   def apply(sharedWorkspace: SharedWorkspaceRequest): SharedWorkspaceRecord =
@@ -50,47 +55,67 @@ object SharedWorkspaceRecord {
       None,
       sharedWorkspace.hdfs.requestedSizeInGB,
       None,
-      None)
+      None,
+      None,
+      sharedWorkspace.yarn.maxCores,
+      sharedWorkspace.yarn.maxMemoryInGB)
 }
 
 class WorkspaceRepositoryImpl(implicit ec: ExecutionContext)
   extends WorkspaceRepository {
 
-  val ctx = new PostgresAsyncContext[SnakeCase with PluralizedTableNames]("ctx") with ImplicitQuery
+  val ctx = new PostgresAsyncContext(NamingStrategy(SnakeCase, PluralizedTableNames), "ctx") with ImplicitQuery
 
   import ctx._
 
-  def list(username: String): Future[Seq[SharedWorkspace]] = run {
-    query[SharedWorkspaceRecord].filter(_.createdBy == lift(username))
-  }.map(_.map(SharedWorkspace.apply))
+  val projectQuery = quote {
+    querySchema[SharedWorkspaceRecord](
+      "projects"
+    )
+  }
+
+  def list(username: String): Future[Seq[SharedWorkspace]] = run(quote {
+    projectQuery.filter(_.createdBy == lift(username))
+  }).map(_.map(SharedWorkspace.apply))
 
   def create(sharedWorkspace: SharedWorkspaceRequest): Future[SharedWorkspace] = {
     val workspace = SharedWorkspaceRecord(sharedWorkspace)
     run {
-      query[SharedWorkspaceRecord].insert(lift(workspace)).returning(_.id)
+      projectQuery.insert(lift(workspace)).returning(_.id)
     }
       .map(res => workspace.copy(id = res))
       .map(SharedWorkspace.apply)
+      .recover {
+        case e =>
+          throw e
+      }
   }
 
   def setLDAP(id: Long, dn: String): Future[SharedWorkspace] =
     (for (
-      _ <- run(query[SharedWorkspaceRecord].filter(_.id == lift(id)).update(_.ldapDn -> lift(Option(dn))));
-      project <- run(query[SharedWorkspaceRecord].filter(_.id == lift(id)))
+      _ <- run(projectQuery.filter(_.id == lift(id)).update(_.ldapDn -> lift(Option(dn))));
+      project <- run(projectQuery.filter(_.id == lift(id)))
     ) yield project.head)
       .map(SharedWorkspace.apply)
 
   def setHDFS(id: Long, location: String, actualGB: Double): Future[SharedWorkspace] =
     (for (
-      _ <- run(query[SharedWorkspaceRecord].filter(_.id == lift(id)).update(_.hdfsLocation -> lift(Option(location)), _.hdfsAcutalSizeInGb -> lift(Option(actualGB))));
-      project <- run(query[SharedWorkspaceRecord].filter(_.id == lift(id)))
+      _ <- run(projectQuery.filter(_.id == lift(id)).update(_.hdfsLocation -> lift(Option(location)), _.hdfsActualSizeInGb -> lift(Option(actualGB))));
+      project <- run(projectQuery.filter(_.id == lift(id)))
     ) yield project.head)
       .map(SharedWorkspace.apply)
 
   def setKeytab(id: Long, location: String): Future[SharedWorkspace] =
     (for (
-      _ <- run(query[SharedWorkspaceRecord].filter(_.id == lift(id)).update(_.keytabLocation -> lift(Option(location))));
-      project <- run(query[SharedWorkspaceRecord].filter(_.id == lift(id)))
+      _ <- run(projectQuery.filter(_.id == lift(id)).update(_.keytabLocation -> lift(Option(location))));
+      project <- run(projectQuery.filter(_.id == lift(id)))
+    ) yield project.head)
+      .map(SharedWorkspace.apply)
+
+  def setYarn(id: Long, poolName: String): Future[SharedWorkspace] =
+    (for (
+      _ <- run(projectQuery.filter(_.id == lift(id)).update(_.yarnPoolName -> lift(Option(poolName))));
+      project <- run(projectQuery.filter(_.id == lift(id)))
     ) yield project.head)
       .map(SharedWorkspace.apply)
 

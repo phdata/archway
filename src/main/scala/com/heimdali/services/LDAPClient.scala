@@ -1,23 +1,16 @@
 package com.heimdali.services
 
-import javax.inject.Inject
-
 import com.typesafe.config.Config
+import com.typesafe.scalalogging.{LazyLogging, Logger}
 import com.unboundid.ldap.sdk._
+import org.slf4j.{Marker, MarkerFactory}
+import org.slf4j.helpers.{BasicMarker, BasicMarkerFactory}
 
 import scala.collection.JavaConverters._
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success, Try}
 
-case class LDAPUser(name: String, username: String, password: String, memberships: Seq[String])
-
-object LDAPUser {
-  def apply(entry: SearchResultEntry): LDAPUser =
-    new LDAPUser(s"${entry.getAttributeValue("givenName")} ${entry.getAttributeValue("sn")}",
-      entry.getAttributeValue("cn"),
-      entry.getAttributeValue("userPassword"),
-      Seq.empty[String])
-}
+case class LDAPUser(name: String, username: String, memberships: Seq[String])
 
 trait LDAPClient {
   def findUser(username: String, password: String): Future[Option[LDAPUser]]
@@ -25,50 +18,76 @@ trait LDAPClient {
   def createGroup(groupName: String, initialMember: String): Future[String]
 }
 
-class LDAPClientImpl(configuration: Config)
-                    (implicit executionContext: ExecutionContext)
-  extends LDAPClient {
+abstract class LDAPClientImpl(configuration: Config)
+                             (implicit executionContext: ExecutionContext)
+  extends LDAPClient with LazyLogging {
+  val marker = MarkerFactory.getMarker("LDAP")
+
+  def searchQuery(username: String): String
+
+  def fullUsername(username: String): String
+
+  def ldapUser(searchResultEntry: SearchResultEntry): LDAPUser
+
+  def groupObjectClass: String
 
   val ldapConfiguration: Config = configuration.getConfig("ldap")
-
-  val usersPath = ldapConfiguration.getString("users_path")
-
-  val baseDN = ldapConfiguration.getString("base_dn")
+  val usersPath: String = ldapConfiguration.getString("users_path")
+  val groupPath: String = ldapConfiguration.getString("group_path")
+  val baseDN: String = ldapConfiguration.getString("base_dn")
+  val server: String = ldapConfiguration.getString("server")
+  val port: Int = ldapConfiguration.getInt("port")
+  val connections: Int = Try(ldapConfiguration.getInt("connections")).getOrElse(10)
 
   val connectionPool: LDAPConnectionPool = {
-    val server = ldapConfiguration.getString("server")
-    val port = ldapConfiguration.getInt("port")
+    val connection = new LDAPConnection(server, port)
+    new LDAPConnectionPool(connection, connections)
+  }
+
+  val adminConnectionPool: LDAPConnectionPool = {
     val username = ldapConfiguration.getString("bind_dn")
     val password = ldapConfiguration.getString("bind_password")
-    val connections = Try(ldapConfiguration.getInt("connections")).getOrElse(10)
-
+    logger.info(marker, "logging into ldap with {}/{}", username, password)
     val connection = new LDAPConnection(server, port, username, password)
     new LDAPConnectionPool(connection, connections)
   }
 
-  override def findUser(username: String, password: String): Future[Option[LDAPUser]] = Future {
-    val dn = s"cn=$username,$usersPath,$baseDN"
+  def getUserEntry(username: String): Option[SearchResultEntry] = {
+    val connection = adminConnectionPool.getConnection
+    val searchResult = connection.search(s"$usersPath,$baseDN", SearchScope.SUB, searchQuery(username))
+    searchResult
+      .getSearchEntries
+      .asScala
+      .headOption
+  }
 
-    val connection = connectionPool.getConnection()
-    Try(connection.bind(new SimpleBindRequest(dn, password))) match {
-      case Success(_) => Some(LDAPUser(connection.getEntry(dn)))
-      case Failure(_) => None
+  override def findUser(username: String, password: String): Future[Option[LDAPUser]] = Future {
+    Try(connectionPool.bindAndRevertAuthentication(fullUsername(username), password)) match {
+      case Success(result) if result.getResultCode == ResultCode.SUCCESS =>
+        getUserEntry(username)
+          .map(ldapUser)
+      case Failure(_) =>
+        None
     }
   }
 
+
   override def createGroup(groupName: String, initialMember: String): Future[String] = Future {
-    val connection = connectionPool.getConnection()
-    val dn = s"cn=edh_sw_$groupName,${ldapConfiguration.getString("group_path")},${ldapConfiguration.getString("base_dn")}"
+    val Some(user) = getUserEntry(initialMember)
+    val connection = adminConnectionPool.getConnection()
+    val dn = s"cn=edh_sw_$groupName,$groupPath,$baseDN"
     try {
-      connection.add(
+      val result = connection.add(
         s"dn: $dn",
+        s"objectClass: $groupObjectClass",
         "objectClass: top",
-        "objectClass: groupOfNames",
         s"cn: edh_sw_$groupName",
-        s"member: cn=$initialMember,$usersPath,$baseDN"
+        s"member: ${user.getDN}"
       )
+      println(result)
     } catch {
-      case exception: Throwable => exception.printStackTrace()
+      case exception: Throwable =>
+        exception.printStackTrace()
     }
     dn
   }

@@ -2,8 +2,6 @@ package com.heimdali.test.fixtures
 
 import com.typesafe.config.ConfigFactory
 import com.unboundid.ldap.sdk.{LDAPConnection, SearchScope}
-import com.whisk.docker.DockerContainer
-import com.whisk.docker.config.DockerKitConfig
 import org.scalatest.{BeforeAndAfterEach, Suite}
 
 import scala.collection.JavaConverters._
@@ -14,6 +12,7 @@ trait LDAPTest extends BeforeAndAfterEach {
 
   val baseDN = "dc=jotunn,dc=io"
   val userDN = "ou=users,ou=hadoop"
+  val groupDN = "ou=groups,ou=hadoop"
   val bindDN = "cn=readonly,dc=jotunn,dc=io"
   val bindPassword = "readonly"
   val username = "username"
@@ -35,12 +34,4 @@ trait LDAPTest extends BeforeAndAfterEach {
     val groups = ldapConnection.search("ou=groups,ou=hadoop,dc=jotunn,dc=io", SearchScope.SUB, "(objectClass=groupOfNames)").getSearchEntries.asScala
     (users ++ groups).map(_.getDN).map(ldapConnection.delete)
   }
-}
-
-trait DockerLDAPService extends DockerKitConfig {
-  val ldapContainer: DockerContainer =
-    configureDockerContainer("docker.ldap")
-
-  override val dockerContainers: List[DockerContainer] =
-    ldapContainer :: super.dockerContainers
 }

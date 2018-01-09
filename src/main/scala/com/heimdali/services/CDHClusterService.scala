@@ -8,6 +8,7 @@ import akka.http.scaladsl.unmarshalling.Unmarshal
 import akka.stream.Materializer
 import com.typesafe.config.Config
 import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport
+import io.circe.{Decoder, HCursor}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -17,7 +18,13 @@ class CDHClusterService(http: HttpExt,
                         materializer: Materializer)
   extends ClusterService with FailFastCirceSupport {
 
-  import io.circe.generic.auto._
+  implicit val decoder = new Decoder[Cluster] {
+    override def apply(c: HCursor) = for {
+      id <- c.downField("name").as[String]
+      name <- c.downField("displayName").as[String]
+      version <- c.downField("fullVersion").as[String]
+    } yield Cluster(id, name, CDH(version))
+  }
 
   def clusterDetails(baseUrl: String, username: String, password: String): Future[Cluster] = {
     val request = Get(baseUrl).addCredentials(BasicHttpCredentials(username, password))

@@ -1,0 +1,14 @@
+{
+  "name": "test",
+  "schedulablePropertiesList": [
+    {
+      "maxResources": {
+        "memory": 1024,
+        "vcores": 1
+      },
+      "scheduleName": "default",
+      "weight": 1.0
+    }
+  ],
+  "schedulingPolicy": "drf"
+}

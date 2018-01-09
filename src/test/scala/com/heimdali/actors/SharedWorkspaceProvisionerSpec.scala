@@ -7,6 +7,7 @@ import com.heimdali.actors.KeytabActor.{GenerateKeytab, KeytabCreated}
 import com.heimdali.actors.LDAPActor.{CreateEntry, LDAPUpdate}
 import com.heimdali.actors.WorkspaceProvisioner.{ProvisionCompleted, RegisterCaller, Request}
 import com.heimdali.actors.WorkspaceSaver.WorkspaceSaved
+import com.heimdali.actors.YarnActor.{CreatePool, PoolCreated}
 import com.heimdali.test.fixtures.TestProject
 import org.apache.hadoop.fs.Path
 import org.scalatest.{FlatSpec, Matchers}
@@ -28,12 +29,11 @@ class SharedWorkspaceProvisionerSpec extends FlatSpec with Matchers {
 
     val project = TestProject()
 
-    val provisioner = TestActorRef[WorkspaceProvisioner](Props(classOf[WorkspaceProvisioner], testProb.ref, testProb.ref, testProb.ref, testProb.ref, project)).underlyingActor
+    val provisioner = TestActorRef[WorkspaceProvisioner](Props(classOf[WorkspaceProvisioner], testProb.ref, testProb.ref, testProb.ref, testProb.ref, testProb.ref, project)).underlyingActor
 
     provisioner.initialSteps should be(Queue(
       testProb.ref -> CreateEntry(project.id, project.systemName, Seq(project.createdBy)),
-      testProb.ref -> CreateDirectory(project.id, project.systemName, project.hdfs.requestedSizeInGB),
-      testProb.ref -> GenerateKeytab(project.id, project.systemName)
+      testProb.ref -> CreateDirectory(project.id, project.systemName, project.hdfs.requestedSizeInGB)
     ))
   }
 
@@ -44,14 +44,16 @@ class SharedWorkspaceProvisionerSpec extends FlatSpec with Matchers {
     val ldapProbe = TestProbe("ldap")
     val saveProbe = TestProbe("save")
     val hdfsProbe = TestProbe("hdfs")
+    val yarnProbe = TestProbe("yarn")
     val keytabProbe = TestProbe("keytab")
 
     val project = TestProject()
     val dn = s"cn=edh_sw_${project.systemName},ou=groups,ou=hadoop,dc=jotunn,dc=io"
     val directory = s"/projects/${project.systemName}"
     val keytab = new Path(s"$directory/${project.systemName}.keytab")
+    val poolName = "yarn test"
 
-    val provisioner = actorSystem.actorOf(Props(classOf[WorkspaceProvisioner], ldapProbe.ref, saveProbe.ref, hdfsProbe.ref, keytabProbe.ref, project))
+    val provisioner = actorSystem.actorOf(Props(classOf[WorkspaceProvisioner], ldapProbe.ref, saveProbe.ref, hdfsProbe.ref, keytabProbe.ref, yarnProbe.ref, project))
 
     provisioner ! RegisterCaller(mainProbe.ref)
     provisioner ! Request
@@ -64,11 +66,6 @@ class SharedWorkspaceProvisionerSpec extends FlatSpec with Matchers {
     hdfsProbe.expectMsg(CreateDirectory(project.id, project.systemName, project.hdfs.requestedSizeInGB))
     hdfsProbe.reply(HDFSUpdate(project.id, directory, 10.0))
     saveProbe.expectMsg(HDFSUpdate(project.id, directory, 10.0))
-    saveProbe.reply(WorkspaceSaved)
-
-    keytabProbe.expectMsg(GenerateKeytab(project.id, project.systemName))
-    keytabProbe.reply(KeytabCreated(project.id, keytab))
-    saveProbe.expectMsg(KeytabCreated(project.id, keytab))
     saveProbe.reply(WorkspaceSaved)
 
     mainProbe.expectMsg(ProvisionCompleted)

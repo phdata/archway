@@ -9,16 +9,12 @@ RUN apt-key add archive.key && \
     apt-get update && \
     apt-get install -y hadoop-client
 
-COPY ./heimdali-api /opt/heimdali-api
+COPY ./heimdali-api.jar /opt/heimdali-api.jar
 COPY ./hdfs/* /etc/hadoop/conf.odin/
 COPY ./krb5.conf /etc/krb5.conf
-COPY ./scripts/jaas.conf /etc/jaas.conf
-COPY ./scripts/api_init.sh /usr/bin/api_init.sh
-
-RUN chmod +x /usr/bin/api_init.sh
+COPY ./jaas.conf /etc/jaas.conf
+COPY ./hdfs.keytab /opt/hdfs.keytab
 
 RUN update-alternatives --install /etc/hadoop/conf hadoop-conf /etc/hadoop/conf.odin 99
 
-ENTRYPOINT ["/usr/bin/api_init.sh"]
-
-CMD java -Djava.security.auth.login.config=/etc/jaas.conf -Duser.dir=/opt/heimdali-api -cp /opt/heimdali-api/lib/*:`hadoop classpath`:/etc/hadoop/conf.odin/:/opt/heimdali-api/conf/ play.core.server.ProdServerStart
+CMD java -Djava.security.auth.login.config=/etc/jaas.conf -cp /opt/heimdali-api.jar:`hadoop classpath`:/etc/hadoop/conf.odin com.heimdali.Main

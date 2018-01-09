@@ -22,7 +22,7 @@ class SharedWorkspaceServiceImplSpec extends AsyncFlatSpec with Matchers with As
     val probe = TestProbe()
     val repo = mock[WorkspaceRepository]
     val date = LocalDateTime.now
-    val workspace = SharedWorkspaceRequest(TestProject.name, TestProject.purpose, TestProject.compliance, HDFSProvision(None, TestProject.hdfsRequestedSize, None), None)
+    val workspace = SharedWorkspaceRequest(TestProject.name, TestProject.purpose, TestProject.compliance, TestProject.hdfs, TestProject.yarn, None)
     repo.create _ expects workspace returning Future(TestProject())
 
     val projectServiceImpl = new WorkspaceServiceImpl(repo, factory)

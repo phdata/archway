@@ -7,7 +7,7 @@ import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.model.headers.OAuth2BearerToken
 import akka.http.scaladsl.testkit.ScalatestRouteTest
 import com.heimdali.models.ViewModel.SharedWorkspace
-import com.heimdali.{AuthService, WorkspaceController}
+import com.heimdali.rest.{AuthService, WorkspaceController}
 import com.heimdali.services._
 import com.heimdali.test.fixtures._
 import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport
@@ -29,6 +29,7 @@ class SharedWorkspaceControllerSpec
     with BeforeAndAfterEach {
 
   implicit val configuration: Configuration = Configuration.default.withDefaults.withSnakeCaseKeys
+
   import io.circe.java8.time._
   import io.circe.generic.extras.auto._
 
@@ -37,19 +38,23 @@ class SharedWorkspaceControllerSpec
   it should "create a project" in {
     val Right(json) = parse(
       """
-      | {
-      |   "name": "Sesame",
-      |   "purpose": "to do something cool",
-      |   "compliance": {
-      |     "pii_data": false,
-      |     "phi_data": false,
-      |     "pci_data": false
-      |   },
-      |   "hdfs": {
-      |     "requested_size_in_gb": 0.2
-      |   }
-      | }
-    """.stripMargin)
+        | {
+        |   "name": "Sesame",
+        |   "purpose": "to do something cool",
+        |   "compliance": {
+        |     "pii_data": false,
+        |     "phi_data": false,
+        |     "pci_data": false
+        |   },
+        |   "hdfs": {
+        |     "requested_size_in_gb": 0.2
+        |   },
+        |   "yarn": {
+        |     "max_cores": 1,
+        |     "max_memory_in_gb": 0.2
+        |   }
+        | }
+      """.stripMargin)
 
     println(json)
 
@@ -62,21 +67,21 @@ class SharedWorkspaceControllerSpec
     Post("/workspaces", json) ~> addCredentials(OAuth2BearerToken("AbCdEf123456")) ~> restApi.route ~> check {
       responseEntity.toString
       status should be(StatusCodes.Created)
-//      val response = responseAs[SharedWorkspace]
-//
-//      val id = response.id
-//      response.name should be(TestProject.name)
-//      response.purpose should be(TestProject.purpose)
-//      response.systemName should be(TestProject.systemName)
-//
-//      response.compliance.piiData should be(false)
-//      response.compliance.phiData should be(false)
-//      response.compliance.pciData should be(false)
-//
-//      implicit val dateOrdering: Ordering[LocalDateTime] = Ordering.fromLessThan(_ isBefore _)
-//      response.created should be < LocalDateTime.now
-//
-//      response.createdBy should be("username")
+      val response = responseAs[SharedWorkspace]
+
+      val id = response.id
+      response.name should be(TestProject.name)
+      response.purpose should be(TestProject.purpose)
+      response.systemName should be(TestProject.systemName)
+
+      response.compliance.piiData should be(false)
+      response.compliance.phiData should be(false)
+      response.compliance.pciData should be(false)
+
+      implicit val dateOrdering: Ordering[LocalDateTime] = Ordering.fromLessThan(_ isBefore _)
+      response.created should be < LocalDateTime.now
+
+      response.createdBy should be(standardUsername)
     }
   }
 
@@ -85,23 +90,28 @@ class SharedWorkspaceControllerSpec
     val oldDateString = oldDate.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
     val wrongUser = "johnsmith"
     val fakeId = 999
-    val Right(json) = parse(s"""
-      | {
-      |   "id": $fakeId,
-      |   "name": "sesame",
-      |   "purpose": "to do something cool",
-      |   "system_name": "blahblah",
-      |   "compliance": {
-      |     "pii_data": false,
-      |     "phi_data": false,
-      |     "pci_data": false
-      |   },
-      |   "hdfs": {
-      |     "requested_size_in_gb": 0.2
-      |   },
-      |   "created": "$oldDateString",
-      |   "created_by": "$wrongUser"
-      | }""".stripMargin)
+    val Right(json) = parse(
+      s"""
+         | {
+         |   "id": $fakeId,
+         |   "name": "sesame",
+         |   "purpose": "to do something cool",
+         |   "system_name": "blahblah",
+         |   "compliance": {
+         |     "pii_data": false,
+         |     "phi_data": false,
+         |     "pci_data": false
+         |   },
+         |   "hdfs": {
+         |     "requested_size_in_gb": 0.2
+         |   },
+         |   "yarn": {
+         |     "max_cores": 1,
+         |     "max_memory_in_gb": 0.2
+         |   },
+         |   "created": "$oldDateString",
+         |   "created_by": "$wrongUser"
+         | }""".stripMargin)
 
     val workspaceService = mock[WorkspaceService]
     (workspaceService.create _).expects(*).returning(Future(TestProject()))

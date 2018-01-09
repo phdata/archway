@@ -20,9 +20,13 @@ package object fixtures {
     val hdfsLocation: Option[String] = None
     val hdfsRequestedSize: Double = 10.0
     val actualGB = None
-    val hdfs = HDFSProvision(hdfsLocation, hdfsRequestedSize, actualGB)
     val keytabLocation: Option[String] = None
     val systemName: String = SharedWorkspace.generateName(name)
+    val maxCores = 1
+    val maxMemoryInGB = 1.0
+    val poolName = None
+    val hdfs = HDFSProvision(hdfsLocation, hdfsRequestedSize, None)
+    val yarn = YarnProvision(poolName, maxCores, maxMemoryInGB)
 
     def apply(id: Long = TestProject.id,
               name: String = TestProject.name,
@@ -31,10 +35,11 @@ package object fixtures {
               systemName: String = TestProject.systemName,
               compliance: Compliance = TestProject.compliance,
               hdfs: HDFSProvision = TestProject.hdfs,
+              yarn: YarnProvision = TestProject.yarn,
               keytabLocation: Option[String] = TestProject.keytabLocation,
               createdDate: LocalDateTime = LocalDateTime.now(),
               createdBy: String = standardUsername): SharedWorkspace =
-      SharedWorkspace(id, name, purpose, ldapDn, systemName, compliance, hdfs, keytabLocation, createdDate, createdBy)
+      SharedWorkspace(id, name, purpose, ldapDn, systemName, compliance, hdfs, yarn, keytabLocation, createdDate, createdBy)
   }
 
 }

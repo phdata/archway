@@ -1,9 +1,0 @@
-apiVersion: v1
-kind: Secret
-metadata:
-  name: ldap-creds
-type: Opaque
-data:
-  username: Y249YWRtaW4sZGM9am90dW5uLGRjPWlv
-  password: YWRtaW4=
-  key: Y249YWRtaW4sZGM9am90dW5uLGRjPWlvI3tIRVh9NjE2NDZkNjk2ZQo=

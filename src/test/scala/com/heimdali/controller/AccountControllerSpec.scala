@@ -2,9 +2,9 @@ package com.heimdali.controller
 
 import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.model.headers.OAuth2BearerToken
-import akka.http.scaladsl.server.directives.{AuthenticationResult, Credentials}
+import akka.http.scaladsl.server.directives.AuthenticationResult
 import akka.http.scaladsl.testkit.ScalatestRouteTest
-import com.heimdali.{AccountController, AuthService}
+import com.heimdali.rest.{AccountController, AuthService}
 import com.heimdali.services._
 import com.typesafe.config.ConfigFactory
 import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport
