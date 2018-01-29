@@ -1,0 +1,4 @@
+.CreateProject {
+    display: flex;
+    flex-direction: column;
+}

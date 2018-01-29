@@ -1,0 +1,23 @@
+.Panel {
+  display: flex;
+  flex-direction: column;
+  flex: 2;
+  margin: 10;
+}
+
+.Panel-title {
+  color: white;
+  padding: 10;
+  margin: 0;
+  background-color: #50514F;
+}
+
+.Panel-content {
+  padding: 10;
+  display: flex;
+  border-width: 1;
+  border-color: #000;
+  border-style: solid;
+  flex-direction: column;
+  background-color: white;
+}
