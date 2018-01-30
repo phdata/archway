@@ -1,30 +1,20 @@
-import {createStore, applyMiddleware, combineReducers} from 'redux';
+import {applyMiddleware, combineReducers, createStore} from 'redux';
 import createSagaMiddleware from 'redux-saga';
 
 import rootReducer from '../reducers';
-import rootSagas from '../sagas';
-import { routerReducer } from 'react-router-redux';
+import rootSaga from '../sagas';
+import {reducer as reduxFormReducer} from "redux-form";
+
 
 const sagaMiddleware = createSagaMiddleware();
 
-const combined = (root) => {
-    return combineReducers({
-        root,
-        routing: routerReducer
-    });
-};
+const store = createStore(
+    combineReducers({
+        form: reduxFormReducer,
+        rootReducer
+    }),
+    applyMiddleware(sagaMiddleware)
+);
+sagaMiddleware.run(rootSaga);
 
-const configureStore = preloadedState => {
-
-    if (module.hot) {
-        // Enable Webpack hot module replacement for reducers
-        module.hot.accept('../reducers', () => {
-            const nextRootReducer = require('../reducers').default;
-            store.replaceReducer(nextRootReducer);
-        });
-    }
-
-    return store;
-};
-
-export default configureStore;
+export default store;

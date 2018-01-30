@@ -1,54 +1,29 @@
 import React from 'react';
 import {render} from 'react-dom';
 import {connect, Provider} from "react-redux";
-import createSagaMiddleware from 'redux-saga';
-
-import {applyMiddleware, combineReducers, createStore} from 'redux'
-
-import rootReducer from './reducers'
-import {ConnectedRouter} from "react-router-redux";
-import Home from './containers/Home';
-import RequestProject from "./containers/RequestProject";
-import createHistory from 'history/createBrowserHistory';
-import {Route} from 'react-router';
-import Navigation from "./components/Navigation";
-import { reducer as reduxFormReducer } from 'redux-form';
 import Login from "./containers/Login";
+import Main from "./containers/Main";
+import Loading from "./containers/Loading";
+import store from "./store/configureStore";
 
-const sagaMiddleware = createSagaMiddleware();
-
-const store = createStore(
-    combineReducers({
-        form: reduxFormReducer,
-        rootReducer
-    }),
-    applyMiddleware(sagaMiddleware)
-);
-
-const history = createHistory();
-
-let App = () => {
-    return (
-        <ConnectedRouter history={history}>
-            <div style={{display: "flex", minHeight: "100%"}}>
-                <Navigation/>
-                <div style={{marginLeft: 10}}>
-                    <Route exact path="/" component={Home}/>
-                    <Route path="/shared-request" component={RequestProject}/>
-                </div>
-            </div>
-        </ConnectedRouter>
-    );
+const AppContainer = ({loading, token}) => {
+    if (loading) {
+        return <Loading/>;
+    } else if (token) {
+        return <Main/>;
+    } else {
+        return <Login/>;
+    }
 };
 
-App = connect(
-    state => ({ token: startup() }),
+const App = connect(
+    state => state.rootReducer.account,
     {}
-)(App);
+)(AppContainer);
 
 render(
     <Provider store={store}>
-        <App />
+        <App/>
     </Provider>,
     document.getElementById('root')
 );

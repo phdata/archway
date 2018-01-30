@@ -1,14 +1,18 @@
 import React from "react";
 import {Field, reduxForm} from 'redux-form';
+import "./LoginForm.css";
+import Button from "./Button";
 
-const LoginForm = ({handleSubmit, pristine, submitting}) => {
+const LoginForm = (values) => {
+    console.log(values);
+    const {handleSubmit, pristine, submitting} = values;
     return (
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="LoginForm">
             <label>Username</label>
             <Field name="username" component="input" type="text"/>
             <label>Password</label>
             <Field name="password" component="input" type="password"/>
-            <button type="submit" disabled={pristine || submitting}>Log In</button>
+            <Button type="submit" disabled={pristine || submitting}>Log In</Button>
         </form>
     )
 };
