@@ -22,6 +22,6 @@ const Login = ({login, error}) => {
 };
 
 export default connect(
-    state => state.rootReducer.account,
+    state => state.account,
     {login}
 )(Login);

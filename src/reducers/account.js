@@ -1,10 +1,11 @@
-import { combineReducers } from 'redux'
 import {
+    LOGIN_FAILURE,
     LOGIN_REQUEST,
     LOGIN_SUCCESS,
-    LOGIN_FAILURE,
     TOKEN_EXTRACTED,
-    TOKEN_NOT_AVAILABLE
+    TOKEN_NOT_AVAILABLE,
+    WORKSPACE_AVAILABLE,
+    WORKSPACE_REQUESTED
 } from '../actions'
 
 const initialState = {
@@ -45,11 +46,19 @@ function token(state = initialState, action ) {
                 ...state,
                 loading: false
             };
+        case WORKSPACE_AVAILABLE:
+            return {
+                ...state,
+                workspace: action.workspace
+            };
+        case WORKSPACE_REQUESTED:
+            return {
+                ...state,
+                requesting: true
+            };
         default:
             return state
     }
 }
 
-export default combineReducers({
-    account: token
-});
+export default token;

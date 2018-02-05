@@ -1,34 +1,28 @@
 .Navigation {
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    background-color: #50514F;
+    height: 50px;
+    padding: 10px;
+    flex-direction: row;
+    background-color: #455C7B;
     color: white;
-    padding: 10px 20px;
-    width: 250px;
-    min-height: 100%;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid white;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, .16);
 }
 
-.Navigation-branding {
-    width: 200px;
-    margin-left: auto;
-    margin-right: auto;
+.Navigation-logo {
+    heighT: 50px;
+    margin-right: 10px;
 }
 
-.Navigation-context {
-    margin: 10px 0;
+.Navigation-left {
+    font-size: 44px;
 }
 
-.Navigation-context > h4 {
-    margin-bottom: 0;
-}
-
-.Navigation-context > h3 {
-    margin-top: 0;
-}
-
-.Navigation-link {
-    color: white;
-    font-size: 16px;
-    text-decoration: none;
+.Navigation-left,
+.Navigation-right {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
 }

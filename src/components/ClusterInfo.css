@@ -1,0 +1,30 @@
+.ClusterInfo {
+    display: flex;
+    align-items: center;
+    margin-right: 15px;
+    font-size: 20px;
+}
+
+.ClusterInfo-status {
+    border: 1px solid white;
+    border-radius: 50%;
+    height: 15px;
+    width: 15px;
+    margin-right: 7px;
+}
+
+.ClusterInfo-status-unknown {
+    background: gray;
+}
+
+.ClusterInfo-status-good {
+    background-color: limegreen;
+}
+
+.ClusterInfo-status-bad {
+    background-color: red;
+}
+
+.Cluster-expand {
+    margin-left: 7px;
+}

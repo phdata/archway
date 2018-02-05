@@ -1,4 +1,4 @@
-const BASE_URL = "http://afaf4ca43f2b711e790d2066697211af-656732979.us-west-2.elb.amazonaws.com:8080";
+const BASE_URL = "http://localhost:8080";
 
 export function login(username, password) {
     return fetch(BASE_URL + "/account/token", {
@@ -15,11 +15,21 @@ export function logout() {
 export function workspace(token) {
     return fetch(BASE_URL + "/account/workspace", {
         headers: {
-            Authorization: "Bearer " + token
+            "Authorization": "Bearer " + token
         }
-    });
+    }).then(response => response.json());
+}
+
+export function requestWorkspace(token) {
+    return fetch(BASE_URL + "/account/workspace", {
+        method: 'POST',
+        headers: {
+            "Authorization": "Bearer " + token
+        }
+    }).then(response => response.json());
 }
 
 export function cluster() {
-    return fetch(BASE_URL + "/clusters").then(response => response.json());
+    return fetch(BASE_URL + "/clusters", {})
+        .then(response => response.json());
 }

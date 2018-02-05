@@ -17,7 +17,7 @@ const AppContainer = ({loading, token}) => {
 };
 
 const App = connect(
-    state => state.rootReducer.account,
+    state => state.account,
     {}
 )(AppContainer);
 
