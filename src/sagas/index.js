@@ -4,15 +4,6 @@ import * as Api from "../api";
 import {reset, stopSubmit} from "redux-form";
 import {delay} from "redux-saga";
 
-function* start() {
-    const requestToken = localStorage.getItem("requestToken");
-    const refreshToken = localStorage.getItem("refreshToken");
-    if (requestToken)
-        yield put(actions.tokenExtracted({ requestToken, refreshToken }));
-    else
-        yield put(actions.tokenNotAvailable());
-}
-
 function* waitForToken() {
     const token = yield take(actions.TOKEN_EXTRACTED);
     console.log(token);
@@ -20,11 +11,13 @@ function* waitForToken() {
 
 function* authorize(username, password) {
     try {
-        const {accessToken, refreshToken} =
+        const response =
             yield call(Api.login, username, password);
-        localStorage.setItem("requestToken", accessToken);
-        localStorage.setItem("refreshToken", refreshToken);
-        yield put(actions.loginSuccess(accessToken));
+        console.log(response);
+        const {access_token, refresh_token} = response;
+        localStorage.setItem("requestToken", access_token);
+        localStorage.setItem("refreshToken", refresh_token);
+        yield put(actions.loginSuccess(access_token));
         yield put(reset("login"));
         yield put(stopSubmit("login"));
     } catch (error) {
@@ -35,18 +28,27 @@ function* authorize(username, password) {
 
 function* loginFlow() {
     while (true) {
-        const {username, password} = yield take(actions.LOGIN_REQUEST);
-        yield fork(authorize, username, password);
+        const requestToken = localStorage.getItem("requestToken");
+        if (requestToken)
+            yield put(actions.tokenExtracted(requestToken));
+        else {
+            const {username, password} = yield take(actions.LOGIN_REQUEST);
+            yield fork(authorize, username, password);
+        }
         yield take(actions.LOGOUT_REQUEST);
         yield call(Api.logout);
     }
 }
 
 function* getWorkspace() {
-    const {requestToken} = yield take(actions.TOKEN_EXTRACTED);
-    const workspace = yield call(Api.workspace, requestToken);
-    if (workspace)
-        yield put(actions.workspaceFound(workspace));
+    const {token} = yield take(actions.TOKEN_EXTRACTED);
+    try {
+        const workspace = yield call(Api.workspace, token);
+        if (workspace)
+            yield put(actions.workspaceFound(workspace));
+    } catch(exception) {
+        yield put(actions.workspaceAbsent());
+    }
 }
 
 function* createWorkspace() {
@@ -57,14 +59,14 @@ function* createWorkspace() {
 function* clusterStatus() {
     while (true) {
         const cluster = yield call(Api.cluster);
+        console.log(cluster);
         yield put(actions.clusterInfo(cluster));
-        yield call(delay, 30000);
+        yield call(delay, 300000);
     }
 }
 
 export default function* root() {
     yield all([
-        fork(start),
         fork(loginFlow),
         fork(waitForToken),
         fork(getWorkspace),

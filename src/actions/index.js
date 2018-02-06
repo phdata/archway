@@ -12,6 +12,7 @@ export const TOKEN_EXTRACTED = 'TOKEN_EXTRACTED';
 export const TOKEN_NOT_AVAILABLE = 'TOKEN_NOT_AVAILABLE';
 
 export const WORKSPACE_AVAILABLE = "WORKSPACE_AVAILABLE";
+export const WORKSPACE_ABSENT = "WORKSPACE_ABSENT";
 export const WORKSPACE_REQUESTED = "WORKSPACE_REQUESTED";
 
 export function login({username, password}) {
@@ -43,18 +44,18 @@ export function tokenExtracted(token) {
     };
 }
 
-export function tokenNotAvailable() {
-    return {
-        type: TOKEN_NOT_AVAILABLE
-    };
-}
-
 export function workspaceFound(workspace) {
     return {
         type: WORKSPACE_AVAILABLE,
         workspace
     };
 }
+
+export function workspaceAbsent() {
+    return {
+        type: WORKSPACE_ABSENT
+    };
+};
 
 export function requestWorkspace() {
     return {

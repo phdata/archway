@@ -1,0 +1,61 @@
+.lds-css {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    justify-content: center;
+    font-size: 38px;
+}
+
+@keyframes lds-disk {
+    0% {
+        -webkit-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+    100% {
+        -webkit-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
+}
+@-webkit-keyframes lds-disk {
+    0% {
+        -webkit-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+    100% {
+        -webkit-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
+}
+
+.lds-disk {
+    position: relative;
+}
+
+.lds-disk > div div:nth-child(1) {
+    position: absolute;
+    top: 30px;
+    left: 30px;
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    background: #455C7B;
+}
+.lds-disk > div div:nth-child(2) {
+    position: absolute;
+    top: 39.800000000000004px;
+    left: 79px;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: #FFFFFF;
+    -webkit-animation: lds-disk 1s linear infinite;
+    animation: lds-disk 1s linear infinite;
+    -webkit-transform-origin: 21px 60.199999999999996px;
+    transform-origin: 21px 60.199999999999996px;
+}
+.lds-disk {
+    width: 100px !important;
+    height: 100px !important;
+    -webkit-transform: translate(-50px, -50px) scale(0.5) translate(50px, 50px);
+    transform: translate(-50px, -50px) scale(0.5) translate(50px, 50px);
+}

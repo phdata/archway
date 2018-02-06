@@ -1,29 +1,47 @@
 import React from 'react';
-import {render} from 'react-dom';
-import {connect, Provider} from "react-redux";
-import Login from "./containers/Login";
-import Main from "./containers/Main";
-import Loading from "./containers/Loading";
-import store from "./store/configureStore";
+import ReactDOM from 'react-dom';
+import configureStore from "./store/configureStore";
+import App from "./App";
+import {Provider} from "react-redux";
+import RedBox from "redbox-react";
 
-const AppContainer = ({loading, token}) => {
-    if (loading) {
-        return <Loading/>;
-    } else if (token) {
-        return <Main/>;
-    } else {
-        return <Login/>;
-    }
+const store = configureStore();
+
+const rootEl = document.getElementById('root');
+
+let render = () => {
+    ReactDOM.render(
+        <Provider store={store}>
+            <App/>
+        </Provider>,
+        rootEl
+    );
 };
 
-const App = connect(
-    state => state.account,
-    {}
-)(AppContainer);
+if(module.hot) {
+    // Support hot reloading of components
+    // and display an overlay for runtime errors
+    const renderApp = render;
+    const renderError = (error) => {
+        const RedBox = require("redbox-react");
+        ReactDOM.render(
+            <RedBox error={error} />,
+            rootEl,
+        );
+    };
 
-render(
-    <Provider store={store}>
-        <App/>
-    </Provider>,
-    document.getElementById('root')
-);
+    render = () => {
+        try {
+            renderApp();
+        }
+        catch(error) {
+            renderError(error);
+        }
+    };
+
+    module.hot.accept("./App", () => {
+        setTimeout(render);
+    });
+}
+
+render();

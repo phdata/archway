@@ -7,6 +7,7 @@ const UserWorkspaceAbsent = ({requestWorkspace}) => {
             <div className="UserWorkspaceAbsent-notice">
                 <i className="far fa-frown"></i>
                 <div>You don't have a workspace yet!</div>
+                <div>Let's add one...</div>
             </div>
             <i className="fas fa-plus"></i>
         </div>
