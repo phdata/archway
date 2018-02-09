@@ -6,6 +6,8 @@ export const LOGOUT_REQUEST = 'LOGOUT_REQUEST';
 export const LOGOUT_SUCCESS = 'LOGOUT_SUCCESS';
 export const LOGOUT_FAILURE = 'LOGOUT_FAILURE';
 
+export const PROFILE_READY = 'PROFILE_READY';
+
 export const CLUSTER_INFO = "CLUSTER_INFO";
 
 export const TOKEN_EXTRACTED = 'TOKEN_EXTRACTED';
@@ -55,7 +57,7 @@ export function workspaceAbsent() {
     return {
         type: WORKSPACE_ABSENT
     };
-};
+}
 
 export function requestWorkspace() {
     return {
@@ -67,5 +69,12 @@ export function clusterInfo(cluster) {
     return {
         type: CLUSTER_INFO,
         cluster
+    };
+}
+
+export function profileReady(profile) {
+    return {
+        type: PROFILE_READY,
+        profile
     };
 }

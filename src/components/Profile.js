@@ -1,12 +1,16 @@
 import React from 'react';
 import "./Profile.css";
+import {connect} from "react-redux";
 
-const Profile = () =>  {
+const Profile = ({profile}) =>  {
     return (
         <div className="Profile">
-            BT
+            {profile.initials}
         </div>
     );
 };
 
-export default Profile;
+export default connect(
+    state => state.account,
+    {}
+)(Profile);

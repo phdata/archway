@@ -1,7 +1,7 @@
 import {
     LOGIN_FAILURE,
     LOGIN_REQUEST,
-    LOGIN_SUCCESS,
+    LOGIN_SUCCESS, PROFILE_READY,
     TOKEN_EXTRACTED,
     TOKEN_NOT_AVAILABLE, WORKSPACE_ABSENT,
     WORKSPACE_AVAILABLE,
@@ -56,6 +56,13 @@ function token(state = initialState, action ) {
             return {
                 ...state,
                 requesting: true
+            };
+        case PROFILE_READY:
+            action.profile.initials =
+                action.profile.name.split(" ").map(s => s.charAt(0));
+            return {
+                ...state,
+                profile: action.profile
             };
         default:
             return state

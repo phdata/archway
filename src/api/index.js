@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost:8080";
+const BASE_URL = "https://private-a63a5-heimdali.apiary-mock.com";
 
 export function login(username, password) {
     return fetch(BASE_URL + "/account/token", {
@@ -26,10 +26,18 @@ export function requestWorkspace(token) {
         headers: {
             "Authorization": "Bearer " + token
         }
-    }).then(response => response.json());
+    });
 }
 
 export function cluster() {
     return fetch(BASE_URL + "/clusters", {})
         .then(response => response.json());
+}
+
+export function profile(token) {
+    return fetch(BASE_URL + "/account/profile", {
+        headers: {
+            "Authorization": "Bearer " + token
+        }
+    }).then(response => response.json());
 }

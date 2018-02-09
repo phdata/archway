@@ -1,12 +1,15 @@
-import {all, call, fork, put, take} from 'redux-saga/effects'
+import {all, select, call, fork, put, take} from 'redux-saga/effects'
 import * as actions from "../actions";
 import * as Api from "../api";
 import {reset, stopSubmit} from "redux-form";
 import {delay} from "redux-saga";
 
+const getToken = state => state.account.token;
+
 function* waitForToken() {
     const token = yield take(actions.TOKEN_EXTRACTED);
-    console.log(token);
+    const profile = yield call(Api.profile, token);
+    yield put(actions.profileReady(profile));
 }
 
 function* authorize(username, password) {
@@ -53,7 +56,8 @@ function* getWorkspace() {
 
 function* createWorkspace() {
     yield take(actions.WORKSPACE_REQUESTED);
-    yield call(Api.requestWorkspace);
+    const token = yield select(getToken);
+    yield call(Api.requestWorkspace, token);
 }
 
 function* clusterStatus() {
