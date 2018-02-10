@@ -1,9 +1,10 @@
 import {
     LOGIN_FAILURE,
     LOGIN_REQUEST,
-    LOGIN_SUCCESS, PROFILE_READY,
-    TOKEN_EXTRACTED,
-    TOKEN_NOT_AVAILABLE, WORKSPACE_ABSENT,
+    LOGIN_SUCCESS,
+    PROFILE_READY,
+    TOKEN_EXTRACTED, TOKEN_NOT_AVAILABLE,
+    WORKSPACE_ABSENT,
     WORKSPACE_AVAILABLE,
     WORKSPACE_REQUESTED
 } from '../actions'
@@ -38,12 +39,19 @@ function token(state = initialState, action ) {
         case TOKEN_EXTRACTED:
             return {
                 ...state,
+                loading: false,
                 token: action.token
+            };
+        case TOKEN_NOT_AVAILABLE:
+            return {
+                ...state,
+                loading: false,
+                token: null
             };
         case WORKSPACE_AVAILABLE:
             return {
                 ...state,
-                loading: false,
+                requesting: false,
                 workspace: action.workspace
             };
         case WORKSPACE_ABSENT:

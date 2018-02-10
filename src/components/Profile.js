@@ -3,9 +3,10 @@ import "./Profile.css";
 import {connect} from "react-redux";
 
 const Profile = ({profile}) =>  {
+    const initials = profile ? profile.initials : '';
     return (
         <div className="Profile">
-            {profile.initials}
+            {initials}
         </div>
     );
 };

@@ -1,4 +1,4 @@
-import {all, select, call, fork, put, take} from 'redux-saga/effects'
+import {all, call, fork, put, select, take} from 'redux-saga/effects'
 import * as actions from "../actions";
 import * as Api from "../api";
 import {reset, stopSubmit} from "redux-form";
@@ -10,6 +10,7 @@ function* waitForToken() {
     const token = yield take(actions.TOKEN_EXTRACTED);
     const profile = yield call(Api.profile, token);
     yield put(actions.profileReady(profile));
+    yield fork(getWorkspace, token);
 }
 
 function* authorize(username, password) {
@@ -35,6 +36,7 @@ function* loginFlow() {
         if (requestToken)
             yield put(actions.tokenExtracted(requestToken));
         else {
+            yield put(actions.tokenNotAvailalbe());
             const {username, password} = yield take(actions.LOGIN_REQUEST);
             yield fork(authorize, username, password);
         }
@@ -43,13 +45,11 @@ function* loginFlow() {
     }
 }
 
-function* getWorkspace() {
-    const {token} = yield take(actions.TOKEN_EXTRACTED);
+function* getWorkspace(token) {
     try {
         const workspace = yield call(Api.workspace, token);
-        if (workspace)
-            yield put(actions.workspaceFound(workspace));
-    } catch(exception) {
+        yield put(actions.workspaceFound(workspace));
+    } catch (exception) {
         yield put(actions.workspaceAbsent());
     }
 }
@@ -58,6 +58,19 @@ function* createWorkspace() {
     yield take(actions.WORKSPACE_REQUESTED);
     const token = yield select(getToken);
     yield call(Api.requestWorkspace, token);
+    let i = 0;
+    let ready = false;
+    while (!ready) {
+        try {
+            const prefer = ((i < 5) ? 404 : 200);
+            const workspace = yield call(Api.workspace, token, prefer);
+            yield put(actions.workspaceFound(workspace));
+            ready = true;
+        } catch (exception) {
+            i++;
+            yield call(delay, 1000);
+        }
+    }
 }
 
 function* clusterStatus() {
@@ -73,7 +86,6 @@ export default function* root() {
     yield all([
         fork(loginFlow),
         fork(waitForToken),
-        fork(getWorkspace),
         fork(createWorkspace),
         fork(clusterStatus)
     ]);

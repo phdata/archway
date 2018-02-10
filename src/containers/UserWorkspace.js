@@ -6,12 +6,16 @@ import UserWorkspaceAbsent from "../components/UserWorkspaceAbsent";
 import {requestWorkspace} from '../actions';
 import Spinner from "../components/Spinner";
 
-const UserWorkspace = ({loading, workspace, requestWorkspace}) => {
+const UserWorkspace = ({account: {requesting, workspace}, cluster, requestWorkspace}) => {
     let workspaceContent = <div/>;
     if (workspace)
-        workspaceContent = <UserWorkspaceDisplay workspace/>;
-    else if (loading)
-        workspaceContent = <Spinner />;
+        workspaceContent = <UserWorkspaceDisplay workspace={workspace} cluster={cluster}/>;
+    else if (requesting)
+        workspaceContent = (
+            <Spinner>
+                Setting up your workspace...
+            </Spinner>
+        );
     else
         workspaceContent = <UserWorkspaceAbsent requestWorkspace={requestWorkspace}/>;
     return (
@@ -22,6 +26,6 @@ const UserWorkspace = ({loading, workspace, requestWorkspace}) => {
 };
 
 export default connect(
-    state => state.account,
+    state => state,
     {requestWorkspace}
 )(UserWorkspace);

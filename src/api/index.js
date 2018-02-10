@@ -12,10 +12,11 @@ export function logout() {
 
 }
 
-export function workspace(token) {
+export function workspace(token, prefer = 404) {
     return fetch(BASE_URL + "/account/workspace", {
         headers: {
-            "Authorization": "Bearer " + token
+            "Authorization": "Bearer " + token,
+            "Prefer": "status=" + prefer
         }
     }).then(response => response.json());
 }

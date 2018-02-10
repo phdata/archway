@@ -46,6 +46,12 @@ export function tokenExtracted(token) {
     };
 }
 
+export function tokenNotAvailalbe() {
+    return {
+        type: TOKEN_NOT_AVAILABLE
+    };
+}
+
 export function workspaceFound(workspace) {
     return {
         type: WORKSPACE_AVAILABLE,
@@ -60,6 +66,7 @@ export function workspaceAbsent() {
 }
 
 export function requestWorkspace() {
+    console.log("here okaY");
     return {
         type: WORKSPACE_REQUESTED
     };

@@ -5,6 +5,7 @@ import Main from "./containers/Main";
 import Spinner from "./components/Spinner";
 
 const AppContainer = ({loading, token}) => {
+    console.log(loading);
     if (loading) {
         return <Spinner />;
     } else if (token) {
