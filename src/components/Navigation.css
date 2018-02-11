@@ -6,7 +6,6 @@
     background-color: #455C7B;
     color: white;
     align-items: center;
-    justify-content: space-between;
     border-bottom: 1px solid white;
     box-shadow: 0 3px 6px rgba(0, 0, 0, .16);
 }
@@ -16,13 +15,47 @@
     margin-right: 10px;
 }
 
-.Navigation-left {
-    font-size: 44px;
+.Navigation-nav {
+    margin-left: 50px;
+}
+
+.Navigation-nav > li {
+    display: inline-block;
+    margin-right: 10px;
+}
+
+.Navigation-nav > li:after {
+    content: "\2022";
+    margin-left: 10px;
+}
+
+.Navigation-nav > li:last-child:after {
+    content: none;
+}
+
+.Navigation-nav > li > a {
+    color: white;
+    text-decoration: none;
+    font-size: 22px;
 }
 
 .Navigation-left,
 .Navigation-right {
     display: flex;
     flex-direction: row;
+    align-items: center;
+}
+
+.Navigation-left {
+    margin-right: auto;
+}
+
+.Navigation-right {
+    align-self: flex-end;
+}
+
+.Navigation-title {
+    display: flex;
+    font-size: 44px;
     align-items: center;
 }
