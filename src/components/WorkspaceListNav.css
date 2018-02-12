@@ -1,0 +1,14 @@
+.WorkspaceListNav {
+    border-bottom: 1px solid dimgray;
+    margin: 0 15px;
+    padding: 10px 0;
+}
+
+.WorkspaceListNav-link {
+    color: black;
+    text-decoration: none;
+}
+
+.WorkspaceListNav-link:hover {
+    text-decoration: underline;
+}

@@ -42,3 +42,11 @@ export function profile(token) {
         }
     }).then(response => response.json());
 }
+
+export function sharedWorkspaces(token) {
+    return fetch(BASE_URL + "/workspaces", {
+        headers: {
+            "Authorization": "Bearer " + token
+        }
+    }).then(response => response.json());
+}

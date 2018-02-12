@@ -1,0 +1,30 @@
+.WorkspaceListItem {
+    position: relative;
+    cursor: pointer;
+    padding: 30px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, .16);
+    background-color: white;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 10px;
+}
+
+.WorkspaceListItem > .fa-arrow-circle-right {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    color: lightgray;
+}
+
+.WorkspaceListItem-title {
+    text-transform: uppercase;
+}
+
+.WorkspaceListItem-created {
+    text-align: center;
+    text-transform: uppercase;
+    font-weight: 300;
+    font-size: 12px;
+}

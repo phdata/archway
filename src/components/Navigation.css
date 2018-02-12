@@ -19,6 +19,14 @@
     margin-left: 50px;
 }
 
+.Navigation-nav-link {
+    font-family: "Roboto";
+}
+
+.Navigation-nav-link.active {
+    color: lightgray;
+}
+
 .Navigation-nav > li {
     display: inline-block;
     margin-right: 10px;

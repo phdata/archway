@@ -17,6 +17,10 @@ export const WORKSPACE_AVAILABLE = "WORKSPACE_AVAILABLE";
 export const WORKSPACE_ABSENT = "WORKSPACE_ABSENT";
 export const WORKSPACE_REQUESTED = "WORKSPACE_REQUESTED";
 
+export const SHARED_WORKSPACES_REQUESTED = "SHARED_WORKSPACES_REQUESTED";
+export const SHARED_WORKSPACES_SUCCESS = "SHARED_WORKSPACES_SUCCESS";
+export const SHARED_WORKSPACES_FAILED = "SHARED_WORKSPACES_FAILED";
+
 export function login({username, password}) {
     return {
         type: LOGIN_REQUEST,
@@ -83,5 +87,25 @@ export function profileReady(profile) {
     return {
         type: PROFILE_READY,
         profile
+    };
+}
+
+export function workspacesRequested() {
+    return {
+        type: SHARED_WORKSPACES_REQUESTED
+    };
+}
+
+export function workspacesSuccess(workspaces) {
+    return {
+        type: SHARED_WORKSPACES_SUCCESS,
+        items: workspaces
+    };
+}
+
+export function workspacesFailed(error) {
+    return {
+        type: SHARED_WORKSPACES_FAILED,
+        error
     };
 }

@@ -11,20 +11,16 @@ const Navigation = () => {
             <div className="Navigation-left">
                 <div className="Navigation-title">
                     <img src={logo} alt="logo" className="Navigation-logo"/>
-                    Heimdali
+                    <h1>Heimdali</h1>
                 </div>
                 <ul className="Navigation-nav">
                     <li>
-                        <NavLink to="/" activeStyle={{
-                            color: "lightgray"
-                        }}>
+                        <NavLink to="/" exact className="Navigation-nav-link" activeClassName="active">
                             My Workspace
                         </NavLink>
                     </li>
                     <li>
-                        <NavLink to="/shared" activeStyle={{
-                            color: "lightgray"
-                        }}>
+                        <NavLink to="/workspaces" className="Navigation-nav-link" activeClassName="active">
                             Shared Workspaces
                         </NavLink>
                     </li>

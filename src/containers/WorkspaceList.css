@@ -1,0 +1,17 @@
+.WorkspaceList {
+    display: flex;
+    margin: 10px;
+    flex-direction: row;
+    align-items: center;
+    flex: 1;
+    justify-content: space-evenly;
+}
+
+.WorkspaceList-nothing {
+    display: flex;
+    flex: 1;
+    align-content: center;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+}

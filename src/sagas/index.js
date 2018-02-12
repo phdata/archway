@@ -3,6 +3,7 @@ import * as actions from "../actions";
 import * as Api from "../api";
 import {reset, stopSubmit} from "redux-form";
 import {delay} from "redux-saga";
+import {LOCATION_CHANGE} from "react-router-redux";
 
 const getToken = state => state.account.token;
 
@@ -82,11 +83,32 @@ function* clusterStatus() {
     }
 }
 
+function* loadWorkspaces() {
+    try {
+        const token = yield select(getToken);
+        const workspaces = yield call(Api.sharedWorkspaces, token);
+        yield put(actions.workspacesSuccess(workspaces));
+    } catch (exception) {
+        yield put(actions.workspacesFailed(exception.message));
+    }
+}
+
+function* requestWorkspaces() {
+    while (true) {
+        const {payload: {pathname}} = yield take(LOCATION_CHANGE);
+        if (pathname === "/workspaces") {
+            yield put(actions.workspacesRequested());
+            yield fork(loadWorkspaces);
+        }
+    }
+}
+
 export default function* root() {
     yield all([
         fork(loginFlow),
         fork(waitForToken),
         fork(createWorkspace),
-        fork(clusterStatus)
+        fork(clusterStatus),
+        fork(requestWorkspaces)
     ]);
 }

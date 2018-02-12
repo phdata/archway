@@ -5,6 +5,7 @@ import Navigation from "../components/Navigation";
 import {Route} from 'react-router';
 import createHistory from "history/createBrowserHistory";
 import UserWorkspace from "./UserWorkspace";
+import SharedWorkspaces from "./SharedWorkspaces";
 
 const history = createHistory();
 
@@ -16,6 +17,7 @@ const Main = () => {
                 <div style={{marginTop: 10, display: "flex", flex: 1}}>
                     <Route exact path="/" component={UserWorkspace}/>
                     <Route path="/shared-request" component={RequestProject}/>
+                    <Route path="/workspaces" component={SharedWorkspaces}/>
                 </div>
             </div>
         </ConnectedRouter>
