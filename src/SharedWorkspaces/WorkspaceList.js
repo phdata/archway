@@ -1,10 +1,11 @@
 import React from "react";
 import {connect} from "react-redux";
+import {push} from "react-router-redux";
 import Spinner from "../Common/Spinner";
 import WorkspaceListItem from "./WorkspaceListItem";
 import "./WorkspaceList.css";
 
-const WorkspaceList = ({loading, items}) => {
+const WorkspaceList = ({push, loading, items}) => {
     let content;
     if (loading) {
         content = <Spinner>Loading workspaces...</Spinner>;
@@ -14,7 +15,9 @@ const WorkspaceList = ({loading, items}) => {
         content = (
             <div className="WorkspaceList">
                 {items.map(item => {
-                    return <WorkspaceListItem key={item.id} workspace={item} />;
+                    return <WorkspaceListItem key={item.id}
+                                              workspace={item}
+                                              push={push} />;
                 })}
             </div>
         );
@@ -24,5 +27,5 @@ const WorkspaceList = ({loading, items}) => {
 
 export default connect(
     state => state.sharedWorkspaces,
-    {}
+    {push}
 )(WorkspaceList);
