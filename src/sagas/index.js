@@ -16,9 +16,7 @@ function* waitForToken() {
 
 function* authorize(username, password) {
     try {
-        const response =
-            yield call(Api.login, username, password);
-        console.log(response);
+        const response = yield call(Api.login, username, password);
         const {access_token, refresh_token} = response;
         localStorage.setItem("requestToken", access_token);
         localStorage.setItem("refreshToken", refresh_token);
@@ -77,7 +75,6 @@ function* createWorkspace() {
 function* clusterStatus() {
     while (true) {
         const cluster = yield call(Api.cluster);
-        console.log(cluster);
         yield put(actions.clusterInfo(cluster));
         yield call(delay, 300000);
     }

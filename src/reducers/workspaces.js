@@ -1,10 +1,9 @@
 import {
+    REQUEST_SHARED_WORKSPACE,
+    SHARED_WORKSPACES_FAILED,
     SHARED_WORKSPACES_REQUESTED,
-    SHARED_WORKSPACES_SUCCESS,
-    SHARED_WORKSPACES_FAILED
+    SHARED_WORKSPACES_SUCCESS
 } from '../actions';
-
-import {LOCATION_CHANGE} from 'react-router-redux';
 
 const initialState = {
     items: false,
@@ -32,6 +31,11 @@ function workspaces(state = initialState, action) {
                 loading: false,
                 items: false,
                 error: action.error
+            };
+        case REQUEST_SHARED_WORKSPACE:
+            return {
+                ...state,
+                loading: true
             };
         default:
             return state

@@ -4,12 +4,11 @@ import Login from "./containers/Login";
 import Main from "./containers/Main";
 import Spinner from "./components/Spinner";
 
-const AppContainer = ({loading, token}) => {
-    console.log(loading);
+const AppContainer = ({loading, token, history}) => {
     if (loading) {
         return <Spinner />;
     } else if (token) {
-        return <Main/>;
+        return <Main history={history}/>;
     } else {
         return <Login/>;
     }

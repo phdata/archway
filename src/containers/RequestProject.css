@@ -1,4 +1,26 @@
-.CreateProject {
+.RequestProject {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    justify-content: center;
+}
+
+.RequestProject-form {
     display: flex;
     flex-direction: column;
+    padding: 30px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, .16);
+    background-color: white;
+    border-radius: 10px;
+    align-items: center;
+    margin: 10px;
+    min-width: 300px;
+}
+
+.RequestProject-form > .compliance {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    min-width: 250px;
 }

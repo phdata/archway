@@ -21,6 +21,10 @@ export const SHARED_WORKSPACES_REQUESTED = "SHARED_WORKSPACES_REQUESTED";
 export const SHARED_WORKSPACES_SUCCESS = "SHARED_WORKSPACES_SUCCESS";
 export const SHARED_WORKSPACES_FAILED = "SHARED_WORKSPACES_FAILED";
 
+export const REQUEST_SHARED_WORKSPACE = "REQUEST_SHARED_WORKSPACE";
+export const REQUEST_SHARED_WORKSPACE_SUCCESS = "REQUEST_SHARED_WORKSPACE_SUCCESS";
+export const REQUEST_SHARED_WORKSPACE_FAILED = "REQUEST_SHARED_WORKSPACE_FAILED";
+
 export function login({username, password}) {
     return {
         type: LOGIN_REQUEST,
@@ -70,7 +74,6 @@ export function workspaceAbsent() {
 }
 
 export function requestWorkspace() {
-    console.log("here okaY");
     return {
         type: WORKSPACE_REQUESTED
     };
@@ -108,4 +111,26 @@ export function workspacesFailed(error) {
         type: SHARED_WORKSPACES_FAILED,
         error
     };
+}
+
+export function requestSharedWorkspace({name, purpose, phi_data, pii_data, pci_data}) {
+    return {
+        type: REQUEST_SHARED_WORKSPACE,
+        request: {
+            name,
+            purpose,
+            compliance: {
+                pii_data,
+                pci_data,
+                phi_data
+            },
+            hdfs: {
+                requested_size_in_gb: 12
+            },
+            yarn: {
+                max_cores: 10,
+                max_memory_in_gb: 8
+            }
+        }
+    }
 }

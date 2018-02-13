@@ -1,0 +1,16 @@
+label {
+    text-transform: uppercase;
+    font-weight: 300;
+    margin: 10px 0;
+}
+
+textarea {
+    min-width: 250px;
+    min-height: 50px;
+}
+
+textarea, input {
+    text-align: center;
+    font-family: inherit;
+    font-weight: inherit;
+}

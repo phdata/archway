@@ -14,7 +14,7 @@ const WorkspaceList = ({loading, items}) => {
         content = (
             <div className="WorkspaceList">
                 {items.map(item => {
-                    return <WorkspaceListItem workspace={item} />;
+                    return <WorkspaceListItem key={item.id} workspace={item} />;
                 })}
             </div>
         );

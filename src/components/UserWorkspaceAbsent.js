@@ -2,16 +2,12 @@ import React from 'react';
 import "./UserWorkspaceAbsent.css";
 
 const UserWorkspaceAbsent = ({requestWorkspace}) => {
-    const doit = () => {
-        console.log("here again");
-        requestWorkspace();
-    };
     return (
-        <div className="UserWorkspaceAbsent" onClick={doit}>
+        <div className="UserWorkspaceAbsent" onClick={requestWorkspace}>
             <div className="UserWorkspaceAbsent-notice">
                 <i className="far fa-frown"></i>
-                <div>You don't have a workspace yet!</div>
-                <div>Let's add one...</div>
+                <h3>You don't have a workspace yet!</h3>
+                <h4>Let's set one up...</h4>
             </div>
             <i className="fas fa-plus"></i>
         </div>

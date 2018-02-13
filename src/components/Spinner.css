@@ -3,7 +3,6 @@
     flex: 1;
     align-items: center;
     justify-content: center;
-    font-size: 38px;
 }
 
 @keyframes lds-disk {
@@ -52,10 +51,4 @@
     animation: lds-disk 1s linear infinite;
     -webkit-transform-origin: 21px 60.199999999999996px;
     transform-origin: 21px 60.199999999999996px;
-}
-.lds-disk {
-    width: 100px !important;
-    height: 100px !important;
-    -webkit-transform: translate(-50px, -50px) scale(0.5) translate(50px, 50px);
-    transform: translate(-50px, -50px) scale(0.5) translate(50px, 50px);
 }

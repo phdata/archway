@@ -1,15 +1,12 @@
 import React from "react";
-import RequestProject from "./RequestProject";
 import {ConnectedRouter} from "react-router-redux";
 import Navigation from "../components/Navigation";
 import {Route} from 'react-router';
-import createHistory from "history/createBrowserHistory";
 import UserWorkspace from "./UserWorkspace";
+import RequestProject from "./RequestProject";
 import SharedWorkspaces from "./SharedWorkspaces";
 
-const history = createHistory();
-
-const Main = () => {
+const Main = ({history}) => {
     return (
         <ConnectedRouter history={history}>
             <div style={{display: "flex", flex: 1, flexDirection: "column"}}>

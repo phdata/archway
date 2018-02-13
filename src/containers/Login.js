@@ -14,7 +14,7 @@ const Login = ({login, error}) => {
             <img src={logo} width={200} alt="logo" className="Login-logo"/>
             <div className="Login-panel">
                 <h1 className="Login-title">Please log in</h1>
-                <LoginForm onSubmit={login}/>
+                <LoginForm onSubmit={login} />
             </div>
             {errorBlock}
         </div>

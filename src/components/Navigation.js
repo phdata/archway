@@ -13,18 +13,14 @@ const Navigation = () => {
                     <img src={logo} alt="logo" className="Navigation-logo"/>
                     <h1>Heimdali</h1>
                 </div>
-                <ul className="Navigation-nav">
-                    <li>
-                        <NavLink to="/" exact className="Navigation-nav-link" activeClassName="active">
-                            My Workspace
-                        </NavLink>
-                    </li>
-                    <li>
-                        <NavLink to="/workspaces" className="Navigation-nav-link" activeClassName="active">
-                            Shared Workspaces
-                        </NavLink>
-                    </li>
-                </ul>
+                <div className="Navigation-nav">
+                    <NavLink to="/" exact className="Navigation-nav-link" activeClassName="active">
+                        My Workspace
+                    </NavLink>
+                    <NavLink to="/workspaces" className="Navigation-nav-link" activeClassName="active">
+                        Shared Workspaces
+                    </NavLink>
+                </div>
             </div>
             <div className="Navigation-right">
                 <ClusterInfo/>

@@ -17,34 +17,24 @@
 
 .Navigation-nav {
     margin-left: 50px;
+    display: flex;
+    flex: 1;
 }
 
 .Navigation-nav-link {
+    color: white;
+    text-decoration: none;
+    font-size: 14px;
     font-family: "Roboto";
+    margin-right: 20px;
 }
 
 .Navigation-nav-link.active {
     color: lightgray;
 }
 
-.Navigation-nav > li {
-    display: inline-block;
-    margin-right: 10px;
-}
-
-.Navigation-nav > li:after {
-    content: "\2022";
-    margin-left: 10px;
-}
-
 .Navigation-nav > li:last-child:after {
     content: none;
-}
-
-.Navigation-nav > li > a {
-    color: white;
-    text-decoration: none;
-    font-size: 22px;
 }
 
 .Navigation-left,
@@ -56,10 +46,13 @@
 
 .Navigation-left {
     margin-right: auto;
+    display: flex;
+    flex: 1;
 }
 
 .Navigation-right {
     align-self: flex-end;
+    height: 100%;
 }
 
 .Navigation-title {

@@ -9,9 +9,6 @@ const ClusterInfo = ({name, status = "unknown"}) => {
             <div>
                 {name}
             </div>
-            <div className="Cluster-expand">
-                <i className="fas fa-angle-down"></i>
-            </div>
         </div>
     );
 };
