@@ -2,21 +2,18 @@ import {
     LOGIN_FAILURE,
     LOGIN_REQUEST,
     LOGIN_SUCCESS,
-    PROFILE_READY,
-    TOKEN_EXTRACTED, TOKEN_NOT_AVAILABLE,
-    WORKSPACE_ABSENT,
-    WORKSPACE_AVAILABLE,
-    WORKSPACE_REQUESTED
-} from '../actions'
+    TOKEN_EXTRACTED,
+    TOKEN_NOT_AVAILABLE,
+    PROFILE_READY
+} from "./actions";
 
-const initialState = {
+let initialState = {
     token: null,
     error: null,
-    loggingIn: false,
-    loading: true
+    loggingIn: false
 };
 
-function token(state = initialState, action ) {
+const login = (state = initialState, action) => {
     switch (action.type) {
         case LOGIN_REQUEST:
             return {
@@ -47,23 +44,6 @@ function token(state = initialState, action ) {
                 loading: false,
                 token: null
             };
-        case WORKSPACE_AVAILABLE:
-            return {
-                ...state,
-                requesting: false,
-                workspace: action.workspace
-            };
-        case WORKSPACE_ABSENT:
-            return {
-                ...state,
-                loading: false,
-                workspace: null
-            };
-        case WORKSPACE_REQUESTED:
-            return {
-                ...state,
-                requesting: true
-            };
         case PROFILE_READY:
             action.profile.initials =
                 action.profile.name.split(" ").map(s => s.charAt(0));
@@ -72,8 +52,8 @@ function token(state = initialState, action ) {
                 profile: action.profile
             };
         default:
-            return state
+            return state;
     }
-}
+};
 
-export default token;
+export default login;

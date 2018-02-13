@@ -1,7 +1,7 @@
 import React from "react";
 import {connect} from "react-redux";
-import Spinner from "../components/Spinner";
-import WorkspaceListItem from "../components/WorkspaceListItem";
+import Spinner from "../Common/Spinner";
+import WorkspaceListItem from "./WorkspaceListItem";
 import "./WorkspaceList.css";
 
 const WorkspaceList = ({loading, items}) => {
@@ -23,6 +23,6 @@ const WorkspaceList = ({loading, items}) => {
 };
 
 export default connect(
-    state => state.workspaces,
+    state => state.sharedWorkspaces,
     {}
 )(WorkspaceList);

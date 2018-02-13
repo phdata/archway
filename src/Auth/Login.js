@@ -1,8 +1,8 @@
 import React from "react";
-import LoginForm from "../components/LoginForm";
-import logo from "./logo_black.png";
+import LoginForm from "./LoginForm";
+import {login} from "./actions";
 import {connect} from "react-redux";
-import {login} from "../actions/index";
+import logo from "./logo_black.png";
 import "./Login.css";
 
 const Login = ({login, error}) => {

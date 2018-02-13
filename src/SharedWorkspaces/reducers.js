@@ -3,7 +3,7 @@ import {
     SHARED_WORKSPACES_FAILED,
     SHARED_WORKSPACES_REQUESTED,
     SHARED_WORKSPACES_SUCCESS
-} from '../actions';
+} from './actions';
 
 const initialState = {
     items: false,

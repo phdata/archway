@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import configureStore from "./store/configureStore";
+import configureStore from "./configureStore";
 import {Provider} from "react-redux";
 import createHistory from "history/createBrowserHistory";
 import App from "./App";

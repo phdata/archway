@@ -1,7 +1,7 @@
 import React from "react";
 import {connect} from "react-redux";
-import RequestForm from "../components/RequestForm";
-import {requestSharedWorkspace} from "../actions";
+import RequestForm from "./RequestForm";
+import {requestSharedWorkspace} from "./actions";
 import "./RequestProject.css";
 
 const RequestProject = () => {

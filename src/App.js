@@ -1,8 +1,8 @@
 import React from "react";
 import {connect} from "react-redux";
-import Login from "./containers/Login";
-import Main from "./containers/Main";
-import Spinner from "./components/Spinner";
+import Login from "./Auth/Login";
+import Main from "./Main";
+import Spinner from "./Common/Spinner";
 
 const AppContainer = ({loading, token, history}) => {
     if (loading) {
@@ -15,6 +15,6 @@ const AppContainer = ({loading, token, history}) => {
 };
 
 export default connect(
-    state => state.account,
+    state => state.auth,
     {}
 )(AppContainer);

@@ -1,7 +1,7 @@
 import React from "react";
 import {Field, reduxForm} from 'redux-form';
-import Button from "../components/Button";
-import Checkbox from "../components/Checkbox";
+import Button from "../Common/Button";
+import Checkbox from "../Common/Checkbox";
 
 const RequestForm = ({className, handleSubmit, pristine, submitting}) => (
     <form onSubmit={handleSubmit} className={className}>

@@ -1,7 +1,7 @@
 import React from "react";
 import {Field, reduxForm} from 'redux-form';
-import Button from "./Button";
-import "./Forms.css";
+import Button from "../Common/Button";
+import "../Common/Forms.css";
 import "./LoginForm.css";
 
 const LoginForm = ({handleSubmit, pristine, submitting}) => (

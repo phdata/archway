@@ -12,6 +12,6 @@ const Profile = ({profile}) =>  {
 };
 
 export default connect(
-    state => state.account,
+    state => state.auth,
     {}
 )(Profile);

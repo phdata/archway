@@ -1,10 +1,10 @@
 import React from "react";
+import Navigation from "./Navigation/index";
+import UserWorkspace from "./UserWorkspace/index";
+import RequestProject from "./RequestProject/index";
+import SharedWorkspaces from "./SharedWorkspaces/index";
 import {ConnectedRouter} from "react-router-redux";
-import Navigation from "../components/Navigation";
 import {Route} from 'react-router';
-import UserWorkspace from "./UserWorkspace";
-import RequestProject from "./RequestProject";
-import SharedWorkspaces from "./SharedWorkspaces";
 
 const Main = ({history}) => {
     return (

@@ -1,4 +1,4 @@
-import {CLUSTER_INFO} from "../actions";
+import {CLUSTER_INFO} from "./actions";
 
 const initialState = {
     name: "Unknown",

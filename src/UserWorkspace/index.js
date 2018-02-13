@@ -1,12 +1,12 @@
 import React from 'react';
 import './UserWorkspace.css';
 import {connect} from "react-redux";
-import UserWorkspaceDisplay from '../components/UserWorkspaceDisplay';
-import UserWorkspaceAbsent from "../components/UserWorkspaceAbsent";
-import {requestWorkspace} from '../actions';
-import Spinner from "../components/Spinner";
+import UserWorkspaceDisplay from './UserWorkspaceDisplay';
+import UserWorkspaceAbsent from "./UserWorkspaceAbsent";
+import {requestWorkspace} from './actions';
+import Spinner from "../Common/Spinner";
 
-const UserWorkspace = ({account: {requesting, workspace}, cluster, requestWorkspace}) => {
+const UserWorkspace = ({userWorkspace: {requesting, workspace}, cluster, requestWorkspace}) => {
     let workspaceContent = <div/>;
     if (workspace)
         workspaceContent = <UserWorkspaceDisplay workspace={workspace} cluster={cluster}/>;

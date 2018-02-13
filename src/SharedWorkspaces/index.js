@@ -1,10 +1,10 @@
 import React from "react";
-import WorkspaceListNav from "../components/WorkspaceListNav";
+import WorkspaceListNav from "./WorkspaceListNav";
 import WorkspaceList from "./WorkspaceList";
-import "./SharedWorkspaces.css";
-import FAB from "../components/FAB";
+import FAB from "../Common/FAB";
 import {connect} from "react-redux";
 import {push} from "react-router-redux";
+import "./SharedWorkspaces.css";
 
 const SharedWorkspaces = ({push}) => {
     return (
