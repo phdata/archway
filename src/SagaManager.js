@@ -4,12 +4,14 @@ import auth from "./Auth/sagas";
 import cluster from "./Navigation/sagas";
 import sharedWorkspace from "./SharedWorkspaces/sagas";
 import userWorkspaace from "./UserWorkspace/sagas";
+import sharedWorkspaceDetails from "./SharedWorkspaceDetails/sagas";
 
 const sagas = [
     auth,
     cluster,
     sharedWorkspace,
-    userWorkspaace
+    userWorkspaace,
+    sharedWorkspaceDetails
 ];
 
 export const CANCEL_SAGAS_HMR = 'CANCEL_SAGAS_HMR';

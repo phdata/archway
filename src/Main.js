@@ -5,7 +5,7 @@ import RequestProject from "./RequestProject/index";
 import SharedWorkspaces from "./SharedWorkspaces/index";
 import {ConnectedRouter} from "react-router-redux";
 import {Route} from 'react-router';
-import SharedWorkspaceDetails from "./SharedWorkspaceDetails";
+import  SharedWorkspaceDetails from "./SharedWorkspaceDetails";
 
 const Main = ({history}) => {
     return (

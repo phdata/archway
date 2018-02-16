@@ -7,13 +7,15 @@ import auth from "./Auth/reducers";
 import cluster from "./Navigation/reducers";
 import sharedWorkspaces from "./SharedWorkspaces/reducers";
 import userWorkspace from "./UserWorkspace/reducers";
+import sharedWorkspaceDetails from "./SharedWorkspaceDetails/reducers";
 
 const reducers = combineReducers({
     form: reduxFormReducer,
     auth,
     cluster,
     sharedWorkspaces,
-    userWorkspace
+    userWorkspace,
+    workspaceDetails: sharedWorkspaceDetails
 });
 
 export default function configureStore(history) {

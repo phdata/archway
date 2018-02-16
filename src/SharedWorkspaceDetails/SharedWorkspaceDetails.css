@@ -1,0 +1,12 @@
+.SharedWorkspaceDetails {
+    margin-left: auto;
+    margin-right: auto;
+    width: 680px;
+}
+
+.SharedWorkspaceDetails-details {
+    display: flex;
+    flex-flow: wrap;
+    flex-direction: row;
+    flex: 1;
+}
