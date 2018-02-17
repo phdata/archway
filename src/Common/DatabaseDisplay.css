@@ -1,0 +1,14 @@
+.DatabaseDisplay {
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    padding: 40px;
+}
+
+pre {
+    display: inline-block;
+    background: #e2e2e2;
+    color: red;
+    font-family: monospace;
+    font-size: .8em;
+}

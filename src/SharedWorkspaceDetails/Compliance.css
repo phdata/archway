@@ -1,0 +1,21 @@
+.Compliance {
+    display: flex;
+    flex-direction: column;
+    margin: 10px 30px;
+}
+
+.Compliance-item {
+    margin: 5px 0;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.Compliance-item.false {
+    display: none;
+}
+
+.Compliance-item > .fas {
+    font-size: 22px;
+    margin-right: 10px;
+}

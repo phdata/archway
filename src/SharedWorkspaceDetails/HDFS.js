@@ -6,7 +6,11 @@ import Spinner from "../Common/Spinner";
 const HDFS = ({workspace: {hdfs: {location}}}) => {
     let content;
     if(location)
-        content = <div>{location}</div>;
+        content = (
+            <div className="HDFS">
+                Location: {location}
+            </div>
+        );
     else
         content = <Spinner width={50}>Provisioning...</Spinner>;
 

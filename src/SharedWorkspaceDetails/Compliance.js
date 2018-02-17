@@ -1,15 +1,18 @@
 import React from "react";
-import DetailPanel from "./DetailPanel";
-import "./Overview.css";
+import "./Compliance.css";
 
-const translate = (truthy) => truthy ? "Yes" : "No";
+const ComplianceItem = ({name, value, icon}) => (
+    <div className={`Compliance-item ${value}`}>
+        <i className={`fas fa-${icon}`} style={{color: "#E74C3C"}}/> {name} possible
+    </div>
+);
 
 const Compliance = ({workspace: {compliance: {pii_data, pci_data, phi_data}}}) => (
-    <DetailPanel title="Overview">
-        <div>PII? {translate(pii_data)}</div>
-        <div>PHI? {translate(phi_data)}</div>
-        <div>PCI? {translate(pci_data)}</div>
-    </DetailPanel>
+    <div className="Compliance">
+        <ComplianceItem name="PII data" value={pii_data} icon="id-card"/>
+        <ComplianceItem name="PCI data" value={pci_data} icon="credit-card"/>
+        <ComplianceItem name="PHI data" value={phi_data} icon="stethoscope"/>
+    </div>
 );
 
 export default Compliance;
