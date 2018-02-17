@@ -5,13 +5,15 @@ import cluster from "./Navigation/sagas";
 import sharedWorkspace from "./SharedWorkspaces/sagas";
 import userWorkspaace from "./UserWorkspace/sagas";
 import sharedWorkspaceDetails from "./SharedWorkspaceDetails/sagas";
+import requestWorkspace from "./RequestProject/sagas";
 
 const sagas = [
     auth,
     cluster,
     sharedWorkspace,
     userWorkspaace,
-    sharedWorkspaceDetails
+    sharedWorkspaceDetails,
+    requestWorkspace
 ];
 
 export const CANCEL_SAGAS_HMR = 'CANCEL_SAGAS_HMR';

@@ -14,11 +14,14 @@ const WorkspaceList = ({push, loading, items}) => {
     } else {
         content = (
             <div className="WorkspaceList">
-                {items.map(item => {
-                    return <WorkspaceListItem key={item.id}
-                                              workspace={item}
-                                              push={push} />;
-                })}
+                <h1>Your Shared Workspaces</h1>
+                <div className="WorkspaceList-list">
+                    {items.map(item => {
+                        return <WorkspaceListItem key={item.id}
+                                                  workspace={item}
+                                                  push={push} />;
+                    })}
+                </div>
             </div>
         );
     }

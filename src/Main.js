@@ -12,7 +12,7 @@ const Main = ({history}) => {
         <ConnectedRouter history={history}>
             <div style={{display: "flex", flex: 1, flexDirection: "column"}}>
                 <Navigation/>
-                <div style={{marginTop: 10, display: "flex", flex: 1}}>
+                <div style={{display: "flex", flex: 1}}>
                     <Route exact path="/" component={UserWorkspace}/>
                     <Route path="/shared-request" component={RequestProject}/>
                     <Route path="/workspaces" component={SharedWorkspaces}/>

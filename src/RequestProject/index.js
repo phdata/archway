@@ -4,10 +4,10 @@ import RequestForm from "./RequestForm";
 import {requestSharedWorkspace} from "./actions";
 import "./RequestProject.css";
 
-const RequestProject = () => {
+const RequestProject = ({requestSharedWorkspace}) => {
     return (
         <div className="RequestProject">
-            <RequestForm className="RequestProject-form" handleSubmit={requestSharedWorkspace}/>
+            <RequestForm className="RequestProject-form" onSubmit={requestSharedWorkspace} />
         </div>
     )
 };

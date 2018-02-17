@@ -50,3 +50,21 @@ export function sharedWorkspaces(token) {
         }
     }).then(response => response.json());
 }
+
+export function sharedWorkspaceDetails(token, id) {
+    return fetch(BASE_URL + `/workspaces/${id}`, {
+        headers: {
+            "Authorization": "Bearer " + token
+        }
+    }).then(response => response.json());
+}
+
+export function requestNewSharedWorkspace(token, workspace) {
+    return fetch(BASE_URL + "/workspaces", {
+        method: "POST",
+        body: workspace,
+        headers: {
+            "Authorization": "Bearer " + token
+        }
+    }).then(response => response.json());
+}

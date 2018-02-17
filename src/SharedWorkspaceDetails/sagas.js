@@ -8,11 +8,8 @@ function* fetchDetails({payload: {pathname}}) {
     if (matches = /\/workspace\/(\d+)/g.exec(pathname)) {
         const id = parseInt(matches[1]);
         const token = yield select(s => s.auth.token);
-        const sharedWorkspaces = yield call(Api.sharedWorkspaces, token);
-        if(sharedWorkspaces) {
-            const theOne = sharedWorkspaces.find(sw => sw.id === id);
-            yield put(sharedWorkspaceDetails(theOne));
-        }
+        const details = yield call(Api.sharedWorkspaceDetails, token, id);
+        yield put(sharedWorkspaceDetails(details));
     }
 }
 

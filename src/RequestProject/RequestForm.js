@@ -21,5 +21,5 @@ const RequestForm = ({className, handleSubmit, pristine, submitting}) => (
 );
 
 export default reduxForm({
-    form: 'project',
+    form: 'project'
 })(RequestForm);
