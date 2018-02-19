@@ -1,7 +1,0 @@
-GET     /projects           @com.heimdali.controller.ProjectController.list
-POST    /projects           @com.heimdali.controller.ProjectController.requestNew
-
-GET     /clusters           @com.heimdali.controller.ClusterController.list
-
-GET     /account/token      @com.heimdali.controller.AccountController.token
-GET     /account/profile    @com.heimdali.controller.AccountController.profile

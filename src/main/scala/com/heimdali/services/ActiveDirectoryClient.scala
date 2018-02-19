@@ -8,7 +8,7 @@ trait ActiveDirectoryClient { this: LDAPClientImpl =>
     s"(sAMAccountName=$username)"
 
   override def fullUsername(username: String): String =
-    s"$username@CORP.JOTUNN.IO"
+    s"$username@PHDATA.IO"
 
   override def ldapUser(searchResultEntry: SearchResultEntry) =
     LDAPUser(s"${searchResultEntry.getAttributeValue("cn")}",

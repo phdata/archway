@@ -7,7 +7,7 @@ ADD https://archive.cloudera.com/cdh5/debian/jessie/amd64/cdh/archive.key archiv
 
 RUN apt-key add archive.key && \
     apt-get update && \
-    apt-get install -y hadoop-client
+    apt-get install -y hadoop-client hive
 
 COPY ./heimdali-api.jar /opt/heimdali-api.jar
 COPY ./hdfs/* /etc/hadoop/conf.odin/
@@ -17,4 +17,4 @@ COPY ./hdfs.keytab /opt/hdfs.keytab
 
 RUN update-alternatives --install /etc/hadoop/conf hadoop-conf /etc/hadoop/conf.odin 99
 
-CMD java -Djava.security.auth.login.config=/etc/jaas.conf -cp /opt/heimdali-api.jar:`hadoop classpath`:/etc/hadoop/conf.odin com.heimdali.Main
+CMD java -Djava.security.auth.login.config=/etc/jaas.conf -cp /usr/lib/hive/lib/hive-jdbc.jar:/opt/heimdali-api.jar:`hadoop classpath`:/etc/hadoop/conf.odin com.heimdali.Main

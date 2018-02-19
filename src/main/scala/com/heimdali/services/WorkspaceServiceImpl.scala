@@ -1,7 +1,7 @@
 package com.heimdali.services
 
 import akka.actor.{ActorRef, ActorSystem}
-import com.heimdali.actors.WorkspaceProvisioner.Request
+import com.heimdali.actors.workspace.WorkspaceProvisioner.Request
 import com.heimdali.models.ViewModel._
 import com.heimdali.repositories.WorkspaceRepository
 

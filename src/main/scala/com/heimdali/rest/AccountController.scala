@@ -1,12 +1,25 @@
 package com.heimdali.rest
 
-import akka.http.scaladsl.server.Directives.{authenticateOAuth2Async, authenticateOrRejectWithChallenge, complete, get, path, pathPrefix, reject, _}
+import akka.actor.ActorRef
+import akka.http.scaladsl.model.StatusCodes
+import akka.http.scaladsl.server.Directives._
+import akka.pattern.ask
+import akka.util.Timeout
+import com.heimdali.actors.user.UserProvisioner.Request
+import com.heimdali.services.{AccountService, User}
 import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport
+import io.circe.generic.extras.Configuration
 
-class AccountController(authService: AuthService)
+import scala.concurrent.duration._
+
+class AccountController(authService: AuthService,
+                        accountService: AccountService,
+                        userProvisionerFactory: User => ActorRef)
   extends FailFastCirceSupport {
 
-  import io.circe.generic.auto._
+  implicit val configuration: Configuration = Configuration.default.withDefaults.withSnakeCaseKeys
+
+  import io.circe.generic.extras.auto._
 
   val route =
     pathPrefix("account") {
@@ -24,6 +37,23 @@ class AccountController(authService: AuthService)
               complete(user)
             }
           }
+        } ~
+        path("workspace") {
+          post {
+            authenticateOAuth2Async("heimdali", authService.validateToken) { user =>
+              onSuccess(userProvisionerFactory(user).ask(Request)(Timeout(1 second))) { _ =>
+                complete(StatusCodes.Created)
+              }
+            }
+          } ~
+            get {
+              authenticateOAuth2Async("heimdali", authService.validateToken) { user =>
+                onSuccess(accountService.findWorkspace(user.username)) {
+                  case Some(workspace) => complete(workspace)
+                  case None => complete(StatusCodes.NotFound)
+                }
+              }
+            }
         }
     }
 

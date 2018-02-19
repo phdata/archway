@@ -5,6 +5,7 @@ import akka.http.scaladsl.HttpExt
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import akka.stream.Materializer
+import ch.megard.akka.http.cors.scaladsl.CorsDirectives._
 import com.typesafe.config.Config
 import com.typesafe.scalalogging.LazyLogging
 
@@ -20,7 +21,9 @@ class RestAPI(http: HttpExt,
               executionContext: ExecutionContext) extends LazyLogging {
 
   val route: Route =
-    accountController.route ~ clusterController.route ~ workspaceController.route
+    cors() {
+      accountController.route ~ clusterController.route ~ workspaceController.route
+    }
 
   val port: Int = configuration.getInt("rest.port")
 

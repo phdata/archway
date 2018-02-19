@@ -2,12 +2,13 @@ package com.heimdali.actors
 
 import akka.actor.{ActorSystem, Props}
 import akka.testkit.{TestActorRef, TestProbe}
-import com.heimdali.actors.HDFSActor.{CreateDirectory, HDFSUpdate}
+import com.heimdali.actors.HDFSActor.{CreateSharedDirectory, HDFSUpdate}
 import com.heimdali.actors.KeytabActor.{GenerateKeytab, KeytabCreated}
-import com.heimdali.actors.LDAPActor.{CreateEntry, LDAPUpdate}
-import com.heimdali.actors.WorkspaceProvisioner.{ProvisionCompleted, RegisterCaller, Request}
+import com.heimdali.actors.LDAPActor.{CreateSharedWorkspaceGroup, LDAPUpdate}
+import com.heimdali.actors.workspace.WorkspaceProvisioner.{ProvisionCompleted, RegisterCaller, Request}
 import com.heimdali.actors.WorkspaceSaver.WorkspaceSaved
 import com.heimdali.actors.YarnActor.{CreatePool, PoolCreated}
+import com.heimdali.actors.workspace.WorkspaceProvisioner
 import com.heimdali.test.fixtures.TestProject
 import org.apache.hadoop.fs.Path
 import org.scalatest.{FlatSpec, Matchers}
@@ -32,7 +33,7 @@ class SharedWorkspaceProvisionerSpec extends FlatSpec with Matchers {
     val provisioner = TestActorRef[WorkspaceProvisioner](Props(classOf[WorkspaceProvisioner], testProb.ref, testProb.ref, testProb.ref, testProb.ref, testProb.ref, project)).underlyingActor
 
     provisioner.initialSteps should be(Queue(
-      testProb.ref -> CreateEntry(project.id, project.systemName, Seq(project.createdBy)),
+      testProb.ref -> CreateSharedWorkspaceGroup(project.id, project.systemName, Seq(project.createdBy)),
       testProb.ref -> CreateDirectory(project.id, project.systemName, project.hdfs.requestedSizeInGB)
     ))
   }
@@ -58,7 +59,7 @@ class SharedWorkspaceProvisionerSpec extends FlatSpec with Matchers {
     provisioner ! RegisterCaller(mainProbe.ref)
     provisioner ! Request
 
-    ldapProbe.expectMsg(CreateEntry(project.id, project.systemName, Seq(project.createdBy)))
+    ldapProbe.expectMsg(CreateSharedWorkspaceGroup(project.id, project.systemName, Seq(project.createdBy)))
     ldapProbe.reply(LDAPUpdate(project.id, project.systemName))
     saveProbe.expectMsg(LDAPUpdate(project.id, project.systemName))
     saveProbe.reply(WorkspaceSaved)

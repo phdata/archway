@@ -4,14 +4,26 @@ version := "2018.08.01"
 
 scalaVersion := "2.12.1"
 
+resolvers += "Cloudera" at "https://repository.cloudera.com/artifactory/cloudera-repos"
+
 val akkaVersion = "2.5.6"
 val circeVersion = "0.8.0"
 val akkaHttpVersion = "10.0.10"
-val hadoopVersion = "2.6.0"
+val cdhVersion = "cdh5.11.1"
+val hiveVersion = s"1.1.0-$cdhVersion"
+val hadoopVersion = s"2.6.0-$cdhVersion"
 
 libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-actor" % akkaVersion,
+  "com.typesafe.akka" %% "akka-persistence" % akkaVersion,
   "com.typesafe.akka" %% "akka-http" % akkaHttpVersion,
+
+  "ch.megard" %% "akka-http-cors" % "0.2.2",
+
+  "org.scalikejdbc" %% "scalikejdbc" % "3.1.0",
+  "org.scalikejdbc" %% "scalikejdbc-config" % "3.1.0",
+
+  "com.github.dnvriend" %% "akka-persistence-inmemory" % "2.5.1.1",
 
   "io.circe" %% "circe-core" % circeVersion,
   "io.circe" %% "circe-generic" % circeVersion,
@@ -30,7 +42,8 @@ libraryDependencies ++= Seq(
   "org.postgresql" % "postgresql" % "42.1.4",
 
   "com.typesafe.akka" %% "akka-slf4j" % akkaVersion,
-  "org.apache.hadoop" % "hadoop-client" % hadoopVersion % "provided",
+  "org.apache.hadoop" % "hadoop-client" % hadoopVersion,
+  "org.apache.hive" % "hive-jdbc" % hiveVersion,
 
   "com.novocode" % "junit-interface" % "0.11" % Test,
   "com.typesafe.akka" %% "akka-testkit" % akkaVersion % Test,

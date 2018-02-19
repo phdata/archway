@@ -1,6 +1,8 @@
 package com.heimdali.services
 
+import com.heimdali.repositories.AccountRepository
 import com.typesafe.config.Config
+import com.typesafe.scalalogging.LazyLogging
 import io.circe.Json
 import pdi.jwt.{JwtAlgorithm, JwtCirce}
 
@@ -8,6 +10,8 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
 
 case class User(name: String, username: String)
+
+case class UserWorkspace(username: String, database: String, dataDirectory: String, role: String)
 
 case class Token(accessToken: String, refreshToken: String)
 
@@ -17,22 +21,30 @@ trait AccountService {
   def login(username: String, password: String): Future[Option[Token]]
 
   def refresh(user: User): Future[Token]
+
+  def findWorkspace(username: String): Future[Option[UserWorkspace]]
 }
 
-class LDAPAccountService(ldapClient: LDAPClient,
+class AccountServiceImpl(ldapClient: LDAPClient,
+                         accountRepo: AccountRepository,
                          configuration: Config)
                         (implicit val executionContext: ExecutionContext)
-  extends AccountService {
+  extends AccountService with LazyLogging {
 
   val algo: JwtAlgorithm.HS256.type = JwtAlgorithm.HS256
   lazy val secret: String = configuration.getString("rest.secret")
 
-  override def login(username: String, password: String): Future[Option[Token]] =
+  override def login(username: String, password: String): Future[Option[Token]] = {
+    logger.info(s"logging in $username")
     ldapClient.findUser(username, password) flatMap {
       case Some(user) =>
+        logger.info(s"found $user")
         refresh(User(user.name, user.username)).map(Some(_))
-      case _ => Future(None)
+      case _ =>
+        logger.info(s"no user found for $username using $password")
+        Future(None)
     }
+  }
 
   override def refresh(user: User): Future[Token] = Future {
     val accessJson = Json.obj(
@@ -47,15 +59,24 @@ class LDAPAccountService(ldapClient: LDAPClient,
     val accessToken = JwtCirce.encode(accessJson, secret, algo)
     val refreshToken = JwtCirce.encode(refreshJson, secret, algo)
 
+    logger.info(s"generated new token for $user")
+
     Token(accessToken, refreshToken)
   }
 
   override def validate(token: String): Future[Option[User]] = Future {
     import io.circe.generic.auto._
     JwtCirce.decodeJson(token, secret, Seq(algo)) match {
-      case Success(json) => json.as[User].toOption
-      case Failure(_) => None
+      case Success(json) =>
+        logger.info(s"found user for $token: $json")
+        json.as[User].toOption
+      case Failure(_) =>
+        logger.info(s"no user found for $token")
+        None
     }
   }
+
+  override def findWorkspace(username: String): Future[Option[UserWorkspace]] =
+    accountRepo.findUser(username)
 
 }

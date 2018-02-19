@@ -25,6 +25,8 @@ object ViewModel {
                                     yarn: YarnProvision,
                                     createdBy: Option[String])
 
+  case class HiveRequest(requestedSizeInGB: Double)
+
   case class SharedWorkspace(id: Long,
                              name: String,
                              purpose: String,

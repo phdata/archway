@@ -11,12 +11,11 @@ import scala.concurrent.ExecutionContext
 
 object HDFSActor {
 
-  case class CreateDirectory(id: Long, name: String, requestedSizeInGB: Double)
+  case class CreateSharedDirectory(name: String, requestedSizeInGB: Double)
 
-  case class HDFSUpdate(id: Long, directory: String, actualGB: Double) extends ProjectUpdate {
-    override def updateProject(project: SharedWorkspace): SharedWorkspace =
-      project.copy(hdfs = project.hdfs.copy(location = Some(directory), actualGB = Some(actualGB)))
-  }
+  case class CreateUserDirectory(username: String)
+
+  case class DirectoryCreated(path: String)
 
 }
 
@@ -27,14 +26,22 @@ class HDFSActor(hdfsClient: HDFSClient,
   import HDFSActor._
 
   val hdfsConfig: Config = configuration.getConfig("hdfs")
-  val projectRoot: String = hdfsConfig.getString("project_root")
-
-  def location(name: String) = s"$projectRoot/$name"
+  val projectRoot: String = hdfsConfig.getString("projectRoot")
+  val usertRoot: String = hdfsConfig.getString("userRoot")
 
   override def receive: Receive = {
-    case CreateDirectory(id, name, size) =>
+    case CreateUserDirectory(username) =>
+      val path: String = s"$usertRoot/$username/db"
       (for (
-        path <- hdfsClient.createDirectory(location(name))
-      ) yield HDFSUpdate(id, path.toUri.getPath, size)).pipeTo(sender())
+        _ <- hdfsClient.createDirectory(path);
+        _ <- hdfsClient.changeOwner(path, username)
+      ) yield DirectoryCreated(path)).pipeTo(sender())
+
+    case CreateSharedDirectory(name, size) =>
+      val path: String = s"$projectRoot/$name"
+      (for (
+        _ <- hdfsClient.createDirectory(path);
+        _ <- hdfsClient.changeOwner(path, "hive")
+      ) yield DirectoryCreated(path)).pipeTo(sender())
   }
 }

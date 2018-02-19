@@ -1,10 +1,10 @@
 package com.heimdali.services
 
-import java.io.{InputStream, OutputStream}
+import java.io.{File, InputStream, OutputStream}
 import java.text.DecimalFormat
 
 import com.typesafe.scalalogging.LazyLogging
-import org.apache.hadoop.fs.{FileSystem, Path}
+import org.apache.hadoop.fs.{FileSystem, FileUtil, Path}
 import org.apache.hadoop.hdfs.client.HdfsAdmin
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -15,6 +15,8 @@ trait HDFSClient {
   def uploadFile(stream: InputStream, hdfsLocation: Path): Future[Path]
 
   def createDirectory(location: String): Future[Path]
+
+  def changeOwner(location: String, user: String): Future[Path]
 
   def setQuota(path: Path, maxSizeInGB: Double): Future[HDFSAllocation]
 
@@ -27,11 +29,18 @@ class HDFSClientImpl(fileSystem: FileSystem,
   extends HDFSClient with LazyLogging {
   logger.info("filesystem looks like {}", fileSystem)
 
+  implicit def locationToPath(location: String): Path =
+    new Path(location)
+
   override def createDirectory(location: String): Future[Path] = Future {
     logger.info("Creating {} in {}", location, fileSystem)
-    val path = new Path(location)
-    val result = fileSystem.mkdirs(path)
-    path
+    fileSystem.mkdirs(location)
+    location
+  }
+
+  override def changeOwner(location: String, user: String): Future[Path] = Future {
+    FileUtil.setOwner(new File(location), user, user)
+    location
   }
 
   override def setQuota(path: Path, maxSizeInGB: Double): Future[HDFSAllocation] = Future {

@@ -7,10 +7,11 @@ trait ServiceModule {
     with ExecutionContextModule
     with RepoModule
     with ClientModule
+    with RepoModule
     with ConfigurationModule
     with HttpModule =>
 
-  val accountService: AccountService = new LDAPAccountService(ldapClient, configuration)
+  val accountService: AccountService = new AccountServiceImpl(ldapClient, accountRepository, configuration)
 
   val clusterService: ClusterService = new CDHClusterService(http, configuration)
 

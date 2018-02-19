@@ -4,7 +4,7 @@ import akka.actor.Actor
 import akka.pattern.pipe
 import com.heimdali.actors.WorkspaceSaver.ProjectUpdate
 import com.heimdali.models.ViewModel.SharedWorkspace
-import com.heimdali.services.{LoginContextProvider, YarnClient}
+import com.heimdali.services.YarnClient
 
 import scala.concurrent.ExecutionContext
 

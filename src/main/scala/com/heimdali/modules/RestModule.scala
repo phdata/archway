@@ -6,7 +6,7 @@ trait RestModule {
   this: AkkaModule with ExecutionContextModule with ServiceModule with HttpModule with ConfigurationModule =>
 
   val authService: AuthServiceImpl = new AuthServiceImpl(accountService)
-  val accountController = new AccountController(authService)
+  val accountController = new AccountController(authService, accountService, userProvisionerFactory)
   val clusterController = new ClusterController(clusterService)
   val workspaceController = new WorkspaceController(authService, workspaceService)
 

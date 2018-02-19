@@ -2,15 +2,17 @@ package com.heimdali.actors
 
 import akka.actor.Actor
 import akka.pattern.pipe
-import com.heimdali.actors.HDFSActor.HDFSUpdate
 import com.heimdali.actors.KeytabActor.KeytabCreated
-import com.heimdali.actors.LDAPActor.LDAPUpdate
 import com.heimdali.models.ViewModel._
 import com.heimdali.repositories.WorkspaceRepository
 
 import scala.concurrent.ExecutionContext
 
 object WorkspaceSaver {
+
+  case class LDAPUpdate(id: Long, dn: String)
+
+  case class HDFSUpdate(id: Long, location: String, size: Double)
 
   trait ProjectUpdate {
     def updateProject(project: SharedWorkspace): SharedWorkspace

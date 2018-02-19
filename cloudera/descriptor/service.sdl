@@ -1,0 +1,25 @@
+{
+  "name": "HEIMDALI",
+  "label": "Heimdali",
+  "description": "The Heimdali service",
+  "version": "1.0",
+  "runAs": {
+    "user": "root",
+    "group": "root"
+  },
+  "roles": [
+    {
+      "name": "HEIMDALI_SERVICE",
+      "label": "Heimdali API",
+      "pluralLabel": "Heimdali APIs",
+      "parameters": [],
+      "startRunner": {
+        "program": "scripts/control.sh",
+        "args": [
+          "start"
+        ],
+        "environmentVariables": {}
+      }
+    }
+  ]
+}

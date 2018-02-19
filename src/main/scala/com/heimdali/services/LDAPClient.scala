@@ -66,7 +66,8 @@ abstract class LDAPClientImpl(configuration: Config)
       case Success(result) if result.getResultCode == ResultCode.SUCCESS =>
         getUserEntry(username)
           .map(ldapUser)
-      case Failure(_) =>
+      case Failure(exc) =>
+        exc.printStackTrace()
         None
     }
   }
@@ -75,20 +76,14 @@ abstract class LDAPClientImpl(configuration: Config)
   override def createGroup(groupName: String, initialMember: String): Future[String] = Future {
     val Some(user) = getUserEntry(initialMember)
     val connection = adminConnectionPool.getConnection()
-    val dn = s"cn=edh_sw_$groupName,$groupPath,$baseDN"
-    try {
-      val result = connection.add(
-        s"dn: $dn",
-        s"objectClass: $groupObjectClass",
-        "objectClass: top",
-        s"cn: edh_sw_$groupName",
-        s"member: ${user.getDN}"
-      )
-      println(result)
-    } catch {
-      case exception: Throwable =>
-        exception.printStackTrace()
-    }
+    val dn = s"cn=$groupName,$groupPath,$baseDN"
+    connection.add(
+      s"dn: $dn",
+      s"objectClass: $groupObjectClass",
+      "objectClass: top",
+      s"cn: $groupName",
+      s"member: ${user.getDN}"
+    )
     dn
   }
 }

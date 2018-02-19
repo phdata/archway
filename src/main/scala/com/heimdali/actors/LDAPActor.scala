@@ -10,12 +10,11 @@ import scala.concurrent.ExecutionContext
 
 object LDAPActor {
 
-  case class CreateEntry(id: Long, name: String, initialMembers: Seq[String])
+  case class CreateSharedWorkspaceGroup(name: String, initialMembers: Seq[String])
 
-  case class LDAPUpdate(id: Long, projectDn: String) extends ProjectUpdate {
-    def updateProject(project: SharedWorkspace): SharedWorkspace =
-      project.copy(ldapDn = Some(projectDn))
-  }
+  case class CreateUserWorkspaceGroup(username: String)
+
+  case class LDAPGroupCreated(groupName: String, dn: String)
 
 }
 
@@ -26,12 +25,19 @@ class LDAPActor(ldapClient: LDAPClient)
   import LDAPActor._
 
   override def receive: Receive = {
-    case CreateEntry(id, name, users) =>
-      log.info("creating group {}", name)
-      ldapClient
-        .createGroup(name, users.head)
-        .map(LDAPUpdate(id, _))
-        .pipeTo(sender())
+    case CreateSharedWorkspaceGroup(name, users) =>
+      createGroup(s"edh_sw_$name", users)
+
+    case CreateUserWorkspaceGroup(username) =>
+      createGroup(s"edh_user_$username", Seq(username))
+  }
+
+  def createGroup(groupName: String, users: Seq[String]): Unit = {
+    log.info("creating group {}", groupName)
+    ldapClient
+      .createGroup(groupName, users.head)
+      .map(LDAPGroupCreated(groupName, _))
+      .pipeTo(sender())
   }
 
 }

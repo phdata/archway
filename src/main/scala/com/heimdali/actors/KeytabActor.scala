@@ -30,7 +30,7 @@ class KeytabActor(hdfsClient: HDFSClient,
 
   import KeytabActor._
 
-  val basePath: String = configuration.getString("hdfs.project_root")
+  val basePath: String = configuration.getString("hdfs.projectRoot")
 
   def projectPath(principal: String): Path = new Path(basePath, s"$principal/$principal.keytab")
 

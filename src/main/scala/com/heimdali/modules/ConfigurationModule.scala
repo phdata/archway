@@ -10,6 +10,8 @@ trait ConfigurationModule {
   val hadoopConfiguration: Configuration = {
     val config = new Configuration()
     config.addResource("core-site.xml")
+    config.addResource("hdfs-site.xml")
+    config.addResource("hive-site.xml")
     config
   }
 
