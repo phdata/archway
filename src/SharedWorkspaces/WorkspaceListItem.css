@@ -16,9 +16,10 @@
 
 .WorkspaceListItem > .fa-arrow-circle-right {
     position: absolute;
-    top: 47%;
+    top: 44%;
     right: 25px;
     color: lightgray;
+    font-size: 32px;
 }
 
 .WorkspaceListItem-title {

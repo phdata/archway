@@ -10,5 +10,6 @@ pre {
     background: #e2e2e2;
     color: red;
     font-family: monospace;
-    font-size: .8em;
+    font-size: .7em;
+    padding: 5px;
 }

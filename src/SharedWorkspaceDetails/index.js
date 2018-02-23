@@ -3,8 +3,6 @@ import {connect} from "react-redux";
 import Spinner from "../Common/Spinner";
 import "./SharedWorkspaceDetails.css"
 import Compliance from "./Compliance";
-import HDFS from "./HDFS";
-import YARN from "./YARN";
 import TimeAgo from "timeago-react";
 import DatabaseDisplay from "../Common/DatabaseDisplay";
 
@@ -17,9 +15,12 @@ const SharedWorkspaceDetails = ({workspaceDetails, cluster}) => {
         return (
             <div className="SharedWorkspaceDetails">
                 <h1>{name} <sub>{purpose}</sub></h1>
-                <h5>Created by {created_by} <TimeAgo datetime={created} /></h5>
-                <Compliance workspace={workspaceDetails}/>
-                <DatabaseDisplay database={{name: "testing", location: "/data/shared_workspace/testing/db"}} cluster={cluster}/>
+                <h5>Created by {created_by} <TimeAgo datetime={created}/></h5>
+                <div className="">
+                    <Compliance workspace={workspaceDetails}/>
+                    <DatabaseDisplay workspace={workspaceDetails}
+                                     cluster={cluster}/>
+                </div>
             </div>
         );
     }

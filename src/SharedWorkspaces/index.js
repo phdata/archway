@@ -9,7 +9,6 @@ import "./SharedWorkspaces.css";
 const SharedWorkspaces = ({push}) => {
     return (
         <div className="SharedWorkspaces">
-            <WorkspaceListNav />
             <WorkspaceList />
             <FAB onClick={() => push("/shared-request")} />
         </div>
