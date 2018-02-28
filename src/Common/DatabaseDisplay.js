@@ -11,12 +11,11 @@ const syntaxStyle = {
     padding: 20
 };
 
-const DatabaseDisplay = () => {
-    var name = "";
-    var cluster;
+const DatabaseDisplay = ({database: {name}, cluster}) => {
+    console.log(cluster);
     if(name) {
-        const cli = `$ impala-shell -i here -d ${name}`
-        const jdbc = `jdbc:impala://here/${name}`;
+        const cli = `$ impala-shell -i ${cluster.services.impala.host} -d ${name}`
+        const jdbc = `jdbc:impala://${cluster.services.impala.host}/${name}`;
         return (
             <div className="DatabaseDisplay">
                 <h2>Here are a few ways to connect to your shared workspace...</h2>
@@ -24,7 +23,7 @@ const DatabaseDisplay = () => {
                 <SyntaxHighlighter language="sql" customStyle={syntaxStyle} style={tomorrowNightBlue}>
                     {jdbc}
                 </SyntaxHighlighter>
-                <h3>Via <pre>impala-shell</pre></h3>
+                <h3>Via impala-shell</h3>
                 <SyntaxHighlighter language="shell" customStyle={syntaxStyle} style={tomorrowNightBlue}>
                     {cli}
                 </SyntaxHighlighter>
