@@ -2,7 +2,8 @@ package com.heimdali.actors
 
 import akka.actor.{ActorSystem, Props}
 import akka.testkit.TestKit
-import com.heimdali.actors.HDFSActor.{CreateSharedDirectory, HDFSUpdate}
+import com.heimdali.actors.HDFSActor.CreateSharedDirectory
+import com.heimdali.actors.WorkspaceSaver.HDFSUpdate
 import com.heimdali.services.HDFSClient
 import com.heimdali.test.fixtures.TestProject
 import com.typesafe.config.ConfigFactory
@@ -25,10 +26,10 @@ class HDFSActorSpec extends FlatSpec with MockFactory {
     val path = new Path(location)
 
     val hdfsClient = mock[HDFSClient]
-    (hdfsClient.createDirectory _).expects(location).returning(Future(path))
+    (hdfsClient.createDirectory _).expects(location).returning(path)
 
     val actor = system.actorOf(Props(classOf[HDFSActor], hdfsClient, config, executiionContext))
-    val request = CreateDirectory(project.id, project.systemName, project.hdfs.requestedSizeInGB)
+    val request = CreateSharedDirectory(project.systemName, project.hdfs.requestedSizeInGB)
     actor.tell(request, testActor)
     expectMsgClass(classOf[HDFSUpdate])
   }

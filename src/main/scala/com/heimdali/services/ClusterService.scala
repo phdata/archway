@@ -6,7 +6,11 @@ trait ClusterService {
   def list: Future[Seq[Cluster]]
 }
 
-case class Cluster(id: String, name: String, distribution: CDH)
+case class Impala(server: String)
+
+case class ClusterApps(impala: Impala)
+
+case class Cluster(id: String, name: String, clusterApps: ClusterApps, distribution: CDH, status: String)
 
 sealed trait Distribution {
   def version: String

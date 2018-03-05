@@ -23,7 +23,7 @@ trait YarnClient {
   def createPool(name: String, maxCores: Int, maxMemoryInGB: Double): Future[YarnPool]
 }
 
-class CDHYarnClient(http: HttpExt,
+class CDHYarnClient(http: HttpClient,
                     configuration: Config)
                    (implicit executionContext: ExecutionContext,
                     materializer: Materializer)
@@ -66,7 +66,7 @@ class CDHYarnClient(http: HttpExt,
 
   def yarnConfig: Future[Json] = {
     val request = Get(configURL).addCredentials(BasicHttpCredentials(username, password))
-    http.singleRequest(request)
+    http.request(request)
       .flatMap {
         case HttpResponse(StatusCodes.OK, _, entity, _) => Unmarshal(entity).to[Json]
         case HttpResponse(_, _, _, _) => Future.failed(new HttpException())
@@ -76,7 +76,7 @@ class CDHYarnClient(http: HttpExt,
 
   def yarnConfigUpdate(updatedJson: Json): Future[Json] = {
     val request = Put(configURL, updatedJson).addCredentials(BasicHttpCredentials(username, password))
-    http.singleRequest(request)
+    http.request(request)
       .flatMap {
         case HttpResponse(StatusCodes.OK, _, entity, _) => Unmarshal(entity).to[Json]
         case HttpResponse(_, _, _, _) => Future.failed(new HttpException())
@@ -86,7 +86,7 @@ class CDHYarnClient(http: HttpExt,
   def yarnConfigRefresh: Future[Json] = {
     val request = Get(refreshURL)
       .addCredentials(BasicHttpCredentials(username, password))
-    http.singleRequest(request)
+    http.request(request)
       .flatMap {
         case HttpResponse(StatusCodes.OK, _, entity, _) => Unmarshal(entity).to[Json]
         case HttpResponse(_, _, _, _) => Future.failed(new HttpException())

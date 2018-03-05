@@ -2,8 +2,7 @@ package com.heimdali.actors
 
 import akka.actor.{ActorSystem, Props}
 import akka.testkit.TestProbe
-import com.heimdali.actors.LDAPActor.LDAPUpdate
-import com.heimdali.actors.WorkspaceSaver.WorkspaceSaved
+import com.heimdali.actors.WorkspaceSaver.{LDAPUpdate, WorkspaceSaved}
 import com.heimdali.repositories.WorkspaceRepository
 import com.heimdali.test.fixtures.TestProject
 import org.scalamock.scalatest.MockFactory

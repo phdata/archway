@@ -17,7 +17,8 @@ class ClusterController(clusterService: ClusterService)
     ("distribution", Json.obj(
       ("name", Json.fromString(a.distribution.name)),
       ("version", Json.fromString(a.distribution.version))
-    )))
+    )),
+    ("status", Json.fromString(a.status)))
 
   val route =
     path("clusters") {

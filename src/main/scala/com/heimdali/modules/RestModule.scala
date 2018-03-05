@@ -10,5 +10,5 @@ trait RestModule {
   val clusterController = new ClusterController(clusterService)
   val workspaceController = new WorkspaceController(authService, workspaceService)
 
-  val restAPI = new RestAPI(http, configuration, accountController, clusterController, workspaceController)
+  val restAPI = new RestAPI(httpExt, configuration, accountController, clusterController, workspaceController)
 }

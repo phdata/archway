@@ -1,0 +1,93 @@
+{
+  "hostId" : "9e29e533-10f5-4f87-b40a-0f2c58f8fdb1",
+  "ipAddress" : "10.0.3.1",
+  "hostname" : "worker1.valhalla.phdata.io",
+  "rackId" : "/default",
+  "hostUrl" : "https://manager.valhalla.phdata.io:7183/cmf/hostRedirect/9e29e533-10f5-4f87-b40a-0f2c58f8fdb1",
+  "lastHeartbeat" : "2018-02-17T22:00:24.945Z",
+  "healthSummary" : "GOOD",
+  "healthChecks" : [ {
+    "name" : "HOST_AGENT_LOG_DIRECTORY_FREE_SPACE",
+    "summary" : "GOOD",
+    "suppressed" : false
+  }, {
+    "name" : "HOST_AGENT_PARCEL_DIRECTORY_FREE_SPACE",
+    "summary" : "GOOD",
+    "suppressed" : false
+  }, {
+    "name" : "HOST_AGENT_PROCESS_DIRECTORY_FREE_SPACE",
+    "summary" : "GOOD",
+    "suppressed" : false
+  }, {
+    "name" : "HOST_CLOCK_OFFSET",
+    "summary" : "GOOD",
+    "suppressed" : false
+  }, {
+    "name" : "HOST_DNS_RESOLUTION",
+    "summary" : "GOOD",
+    "suppressed" : false
+  }, {
+    "name" : "HOST_MEMORY_SWAPPING",
+    "summary" : "GOOD",
+    "suppressed" : false
+  }, {
+    "name" : "HOST_NETWORK_FRAME_ERRORS",
+    "summary" : "GOOD",
+    "suppressed" : false
+  }, {
+    "name" : "HOST_NETWORK_INTERFACES_SLOW_MODE",
+    "summary" : "GOOD",
+    "suppressed" : false
+  }, {
+    "name" : "HOST_SCM_HEALTH",
+    "summary" : "GOOD",
+    "suppressed" : false
+  } ],
+  "roleRefs" : [ {
+    "clusterName" : "cluster",
+    "serviceName" : "impala",
+    "roleName" : "impala-IMPALAD-f4585068fb660d09498a47e45672b588"
+  }, {
+    "clusterName" : "cluster",
+    "serviceName" : "spark_on_yarn",
+    "roleName" : "spark_on_yarn-GATEWAY-f4585068fb660d09498a47e45672b588"
+  }, {
+    "clusterName" : "cluster",
+    "serviceName" : "arcadiaenterprise",
+    "roleName" : "arcadiaenterprise-ARCENGINE-f4585068fb660d09498a47e45672b588"
+  }, {
+    "clusterName" : "cluster",
+    "serviceName" : "spark2_on_yarn",
+    "roleName" : "spark2_on_yarn-GATEWAY-f4585068fb660d09498a47e45672b588"
+  }, {
+    "clusterName" : "cluster",
+    "serviceName" : "datarobot",
+    "roleName" : "datarobot-GATEWAY-f4585068fb660d09498a47e45672b588"
+  }, {
+    "clusterName" : "cluster",
+    "serviceName" : "hbase",
+    "roleName" : "hbase-REGIONSERVER-f4585068fb660d09498a47e45672b588"
+  }, {
+    "clusterName" : "cluster",
+    "serviceName" : "yarn",
+    "roleName" : "yarn-NODEMANAGER-f4585068fb660d09498a47e45672b588"
+  }, {
+    "clusterName" : "cluster",
+    "serviceName" : "kudu",
+    "roleName" : "kudu-KUDU_TSERVER-f4585068fb660d09498a47e45672b588"
+  }, {
+    "clusterName" : "cluster",
+    "serviceName" : "hdfs",
+    "roleName" : "hdfs-DATANODE-f4585068fb660d09498a47e45672b588"
+  } ],
+  "maintenanceMode" : false,
+  "maintenanceOwners" : [ ],
+  "commissionState" : "COMMISSIONED",
+  "numCores" : 4,
+  "numPhysicalCores" : 2,
+  "totalPhysMemBytes" : 31714377728,
+  "entityStatus" : "GOOD_HEALTH",
+  "clusterRef" : {
+    "clusterName" : "cluster"
+  }
+}

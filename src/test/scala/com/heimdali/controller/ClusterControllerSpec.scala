@@ -24,7 +24,7 @@ class ClusterControllerSpec
 
   it should "get a list of clusters" in {
     val clusterService = mock[ClusterService]
-    (clusterService.list _).expects().returning(Future(Seq(Cluster("admin", "admin", CDH("1.0")))))
+    (clusterService.list _).expects().returning(Future(Seq(Cluster("admin", "admin", ClusterApps(Impala("")), CDH("1.0"), "GOOD_HEALTH"))))
 
     val restApi = new ClusterController(clusterService)
 
@@ -46,6 +46,9 @@ class ClusterControllerSpec
       result.hcursor
         .downField("distribution")
         .get[String]("version").toOption.get should be(FakeClusterService.cdh.version)
+
+      result.hcursor
+        .get[String]("status").toOption.get should be("GOOD_HEALTH")
     }
   }
 

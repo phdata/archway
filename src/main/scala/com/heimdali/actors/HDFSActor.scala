@@ -2,9 +2,7 @@ package com.heimdali.actors
 
 import akka.actor.Actor
 import akka.pattern.pipe
-import com.heimdali.actors.WorkspaceSaver.ProjectUpdate
-import com.heimdali.models.ViewModel._
-import com.heimdali.services.HDFSClient
+import com.heimdali.services.{HDFSClient, LoginContextProvider}
 import com.typesafe.config.Config
 
 import scala.concurrent.ExecutionContext
@@ -20,6 +18,7 @@ object HDFSActor {
 }
 
 class HDFSActor(hdfsClient: HDFSClient,
+                loginContextProvider: LoginContextProvider,
                 configuration: Config)
                (implicit val executionContext: ExecutionContext) extends Actor {
 
@@ -32,16 +31,15 @@ class HDFSActor(hdfsClient: HDFSClient,
   override def receive: Receive = {
     case CreateUserDirectory(username) =>
       val path: String = s"$usertRoot/$username/db"
-      (for (
-        _ <- hdfsClient.createDirectory(path);
-        _ <- hdfsClient.changeOwner(path, username)
-      ) yield DirectoryCreated(path)).pipeTo(sender())
+      loginContextProvider.elevate(username)(hdfsClient.createDirectory(path))
+        .map(_ => DirectoryCreated(path))
+        .pipeTo(sender())
 
-    case CreateSharedDirectory(name, size) =>
-      val path: String = s"$projectRoot/$name"
-      (for (
-        _ <- hdfsClient.createDirectory(path);
-        _ <- hdfsClient.changeOwner(path, "hive")
-      ) yield DirectoryCreated(path)).pipeTo(sender())
+//    case CreateSharedDirectory(name, size) =>
+//      val path: String = s"$projectRoot/$name"
+//      hdfsClient
+//        .createDirectory(path)
+//        .map(_ => DirectoryCreated(path))
+//        .pipeTo(sender())
   }
 }

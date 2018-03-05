@@ -5,12 +5,10 @@ import org.apache.hadoop.fs.{FSDataOutputStream, FileSystem, Path}
 import org.apache.hadoop.hdfs.client.HdfsAdmin
 import org.mockito.ArgumentMatchers._
 import org.mockito.Mockito._
-import org.mockito.invocation.InvocationOnMock
-import org.mockito.stubbing.Answer
 import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{FlatSpec, Matchers}
 
-import scala.concurrent.{Await, Future}
+import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.Duration
 
@@ -19,7 +17,7 @@ class HDFSClientImplSpec extends FlatSpec with Matchers with MockitoSugar {
   behavior of "HDFS Client"
 
   it should "create a directory" in new Context {
-    val result = Await.result(client.createDirectory(location), Duration.Inf)
+    val result = client.createDirectory(location)
     verify(fileSystem).mkdirs(path)
     result.toUri.getPath should be(location)
   }
@@ -54,7 +52,7 @@ class HDFSClientImplSpec extends FlatSpec with Matchers with MockitoSugar {
     val fileSystem = mock[FileSystem]
     val admin = mock[HdfsAdmin]
 
-    val client = new HDFSClientImpl(fileSystem, admin)
+    val client = new HDFSClientImpl(() => fileSystem, admin)
   }
 
 }

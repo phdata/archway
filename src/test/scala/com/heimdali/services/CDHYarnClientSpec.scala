@@ -4,29 +4,22 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME
 
 import akka.actor.ActorSystem
-import akka.event.LoggingAdapter
-import akka.http.scaladsl.{HttpExt, HttpsConnectionContext}
+import akka.http.scaladsl.client.RequestBuilding._
 import akka.http.scaladsl.marshalling.Marshal
 import akka.http.scaladsl.model._
-import akka.http.scaladsl.settings.ConnectionPoolSettings
-import akka.stream.{ActorMaterializer, Materializer}
+import akka.stream.ActorMaterializer
 import com.typesafe.config.ConfigFactory
 import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport
 import io.circe.Json
 import io.circe.parser._
-
-import scala.collection.JavaConverters._
-import org.mockito.ArgumentCaptor
-import org.mockito.ArgumentMatchers._
-import org.mockito.Mockito._
-import org.scalatest.mockito._
-import org.scalatest.{AsyncFlatSpec, FlatSpec, Matchers}
+import org.scalamock.scalatest.AsyncMockFactory
+import org.scalatest.{AsyncFlatSpec, Matchers}
 
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
 import scala.io.Source
 
-class CDHYarnClientSpec extends AsyncFlatSpec with MockitoSugar with Matchers with FailFastCirceSupport {
+class CDHYarnClientSpec extends AsyncFlatSpec with AsyncMockFactory with Matchers with FailFastCirceSupport {
 
   behavior of "CDHYarnClientSpec"
 
@@ -56,24 +49,15 @@ class CDHYarnClientSpec extends AsyncFlatSpec with MockitoSugar with Matchers wi
     val updateEntity: ResponseEntity = Await.result(Marshal(updateJson).to[ResponseEntity], Duration.Inf)
     val refreshEntity: ResponseEntity = Await.result(Marshal(refreshResponseJson).to[ResponseEntity], Duration.Inf)
 
-    val cdhClient = mock[HttpExt]
+    val cdhClient = mock[HttpClient]
 
-    when(cdhClient.singleRequest(any[HttpRequest], any[HttpsConnectionContext], any[ConnectionPoolSettings], any[LoggingAdapter])(any[Materializer])).thenReturn(
-      Future(HttpResponse(StatusCodes.OK, entity = initialEntity)),
-      Future(HttpResponse(StatusCodes.OK, entity = updateEntity)),
-      Future(HttpResponse(StatusCodes.OK, entity = refreshEntity))
-    )
+    (cdhClient.request _).expects(Get(configUrl)).returning(Future(HttpResponse(StatusCodes.OK, entity = initialEntity)))
+    (cdhClient.request _).expects(Put(configUrl)).returning(Future(HttpResponse(StatusCodes.OK, entity = updateEntity)))
+    (cdhClient.request _).expects(Get(refreshUrl)).returning(Future(HttpResponse(StatusCodes.OK, entity = refreshEntity)))
 
     val client = new CDHYarnClient(cdhClient, configuration)
     client.createPool("pool", 1, 1.0).map { result =>
-      val capture = ArgumentCaptor.forClass(classOf[HttpRequest])
-      verify(cdhClient, times(3)).singleRequest(capture.capture(), any[HttpsConnectionContext], any[ConnectionPoolSettings], any[LoggingAdapter])(any[Materializer])
-
-      capture.getAllValues.asScala.map(r => r.method -> r.uri.toString()).toList should be (Seq(
-        HttpMethods.GET -> configUrl,
-        HttpMethods.PUT -> configUrl,
-        HttpMethods.GET -> refreshUrl
-      ))
+      result.name should be ("test")
     }
   }
 
@@ -83,7 +67,7 @@ class CDHYarnClientSpec extends AsyncFlatSpec with MockitoSugar with Matchers wi
 
     val Right(expected) = parse(Source.fromResource("cloudera/pool_json.json").getLines().mkString)
 
-    val client = new CDHYarnClient(mock[HttpExt], ConfigFactory.load())
+    val client = new CDHYarnClient(mock[HttpClient], ConfigFactory.load())
     val result = client.config(YarnPool("test", 1, 1.0))
     result should be(expected)
   }
@@ -95,7 +79,7 @@ class CDHYarnClientSpec extends AsyncFlatSpec with MockitoSugar with Matchers wi
     val Right(input) = parse(Source.fromResource("cloudera/pool.json").getLines().mkString)
     val Right(expected) = parse(Source.fromResource("cloudera/pool_after.json").getLines().mkString)
 
-    val client = new CDHYarnClient(mock[HttpExt], ConfigFactory.load())
+    val client = new CDHYarnClient(mock[HttpClient], ConfigFactory.load())
     val result = client.combine(input, YarnPool("test", 1, 1.0))
     result should be(expected)
   }

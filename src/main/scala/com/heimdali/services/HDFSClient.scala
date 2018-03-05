@@ -14,7 +14,7 @@ case class HDFSAllocation(location: String, maxSizeInGB: Double)
 trait HDFSClient {
   def uploadFile(stream: InputStream, hdfsLocation: Path): Future[Path]
 
-  def createDirectory(location: String): Future[Path]
+  def createDirectory(location: String): Path
 
   def changeOwner(location: String, user: String): Future[Path]
 
@@ -23,18 +23,17 @@ trait HDFSClient {
   def getQuota(path: Path): Future[Double]
 }
 
-class HDFSClientImpl(fileSystem: FileSystem,
+class HDFSClientImpl(fileSystem: () => FileSystem,
                      hdfsAdmin: HdfsAdmin)
                     (implicit val executionContext: ExecutionContext)
   extends HDFSClient with LazyLogging {
-  logger.info("filesystem looks like {}", fileSystem)
 
   implicit def locationToPath(location: String): Path =
     new Path(location)
 
-  override def createDirectory(location: String): Future[Path] = Future {
-    logger.info("Creating {} in {}", location, fileSystem)
-    fileSystem.mkdirs(location)
+  override def createDirectory(location: String): Path = {
+    println(s"Creating $location in ${fileSystem()}")
+    fileSystem().mkdirs(location)
     location
   }
 
@@ -50,11 +49,11 @@ class HDFSClientImpl(fileSystem: FileSystem,
 
   override def getQuota(path: Path): Future[Double] = Future {
     val dec = new DecimalFormat("0.00")
-    dec.format(((fileSystem.getContentSummary(path).getSpaceQuota / 1024.0) / 1024.0) / 1024.0).toDouble
+    dec.format(((fileSystem().getContentSummary(path).getSpaceQuota / 1024.0) / 1024.0) / 1024.0).toDouble
   }
 
   override def uploadFile(stream: InputStream, hdfsLocation: Path): Future[Path] = Future {
-    val output: OutputStream = fileSystem.create(hdfsLocation)
+    val output: OutputStream = fileSystem().create(hdfsLocation)
     Iterator.continually(stream.read())
       .takeWhile(-1 !=)
       .foreach(output.write)

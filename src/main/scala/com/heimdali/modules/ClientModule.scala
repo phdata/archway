@@ -3,6 +3,7 @@ package com.heimdali.modules
 import java.net.URI
 
 import com.heimdali.services._
+import org.apache.hadoop.fs.FileSystem
 import org.apache.hadoop.hdfs.client.HdfsAdmin
 
 trait ClientModule {
@@ -10,11 +11,14 @@ trait ClientModule {
 
   val hdfsUri = new URI("hdfs://cdh.corp.jotunn.io:8020/")
 
+  def fileSystemLoader(): FileSystem =
+    FileSystem.get(hadoopConfiguration)
+
   val hdfsAdmin: HdfsAdmin = new HdfsAdmin(hdfsUri, hadoopConfiguration)
 
   val ldapClient: LDAPClient = new LDAPClientImpl(configuration) with ActiveDirectoryClient
 
-  val hdfsClient: HDFSClient = new HDFSClientImpl(hadoopFileSystem, hdfsAdmin)
+  val hdfsClient: HDFSClient = new HDFSClientImpl(fileSystemLoader, hdfsAdmin)
 
   val yarnClient: YarnClient = new CDHYarnClient(http, configuration)
 

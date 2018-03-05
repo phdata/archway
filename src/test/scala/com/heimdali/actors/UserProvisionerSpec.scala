@@ -17,7 +17,7 @@ class UserProvisionerSpec extends FlatSpec with MockFactory {
 
   it should "create user db" in new TestKit(ActorSystem()) with ImplicitSender {
     val user = UserWorkspace("username", "", "", "")
-    val actor = system.actorOf(UserProvisioner.props(testActor, testActor, testActor, user))
+    val actor = system.actorOf(UserProvisioner.props(testActor, testActor, testActor, testActor, user))
     watch(actor)
 
     actor ! UserProvisioner.Request

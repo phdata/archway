@@ -4,7 +4,6 @@ import javax.security.auth.Subject
 
 import akka.actor.{ActorSystem, Props}
 import akka.testkit.{TestKit, TestProbe}
-import com.heimdali.actors.HDFSActor.HDFSUpdate
 import com.heimdali.actors.YarnActor.{CreatePool, PoolCreated}
 import com.heimdali.services.{LoginContextProvider, YarnClient, YarnPool}
 import com.heimdali.test.fixtures.TestProject
