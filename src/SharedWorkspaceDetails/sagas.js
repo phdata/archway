@@ -10,6 +10,7 @@ function* fetchDetails({payload: {pathname}}) {
         const token = yield select(s => s.auth.token);
         const details = yield call(Api.sharedWorkspaceDetails, token, id);
         yield put(sharedWorkspaceDetails(details));
+        const members = yield call(Api.workspaceMemberList, token, id);
     }
 }
 

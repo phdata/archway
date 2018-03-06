@@ -68,3 +68,11 @@ export function requestNewSharedWorkspace(token, workspace) {
         }
     }).then(response => response.json());
 }
+
+export function workspaceMemberList(token, id) {
+    return fetch(BASE_URL + "/workspaces/"+id + "/members", {
+        headers: {
+            "Authorization": "Bearer " + token
+        }
+    }).then(response => response.json());
+}
