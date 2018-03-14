@@ -3,7 +3,7 @@
     height: 50px;
     padding: 10px;
     flex-direction: row;
-    background-color: #455C7B;
+    background-color: #011627;
     color: white;
     align-items: center;
     border-bottom: 1px solid white;
@@ -24,13 +24,14 @@
 .Navigation-nav-link {
     color: white;
     text-decoration: none;
-    font-size: 14px;
-    font-family: "Roboto";
+    font-size: 20px;
+    font-family: "Playfair Display";
     margin-right: 20px;
+    padding: 23px 10px;
 }
 
 .Navigation-nav-link.active {
-    color: lightgray;
+    border-bottom: 4px solid white;
 }
 
 .Navigation-nav > li:last-child:after {

@@ -4,7 +4,7 @@ import Spinner from "../Common/Spinner";
 
 const MemberItem = ({member: {name, username}, index}) => (
     <div className={"MemberItem"}>
-        <i class="fas fa-user"></i> {name}
+        <i class="fa fa-user"></i> {name}
     </div>
 );
 

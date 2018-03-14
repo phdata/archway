@@ -3,3 +3,15 @@
     flex: 1;
     flex-direction: column;
 }
+
+.SharedWorkspaces-list {
+    display: flex;
+    flex: 1;
+    flex-direction: row;
+    flex-wrap: wrap;
+
+}
+
+.SharedWorkspaces-list > div {
+    margin-bottom: 20px;
+}

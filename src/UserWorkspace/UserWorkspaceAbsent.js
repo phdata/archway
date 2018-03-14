@@ -1,16 +1,15 @@
 import React from 'react';
+import Panel from "../Common/Panel";
 import "./UserWorkspaceAbsent.css";
 
 const UserWorkspaceAbsent = ({requestWorkspace}) => {
     return (
-        <div className="UserWorkspaceAbsent" onClick={requestWorkspace}>
+        <Panel className="UserWorkspaceAbsent" onClick={requestWorkspace}>
             <div className="UserWorkspaceAbsent-notice">
-                <i className="far fa-frown"></i>
-                <h3>You don't have a workspace yet!</h3>
-                <h4>Let's set one up...</h4>
+                <h3>Let's get yours set up!</h3>
             </div>
-            <i className="fas fa-plus"></i>
-        </div>
+            <i className="fa fa-plus"></i>
+        </Panel>
     );
 };
 

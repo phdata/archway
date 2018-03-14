@@ -2,15 +2,15 @@ import { take, fork, cancel } from 'redux-saga/effects';
 
 import auth from "./Auth/sagas";
 import cluster from "./Navigation/sagas";
-import sharedWorkspace from "./SharedWorkspaces/sagas";
 import userWorkspaace from "./UserWorkspace/sagas";
 import sharedWorkspaceDetails from "./SharedWorkspaceDetails/sagas";
 import requestWorkspace from "./RequestProject/sagas";
+import sharedWorkspaces from "./SharedWorkspaces/sagas";
 
 const sagas = [
     auth,
     cluster,
-    sharedWorkspace,
+    sharedWorkspaces,
     userWorkspaace,
     sharedWorkspaceDetails,
     requestWorkspace

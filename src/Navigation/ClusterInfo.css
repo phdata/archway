@@ -3,6 +3,7 @@
     align-items: center;
     margin-right: 15px;
     font-size: 20px;
+    font-family: "Playfair Display";
 }
 
 .ClusterInfo-status {
@@ -17,8 +18,8 @@
     background: gray;
 }
 
-.ClusterInfo-status-good {
-    background-color: limegreen;
+.ClusterInfo-status-GOOD_HEALTH {
+    background-color: #2EC4B6;
 }
 
 .ClusterInfo-status-bad {

@@ -5,6 +5,7 @@ import UserWorkspaceDisplay from './UserWorkspaceDisplay';
 import UserWorkspaceAbsent from "./UserWorkspaceAbsent";
 import {requestWorkspace} from './actions';
 import Spinner from "../Common/Spinner";
+import WorkspaceHeader from "../Common/WorkspaceHeader";
 
 const UserWorkspace = ({userWorkspace: {requesting, workspace}, cluster, requestWorkspace}) => {
     let workspaceContent = <div/>;
@@ -20,10 +21,12 @@ const UserWorkspace = ({userWorkspace: {requesting, workspace}, cluster, request
         workspaceContent = <UserWorkspaceAbsent requestWorkspace={requestWorkspace}/>;
     return (
         <div className="UserWorkspace">
+            <WorkspaceHeader icon="user" title="Personal" subtitle="a private workspace"/>
             {workspaceContent}
         </div>
     );
 };
+
 
 export default connect(
     state => state,

@@ -17,7 +17,7 @@ const Spinner = ({children = "Loading...", width = 100}) => {
                     <div></div>
                 </div>
             </div>
-            <h2>{children}</h2>
+            {children}
         </div>
     );
 };

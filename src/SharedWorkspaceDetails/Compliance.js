@@ -3,7 +3,7 @@ import "./Compliance.css";
 
 const ComplianceItem = ({name, value, icon}) => (
     <div className={`Compliance-item ${value}`}>
-        <i className={`fas fa-${icon}`} /> {name} possible
+        <i className={`fa fa-${icon}`} /> {name} possible
     </div>
 );
 

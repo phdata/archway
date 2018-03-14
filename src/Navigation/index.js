@@ -13,11 +13,8 @@ const Navigation = () => (
                 <h1>Heimdali</h1>
             </div>
             <div className="Navigation-nav">
-                <NavLink to="/" exact className="Navigation-nav-link" activeClassName="active">
-                    My Workspace
-                </NavLink>
                 <NavLink to="/workspaces" className="Navigation-nav-link" activeClassName="active">
-                    Shared Workspaces
+                    Workspaces
                 </NavLink>
             </div>
         </div>

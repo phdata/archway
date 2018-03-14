@@ -1,11 +1,10 @@
 import React from "react";
 import Navigation from "./Navigation/index";
-import UserWorkspace from "./UserWorkspace/index";
 import RequestProject from "./RequestProject/index";
-import SharedWorkspaces from "./SharedWorkspaces/index";
 import {ConnectedRouter} from "react-router-redux";
-import {Route} from 'react-router';
-import  SharedWorkspaceDetails from "./SharedWorkspaceDetails";
+import {Redirect, Route} from 'react-router';
+import SharedWorkspaceDetails from "./SharedWorkspaceDetails";
+import Workspaces from "./Workspaces";
 
 const Main = ({history}) => {
     return (
@@ -13,9 +12,9 @@ const Main = ({history}) => {
             <div style={{display: "flex", flex: 1, flexDirection: "column"}}>
                 <Navigation/>
                 <div style={{display: "flex", flex: 1}}>
-                    <Route exact path="/" component={UserWorkspace}/>
+                    <Redirect from="/" to="/workspaces" />
+                    <Route exact path="/workspaces" component={Workspaces}/>
                     <Route path="/shared-request" component={RequestProject}/>
-                    <Route path="/workspaces" component={SharedWorkspaces}/>
                     <Route path="/workspace/:id" component={SharedWorkspaceDetails} />
                 </div>
             </div>

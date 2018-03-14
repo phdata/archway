@@ -1,10 +1,10 @@
 import React from 'react';
 import './Panel.css';
 
-const Panel = ({className, children}) => {
-
+const Panel = (params) => {
+    const {className, children} = params;
     return (
-      <div className={`Panel ${className}`}>
+      <div {...params} className={`Panel ${className}`}>
           {children}
       </div>
     );

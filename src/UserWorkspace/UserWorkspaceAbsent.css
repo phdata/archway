@@ -1,15 +1,6 @@
 .UserWorkspaceAbsent {
-    cursor: pointer;
-    min-width: 350px;
-    min-height: 250px;
-    box-shadow: 0 3px 6px rgba(0, 0, 0, .16);
-    background-color: white;
-    border-radius: 10px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-evenly;
-    padding: 15px;
+    height: 150px;
+    width: 350px;
 }
 
 .UserWorkspaceAbsent-notice {
@@ -17,15 +8,14 @@
     flex-direction: column;
     align-items: center;
     justify-content: space-evenly;
-    height: 75px;
     font-size: 24px;
 }
 
-.UserWorkspaceAbsent .fa-frown {
-    color: lightgray;
+.UserWorkspaceAbsent .fa-plus {
+    font-size: 34px;
+    color: #2EC4B6;
 }
 
-.UserWorkspaceAbsent .fa-plus {
-    font-size: 42px;
-    color: lightgray;
+.UserWorkspaceAbsent > h3 {
+    margin-top: 0;
 }
