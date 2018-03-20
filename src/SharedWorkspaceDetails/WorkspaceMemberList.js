@@ -1,10 +1,12 @@
 import React from "react";
 import "./Compliance.css";
 import Spinner from "../Common/Spinner";
+import "./WorkspaceMemberList.css";
+import "./DetailPanel.css";
 
 const MemberItem = ({member: {name, username}, index}) => (
     <div className={"MemberItem"}>
-        <i class="fa fa-user"></i> {name}
+        {name}
     </div>
 );
 
@@ -14,8 +16,9 @@ const MemberList = ({members}) => {
         children = members.map((member, index) => (<MemberItem member={member} index={index}/>));
     return (
         <div className="MemberList">
+            <h2><i className="fa fa-user"/>Members<i className=""/> </h2>
             {children}
-        </div>
+            </div>
     );
 };
 

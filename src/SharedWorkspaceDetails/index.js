@@ -11,16 +11,22 @@ const SharedWorkspaceDetails = ({workspaceDetails: {workspace, members}, cluster
     if (!workspace || !workspace.hdfs)
         return <Spinner>Loading Details...</Spinner>;
     else {
-        const {name, purpose, created_by, created} = workspace;
+        const {name, purpose, created_by, created, compliance} = workspace;
         return (
             <div className="SharedWorkspaceDetails">
-                <h1>{name} <sub>{purpose}</sub></h1>
-                <h5>Created by {created_by} <TimeAgo datetime={created}/></h5>
-                <div className="">
-                    <Compliance workspace={workspace}/>
+                <div className="SharedWorkspaceDetails-header">
+                <h1>{name}</h1>
+                <Compliance workspace={workspace}/>
+                </div>
+                <h5>{purpose}</h5>
+                <div className="SharedWorkspaceDetails-details">
+                    <div className="SharedWorkspaceDetails-details-left">
                     <DatabaseDisplay database={workspace.database}
                                      cluster={cluster}/>
+                    </div>
+                    <div className="SharedWorkspaceDetails-details-right">
                     <WorkspaceMemberList members={members} />
+                    </div>
                 </div>
             </div>
         );

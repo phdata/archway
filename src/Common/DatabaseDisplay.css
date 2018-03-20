@@ -1,8 +1,14 @@
 .DatabaseDisplay {
     background-color: white;
     display: flex;
+    flex: 1;
     flex-direction: column;
     padding: 40px;
+    border: solid black 1px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, .16);
+    border-radius: 10px;
+    margin: 0px 50px 25px 50px;
+    width: 1150px;
 }
 
 pre {
@@ -12,4 +18,33 @@ pre {
     font-family: monospace;
     font-size: .7em;
     padding: 5px;
+}
+
+.DatabaseDisplay >h2 {
+    border-bottom: solid black 1px;
+    font-weight: bold;
+    padding-bottom: 10px;
+}
+
+.DatabaseDisplay-Display {
+    display: flex;
+    flex: 1;
+    flex-direction: row;
+}
+
+.DatabaseDisplay-Display-left {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    justify-content: space-evenly;
+}
+
+.DatabaseDisplay-Display-right {
+    display: flex;
+    flex: 3;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 55px;
+
 }

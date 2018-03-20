@@ -27,7 +27,6 @@ const UserWorkspace = ({userWorkspace: {requesting, workspace}, cluster, request
     );
 };
 
-
 export default connect(
     state => state,
     {requestWorkspace}

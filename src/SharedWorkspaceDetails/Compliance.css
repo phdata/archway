@@ -1,23 +1,20 @@
 .Compliance {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    padding-left: 10px;
 }
 
 .Compliance-item {
-    padding: 10px 0;
     display: flex;
     flex-direction: row;
     align-items: center;
-    background-color: #E74C3C;
-    color: white;
 }
 
 .Compliance-item.false {
     display: none;
 }
 
-.Compliance-item > .fas {
-    font-size: 22px;
-    margin-right: 10px;
-    padding-left: 30px;
+.Compliance-item > .fa {
+    font-size: 35px;
+    color: #E74C3C;
 }
