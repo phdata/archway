@@ -2,14 +2,11 @@ package com.heimdali.actors
 
 import akka.actor.{ActorSystem, Props}
 import akka.testkit.{ImplicitSender, TestKit}
-import com.heimdali.actors.HiveActor.{CreateUserDatabase, UserDatabaseCreated}
+import com.heimdali.actors.HiveActor.{CreateSharedDatabase, CreateUserDatabase, DatabaseCreated}
 import com.typesafe.config.ConfigFactory
-import org.mockito.ArgumentMatchers
-import org.mockito.ArgumentMatchers.anyString
-import org.mockito.Mockito.when
+import org.apache.hadoop.conf.Configuration
 import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{FlatSpec, Matchers}
-import scalikejdbc.DBSession
 
 import scala.concurrent.ExecutionContext
 
@@ -19,26 +16,35 @@ class HiveActorSpec extends FlatSpec with MockitoSugar with Matchers {
 
   it should "create a new db" in new TestKit(ActorSystem()) with ImplicitSender {
     val username = "username"
-    val role = s"role_$username"
-    val location = s"/users/$username/db"
-    val database = s"user_$username"
 
-    val session = mock[DBSession]
-    when(session.execute(anyString, ArgumentMatchers.anyString))
-      .thenReturn(true)
-
+    val service = new HappyHiveService
     val config = ConfigFactory.load()
+    val hadoopConfiguration = new Configuration(false)
 
-    val actor = system.actorOf(Props(classOf[HiveActor], config, session, ExecutionContext.global))
+    val actor = system.actorOf(Props(classOf[HiveActor], config, hadoopConfiguration, service, ExecutionContext.global))
 
     actor ! CreateUserDatabase(username)
 
     expectMsgPF() {
-      case UserDatabaseCreated(HiveDatabase(`location`, `role`, `database`)) =>
+      case DatabaseCreated(HiveDatabase(location, role, database)) =>
         database should be (s"user_$username")
         location should be (s"/users/$username/db")
         role should be (s"role_$username")
     }
+  }
+
+  it should "create a new project db" in new TestKit(ActorSystem()) with ImplicitSender {
+    val username = "myproject"
+
+    val service = new HappyHiveService
+    val config = ConfigFactory.load()
+    val hadoopConfiguration = new Configuration(false)
+
+    val actor = system.actorOf(Props(classOf[HiveActor], config, hadoopConfiguration, service, ExecutionContext.global))
+
+    actor ! CreateSharedDatabase(username)
+
+    expectMsgType[DatabaseCreated]
   }
 
 }

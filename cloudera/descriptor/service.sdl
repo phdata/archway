@@ -2,17 +2,27 @@
   "name": "HEIMDALI",
   "label": "Heimdali",
   "description": "The Heimdali service",
-  "version": "1.0",
+  "version": "0.1.0",
   "runAs": {
-    "user": "root",
-    "group": "root"
+    "user": "heimdali",
+    "group": "heimdali"
   },
+  "maxInstances" : 1,
   "roles": [
     {
       "name": "HEIMDALI_SERVICE",
       "label": "Heimdali API",
       "pluralLabel": "Heimdali APIs",
-      "parameters": [],
+      "parameters": [
+        {
+          "name" : "port_num",
+          "label" : "Webserver port",
+          "description" : "The web server port number",
+          "required" : "true",
+          "type" : "port",
+          "default" : 8080
+        }
+      ],
       "startRunner": {
         "program": "scripts/control.sh",
         "args": [

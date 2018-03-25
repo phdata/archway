@@ -2,8 +2,7 @@ package com.heimdali.actors
 
 import akka.actor.{ActorSystem, Props}
 import akka.testkit.TestProbe
-import com.heimdali.actors.LDAPActor.CreateSharedWorkspaceGroup
-import com.heimdali.actors.WorkspaceSaver.LDAPUpdate
+import com.heimdali.actors.LDAPActor.{CreateSharedWorkspaceGroup, LDAPGroupCreated}
 import com.heimdali.services.LDAPClient
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FlatSpec, Matchers}
@@ -22,12 +21,12 @@ class LDAPActorSpec extends FlatSpec with Matchers with MockFactory {
 
     val ldapClient = mock[LDAPClient]
     implicit val executionContext = scala.concurrent.ExecutionContext.global
-    (ldapClient.createGroup _).expects(projectName, username).returning(Future { "" })
+    (ldapClient.createGroup _).expects(s"edh_sw_$projectName", username).returning(Future { "" })
 
     val actor = actorSystem.actorOf(Props(classOf[LDAPActor], ldapClient, executionContext))
     val project = CreateSharedWorkspaceGroup(projectName, Seq(username))
     actor.tell(project, probe.ref)
-    probe.expectMsgClass(classOf[LDAPUpdate])
+    probe.expectMsgClass(classOf[LDAPGroupCreated])
   }
 
 }

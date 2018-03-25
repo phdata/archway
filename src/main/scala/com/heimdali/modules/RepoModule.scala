@@ -1,33 +1,24 @@
 package com.heimdali.modules
 
+import cats.effect.IO
 import com.heimdali.repositories.{AccountRepository, AccountRepositoryImpl, WorkspaceRepository, WorkspaceRepositoryImpl}
-import scalikejdbc.config.DBs
-import scalikejdbc.{DB, DBSession, GlobalSettings, LoggingSQLAndTimeSettings, SettingsProvider}
+import doobie.util.transactor.Transactor
 
 trait RepoModule {
-  this: ExecutionContextModule =>
+  this: ExecutionContextModule
+    with ConfigurationModule =>
 
-  val workspaceRepository: WorkspaceRepository = new WorkspaceRepositoryImpl
+  val metaConfig = configuration.getConfig("db.meta")
 
-  val accountRepository: AccountRepository = new AccountRepositoryImpl
+  val transactor = Transactor.fromDriverManager[IO](
+    metaConfig.getString("driver"),
+    metaConfig.getString("url"),
+    metaConfig.getString("user"),
+    metaConfig.getString("password")
+  )
 
-  val session: DBSession = {
-    DBs.loadGlobalSettings()
-    DBs.setupAll()
-    GlobalSettings.loggingSQLAndTime = LoggingSQLAndTimeSettings(
-      enabled = true,
-      singleLineMode = false,
-      printUnprocessedStackTrace = false,
-      stackTraceDepth= 15,
-      logLevel = 'debug,
-      warningEnabled = false,
-      warningThresholdMillis = 3000L,
-      warningLogLevel = 'warn
-    )
-    DB.autoCommitSession(SettingsProvider.default.copy(
-      jtaDataSourceCompatible = e => true,
-      loggingSQLAndTime = e => e.copy(enabled = true, logLevel = 'debug)
-    ))
-  }
+  val workspaceRepository: WorkspaceRepository = new WorkspaceRepositoryImpl(transactor)
+
+  val accountRepository: AccountRepository = new AccountRepositoryImpl(transactor)
 
 }

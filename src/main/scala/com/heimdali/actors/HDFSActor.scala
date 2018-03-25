@@ -31,15 +31,15 @@ class HDFSActor(hdfsClient: HDFSClient,
   override def receive: Receive = {
     case CreateUserDirectory(username) =>
       val path: String = s"$usertRoot/$username/db"
-      loginContextProvider.elevate(username)(hdfsClient.createDirectory(path))
+      hdfsClient.createDirectory(path, Some(username))
         .map(_ => DirectoryCreated(path))
         .pipeTo(sender())
 
-//    case CreateSharedDirectory(name, size) =>
-//      val path: String = s"$projectRoot/$name"
-//      hdfsClient
-//        .createDirectory(path)
-//        .map(_ => DirectoryCreated(path))
-//        .pipeTo(sender())
+    case CreateSharedDirectory(name, size) =>
+      val path: String = s"$projectRoot/$name"
+      hdfsClient
+        .createDirectory(path, None)
+        .map(_ => DirectoryCreated(path))
+        .pipeTo(sender())
   }
 }

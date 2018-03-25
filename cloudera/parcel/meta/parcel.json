@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "name": "Heimdali",
+  "version": "0.1.0",
+  "setActiveSymlink": true,
+  "depends": "",
+  "replaces": "HEIMDALI",
+  "conflicts": "",
+  "provides": [
+    "heimdali-api",
+    "heimdali-ui"
+  ],
+  "scripts": {
+    "defines": "heimdali_env.sh"
+  },
+  "packages": [],
+  "components": [
+    {
+      "name": "heimdali-api",
+      "version": "0.1.0-cdh5.0.0",
+      "pkg_version": "0.1.0-cdh5.0.0"
+    },
+    {
+      "name": "heimdali-ui",
+      "version": "0.1.0-cdh5.0.0",
+      "pkg_version": "0.1.0-cdh5.0.0"
+    }
+  ],
+  "users": {
+    "heimdali": {
+      "longname": "Heimdali",
+      "home": "/var/lib/heimdali",
+      "shell": "/bin/bash",
+      "extra_groups": []
+    }
+  },
+  "groups": []
+}

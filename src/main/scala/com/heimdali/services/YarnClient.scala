@@ -68,7 +68,9 @@ class CDHYarnClient(http: HttpClient,
     val request = Get(configURL).addCredentials(BasicHttpCredentials(username, password))
     http.request(request)
       .flatMap {
-        case HttpResponse(StatusCodes.OK, _, entity, _) => Unmarshal(entity).to[Json]
+        case HttpResponse(StatusCodes.OK, _, entity, _) =>
+          val response = Await.result(Unmarshal(entity).to[Json], Duration.Inf)
+          Future(response)
         case HttpResponse(_, _, _, _) => Future.failed(new HttpException())
       }
 

@@ -1,58 +1,76 @@
+
 package com.heimdali.services
 
+import java.net.URI
+
 import com.sun.xml.internal.messaging.saaj.util.ByteInputStream
+import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.fs.{FSDataOutputStream, FileSystem, Path}
+import org.apache.hadoop.hdfs.MiniDFSCluster
 import org.apache.hadoop.hdfs.client.HdfsAdmin
-import org.mockito.ArgumentMatchers._
-import org.mockito.Mockito._
-import org.scalatest.mockito.MockitoSugar
-import org.scalatest.{FlatSpec, Matchers}
+import org.scalamock.scalatest.AsyncMockFactory
+import org.scalatest.{FutureOutcome, Matchers, fixture}
 
-import scala.concurrent.Await
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.duration.Duration
+import scala.concurrent.Future
 
-class HDFSClientImplSpec extends FlatSpec with Matchers with MockitoSugar {
+class HDFSClientImplSpec extends fixture.AsyncFlatSpec with Matchers with AsyncMockFactory {
 
   behavior of "HDFS Client"
 
-  it should "create a directory" in new Context {
-    val result = client.createDirectory(location)
-    verify(fileSystem).mkdirs(path)
-    result.toUri.getPath should be(location)
+  it should "create a directory on behalf of a user" in { fixture =>
+    val context = mock[LoginContextProvider]
+    (context.elevate[Path](_: String)(_: () => Path))
+      .expects("jdoe", *)
+      .onCall((location, path) => Future(Some(path())))
+
+    val client = new HDFSClientImpl(() => fixture.fileSystem, fixture.admin, context)
+
+    client.createDirectory(fixture.location.toUri.getPath, Some("jdoe")).map { result =>
+      result.toUri.getPath should be(fixture.location.toUri.getPath)
+
+      fixture.fileSystem.exists(fixture.location) should be(true)
+    }
   }
 
-  it should "set permissions" in new Context {
-    val result = Await.result(client.setQuota(path, 10), Duration.Inf)
-    val bytes = 10L * 1024L * 1024L * 1024L
-    verify(admin).setSpaceQuota(path, bytes)
-    result.location should be(location)
-    result.maxSizeInGB should be(10)
+  it should "set permissions" in { fixture =>
+    val context = mock[LoginContextProvider]
+
+    fixture.fileSystem.mkdirs(fixture.location)
+
+    val client = new HDFSClientImpl(() => fixture.fileSystem, fixture.admin, context)
+    client.setQuota(fixture.location, .25).map { result =>
+      result.location should be(fixture.location.toString)
+      result.maxSizeInGB should be(.25)
+    }
   }
 
-  it should "upload a file" in new Context {
+  it should "upload a file" in { fixture =>
+    val context = mock[LoginContextProvider]
     val outputStream = mock[FSDataOutputStream]
     val data = "test out"
     val dataBytes = data.getBytes
 
-    when(fileSystem.create(any[Path])).thenReturn(outputStream)
+    val client = new HDFSClientImpl(() => fixture.fileSystem, fixture.admin, context)
+    client.uploadFile(new ByteInputStream(dataBytes, dataBytes.length), fixture.location).map { result =>
+      fixture.fileSystem.exists(result) should be(true)
+      result.toString should be(fixture.location.toString)
+    }
 
-    val result = Await.result(client.uploadFile(new ByteInputStream(dataBytes, dataBytes.length), path), Duration.Inf)
-
-    verify(fileSystem).create(path)
-    verify(outputStream).close()
-    verify(outputStream, times(dataBytes.length)).write(any)
-
-    result.toString should be(path.toString)
   }
 
-  trait Context {
-    val location = "/projects/something"
-    val path = new Path(location)
-    val fileSystem = mock[FileSystem]
-    val admin = mock[HdfsAdmin]
+  override def withFixture(test: OneArgAsyncTest): FutureOutcome = {
+    val location = "/data/shared_workspaces/project_a"
+    val configuration = new Configuration()
+    val cluster = new MiniDFSCluster.Builder(configuration).build()
+    val baseUri = new URI(s"hdfs://localhost:${cluster.getNameNodePort}/")
+    val fileSystem = FileSystem.get(baseUri, configuration)
+    val admin = new HdfsAdmin(baseUri, configuration)
 
-    val client = new HDFSClientImpl(() => fileSystem, admin)
+    val fixture = FixtureParam(cluster, fileSystem, admin, new Path(location))
+
+    withFixture(test.toNoArgAsyncTest(fixture))
   }
+
+  case class FixtureParam(cluster: MiniDFSCluster, fileSystem: FileSystem, admin: HdfsAdmin, location: Path)
 
 }

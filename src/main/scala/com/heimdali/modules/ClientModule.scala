@@ -18,7 +18,7 @@ trait ClientModule {
 
   val ldapClient: LDAPClient = new LDAPClientImpl(configuration) with ActiveDirectoryClient
 
-  val hdfsClient: HDFSClient = new HDFSClientImpl(fileSystemLoader, hdfsAdmin)
+  val hdfsClient: HDFSClient = new HDFSClientImpl(fileSystemLoader, hdfsAdmin, loginContextProvider)
 
   val yarnClient: YarnClient = new CDHYarnClient(http, configuration)
 

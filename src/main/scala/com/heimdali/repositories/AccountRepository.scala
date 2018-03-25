@@ -1,7 +1,9 @@
 package com.heimdali.repositories
 
 import com.heimdali.services.UserWorkspace
-import io.getquill._
+import doobie._
+import doobie.implicits._
+import cats.effect.IO
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -11,23 +13,46 @@ trait AccountRepository {
   def create(userWorkspace: UserWorkspace): Future[UserWorkspace]
 }
 
-class AccountRepositoryImpl(implicit executionContext: ExecutionContext) extends AccountRepository {
-  val context = new PostgresAsyncContext(NamingStrategy(SnakeCase, PluralizedTableNames), "ctx") with ImplicitQuery
+class AccountRepositoryImpl(transactor: Transactor[IO])
+                           (implicit executionContext: ExecutionContext) extends AccountRepository {
 
-  import context._
+  def findUser(username: String): Future[Option[UserWorkspace]] =
+    sql"""
+         | SELECT
+         |   username,
+         |   database,
+         |   data_directory,
+         |   role
+         | FROM
+         |   users
+         | WHERE
+         |   username = $username""".stripMargin
+      .query[UserWorkspace]
+      .option
+      .transact(transactor)
+      .unsafeToFuture()
 
-  val userQuery = quote {
-    querySchema[UserWorkspace]("users")
-  }
-
-  def findUser(username: String): Future[Option[UserWorkspace]] = run(quote {
-    userQuery.filter(_.username == lift(username))
-  }).map(_.headOption)
-
-  def create(userWorkspace: UserWorkspace): Future[UserWorkspace] = {
-    run {
-      userQuery.insert(lift(userWorkspace))
-    }.map(_ => userWorkspace)
-  }
+  def create(userWorkspace: UserWorkspace): Future[UserWorkspace] =
+    sql"""
+         | INSERT INTO
+         |   users (
+         |     username,
+         |     database,
+         |     dataDirectory,
+         |     role
+         |   )
+         | VALUES
+         |   (
+         |     ${userWorkspace.username},
+         |     ${userWorkspace.database},
+         |     ${userWorkspace.dataDirectory},
+         |     ${userWorkspace.role}
+         |   )
+         | """.stripMargin
+      .update
+      .run
+      .transact(transactor)
+      .unsafeToFuture()
+      .map(_ => userWorkspace)
 
 }

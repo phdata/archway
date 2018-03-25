@@ -25,7 +25,7 @@ class LDAPClientImplSpec extends AsyncFlatSpec
 
   it should "create a group" in {
     val client = new LDAPClientImpl(config)(executionContext) with OpenLDAPClient
-    client.createGroup("sesame", "username").map { _ =>
+    client.createGroup("edh_sw_sesame", "username").map { _ =>
       val entry = client.adminConnectionPool.getConnection.getEntry(s"cn=edh_sw_sesame,$groupDN,$baseDN")
       entry should not be null
     }(executionContext)

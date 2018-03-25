@@ -7,6 +7,7 @@ import akka.actor.ActorSystem
 import akka.http.scaladsl.client.RequestBuilding._
 import akka.http.scaladsl.marshalling.Marshal
 import akka.http.scaladsl.model._
+import akka.http.scaladsl.model.headers.BasicHttpCredentials
 import akka.stream.ActorMaterializer
 import com.typesafe.config.ConfigFactory
 import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport
@@ -51,13 +52,15 @@ class CDHYarnClientSpec extends AsyncFlatSpec with AsyncMockFactory with Matcher
 
     val cdhClient = mock[HttpClient]
 
-    (cdhClient.request _).expects(Get(configUrl)).returning(Future(HttpResponse(StatusCodes.OK, entity = initialEntity)))
-    (cdhClient.request _).expects(Put(configUrl)).returning(Future(HttpResponse(StatusCodes.OK, entity = updateEntity)))
-    (cdhClient.request _).expects(Get(refreshUrl)).returning(Future(HttpResponse(StatusCodes.OK, entity = refreshEntity)))
+    (cdhClient.request _).expects(Get(configUrl).addCredentials(BasicHttpCredentials("admin", "admin"))).returning(Future(HttpResponse(StatusCodes.OK, entity = initialEntity)))
+    cdhClient.request _ expects where {
+      request: HttpRequest => request.uri.toString() == configUrl && request.method == HttpMethods.PUT
+    } returning Future(HttpResponse(StatusCodes.OK, entity = updateEntity))
+    (cdhClient.request _).expects(Get(refreshUrl).addCredentials(BasicHttpCredentials("admin", "admin"))).returning(Future(HttpResponse(StatusCodes.OK, entity = refreshEntity)))
 
     val client = new CDHYarnClient(cdhClient, configuration)
     client.createPool("pool", 1, 1.0).map { result =>
-      result.name should be ("test")
+      result.name should be ("pool")
     }
   }
 

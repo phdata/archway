@@ -25,7 +25,7 @@ class KeytabActorSpec extends FlatSpec with MockFactory with Matchers {
     val principal = "project"
     val location = new Path("/projects/project")
     val keytabContent = "keytab content"
-    val fullPath = new Path("/projects/project/project.keytab")
+    val fullPath = new Path("/data/shared_workspaces/project/project.keytab")
     val configuration = ConfigFactory.load()
 
     (keytabService.generateKeytab _).expects(principal).returning(Future(keytabContent))

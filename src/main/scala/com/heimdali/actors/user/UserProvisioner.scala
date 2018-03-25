@@ -3,13 +3,11 @@ package com.heimdali.actors.user
 import akka.actor.{ActorRef, Props}
 import akka.persistence.fsm.PersistentFSM
 import akka.persistence.fsm.PersistentFSM.FSMState
-import com.heimdali.actors
 import com.heimdali.actors.HDFSActor.CreateUserDirectory
-import com.heimdali.actors.HiveActor.{CreateUserDatabase, UserDatabaseCreated}
+import com.heimdali.actors.HiveActor.{CreateUserDatabase, DatabaseCreated}
 import com.heimdali.actors.LDAPActor.{CreateUserWorkspaceGroup, LDAPGroupCreated}
 import com.heimdali.actors.UserSaver.{SaveUser, UserSaved}
 import com.heimdali.actors._
-import com.heimdali.actors.workspace.WorkspaceState
 import com.heimdali.services.UserWorkspace
 
 import scala.reflect.ClassTag
@@ -75,7 +73,7 @@ class UserProvisioner(hiveActor: ActorRef,
         hiveActor ! CreateUserDatabase(existing.username)
       }
 
-    case Event(UserDatabaseCreated(db), existing) =>
+    case Event(DatabaseCreated(db), existing) =>
       goto(Saving) applying Save(db) andThen { newWorkspace =>
         saveActor ! SaveUser(newWorkspace)
       }

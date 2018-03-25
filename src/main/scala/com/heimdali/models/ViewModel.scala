@@ -2,8 +2,6 @@ package com.heimdali.models
 
 import java.time.LocalDateTime
 
-import com.heimdali.repositories.SharedWorkspaceRecord
-
 object ViewModel {
 
   case class Compliance(phiData: Boolean,
@@ -46,20 +44,6 @@ object ViewModel {
         .trim //if we have leading or trailing spaces, clean them up
         .replaceAll("""\s+""", "_")
         .toLowerCase
-
-    def apply(sharedWorkspaceRecord: SharedWorkspaceRecord): SharedWorkspace =
-      SharedWorkspace(
-        sharedWorkspaceRecord.id,
-        sharedWorkspaceRecord.name,
-        sharedWorkspaceRecord.purpose,
-        sharedWorkspaceRecord.ldapDn,
-        sharedWorkspaceRecord.systemName,
-        Compliance(sharedWorkspaceRecord.piiData, sharedWorkspaceRecord.pciData, sharedWorkspaceRecord.piiData),
-        HDFSProvision(sharedWorkspaceRecord.hdfsLocation, sharedWorkspaceRecord.hdfsRequestedSizeInGb, sharedWorkspaceRecord.hdfsActualSizeInGb),
-        YarnProvision(sharedWorkspaceRecord.yarnPoolName, sharedWorkspaceRecord.yarnMaxCores, sharedWorkspaceRecord.yarnMaxMemoryInGb),
-        sharedWorkspaceRecord.keytabLocation,
-        sharedWorkspaceRecord.created,
-        sharedWorkspaceRecord.createdBy)
   }
 
 

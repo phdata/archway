@@ -14,7 +14,7 @@ case class HDFSAllocation(location: String, maxSizeInGB: Double)
 trait HDFSClient {
   def uploadFile(stream: InputStream, hdfsLocation: Path): Future[Path]
 
-  def createDirectory(location: String): Path
+  def createDirectory(location: String, onBhalfOf: Option[String]): Future[Path]
 
   def changeOwner(location: String, user: String): Future[Path]
 
@@ -24,18 +24,30 @@ trait HDFSClient {
 }
 
 class HDFSClientImpl(fileSystem: () => FileSystem,
-                     hdfsAdmin: HdfsAdmin)
+                     hdfsAdmin: HdfsAdmin,
+                     loginContextProvider: LoginContextProvider)
                     (implicit val executionContext: ExecutionContext)
   extends HDFSClient with LazyLogging {
 
   implicit def locationToPath(location: String): Path =
     new Path(location)
 
-  override def createDirectory(location: String): Path = {
-    println(s"Creating $location in ${fileSystem()}")
+  def createDirectory(location: String): Path = {
+    logger.info(s"Creating $location in ${fileSystem()}")
     fileSystem().mkdirs(location)
     location
   }
+
+  override def createDirectory(location: String, onBehalfOf: Option[String] = None): Future[Path] =
+    onBehalfOf match {
+      case Some(user) =>
+        loginContextProvider
+          .elevate(user) {
+            createDirectory(location)
+          }.map(_.get)
+      case None =>
+        Future(createDirectory(location))
+    }
 
   override def changeOwner(location: String, user: String): Future[Path] = Future {
     FileUtil.setOwner(new File(location), user, user)
