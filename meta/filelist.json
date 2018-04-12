@@ -1,0 +1,27 @@
+{
+  "heimdali-api": {
+    "name": "heimdali-api",
+    "version": "0.1.2",
+    "files": {
+      "usr/lib/heimdali-api/heimdali-api.jar": {}
+    }
+  },
+  "heimdali-ui": {
+    "name": "heimdali-ui",
+    "version": "0.1.2",
+    "files": {
+      "usr/lib/heimdali-ui/favicon.ico": {},
+      "usr/lib/heimdali-ui/index.html": {},
+      "usr/lib/heimdali-ui/asset-manifest.json": {},
+      "usr/lib/heimdali-ui/static/css/main.cc6d86a8.css": {},
+      "usr/lib/heimdali-ui/static/css/main.cc6d86a8.css.map": {},
+      "usr/lib/heimdali-ui/static/js/main.f135cc75.js": {},
+      "usr/lib/heimdali-ui/static/js/main.f135cc75.js.map": {},
+      "usr/lib/heimdali-ui/static/media/logo.a6df6aad.png": {},
+      "usr/lib/heimdali-ui/static/media/logo_black.f0d1d46f.png": {},
+      "usr/lib/heimdali-ui/manifest.json": {},
+      "usr/lib/heimdali-ui/service-worker.js": {},
+      "usr/lib/heimdali-ui/robots.txt": {}
+    }
+  }
+}
