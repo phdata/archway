@@ -19,7 +19,7 @@ pipeline {
     stages {
         stage('build') {
             steps {
-                container('node') {
+                container('busybox') {
                     withAWS(credentials: 'jenkins-aws-user') {
                         sh '''
                            mkdir build
@@ -39,28 +39,13 @@ pipeline {
                 }
             }
         }
-        stage('package') {
-            steps {
-                container('node') {
-                    sh "npm run-script build"
-                    withAWS(credentials: 'jenkins-aws-user') {
-                        s3Upload file: 'build', bucket: 'heimdali-repo', path: 'heimdali-ui/'
-                    }
-                }
-            }
-        }
     }
     post {
-        always {
-            container('node') {
-                sh 'mv node_modules /cache/node_modules'
-            }
-        }
         failure {
-            slackSend color: "#a64f36", message: "Heimdali UI, <${env.BUILD_URL}|build #${BUILD_NUMBER}> Failed"
+            slackSend color: "#a64f36", message: "Heimdali Parcel, <${env.BUILD_URL}|build #${BUILD_NUMBER}> Failed"
         }
         success {
-            slackSend color: "#36a64f", message: "Heimdali UI, <${env.BUILD_URL}|build #${BUILD_NUMBER}> Succeeded"
+            slackSend color: "#36a64f", message: "New Parcel Available @here: ${env.VERSION}"
         }
     }
 }
