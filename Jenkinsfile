@@ -15,6 +15,11 @@ pipeline {
         stage('build') {
             steps {
                 container('node') {
+                    sh '''
+                       if [ -f blah ]; then
+                          mv /cache/node_modules node_modules
+                       fi
+                    '''
                     sh "npm install"
                 }
             }
@@ -31,6 +36,11 @@ pipeline {
         }
     }
     post {
+        always {
+            container('node') {
+                sh 'mv node_modules /cache/node_modules'
+            }
+        }
         failure {
             slackSend color: "#a64f36", message: "Heimdali UI, <${env.BUILD_URL}|build #${BUILD_NUMBER}> Failed"
         }
