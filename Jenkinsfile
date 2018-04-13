@@ -22,20 +22,18 @@ pipeline {
                 container('busybox') {
                     withAWS(credentials: 'jenkins-aws-user') {
                         sh '''
-                           cd cloudera/parcel/
-                           mkdir build
-                           cp -R meta build/
-                           mkdir -p /usr/lib/heimdali-api
-                           mkdir -p /usr/lib/heimdali-ui
+                           mkdir cloudera/parcel/build
+                           cp -R cloudera/parcel/meta cloudera/parcel/build/
+                           mkdir -p cloudera/parcel/build/usr/lib/heimdali-api
+                           mkdir -p cloudera/parcel/build/usr/lib/heimdali-ui
                         '''
 
                         s3Download file: 'cloudera/parcel/build/usr/lib/heimdali-ui/', bucket: 'heimdali-repo', path: 'heimdali-ui/'
                         s3Download file: 'cloudera/parcel/build/usr/lib/heimdali-api/heimdali-api.jar', bucket: 'heimdali-repo', path: 'heimdali-api.jar'
 
                         sh '''
-                           cd cloudera/parcel/
-                           mv build HEIMDALI-${VERSION}
-                           tar cvf HEIMDALI-${VERSION}-el7.parcel HEIMDALI-${VERSION}
+                           mv cloudera/parcel/build cloudera/parcel/HEIMDALI-${VERSION}
+                           cd cloudera/parcel/ && tar cvf HEIMDALI-${VERSION}-el7.parcel HEIMDALI-${VERSION}
                         '''
 
                         s3Upload file: "cloudera/parcel/HEIMDALI-${env.VERSION}-el7.parcel", bucket: 'heimdali-repo', path: 'parcels/'
