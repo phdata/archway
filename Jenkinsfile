@@ -24,7 +24,7 @@ pipeline {
                 container('node') {
                     sh "npm run-script build"
                     withAWS(credentials: 'jenkins-aws-user') {
-                        s3Upload file: 'build', bucket: 'heimdali-repo', path: '/'
+                        s3Upload file: 'build', bucket: 'heimdali-repo', path: 'heimdali-ui/'
                     }
                 }
             }
