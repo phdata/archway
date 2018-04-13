@@ -29,8 +29,8 @@ pipeline {
                            mkdir -p /usr/lib/heimdali-ui
                         '''
 
-                        s3Download file: 'build/usr/lib/heimdali-ui/', bucket: 'heimdali-repo', path: 'heimdali-ui/'
-                        s3Download file: 'build/usr/lib/heimdali-api/', bucket: 'heimdali-repo', path: 'heimdali-api.jar/'
+                        s3Download file: 'build/usr/lib/heimdali-ui/', bucket: 'heimdali-repo', path: 'cloudera/parcel/heimdali-ui/'
+                        s3Download file: 'build/usr/lib/heimdali-api/heimdali-api.jar', bucket: 'heimdali-repo', path: 'cloudera/parcel/heimdali-api.jar'
 
                         sh '''
                            cd cloudera/parcel/
