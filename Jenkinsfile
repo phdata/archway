@@ -31,9 +31,6 @@ pipeline {
         }
     }
     post {
-        always {
-            junit 'target/test-reports/*.xml'
-        }
         failure {
             slackSend color: "#a64f36", message: "Heimdali UI, <${env.BUILD_URL}|build #${BUILD_NUMBER}> Failed"
         }
