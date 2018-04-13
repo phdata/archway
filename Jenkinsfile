@@ -16,7 +16,7 @@ pipeline {
             steps {
                 container('node') {
                     sh '''
-                       if [ -f /cache/node_modules ]; then
+                       if [ -d /cache/node_modules ]; then
                           mv /cache/node_modules node_modules
                        fi
                     '''
