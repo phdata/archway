@@ -22,7 +22,7 @@ pipeline {
         stage('package') {
             steps {
                 container('node') {
-                    sh "npm build"
+                    sh "npm run-script build"
                     withAWS(credentials: 'jenkins-aws-user') {
                         s3Upload file: 'build', bucket: 'heimdali-repo', path: '/'
                     }
