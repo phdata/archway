@@ -25,7 +25,6 @@ pipeline {
                            mkdir cloudera/parcel/build
                            cp -R cloudera/parcel/meta cloudera/parcel/build/
                            mkdir -p cloudera/parcel/build/usr/lib/heimdali-api
-                           mkdir -p cloudera/parcel/build/usr/lib/heimdali-ui
                         '''
 
                         s3Download file: 'cloudera/parcel/build/usr/lib/heimdali-ui', bucket: 'heimdali-repo', path: 'heimdali-ui/'
