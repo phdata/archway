@@ -26,14 +26,15 @@ pipeline {
                            cp -R meta build/
                            mkdir -p /usr/lib/heimdali-api
                            mkdir -p /usr/lib/heimdali-ui
-                           ```
+                        '''
+
                         s3Download file: 'build/usr/lib/heimdali-ui/', bucket: 'heimdali-repo', path: 'heimdali-ui/'
                         s3Download file: 'build/usr/lib/heimdali-api/', bucket: 'heimdali-repo', path: 'heimdali-api.jar/'
 
                         sh '''
                            mv build HEIMDALI-${VERSION}
                            tar cvf HEIMDALI-${VERSION}-el7.parcel HEIMDALI-${VERSION}
-                           '''
+                        '''
                    }
                 }
             }
