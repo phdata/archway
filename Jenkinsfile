@@ -37,6 +37,8 @@ pipeline {
                            mv build HEIMDALI-${VERSION}
                            tar cvf HEIMDALI-${VERSION}-el7.parcel HEIMDALI-${VERSION}
                         '''
+
+                        s3Upload file: 'cloudera/parcel/HEIMDALI-${VERSION}-el7.parcel', bucket: 'heimdali-repo', path: 'parcels/'
                    }
                 }
             }
