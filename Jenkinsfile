@@ -11,14 +11,7 @@ pipeline {
             }
         }
     }
-    environment {
-        VERSION = VersionNumber({
-            versionNumberString: '${BUILD_DATE_FORMATTED, "yyyy.MM"}.${BUILDS_THIS_MONTH}'
-        })
-        DOCKER_CRED = credentials('docker')
-    }
     parameters {
-        string(name: 'image_name', defaultValue: 'jotunn/heimdali-api')
         string(name: 'sbt_params', defaultValue: '-sbt-dir /sbt/.sbt -ivy /sbt/.ivy')
     }
     stages {
@@ -26,69 +19,30 @@ pipeline {
             steps {
                 container("jdk") {
                     sh "./sbt ${params.sbt_params} test"
-                    junit 'target/test-reports/*.xml'
-                    script {
-                        def testResultAction = currentBuild.rawBuild.getAction(hudson.tasks.test.AbstractTestResultAction.class)
-
-                        if (testResultAction != null) {
-                            total = testResultAction.getTotalCount()
-                            failed = testResultAction.getFailCount()
-                            skipped = testResultAction.getSkipCount()
-
-                            summary = "Passed: " + (total - failed - skipped)
-                            summary = summary + (", Failed: " + failed)
-                            summary = summary + (", Skipped: " + skipped)
-                        } else {
-                            summary = "No tests found"
-                        }
-                        env.summary = summary
+                }
+            }
+        }
+        stage('package') {
+            steps {
+                container("jdk") {
+                    sh "./sbt ${params.sbt_params} assembly"
+                    archiveArtifacts artifacts: 'target/scala-2.12/heimdali-api.jar', fingerprint: true
+                    withAWS(credentials: 'jenkins-aws-user') {
+                        s3Upload file: 'target/scala-2.12/heimdali-api.jar', bucket: 'heimdali-repo', path: 'heimdali-api.jar'
                     }
-                }
-            }
-        }
-        stage('prepare') {
-            steps {
-                container("jdk") {
-                    sh "./sbt ${params.sbt_params} \"set test in assembly := {}\" assembly"
-                    sh "mv target/scala-2.12/heimdali-api.jar docker"
-                }
-            }
-        }
-        stage('publish') {
-            steps {
-                container("docker") {
-                    sh """
-                    docker login -u ${DOCKER_CRED_USR} -p ${DOCKER_CRED_PSW}
-                    docker build -t ${params.image_name} docker
-                    docker tag ${params.image_name} ${params.image_name}:$VERSION
-                    docker push ${params.image_name}:$VERSION
-                    docker push ${params.image_name}:latest
-                    """
-                }
-            }
-        }
-        stage('deploy') {
-            steps {
-                container("jdk") {
-                    sh """
-                    curl -X PATCH -H 'Content-Type: application/strategic-merge-patch+json' \\
-                    --cacert /var/run/secrets/kubernetes.io/serviceaccount/ca.crt \\
-                    -H "Authorization: Bearer \$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)" \\
-                    --data '{"spec":{"template":{"spec":{"containers":[{"name":"heimdali-api","image":"${
-                        params.image_name
-                    }:$VERSION"}]}}}}' \\
-                    https://kubernetes/apis/apps/v1beta1/namespaces/default/deployments/heimdali-api
-                    """
                 }
             }
         }
     }
     post {
+        always {
+            junit 'target/test-reports/*.xml'
+        }
         failure {
-            slackSend(message: "Heimdali API, build #${BUILD_NUMBER}", attachments: """[{"title":"Heimdali API, build #${BUILD_NUMBER}","title_link":"${BUILD_URL}","color":"#a64f36","pretext":"Build failed","fields":[{"title":"Test Results","value":"${env.summary}","short":true}]}]""")
+            slackSend color: "#a64f36", message: "Heimdali API, <${env.BUILD_URL}|build #${BUILD_NUMBER}> Failed"
         }
         success {
-            slackSend(message: "Heimdali API, build #${BUILD_NUMBER}", attachments: """[{"title":"Heimdali API, build #${BUILD_NUMBER}","title_link":"${BUILD_URL}","color":"#36a64f","pretext":"Build succeeded","fields":[{"title":"Test Results","value":"${env.summary}","short":true}]}]""")
+            slackSend color: "#36a64f", message: "Heimdali API, <${env.BUILD_URL}|build #${BUILD_NUMBER}> Succeeded"
         }
     }
 }

@@ -40,14 +40,14 @@ libraryDependencies ++= Seq(
 
   "com.unboundid" % "unboundid-ldapsdk" % "4.0.0",
 
-  "org.tpolecat" %% "doobie-core"     % doobieVersion,
+  "org.tpolecat" %% "doobie-core" % doobieVersion,
   "org.tpolecat" %% "doobie-postgres" % doobieVersion,
-  "org.tpolecat" %% "doobie-scalatest"   % doobieVersion % Test,
+  "org.tpolecat" %% "doobie-scalatest" % doobieVersion % Test,
 
   "org.flywaydb" % "flyway-core" % "4.2.0",
 
-  "org.apache.hadoop" % "hadoop-client" % hadoopVersion,
-  "org.apache.hive" % "hive-jdbc" % hiveVersion,
+  "org.apache.hadoop" % "hadoop-client" % hadoopVersion % "provided",
+  "org.apache.hive" % "hive-jdbc" % hiveVersion % "provided",
   "org.apache.hadoop" % "hadoop-hdfs" % hadoopVersion % Test classifier "" classifier "tests",
   "org.apache.hadoop" % "hadoop-common" % hadoopVersion % Test classifier "" classifier "tests",
   "org.apache.hadoop" % "hadoop-client" % hadoopVersion % Test classifier "" classifier "tests",

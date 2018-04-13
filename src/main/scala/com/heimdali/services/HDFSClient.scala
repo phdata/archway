@@ -42,7 +42,7 @@ class HDFSClientImpl(fileSystem: () => FileSystem,
     onBehalfOf match {
       case Some(user) =>
         loginContextProvider
-          .elevate(user) {
+          .elevate(user) { () =>
             createDirectory(location)
           }.map(_.get)
       case None =>
