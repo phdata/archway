@@ -31,8 +31,9 @@ class CDHYarnClient(http: HttpClient,
 
   val clusterConfig = configuration.getConfig("cluster")
   val baseUrl = clusterConfig.getString("url")
-  val username = clusterConfig.getString("username")
-  val password = clusterConfig.getString("password")
+  val adminConfig = configuration.getConfig("admin")
+  val username = adminConfig.getString("username")
+  val password = adminConfig.getString("password")
 
   val configURL = s"$baseUrl/services/yarn/config"
   val refreshURL = s"$baseUrl/commands/poolsRefresh"
