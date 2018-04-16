@@ -24,13 +24,12 @@ pipeline {
                         sh '''
                            mkdir cloudera/parcel/build
                            cp -R cloudera/parcel/meta cloudera/parcel/build/
+                           sed -i "s/0.1.5/${VERSION}/g" parcel.json
                            mkdir -p cloudera/parcel/build/usr/lib/heimdali-api
                            chown -R 10000:10000 cloudera/parcel/build
                         '''
 
                         s3Download file: 'cloudera/parcel/build/usr/lib/', force: true, bucket: 'heimdali-repo', path: 'heimdali-ui/'
-
-                        sh 'ls -la cloudera/parcel/build/usr/lib/heimdali-ui'
 
                         s3Download file: 'cloudera/parcel/build/usr/lib/heimdali-api/heimdali-api.jar', bucket: 'heimdali-repo', path: 'heimdali-api.jar'
 
