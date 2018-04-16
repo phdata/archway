@@ -13,7 +13,7 @@ pipeline {
     }
     environment {
         VERSION = VersionNumber({
-            versionNumberString: '${BUILD_DATE_FORMATTED, "yyyy.MM"}.${BUILDS_THIS_MONTH}'
+            versionNumberString: '${BUILD_DATE_FORMATTED, "yyyy.MM"}.${BUILDS_THIS_MONTH, XX}'
         })
     }
     stages {
