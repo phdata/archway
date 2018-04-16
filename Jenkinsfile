@@ -24,7 +24,7 @@ pipeline {
                         sh '''
                            mkdir cloudera/parcel/build
                            cp -R cloudera/parcel/meta cloudera/parcel/build/
-                           sed -i "s/0.1.5/${VERSION}/g" cloudera/parcel/meta/parcel.json
+                           sed -i "s/0.1.5/${VERSION}/g" cloudera/parcel/build/meta/parcel.json
                            mkdir -p cloudera/parcel/build/usr/lib/heimdali-api
                            chown -R 10000:10000 cloudera/parcel/build
                         '''
