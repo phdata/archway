@@ -77,13 +77,18 @@ abstract class LDAPClientImpl(configuration: Config)
     val Some(user) = getUserEntry(initialMember)
     val connection = adminConnectionPool.getConnection()
     val dn = s"cn=$groupName,$groupPath,$baseDN"
-    connection.add(
-      s"dn: $dn",
-      s"objectClass: $groupObjectClass",
-      "objectClass: top",
-      s"cn: $groupName",
-      s"member: ${user.getDN}"
-    )
-    dn
+    try {
+      connection.add(
+        s"dn: $dn",
+        s"objectClass: $groupObjectClass",
+        "objectClass: top",
+        s"cn: $groupName",
+        s"member: ${user.getDN}"
+      )
+      dn
+    } catch {
+      case exc: LDAPException if exc.getResultCode == ResultCode.ENTRY_ALREADY_EXISTS => dn
+      case exc => throw exc
+    }
   }
 }

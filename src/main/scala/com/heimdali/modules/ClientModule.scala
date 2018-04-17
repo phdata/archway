@@ -9,7 +9,7 @@ import org.apache.hadoop.hdfs.client.HdfsAdmin
 trait ClientModule {
   this: AkkaModule with ExecutionContextModule with ConfigurationModule with HttpModule with ContextModule with FileSystemModule =>
 
-  val hdfsUri = new URI("hdfs://cdh.corp.jotunn.io:8020/")
+  val hdfsUri = new URI(hadoopConfiguration.get("fs.defaultFS"))
 
   def fileSystemLoader(): FileSystem =
     FileSystem.get(hadoopConfiguration)

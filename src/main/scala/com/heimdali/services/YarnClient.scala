@@ -31,7 +31,7 @@ class CDHYarnClient(http: HttpClient,
 
   val clusterConfig = configuration.getConfig("cluster")
   val baseUrl = clusterConfig.getString("url")
-  val adminConfig = configuration.getConfig("admin")
+  val adminConfig = clusterConfig.getConfig("admin")
   val username = adminConfig.getString("username")
   val password = adminConfig.getString("password")
 

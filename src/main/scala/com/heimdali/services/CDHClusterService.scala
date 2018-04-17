@@ -44,9 +44,10 @@ class CDHClusterService(http: HttpClient,
 
   val clusterConfig: Config = configuration.getConfig("cluster")
   val baseUrl: String = clusterConfig.getString("url")
-  val username: String = clusterConfig.getString("username")
-  val password: String = clusterConfig.getString("password")
   val cluster: String = clusterConfig.getString("name")
+  val adminConfig = clusterConfig.getConfig("admin")
+  val username: String = adminConfig.getString("username")
+  val password: String = adminConfig.getString("password")
 
   def secureRequest(httpRequest: HttpRequest): HttpRequest =
     httpRequest.addCredentials(BasicHttpCredentials(username, password))

@@ -4,7 +4,7 @@ import akka.http.scaladsl.Http
 import com.heimdali.services.{AkkaHttpClient, HttpClient}
 
 trait HttpModule {
-  this: AkkaModule =>
+  this: ConfigurationModule =>
 
   val httpExt = Http()
 

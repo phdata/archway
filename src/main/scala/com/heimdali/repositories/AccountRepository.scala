@@ -38,7 +38,7 @@ class AccountRepositoryImpl(transactor: Transactor[IO])
          |   users (
          |     username,
          |     database,
-         |     dataDirectory,
+         |     data_directory,
          |     role
          |   )
          | VALUES

@@ -15,9 +15,9 @@ object Main extends App {
     with StartupModule
     with ClientModule
     with RepoModule
-    with AkkaModule
     with HttpModule
     with ServiceModule
+    with AkkaModule
     with RestModule
 
   import app.executionContext

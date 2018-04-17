@@ -28,6 +28,7 @@ libraryDependencies ++= Seq(
   "com.github.dnvriend" %% "akka-persistence-inmemory" % "2.5.1.1",
 
   "com.typesafe.scala-logging" %% "scala-logging" % "3.8.0",
+  "ch.qos.logback" % "logback-classic" % "1.2.3",
 
   "io.circe" %% "circe-core" % circeVersion,
   "io.circe" %% "circe-generic" % circeVersion,

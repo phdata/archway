@@ -15,9 +15,9 @@ class HeimdaliStartup(configuration: Config,
   extends Startup with LazyLogging {
 
   def start(): Future[Unit] = Future {
-    val url = configuration.getString("ctx.url")
-    val user = configuration.getString("ctx.user")
-    val pass = configuration.getString("ctx.password")
+    val url = configuration.getString("db.meta.url")
+    val user = configuration.getString("db.meta.user")
+    val pass = configuration.getString("db.meta.password")
 
     dbMigration.migrate(url, user, pass)
   }

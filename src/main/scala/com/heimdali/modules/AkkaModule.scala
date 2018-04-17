@@ -19,16 +19,6 @@ trait AkkaModule {
     with RepoModule
     with ContextModule =>
 
-  val hiveConfig = configuration.getConfig("db.hive")
-
-  val hiveTransactor = Transactor.fromDriverManager[IO](
-    metaConfig.getString("driver"),
-    metaConfig.getString("url")
-  )
-
-  implicit val actorSystem: ActorSystem = ActorSystem()
-  implicit val materializer: Materializer = ActorMaterializer()
-
   val ldapActor: ActorRef = actorSystem.actorOf(Props(classOf[LDAPActor], ldapClient, executionContext))
   val saveActor: ActorRef = actorSystem.actorOf(Props(classOf[WorkspaceSaver], workspaceRepository, executionContext))
   val hDFSActor: ActorRef = actorSystem.actorOf(Props(classOf[HDFSActor], hdfsClient, loginContextProvider, configuration, executionContext))

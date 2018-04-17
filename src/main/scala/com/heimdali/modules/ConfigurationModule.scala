@@ -1,5 +1,7 @@
 package com.heimdali.modules
 
+import akka.actor.ActorSystem
+import akka.stream.{ActorMaterializer, Materializer}
 import com.typesafe.config.{Config, ConfigFactory}
 import org.apache.hadoop.conf.Configuration
 
@@ -14,5 +16,8 @@ trait ConfigurationModule {
     config.addResource("hive-site.xml")
     config
   }
+
+  implicit val actorSystem: ActorSystem = ActorSystem()
+  implicit val materializer: Materializer = ActorMaterializer()
 
 }
