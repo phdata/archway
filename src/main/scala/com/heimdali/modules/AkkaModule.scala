@@ -34,7 +34,7 @@ trait AkkaModule {
   val hDFSActor: ActorRef = actorSystem.actorOf(Props(classOf[HDFSActor], hdfsClient, loginContextProvider, configuration, executionContext))
   val keytabActor: ActorRef = actorSystem.actorOf(Props(classOf[KeytabActor], hdfsClient, keytabService, configuration, executionContext))
   val yarnActor: ActorRef = actorSystem.actorOf(Props(classOf[YarnActor], yarnClient, executionContext))
-  val hiveActor: ActorRef = actorSystem.actorOf(Props(classOf[HiveActor], configuration, hadoopConfiguration, hiveTransactor, executionContext))
+  val hiveActor: ActorRef = actorSystem.actorOf(HiveActor.props(configuration, hadoopConfiguration, hiveService))
   val userSaveActor: ActorRef = actorSystem.actorOf(Props(classOf[UserSaver], accountRepository, executionContext))
 
   val userProvisionerFactory: User => ActorRef =

@@ -1,6 +1,6 @@
 package com.heimdali.actors
 
-import akka.actor.{Actor, ActorLogging}
+import akka.actor.{Actor, ActorLogging, Props}
 import akka.pattern.pipe
 import com.heimdali.services.HiveService
 import com.typesafe.config.Config
@@ -15,6 +15,12 @@ object HiveActor {
   case class CreateSharedDatabase(name: String)
 
   case class DatabaseCreated(database: HiveDatabase)
+
+  def props(configuration: Config,
+            hadoopConfiguration: Configuration,
+            hiveService: HiveService)
+           (implicit executionContext: ExecutionContext) =
+    Props(new HiveActor(configuration, hadoopConfiguration, hiveService))
 
 }
 

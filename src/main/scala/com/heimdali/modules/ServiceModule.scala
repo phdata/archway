@@ -18,4 +18,6 @@ trait ServiceModule {
   val workspaceService: WorkspaceService = new WorkspaceServiceImpl(workspaceRepository, workspaceProvisionerFactory)
 
   val keytabService: KeytabService = new KeytabServiceImpl()
+
+  val hiveService: HiveService = new HiveServiceImpl(hiveTransactor)
 }
