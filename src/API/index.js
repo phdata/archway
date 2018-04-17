@@ -1,4 +1,4 @@
-const BASE_URL = "https://private-a63a5-heimdali.apiary-mock.com";
+const BASE_URL = "http://localhost:8080";
 
 export function login(username, password) {
     return fetch(BASE_URL + "/account/token", {

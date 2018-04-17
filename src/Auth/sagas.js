@@ -1,8 +1,9 @@
 import {reset, stopSubmit} from "redux-form";
-import {fork, take, call, put, all} from "redux-saga/effects";
+import {fork, take, call, put, all, cancel} from "redux-saga/effects";
 import * as Api from "../API";
 import * as actions from "./actions";
 import * as workspaceActions from "../UserWorkspace/actions";
+import {LOGIN_FAILURE} from "./actions";
 
 function* authorize(username, password) {
     try {
@@ -20,22 +21,26 @@ function* authorize(username, password) {
 }
 
 function* loginFlow() {
+    let task;
     while (true) {
         const requestToken = localStorage.getItem("requestToken");
+        console.log(requestToken);
         if (requestToken)
             yield put(actions.tokenExtracted(requestToken));
         else {
             yield put(actions.tokenNotAvailalbe());
             const {username, password} = yield take(actions.LOGIN_REQUEST);
-            yield fork(authorize, username, password);
+            task = yield fork(authorize, username, password);
         }
-        yield take(actions.LOGOUT_REQUEST);
+        const action = yield take(['LOGOUT', 'LOGIN_FAILURE'])
+        if (action.type === 'LOGOUT' && task)
+            yield cancel(task)
         yield call(Api.logout);
     }
 }
 
 function* waitForToken() {
-    const token = yield take(actions.TOKEN_EXTRACTED);
+    const {token} = yield take(actions.TOKEN_EXTRACTED);
     const profile = yield call(Api.profile, token);
     yield put(actions.profileReady(profile));
     yield fork(getWorkspace, token);

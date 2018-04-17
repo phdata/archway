@@ -2,7 +2,7 @@ import React from "react";
 import LoginForm from "./LoginForm";
 import {login} from "./actions";
 import {connect} from "react-redux";
-import logo from "./logo_black.png";
+import logo from "../Common/white_logo_transparent.png";
 import "./Login.css";
 
 const Login = ({login, error}) => {
@@ -11,7 +11,9 @@ const Login = ({login, error}) => {
         errorBlock = <div className="Login-error">{error.message}</div>;
     return (
         <div className="Login">
-            <img src={logo} width={200} alt="logo" className="Login-logo"/>
+            <div className="Login-brandcontainer">
+                <img src={logo} alt="logo" className="Login-logo"/>
+            </div>
             <div className="Login-panel">
                 <h1 className="Login-title">Please log in</h1>
                 <LoginForm onSubmit={login} />
