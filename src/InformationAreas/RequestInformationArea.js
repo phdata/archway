@@ -1,13 +1,13 @@
 import React from 'react';
 import {push} from "react-router-redux";
 import {connect} from "react-redux";
-import "./RequestSharedWorkspace.css";
 import Panel from "../Common/Panel";
+import "./RequestInformationArea.css";
 
-const RequestSharedWorkspace = ({push}) => (
-    <Panel className="RequestSharedWorkspace" onClick={() => push("/shared-request")}>
+const RequestInformationArea = ({push}) => (
+    <Panel className="RequestInformationArea" onClick={() => push("/information-request")}>
         <h3>Request new...</h3>
-        <i className="fa fa-plus"></i>
+        <i className="fa fa-plus"/>
     </Panel>
 );
 
@@ -15,4 +15,4 @@ const RequestSharedWorkspace = ({push}) => (
 export default connect(
     state => state,
     {push}
-)(RequestSharedWorkspace);
+)(RequestInformationArea);

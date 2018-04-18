@@ -1,0 +1,17 @@
+.InformationAreas {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+}
+
+.InformationAreas-list {
+    display: flex;
+    flex: 1;
+    flex-direction: row;
+    flex-wrap: wrap;
+
+}
+
+.InformationAreas-list > div {
+    margin-bottom: 20px;
+}

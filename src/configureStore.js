@@ -9,6 +9,7 @@ import sharedWorkspaces from "./SharedWorkspaces/reducers";
 import userWorkspace from "./UserWorkspace/reducers";
 import sharedWorkspaceDetails from "./SharedWorkspaceDetails/reducers";
 import requestWorkspace from "./RequestProject/reducers";
+import areas from "./InformationAreas/reducers";
 
 const reducers = combineReducers({
     form: reduxFormReducer,
@@ -17,7 +18,9 @@ const reducers = combineReducers({
     sharedWorkspaces,
     userWorkspace,
     workspaceDetails: sharedWorkspaceDetails,
-    requestWorkspace
+    requestWorkspace,
+    informationAreas: areas
+
 });
 
 export default function configureStore(history) {

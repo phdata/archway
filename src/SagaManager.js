@@ -6,6 +6,7 @@ import userWorkspaace from "./UserWorkspace/sagas";
 import sharedWorkspaceDetails from "./SharedWorkspaceDetails/sagas";
 import requestWorkspace from "./RequestProject/sagas";
 import sharedWorkspaces from "./SharedWorkspaces/sagas";
+import informationAreas from "./InformationAreas/sagas";
 
 const sagas = [
     auth,
@@ -13,7 +14,8 @@ const sagas = [
     sharedWorkspaces,
     userWorkspaace,
     sharedWorkspaceDetails,
-    requestWorkspace
+    requestWorkspace,
+    informationAreas
 ];
 
 export const CANCEL_SAGAS_HMR = 'CANCEL_SAGAS_HMR';

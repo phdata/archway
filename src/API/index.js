@@ -76,3 +76,11 @@ export function workspaceMemberList(token, id) {
         }
     }).then(response => response.json());
 }
+
+export function informationAreas(token) {
+    return fetch(BASE_URL + "/areas", {
+        headers: {
+            "Authorization": "Bearer " + token
+        }
+    }).then(response => response.json());
+}

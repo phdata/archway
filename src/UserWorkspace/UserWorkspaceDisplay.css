@@ -1,14 +1,4 @@
-.UserWorkspaceDisplay {
-    min-width: 350px;
-    box-shadow: 0 3px 6px rgba(0, 0, 0, .16);
-    background-color: white;
-    border-radius: 10px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 40px;
-}
+
 
 .UserWorkspaceDisplay-notice {
     text-transform: uppercase;
