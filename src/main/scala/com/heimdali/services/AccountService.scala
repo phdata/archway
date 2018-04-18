@@ -32,7 +32,7 @@ class AccountServiceImpl(ldapClient: LDAPClient,
                         (implicit val executionContext: ExecutionContext)
   extends AccountService with LazyLogging {
 
-  val algo: JwtAlgorithm.HS256.type = JwtAlgorithm.HS256
+  val algo: JwtAlgorithm.HS512.type = JwtAlgorithm.HS512
   lazy val secret: String = configuration.getString("rest.secret")
 
   override def login(username: String, password: String): Future[Option[Token]] = {

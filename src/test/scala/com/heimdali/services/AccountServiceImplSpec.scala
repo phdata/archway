@@ -74,14 +74,14 @@ class AccountServiceImplSpec extends AsyncFlatSpec with Matchers with AsyncMockF
 
     val lDAPAccountService = new AccountServiceImpl(null, accountRepository, configuration)
     lDAPAccountService.refresh(user).map { token =>
-      val accessToken = JwtCirce.decodeJson(token.accessToken, secret, Seq(JwtAlgorithm.HS256))
+      val accessToken = JwtCirce.decodeJson(token.accessToken, secret, Seq(JwtAlgorithm.HS512))
       accessToken.toOption shouldBe defined
       accessToken.get.as[Map[String, String]] should be (Right(Map(
         "name" -> user.name,
         "username" -> user.username
       )))
 
-      val refreshToken = JwtCirce.decodeJson(token.refreshToken, secret, Seq(JwtAlgorithm.HS256))
+      val refreshToken = JwtCirce.decodeJson(token.refreshToken, secret, Seq(JwtAlgorithm.HS512))
       refreshToken.toOption shouldBe defined
       refreshToken.get.as[Map[String, String]] should be (Right(Map(
         "username" -> user.username
