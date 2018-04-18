@@ -90,9 +90,9 @@ class AccountServiceImplSpec extends AsyncFlatSpec with Matchers with AsyncMockF
   }
 
   it should "validate a valid token" in {
-    val secret = "1yR2kSbv$gE@xkQRdlTtuecW"
+    val secret = "abc"
     val user = User("Dude Doe", "username")
-    val token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJuYW1lIjoiRHVkZSBEb2UiLCJ1c2VybmFtZSI6InVzZXJuYW1lIiwicm9sZSI6InVzZXIifQ.ArnfmWsJCLLoqGR2jKWQGJAf5kxP7Um2njCykIM5XXQ"
+    val token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJuYW1lIjoiRHVkZSBEb2UiLCJ1c2VybmFtZSI6InVzZXJuYW1lIn0.B0UjtU-USy1F7LdouoiAYUmQd1VO9nbtHntNc9y3dXzkTtHd2CvCt4rDmqSNvRKdns-MJOQYPDffu1nwMPvc-A"
     val accountRepository = mock[AccountRepository]
 
     val configuration = mock[Config]
