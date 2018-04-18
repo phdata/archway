@@ -14,9 +14,8 @@ const syntaxStyle = {
 };
 
 const DatabaseDisplay = ({name, cluster}) => {
-    console.log(cluster);
-    console.log(name);
-    if (name) {
+    if (name && cluster.services) {
+        console.log(cluster);
         const impala = `$ impala-shell -i ${cluster.services.impala.host} -d ${name}`;
         const jdbc = `jdbc:impala://${cluster.services.impala.host}/${name}`;
         const beeline = `$ beeline -u 'jdbc:hive2://${cluster.services.impala.host}/${name};auth=noSasl'`;
