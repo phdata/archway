@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost:8080";
+const BASE_URL = "http://edge1.valhalla.phdata.io:8080";
 
 export function login(username, password) {
     return fetch(BASE_URL + "/account/token", {
