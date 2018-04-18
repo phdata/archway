@@ -1,4 +1,11 @@
 .UserWorkspaceAbsent {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.UserWorkspaceAbsent-panel {
+    margin-top: 15px;
     height: 150px;
     width: 350px;
 }

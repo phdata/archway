@@ -13,8 +13,9 @@ const syntaxStyle = {
     padding: 20
 };
 
-const DatabaseDisplay = ({database: {name}, cluster}) => {
+const DatabaseDisplay = ({name, cluster}) => {
     console.log(cluster);
+    console.log(name);
     if (name) {
         const impala = `$ impala-shell -i ${cluster.services.impala.host} -d ${name}`;
         const jdbc = `jdbc:impala://${cluster.services.impala.host}/${name}`;

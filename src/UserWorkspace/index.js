@@ -14,14 +14,13 @@ const UserWorkspace = ({userWorkspace: {requesting, workspace}, cluster, request
     else if (requesting)
         workspaceContent = (
             <Spinner>
-                Setting up your workspace...
+                Setting you up with a workspace...
             </Spinner>
         );
     else
         workspaceContent = <UserWorkspaceAbsent requestWorkspace={requestWorkspace}/>;
     return (
         <div className="UserWorkspace">
-            <WorkspaceHeader icon="user" title="Personal" subtitle="a private workspace"/>
             {workspaceContent}
         </div>
     );
