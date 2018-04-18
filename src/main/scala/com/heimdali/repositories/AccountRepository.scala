@@ -44,9 +44,9 @@ class AccountRepositoryImpl(transactor: Transactor[IO])
          | VALUES
          |   (
          |     ${userWorkspace.username},
-         |     ${userWorkspace.database},
-         |     ${userWorkspace.dataDirectory},
-         |     ${userWorkspace.role}
+         |     ${userWorkspace.database.name},
+         |     ${userWorkspace.database.location},
+         |     ${userWorkspace.database.role}
          |   )
          | """.stripMargin
       .update

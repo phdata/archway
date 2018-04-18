@@ -18,17 +18,24 @@ object CDHResponses {
 
   case class HostRef(hostId: String)
 
-  case class ImpalaAppItem(name: String, roleName: String, hostRef: HostRef)
+  case class AppRole(name: String, roleName: String, hostRef: HostRef)
 
-  case class ImpalaApp(items: Seq[ImpalaAppItem]) {
+  case class ImpalaApp(items: Seq[AppRole]) {
     def hostname(name: String): Option[String] =
       items.find(_.roleName == name).map(_.hostRef.hostId)
   }
 
+  case class Services(items: Seq[ServiceInfo])
+
+  case class ServiceInfo(name: String, serviceState: String, entityStatus: String, displayName: String)
+
   case class HostInfo(hostId: String, hostname: String)
 
-  implicit val decodeImpalaItem: Decoder[ImpalaAppItem] =
-    Decoder.forProduct3("name", "type", "hostRef")(ImpalaAppItem.apply)
+  implicit val decodeServiceInfo: Decoder[ServiceInfo] =
+    Decoder.forProduct4("name", "serviceState", "entityStatus", "displayName")(ServiceInfo.apply)
+
+  implicit val decodeImpalaItem: Decoder[AppRole] =
+    Decoder.forProduct3("name", "type", "hostRef")(AppRole.apply)
 
   implicit val decodeClusterInfo: Decoder[ClusterInfo] =
     Decoder.forProduct4("name", "displayName", "fullVersion", "entityStatus")(ClusterInfo.apply)
@@ -56,20 +63,36 @@ class CDHClusterService(http: HttpClient,
     http.request(secureRequest(Get(s"$baseUrl/clusters/$cluster")))
       .flatMap(extract[ClusterInfo])
 
-  def impalaRequest: Future[ImpalaApp] =
-    http.request(secureRequest(Get(s"$baseUrl/clusters/$cluster/services/impala/roles")))
+  def impalaRequest(service: String): Future[ImpalaApp] =
+    http.request(secureRequest(Get(s"$baseUrl/clusters/$cluster/services/$service/roles")))
       .flatMap(extract[ImpalaApp])
 
   def hostRequest(id: String): Future[HostInfo] =
     http.request(secureRequest(Get(s"$baseUrl/hosts/$id")))
       .flatMap(extract[HostInfo])
 
+  def servicesRequest: Future[Services] =
+    http.request(secureRequest(Get(s"$baseUrl/clusters/$cluster/services")))
+      .flatMap(extract[Services])
+
   def clusterDetails(url: String, username: String, password: String): Future[Cluster] =
     for (
       details <- clusterDetailsRequest;
-      impala <- impalaRequest;
+      services <- servicesRequest;
+      impala <- impalaRequest("impala");
       host <- hostRequest(impala.hostname(CDHClusterService.ImpalaDaemonRole).get)
-    ) yield Cluster(details.name, details.displayName, ClusterApps(Impala(host.hostname)), CDH(details.fullVersion), details.status)
+    ) yield Cluster(
+      details.name,
+      details.displayName,
+      services.items.map {
+        case ServiceInfo("impala", state, status, display) =>
+          "impala" -> HostClusterApp(display, status, state, host.hostname)
+        case ServiceInfo(name, state, status, display) =>
+          name -> BasicClusterApp(display, status, state)
+      }.toMap,
+      CDH(details.fullVersion),
+      details.status
+    )
 
   def extract[A](httpResponse: HttpResponse)(implicit decoder: Decoder[A]): Future[A] =
     httpResponse match {

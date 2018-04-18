@@ -6,14 +6,17 @@ import akka.http.scaladsl.model.headers.OAuth2BearerToken
 import akka.http.scaladsl.server.directives.AuthenticationResult
 import akka.http.scaladsl.testkit.ScalatestRouteTest
 import akka.testkit.{TestActor, TestKit}
+import com.heimdali.actors.HiveDatabase
 import com.heimdali.actors.user.UserProvisioner.{Request, Started}
 import com.heimdali.rest.{AccountController, AuthService}
 import com.heimdali.services._
 import com.typesafe.config.ConfigFactory
 import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport
+import io.circe.Json
 import io.circe.generic.extras.Configuration
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FlatSpec, Matchers}
+import io.circe.parser._
 
 import scala.concurrent.Future
 
@@ -80,27 +83,34 @@ class AccountControllerSpec
   }
 
   it should "find a user workspace" in new TestKit(ActorSystem()) {
-    val (username, database, dir, role) = ("username", "username", "/data", "role")
+    val (username, database, dir, role, name) = ("username", "username", "/user/username/db", "role", "Dude Doe")
     val accountService = mock[AccountService]
     (accountService.findWorkspace _)
       .expects(username)
-      .returning(Future(Some(UserWorkspace(username, database, dir, role))))
+      .returning(Future(Some(UserWorkspace(username, HiveDatabase(dir, role, database)))))
 
     val authService = mock[AuthService]
     (authService.validateToken _)
       .expects(*)
-      .returning(Future(Option(User("Dude Doe", username))))
+      .returning(Future(Option(User(name, username))))
 
     val accountController = new AccountController(authService, accountService, _ => ActorRef.noSender)
 
     Get("/account/workspace") ~> addCredentials(OAuth2BearerToken("abc123")) ~> accountController.route ~> check {
       status should be(StatusCodes.OK)
-      val workspace = responseAs[UserWorkspace]
-      workspace should have(
-        'database (database),
-        'dataDirectory (dir),
-        'role (role)
+      val Right(expected) = parse(
+        s"""
+          | {
+          |   "username": "$username",
+          |   "database": {
+          |     "name": "$database",
+          |     "location": "/user/$username/db",
+          |     "role": "$role"
+          |   }
+          | }
+        """.stripMargin
       )
+      responseAs[Json] should be(expected)
     }
   }
 

@@ -6,11 +6,17 @@ trait ClusterService {
   def list: Future[Seq[Cluster]]
 }
 
-case class Impala(server: String)
+sealed trait ClusterApp {
+  def name: String
+  def status: String
+  def state: String
+}
 
-case class ClusterApps(impala: Impala)
+case class BasicClusterApp(name: String, status: String, state: String) extends ClusterApp
 
-case class Cluster(id: String, name: String, clusterApps: ClusterApps, distribution: CDH, status: String)
+case class HostClusterApp(name: String, status: String, state: String, host: String) extends ClusterApp
+
+case class Cluster(id: String, name: String, clusterApps: Map[String, _ <: ClusterApp], distribution: CDH, status: String)
 
 sealed trait Distribution {
   def version: String

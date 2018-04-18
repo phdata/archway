@@ -1,0 +1,17 @@
+[{
+  "id": "cluster",
+  "name": "Odin",
+  "status": "GOOD_HEALTH",
+  "services": {
+    "impala": {
+      "state": "STARTED",
+      "status": "GOOD",
+      "name": "Impala",
+      "host": "impala.example.com"
+    }
+  },
+  "distribution": {
+    "name": "CDH",
+    "version": "5.11"
+  }
+}]

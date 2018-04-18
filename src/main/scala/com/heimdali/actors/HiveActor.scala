@@ -76,4 +76,4 @@ class HiveActor(configuration: Config,
   }
 }
 
-case class HiveDatabase(location: String, role: String, database: String)
+case class HiveDatabase(location: String, role: String, name: String)

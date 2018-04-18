@@ -34,6 +34,7 @@ class CDHClusterServiceSpec
     val Right(clusterJson) = io.circe.parser.parse(Source.fromResource("cloudera/cluster.json").getLines().mkString)
     val Right(impalaJson) = io.circe.parser.parse(Source.fromResource("cloudera/impala.json").getLines().mkString)
     val Right(hostsJson) = io.circe.parser.parse(Source.fromResource("cloudera/hosts.json").getLines().mkString)
+    val Right(servicesJson) = io.circe.parser.parse(Source.fromResource("cloudera/services.json").getLines().mkString)
 
     val http = mock[HttpClient]
     val clusterRequest = Get("/clusters/cluster").addCredentials(BasicHttpCredentials(username, password))
@@ -42,10 +43,21 @@ class CDHClusterServiceSpec
     (http.request _).expects(impalaRequest).returning(Marshal(impalaJson).to[HttpResponse])
     val hostsRequest = Get("/hosts/9e29e533-10f5-4f87-b40a-0f2c58f8fdb1").addCredentials(BasicHttpCredentials(username, password))
     (http.request _).expects(hostsRequest).returning(Marshal(hostsJson).to[HttpResponse])
+    val servicesRequest = Get("/clusters/cluster/services").addCredentials(BasicHttpCredentials(username, password))
+    (http.request _).expects(servicesRequest).returning(Marshal(servicesJson).to[HttpResponse])
 
     val service = new CDHClusterService(http, configuration)(ExecutionContext.global, materializer)
     val list = Await.result(service.list, Duration.Inf)
     list should have length 1
-    list should be(Seq(Cluster(name, "Valhalla", ClusterApps(Impala("worker1.valhalla.phdata.io")), CDH(version), "GOOD_HEALTH")))
+    list.head.id should be(name)
+    list.head.name should be("Valhalla")
+    list.head.clusterApps should be(Map(
+      "zookeeper" -> BasicClusterApp("ZooKeeper", "GOOD_HEALTH", "STARTED"),
+      "oozie" -> BasicClusterApp("Oozie", "GOOD_HEALTH", "STARTED"),
+      "ks_indexer" -> BasicClusterApp("Key-Value Store Indexer", "GOOD_HEALTH", "STARTED"),
+      "impala" -> HostClusterApp("Impala", "GOOD_HEALTH", "STARTED", "worker1.valhalla.phdata.io")
+    ))
+    list.head.distribution should be(CDH(version))
+    list.head.status should be("GOOD_HEALTH")
   }
 }

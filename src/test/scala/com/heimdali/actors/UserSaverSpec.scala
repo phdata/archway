@@ -16,7 +16,7 @@ class UserSaverSpec extends FlatSpec with MockFactory {
   behavior of "User Saver"
 
   it should "save a user" in new TestKit(ActorSystem()) with ImplicitSender {
-    val userWorkspace = UserWorkspace("username", "database", "/data", "role")
+    val userWorkspace = UserWorkspace("username", HiveDatabase("/data", "role", "database"))
     val workspaceRepository = mock[AccountRepository]
     (workspaceRepository.create _).expects(userWorkspace).returning(Future(userWorkspace))
 

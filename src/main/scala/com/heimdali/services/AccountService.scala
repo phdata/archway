@@ -1,5 +1,6 @@
 package com.heimdali.services
 
+import com.heimdali.actors.HiveDatabase
 import com.heimdali.repositories.AccountRepository
 import com.typesafe.config.Config
 import com.typesafe.scalalogging.LazyLogging
@@ -11,7 +12,7 @@ import scala.util.{Failure, Success}
 
 case class User(name: String, username: String)
 
-case class UserWorkspace(username: String, database: String, dataDirectory: String, role: String)
+case class UserWorkspace(username: String, database: HiveDatabase)
 
 case class Token(accessToken: String, refreshToken: String)
 

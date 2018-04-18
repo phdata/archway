@@ -28,7 +28,7 @@ trait AkkaModule {
   val userSaveActor: ActorRef = actorSystem.actorOf(Props(classOf[UserSaver], accountRepository, executionContext))
 
   val userProvisionerFactory: User => ActorRef =
-    (user) => actorSystem.actorOf(UserProvisioner.props(hiveActor, ldapActor, userSaveActor, hDFSActor, UserWorkspace(user.username, "", "", "")))
+    (user) => actorSystem.actorOf(UserProvisioner.props(hiveActor, ldapActor, userSaveActor, hDFSActor, UserWorkspace(user.username, HiveDatabase("", "", ""))))
 
   val workspaceProvisionerFactory: SharedWorkspace => ActorRef =
     (sharedWorkspace: SharedWorkspace) =>

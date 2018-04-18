@@ -17,7 +17,7 @@ class UserProvisionerSpec extends FlatSpec with MockFactory {
   behavior of "User provisioning"
 
   it should "create user db" in new TestKit(ActorSystem()) with ImplicitSender {
-    val user = UserWorkspace("username", "", "", "")
+    val user = UserWorkspace("username", HiveDatabase("", "", ""))
     val actor = system.actorOf(UserProvisioner.props(testActor, testActor, testActor, testActor, user))
     watch(actor)
 
@@ -31,7 +31,7 @@ class UserProvisionerSpec extends FlatSpec with MockFactory {
 
     expectMsg(CreateUserDatabase("username"))
 
-    expectMsg(SaveUser(UserWorkspace("username", "database", "location", "role")))
+    expectMsg(SaveUser(UserWorkspace("username", HiveDatabase("location", "role", "database"))))
     actor ! UserSaved
     expectTerminated(actor)
   }

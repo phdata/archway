@@ -87,7 +87,7 @@ class UserProvisioner(hiveActor: ActorRef,
   override def applyEvent(domainEvent: UserEvent, currentData: UserWorkspace): UserWorkspace =
     domainEvent match {
       case Save(db) =>
-        currentData.copy(database = db.database, role = db.role, dataDirectory = db.location)
+        currentData.copy(database = db)
       case _ =>
         currentData
     }

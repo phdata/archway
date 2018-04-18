@@ -8,6 +8,7 @@ import com.heimdali.services._
 import com.heimdali.test.fixtures.FakeClusterService
 import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport
 import io.circe.Json
+import io.circe.parser._
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FlatSpec, Matchers}
 
@@ -24,31 +25,38 @@ class ClusterControllerSpec
 
   it should "get a list of clusters" in {
     val clusterService = mock[ClusterService]
-    (clusterService.list _).expects().returning(Future(Seq(Cluster("admin", "admin", ClusterApps(Impala("")), CDH("1.0"), "GOOD_HEALTH"))))
+    (clusterService.list _).expects().returning(Future(Seq(Cluster("cluster", "Odin", Map(
+      "impala" -> HostClusterApp("Impala", "GOOD", "STARTED", "impala.example.com")
+    ), CDH("5.11"), "GOOD_HEALTH"))))
+
+    val Right(expected) = parse(
+    """
+      | [{
+      |   "id": "cluster",
+      |   "name": "Odin",
+      |   "status": "GOOD_HEALTH",
+      |   "services": {
+      |     "impala": {
+      |       "state": "STARTED",
+      |       "status": "GOOD",
+      |       "name": "Impala",
+      |       "host": "impala.example.com"
+      |     }
+      |   },
+      |   "distribution": {
+      |     "name": "CDH",
+      |     "version": "5.11"
+      |   }
+      | }]
+    """.stripMargin
+    )
 
     val restApi = new ClusterController(clusterService)
 
     Get("/clusters") ~> addCredentials(OAuth2BearerToken("AbCdEf123456")) ~> restApi.route ~> check {
       status should be(StatusCodes.OK)
 
-      val Some(Vector(result)) = responseAs[Json].asArray
-      println(result)
-      result.hcursor
-        .get[String]("id").toOption.get should be("admin")
-
-      result.hcursor
-        .get[String]("name").toOption.get should be("admin")
-
-      result.hcursor
-        .downField("distribution")
-        .get[String]("name").toOption.get should be(FakeClusterService.cdh.name)
-
-      result.hcursor
-        .downField("distribution")
-        .get[String]("version").toOption.get should be(FakeClusterService.cdh.version)
-
-      result.hcursor
-        .get[String]("status").toOption.get should be("GOOD_HEALTH")
+      responseAs[Json] should be(expected)
     }
   }
 
