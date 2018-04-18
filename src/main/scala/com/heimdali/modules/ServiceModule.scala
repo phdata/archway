@@ -20,9 +20,7 @@ trait ServiceModule {
 
   val rawHiveTransactor = Transactor.fromDriverManager[IO](
     hiveConfig.getString("driver"),
-    hiveConfig.getString("url"),
-    hiveConfig.getString("user"),
-    hiveConfig.getString("password")
+    hiveConfig.getString("url")
   )
 
   val hiveTransactor: Transactor[IO] = {
