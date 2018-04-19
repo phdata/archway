@@ -38,6 +38,7 @@ libraryDependencies ++= Seq(
 
   ("com.pauldijou" %% "jwt-core" % "0.14.1").exclude("org.bouncycastle", "bcpkix-jdk15on"),
   ("com.pauldijou" %% "jwt-circe" % "0.14.1").exclude("org.bouncycastle", "bcpkix-jdk15on"),
+  "org.bouncycastle" % "bcpkix-jdk15on" % "1.57" % "provided",
 
   "com.unboundid" % "unboundid-ldapsdk" % "4.0.0",
 

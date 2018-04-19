@@ -61,10 +61,6 @@ class AccountServiceImpl(ldapClient: LDAPClient,
     )
 
     try {
-      if (Security.getProvider("BC") == null) {
-        logger.warn("Bouncy Castle wasn't a known provider...adding it.")
-        Security.addProvider(new BouncyCastleProvider())
-      }
       val accessToken = JwtCirce.encode(accessJson, secret, algo)
       val refreshToken = JwtCirce.encode(refreshJson, secret, algo)
 
