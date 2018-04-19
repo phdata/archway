@@ -12,7 +12,7 @@ object Main extends App {
     with ConfigurationModule
     with ContextModule
     with FileSystemModule
-    with StartupModule
+//    with StartupModule
     with ClientModule
     with RepoModule
     with HttpModule
@@ -24,7 +24,7 @@ object Main extends App {
 
   Await.ready(
     for {
-      _ <- app.startup.start()
+//      _ <- app.startup.start()
       _ <- app.restAPI.start()
     } yield Unit, Duration.Inf)
 
