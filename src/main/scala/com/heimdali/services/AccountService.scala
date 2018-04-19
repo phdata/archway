@@ -57,12 +57,18 @@ class AccountServiceImpl(ldapClient: LDAPClient,
       "username" -> Json.fromString(user.username)
     )
 
-    val accessToken = JwtCirce.encode(accessJson, secret, algo)
-    val refreshToken = JwtCirce.encode(refreshJson, secret, algo)
+    try {
+      val accessToken = JwtCirce.encode(accessJson, secret, algo)
+      val refreshToken = JwtCirce.encode(refreshJson, secret, algo)
 
-    logger.info(s"generated new token for $user")
+      logger.info(s"generated new token for $user")
 
-    Token(accessToken, refreshToken)
+      Token(accessToken, refreshToken)
+    } catch {
+      case exc: Throwable =>
+        exc.printStackTrace()
+        throw exc
+    }
   }
 
   override def validate(token: String): Future[Option[User]] = Future {
