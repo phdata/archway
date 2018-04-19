@@ -36,8 +36,8 @@ libraryDependencies ++= Seq(
   "io.circe" %% "circe-java8" % circeVersion,
   "io.circe" %% "circe-generic-extras" % circeVersion,
 
-  "com.pauldijou" %% "jwt-core" % "0.14.1",
-  "com.pauldijou" %% "jwt-circe" % "0.14.1",
+  ("com.pauldijou" %% "jwt-core" % "0.14.1").exclude("org.bouncycastle", "bcpkix-jdk15on"),
+  ("com.pauldijou" %% "jwt-circe" % "0.14.1").exclude("org.bouncycastle", "bcpkix-jdk15on"),
 
   "com.unboundid" % "unboundid-ldapsdk" % "4.0.0",
 
