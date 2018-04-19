@@ -25,9 +25,9 @@
     }
   ],
   "users": {
-    "heimdali": {
-      "longname": "Heimdali",
-      "home": "/var/lib/heimdali",
+    "heimdali_api": {
+      "longname": "Heimdali API",
+      "home": "/var/lib/heimdali_api",
       "shell": "/bin/bash",
       "extra_groups": []
     }
