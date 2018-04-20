@@ -24,30 +24,28 @@ class HiveServiceImpl(hiveTransactor: Transactor[IO])
                      (implicit executionContext: ExecutionContext)
   extends HiveService with LazyLogging {
 
-  private def createIfNotExists(resource: String, name: String, createSql: Fragment): Future[Option[Int]] =
-    (fr"SHOW " ++ Fragment.const(s"${resource}S"))
+  private def createIfNotExists(resource: String, name: String, createSql: Fragment): Future[Option[Int]] = Future {
+    val query = fr"SHOW " ++ Fragment.const(s"${resource}S")
+    val result = query
       .query[String]
       .to[Seq]
       .transact(hiveTransactor)
-      .unsafeToFuture()
-      .flatMap {
-        case existing if existing.contains(name) =>
-          logger.info("{} {} already exists", resource, name)
-          Future(None)
-        case _ =>
-          logger.info("creating {}: {}", resource, name)
-          createSql
-            .update
-            .run
-            .transact(hiveTransactor)
-            .unsafeToFuture()
-            .map(Some.apply)
-      }
-    .recover {
-      case exc: Throwable =>
-        logger.error(s"Couldn't upsert ${name}", exc)
-        throw exc
+      .unsafeRunSync()
+
+    result match {
+      case existing if existing.contains(name) =>
+        logger.info("{} {} already exists", resource, name)
+        None
+      case _ =>
+        logger.info("creating {}: {}", resource, name)
+        val outcome = createSql
+          .update
+          .run
+          .transact(hiveTransactor)
+          .unsafeRunSync()
+        Some(outcome)
     }
+  }
 
   override def createRole(name: String): Future[Option[Int]] = {
     logger.info("creating role {}", name)
