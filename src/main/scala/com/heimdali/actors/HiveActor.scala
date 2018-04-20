@@ -57,6 +57,11 @@ class HiveActor(configuration: Config,
 
       createDatabase(role, group, database, location)
         .map(DatabaseCreated)
+        .recover {
+          case exc: Throwable =>
+            log.error(exc, "Couldn't create database")
+            exc
+        }
         .pipeTo(sender())
 
     case CreateSharedDatabase(name) =>
@@ -68,9 +73,9 @@ class HiveActor(configuration: Config,
       createDatabase(role, group, database, location)
         .map(DatabaseCreated)
         .recover {
-          case ex: Throwable =>
-            ex.printStackTrace()
-            DatabaseCreated(null)
+          case exc: Throwable =>
+            log.error(exc, "Couldn't create database")
+            exc
         }
         .pipeTo(sender())
   }
