@@ -43,6 +43,11 @@ class HiveServiceImpl(hiveTransactor: Transactor[IO])
             .unsafeToFuture()
             .map(Some.apply)
       }
+    .recover {
+      case exc: Throwable =>
+        logger.error(s"Couldn't upsert ${name}", exc)
+        throw exc
+    }
 
   override def createRole(name: String): Future[Option[Int]] = {
     logger.info("creating role {}", name)
