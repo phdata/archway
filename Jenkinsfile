@@ -47,10 +47,11 @@ pipeline {
             steps {
                 container('busybox') {
                     sh """
-                    curl -X PATCH -H 'Content-Type: application/strategic-merge-patch+json' \\
-                    --cacert /var/run/secrets/kubernetes.io/serviceaccount/ca.crt \\
-                    -H "Authorization: Bearer \$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)" \\
-                    --data  '{"spec":{"template":{"metadata":{"annotations":{"date":"`date +'%s'`"}}}}}' \\
+                    wget --method=PATCH \\
+                    --header='Content-Type: application/strategic-merge-patch+json' \\
+                    --header="Authorization: Bearer \$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)" \\
+                    --ca-certificate= /var/run/secrets/kubernetes.io/serviceaccount/ca.crt \\
+                    --post-data='{"spec":{"template":{"metadata":{"annotations":{"date":"`date +'%s'`"}}}}}' \\
                     https://kubernetes/apis/apps/v1beta1/namespaces/default/deployments/parcels
                     """
                 }
