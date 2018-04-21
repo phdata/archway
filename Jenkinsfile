@@ -4,8 +4,8 @@ pipeline {
             cloud "kubernetes"
             label "parcels"
             containerTemplate {
-                name 'busybox'
-                image 'busybox'
+                name 'curl'
+                image 'appropriate/curl'
                 ttyEnabled true
                 command 'cat'
             }
@@ -19,7 +19,7 @@ pipeline {
     stages {
         stage('build') {
             steps {
-                container('busybox') {
+                container('curl') {
                     withAWS(credentials: 'jenkins-aws-user') {
                         sh '''
                            mkdir cloudera/parcel/build
@@ -45,13 +45,12 @@ pipeline {
         }
         stage('deploy') {
             steps {
-                container('busybox') {
+                container('curl') {
                     sh """
-                    wget --method=PATCH \\
-                    --header='Content-Type: application/strategic-merge-patch+json' \\
-                    --header="Authorization: Bearer \$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)" \\
-                    --ca-certificate= /var/run/secrets/kubernetes.io/serviceaccount/ca.crt \\
-                    --post-data='{"spec":{"template":{"metadata":{"annotations":{"date":"`date +'%s'`"}}}}}' \\
+                    wget -X PATCH -H 'Content-Type: application/strategic-merge-patch+json' \\
+                    --cacert /var/run/secrets/kubernetes.io/serviceaccount/ca.crt \\
+                    -H "Authorization: Bearer \$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)" \\
+                    --data  '{"spec":{"template":{"metadata":{"annotations":{"date":"`date +'%s'`"}}}}}' \\
                     https://kubernetes/apis/apps/v1beta1/namespaces/default/deployments/parcels
                     """
                 }
