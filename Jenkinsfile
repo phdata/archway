@@ -43,6 +43,19 @@ pipeline {
                 }
             }
         }
+        stage('deploy') {
+            steps {
+                container('busybox') {
+                    sh """
+                    curl -X PATCH -H 'Content-Type: application/strategic-merge-patch+json' \\
+                    --cacert /var/run/secrets/kubernetes.io/serviceaccount/ca.crt \\
+                    -H "Authorization: Bearer \$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)" \\
+                    --data  '{"spec":{"template":{"metadata":{"annotations":{"date":"`date +'%s'`"}}}}}' \\
+                    https://kubernetes/apis/apps/v1beta1/namespaces/default/deployments/parcels
+                    """
+                }
+            }
+        }
     }
     post {
         failure {
