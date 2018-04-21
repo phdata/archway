@@ -18,14 +18,13 @@ pipeline {
         stage('build') {
             steps {
                 container("jdk") {
-                    sh "./sbt ${params.sbt_params} test"
+                    sh "./sbt ${params.sbt_params} assembly"
                 }
             }
         }
         stage('package') {
             steps {
                 container("jdk") {
-                    sh "./sbt ${params.sbt_params} assembly"
                     archiveArtifacts artifacts: 'target/scala-2.12/heimdali-api.jar', fingerprint: true
                     withAWS(credentials: 'jenkins-aws-user') {
                         s3Upload file: 'target/scala-2.12/heimdali-api.jar', bucket: 'heimdali-repo', path: 'heimdali-api.jar'

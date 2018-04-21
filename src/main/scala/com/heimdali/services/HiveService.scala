@@ -25,25 +25,31 @@ class HiveServiceImpl(hiveTransactor: Transactor[IO])
   extends HiveService with LazyLogging {
 
   private def createIfNotExists(resource: String, name: String, createSql: Fragment): Future[Option[Int]] = Future {
-    val query = fr"SHOW " ++ Fragment.const(s"${resource}S")
-    val result = query
-      .query[String]
-      .to[Seq]
-      .transact(hiveTransactor)
-      .unsafeRunSync()
+    try {
+      val query = fr"SHOW " ++ Fragment.const(s"${resource}S")
+      val result = query
+        .query[String]
+        .to[Seq]
+        .transact(hiveTransactor)
+        .unsafeRunSync()
 
-    result match {
-      case existing if existing.contains(name) =>
-        logger.info("{} {} already exists", resource, name)
+      result match {
+        case existing if existing.contains(name) =>
+          logger.info("{} {} already exists", resource, name)
+          None
+        case _ =>
+          logger.info("creating {}: {}", resource, name)
+          val outcome = createSql
+            .update
+            .run
+            .transact(hiveTransactor)
+            .unsafeRunSync()
+          Some(outcome)
+      }
+    } catch {
+      case exc: Throwable =>
+        logger.error(s"Couldn't create $resource $name")
         None
-      case _ =>
-        logger.info("creating {}: {}", resource, name)
-        val outcome = createSql
-          .update
-          .run
-          .transact(hiveTransactor)
-          .unsafeRunSync()
-        Some(outcome)
     }
   }
 
