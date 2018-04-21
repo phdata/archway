@@ -47,7 +47,7 @@ pipeline {
             steps {
                 container('curl') {
                     sh """
-                    wget -X PATCH -H 'Content-Type: application/strategic-merge-patch+json' \\
+                    curl -X PATCH -H 'Content-Type: application/strategic-merge-patch+json' \\
                     --cacert /var/run/secrets/kubernetes.io/serviceaccount/ca.crt \\
                     -H "Authorization: Bearer \$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)" \\
                     --data  '{"spec":{"template":{"metadata":{"annotations":{"date":"`date +'%s'`"}}}}}' \\
