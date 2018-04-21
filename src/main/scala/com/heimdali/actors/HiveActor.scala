@@ -38,13 +38,12 @@ class HiveActor(configuration: Config,
 
   def createDatabase(role: String, group: String, database: String, location: String): Future[HiveDatabase] = {
     log.info(s"creating a $database database and $role role for $group group at $hdfsRoot/$location")
-    val dataDirectory = s"$hdfsRoot/$location"
     for (
       _ <- hiveService.createRole(role);
       _ <- hiveService.grantGroup(group, role);
-      _ <- hiveService.createDatabase(database, dataDirectory);
+      _ <- hiveService.createDatabase(database, location);
       _ <- hiveService.enableAccessToDB(database, role);
-      _ <- hiveService.enableAccessToLocation(dataDirectory, role)
+      _ <- hiveService.enableAccessToLocation(location, role)
     ) yield HiveDatabase(location, role, database)
   }
 
