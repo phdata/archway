@@ -8,9 +8,9 @@ export function requestSharedWorkspace({name, purpose, phi_data, pii_data, pci_d
             name,
             purpose,
             compliance: {
-                pii_data,
-                pci_data,
-                phi_data
+                pii_data: !!pii_data,
+                pci_data: !!pci_data,
+                phi_data: !!phi_data
             },
             hdfs: {
                 requested_size_in_gb: 12

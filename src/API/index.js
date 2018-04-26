@@ -1,4 +1,4 @@
-const BASE_URL = "http://edge1.valhalla.phdata.io:8080";
+const BASE_URL = "https://private-a63a5-heimdali.apiary-mock.com";
 
 export function login(username, password) {
     return fetch(BASE_URL + "/account/token", {
@@ -60,10 +60,13 @@ export function sharedWorkspaceDetails(token, id) {
 }
 
 export function requestNewSharedWorkspace(token, workspace) {
+
     return fetch(BASE_URL + "/workspaces", {
         method: "POST",
-        body: workspace,
+        body: JSON.stringify(workspace),
         headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
             "Authorization": "Bearer " + token
         }
     }).then(response => response.json());

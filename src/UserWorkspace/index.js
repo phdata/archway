@@ -21,7 +21,10 @@ const UserWorkspace = ({userWorkspace: {requesting, workspace}, cluster, request
         workspaceContent = <UserWorkspaceAbsent requestWorkspace={requestWorkspace}/>;
     return (
         <div className="UserWorkspace">
-            {workspaceContent}
+            <WorkspaceHeader icon="user" title="Your Personal Workspace" subtitle="a place to try things out"/>
+            <div className="UserWorkspace-content">
+                {workspaceContent}
+            </div>
         </div>
     );
 };

@@ -21,8 +21,8 @@ const Navigation = () => (
                 <NavLink to="/workspaces" className="Navigation-nav-link" activeClassName="active">
                     <i className="fa fa-users"></i>Workspaces
                 </NavLink>
-                <NavLink to="/areas" className="Navigation-nav-link" activeClassName="active">
-                    <i className="fa fa-info"></i>Areas
+                <NavLink to="/governed" className="Navigation-nav-link" activeClassName="active">
+                    <i className="fa fa-info"></i>Governed
                 </NavLink>
             </div>
         </div>

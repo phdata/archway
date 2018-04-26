@@ -5,10 +5,10 @@ import Checkbox from "../Common/Checkbox";
 
 const RequestForm = ({className, handleSubmit, pristine, submitting}) => (
     <form onSubmit={handleSubmit} className={className}>
-        <h2>Let's get you a project!</h2>
-        <label>PROJECT NAME</label>
+        <h2>Let's get you a place to collaborate!</h2>
+        <label>NAME YOUR SPACE</label>
         <Field name="name" component="input" type="text"/>
-        <label>PURPOSE</label>
+        <label>WHAT'S THE PURPOSE (OR REQUEST #)?</label>
         <Field name="purpose" component="textarea" type="textarea"/>
         <label>THIS DATA MAY CONTAIN...</label>
         <div className="compliance">

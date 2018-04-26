@@ -18,7 +18,7 @@ const InformationAreas = ({items, push}) => {
     }
     return (
         <div className="InformationAreas">
-            <WorkspaceHeader icon="lightbulb-o" title="Information Areas" subtitle="official spaces for real data"/>
+            <WorkspaceHeader icon="lightbulb-o" title="Governed Datasets" subtitle="official spaces for real data"/>
             <div className="InformationAreas-list">
                 <RequestInformationAreas/>
                 {areas}

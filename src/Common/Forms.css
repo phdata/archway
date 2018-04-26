@@ -1,7 +1,7 @@
 label {
     text-transform: uppercase;
     font-weight: 300;
-    margin: 10px 0;
+    margin: 15px 0 0 0;
 }
 
 textarea {
@@ -10,6 +10,7 @@ textarea {
 }
 
 textarea, input {
+    min-width: 250px;
     text-align: center;
     font-family: inherit;
     font-weight: inherit;

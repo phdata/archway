@@ -16,9 +16,9 @@ const syntaxStyle = {
 const DatabaseDisplay = ({name, cluster}) => {
     if (name && cluster.services) {
         console.log(cluster);
-        const impala = `$ impala-shell -i ${cluster.services.impala.host} -d ${name}`;
-        const jdbc = `jdbc:impala://${cluster.services.impala.host}/${name}`;
-        const beeline = `$ beeline -u 'jdbc:hive2://${cluster.services.impala.host}/${name};auth=noSasl'`;
+        const impala = `$ impala-shell -i ${cluster.services.impala.host}:10000 -d ${name}`;
+        const jdbc = `jdbc:impala://${cluster.services.impala.host}:10000/${name}`;
+        const beeline = `$ beeline -u 'jdbc:hive2://${cluster.services.impala.host}:10000/${name};auth=noSasl'`;
         return (
             <div className="DatabaseDisplay">
                 <h2><i className="fa fa-database"/>Data ({name})</h2>
