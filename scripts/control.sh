@@ -14,18 +14,16 @@ com.sun.security.jgss.krb5.initiate {
    principal=\"$HEIMDALI_API_SERVICE_PRINCIPAL\";
 };"
 
-export HEIMDALI_HIVE_URL="${HEIMDALI_BASE_HIVE_URL};principal=${HEIMDALI_API_SERVICE_PRINCIPAL}"
-
 echo $JAAS_CONFIGS > ${CONF_DIR}/jaas.conf
 
 case ${COMPONENT} in
     (api)
         case ${CMD} in
             (start)
-                java -Djava.security.krb5.conf=/etc/krb5.conf \
+                java -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=8282 \
                      -Djavax.security.auth.useSubjectCredsOnly=false \
                      -Djava.security.auth.login.config=${CONF_DIR}/jaas.conf \
-                     -cp /opt/cloudera/parcels/CDH/jars/bcprov-jdk15-1.45.jar:/opt/cloudera/parcels/CDH/lib/hive/lib/hive-jdbc-standalone.jar:`hadoop classpath`:$HEIMDALI_API_HOME/heimdali-api.jar \
+                     -cp ${CONF_DIR}:${CLOUDERA_POSTGRESQL_JDBC_JAR}:/opt/cloudera/parcels/CDH/jars/bcprov-jdk15-1.45.jar:/opt/cloudera/parcels/CDH/lib/hive/lib/hive-jdbc-standalone.jar:`hadoop classpath`:$HEIMDALI_API_HOME/heimdali-api.jar \
                      com.heimdali.Main
                 ;;
             (*)

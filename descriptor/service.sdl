@@ -8,15 +8,11 @@
     "group": "heimdali_api",
     "principal": "heimdali_api"
   },
-  "rolesWithExternalLinks": [
-    "HEIMDALI_UI",
-    "HEIMDALI_SERVICE"
-  ],
-  "maxInstances": 1,
-  "icon": "images/favicon_symbol.png",
-  "parcel": {
-    "repoUrl": "http://parcels.jotunn.io/",
-    "requiredTags": [
+  "maxInstances" : 1,
+  "icon" : "images/favicon_symbol.png",
+  "parcel" : {
+    "repoUrl" : "http://parcels.jotunn.io/",
+    "requiredTags" : [
       "heimdali-api",
       "heimdali-ui"
     ]
@@ -36,16 +32,11 @@
       "name": "HEIMDALI_UI",
       "label": "Heimdali UI",
       "pluralLabel": "Heimdali UIs",
-      "externalLink": {
-        "name": "heimdali_web_ui",
-        "label": "Heimdali UI",
-        "url": "http://${host}:${heimdali_ui_port}"
-      },
-      "kerberosPrincipals": [
+      "kerberosPrincipals" : [
         {
-          "name": "HEIMDALI_UI_PRINCIPAL",
-          "primary": "heimdali_ui",
-          "instance": "${host}"
+          "name" : "HEIMDALI_UI_PRINCIPAL",
+          "primary" : "heimdali_ui",
+          "instance" : "${host}"
         }
       ],
       "parameters": [
@@ -73,18 +64,20 @@
       "name": "HEIMDALI_SERVICE",
       "label": "Heimdali API",
       "pluralLabel": "Heimdali APIs",
-      "externalLink": {
-        "name": "heimdali_rest_api",
-        "label": "Heimdali API",
-        "url": "http://${host}:${heimdali_rest_port}"
-      },
-      "kerberosPrincipals": [
+      "kerberosPrincipals" : [
         {
-          "name": "HEIMDALI_API_SERVICE_PRINCIPAL",
-          "primary": "heimdali_api",
-          "instance": "${host}"
+          "name" : "HEIMDALI_API_SERVICE_PRINCIPAL",
+          "primary" : "heimdali_api",
+          "instance" : "${host}"
         }
       ],
+      "logging" : {
+        "dir" : "/var/log/heimdali-api",
+        "filename" : "heimdali-api.log",
+        "modifiable" : true,
+        "configName" : "log.dir",
+        "loggingType" : "log4j"
+      },
       "parameters": [
         {
           "name": "heimdali_rest_port",
@@ -263,7 +256,7 @@
           "HEIMDALI_DB_URL": "${heimdali_db_url}",
           "HEIMDALI_DB_USER": "${heimdali_db_user}",
           "HEIMDALI_DB_PASS": "${heimdali_db_pass}",
-          "HEIMDALI_BASE_HIVE_URL": "${heimdali_hive_url}",
+          "HEIMDALI_HIVE_URL": "${heimdali_hive_url};principal=hive/_HOST@PHDATA.IO",
           "HEIMDALI_LDAP_HOST": "${heimdali_ldap_host}",
           "HEIMDALI_LDAP_PORT": "${heimdali_ldap_port}",
           "HEIMDALI_LDAP_BASE_DN": "${heimdali_ldap_base_dn}",
