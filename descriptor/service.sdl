@@ -1,0 +1,278 @@
+{
+  "name": "HEIMDALI",
+  "label": "Heimdali",
+  "description": "The Heimdali service",
+  "version": "0.1.0",
+  "runAs": {
+    "user": "heimdali_api",
+    "group": "heimdali_api",
+    "principal": "heimdali_api"
+  },
+  "rolesWithExternalLinks": [
+    "HEIMDALI_UI",
+    "HEIMDALI_SERVICE"
+  ],
+  "maxInstances": 1,
+  "icon": "images/favicon_symbol.png",
+  "parcel": {
+    "repoUrl": "http://parcels.jotunn.io/",
+    "requiredTags": [
+      "heimdali-api",
+      "heimdali-ui"
+    ]
+  },
+  "serviceDependencies": [
+    {
+      "name": "SENTRY",
+      "required": "true"
+    },
+    {
+      "name": "HIVE",
+      "required": "true"
+    }
+  ],
+  "roles": [
+    {
+      "name": "HEIMDALI_UI",
+      "label": "Heimdali UI",
+      "pluralLabel": "Heimdali UIs",
+      "externalLink": {
+        "name": "heimdali_web_ui",
+        "label": "Heimdali UI",
+        "url": "http://${host}:${heimdali_ui_port}"
+      },
+      "kerberosPrincipals": [
+        {
+          "name": "HEIMDALI_UI_PRINCIPAL",
+          "primary": "heimdali_ui",
+          "instance": "${host}"
+        }
+      ],
+      "parameters": [
+        {
+          "name": "heimdali_ui_port",
+          "label": "REST UI Port",
+          "description": "Heimdali UI Port",
+          "required": "true",
+          "type": "port",
+          "default": 8181
+        }
+      ],
+      "startRunner": {
+        "program": "scripts/control.sh",
+        "args": [
+          "ui",
+          "start"
+        ],
+        "environmentVariables": {
+          "HEIMDALI_UI_PORT": "${heimdali_ui_port}"
+        }
+      }
+    },
+    {
+      "name": "HEIMDALI_SERVICE",
+      "label": "Heimdali API",
+      "pluralLabel": "Heimdali APIs",
+      "externalLink": {
+        "name": "heimdali_rest_api",
+        "label": "Heimdali API",
+        "url": "http://${host}:${heimdali_rest_port}"
+      },
+      "kerberosPrincipals": [
+        {
+          "name": "HEIMDALI_API_SERVICE_PRINCIPAL",
+          "primary": "heimdali_api",
+          "instance": "${host}"
+        }
+      ],
+      "parameters": [
+        {
+          "name": "heimdali_rest_port",
+          "label": "REST API Port",
+          "description": "Heimdali REST API Port",
+          "required": "true",
+          "type": "port",
+          "default": 8080,
+          "configurableInWizard": "true"
+        },
+        {
+          "name": "heimdali_cm_url_base",
+          "label": "Cloudera Manager Base URL",
+          "description": "The base URL for CM API (eg. https://manager.valhalla.phdata.io:7183/api/v14)",
+          "required": "true",
+          "type": "uri",
+          "configurableInWizard": "true"
+        },
+        {
+          "name": "heimdali_admin_username",
+          "label": "Heimdali CM User",
+          "description": "The username for the CM user",
+          "required": "true",
+          "type": "string",
+          "configurableInWizard": "true"
+        },
+        {
+          "name": "heimdali_admin_password",
+          "label": "Heimdali CM Password",
+          "description": "The password for the CM user",
+          "required": "true",
+          "type": "password",
+          "configurableInWizard": "true"
+        },
+        {
+          "name": "heimdali_cluster_name",
+          "label": "Cluster Name",
+          "description": "THe name of the cluster to manage",
+          "required": "true",
+          "type": "string",
+          "configurableInWizard": "true"
+        },
+        {
+          "name": "heimdali_hdfs_user_root",
+          "label": "User HDFS Path",
+          "description": "The HDFS location for users",
+          "required": "true",
+          "type": "string",
+          "configurableInWizard": "true"
+        },
+        {
+          "name": "heimdali_hdfs_sw_root",
+          "label": "Shared Workspace HDFS Path",
+          "description": "The HDFS location for shared workspaces",
+          "required": "true",
+          "type": "string",
+          "configurableInWizard": "true"
+        },
+        {
+          "name": "heimdali_db_driver",
+          "label": "db_driver",
+          "description": "The database driver to use for storage",
+          "required": "true",
+          "type": "string_enum",
+          "validValues": [
+            "org.postgresql.Driver",
+            "com.mysql.jdbc.Driver"
+          ],
+          "configurableInWizard": "true"
+        },
+        {
+          "name": "heimdali_db_url",
+          "label": "JDBC URI",
+          "description": "The JDBC URI to the Heimdali database",
+          "required": "true",
+          "type": "string",
+          "configurableInWizard": "true"
+        },
+        {
+          "name": "heimdali_db_user",
+          "label": "Database Username",
+          "description": "User with insert permissions",
+          "required": "true",
+          "type": "string",
+          "configurableInWizard": "true"
+        },
+        {
+          "name": "heimdali_db_pass",
+          "label": "Database Password",
+          "description": "Password for the user with insert permissions",
+          "required": "true",
+          "type": "password",
+          "configurableInWizard": "true"
+        },
+        {
+          "name": "heimdali_hive_url",
+          "label": "Hive URL",
+          "description": "The URL for connecting to Hive",
+          "required": "true",
+          "type": "string",
+          "configurableInWizard": "true"
+        },
+        {
+          "name": "heimdali_ldap_host",
+          "label": "LDAP Host",
+          "description": "THe LDAP/AD host for users and groups",
+          "required": "true",
+          "type": "uri",
+          "configurableInWizard": "true"
+        },
+        {
+          "name": "heimdali_ldap_port",
+          "label": "LDAP Port",
+          "description": "The LDAP/AD port for users and groups",
+          "required": "true",
+          "type": "port",
+          "default": 389,
+          "configurableInWizard": "true"
+        },
+        {
+          "name": "heimdali_ldap_base_dn",
+          "label": "Base DN",
+          "description": "The base DN Heimdali will manage",
+          "required": "true",
+          "type": "string",
+          "configurableInWizard": "true"
+        },
+        {
+          "name": "heimdali_ldap_user_path",
+          "label": "User DN",
+          "description": "The LDAP location of users with access to Heimdali",
+          "required": "true",
+          "type": "string",
+          "configurableInWizard": "true"
+        },
+        {
+          "name": "heimdali_ldap_group_path",
+          "label": "Group DN",
+          "description": "The LDAP location for groups",
+          "required": "true",
+          "type": "string",
+          "configurableInWizard": "true"
+        },
+        {
+          "name": "heimdali_ldap_admin_dn",
+          "label": "LDAP Admin DN",
+          "description": "The DN for the admin user",
+          "required": "true",
+          "type": "string",
+          "configurableInWizard": "true"
+        },
+        {
+          "name": "heimdali_ldap_admin_pass",
+          "label": "LDAP Admin Password",
+          "description": "The password for the admin user",
+          "required": "true",
+          "type": "password",
+          "configurableInWizard": "true"
+        }
+      ],
+      "startRunner": {
+        "program": "scripts/control.sh",
+        "args": [
+          "api",
+          "start"
+        ],
+        "environmentVariables": {
+          "HEIMDALI_REST_PORT": "${heimdali_rest_port}",
+          "HEIMDALI_CM_URL_BASE": "${heimdali_cm_url_base}",
+          "HEIMDALI_CM_ADMIN_USER": "${heimdali_admin_username}",
+          "HEIMDALI_CM_ADMIN_PASSWORD": "${heimdali_admin_password}",
+          "HEIMDALI_CLUSTER_NAME": "${heimdali_cluster_name}",
+          "HEIMDALI_HDFS_USER_ROOT": "${heimdali_hdfs_user_root}",
+          "HEIMDALI_HDFS_SW_ROOT": "${heimdali_hdfs_sw_root}",
+          "HEIMDALI_DB_DRIVER": "${heimdali_db_driver}",
+          "HEIMDALI_DB_URL": "${heimdali_db_url}",
+          "HEIMDALI_DB_USER": "${heimdali_db_user}",
+          "HEIMDALI_DB_PASS": "${heimdali_db_pass}",
+          "HEIMDALI_BASE_HIVE_URL": "${heimdali_hive_url}",
+          "HEIMDALI_LDAP_HOST": "${heimdali_ldap_host}",
+          "HEIMDALI_LDAP_PORT": "${heimdali_ldap_port}",
+          "HEIMDALI_LDAP_BASE_DN": "${heimdali_ldap_base_dn}",
+          "HEIMDALI_LDAP_USER_PATH": "${heimdali_ldap_user_path}",
+          "HEIMDALI_LDAP_GROUP_PATH": "${heimdali_ldap_group_path}",
+          "HEIMDALI_LDAP_ADMIN_DN": "${heimdali_ldap_admin_dn}",
+          "HEIMDALI_LDAP_ADMIN_PASS": "${heimdali_ldap_admin_pass}"
+        }
+      }
+    }
+  ]
+}
