@@ -33,7 +33,7 @@ export default function configureStore(history) {
 
     const storeEnhancers = [];
 
-    storeEnhancers.push(window.devToolsExtension());
+    // storeEnhancers.push(window.devToolsExtension());
 
     const middlewareEnhancer = applyMiddleware(...middlewares);
     storeEnhancers.unshift(middlewareEnhancer);
