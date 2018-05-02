@@ -4,7 +4,7 @@ import "./InformationAreaListItem.css";
 import Panel from "../Common/Panel";
 
 const InformationAreaListItem = ({push, area: {id, name, created, created_by}}) => (
-    <Panel onClick={() => push("/area/" + id + "/overview")} className="InformationAreaListItem">
+    <Panel onClick={() => push("/datasets/" + id + "/overview")} className="InformationAreaListItem">
         <div className="InformationAreaListItem-details">
             <h3 className="InformationAreaItem-title">{name}</h3>
             <div className="InformationAreaItem-created">

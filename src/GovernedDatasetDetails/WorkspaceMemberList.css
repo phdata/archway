@@ -1,0 +1,22 @@
+
+.MemberList {
+    display: flex;
+    flex: 3;
+    flex-direction: column;
+    background: white;
+    border: solid black 1px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, .16);
+    border-radius: 10px;
+    align-content: left;
+    justify-content: space-evenly;
+    padding: 25px;
+    height: 100px;
+    width: 400px;
+}
+
+.MemberList > h2 {
+    border-bottom: solid black 1px;
+    font-weight: bold;
+    padding-bottom: 15px;
+    margin-top: 0;
+}

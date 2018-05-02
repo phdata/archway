@@ -21,7 +21,7 @@ const Navigation = () => (
                 <NavLink to="/workspaces" className="Navigation-nav-link" activeClassName="active">
                     <i className="fa fa-users"></i>Workspaces
                 </NavLink>
-                <NavLink to="/governed" className="Navigation-nav-link" activeClassName="active">
+                <NavLink to="/datasets" className="Navigation-nav-link" activeClassName="active">
                     <i className="fa fa-info"></i>Governed
                 </NavLink>
             </div>

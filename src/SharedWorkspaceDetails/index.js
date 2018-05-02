@@ -3,15 +3,14 @@ import {connect} from "react-redux";
 import Spinner from "../Common/Spinner";
 import "./SharedWorkspaceDetails.css"
 import Compliance from "./Compliance";
-import TimeAgo from "timeago-react";
 import DatabaseDisplay from "../Common/DatabaseDisplay";
 import WorkspaceMemberList from "./WorkspaceMemberList";
 
 const SharedWorkspaceDetails = ({workspaceDetails: {workspace, members}, cluster}) => {
-    if (!workspace || !workspace.hdfs)
+    if (!workspace || !workspace.data)
         return <Spinner>Loading Details...</Spinner>;
     else {
-        const {name, purpose, created_by, created, compliance} = workspace;
+        const {name, purpose} = workspace;
         return (
             <div className="SharedWorkspaceDetails">
                 <div className="SharedWorkspaceDetails-header">
@@ -21,7 +20,7 @@ const SharedWorkspaceDetails = ({workspaceDetails: {workspace, members}, cluster
                 <h5>{purpose}</h5>
                 <div className="SharedWorkspaceDetails-details">
                     <div className="SharedWorkspaceDetails-details-left">
-                    <DatabaseDisplay database={workspace.database}
+                    <DatabaseDisplay database={workspace.data}
                                      cluster={cluster}/>
                     </div>
                     <div className="SharedWorkspaceDetails-details-right">

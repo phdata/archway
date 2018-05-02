@@ -7,6 +7,8 @@ import sharedWorkspaceDetails from "./SharedWorkspaceDetails/sagas";
 import requestWorkspace from "./RequestProject/sagas";
 import sharedWorkspaces from "./SharedWorkspaces/sagas";
 import informationAreas from "./InformationAreas/sagas";
+import requestGovernedDataset from "./RequestGovernedDataset/sagas";
+import governedDatasetDetails from "./GovernedDatasetDetails/sagas";
 
 const sagas = [
     auth,
@@ -15,7 +17,9 @@ const sagas = [
     userWorkspaace,
     sharedWorkspaceDetails,
     requestWorkspace,
-    informationAreas
+    informationAreas,
+    requestGovernedDataset,
+    governedDatasetDetails
 ];
 
 export const CANCEL_SAGAS_HMR = 'CANCEL_SAGAS_HMR';

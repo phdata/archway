@@ -1,4 +1,4 @@
-const BASE_URL = window.config.baseUrl;
+const BASE_URL = "https://private-a63a5-heimdali.apiary-mock.com";
 
 export function login(username, password) {
     return fetch(BASE_URL + "/account/token", {
@@ -60,7 +60,6 @@ export function sharedWorkspaceDetails(token, id) {
 }
 
 export function requestNewSharedWorkspace(token, workspace) {
-
     return fetch(BASE_URL + "/workspaces", {
         method: "POST",
         body: JSON.stringify(workspace),
@@ -73,17 +72,38 @@ export function requestNewSharedWorkspace(token, workspace) {
 }
 
 export function workspaceMemberList(token, id) {
-    return fetch(BASE_URL + "/workspaces/"+id + "/members", {
+    return fetch(BASE_URL + "/workspaces/" + id + "/members", {
         headers: {
             "Authorization": "Bearer " + token
         }
     }).then(response => response.json());
 }
 
-export function informationAreas(token) {
-    return fetch(BASE_URL + "/areas", {
+export function datasets(token) {
+    return fetch(BASE_URL + "/datasets", {
         headers: {
             "Authorization": "Bearer " + token
+        }
+    }).then(response => response.json());
+}
+
+export function requestDataset(token, dataset) {
+    return fetch(BASE_URL + "/datasets", {
+        method: "POST",
+        body: JSON.stringify(dataset),
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            "Authorization": "Bearer " + token
+        }
+    }).then(response => response.json());
+}
+
+export function datasetDetails(token, id) {
+    return fetch(BASE_URL + "/datasets/" + id, {
+        method: "GET",
+        headers: {
+            Accept: 'application/json'
         }
     }).then(response => response.json());
 }

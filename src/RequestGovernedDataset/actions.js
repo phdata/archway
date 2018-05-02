@@ -1,9 +1,9 @@
-export const REQUEST_SHARED_WORKSPACE = "REQUEST_SHARED_WORKSPACE";
+export const REQUEST_GOVERNED_DATASET = "REQUEST_GOVERNED_DATASET";
 
 
-export function requestSharedWorkspace({name, purpose, phi_data, pii_data, pci_data}) {
+export function requestGovernedDataset({name, purpose, phi_data, pii_data, pci_data}) {
     return {
-        type: REQUEST_SHARED_WORKSPACE,
+        type: REQUEST_GOVERNED_DATASET,
         request: {
             name,
             purpose,
@@ -16,5 +16,5 @@ export function requestSharedWorkspace({name, purpose, phi_data, pii_data, pci_d
             requested_cores: 10,
             requested_memory_in_gb: 8
         }
-    }
+    };
 }

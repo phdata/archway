@@ -5,11 +5,11 @@ import Checkbox from "../Common/Checkbox";
 
 const RequestForm = ({className, handleSubmit, pristine, submitting}) => (
     <form onSubmit={handleSubmit} className={className}>
-        <h2>Let's get you a place to collaborate!</h2>
-        <label>NAME YOUR SPACE</label>
+        <h2>Let's get you a place for your data!</h2>
+        <label>NAME YOUR DATASET</label>
         <Field name="name" component="input" type="text"/>
         <label>WHAT'S THE PURPOSE (OR REQUEST #)?</label>
-        <Field name="purpose" component="input" type="input"/>
+        <Field name="purpose" component="textarea" type="textarea"/>
         <label>THIS DATA MAY CONTAIN...</label>
         <div className="compliance">
             <Checkbox name="pci_data">PCI</Checkbox>
@@ -21,5 +21,5 @@ const RequestForm = ({className, handleSubmit, pristine, submitting}) => (
 );
 
 export default reduxForm({
-    form: 'project'
+    form: 'dataset'
 })(RequestForm);

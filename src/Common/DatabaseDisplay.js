@@ -13,15 +13,14 @@ const syntaxStyle = {
     padding: 20
 };
 
-const DatabaseDisplay = ({name, cluster}) => {
-    if (name && cluster.services) {
-        console.log(cluster);
-        const impala = `$ impala-shell -i ${cluster.services.impala.host}:10000 -d ${name}`;
-        const jdbc = `jdbc:impala://${cluster.services.impala.host}:10000/${name}`;
-        const beeline = `$ beeline -u 'jdbc:hive2://${cluster.services.impala.host}:10000/${name};auth=noSasl'`;
+const DatabaseDisplay = ({database, cluster}) => {
+    if (database && database.name && cluster.services) {
+        const impala = `$ impala-shell -i ${cluster.services.impala.host}:10000 -d ${database.name}`;
+        const jdbc = `jdbc:impala://${cluster.services.impala.host}:10000/${database.name}`;
+        const beeline = `$ beeline -u 'jdbc:hive2://${cluster.services.impala.host}:10000/${database.name};auth=noSasl'`;
         return (
             <div className="DatabaseDisplay">
-                <h2><i className="fa fa-database"/>Data ({name})</h2>
+                <h2><i className="fa fa-database"/>Data ({database.name})</h2>
                 <div className="DatabaseDisplay-Display">
                     <div className="DatabaseDisplay-Display-left">
                         <h4>Connect Via JDBC</h4>

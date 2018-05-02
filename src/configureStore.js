@@ -10,6 +10,7 @@ import userWorkspace from "./UserWorkspace/reducers";
 import sharedWorkspaceDetails from "./SharedWorkspaceDetails/reducers";
 import requestWorkspace from "./RequestProject/reducers";
 import areas from "./InformationAreas/reducers";
+import governedDatasetDetails from "./GovernedDatasetDetails/reducers";
 
 const reducers = combineReducers({
     form: reduxFormReducer,
@@ -19,7 +20,8 @@ const reducers = combineReducers({
     userWorkspace,
     workspaceDetails: sharedWorkspaceDetails,
     requestWorkspace,
-    informationAreas: areas
+    informationAreas: areas,
+    datasetDetails: governedDatasetDetails
 
 });
 
@@ -61,6 +63,9 @@ export default function configureStore(history) {
             );
             module.hot.accept("./UserWorkspace/reducers", () =>
                 store.replaceReducer(require("./UserWorkspace/reducers").default)
+            );
+            module.hot.accept("./GovernedDatasetDetails/reducers", () =>
+                store.replaceReducer(require("./GovernedDatasetDetails/reducers").default)
             );
 
             module.hot.accept('./SagaManager', () => {

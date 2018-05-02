@@ -8,7 +8,7 @@ const getToken = state => state.auth.token;
 function* loadAreas() {
     try {
         const token = yield select(getToken);
-        const areas = yield call(Api.informationAreas, token);
+        const areas = yield call(Api.datasets, token);
         yield put(actions.areasSuccess(areas));
     } catch (exception) {
         yield put(actions.areasFailed(exception.message));
@@ -18,7 +18,7 @@ function* loadAreas() {
 function* requestAreas() {
     while (true) {
         const {payload: {pathname}} = yield take(LOCATION_CHANGE);
-        if (pathname === "/workspaces") {
+        if (pathname === "/datasets") {
             yield put(actions.areasRequested());
             yield fork(loadAreas);
         }

@@ -8,7 +8,6 @@ import InformationAreaListItem from "./InformationAreaListItem";
 
 const InformationAreas = ({items, push}) => {
     let areas;
-    console.log(items);
     if (items) {
         areas = items.map(item => (
             <InformationAreaListItem key={item.id}

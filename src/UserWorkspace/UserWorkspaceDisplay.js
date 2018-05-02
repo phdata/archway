@@ -8,7 +8,7 @@ const UserWorkspaceDisplay = ({workspace, cluster}) => {
             <h2 className="UserWorkspaceDisplay-notice">
                 Your workspace is set up<br />on "{cluster.name}"!
             </h2>
-            <DatabaseDisplay name={workspace.database.name} cluster={cluster} />
+            <DatabaseDisplay database={workspace.database} cluster={cluster} />
         </div>
     );
 };
