@@ -1,11 +1,12 @@
 package com.heimdali.modules
 
-import cats.Eval
-import cats.data.IndexedStateT
-import cats.effect.IO
-import doobie.FC
+import java.sql.DriverManager
+
+import akka.actor.ActorRef
+import com.heimdali.models.{Dataset, SharedWorkspace, UserWorkspace}
+import com.heimdali.provisioning.WorkspaceProvisioner
 import com.heimdali.services._
-import doobie.util.transactor.{Strategy, Transactor}
+import scalikejdbc.ConnectionPool
 
 trait ServiceModule {
   this: AkkaModule
@@ -16,28 +17,24 @@ trait ServiceModule {
     with ConfigurationModule
     with HttpModule =>
 
-  val hiveConfig = configuration.getConfig("db.hive")
+  val userProvisionerFactory: UserWorkspace => ActorRef =
+    (userWorkspace) => actorSystem.actorOf(WorkspaceProvisioner.props(ldapActor, hdfsActor, hiveActor, userWorkspaceSaver, configuration, userWorkspace))
 
-  val rawHiveTransactor = Transactor.fromDriverManager[IO](
-    hiveConfig.getString("driver"),
-    hiveConfig.getString("url")
-  )
-
-  val hiveTransactor: Transactor[IO] = {
-    val xa = (for {
-      _ <- Transactor.before[IO] := FC.unit
-      _ <- Transactor.after[IO] := FC.unit
-    } yield ()).runS(rawHiveTransactor).value
-    Transactor.strategy.set(xa, Strategy.void.copy(always = FC.close))
-  }
-
-  val accountService: AccountService = new AccountServiceImpl(ldapClient, accountRepository, configuration)
+  val accountService: AccountService = new AccountServiceImpl(ldapClient, accountRepository, configuration, userProvisionerFactory)
 
   val clusterService: ClusterService = new CDHClusterService(http, configuration)
 
-  val workspaceService: WorkspaceService = new WorkspaceServiceImpl(workspaceRepository, workspaceProvisionerFactory)
+  val workspaceProvisionerFactory: SharedWorkspace => ActorRef =
+    (sharedWorkspace) => actorSystem.actorOf(WorkspaceProvisioner.props(ldapActor, hdfsActor, hiveActor, sharedWorkspaceSaver, configuration, sharedWorkspace))
+
+  val workspaceService: WorkspaceService = new WorkspaceServiceImpl(ldapClient, sharedWorkspaceRepository, complianceRepository, workspaceProvisionerFactory)
 
   val keytabService: KeytabService = new KeytabServiceImpl()
 
-  val hiveService: HiveService = new HiveServiceImpl(hiveTransactor)
+  val hiveService: HiveService = new HiveServiceImpl
+
+  val datasetProvisionerFactory: Dataset => ActorRef =
+    (dataset) => actorSystem.actorOf(WorkspaceProvisioner.props(ldapActor, hdfsActor, hiveActor, datasetWorkspaceSaver, configuration, dataset))
+
+  val governedDatasetService: GovernedDatasetService = new GovernedDatasetServiceImpl(governedDatasetRepository, datasetRepository, complianceRepository, ldapClient, datasetProvisionerFactory)
 }

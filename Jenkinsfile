@@ -25,7 +25,6 @@ pipeline {
         stage('package') {
             steps {
                 container("jdk") {
-                    archiveArtifacts artifacts: 'target/scala-2.12/heimdali-api.jar', fingerprint: true
                     withAWS(credentials: 'jenkins-aws-user') {
                         s3Upload file: 'target/scala-2.12/heimdali-api.jar', bucket: 'heimdali-repo', path: 'heimdali-api.jar'
                     }

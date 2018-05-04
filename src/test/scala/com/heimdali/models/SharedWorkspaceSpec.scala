@@ -1,6 +1,5 @@
 package com.heimdali.models
 
-import com.heimdali.models.ViewModel.SharedWorkspace
 import org.scalatest.prop.TableDrivenPropertyChecks
 import org.scalatest.{Matchers, PropSpec}
 

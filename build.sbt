@@ -33,7 +33,6 @@ libraryDependencies ++= Seq(
   "io.circe" %% "circe-core" % circeVersion,
   "io.circe" %% "circe-generic" % circeVersion,
   "io.circe" %% "circe-parser" % circeVersion,
-  "io.circe" %% "circe-java8" % circeVersion,
   "io.circe" %% "circe-generic-extras" % circeVersion,
 
   ("com.pauldijou" %% "jwt-core" % "0.14.1").exclude("org.bouncycastle", "bcpkix-jdk15on"),
@@ -42,11 +41,10 @@ libraryDependencies ++= Seq(
 
   "com.unboundid" % "unboundid-ldapsdk" % "4.0.0",
 
-  "org.tpolecat" %% "doobie-core" % doobieVersion,
-  "org.tpolecat" %% "doobie-postgres" % doobieVersion,
-  "org.tpolecat" %% "doobie-scalatest" % doobieVersion % Test,
+  "org.scalikejdbc" %% "scalikejdbc" % "2.5.2",
 
   "org.flywaydb" % "flyway-core" % "4.2.0",
+  "postgresql" % "postgresql" % "9.0-801.jdbc4" % "provided",
 
   "org.apache.hadoop" % "hadoop-client" % hadoopVersion % "provided",
   "org.apache.hive" % "hive-jdbc" % hiveVersion % "provided",

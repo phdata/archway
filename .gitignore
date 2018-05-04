@@ -2,3 +2,4 @@ src/main/resources/*-site.xml
 **/target
 .idea
 .ensime*
+build

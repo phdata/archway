@@ -1,7 +1,7 @@
 package com.heimdali.modules
 
 import akka.http.scaladsl.Http
-import com.heimdali.services.{AkkaHttpClient, HttpClient}
+import com.heimdali.clients.{AkkaHttpClient, HttpClient}
 
 trait HttpModule {
   this: ConfigurationModule =>

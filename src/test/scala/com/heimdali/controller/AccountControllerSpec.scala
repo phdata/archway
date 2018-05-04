@@ -5,18 +5,19 @@ import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.model.headers.OAuth2BearerToken
 import akka.http.scaladsl.server.directives.AuthenticationResult
 import akka.http.scaladsl.testkit.ScalatestRouteTest
-import akka.testkit.{TestActor, TestKit}
-import com.heimdali.actors.HiveDatabase
-import com.heimdali.actors.user.UserProvisioner.{Request, Started}
+import akka.testkit.TestKit
+import com.heimdali.models._
+import com.heimdali.provisioning.WorkspaceProvisioner.Start
 import com.heimdali.rest.{AccountController, AuthService}
 import com.heimdali.services._
+import com.heimdali.test.fixtures._
 import com.typesafe.config.ConfigFactory
 import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport
 import io.circe.Json
 import io.circe.generic.extras.Configuration
+import io.circe.parser._
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FlatSpec, Matchers}
-import io.circe.parser._
 
 import scala.concurrent.Future
 
@@ -28,20 +29,22 @@ class AccountControllerSpec
     with FailFastCirceSupport {
 
   implicit val configuration: Configuration = Configuration.default.withDefaults.withSnakeCaseKeys
+
   import io.circe.generic.extras.auto._
 
-  lazy val secret: String = ConfigFactory.load().getString("rest.secret")
+  val config = ConfigFactory.load()
+  lazy val secret: String = config.getString("rest.secret")
 
   behavior of "AccountController"
 
-  it should "do something" in {
+  it should "get a token" in {
     val accountService = mock[AccountService]
     val authService = mock[AuthService]
     (authService.validateCredentials _)
       .expects(*)
       .returning(Future(Right(AuthenticationResult.success(Token("", "")))))
 
-    val accountController = new AccountController(authService, accountService, _ => ActorRef.noSender)
+    val accountController = new AccountController(authService, accountService, config)
     Get("/account/token") ~> addCredentials(OAuth2BearerToken("abc123")) ~> accountController.route ~> check {
       status should be(StatusCodes.OK)
       responseAs[Token] should be(Token("", ""))
@@ -55,59 +58,56 @@ class AccountControllerSpec
       .expects(*)
       .returning(Future(Option(User("Dude Doe", "username"))))
 
-    val accountController = new AccountController(authService, accountService, _ => ActorRef.noSender)
+    val accountController = new AccountController(authService, accountService, config)
     Get("/account/profile") ~> addCredentials(OAuth2BearerToken("abc123")) ~> accountController.route ~> check {
       status should be(StatusCodes.OK)
       responseAs[User] should be(User("Dude Doe", "username"))
     }
   }
 
-  it should "provision a user workspace" in new TestKit(ActorSystem()) {
-    val accountService = mock[AccountService]
-    setAutoPilot { (sender: ActorRef, msg: Any) =>
-      sender.tell(Started, testActor)
-      TestActor.NoAutoPilot
-    }
-
+  it should "start provisioning a user workspace" in new TestKit(ActorSystem()) {
     val authService = mock[AuthService]
     (authService.validateToken _)
       .expects(*)
-      .returning(Future(Option(User("Dude Doe", "username"))))
+      .returning(Future(Option(User("Dude Doe", standardUsername))))
 
-    val accountController = new AccountController(authService, accountService, _ => testActor)
+    val accountService = mock[AccountService]
+    accountService.createWorkspace _ expects standardUsername returning Future(userWorkspace)
 
+    val accountController = new AccountController(authService, accountService, config)
     Post("/account/workspace") ~> addCredentials(OAuth2BearerToken("abc123")) ~> accountController.route ~> check {
       status should be(StatusCodes.Created)
-      expectMsg(Request)
     }
   }
 
   it should "find a user workspace" in new TestKit(ActorSystem()) {
-    val (username, database, dir, role, name) = ("username", "username", "/user/username/db", "role", "Dude Doe")
     val accountService = mock[AccountService]
     (accountService.findWorkspace _)
-      .expects(username)
-      .returning(Future(Some(UserWorkspace(username, HiveDatabase(dir, role, database)))))
+      .expects(standardUsername)
+      .returning(Future(Some(completedUserWorkspace)))
 
     val authService = mock[AuthService]
     (authService.validateToken _)
       .expects(*)
-      .returning(Future(Option(User(name, username))))
+      .returning(Future(Option(User(name, standardUsername))))
 
-    val accountController = new AccountController(authService, accountService, _ => ActorRef.noSender)
-
+    val accountController = new AccountController(authService, accountService, config)
     Get("/account/workspace") ~> addCredentials(OAuth2BearerToken("abc123")) ~> accountController.route ~> check {
       status should be(StatusCodes.OK)
       val Right(expected) = parse(
         s"""
-          | {
-          |   "username": "$username",
-          |   "database": {
-          |     "name": "$database",
-          |     "location": "/user/$username/db",
-          |     "role": "$role"
-          |   }
-          | }
+           | {
+           |   "username": "$standardUsername",
+           |   "database": {
+           |     "name": "${completedUserWorkspace.hiveDatabase.get.name}",
+           |     "location": "${completedUserWorkspace.hiveDatabase.get.location}",
+           |     "role": "${completedUserWorkspace.hiveDatabase.get.role}"
+           |   },
+           |   "ldap": {
+           |      "distinguished_name": "${completedUserWorkspace.ldap.get.distinguishedName}",
+           |      "common_name": "${completedUserWorkspace.ldap.get.commonName}"
+           |   }
+           | }
         """.stripMargin
       )
       responseAs[Json] should be(expected)
@@ -126,8 +126,7 @@ class AccountControllerSpec
       .expects(*)
       .returning(Future(Option(User("Dude Doe", username))))
 
-    val accountController = new AccountController(authService, accountService, _ => ActorRef.noSender)
-
+    val accountController = new AccountController(authService, accountService, config)
     Get("/account/workspace") ~> addCredentials(OAuth2BearerToken("abc123")) ~> accountController.route ~> check {
       status should be(StatusCodes.NotFound)
     }

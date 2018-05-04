@@ -1,21 +1,22 @@
 package com.heimdali.services
 
-import java.security.Security
-
-import com.heimdali.actors.HiveDatabase
-import com.heimdali.repositories.AccountRepository
+import akka.actor.ActorRef
+import akka.pattern.ask
+import akka.util.Timeout
+import com.heimdali.clients.LDAPClient
+import com.heimdali.models.UserWorkspace
+import com.heimdali.provisioning.WorkspaceProvisioner.Start
+import com.heimdali.repositories.UserWorkspaceRepository
 import com.typesafe.config.Config
 import com.typesafe.scalalogging.LazyLogging
 import io.circe.Json
-import org.bouncycastle.jce.provider.BouncyCastleProvider
+import scala.concurrent.duration._
 import pdi.jwt.{JwtAlgorithm, JwtCirce}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
 
 case class User(name: String, username: String)
-
-case class UserWorkspace(username: String, database: HiveDatabase)
 
 case class Token(accessToken: String, refreshToken: String)
 
@@ -26,12 +27,15 @@ trait AccountService {
 
   def refresh(user: User): Future[Token]
 
+  def createWorkspace(username: String): Future[UserWorkspace]
+
   def findWorkspace(username: String): Future[Option[UserWorkspace]]
 }
 
 class AccountServiceImpl(ldapClient: LDAPClient,
-                         accountRepo: AccountRepository,
-                         configuration: Config)
+                         accountRepo: UserWorkspaceRepository,
+                         configuration: Config,
+                         provisionFactory: UserWorkspace => ActorRef)
                         (implicit val executionContext: ExecutionContext)
   extends AccountService with LazyLogging {
 
@@ -40,7 +44,7 @@ class AccountServiceImpl(ldapClient: LDAPClient,
 
   override def login(username: String, password: String): Future[Option[Token]] = {
     logger.info(s"logging in $username")
-    ldapClient.findUser(username, password) flatMap {
+    ldapClient.validateUser(username, password) flatMap {
       case Some(user) =>
         logger.info(s"found $user")
         refresh(User(user.name, user.username)).map(Some(_))
@@ -78,8 +82,9 @@ class AccountServiceImpl(ldapClient: LDAPClient,
     import io.circe.generic.auto._
     JwtCirce.decodeJson(token, secret, Seq(algo)) match {
       case Success(json) =>
-        logger.info(s"found user for $token: $json")
-        json.as[User].toOption
+        val Right(user) = json.as[User]
+        logger.info(s"validated ${user.username}")
+        Some(user)
       case Failure(_) =>
         logger.info(s"no user found for $token")
         None
@@ -89,4 +94,11 @@ class AccountServiceImpl(ldapClient: LDAPClient,
   override def findWorkspace(username: String): Future[Option[UserWorkspace]] =
     accountRepo.findUser(username)
 
+  implicit val timeout = Timeout(1 second)
+
+  override def createWorkspace(username: String): Future[UserWorkspace] =
+    accountRepo.create(username).map { workspace =>
+      provisionFactory(workspace) ! Start
+      workspace
+    }
 }

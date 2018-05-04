@@ -2,7 +2,7 @@ package com.heimdali.rest
 
 import akka.http.scaladsl.model.headers.{BasicHttpCredentials, HttpChallenge, HttpChallenges, HttpCredentials}
 import akka.http.scaladsl.server.directives.{AuthenticationResult, Credentials, SecurityDirectives}
-import com.heimdali.services.{AccountService, Token, User, UserWorkspace}
+import com.heimdali.services.{AccountService, Token, User}
 
 import scala.concurrent.{ExecutionContext, Future}
 

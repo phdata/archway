@@ -4,6 +4,7 @@ import akka.http.scaladsl.marshalling.Marshal
 import akka.http.scaladsl.model._
 import akka.http.scaladsl.model.headers.BasicHttpCredentials
 import akka.http.scaladsl.testkit.ScalatestRouteTest
+import com.heimdali.clients.HttpClient
 import com.typesafe.config.ConfigFactory
 import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport
 import org.scalamock.scalatest.MockFactory

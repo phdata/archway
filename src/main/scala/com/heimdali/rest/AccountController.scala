@@ -5,21 +5,51 @@ import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.Directives._
 import akka.pattern.ask
 import akka.util.Timeout
-import com.heimdali.actors.user.UserProvisioner.Request
-import com.heimdali.services.{AccountService, User}
+import cats.kernel.Semigroup
+import com.heimdali.models.{HiveDatabase, LDAPRegistration, UserWorkspace}
+import com.heimdali.provisioning.WorkspaceProvisioner.Start
+import com.heimdali.services.AccountService
+import com.typesafe.config.Config
 import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport
 import io.circe.generic.extras.Configuration
+import io.circe.{Encoder, Json}
 
 import scala.concurrent.duration._
 
 class AccountController(authService: AuthService,
                         accountService: AccountService,
-                        userProvisionerFactory: User => ActorRef)
+                        config: Config)
   extends FailFastCirceSupport {
 
   implicit val configuration: Configuration = Configuration.default.withDefaults.withSnakeCaseKeys
+  implicit val timeout: Timeout = Timeout(1 second)
 
   import io.circe.generic.extras.auto._
+
+  def hive(hive: HiveDatabase) = Json.obj(
+    "database" -> Json.obj(
+      "name" -> Json.fromString(hive.name),
+      "location" -> Json.fromString(hive.location),
+      "role" -> Json.fromString(hive.role)
+    )
+  )
+
+  def ldap(ldap: LDAPRegistration) = Json.obj(
+    "ldap" -> Json.obj(
+      "common_name" -> Json.fromString(ldap.commonName),
+      "distinguished_name" -> Json.fromString(ldap.distinguishedName)
+    )
+  )
+
+  implicit final val encodeSharedWorkspace: Encoder[UserWorkspace] =
+    (userWorkspace: UserWorkspace) => {
+      Seq(
+        Some(Json.obj("username" -> Json.fromString(userWorkspace.username))),
+        userWorkspace.ldap.map(ldap),
+        userWorkspace.hiveDatabase.map(hive)
+      ).flatten
+        .reduce(_ deepMerge _)
+    }
 
   val route =
     pathPrefix("account") {
@@ -41,7 +71,7 @@ class AccountController(authService: AuthService,
         path("workspace") {
           post {
             authenticateOAuth2Async("heimdali", authService.validateToken) { user =>
-              onSuccess(userProvisionerFactory(user).ask(Request)(Timeout(1 second))) { _ =>
+              onSuccess(accountService.createWorkspace(user.username)) { _ =>
                 complete(StatusCodes.Created)
               }
             }

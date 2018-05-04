@@ -1,93 +1,112 @@
 package com.heimdali.services
 
-import cats.effect.IO
+import java.sql.Connection
+
 import com.typesafe.scalalogging.LazyLogging
-import doobie.implicits._
-import doobie.util.fragment.Fragment
-import doobie.util.transactor.Transactor
 
 import scala.concurrent.{ExecutionContext, Future}
 
 trait HiveService {
-  def createRole(name: String): Future[Option[Int]]
+  def createRole(name: String)(implicit connection: Connection): Future[Option[Boolean]]
 
-  def createDatabase(name: String, location: String): Future[Option[Int]]
+  def createDatabase(name: String, location: String)(implicit connection: Connection): Future[Option[Boolean]]
 
-  def grantGroup(group: String, role: String): Future[Int]
+  def grantGroup(group: String, role: String)(implicit connection: Connection): Future[Boolean]
 
-  def enableAccessToDB(database: String, role: String): Future[Int]
+  def enableAccessToDB(database: String, role: String)(implicit connection: Connection): Future[Boolean]
 
-  def enableAccessToLocation(location: String, role: String): Future[Int]
+  def enableAccessToLocation(location: String, role: String)(implicit connection: Connection): Future[Boolean]
 }
 
-class HiveServiceImpl(hiveTransactor: Transactor[IO])
-                     (implicit executionContext: ExecutionContext)
+class HiveServiceImpl(implicit executionContext: ExecutionContext)
   extends HiveService with LazyLogging {
 
-  private def createIfNotExists(resource: String, name: String, createSql: Fragment): Future[Option[Int]] = Future {
-    try {
-      val query = fr"SHOW " ++ Fragment.const(s"${resource}S")
-      val result = query
-        .query[String]
-        .to[Seq]
-        .transact(hiveTransactor)
-        .unsafeRunSync()
+  def runCommand(sql: String, connection: Connection): Future[Boolean] = Future {
+    logger.info(s"running $sql against hive")
+    val statement = connection.prepareStatement(sql);
+    statement.execute()
+  }
 
-      result match {
-        case existing if existing.contains(name) =>
-          logger.info("{} {} already exists", resource, name)
-          None
-        case _ =>
-          logger.info("creating {}: {}", resource, name)
-          val outcome = createSql
-            .update
-            .run
-            .transact(hiveTransactor)
-            .unsafeRunSync()
-          Some(outcome)
+  def getString(sql: String, connection: Connection): Future[Seq[String]] = Future {
+    logger.info(s"running $sql against hive")
+    val statement = connection.prepareStatement(sql)
+    val resultSet = statement.executeQuery()
+    new Iterator[String] {
+      def hasNext: Boolean = resultSet.next()
+
+      def next(): String = resultSet.getString(1)
+    }.toStream.toSeq
+  }
+
+  override def createRole(name: String)(implicit connection: Connection): Future[Option[Boolean]] = {
+    getString("SHOW ROLES", connection)
+      .map(_.find(_ == name))
+      .flatMap {
+        case Some(_) =>
+          logger.info("{} role already exists", name)
+          Future(None)
+        case None =>
+          logger.info("creating role {}", name)
+          runCommand(s"CREATE ROLE ${name}", connection).map(Some(_))
       }
-    } catch {
-      case exc: Throwable =>
-        logger.error(s"Couldn't create $resource $name")
-        None
-    }
+      .recover {
+        case exc: Throwable =>
+          logger.error("couldn't create role {}", name)
+          logger.error(exc.getMessage, exc)
+          throw exc
+      }
   }
 
-  override def createRole(name: String): Future[Option[Int]] = {
-    logger.info("creating role {}", name)
-    createIfNotExists("ROLE", name, fr"CREATE ROLE " ++ Fragment.const(name))
+  override def createDatabase(name: String, location: String)(implicit connection: Connection): Future[Option[Boolean]] = {
+    getString("SHOW DATABASES", connection)
+      .map(_.find(_ == name))
+      .flatMap {
+        case Some(_) =>
+          logger.info("{} database already exists", name)
+          Future(None)
+        case None =>
+          logger.info("creating database {}", name)
+          runCommand(s"CREATE DATABASE $name LOCATION '$location'", connection).map(Some(_))
+      }
+      .recover {
+        case exc: Throwable =>
+          logger.error("couldn't create role {}", name)
+          logger.error(exc.getMessage, exc)
+          throw exc
+      }
   }
 
-  override def createDatabase(name: String, location: String): Future[Option[Int]] = {
-    logger.info("creating database {} at {}", name, location)
-    createIfNotExists("DATABASE", name, fr"CREATE DATABASE " ++ Fragment.const(name) ++ fr" LOCATION '" ++ Fragment.const(location) ++ fr"'")
-  }
-
-  override def grantGroup(group: String, role: String): Future[Int] = {
+  override def grantGroup(group: String, role: String)(implicit connection: Connection): Future[Boolean] = {
     logger.info("granting {} role to {} group", group, role)
-    (fr"GRANT ROLE " ++ Fragment.const(role) ++ fr" TO GROUP " ++ Fragment.const(group))
-      .update
-      .run
-      .transact(hiveTransactor)
-      .unsafeToFuture()
+    runCommand(s"GRANT ROLE $role TO GROUP $group", connection)
+      .recover {
+        case exc: Throwable =>
+          logger.error("couldn't grant role {} to group {}", role, group)
+          logger.error(exc.getMessage, exc)
+          throw exc
+      }
   }
 
 
-  override def enableAccessToDB(database: String, role: String): Future[Int] = {
+  override def enableAccessToDB(database: String, role: String)(implicit connection: Connection): Future[Boolean] = {
     logger.info("granting all on {} database to {} role", database, role)
-    (fr"GRANT ALL ON DATABASE " ++ Fragment.const(database) ++ fr" TO ROLE " ++ Fragment.const(role) ++ fr" WITH GRANT OPTION")
-      .update
-      .run
-      .transact(hiveTransactor)
-      .unsafeToFuture()
+    runCommand(s"GRANT ALL ON DATABASE $database TO ROLE $role WITH GRANT OPTION", connection)
+      .recover {
+        case exc: Throwable =>
+          logger.error("couldn't enable access for {} to {}", role, database)
+          logger.error(exc.getMessage, exc)
+          throw exc
+      }
   }
 
-  override def enableAccessToLocation(location: String, role: String): Future[Int] = {
+  override def enableAccessToLocation(location: String, role: String)(implicit connection: Connection): Future[Boolean] = {
     logger.info("granting all on {} location to {} role", location, role)
-    (fr"GRANT ALL ON URI '" ++ Fragment.const(location) ++ fr"' TO ROLE " ++ Fragment.const(role) ++ fr" WITH GRANT OPTION")
-      .update
-      .run
-      .transact(hiveTransactor)
-      .unsafeToFuture()
+    runCommand(s"GRANT ALL ON URI '$location' TO ROLE $role WITH GRANT OPTION", connection)
+      .recover {
+        case exc: Throwable =>
+          logger.error("couldn't enable {} access to {}", role, location)
+          logger.error(exc.getMessage, exc)
+          throw exc
+      }
   }
 }

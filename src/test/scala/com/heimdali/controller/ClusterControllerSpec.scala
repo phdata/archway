@@ -3,6 +3,7 @@ package com.heimdali.controller
 import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.model.headers.OAuth2BearerToken
 import akka.http.scaladsl.testkit.ScalatestRouteTest
+import com.google.common.io.Resources
 import com.heimdali.rest.ClusterController
 import com.heimdali.services._
 import com.heimdali.test.fixtures.FakeClusterService
@@ -13,6 +14,7 @@ import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FlatSpec, Matchers}
 
 import scala.concurrent.Future
+import scala.io.Source
 
 class ClusterControllerSpec
   extends FlatSpec
@@ -29,27 +31,7 @@ class ClusterControllerSpec
       "impala" -> HostClusterApp("Impala", "GOOD", "STARTED", "impala.example.com")
     ), CDH("5.11"), "GOOD_HEALTH"))))
 
-    val Right(expected) = parse(
-    """
-      | [{
-      |   "id": "cluster",
-      |   "name": "Odin",
-      |   "status": "GOOD_HEALTH",
-      |   "services": {
-      |     "impala": {
-      |       "state": "STARTED",
-      |       "status": "GOOD",
-      |       "name": "Impala",
-      |       "host": "impala.example.com"
-      |     }
-      |   },
-      |   "distribution": {
-      |     "name": "CDH",
-      |     "version": "5.11"
-      |   }
-      | }]
-    """.stripMargin
-    )
+    val Right(expected) = parse(Source.fromResource("expected/cluster.json").getLines().mkString)
 
     val restApi = new ClusterController(clusterService)
 

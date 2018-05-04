@@ -1,8 +1,7 @@
 package com.heimdali.modules
 
-import cats.effect.IO
-import com.heimdali.repositories.{AccountRepository, AccountRepositoryImpl, WorkspaceRepository, WorkspaceRepositoryImpl}
-import doobie.util.transactor.Transactor
+import com.heimdali.repositories._
+import scalikejdbc.ConnectionPool
 
 trait RepoModule {
   this: ExecutionContextModule
@@ -10,15 +9,26 @@ trait RepoModule {
 
   val metaConfig = configuration.getConfig("db.meta")
 
-  val transactor = Transactor.fromDriverManager[IO](
-    metaConfig.getString("driver"),
+  Class.forName(metaConfig.getString("driver"))
+  ConnectionPool.add('default,
     metaConfig.getString("url"),
     metaConfig.getString("user"),
-    metaConfig.getString("password")
-  )
+    metaConfig.getString("password"))
 
-  val workspaceRepository: WorkspaceRepository = new WorkspaceRepositoryImpl(transactor)
+  val sharedWorkspaceRepository: SharedWorkspaceRepository = new SharedWorkspaceRepositoryImpl
 
-  val accountRepository: AccountRepository = new AccountRepositoryImpl(transactor)
+  val accountRepository: UserWorkspaceRepository = new UserWorkspaceRepositoryImpl
+
+  val complianceRepository: ComplianceRepository = new ComplianceRepositoryImpl
+
+  val governedDatasetRepository: GovernedDatasetRepository = new GovernedDatasetRepositoryImpl()
+
+  val datasetRepository: DatasetRepository = new DatasetRepositoryImpl()
+
+  val ldapRepository: LDAPRepository = new LDAPRepositoryImpl()
+
+  val hiveDatabaseRepository: HiveDatabaseRepository = new HiveDatabaseRepositoryImpl()
+
+  val userWorkspaceRepository: UserWorkspaceRepository = new UserWorkspaceRepositoryImpl()
 
 }

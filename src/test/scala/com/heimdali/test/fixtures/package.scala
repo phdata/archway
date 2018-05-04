@@ -1,46 +1,94 @@
 package com.heimdali.test
 
-import java.time.LocalDateTime
-import java.util.Date
-
-import com.heimdali.models.ViewModel._
+import com.heimdali.models._
+import io.circe.parser._
+import org.joda.time.DateTime
 
 package object fixtures {
 
+  val id = 123L
+  val name = "Sesame"
+  val purpose = "World Peace"
+  val ldapDn: String = s"cn=edh_sw_$systemName,ou=hadoop,dc=example,dc=com"
+  val phiCompliance = false
+  val piiCompliance = false
+  val pciCompliance = false
+  val hdfsLocation: String = s"/data/shared_workspaces/$systemName"
+  val hdfsRequestedSize: Int = 250
+  val actualGB: None.type = None
+  val keytabLocation: Option[String] = None
+  val systemName: String = SharedWorkspace.generateName(name)
+  val maxCores = 4
+  val maxMemoryInGB = 16
+  val poolName: String = "pool"
+  val compliance = Compliance(None, phiCompliance, pciCompliance, piiCompliance)
+  val hive = HiveDatabase(None, "", "", "", 1)
+  val yarn = Yarn(1, poolName, maxCores, maxMemoryInGB)
+  val ldap = LDAPRegistration(None, ldapDn, s"edh_sw_$systemName")
+
   val standardUsername = "john.doe"
 
-  object TestProject {
-    val id = 123L
-    val name = "Sesame"
-    val purpose = "World Peace"
-    val ldapDn: Option[String] = None
-    val phiCompliance = false
-    val piiCompliance = false
-    val pciCompliance = false
-    val compliance = Compliance(phiCompliance, piiCompliance, pciCompliance)
-    val hdfsLocation: Option[String] = None
-    val hdfsRequestedSize: Double = 10.0
-    val actualGB = None
-    val keytabLocation: Option[String] = None
-    val systemName: String = SharedWorkspace.generateName(name)
-    val maxCores = 1
-    val maxMemoryInGB = 1.0
-    val poolName = None
-    val hdfs = HDFSProvision(hdfsLocation, hdfsRequestedSize, None)
-    val yarn = YarnProvision(poolName, maxCores, maxMemoryInGB)
+  val initialSharedWorkspace = SharedWorkspace(
+    Some(id),
+    name,
+    systemName,
+    purpose,
+    new DateTime(),
+    standardUsername,
+    hdfsRequestedSize,
+    maxCores,
+    maxMemoryInGB,
+    None,
+    Some(Compliance(None, phiCompliance, pciCompliance, piiCompliance))
+  )
 
-    def apply(id: Long = TestProject.id,
-              name: String = TestProject.name,
-              purpose: String = TestProject.purpose,
-              ldapDn: Option[String] = TestProject.ldapDn,
-              systemName: String = TestProject.systemName,
-              compliance: Compliance = TestProject.compliance,
-              hdfs: HDFSProvision = TestProject.hdfs,
-              yarn: YarnProvision = TestProject.yarn,
-              keytabLocation: Option[String] = TestProject.keytabLocation,
-              createdDate: LocalDateTime = LocalDateTime.now(),
-              createdBy: String = standardUsername): SharedWorkspace =
-      SharedWorkspace(id, name, purpose, ldapDn, systemName, compliance, hdfs, yarn, keytabLocation, createdDate, createdBy)
-  }
+  val userWorkspace = UserWorkspace(
+    standardUsername
+  )
+
+  val completedUserWorkspace = UserWorkspace(
+    standardUsername,
+    Some(123),
+    Some(LDAPRegistration(Some(123), s"cn=user_$standardUsername,ou=hadoop,dc=example,dc=com", s"user_$standardUsername")),
+    Some(123),
+    Some(HiveDatabase(Some(123), "database", "role", "location", 1))
+  )
+
+  val Right(defaultRequest) = parse(
+    s"""
+       | {
+       |   "name": "$name",
+       |   "purpose": "$purpose",
+       |   "compliance": {
+       |     "pii_data": $piiCompliance,
+       |     "phi_data": $phiCompliance,
+       |     "pci_data": $pciCompliance
+       |   },
+       |   "requested_size_in_gb": $hdfsRequestedSize,
+       |   "requested_cores": $maxCores,
+       |   "requested_memory_in_gb": $maxMemoryInGB
+       | }
+      """.stripMargin)
+
+  val Right(defaultResponse) = parse(
+    s"""
+       |{
+       |  "id" : $id,
+       |  "name" : "$name",
+       |  "purpose" : "$purpose",
+       |  "system_name" : "$systemName",
+       |  "compliance" : {
+       |    "phi_data" : $phiCompliance,
+       |    "pci_data" : $pciCompliance,
+       |    "pii_data" : $piiCompliance
+       |  },
+       |   "requested_size_in_gb": $hdfsRequestedSize,
+       |   "requested_cores": $maxCores,
+       |   "requested_memory_in_gb": $maxMemoryInGB,
+       |  "created" : "20180423T112115.025-0500",
+       |  "created_by" : "$standardUsername"
+       |}
+       """.stripMargin
+  )
 
 }

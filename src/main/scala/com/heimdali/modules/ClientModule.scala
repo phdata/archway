@@ -2,6 +2,7 @@ package com.heimdali.modules
 
 import java.net.URI
 
+import com.heimdali.clients._
 import com.heimdali.services._
 import org.apache.hadoop.fs.FileSystem
 import org.apache.hadoop.hdfs.client.HdfsAdmin

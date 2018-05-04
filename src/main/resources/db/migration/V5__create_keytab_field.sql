@@ -1,1 +1,0 @@
-ALTER TABLE public.projects ADD COLUMN keytab_location TEXT;

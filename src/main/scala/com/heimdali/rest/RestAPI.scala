@@ -15,14 +15,15 @@ class RestAPI(http: HttpExt,
               configuration: Config,
               accountController: AccountController,
               clusterController: ClusterController,
-              workspaceController: WorkspaceController)
+              workspaceController: WorkspaceController,
+              governedDatasetController: GovernedDatasetController)
              (implicit actorSystem: ActorSystem,
               materializer: Materializer,
               executionContext: ExecutionContext) extends LazyLogging {
 
   val route: Route =
     cors() {
-      accountController.route ~ clusterController.route ~ workspaceController.route
+      accountController.route ~ clusterController.route ~ workspaceController.route ~ governedDatasetController.route
     }
 
   val port: Int = configuration.getInt("rest.port")

@@ -5,6 +5,7 @@ import akka.http.scaladsl.model.headers.BasicHttpCredentials
 import akka.http.scaladsl.model.{HttpRequest, HttpResponse, StatusCodes}
 import akka.http.scaladsl.unmarshalling.Unmarshal
 import akka.stream.Materializer
+import com.heimdali.clients.HttpClient
 import com.typesafe.config.Config
 import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport
 import io.circe.Decoder
@@ -27,12 +28,12 @@ object CDHResponses {
 
   case class Services(items: Seq[ServiceInfo])
 
-  case class ServiceInfo(name: String, serviceState: String, entityStatus: String, displayName: String)
+  case class ServiceInfo(name: String, `type`: String, serviceState: String, entityStatus: String, displayName: String)
 
   case class HostInfo(hostId: String, hostname: String)
 
   implicit val decodeServiceInfo: Decoder[ServiceInfo] =
-    Decoder.forProduct4("name", "serviceState", "entityStatus", "displayName")(ServiceInfo.apply)
+    Decoder.forProduct5("name", "type", "serviceState", "entityStatus", "displayName")(ServiceInfo.apply)
 
   implicit val decodeImpalaItem: Decoder[AppRole] =
     Decoder.forProduct3("name", "type", "hostRef")(AppRole.apply)
@@ -75,19 +76,20 @@ class CDHClusterService(http: HttpClient,
     http.request(secureRequest(Get(s"$baseUrl/clusters/$cluster/services")))
       .flatMap(extract[Services])
 
+  //TODO: Fix hard-coded name
   def clusterDetails(url: String, username: String, password: String): Future[Cluster] =
     for (
       details <- clusterDetailsRequest;
       services <- servicesRequest;
-      impala <- impalaRequest("impala");
+      impala <- impalaRequest(services.items.find(_.`type` == "IMPALA").get.name);
       host <- hostRequest(impala.hostname(CDHClusterService.ImpalaDaemonRole).get)
     ) yield Cluster(
       details.name,
       details.displayName,
       services.items.map {
-        case ServiceInfo("impala", state, status, display) =>
-          "impala" -> HostClusterApp(display, status, state, host.hostname)
-        case ServiceInfo(name, state, status, display) =>
+        case ServiceInfo(name, "IMPALA", state, status, display) =>
+          name -> HostClusterApp(display, status, state, host.hostname)
+        case ServiceInfo(name, _, state, status, display) =>
           name -> BasicClusterApp(display, status, state)
       }.toMap,
       CDH(details.fullVersion),
