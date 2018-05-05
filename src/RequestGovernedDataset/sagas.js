@@ -7,7 +7,7 @@ function* submitRequest({request}) {
     console.log(request);
     const token = yield select(s => s.auth.token);
     const {id} = yield call(Api.requestDataset, token, request);
-    yield put(push(`/datasets/${id}`));
+    yield put(push(`/dataset/${id}`));
 }
 
 function* requestGovernedDataset() {
