@@ -10,8 +10,8 @@ function* fetchDetails({payload: {pathname}}) {
         const id = parseInt(matches[1], 10);
         const token = yield select(s => s.auth.token);
         yield fork(workspaceDetails, token, id);
-        // const members = yield call(Api.workspaceMemberList, token, id);
-        // yield put(workspaceMemberList(members));
+        const members = yield call(Api.workspaceMemberList, token, id);
+        yield put(workspaceMemberList(members));
     }
 }
 
