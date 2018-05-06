@@ -7,9 +7,11 @@ import {requestWorkspace} from './actions';
 import Spinner from "../Common/Spinner";
 import WorkspaceHeader from "../Common/WorkspaceHeader";
 
-const UserWorkspace = ({userWorkspace: {requesting, workspace}, cluster, requestWorkspace}) => {
+const UserWorkspace = ({userWorkspace: {loading, requesting, workspace}, cluster, requestWorkspace}) => {
     let workspaceContent = <div/>;
-    if (workspace)
+    if (loading)
+        workspaceContent = <Spinner />;
+    else if (workspace)
         workspaceContent = <UserWorkspaceDisplay workspace={workspace} cluster={cluster}/>;
     else if (requesting)
         workspaceContent = (

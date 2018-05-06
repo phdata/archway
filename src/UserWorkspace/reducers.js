@@ -14,6 +14,7 @@ function userWorkspace(state = initialState, action ) {
         case WORKSPACE_AVAILABLE:
             return {
                 ...state,
+                loading: false,
                 requesting: false,
                 workspace: action.workspace
             };

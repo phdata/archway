@@ -42,8 +42,8 @@
 }
 
 .SharedWorkspaceDetails-details-right {
-    flex: 3;
     display: flex;
     flex-direction: column;
-    height: 150px;
+    max-width: 300px;
+    margin: 0 35px;
 }

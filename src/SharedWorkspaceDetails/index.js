@@ -7,24 +7,24 @@ import DatabaseDisplay from "../Common/DatabaseDisplay";
 import WorkspaceMemberList from "./WorkspaceMemberList";
 
 const SharedWorkspaceDetails = ({workspaceDetails: {workspace, members}, cluster}) => {
-    if (!workspace || !workspace.data)
+    if (!workspace || !workspace.ldap)
         return <Spinner>Loading Details...</Spinner>;
     else {
         const {name, purpose} = workspace;
         return (
             <div className="SharedWorkspaceDetails">
                 <div className="SharedWorkspaceDetails-header">
-                <h1>{name}</h1>
-                <Compliance workspace={workspace}/>
+                    <h1>{name}</h1>
+                    <Compliance workspace={workspace}/>
                 </div>
                 <h5>{purpose}</h5>
                 <div className="SharedWorkspaceDetails-details">
                     <div className="SharedWorkspaceDetails-details-left">
-                    <DatabaseDisplay database={workspace.data}
-                                     cluster={cluster}/>
+                        <DatabaseDisplay database={workspace.data}
+                                         cluster={cluster}/>
                     </div>
                     <div className="SharedWorkspaceDetails-details-right">
-                    <WorkspaceMemberList members={members} />
+                        <WorkspaceMemberList members={members}/>
                     </div>
                 </div>
             </div>

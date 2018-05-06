@@ -45,7 +45,7 @@ const DatabaseDisplay = ({database, cluster}) => {
         );
     }
     else {
-        return <Spinner>Setting things up, please wait...</Spinner>
+        return <Spinner>Provisioning your workspace...</Spinner>
     }
 };
 

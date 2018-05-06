@@ -103,7 +103,8 @@ export function datasetDetails(token, id) {
     return fetch(BASE_URL + "/datasets/" + id, {
         method: "GET",
         headers: {
-            Accept: 'application/json'
+            Accept: 'application/json',
+            "Authorization": "Bearer " + token
         }
     }).then(response => response.json());
 }

@@ -1,7 +1,5 @@
-
 .MemberList {
     display: flex;
-    flex: 3;
     flex-direction: column;
     background: white;
     border: solid black 1px;
@@ -10,8 +8,6 @@
     align-content: left;
     justify-content: space-evenly;
     padding: 25px;
-    height: 100px;
-    width: 400px;
 }
 
 .MemberList > h2 {
