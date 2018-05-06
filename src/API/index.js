@@ -9,7 +9,7 @@ export function login(username, password) {
 }
 
 export function logout() {
-
+    window.localStorage.clear();
 }
 
 export function workspace(token, prefer = 404) {

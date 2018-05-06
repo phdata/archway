@@ -1,8 +1,7 @@
 .ClusterInfo {
     display: flex;
     align-items: center;
-    margin-right: 15px;
-    font-size: 20px;
+    font-size: 16px;
     font-family: "Playfair Display";
 }
 
@@ -11,7 +10,7 @@
     border-radius: 50%;
     height: 15px;
     width: 15px;
-    margin-right: 7px;
+    margin-left: 7px;
 }
 
 .ClusterInfo-status-unknown {

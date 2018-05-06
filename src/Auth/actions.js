@@ -28,7 +28,11 @@ export const LOGOUT_REQUEST = 'LOGOUT_REQUEST';
 export const LOGOUT_SUCCESS = 'LOGOUT_SUCCESS';
 export const LOGOUT_FAILURE = 'LOGOUT_FAILURE';
 
-
+export function requestLogout() {
+    return {
+        type: LOGOUT_REQUEST
+    };
+}
 
 export const TOKEN_EXTRACTED = 'TOKEN_EXTRACTED';
 export const TOKEN_NOT_AVAILABLE = 'TOKEN_NOT_AVAILABLE';

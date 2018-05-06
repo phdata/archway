@@ -1,8 +1,19 @@
 .Profile {
-    border-radius: 50%;
-    font-size: 28px;
-    color: black;
+    display: flex;
+    flex-direction: row;
+    color: white;
     padding: 7px;
-    background-color: white;
     font-weight: 200;
+    font-size: 28px;
+    font-family: "Playfair Display";
+}
+
+.Profile-logout a {
+    color: white;
+    font-size: 14px;
+    margin-left: 5px;
+    font-family: "Roboto";
+    font-weight: 200;
+    text-decoration: none;
+    text-transform: uppercase;
 }

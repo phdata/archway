@@ -3,6 +3,8 @@ import {fork, take, call, put, all, cancel} from "redux-saga/effects";
 import * as Api from "../API";
 import * as actions from "./actions";
 import {LOGIN_FAILURE} from "./actions";
+import {LOGOUT_REQUEST} from "./actions";
+import {push} from "react-router-redux";
 
 function* authorize(username, password) {
     try {
@@ -30,10 +32,11 @@ function* loginFlow() {
             const {username, password} = yield take(actions.LOGIN_REQUEST);
             task = yield fork(authorize, username, password);
         }
-        const action = yield take(['LOGOUT', 'LOGIN_FAILURE'])
-        if (action.type === 'LOGOUT' && task)
-            yield cancel(task)
+        const action = yield take(['LOGOUT_REQUEST', 'LOGIN_FAILURE'])
+        if (action.type === 'LOGOUT_REQUEST' && task)
+            yield cancel(task);
         yield call(Api.logout);
+        yield put(push("/personal"));
     }
 }
 
