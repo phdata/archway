@@ -43,7 +43,7 @@ extends Workspace {
 object SharedWorkspace extends SQLSyntaxSupport[SharedWorkspace] {
 
 
-  override def tableName: String = "shared_workspaces"
+  override def tableName: String = "shared_workspace"
 
   def apply(g: ResultName[SharedWorkspace],
             ldapName: ResultName[LDAPRegistration],

@@ -30,7 +30,7 @@ case class UserWorkspace(username: String,
 
 object UserWorkspace extends SQLSyntaxSupport[UserWorkspace] {
 
-  override def tableName: String = "users"
+  override def tableName: String = "user_workspace"
 
   def apply(userWorkspaceName: ResultName[UserWorkspace],
             ldapName: ResultName[LDAPRegistration],

@@ -92,7 +92,6 @@ class WorkspaceController(authService: AuthService,
             }
         } ~
           path(LongNumber) { id =>
-            println(id)
             onSuccess(workspaceService.find(id)) {
               case Some(workspace) =>
                 complete(workspace)

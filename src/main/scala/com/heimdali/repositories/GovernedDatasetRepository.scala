@@ -8,5 +8,7 @@ trait GovernedDatasetRepository {
   def find(names: Seq[String]): Future[Seq[GovernedDataset]]
 
   def create(governedDataset: GovernedDataset): Future[GovernedDataset]
+
+  def get(id: Long): Future[Option[GovernedDataset]]
 }
 

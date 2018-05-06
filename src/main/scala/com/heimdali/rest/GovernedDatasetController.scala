@@ -70,24 +70,35 @@ class GovernedDatasetController(authService: AuthService,
     }
 
   val route =
-    path("datasets") {
+    pathPrefix("datasets") {
       authenticateOAuth2Async("heimdali", authService.validateToken) { user =>
-        post {
-          entity(as[GovernedDataset]) { dataset =>
-            onComplete(datasetService.create(dataset.copy(createdBy = Some(user.username)))) {
-              case Success(newDataset: GovernedDataset) =>
-                complete(StatusCodes.Created -> newDataset)
-              case Failure(exception) =>
-                complete(StatusCodes.BadRequest -> exception.getMessage)
+        pathEnd {
+          post {
+            entity(as[GovernedDataset]) { dataset =>
+              onComplete(datasetService.create(dataset.copy(createdBy = Some(user.username)))) {
+                case Success(newDataset: GovernedDataset) =>
+                  complete(StatusCodes.Created -> newDataset)
+                case Failure(exception) =>
+                  complete(StatusCodes.BadRequest -> exception.getMessage)
+              }
+            }
+          } ~
+            get {
+              onComplete(datasetService.find(user.username)) {
+                case Success(datasets) =>
+                  complete(StatusCodes.OK -> datasets)
+              }
+            }
+        } ~
+          path(LongNumber) { id =>
+            onComplete(datasetService.get(id)) {
+              case Success(dataset) =>
+                println(dataset)
+                complete(StatusCodes.OK -> dataset)
+              case _ =>
+                complete(StatusCodes.NotFound)
             }
           }
-        } ~
-        get {
-          onComplete(datasetService.find(user.username)) {
-            case Success(datasets) =>
-              complete(StatusCodes.OK -> datasets)
-          }
-        }
       }
     }
 }

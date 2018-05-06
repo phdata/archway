@@ -20,6 +20,8 @@ trait GovernedDatasetService {
 
   def find(username: String): Future[Seq[GovernedDataset]]
 
+  def get(id: Long): Future[Option[GovernedDataset]]
+
 }
 
 
@@ -61,4 +63,8 @@ class GovernedDatasetServiceImpl(governedDatasetRepository: GovernedDatasetRepos
       dataset <- governedDatasetRepository.create(readyDataset)
       _ <- Future.traverse(Seq(raw, staging, modeled))(ds => Future(provisionFactory(ds) ! Start))
     } yield dataset
+
+  //TODO: Add testing around all single item gets
+  override def get(id: Long): Future[Option[GovernedDataset]] =
+    governedDatasetRepository.get(id)
 }

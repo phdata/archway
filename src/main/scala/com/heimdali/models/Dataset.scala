@@ -33,7 +33,7 @@ case class Dataset(id: Option[Long] = None,
 
 object Dataset extends SQLSyntaxSupport[Dataset] {
 
-  override def tableName: String = "datasets"
+  override def tableName: String = "dataset"
 
   def apply(g: ResultName[Dataset],
             ldapName: ResultName[LDAPRegistration],

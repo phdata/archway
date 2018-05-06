@@ -23,7 +23,7 @@ case class GovernedDataset(id: Option[Long] = None,
 
 object GovernedDataset extends SQLSyntaxSupport[GovernedDataset] {
 
-  override def tableName: String = "governed_datasets"
+  override def tableName: String = "governed_dataset"
 
   def apply(g: ResultName[GovernedDataset],
             complianceName: ResultName[Compliance],

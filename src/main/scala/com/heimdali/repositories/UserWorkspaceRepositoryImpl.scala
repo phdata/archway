@@ -6,9 +6,7 @@ import scalikejdbc._
 import scala.concurrent.{ExecutionContext, Future}
 
 class UserWorkspaceRepositoryImpl(implicit executionContext: ExecutionContext)
-  extends UserWorkspaceRepository with SQLSyntaxSupport[UserWorkspace] {
-
-  override val tableName: String = "users"
+  extends UserWorkspaceRepository {
 
   def baseSql(insidePart: (QuerySQLSyntaxProvider[_, _], QuerySQLSyntaxProvider[_, _], QuerySQLSyntaxProvider[_, _], QuerySQLSyntaxProvider[_, _]) => (ConditionSQLBuilder[_] => ConditionSQLBuilder[_]))(implicit session: DBSession): SQL[UserWorkspace, HasExtractor] = {
     val uw = UserWorkspace.syntax
