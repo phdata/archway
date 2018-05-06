@@ -119,4 +119,29 @@ class SharedWorkspaceControllerSpec
       stripCreated(responseAs[Json].hcursor.downArray.focus.get) should be(stripCreated(defaultResponse))
     }
   }
+
+  it should "list all members" in {
+    val factory = mockFunction[SharedWorkspace, ActorRef]
+
+    val workspaceService = mock[WorkspaceService]
+    (workspaceService.members _).expects(123).returning(Future(Seq(WorkspaceMember("johndoe", "John Doe"))))
+    val authService = mock[AuthService]
+    (authService.validateToken _).expects(*).returning(Future(Some(User("", standardUsername))))
+    val restApi = new WorkspaceController(authService, workspaceService)
+    val Right(json) = parse(
+      """
+        | [
+        |   {
+        |     "username": "johndoe",
+        |     "name": "John Doe"
+        |   }
+        | ]
+      """.stripMargin)
+
+    Get("/workspaces/123/members") ~> addCredentials(OAuth2BearerToken("AbCdEf123456")) ~> restApi.route ~> check {
+      status should be(StatusCodes.OK)
+
+      responseAs[Json] should be(json)
+    }
+  }
 }

@@ -2,7 +2,7 @@ package com.heimdali.services
 
 import akka.actor.{ActorRef, ActorSystem}
 import com.heimdali.clients.{LDAPClient, LDAPUser}
-import com.heimdali.models.SharedWorkspace
+import com.heimdali.models.{SharedWorkspace, WorkspaceMember}
 import com.heimdali.provisioning.WorkspaceProvisioner.Start
 import com.heimdali.repositories.{ComplianceRepository, SharedWorkspaceRepository}
 import com.typesafe.scalalogging.LazyLogging
@@ -10,6 +10,8 @@ import com.typesafe.scalalogging.LazyLogging
 import scala.concurrent.{ExecutionContext, Future}
 
 trait WorkspaceService {
+  def members(id: Long): Future[Seq[WorkspaceMember]]
+
   def find(id: Long): Future[Option[SharedWorkspace]]
 
   def list(username: String): Future[Seq[SharedWorkspace]]
@@ -54,4 +56,10 @@ class WorkspaceServiceImpl(ldapClient: LDAPClient,
       created <- workspaceRepository.create(sharedWorkspace.copy(complianceId = compliance.id))
       _ <- Future(workspaceFactory(created) ! Start)
     } yield created
+
+  override def members(id: Long): Future[Seq[WorkspaceMember]] =
+    for {
+      workspace <- workspaceRepository.find(id)
+      members <- ldapClient.groupMembers(workspace.get.ldap.get.distinguishedName)
+    } yield members.map(m => WorkspaceMember(m.username, m.name))
 }

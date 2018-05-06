@@ -91,12 +91,19 @@ class WorkspaceController(authService: AuthService,
               }
             }
         } ~
-          path(LongNumber) { id =>
-            onSuccess(workspaceService.find(id)) {
-              case Some(workspace) =>
-                complete(workspace)
-              case _ =>
-                complete(StatusCodes.NotFound)
+          pathPrefix(LongNumber) { id =>
+            pathEnd {
+              onSuccess(workspaceService.find(id)) {
+                case Some(workspace) =>
+                  complete(workspace)
+                case _ =>
+                  complete(StatusCodes.NotFound)
+              }
+            } ~
+            path("members") {
+              onSuccess(workspaceService.members(id)) { members =>
+                  complete(members)
+              }
             }
           }
       }

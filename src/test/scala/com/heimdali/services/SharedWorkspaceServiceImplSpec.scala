@@ -6,7 +6,7 @@ import akka.actor.{ActorRef, ActorSystem, Props}
 import akka.testkit.TestActor.Message
 import akka.testkit.{TestActor, TestActorRef, TestProbe}
 import com.heimdali.clients.{LDAPClient, LDAPUser}
-import com.heimdali.models.SharedWorkspace
+import com.heimdali.models.{LDAPRegistration, SharedWorkspace, WorkspaceMember}
 import com.heimdali.repositories.{ComplianceRepository, SharedWorkspaceRepository}
 import com.heimdali.test.fixtures._
 import org.scalamock.scalatest.MockFactory
@@ -97,6 +97,20 @@ class SharedWorkspaceServiceImplSpec extends FlatSpec with Matchers with MockFac
     val foundWorkspace = Await.result(projectServiceImpl.find(id), Duration.Inf)
 
     foundWorkspace shouldBe defined
+  }
+
+  it should "list members" in {
+    val ldapClient = mock[LDAPClient]
+    ldapClient.groupMembers _ expects ldapDn returning Future(Seq(LDAPUser("John Doe", "johndoe", Seq.empty)))
+    val complianceRepository = mock[ComplianceRepository]
+    val factory = mockFunction[SharedWorkspace, ActorRef]
+    val workspaceRepo = mock[SharedWorkspaceRepository]
+    workspaceRepo.find _ expects id returning Future(Some(initialSharedWorkspace.copy(ldap = Some(ldap))))
+
+    val projectServiceImpl = new WorkspaceServiceImpl(ldapClient, workspaceRepo, complianceRepository, factory)
+    val members = Await.result(projectServiceImpl.members(id), Duration.Inf)
+
+    members shouldBe Seq(WorkspaceMember("johndoe", "John Doe"))
   }
 
   implicit val system: ActorSystem = ActorSystem()

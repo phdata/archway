@@ -19,6 +19,8 @@ trait LDAPClient {
   def createGroup(groupName: String): Future[String]
 
   def addUser(group: String, username: String): Future[String]
+
+  def groupMembers(groupDN: String): Future[Seq[LDAPUser]]
 }
 
 abstract class LDAPClientImpl(configuration: Config)
@@ -128,4 +130,8 @@ abstract class LDAPClientImpl(configuration: Config)
     }
   }
 
+  override def groupMembers(groupDN: String): Future[Seq[LDAPUser]] = Future {
+    val searchResult = adminConnectionPool.search(baseDN, SearchScope.SUB, s"(&(objectClass=user)(memberOf=$groupDN))")
+    searchResult.getSearchEntries.asScala.map(ldapUser)
+  }
 }

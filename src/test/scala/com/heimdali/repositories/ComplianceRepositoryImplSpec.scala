@@ -9,7 +9,7 @@ class ComplianceRepositoryImplSpec extends AsyncFlatSpec with Matchers with DBTe
 
   behavior of "ComplianceRepositoryImplSpec"
 
-  it should "create" in {
+  ignore should "create" in {
 
     val complianceRepository = new ComplianceRepositoryImpl
 
