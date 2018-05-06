@@ -89,6 +89,7 @@ abstract class LDAPClientImpl(configuration: Config)
         s"dn: $dn",
         s"objectClass: $groupObjectClass",
         "objectClass: top",
+        s"sAMAccountName: $groupName",
         s"cn: $groupName"
       )
       dn
