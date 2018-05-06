@@ -1,5 +1,9 @@
 src/main/resources/*-site.xml
+src/main/resources/log4j.xml
 **/target
 .idea
 .ensime*
 build
+**/.DS_Store
+Heimdali.mwb.bak
+src/main/resources/krb5.conf

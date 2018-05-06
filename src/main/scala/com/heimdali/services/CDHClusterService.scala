@@ -76,21 +76,20 @@ class CDHClusterService(http: HttpClient,
     http.request(secureRequest(Get(s"$baseUrl/clusters/$cluster/services")))
       .flatMap(extract[Services])
 
-  //TODO: Fix hard-coded name
   def clusterDetails(url: String, username: String, password: String): Future[Cluster] =
     for (
       details <- clusterDetailsRequest;
       services <- servicesRequest;
-      impala <- impalaRequest(services.items.find(_.`type` == "IMPALA").get.name);
+      impala <- impalaRequest(services.items.find(_.`type` == CDHClusterService.IMPALA_SERVICE_TYPE).get.name);
       host <- hostRequest(impala.hostname(CDHClusterService.ImpalaDaemonRole).get)
     ) yield Cluster(
       details.name,
       details.displayName,
       services.items.map {
-        case ServiceInfo(name, "IMPALA", state, status, display) =>
-          name -> HostClusterApp(display, status, state, host.hostname)
-        case ServiceInfo(name, _, state, status, display) =>
-          name -> BasicClusterApp(display, status, state)
+        case ServiceInfo(_, CDHClusterService.IMPALA_SERVICE_TYPE, state, status, display) =>
+          CDHClusterService.IMPALA_SERVICE_TYPE -> HostClusterApp(display, status, state, host.hostname)
+        case ServiceInfo(_, serviceType, state, status, display) =>
+          serviceType -> BasicClusterApp(display, status, state)
       }.toMap,
       CDH(details.fullVersion),
       details.status
@@ -109,4 +108,5 @@ class CDHClusterService(http: HttpClient,
 
 object CDHClusterService {
   val ImpalaDaemonRole: String = "IMPALAD"
+  val IMPALA_SERVICE_TYPE = "IMPALA"
 }

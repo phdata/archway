@@ -3,7 +3,7 @@
   "name": "Odin",
   "status": "GOOD_HEALTH",
   "services": {
-    "impala": {
+    "IMPALA": {
       "state": "STARTED",
       "status": "GOOD",
       "name": "Impala",
