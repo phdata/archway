@@ -1,4 +1,4 @@
-import {SHARED_WORKSPACE_DETAILS, WORKSPACE_MEMBER_LIST} from "./actions";
+import {SHARED_WORKSPACE_DETAILS, WORKSPACE_MEMBER_LIST, WORKSPACE_MEMBER_REQUESTED} from "./actions";
 
 const initialState = {
     workspace: false,
@@ -16,6 +16,11 @@ function sharedWorkspaceDetails(state = initialState, action) {
             return {
                 ...state,
                 members: action.members
+            };
+        case WORKSPACE_MEMBER_REQUESTED:
+            return {
+                ...state,
+                username: action.username
             };
 
 

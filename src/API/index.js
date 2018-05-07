@@ -108,3 +108,17 @@ export function datasetDetails(token, id) {
         }
     }).then(response => response.json());
 }
+
+export function workspaceNewMember(username, token, id) {
+    return fetch(`${BASE_URL}/workspaces/${id}/members`, {
+        method: "POST",
+        body: JSON.stringify({
+            username
+        }),
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            "Authorization": "Bearer " + token
+        }
+    }).then(response => response.json());
+}

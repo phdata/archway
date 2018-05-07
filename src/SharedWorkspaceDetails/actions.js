@@ -15,3 +15,12 @@ export function workspaceMemberList(members) {
         members
     }
 }
+
+export const WORKSPACE_MEMBER_REQUESTED = "WORKSPACE_MEMBER_REQUESTED";
+
+export function requestNewMember({username}) {
+    return {
+        type: WORKSPACE_MEMBER_REQUESTED,
+        username
+    }
+}

@@ -1,12 +1,13 @@
 import React from "react";
 import {connect} from "react-redux";
 import Spinner from "../Common/Spinner";
-import "./SharedWorkspaceDetails.css"
 import Compliance from "./Compliance";
 import DatabaseDisplay from "../Common/DatabaseDisplay";
 import WorkspaceMemberList from "./WorkspaceMemberList";
+import {requestNewMember} from "./actions";
+import "./SharedWorkspaceDetails.css"
 
-const SharedWorkspaceDetails = ({workspaceDetails: {workspace, members}, cluster}) => {
+const SharedWorkspaceDetails = ({workspaceDetails: {workspace, members}, cluster, requestNewMember}) => {
     if (!workspace || !workspace.ldap)
         return <Spinner>Loading Details...</Spinner>;
     else {
@@ -24,7 +25,7 @@ const SharedWorkspaceDetails = ({workspaceDetails: {workspace, members}, cluster
                                          cluster={cluster}/>
                     </div>
                     <div className="SharedWorkspaceDetails-details-right">
-                        <WorkspaceMemberList members={members}/>
+                        <WorkspaceMemberList members={members} onAdd={requestNewMember} />
                     </div>
                 </div>
             </div>
@@ -34,5 +35,5 @@ const SharedWorkspaceDetails = ({workspaceDetails: {workspace, members}, cluster
 
 export default connect(
     state => state,
-    {}
+    {requestNewMember}
 )(SharedWorkspaceDetails);

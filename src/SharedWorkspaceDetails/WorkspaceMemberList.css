@@ -16,3 +16,28 @@
     padding-bottom: 15px;
     margin-top: 0;
 }
+
+.MemberList-item {
+    padding: 10px 0;
+    font-family: Roboto;
+}
+
+.MemberList-item-add {
+    display: flex;
+    flex: 1;
+    flex-direction: row;
+    align-items: center;
+}
+
+.MemberList-item-add input {
+    min-width: auto;
+    text-align: left;
+    font-size: unset;
+    padding: 5px 10px;
+}
+
+.MemberList-item-add > .fa {
+    color: #0b7a75;
+    margin-right: 5px;
+    font-size: 20px;
+}
