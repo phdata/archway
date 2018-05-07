@@ -17,6 +17,8 @@ trait WorkspaceService {
   def list(username: String): Future[Seq[SharedWorkspace]]
 
   def create(sharedWorkspace: SharedWorkspace): Future[SharedWorkspace]
+
+  def addMember(id: Long, username: String): Future[WorkspaceMember]
 }
 
 class WorkspaceServiceImpl(ldapClient: LDAPClient,
@@ -62,4 +64,11 @@ class WorkspaceServiceImpl(ldapClient: LDAPClient,
       workspace <- workspaceRepository.find(id)
       members <- ldapClient.groupMembers(workspace.get.ldap.get.distinguishedName)
     } yield members.map(m => WorkspaceMember(m.username, m.name))
+
+  override def addMember(id: Long, username: String): Future[WorkspaceMember] = {
+    for {
+      workspace <- workspaceRepository.find(id)
+      member <- ldapClient.addUser(workspace.get.ldap.get.commonName, username)
+    } yield WorkspaceMember(member.username, member.name)
+  }
 }

@@ -18,7 +18,7 @@ trait LDAPClient {
 
   def createGroup(groupName: String): Future[String]
 
-  def addUser(group: String, username: String): Future[String]
+  def addUser(group: String, username: String): Future[LDAPUser]
 
   def groupMembers(groupDN: String): Future[Seq[LDAPUser]]
 }
@@ -106,7 +106,7 @@ abstract class LDAPClientImpl(configuration: Config)
     }
   }
 
-  override def addUser(groupName: String, username: String): Future[String] = Future {
+  override def addUser(groupName: String, username: String): Future[LDAPUser] = Future {
     try {
       val Some(user) = getUserEntry(username)
 
@@ -122,7 +122,7 @@ abstract class LDAPClientImpl(configuration: Config)
         adminConnectionPool.modify(dn, new Modification(ModificationType.ADD, "member", user.getDN))
       }
 
-      dn
+      ldapUser(user)
     } catch {
       case exc: Throwable =>
         logger.error("couldn't add user", exc)

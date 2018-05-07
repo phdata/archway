@@ -3,7 +3,7 @@ package com.heimdali.rest
 import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.Directives._
 import akka.util.Timeout
-import com.heimdali.models.{Compliance, HiveDatabase, LDAPRegistration, SharedWorkspace}
+import com.heimdali.models._
 import com.heimdali.services.WorkspaceService
 import de.heikoseeberger.akkahttpcirce.ErrorAccumulatingCirceSupport
 import io.circe._
@@ -100,9 +100,20 @@ class WorkspaceController(authService: AuthService,
                   complete(StatusCodes.NotFound)
               }
             } ~
-            path("members") {
-              onSuccess(workspaceService.members(id)) { members =>
-                  complete(members)
+            pathPrefix("members") {
+              pathEnd {
+                get {
+                  onSuccess(workspaceService.members(id)) { members =>
+                    complete(members)
+                  }
+                } ~
+                post {
+                  entity(as[MemberRequest]) { request =>
+                    onSuccess(workspaceService.addMember(id, request.username)) { member =>
+                      complete(member)
+                    }
+                  }
+                }
               }
             }
           }
