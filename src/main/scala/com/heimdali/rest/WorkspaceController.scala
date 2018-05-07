@@ -100,22 +100,29 @@ class WorkspaceController(authService: AuthService,
                   complete(StatusCodes.NotFound)
               }
             } ~
-            pathPrefix("members") {
-              pathEnd {
-                get {
-                  onSuccess(workspaceService.members(id)) { members =>
-                    complete(members)
-                  }
+              pathPrefix("members") {
+                pathEnd {
+                  get {
+                    onSuccess(workspaceService.members(id)) { members =>
+                      complete(members)
+                    }
+                  } ~
+                    post {
+                      entity(as[MemberRequest]) { request =>
+                        onSuccess(workspaceService.addMember(id, request.username)) { member =>
+                          complete(member)
+                        }
+                      }
+                    }
                 } ~
-                post {
-                  entity(as[MemberRequest]) { request =>
-                    onSuccess(workspaceService.addMember(id, request.username)) { member =>
-                      complete(member)
+                  path(Remaining) { username =>
+                    delete {
+                      onSuccess(workspaceService.removeMember(id, username)) { member =>
+                        complete(member)
+                      }
                     }
                   }
-                }
               }
-            }
           }
       }
     }

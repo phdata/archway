@@ -1,11 +1,15 @@
 package com.heimdali.rest
 
+import java.util
+
 import akka.actor.ActorSystem
 import akka.http.scaladsl.HttpExt
+import akka.http.scaladsl.model.HttpMethods._
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import akka.stream.Materializer
 import ch.megard.akka.http.cors.scaladsl.CorsDirectives._
+import ch.megard.akka.http.cors.scaladsl.settings.CorsSettings
 import com.typesafe.config.Config
 import com.typesafe.scalalogging.LazyLogging
 
@@ -20,9 +24,11 @@ class RestAPI(http: HttpExt,
              (implicit actorSystem: ActorSystem,
               materializer: Materializer,
               executionContext: ExecutionContext) extends LazyLogging {
+  val settings: CorsSettings =
+    CorsSettings.defaultSettings.withAllowedMethods(util.Arrays.asList(DELETE, POST, HEAD, OPTIONS))
 
   val route: Route =
-    cors() {
+    cors(settings) {
       accountController.route ~ clusterController.route ~ workspaceController.route ~ governedDatasetController.route
     }
 

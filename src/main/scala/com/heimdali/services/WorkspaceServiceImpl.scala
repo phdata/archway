@@ -1,6 +1,7 @@
 package com.heimdali.services
 
 import akka.actor.{ActorRef, ActorSystem}
+import akka.http.scaladsl.server.directives.OnSuccessMagnet
 import com.heimdali.clients.{LDAPClient, LDAPUser}
 import com.heimdali.models.{SharedWorkspace, WorkspaceMember}
 import com.heimdali.provisioning.WorkspaceProvisioner.Start
@@ -19,6 +20,8 @@ trait WorkspaceService {
   def create(sharedWorkspace: SharedWorkspace): Future[SharedWorkspace]
 
   def addMember(id: Long, username: String): Future[WorkspaceMember]
+
+  def removeMember(id: Long, username: String): Future[WorkspaceMember]
 }
 
 class WorkspaceServiceImpl(ldapClient: LDAPClient,
@@ -65,10 +68,15 @@ class WorkspaceServiceImpl(ldapClient: LDAPClient,
       members <- ldapClient.groupMembers(workspace.get.ldap.get.distinguishedName)
     } yield members.map(m => WorkspaceMember(m.username, m.name))
 
-  override def addMember(id: Long, username: String): Future[WorkspaceMember] = {
+  override def addMember(id: Long, username: String): Future[WorkspaceMember] =
     for {
       workspace <- workspaceRepository.find(id)
       member <- ldapClient.addUser(workspace.get.ldap.get.commonName, username)
     } yield WorkspaceMember(member.username, member.name)
-  }
+
+  override def removeMember(id: Long, username: String): Future[WorkspaceMember] =
+    for {
+      workspace <- workspaceRepository.find(id)
+      member <- ldapClient.removeUser(workspace.get.ldap.get.commonName, username)
+    } yield WorkspaceMember(member.username, member.name)
 }

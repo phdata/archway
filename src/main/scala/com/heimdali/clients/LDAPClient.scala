@@ -18,7 +18,9 @@ trait LDAPClient {
 
   def createGroup(groupName: String): Future[String]
 
-  def addUser(group: String, username: String): Future[LDAPUser]
+  def addUser(groupName: String, username: String): Future[LDAPUser]
+
+  def removeUser(groupName: String, username: String): Future[LDAPUser]
 
   def groupMembers(groupDN: String): Future[Seq[LDAPUser]]
 }
@@ -133,5 +135,29 @@ abstract class LDAPClientImpl(configuration: Config)
   override def groupMembers(groupDN: String): Future[Seq[LDAPUser]] = Future {
     val searchResult = adminConnectionPool.search(baseDN, SearchScope.SUB, s"(&(objectClass=user)(memberOf=$groupDN))")
     searchResult.getSearchEntries.asScala.map(ldapUser)
+  }
+
+  override def removeUser(groupName: String, username: String): Future[LDAPUser] = Future {
+    try {
+      val Some(user) = getUserEntry(username)
+
+      val dn = groupDN(groupName)
+      val groupEntry = Option(adminConnectionPool.getEntry(dn))
+
+      if (groupEntry.isDefined &&
+        groupEntry.get.hasAttribute("member") &&
+        groupEntry.get.getAttributeValues("member").contains(user.getDN)) {
+        logger.info("removing {} from group {}", user, groupName)
+        adminConnectionPool.modify(dn, new Modification(ModificationType.DELETE, "member", user.getDN))
+      } else {
+        logger.info("{} is not a member of {}", username, groupName)
+      }
+
+      ldapUser(user)
+    } catch {
+      case exc: Throwable =>
+        logger.error("couldn't remove user", exc)
+        throw exc
+    }
   }
 }
