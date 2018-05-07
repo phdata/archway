@@ -122,3 +122,14 @@ export function workspaceNewMember(username, token, id) {
         }
     }).then(response => response.json());
 }
+
+export function removeWorkspaceMember(username, token, id) {
+    return fetch(`${BASE_URL}/workspaces/${id}/members/${username}`, {
+        method: "DELETE",
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            "Authorization": "Bearer " + token
+        }
+    }).then(response => response.json());
+}

@@ -17,11 +17,6 @@ function sharedWorkspaceDetails(state = initialState, action) {
                 ...state,
                 members: action.members
             };
-        case WORKSPACE_MEMBER_REQUESTED:
-            return {
-                ...state,
-                username: action.username
-            };
 
 
         default:

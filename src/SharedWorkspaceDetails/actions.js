@@ -24,3 +24,13 @@ export function requestNewMember({username}) {
         username
     }
 }
+
+export const WORKSPACE_MEMBER_REMOVE = "WORKSPACE_MEMBER_REMOVE";
+
+export function removeMember(id, username) {
+    return {
+        type: WORKSPACE_MEMBER_REMOVE,
+        id,
+        username
+    }
+}

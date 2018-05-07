@@ -1,5 +1,5 @@
 import {all, call, fork, put, select, takeLatest} from "redux-saga/effects";
-import {sharedWorkspaceDetails, workspaceMemberList} from "./actions";
+import {sharedWorkspaceDetails, WORKSPACE_MEMBER_REMOVE, workspaceMemberList} from "./actions";
 import {LOCATION_CHANGE} from "react-router-redux";
 import {WORKSPACE_MEMBER_REQUESTED} from "./actions";
 import * as Api from "../API";
@@ -45,13 +45,25 @@ function* requestMember({username}) {
     yield fork(fetchMembers, token, id);
 }
 
-function* newMemberRequeste() {
+function* newMemberRequested() {
     yield takeLatest(WORKSPACE_MEMBER_REQUESTED, requestMember);
+}
+
+function* requestMemberRemoved({username}) {
+    const token = yield select(s => s.auth.token);
+    const id = yield select(s => s.workspaceDetails.workspace.id);
+    yield call(Api.removeWorkspaceMember, username, token, id);
+    yield fork(fetchMembers, token, id);
+}
+
+function* removeMemberRequested() {
+    yield takeLatest(WORKSPACE_MEMBER_REMOVE, requestMemberRemoved)
 }
 
 export default function* root() {
     yield all([
         fork(loadDetails),
-        fork(newMemberRequeste)
+        fork(newMemberRequested),
+        fork(removeMemberRequested)
     ]);
 }
