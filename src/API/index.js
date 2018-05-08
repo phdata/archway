@@ -133,3 +133,36 @@ export function removeWorkspaceMember(username, token, id) {
         }
     }).then(response => response.json());
 }
+
+export function datasetMemberList(token, id, dataset) {
+    return fetch(`${BASE_URL}/datasets/${id}/${dataset}/members`, {
+        headers: {
+            "Authorization": "Bearer " + token
+        }
+    }).then(response => response.json());
+}
+
+export function datasetNewMember(username, token, id, dataset) {
+    return fetch(`${BASE_URL}/datasets/${id}/${dataset}/members`, {
+        method: "POST",
+        body: JSON.stringify({
+            username
+        }),
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            "Authorization": "Bearer " + token
+        }
+    }).then(response => response.json());
+}
+
+export function removeDatasetMember(username, token, id, dataset) {
+    return fetch(`${BASE_URL}/datasets/${id}/${dataset}/members/${username}`, {
+        method: "DELETE",
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            "Authorization": "Bearer " + token
+        }
+    }).then(response => response.json());
+}

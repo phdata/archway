@@ -15,7 +15,7 @@ function* fetchDetails({payload: {pathname}}) {
     }
 }
 
-function* fetchMembers(token, id) {
+function* fetchMembers(token, id, dataset) {
     const members = yield call(Api.workspaceMemberList, token, id);
     yield put(workspaceMemberList(members));
 }
