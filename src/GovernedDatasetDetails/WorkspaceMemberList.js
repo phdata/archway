@@ -2,7 +2,6 @@ import React from "react";
 import "./Compliance.css";
 import Spinner from "../Common/Spinner";
 import "./WorkspaceMemberList.css";
-import "./DetailPanel.css";
 
 const MemberItem = ({member: {name, username}, index}) => (
     <div className={"MemberItem"}>

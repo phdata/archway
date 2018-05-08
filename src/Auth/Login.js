@@ -4,6 +4,7 @@ import {login} from "./actions";
 import {connect} from "react-redux";
 import logo from "../Common/white_logo_transparent.png";
 import "./Login.css";
+import auth from "./reducers";
 
 const Login = ({login, error}) => {
     let errorBlock = <br />;
@@ -24,6 +25,6 @@ const Login = ({login, error}) => {
 };
 
 export default connect(
-    state => state.account,
+    state => state.auth,
     {login}
 )(Login);
