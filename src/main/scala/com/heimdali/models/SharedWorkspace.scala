@@ -26,14 +26,16 @@ extends Workspace {
 
   override val databaseName: String = s"sw_$systemName"
 
-  override val role: String = s"role_sw_$systemName"
+  override def role(configuration: Config): String = s"role_sw_$systemName"
 
   override def dataDirectory(configuration: Config): String = {
     val baseDirectory = configuration.getString("hdfs.sharedWorkspaceRoot")
     s"$baseDirectory/$systemName"
   }
 
-  override val groupName: String = s"edh_sw_$systemName"
+  override def groupName(configuration: Config): String = {
+    s"edh_sw_$systemName"
+  }
 
   override val initialMembers: Seq[String] = Seq(createdBy)
 

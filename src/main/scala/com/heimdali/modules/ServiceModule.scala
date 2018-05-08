@@ -36,5 +36,7 @@ trait ServiceModule {
   val datasetProvisionerFactory: Dataset => ActorRef =
     (dataset) => actorSystem.actorOf(WorkspaceProvisioner.props(ldapActor, hdfsActor, hiveActor, datasetWorkspaceSaver, configuration, dataset))
 
-  val governedDatasetService: GovernedDatasetService = new GovernedDatasetServiceImpl(governedDatasetRepository, datasetRepository, complianceRepository, ldapClient, datasetProvisionerFactory)
+  val environment = configuration.getString("cluster.environment")
+
+  val governedDatasetService: GovernedDatasetService = new GovernedDatasetServiceImpl(governedDatasetRepository, datasetRepository, complianceRepository, environment, ldapClient, datasetProvisionerFactory)
 }

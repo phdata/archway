@@ -9,6 +9,7 @@ import com.heimdali.models.Dataset._
 import com.heimdali.models._
 import com.heimdali.provisioning.WorkspaceProvisioner.Start
 import com.heimdali.repositories.{ComplianceRepository, DatasetRepository, GovernedDatasetRepository}
+import com.typesafe.config.Config
 import com.typesafe.scalalogging.LazyLogging
 
 import scala.concurrent.duration._
@@ -34,13 +35,14 @@ trait GovernedDatasetService {
 class GovernedDatasetServiceImpl(governedDatasetRepository: GovernedDatasetRepository,
                                  datasetRepository: DatasetRepository,
                                  complianceRepository: ComplianceRepository,
+                                 environment: String,
                                  ldapClient: LDAPClient,
                                  provisionFactory: Dataset => ActorRef)
                                 (implicit executionContext: ExecutionContext)
   extends GovernedDatasetService with LazyLogging {
   implicit val timeout: Timeout = Timeout(1 second)
 
-  val GroupExtractor = "CN=edh_raw_([A-z0-9_]+),OU=.*".r
+  val GroupExtractor = s"CN=edh_${environment}_raw_([A-z0-9_]+),OU=.*".r
 
   def filter(memberships: Seq[String]): Seq[String] =
     memberships.flatMap {
@@ -48,7 +50,7 @@ class GovernedDatasetServiceImpl(governedDatasetRepository: GovernedDatasetRepos
         logger.info("found dataset {}", name)
         Some(name)
       case name =>
-        logger.info("ignoring group {}", name)
+        logger.debug("ignoring group {}", name)
         None
     }.distinct
 

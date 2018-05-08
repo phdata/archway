@@ -7,11 +7,11 @@ trait Workspace {
 
   def databaseName: String
 
-  def role: String
+  def role(configuration: Config): String
 
   def dataDirectory(configuration: Config): String
 
-  def groupName: String
+  def groupName(configuration: Config): String
 
   def initialMembers: Seq[String]
 

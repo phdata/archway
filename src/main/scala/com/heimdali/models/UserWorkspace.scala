@@ -14,14 +14,16 @@ case class UserWorkspace(username: String,
 
   override val databaseName: String = s"user_$username"
 
-  override val role: String = s"role_$username"
+  override def role(configuration: Config): String = s"role_$username"
 
   override def dataDirectory(configuration: Config): String = {
     val userDirectory = configuration.getString("hdfs.userRoot")
     s"$userDirectory/$username/db"
   }
 
-  override val groupName: String = s"edh_user_$username"
+  override def groupName(configuration: Config): String = {
+    "edh_user_$username"
+  }
 
   override val initialMembers: Seq[String] = Seq(username)
 

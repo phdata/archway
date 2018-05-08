@@ -18,6 +18,7 @@ package object fixtures {
   val actualGB: None.type = None
   val keytabLocation: Option[String] = None
   val systemName: String = SharedWorkspace.generateName(name)
+  val environment = "dev"
   val maxCores = 4
   val maxMemoryInGB = 16
   val poolName: String = "pool"

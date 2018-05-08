@@ -56,7 +56,7 @@ class GovernedDatasetServiceIntegrationSpec extends FlatSpec with Matchers with 
       None,
       Some(compliance))
 
-    val governedDatasetService = new GovernedDatasetServiceImpl(governedDatasetRepository, datasetRepository, complianceRepository, ldapClient, factory)
+    val governedDatasetService = new GovernedDatasetServiceImpl(governedDatasetRepository, datasetRepository, complianceRepository, environment, ldapClient, factory)
     val newRecord = Await.result(governedDatasetService.create(dataset), Duration.Inf)
     newRecord.id shouldBe defined
   }
@@ -67,12 +67,12 @@ class GovernedDatasetServiceIntegrationSpec extends FlatSpec with Matchers with 
     val datasetRepository = mock[DatasetRepository]
     val complianceRepository = mock[ComplianceRepository]
     val factory = mockFunction[Dataset, ActorRef]
-    val governedDatasetService = new GovernedDatasetServiceImpl(governedDatasetRepository, datasetRepository, complianceRepository, ldapClient, factory)
+    val governedDatasetService = new GovernedDatasetServiceImpl(governedDatasetRepository, datasetRepository, complianceRepository, environment, ldapClient, factory)
 
     governedDatasetService.filter(Seq(
       "CN=edm_abc_row_abc,OU=groups,ou=example,ou=com",
-      "CN=edh_raw_tony,OU=groups,ou=example,ou=com",
-      "CN=edh_raw_home_mortgage,OU=groups,ou=example,ou=com"
+      "CN=edh_dev_raw_tony,OU=groups,ou=example,ou=com",
+      "CN=edh_dev_raw_home_mortgage,OU=groups,ou=example,ou=com"
     )) should be (Seq(
       "tony",
       "home_mortgage"

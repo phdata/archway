@@ -19,14 +19,20 @@ case class Dataset(id: Option[Long] = None,
 
   override val databaseName: String = systemName
 
-  override val role: String = s"role_$systemName"
+  override def role(configuration: Config): String = {
+    val environment = configuration.getString("cluster.environment")
+    s"role_${environment}_${name}_$systemName"
+  }
 
   override def dataDirectory(configuration: Config): String = {
     val baseDirectory = configuration.getString("hdfs.datasetRoot")
     s"$baseDirectory/$name/$systemName"
   }
 
-  override val groupName: String = s"edh_$systemName"
+  override def groupName(configuration: Config): String = {
+    val environment = configuration.getString("cluster.environment")
+    s"edh_${environment}_${name}_$systemName"
+  }
 
   override val onBehalfOf: Option[String] = None
 }
@@ -71,6 +77,6 @@ object Dataset extends SQLSyntaxSupport[Dataset] {
   }
 
   def apply(datasetType: DatasetType, informationArea: String, createdBy: String): Dataset =
-    Dataset(None, datasetType.name, s"${datasetType.name}_$informationArea", datasetType.purpose, initialMembers = Seq(createdBy))
+    Dataset(None, datasetType.name, informationArea, datasetType.purpose, initialMembers = Seq(createdBy))
 
 }

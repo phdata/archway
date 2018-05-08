@@ -34,14 +34,14 @@ class WorkspaceProvisioner[T <: Workspace](ldapActor: ActorRef,
 
   when(Idle) {
     case Event(Start, _) =>
-      ldapActor ! CreateGroup(workspace.groupName, workspace.initialMembers)
+      ldapActor ! CreateGroup(workspace.groupName(configuration), workspace.initialMembers)
       hdfsActor ! CreateDirectory(workspace.dataDirectory(configuration), 0, workspace.onBehalfOf)
       goto(Provisioning) replying Started
   }
 
   when(Provisioning) {
     case Event(DirectoryCreated(_), _) =>
-      hiveActor ! CreateDatabase(workspace.groupName, workspace.databaseName, workspace.role, workspace.dataDirectory(configuration))
+      hiveActor ! CreateDatabase(workspace.groupName(configuration), workspace.databaseName, workspace.role(configuration), workspace.dataDirectory(configuration))
       stay()
 
     case Event(DatabaseCreated(db), _) =>
