@@ -15,14 +15,24 @@ pipeline {
         string(name: 'sbt_params', defaultValue: '-sbt-dir /sbt/.sbt -ivy /sbt/.ivy')
     }
     stages {
-        stage('build') {
+        stage('setup') {
+            steps {
+                container("mysql") {
+                    sh "mysql --password=my-secret-pw < ./src/main/resources/db/migration/V1__Create.sql"
+                }
+            }
+        }
+        stage('package') {
             steps {
                 container("jdk") {
                     sh "./sbt ${params.sbt_params} assembly"
                 }
             }
         }
-        stage('package') {
+        stage('publish') {
+            when {
+                branch "master"
+            }
             steps {
                 container("jdk") {
                     withAWS(credentials: 'jenkins-aws-user') {

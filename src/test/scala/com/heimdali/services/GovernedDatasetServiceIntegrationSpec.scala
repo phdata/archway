@@ -15,12 +15,10 @@ import scalikejdbc.ConnectionPool
 import scala.concurrent.Await
 import scala.concurrent.duration._
 
-class GovernedDatasetServiceIntegrationSpec extends FlatSpec with Matchers with MockFactory {
-
-  Class.forName("org.postgresql.Driver")
-  ConnectionPool.add('default, "jdbc:postgresql://localhost/heimdali", "postgres", "postgres")
+class GovernedDatasetServiceIntegrationSpec extends FlatSpec with Matchers with MockFactory with DBTest {
 
   import scala.concurrent.ExecutionContext.Implicits.global
+
 
   behavior of "Governed dataset service"
 
@@ -84,4 +82,5 @@ class GovernedDatasetServiceIntegrationSpec extends FlatSpec with Matchers with 
 
   }
 
+  override def tables: Seq[scalikejdbc.SQLSyntaxSupport[_]] = Seq.empty
 }
