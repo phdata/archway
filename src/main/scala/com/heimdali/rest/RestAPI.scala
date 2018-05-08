@@ -25,7 +25,7 @@ class RestAPI(http: HttpExt,
               materializer: Materializer,
               executionContext: ExecutionContext) extends LazyLogging {
   val settings: CorsSettings =
-    CorsSettings.defaultSettings.withAllowedMethods(util.Arrays.asList(DELETE, POST, HEAD, OPTIONS))
+    CorsSettings.defaultSettings.withAllowedMethods(util.Arrays.asList(DELETE, GET, POST, HEAD, OPTIONS))
 
   val route: Route =
     cors(settings) {

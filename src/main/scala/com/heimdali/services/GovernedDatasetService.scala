@@ -1,6 +1,7 @@
 package com.heimdali.services
 
 import akka.actor.ActorRef
+import akka.http.scaladsl.server.directives.OnSuccessMagnet
 import akka.pattern.ask
 import akka.util.Timeout
 import com.heimdali.clients.LDAPClient
@@ -15,6 +16,11 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.util.matching.Regex
 
 trait GovernedDatasetService {
+  def members(id: Long, dataset: String): Future[Seq[WorkspaceMember]]
+
+  def addMember(id: Long, dataset: String, username: String): Future[WorkspaceMember]
+
+  def removeMember(id: Long, dataset: String, username: String): Future[WorkspaceMember]
 
   def create(governedDataset: GovernedDataset): Future[GovernedDataset]
 
@@ -67,4 +73,22 @@ class GovernedDatasetServiceImpl(governedDatasetRepository: GovernedDatasetRepos
   //TODO: Add testing around all single item gets
   override def get(id: Long): Future[Option[GovernedDataset]] =
     governedDatasetRepository.get(id)
+
+  override def members(id: Long, dataset: String): Future[Seq[WorkspaceMember]] =
+    for {
+      workspace <- datasetRepository.find(id, dataset)
+      members <- ldapClient.groupMembers(workspace.get.ldap.get.distinguishedName)
+    } yield members.map(m => WorkspaceMember(m.username, m.name))
+
+  override def addMember(id: Long, dataset: String, username: String): Future[WorkspaceMember] =
+    for {
+      workspace <- datasetRepository.find(id, dataset)
+      member <- ldapClient.addUser(workspace.get.ldap.get.commonName, username)
+    } yield WorkspaceMember(member.username, member.name)
+
+  override def removeMember(id: Long, dataset: String, username: String): Future[WorkspaceMember] =
+    for {
+      workspace <- datasetRepository.find(id, dataset)
+      member <- ldapClient.removeUser(workspace.get.ldap.get.commonName, username)
+    } yield WorkspaceMember(member.username, member.name)
 }

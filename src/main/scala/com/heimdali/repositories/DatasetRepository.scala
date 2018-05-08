@@ -6,6 +6,8 @@ import com.heimdali.provisioning.WorkspaceRepository
 import scala.concurrent.Future
 
 trait DatasetRepository extends WorkspaceRepository[Dataset] {
+  def find(id: Long, dataset: String): Future[Option[Dataset]]
+
   def create(dataset: Dataset): Future[Dataset]
 
   def setLDAP(datasetId: String, ldapRegistrationId: Long): Future[Dataset]

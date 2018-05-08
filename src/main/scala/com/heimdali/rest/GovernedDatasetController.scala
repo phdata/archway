@@ -3,7 +3,7 @@ package com.heimdali.rest
 import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.Directives._
 import akka.util.Timeout
-import com.heimdali.models.{Compliance, Dataset, GovernedDataset, SharedWorkspace}
+import com.heimdali.models._
 import com.heimdali.services.GovernedDatasetService
 import com.typesafe.config.Config
 import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport
@@ -90,14 +90,38 @@ class GovernedDatasetController(authService: AuthService,
               }
             }
         } ~
-          path(LongNumber) { id =>
-            onComplete(datasetService.get(id)) {
-              case Success(dataset) =>
-                println(dataset)
-                complete(StatusCodes.OK -> dataset)
-              case _ =>
-                complete(StatusCodes.NotFound)
-            }
+          pathPrefix(LongNumber) { id =>
+            pathEnd {
+              onComplete(datasetService.get(id)) {
+                case Success(dataset) =>
+                  complete(StatusCodes.OK -> dataset)
+                case _ =>
+                  complete(StatusCodes.NotFound)
+              }
+            } ~
+              pathPrefix(Segment / "members") { dataset: String =>
+                pathEnd {
+                  get {
+                    onSuccess(datasetService.members(id, dataset)) { members =>
+                      complete(members)
+                    }
+                  } ~
+                    post {
+                      entity(as[MemberRequest]) { request =>
+                        onSuccess(datasetService.addMember(id, dataset, request.username)) { member =>
+                          complete(member)
+                        }
+                      }
+                    }
+                } ~
+                  path(Remaining) { username =>
+                    delete {
+                      onSuccess(datasetService.removeMember(id, dataset, username)) { member =>
+                        complete(member)
+                      }
+                    }
+                  }
+              }
           }
       }
     }

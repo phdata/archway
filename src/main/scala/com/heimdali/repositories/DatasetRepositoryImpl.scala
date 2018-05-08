@@ -1,6 +1,6 @@
 package com.heimdali.repositories
 
-import com.heimdali.models.{Dataset, HiveDatabase, LDAPRegistration, Yarn}
+import com.heimdali.models._
 import scalikejdbc._
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -21,6 +21,25 @@ class DatasetRepositoryImpl(implicit executionContext: ExecutionContext)
         .where.eq(d.id, id)
     }.map(Dataset(d.resultName, l.resultName, h.resultName, y.resultName))
       .single().apply().get
+  }
+
+  override def find(id: Long, dataset: String): Future[Option[Dataset]] = Future {
+    NamedDB('default) readOnly { implicit session =>
+      val gd = GovernedDataset.syntax
+      val d = Dataset.syntax
+      val l = LDAPRegistration.syntax
+      val h = HiveDatabase.syntax
+      val y = Yarn.syntax
+      withSQL {
+        select.from(GovernedDataset as gd)
+          .innerJoin(Dataset as d).on(sqls"${gd.column(s"${dataset}_dataset_id")} = ${d.id}")
+          .leftJoin(LDAPRegistration as l).on(d.ldapRegistrationId, l.id)
+          .leftJoin(HiveDatabase as h).on(d.hiveDatabaseId, h.id)
+          .leftJoin(Yarn as y).on(d.yarnId, y.id)
+          .where.eq(gd.id, id)
+      }.map(Dataset(d.resultName, l.resultName, h.resultName, y.resultName))
+        .single().apply()
+    }
   }
 
   override def create(dataset: Dataset): Future[Dataset] = Future {
