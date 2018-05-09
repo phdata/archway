@@ -3,7 +3,11 @@ package com.heimdali.modules
 import com.heimdali.rest._
 
 trait RestModule {
-  this: AkkaModule with ExecutionContextModule with ServiceModule with HttpModule with ConfigurationModule =>
+  this: AkkaModule
+    with ExecutionContextModule
+    with ServiceModule
+    with HttpModule
+    with ConfigurationModule =>
 
   val authService: AuthServiceImpl = new AuthServiceImpl(accountService)
   val accountController = new AccountController(authService, accountService, configuration)

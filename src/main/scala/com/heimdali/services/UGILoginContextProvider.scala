@@ -2,11 +2,7 @@ package com.heimdali.services
 
 import java.security.PrivilegedAction
 
-import javax.security.auth.callback.{Callback, CallbackHandler, NameCallback, PasswordCallback}
-import javax.security.auth.login.LoginContext
-import com.typesafe.config.Config
 import com.typesafe.scalalogging.LazyLogging
-import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.security.UserGroupInformation
 
 import scala.concurrent.{ExecutionContext, Future, Promise}
@@ -33,5 +29,17 @@ class UGILoginContextProvider(implicit executionContext: ExecutionContext)
       }
     })
     promise.future
+  }
+
+  override def kinit(): Boolean = {
+    logger.info("kiniting api service principal")
+    try {
+      UserGroupInformation.loginUserFromKeytab(sys.env("KEYTAB_FILE"), sys.env("HEIMDALI_API_SERVICE_PRINCIPAL"))
+      true
+    } catch {
+      case exc: Throwable =>
+        logger.error("Couldn't kinit")
+        false
+    }
   }
 }

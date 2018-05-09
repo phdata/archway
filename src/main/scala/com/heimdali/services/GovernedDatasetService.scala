@@ -79,7 +79,8 @@ class GovernedDatasetServiceImpl(governedDatasetRepository: GovernedDatasetRepos
   override def members(id: Long, dataset: String): Future[Seq[WorkspaceMember]] =
     for {
       workspace <- datasetRepository.find(id, dataset)
-      members <- ldapClient.groupMembers(workspace.get.ldap.get.distinguishedName)
+      members <- workspace.get.ldap.map(l => ldapClient.groupMembers(l.distinguishedName))
+                  .getOrElse(Future(Seq.empty))
     } yield members.map(m => WorkspaceMember(m.username, m.name))
 
   override def addMember(id: Long, dataset: String, username: String): Future[WorkspaceMember] =

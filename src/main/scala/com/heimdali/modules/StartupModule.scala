@@ -5,7 +5,8 @@ import org.flywaydb.core.Flyway
 
 trait StartupModule {
   this: ConfigurationModule
-    with ExecutionContextModule =>
+    with ExecutionContextModule
+    with ContextModule =>
 
   val flyway: Flyway = new Flyway()
 
@@ -13,6 +14,6 @@ trait StartupModule {
     new FlywayMigration(flyway)
 
   val startup: Startup =
-    new HeimdaliStartup(configuration, dbMigration)
+    new HeimdaliStartup(configuration, dbMigration, loginContextProvider)
 
 }

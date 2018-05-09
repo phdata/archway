@@ -21,9 +21,7 @@ case class UserWorkspace(username: String,
     s"$userDirectory/$username/db"
   }
 
-  override def groupName(configuration: Config): String = {
-    "edh_user_$username"
-  }
+  override def groupName(configuration: Config): String = s"edh_user_$username"
 
   override val initialMembers: Seq[String] = Seq(username)
 

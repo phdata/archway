@@ -23,7 +23,7 @@ class HiveServiceImpl(implicit executionContext: ExecutionContext)
 
   def runCommand(sql: String, connection: Connection): Future[Boolean] = Future {
     logger.info(s"running $sql against hive")
-    val statement = connection.prepareStatement(sql);
+    val statement = connection.prepareStatement(sql)
     statement.execute()
   }
 

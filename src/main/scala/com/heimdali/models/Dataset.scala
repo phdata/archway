@@ -17,7 +17,7 @@ case class Dataset(id: Option[Long] = None,
   extends Workspace {
   override def workspaceId: String = id.get.toString
 
-  override val databaseName: String = systemName
+  override val databaseName: String = s"${name}_${systemName}"
 
   override def role(configuration: Config): String = {
     val environment = configuration.getString("cluster.environment")
