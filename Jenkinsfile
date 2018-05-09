@@ -19,7 +19,7 @@ pipeline {
     stages {
         stage('build') {
             steps {
-                container('jdkC') {
+                container('jdk') {
                     withAWS(credentials: 'jenkins-aws-user') {
                         sh '''
                            sed -i "s/0.1.0/${VERSION}/g" descriptor/service.sdl
