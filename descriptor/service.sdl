@@ -115,7 +115,15 @@
         {
           "name": "heimdali_cluster_name",
           "label": "Cluster Name",
-          "description": "THe name of the cluster to manage",
+          "description": "The name of the cluster to manage",
+          "required": "true",
+          "type": "string",
+          "configurableInWizard": "true"
+        },
+        {
+          "name": "heimdali_cluster_environment",
+          "label": "Cluster Environment",
+          "description": "The environment the cluster represents, such as dev, qa, prod, etc. Should be lowercase, no spaces or special chars",
           "required": "true",
           "type": "string",
           "configurableInWizard": "true"
@@ -258,6 +266,7 @@
           "HEIMDALI_CM_ADMIN_USER": "${heimdali_admin_username}",
           "HEIMDALI_CM_ADMIN_PASSWORD": "${heimdali_admin_password}",
           "HEIMDALI_CLUSTER_NAME": "${heimdali_cluster_name}",
+          "HEIMDALI_CLUSTER_ENVIRONMENT": "${heimdali_cluster_environment}",
           "HEIMDALI_HDFS_USER_ROOT": "${heimdali_hdfs_user_root}",
           "HEIMDALI_HDFS_SW_ROOT": "${heimdali_hdfs_sw_root}",
           "HEIMDALI_HDFS_DS_ROOT": "${heimdali_hdfs_ds_root}",
