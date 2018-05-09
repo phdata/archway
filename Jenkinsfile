@@ -35,7 +35,7 @@ pipeline {
 
                         sh '''
                            mv build HEIMDALI-${VERSION}
-                           cd  && tar cvf HEIMDALI-${VERSION}-el7.parcel HEIMDALI-${VERSION}
+                           tar cvf HEIMDALI-${VERSION}-el7.parcel HEIMDALI-${VERSION}
                         '''
 
                         s3Upload file: "HEIMDALI-${env.VERSION}-el7.parcel", bucket: 'heimdali-repo', path: 'parcels/'
