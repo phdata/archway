@@ -137,6 +137,14 @@
           "configurableInWizard": "true"
         },
         {
+          "name": "heimdali_hdfs_ds_root",
+          "label": "Governed Dataset HDFS Path",
+          "description": "The HDFS location for governed datasets",
+          "required": "true",
+          "type": "string",
+          "configurableInWizard": "true"
+        },
+        {
           "name": "heimdali_db_driver",
           "label": "db_driver",
           "description": "The database driver to use for storage",
@@ -206,9 +214,9 @@
           "configurableInWizard": "true"
         },
         {
-          "name": "heimdali_ldap_user_path",
-          "label": "User DN",
-          "description": "The LDAP location of users with access to Heimdali",
+          "name": "heimdali_realm",
+          "label": "AD Realm",
+          "description": "The realm to use when looking up users (eg. EXAMPLE.COM)",
           "required": "true",
           "type": "string",
           "configurableInWizard": "true"
@@ -252,6 +260,7 @@
           "HEIMDALI_CLUSTER_NAME": "${heimdali_cluster_name}",
           "HEIMDALI_HDFS_USER_ROOT": "${heimdali_hdfs_user_root}",
           "HEIMDALI_HDFS_SW_ROOT": "${heimdali_hdfs_sw_root}",
+          "HEIMDALI_HDFS_DS_ROOT": "${heimdali_hdfs_ds_root}",
           "HEIMDALI_DB_DRIVER": "${heimdali_db_driver}",
           "HEIMDALI_DB_URL": "${heimdali_db_url}",
           "HEIMDALI_DB_USER": "${heimdali_db_user}",
@@ -260,7 +269,7 @@
           "HEIMDALI_LDAP_HOST": "${heimdali_ldap_host}",
           "HEIMDALI_LDAP_PORT": "${heimdali_ldap_port}",
           "HEIMDALI_LDAP_BASE_DN": "${heimdali_ldap_base_dn}",
-          "HEIMDALI_LDAP_USER_PATH": "${heimdali_ldap_user_path}",
+          "HEIMDALI_REALM": "${heimdali_realm}",
           "HEIMDALI_LDAP_GROUP_PATH": "${heimdali_ldap_group_path}",
           "HEIMDALI_LDAP_ADMIN_DN": "${heimdali_ldap_admin_dn}",
           "HEIMDALI_LDAP_ADMIN_PASS": "${heimdali_ldap_admin_pass}"
