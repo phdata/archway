@@ -22,23 +22,23 @@ pipeline {
                 container('curl') {
                     withAWS(credentials: 'jenkins-aws-user') {
                         sh '''
-                           mkdir /build
-                           cp -R /meta /build/
-                           sed -i "s/0.1.5/${VERSION}/g" /build/meta/parcel.json
-                           mkdir -p /build/usr/lib/heimdali-api
-                           chown -R 10000:10000 /build
+                           mkdir build
+                           cp -R meta build/
+                           sed -i "s/0.1.5/${VERSION}/g" build/meta/parcel.json
+                           mkdir -p build/usr/lib/heimdali-api
+                           chown -R 10000:10000 build
                         '''
 
-                        s3Download file: '/build/usr/lib/', force: true, bucket: 'heimdali-repo', path: 'heimdali-ui/'
+                        s3Download file: 'build/usr/lib/', force: true, bucket: 'heimdali-repo', path: 'heimdali-ui/'
 
-                        s3Download file: '/build/usr/lib/heimdali-api/heimdali-api.jar', bucket: 'heimdali-repo', path: 'heimdali-api.jar'
+                        s3Download file: 'build/usr/lib/heimdali-api/heimdali-api.jar', bucket: 'heimdali-repo', path: 'heimdali-api.jar'
 
                         sh '''
-                           mv /build /HEIMDALI-${VERSION}
-                           cd / && tar cvf HEIMDALI-${VERSION}-el7.parcel HEIMDALI-${VERSION}
+                           mv build HEIMDALI-${VERSION}
+                           cd  && tar cvf HEIMDALI-${VERSION}-el7.parcel HEIMDALI-${VERSION}
                         '''
 
-                        s3Upload file: "/HEIMDALI-${env.VERSION}-el7.parcel", bucket: 'heimdali-repo', path: 'parcels/'
+                        s3Upload file: "HEIMDALI-${env.VERSION}-el7.parcel", bucket: 'heimdali-repo', path: 'parcels/'
                    }
                 }
             }
