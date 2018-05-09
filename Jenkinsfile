@@ -37,7 +37,7 @@ pipeline {
             slackSend color: "#a64f36", message: "Heimdali CSD, <${env.BUILD_URL}|build #${BUILD_NUMBER}> Failed"
         }
         success {
-            slackSend color: "#36a64f", message: "New CSD Available @here: <$http://csd.jotunn.io/HEIMDALI-${VERSION}.jar|HEIMDALI-${VERSION}.jar>"
+            slackSend color: "#36a64f", message: "New CSD Available @here: <$"http://csd.jotunn.io/HEIMDALI-${VERSION}.jar"|HEIMDALI-${VERSION}.jar>"
         }
     }
 }
