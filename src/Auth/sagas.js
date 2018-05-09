@@ -1,9 +1,8 @@
 import {reset, stopSubmit} from "redux-form";
-import {fork, take, call, put, all, cancel} from "redux-saga/effects";
+import {all, call, cancel, fork, put, take} from "redux-saga/effects";
 import * as Api from "../API";
 import * as actions from "./actions";
-import {LOGIN_FAILURE} from "./actions";
-import {LOGOUT_REQUEST} from "./actions";
+import {LOGIN_FAILURE, LOGOUT_REQUEST} from "./actions";
 import {push} from "react-router-redux";
 
 function* authorize(username, password) {
@@ -16,7 +15,7 @@ function* authorize(username, password) {
         yield put(reset("login"));
         yield put(stopSubmit("login"));
     } catch (error) {
-        yield put(actions.loginError(error));
+        yield put(actions.loginError("Invalid credentials, please try again."));
         yield put(stopSubmit("login"));
     }
 }
@@ -32,8 +31,8 @@ function* loginFlow() {
             const {username, password} = yield take(actions.LOGIN_REQUEST);
             task = yield fork(authorize, username, password);
         }
-        const action = yield take(['LOGOUT_REQUEST', 'LOGIN_FAILURE'])
-        if (action.type === 'LOGOUT_REQUEST' && task)
+        const action = yield take([LOGOUT_REQUEST, LOGIN_FAILURE]);
+        if (action.type === LOGOUT_REQUEST && task)
             yield cancel(task);
         yield call(Api.logout);
         yield put(push("/personal"));

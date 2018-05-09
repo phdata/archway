@@ -25,6 +25,9 @@ pipeline {
             }
         }
         stage('package') {
+            when {
+                branch "master"
+            }
             steps {
                 container('node') {
                     sh "npm run-script build"
@@ -32,6 +35,7 @@ pipeline {
                         s3Upload file: 'build', bucket: 'heimdali-repo', path: 'heimdali-ui/'
                     }
                 }
+                build '../heimdali-parcel/master'
             }
         }
     }

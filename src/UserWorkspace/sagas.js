@@ -28,8 +28,8 @@ function* getWorkspace() {
         yield put(actions.workspaceFound(workspace));
     } catch (exc) {
         console.log("no personal workspace found");
+        yield put(actions.workspaceAbsent());
     }
-    console.log(workspace);
     if (workspace) {
         while (!workspace.ldap || !workspace.database) {
             yield call(delay, 2000);

@@ -14,9 +14,9 @@ const Profile = ({profile, requestLogout}) =>  {
                 {name}
             </div>
             <div className="Profile-logout">
-                <a href="#" onClick={requestLogout}>
+                <button type="button" onClick={requestLogout}>
                     Log Out
-                </a>
+                </button>
             </div>
         </div>
     );

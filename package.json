@@ -9,6 +9,7 @@
     "eject": "react-scripts eject"
   },
   "dependencies": {
+    "fetch-intercept": "2.2.3",
     "history": "latest",
     "react": "16.2.0",
     "react-dom": "16.2.0",
@@ -22,6 +23,7 @@
     "redux": "^3.7.2",
     "redux-form": "^7.2.1",
     "redux-saga": "^0.16.0",
-    "timeago-react": "^2.0.0"
+    "timeago-react": "^2.0.0",
+    "whatwg-fetch": "^2.0.4"
   }
 }

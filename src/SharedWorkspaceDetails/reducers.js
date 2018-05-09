@@ -1,4 +1,4 @@
-import {SHARED_WORKSPACE_DETAILS, WORKSPACE_MEMBER_LIST, WORKSPACE_MEMBER_REQUESTED} from "./actions";
+import {SHARED_WORKSPACE_DETAILS, WORKSPACE_MEMBER_LIST} from "./actions";
 
 const initialState = {
     workspace: false,

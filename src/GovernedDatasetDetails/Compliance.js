@@ -2,7 +2,7 @@ import React from "react";
 import "./Compliance.css";
 
 const ComplianceItem = ({name, value, icon}) => (
-    <div className={`Compliance-item ${value}`}>
+    <div title={name} className={`Compliance-item ${value}`}>
         <i className={`fa fa-${icon}`} />
     </div>
 );

@@ -4,12 +4,11 @@ import {login} from "./actions";
 import {connect} from "react-redux";
 import logo from "../Common/white_logo_transparent.png";
 import "./Login.css";
-import auth from "./reducers";
 
 const Login = ({login, error}) => {
     let errorBlock = <br />;
     if (error)
-        errorBlock = <div className="Login-error">{error.message}</div>;
+        errorBlock = <div className="Login-error">{error}</div>;
     return (
         <div className="Login">
             <div className="Login-brandcontainer">
@@ -18,8 +17,8 @@ const Login = ({login, error}) => {
             <div className="Login-panel">
                 <h1 className="Login-title">Please log in</h1>
                 <LoginForm onSubmit={login} />
+                {errorBlock}
             </div>
-            {errorBlock}
         </div>
     );
 };

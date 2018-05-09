@@ -4,7 +4,6 @@ import {tomorrowNightBlue} from 'react-syntax-highlighter/styles/hljs';
 import "./DatabaseDisplay.css"
 import Spinner from "./Spinner";
 import "./Panel.css";
-import {workspace} from "../API";
 
 const syntaxStyle = {
     marginTop: 10,

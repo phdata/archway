@@ -9,6 +9,7 @@ function* fetchDetails({payload: {pathname}}) {
     const matches = /\/workspace\/(\d+)/g.exec(pathname);
     if (matches) {
         const id = parseInt(matches[1], 10);
+        console.log(id);
         const token = yield select(s => s.auth.token);
         yield fork(workspaceDetails, token, id);
         yield fork(fetchMembers, token, id);

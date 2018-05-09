@@ -1,7 +1,7 @@
 .Button {
     background-color: #2EC4B6;
     text-decoration: none;
-    font-family: "Slabo 27px";
+    font-family: "Playfair Display";
     font-size: 20px;
     text-align: center;
     cursor: pointer;
@@ -14,4 +14,18 @@
     text-transform: uppercase;
     font-weight: 300;
     min-width: 200px;
+    box-shadow: 5px 5px 5px #707070;
+    -webkit-transition: background-color .5s;
+    -moz-transition: background-color .5s;
+    -ms-transition: background-color .5s;
+    -o-transition: background-color .5s;
+    transition: background-color .5s;
+}
+
+.Button:hover {
+    background-color: #26a296;
+}
+
+.Button:active {
+    background-color: #81e1d8;
 }
