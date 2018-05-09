@@ -26,7 +26,7 @@ pipeline {
                            jar cvf HEIMDALI-${VERSION}.jar `find . -mindepth 1 -not -path "./.git*"`
                         '''
 
-                        s3Upload file: "HEIMDALI-${env.VERSION}.jar", bucket: 'heimdali-repo', path: 'csd/'
+                        s3Upload file: "HEIMDALI-${env.VERSION}.jar", bucket: 'heimdali-csd', path: '/'
                    }
                 }
             }
@@ -34,10 +34,10 @@ pipeline {
     }
     post {
         failure {
-            slackSend color: "#a64f36", message: "Heimdali Parcel, <${env.BUILD_URL}|build #${BUILD_NUMBER}> Failed"
+            slackSend color: "#a64f36", message: "Heimdali CSD, <${env.BUILD_URL}|build #${BUILD_NUMBER}> Failed"
         }
         success {
-            slackSend color: "#36a64f", message: "New Parcel Available @here: ${env.VERSION}"
+            slackSend color: "#36a64f", message: "New CSD Available @here: <$http://csd.jotunn.io/HEIMDALI-${VERSION}.jar|HEIMDALI-${VERSION}.jar>"
         }
     }
 }
