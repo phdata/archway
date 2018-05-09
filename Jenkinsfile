@@ -5,7 +5,7 @@ pipeline {
             label "csd"
             containerTemplate {
                 name 'jdk'
-                image 'jdk:8'
+                image 'java:8-jdk'
                 ttyEnabled true
                 command 'cat'
             }
@@ -19,7 +19,7 @@ pipeline {
     stages {
         stage('build') {
             steps {
-                container('jdk') {
+                container('jdkC') {
                     withAWS(credentials: 'jenkins-aws-user') {
                         sh '''
                            sed -i "s/0.1.0/${VERSION}/g" descriptor/service.sdl
