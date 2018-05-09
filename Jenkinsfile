@@ -4,8 +4,8 @@ pipeline {
             cloud "kubernetes"
             label "csd"
             containerTemplate {
-                name 'curl'
-                image 'appropriate/curl'
+                name 'jdk'
+                image 'jdk:8'
                 ttyEnabled true
                 command 'cat'
             }
@@ -19,7 +19,7 @@ pipeline {
     stages {
         stage('build') {
             steps {
-                container('curl') {
+                container('jdk') {
                     withAWS(credentials: 'jenkins-aws-user') {
                         sh '''
                            sed -i "s/0.1.0/${VERSION}/g" descriptor/service.sdl
