@@ -26,7 +26,7 @@ pipeline {
                            jar cvf HEIMDALI-${VERSION}.jar `find . -mindepth 1 -not -path "./.git*"`
                         '''
 
-                        s3Upload file: "HEIMDALI-${env.VERSION}-el7.parcel", bucket: 'heimdali-repo', path: 'csd/'
+                        s3Upload file: "HEIMDALI-${env.VERSION}.jar", bucket: 'heimdali-repo', path: 'csd/'
                    }
                 }
             }
