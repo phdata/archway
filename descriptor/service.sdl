@@ -97,6 +97,14 @@
           "configurableInWizard": "true"
         },
         {
+          "name": "heimdali_keytab_refresh",
+          "label" : "Kerberos Refresh Interval",
+          "description": "Interval between refreshing kerberos cache (eg. 1h, 30m, etc)",
+          "required": "true",
+          "type": "string",
+          "default": "1h"
+        },
+        {
           "name": "heimdali_cm_url_base",
           "label": "Cloudera Manager Base URL",
           "description": "The base URL for CM API (eg. https://manager.valhalla.phdata.io:7183/api/v14)",
@@ -269,6 +277,7 @@
           "start"
         ],
         "environmentVariables": {
+          "HEIMDALI_KEYTAB_REFRESH": "${heimdali_keytab_refresh}",
           "HEIMDALI_SECRET": "${heimdali_rest_secret}",
           "HEIMDALI_REST_PORT": "${heimdali_rest_port}",
           "HEIMDALI_CM_URL_BASE": "${heimdali_cm_url_base}",
