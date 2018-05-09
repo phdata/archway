@@ -23,7 +23,7 @@ pipeline {
                     withAWS(credentials: 'jenkins-aws-user') {
                         sh '''
                            sed -i "s/0.1.0/${VERSION}/g" descriptor/service.sdl
-                           jar cvf HEIMDALI-${VERSION}.jar `find . -mindepth 1 -not -path "./.git*"
+                           jar cvf HEIMDALI-${VERSION}.jar `find . -mindepth 1 -not -path "./.git*"`
                         '''
 
                         s3Upload file: "HEIMDALI-${env.VERSION}-el7.parcel", bucket: 'heimdali-repo', path: 'csd/'
