@@ -2,7 +2,7 @@ pipeline {
     agent {
         kubernetes {
             cloud "kubernetes"
-            label "parcels"
+            label "csd"
             containerTemplate {
                 name 'curl'
                 image 'appropriate/curl'
