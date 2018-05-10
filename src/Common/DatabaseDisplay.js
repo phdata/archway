@@ -36,7 +36,7 @@ const DatabaseDisplay = ({database, cluster}) => {
                         </SyntaxHighlighter>
                     </div>
                     <div className="DatabaseDisplay-Display-right">
-                        N/A
+                        {database.size_in_gb}
                         <h4>GB</h4>
                     </div>
                 </div>
