@@ -60,7 +60,7 @@ class WorkspaceController(authService: AuthService,
     Encoder.forProduct3("phi_data", "pci_data", "pii_data")(c => (c.phiData, c.pciData, c.piiData))
 
   implicit final val encodeHive: Encoder[HiveDatabase] =
-    Encoder.forProduct3("name", "location", "role")(c => (c.name, c.location, c.role))
+    Encoder.forProduct4("name", "location", "role", "size_in_gb")(c => (c.name, c.location, c.role, c.sizeInGB))
 
   implicit final val encodeLDAP: Encoder[LDAPRegistration] =
     Encoder.forProduct2("distinguished_name", "common_name")(c => (c.distinguishedName, c.commonName))
@@ -103,8 +103,11 @@ class WorkspaceController(authService: AuthService,
               pathPrefix("members") {
                 pathEnd {
                   get {
-                    onSuccess(workspaceService.members(id)) { members =>
-                      complete(members)
+                    onComplete(workspaceService.members(id)) {
+                      case Success(members) =>
+                        complete(members)
+                      case Failure(ex) =>
+                        complete(StatusCodes.InternalServerError)
                     }
                   } ~
                     post {

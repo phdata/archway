@@ -5,7 +5,7 @@ import com.heimdali.provisioning.WorkspaceRepository
 
 import scala.concurrent.Future
 
-trait UserWorkspaceRepository extends WorkspaceRepository[UserWorkspace] {
+trait UserWorkspaceRepository extends WorkspaceRepository[String, UserWorkspace] {
   def findUser(username: String): Future[Option[UserWorkspace]]
 
   def create(username: String): Future[UserWorkspace]

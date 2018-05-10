@@ -65,7 +65,8 @@ class WorkspaceServiceImpl(ldapClient: LDAPClient,
   override def members(id: Long): Future[Seq[WorkspaceMember]] =
     for {
       workspace <- workspaceRepository.find(id)
-      members <- ldapClient.groupMembers(workspace.get.ldap.get.distinguishedName)
+      members <- workspace.get.ldap.map(l => ldapClient.groupMembers(l.distinguishedName))
+        .getOrElse(Future(Seq.empty))
     } yield members.map(m => WorkspaceMember(m.username, m.name))
 
   override def addMember(id: Long, username: String): Future[WorkspaceMember] =

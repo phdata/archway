@@ -9,35 +9,35 @@ import scala.concurrent.ExecutionContext
 
 object WorkspaceSaver {
 
-  case class LDAPUpdate(id: String, ldapRegistration: LDAPRegistration)
+  case class LDAPUpdate[A](id: A, ldapRegistration: LDAPRegistration)
 
-  case class HiveUpdate(id: String, hiveDatabase: HiveDatabase)
+  case class HiveUpdate[A](id: A, hiveDatabase: HiveDatabase)
 
-  def apply[T <: Workspace](workspaceRepository: WorkspaceRepository[T],
-                            ldapRepository: LDAPRepository,
-                            hiveDatabaseRepository: HiveDatabaseRepository)
-                           (implicit executionContext: ExecutionContext) =
-    Props(classOf[WorkspaceSaver[T]], workspaceRepository, ldapRepository, hiveDatabaseRepository, executionContext)
+  def apply[A, T <: Workspace[A]](workspaceRepository: WorkspaceRepository[A, T],
+                                  ldapRepository: LDAPRepository,
+                                  hiveDatabaseRepository: HiveDatabaseRepository)
+                                 (implicit executionContext: ExecutionContext) =
+    Props(classOf[WorkspaceSaver[A, T]], workspaceRepository, ldapRepository, hiveDatabaseRepository, executionContext)
 
 }
 
-class WorkspaceSaver[T <: Workspace](workspaceRepository: WorkspaceRepository[T],
-                                     ldapRepository: LDAPRepository,
-                                     hiveDatabaseRepository: HiveDatabaseRepository)
-                                    (implicit val executionContext: ExecutionContext)
+class WorkspaceSaver[A, T <: Workspace[A]](workspaceRepository: WorkspaceRepository[A, T],
+                                           ldapRepository: LDAPRepository,
+                                           hiveDatabaseRepository: HiveDatabaseRepository)
+                                          (implicit val executionContext: ExecutionContext)
   extends Actor {
 
   import WorkspaceSaver._
 
   override def receive: Receive = {
-    case LDAPUpdate(id, ldap) =>
+    case LDAPUpdate(id: A, ldap) =>
       (for {
         newLDAP <- ldapRepository.create(ldap)
         workspace <- workspaceRepository.setLDAP(id, newLDAP.id.get)
       } yield workspace)
         .pipeTo(sender())
 
-    case HiveUpdate(id, hive) =>
+    case HiveUpdate(id: A, hive) =>
       (for {
         newHive <- hiveDatabaseRepository.create(hive)
         workspace <- workspaceRepository.setHive(id, newHive.id.get)

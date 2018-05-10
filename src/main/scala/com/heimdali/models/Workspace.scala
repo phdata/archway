@@ -2,8 +2,10 @@ package com.heimdali.models
 
 import com.typesafe.config.Config
 
-trait Workspace {
-  def workspaceId: String
+trait Workspace[T] {
+  def workspaceId: T
+
+  def requestedDiskSize(configuration: Config): Int
 
   def databaseName: String
 

@@ -33,8 +33,11 @@ class HDFSClientImplSpec extends fixture.AsyncFlatSpec with Matchers with AsyncM
     }
   }
 
-  it should "set permissions" in { fixture =>
+  it should "set quota" in { fixture =>
     val context = mock[LoginContextProvider]
+    (context.elevate[Path](_: String)(_: () => Path))
+      .expects("hdfs", *)
+      .onCall((location, path) => Future(Some(path())))
 
     fixture.fileSystem.mkdirs(fixture.location)
 
@@ -65,13 +68,13 @@ class HDFSClientImplSpec extends fixture.AsyncFlatSpec with Matchers with AsyncM
     val cluster = new MiniDFSCluster.Builder(configuration).build()
     val baseUri = new URI(s"hdfs://localhost:${cluster.getNameNodePort}/")
     val fileSystem = FileSystem.get(baseUri, configuration)
-    val admin = new HdfsAdmin(baseUri, configuration)
+    val admin = () => new HdfsAdmin(baseUri, configuration)
 
     val fixture = FixtureParam(cluster, fileSystem, admin, new Path(location))
 
     withFixture(test.toNoArgAsyncTest(fixture))
   }
 
-  case class FixtureParam(cluster: MiniDFSCluster, fileSystem: FileSystem, admin: HdfsAdmin, location: Path)
+  case class FixtureParam(cluster: MiniDFSCluster, fileSystem: FileSystem, admin: () => HdfsAdmin, location: Path)
 
 }

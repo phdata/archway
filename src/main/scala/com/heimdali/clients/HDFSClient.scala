@@ -25,7 +25,7 @@ trait HDFSClient {
 }
 
 class HDFSClientImpl(fileSystem: () => FileSystem,
-                     hdfsAdmin: HdfsAdmin,
+                     hdfsAdmin: () => HdfsAdmin,
                      loginContextProvider: LoginContextProvider)
                     (implicit val executionContext: ExecutionContext)
   extends HDFSClient with LazyLogging {
@@ -49,10 +49,11 @@ class HDFSClientImpl(fileSystem: () => FileSystem,
     location
   }
 
-  override def setQuota(path: Path, maxSizeInGB: Double): Future[HDFSAllocation] = Future {
-    hdfsAdmin.setSpaceQuota(path, (maxSizeInGB * 1024 * 1024 * 1024).toLong)
-    HDFSAllocation(path.toUri.getPath, maxSizeInGB)
-  }
+  override def setQuota(path: Path, maxSizeInGB: Double): Future[HDFSAllocation] =
+    loginContextProvider.elevate("hdfs") { () =>
+      hdfsAdmin().setSpaceQuota(path, (maxSizeInGB * 1024 * 1024 * 1024).toLong)
+      HDFSAllocation(path.toUri.getPath, maxSizeInGB)
+    }.map(_.get)
 
   override def getQuota(path: Path): Future[Double] = Future {
     val dec = new DecimalFormat("0.00")

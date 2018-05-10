@@ -12,17 +12,17 @@ object WorkspaceProvisioner {
 
   case object Started
 
-  def props[T <: Workspace](ldapActor: ActorRef, hdfsActor: ActorRef, hiveActor: ActorRef, saveActor: ActorRef, configuration: Config, sharedWorkspace: T) =
-    Props(new WorkspaceProvisioner[T](ldapActor, hdfsActor, hiveActor, saveActor, configuration, sharedWorkspace))
+  def props[A, T <: Workspace[A]](ldapActor: ActorRef, hdfsActor: ActorRef, hiveActor: ActorRef, saveActor: ActorRef, configuration: Config, sharedWorkspace: T) =
+    Props(new WorkspaceProvisioner[A, T](ldapActor, hdfsActor, hiveActor, saveActor, configuration, sharedWorkspace))
 
 }
 
-class WorkspaceProvisioner[T <: Workspace](ldapActor: ActorRef,
-                                           hdfsActor: ActorRef,
-                                           hiveActor: ActorRef,
-                                           saveActor: ActorRef,
-                                           configuration: Config,
-                                           workspace: T)
+class WorkspaceProvisioner[A, T <: Workspace[A]](ldapActor: ActorRef,
+                                                 hdfsActor: ActorRef,
+                                                 hiveActor: ActorRef,
+                                                 saveActor: ActorRef,
+                                                 configuration: Config,
+                                                 workspace: T)
   extends FSM[WorkspaceState, T] with ActorLogging {
 
   import HDFSActor._
@@ -35,7 +35,7 @@ class WorkspaceProvisioner[T <: Workspace](ldapActor: ActorRef,
   when(Idle) {
     case Event(Start, _) =>
       ldapActor ! CreateGroup(workspace.groupName(configuration), workspace.initialMembers)
-      hdfsActor ! CreateDirectory(workspace.dataDirectory(configuration), 0, workspace.onBehalfOf)
+      hdfsActor ! CreateDirectory(workspace.dataDirectory(configuration), workspace.requestedDiskSize(configuration), workspace.onBehalfOf)
       goto(Provisioning) replying Started
   }
 
@@ -45,11 +45,11 @@ class WorkspaceProvisioner[T <: Workspace](ldapActor: ActorRef,
       stay()
 
     case Event(DatabaseCreated(db), _) =>
-      saveActor ! HiveUpdate(workspace.workspaceId, db)
+      saveActor ! HiveUpdate[A](workspace.workspaceId, db.copy(sizeInGB = workspace.requestedDiskSize(configuration)))
       stay()
 
     case Event(LDAPGroupCreated(name, dn), _) =>
-      saveActor ! LDAPUpdate(workspace.workspaceId, LDAPRegistration(None, dn, name))
+      saveActor ! LDAPUpdate[A](workspace.workspaceId, LDAPRegistration(None, dn, name))
       stay()
   }
 

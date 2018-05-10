@@ -1,8 +1,8 @@
 package com.heimdali.provisioning
 
-import akka.actor.{ActorSystem, Props}
+import akka.actor.ActorSystem
 import akka.testkit.{ImplicitSender, TestKit}
-import com.heimdali.clients.HDFSClient
+import com.heimdali.clients.{HDFSAllocation, HDFSClient}
 import com.heimdali.provisioning.HDFSActor.{CreateDirectory, DirectoryCreated}
 import com.heimdali.services.LoginContextProvider
 import com.typesafe.config.ConfigFactory
@@ -27,9 +27,10 @@ class HDFSActorSpec extends FlatSpec with MockFactory {
 
     val hdfsClient = mock[HDFSClient]
     (hdfsClient.createDirectory _).expects(hdfsLocation, *).returning(Future(path))
+    (hdfsClient.setQuota _).expects(path, 1).returning(Future(HDFSAllocation(path.toString, 1)))
 
-    val actor = system.actorOf(Props(classOf[HDFSActor], hdfsClient, provider, config, executiionContext))
-    val request = CreateDirectory(hdfsLocation, hdfsRequestedSize, None)
+    val actor = system.actorOf(HDFSActor.props(hdfsClient, provider))
+    val request = CreateDirectory(hdfsLocation, 1, None)
     actor ! request
     expectMsgClass(classOf[DirectoryCreated])
   }

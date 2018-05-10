@@ -15,7 +15,7 @@ trait ClientModule {
   def fileSystemLoader(): FileSystem =
     FileSystem.get(hadoopConfiguration)
 
-  val hdfsAdmin: HdfsAdmin = new HdfsAdmin(hdfsUri, hadoopConfiguration)
+  val hdfsAdmin: () => HdfsAdmin = () => new HdfsAdmin(hdfsUri, hadoopConfiguration)
 
   val ldapClient: LDAPClient = new LDAPClientImpl(configuration) with ActiveDirectoryClient
 

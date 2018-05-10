@@ -17,9 +17,9 @@ object KeytabActor {
     Props(classOf[KeytabActor], hdfsClient, keytabService, configuration, executionContext)
 
 
-  case class GenerateKeytab(id: Long, principal: String)
+  case class GenerateKeytab(principal: String)
 
-  case class KeytabCreated(id: Long, hdfsLocation: Path)
+  case class KeytabCreated(hdfsLocation: Path)
 
 }
 
@@ -30,15 +30,15 @@ class KeytabActor(hdfsClient: HDFSClient,
 
   import KeytabActor._
 
-  val basePath: String = configuration.getString("hdfs.sharedWorkspaceRoot")
+  val basePath: String = configuration.getString("hdfs.sharedWorkspace.root")
 
   def projectPath(principal: String): Path = new Path(basePath, s"$principal/$principal.keytab")
 
   override val receive: Receive = {
-    case GenerateKeytab(id, principal) =>
+    case GenerateKeytab(principal) =>
       (for (
         keytab <- keytabService.generateKeytab(principal);
         filePath <- hdfsClient.uploadFile(new ByteArrayInputStream(keytab.getBytes), projectPath(principal))
-      ) yield KeytabCreated(id, filePath)).pipeTo(sender())
+      ) yield KeytabCreated(filePath)).pipeTo(sender())
   }
 }

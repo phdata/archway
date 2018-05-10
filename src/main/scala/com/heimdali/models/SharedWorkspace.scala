@@ -21,15 +21,18 @@ case class SharedWorkspace(id: Option[Long] = None,
                            hiveDatabase: Option[HiveDatabase] = None,
                            yarnId: Option[Long] = None,
                            yarn: Option[Yarn] = None)
-extends Workspace {
-  override def workspaceId: String = id.get.toString
+extends Workspace[Long] {
+  override def requestedDiskSize(configuration: Config): Int =
+    configuration.getInt("hdfs.sharedWorkspace.defaultSize")
+
+  override lazy val workspaceId: Long = id.get
 
   override val databaseName: String = s"sw_$systemName"
 
   override def role(configuration: Config): String = s"role_sw_$systemName"
 
   override def dataDirectory(configuration: Config): String = {
-    val baseDirectory = configuration.getString("hdfs.sharedWorkspaceRoot")
+    val baseDirectory = configuration.getString("hdfs.sharedWorkspace.root")
     s"$baseDirectory/$systemName"
   }
 

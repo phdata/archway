@@ -59,34 +59,34 @@ class SharedWorkspaceRepositoryImpl(implicit ec: ExecutionContext)
     }
   }
 
-  override def setLDAP(workspaceId: String, ldapRegistrationId: Long): Future[SharedWorkspace] = Future {
+  override def setLDAP(workspaceId: Long, ldapRegistrationId: Long): Future[SharedWorkspace] = Future {
     NamedDB('default) localTx { implicit session =>
       applyUpdate {
         update(SharedWorkspace)
           .set(
             SharedWorkspace.column.ldapRegistrationId -> ldapRegistrationId
           )
-          .where.eq(SharedWorkspace.column.id, workspaceId.toLong)
+          .where.eq(SharedWorkspace.column.id, workspaceId)
       }
 
-      baseSql((sw, _, _, _, _) => _.eq(sw.id, workspaceId.toLong))
+      baseSql((sw, _, _, _, _) => _.eq(sw.id, workspaceId))
         .single()
         .apply()
         .get
     }
   }
 
-  override def setHive(workspaceId: String, hiveDatbaseId: Long): Future[SharedWorkspace] = Future {
+  override def setHive(workspaceId: Long, hiveDatbaseId: Long): Future[SharedWorkspace] = Future {
     NamedDB('default) localTx { implicit session =>
       applyUpdate {
         update(SharedWorkspace)
           .set(
             SharedWorkspace.column.hiveDatabaseId -> hiveDatbaseId
           )
-          .where.eq(SharedWorkspace.column.id, workspaceId.toLong)
+          .where.eq(SharedWorkspace.column.id, workspaceId)
       }
 
-      baseSql((sw, _, _, _, _) => _.eq(sw.id, workspaceId.toLong))
+      baseSql((sw, _, _, _, _) => _.eq(sw.id, workspaceId))
         .single()
         .apply()
         .get

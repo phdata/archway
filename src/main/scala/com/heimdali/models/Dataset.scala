@@ -14,8 +14,12 @@ case class Dataset(id: Option[Long] = None,
                    yarnId: Option[Long] = None,
                    yarn: Option[Yarn] = None,
                    initialMembers: Seq[String] = Seq.empty)
-  extends Workspace {
-  override def workspaceId: String = id.get.toString
+  extends Workspace[Long] {
+
+  override def requestedDiskSize(configuration: Config): Int =
+    configuration.getInt("hdfs.dataset.defaultSize")
+
+  override lazy val workspaceId: Long = id.get
 
   override val databaseName: String = s"${name}_${systemName}"
 
@@ -25,7 +29,7 @@ case class Dataset(id: Option[Long] = None,
   }
 
   override def dataDirectory(configuration: Config): String = {
-    val baseDirectory = configuration.getString("hdfs.datasetRoot")
+    val baseDirectory = configuration.getString("hdfs.dataset.root")
     s"$baseDirectory/$name/$systemName"
   }
 

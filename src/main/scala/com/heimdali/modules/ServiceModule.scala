@@ -1,12 +1,9 @@
 package com.heimdali.modules
 
-import java.sql.DriverManager
-
 import akka.actor.ActorRef
 import com.heimdali.models.{Dataset, SharedWorkspace, UserWorkspace}
 import com.heimdali.provisioning.WorkspaceProvisioner
 import com.heimdali.services._
-import scalikejdbc.ConnectionPool
 
 trait ServiceModule {
   this: AkkaModule
@@ -18,14 +15,14 @@ trait ServiceModule {
     with HttpModule =>
 
   val userProvisionerFactory: UserWorkspace => ActorRef =
-    (userWorkspace) => actorSystem.actorOf(WorkspaceProvisioner.props(ldapActor, hdfsActor, hiveActor, userWorkspaceSaver, configuration, userWorkspace))
+    (userWorkspace) => actorSystem.actorOf(WorkspaceProvisioner.props[String, UserWorkspace](ldapActor, hdfsActor, hiveActor, userWorkspaceSaver, configuration, userWorkspace))
 
   val accountService: AccountService = new AccountServiceImpl(ldapClient, accountRepository, configuration, userProvisionerFactory)
 
   val clusterService: ClusterService = new CDHClusterService(http, configuration)
 
   val workspaceProvisionerFactory: SharedWorkspace => ActorRef =
-    (sharedWorkspace) => actorSystem.actorOf(WorkspaceProvisioner.props(ldapActor, hdfsActor, hiveActor, sharedWorkspaceSaver, configuration, sharedWorkspace))
+    (sharedWorkspace) => actorSystem.actorOf(WorkspaceProvisioner.props[Long, SharedWorkspace](ldapActor, hdfsActor, hiveActor, sharedWorkspaceSaver, configuration, sharedWorkspace))
 
   val workspaceService: WorkspaceService = new WorkspaceServiceImpl(ldapClient, sharedWorkspaceRepository, complianceRepository, workspaceProvisionerFactory)
 
@@ -34,7 +31,7 @@ trait ServiceModule {
   val hiveService: HiveService = new HiveServiceImpl
 
   val datasetProvisionerFactory: Dataset => ActorRef =
-    (dataset) => actorSystem.actorOf(WorkspaceProvisioner.props(ldapActor, hdfsActor, hiveActor, datasetWorkspaceSaver, configuration, dataset))
+    (dataset) => actorSystem.actorOf(WorkspaceProvisioner.props[Long, Dataset](ldapActor, hdfsActor, hiveActor, datasetWorkspaceSaver, configuration, dataset))
 
   val environment = configuration.getString("cluster.environment")
 

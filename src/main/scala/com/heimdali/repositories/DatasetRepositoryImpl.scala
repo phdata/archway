@@ -58,29 +58,29 @@ class DatasetRepositoryImpl(implicit executionContext: ExecutionContext)
     }
   }
 
-  override def setLDAP(datasetId: String, ldapRegistrationId: Long): Future[Dataset] = Future {
+  override def setLDAP(datasetId: Long, ldapRegistrationId: Long): Future[Dataset] = Future {
     NamedDB('default) localTx { implicit session =>
       applyUpdate {
         update(Dataset)
           .set(
             Dataset.column.ldapRegistrationId -> ldapRegistrationId
           )
-          .where.eq(Dataset.column.id, datasetId.toLong)
+          .where.eq(Dataset.column.id, datasetId)
       }
-      get(datasetId.toLong)
+      get(datasetId)
     }
   }
 
-  override def setHive(datasetId: String, hiveDatbaseId: Long): Future[Dataset] = Future {
+  override def setHive(datasetId: Long, hiveDatbaseId: Long): Future[Dataset] = Future {
     NamedDB('default) localTx { implicit session =>
       applyUpdate {
         update(Dataset)
           .set(
             Dataset.column.hiveDatabaseId -> hiveDatbaseId
           )
-          .where.eq(Dataset.column.id, datasetId.toLong)
+          .where.eq(Dataset.column.id, datasetId)
       }
-      get(datasetId.toLong)
+      get(datasetId)
     }
   }
 }
