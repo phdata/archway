@@ -153,6 +153,16 @@
           "configurableInWizard": "true"
         },
         {
+          "name": "heimdali_hdfs_user_size",
+          "label": "Default User Workspace Quota Size",
+          "description": "The default size for user workspaces",
+          "required": "true",
+          "type": "long",
+          "unit": "gigabytes",
+          "configurableInWizard": "true",
+          "default": "250"
+        },
+        {
           "name": "heimdali_hdfs_sw_root",
           "label": "Shared Workspace HDFS Path",
           "description": "The HDFS location for shared workspaces",
@@ -161,12 +171,32 @@
           "configurableInWizard": "true"
         },
         {
+          "name": "heimdali_hdfs_shared_size",
+          "label": "Default Shared Workspace Quota Size",
+          "description": "The default size for shared workspaces",
+          "required": "true",
+          "type": "long",
+          "unit": "gigabytes",
+          "configurableInWizard": "true",
+          "default": "250"
+        },
+        {
           "name": "heimdali_hdfs_ds_root",
           "label": "Governed Dataset HDFS Path",
           "description": "The HDFS location for governed datasets",
           "required": "true",
           "type": "string",
           "configurableInWizard": "true"
+        },
+        {
+          "name": "heimdali_hdfs_dataset_size",
+          "label": "Default Governed Dataset Quota Size",
+          "description": "The default size for governed datasets",
+          "required": "true",
+          "type": "long",
+          "unit": "gigabytes",
+          "configurableInWizard": "true",
+          "default": "250"
         },
         {
           "name": "heimdali_db_driver",
@@ -277,6 +307,9 @@
           "start"
         ],
         "environmentVariables": {
+          "HEIMDALI_HDFS_USER_SIZE": "${heimdali_hdfs_user_size}",
+          "HEIMDALI_HDFS_SHARED_SIZE": "${heimdali_hdfs_shared_size}",
+          "HEIMDALI_HDFS_DATASET_SIZE": "${heimdali_hdfs_dataset_size}",
           "HEIMDALI_KEYTAB_REFRESH": "${heimdali_keytab_refresh}",
           "HEIMDALI_SECRET": "${heimdali_rest_secret}",
           "HEIMDALI_REST_PORT": "${heimdali_rest_port}",
