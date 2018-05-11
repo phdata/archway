@@ -172,8 +172,7 @@
           "type": "long",
           "required": "true",
           "configurableInWizard": "true",
-          "default": "1",
-          "unit": "gigabytes"
+          "default": "5"
         },
         {
           "name": "heimdali_yarn_user_memory",
@@ -182,7 +181,7 @@
           "type": "long",
           "required": "true",
           "configurableInWizard": "true",
-          "default": "1",
+          "default": "20",
           "unit": "gigabytes"
         },
         {
@@ -192,8 +191,7 @@
           "type": "string",
           "required": "true",
           "configurableInWizard": "true",
-          "default": "1",
-          "unit": "gigabytes"
+          "default": "root"
         },
         {
           "name": "heimdali_hdfs_sw_root",
@@ -220,7 +218,7 @@
           "type": "long",
           "required": "true",
           "configurableInWizard": "true",
-          "default": "1"
+          "default": "25"
         },
         {
           "name": "heimdali_yarn_shared_memory",
@@ -229,7 +227,7 @@
           "type": "long",
           "required": "true",
           "configurableInWizard": "true",
-          "default": "4",
+          "default": "100",
           "unit": "gigabytes"
         },
         {
@@ -266,7 +264,7 @@
           "type": "long",
           "required": "true",
           "configurableInWizard": "true",
-          "default": "1"
+          "default": "25"
         },
         {
           "name": "heimdali_yarn_dataset_memory",
@@ -275,7 +273,7 @@
           "type": "long",
           "required": "true",
           "configurableInWizard": "true",
-          "default": "1",
+          "default": "100",
           "unit": "gigabytes"
         },
         {
@@ -285,7 +283,7 @@
           "type": "string",
           "required": "true",
           "configurableInWizard": "true",
-          "default": "1"
+          "default": "root"
         },
         {
           "name": "heimdali_db_driver",
