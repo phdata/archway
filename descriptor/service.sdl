@@ -56,7 +56,8 @@
           "start"
         ],
         "environmentVariables": {
-          "HEIMDALI_UI_PORT": "${heimdali_ui_port}"
+          "HEIMDALI_UI_PORT": "${heimdali_ui_port}",
+          "HEIMDALI_REST_PORT": "${heimdali_rest_port}"
         }
       }
     },
