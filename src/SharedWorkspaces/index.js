@@ -17,7 +17,7 @@ const SharedWorkspaces = ({items, push}) => {
     }
     return (
         <div className="SharedWorkspaces">
-            <WorkspaceHeader icon="users" title="Shared Workspaces" subtitle="official spaces for real data"/>
+            <WorkspaceHeader icon="users" title="Shared Workspaces" subtitle="a place to collaborate and learn together"/>
             <div className="SharedWorkspaces-list">
                 <RequestSharedWorkspace requestSharedWorkspace={() => push("/shared-request")}/>
                 {workspaces}
