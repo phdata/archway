@@ -34,7 +34,7 @@ case ${COMPONENT} in
         case ${CMD} in
             (start)
                 cd $HEIMDALI_UI_HOME
-                sed -i -e "s/%%BASE_URL%%/$HOST:$HEIMDALI_API_PORT/g" index.html
+                sed -i -e "s/%%BASE_URL%%/`hostname -f`:HEIMDALI_REST_PORT/g" index.html
                 exec python -m SimpleHTTPServer ${HEIMDALI_UI_PORT}
                 ;;
             (*)
