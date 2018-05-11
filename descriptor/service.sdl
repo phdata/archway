@@ -312,7 +312,7 @@
           "HEIMDALI_HDFS_DATASET_SIZE": "${heimdali_hdfs_dataset_size}",
           "HEIMDALI_KEYTAB_REFRESH": "${heimdali_keytab_refresh}",
           "HEIMDALI_SECRET": "${heimdali_rest_secret}",
-          "HEIMDALI_REST_PORT": "${heimdali_rest_port}",
+          "HEIMDALI_API_PORT": "${heimdali_rest_port}",
           "HEIMDALI_CM_URL_BASE": "${heimdali_cm_url_base}",
           "HEIMDALI_CM_ADMIN_USER": "${heimdali_admin_username}",
           "HEIMDALI_CM_ADMIN_PASSWORD": "${heimdali_admin_password}",
