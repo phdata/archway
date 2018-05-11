@@ -26,6 +26,11 @@ object CDHResponses {
       items.find(_.roleName == name).map(_.hostRef.hostId)
   }
 
+  case class HiveApp(items: Seq[AppRole]) {
+    def hostname(name: String): Option[String] =
+      items.find(_.roleName == name).map(_.hostRef.hostId)
+  }
+
   case class Services(items: Seq[ServiceInfo])
 
   case class ServiceInfo(name: String, `type`: String, serviceState: String, entityStatus: String, displayName: String)
@@ -68,6 +73,10 @@ class CDHClusterService(http: HttpClient,
     http.request(secureRequest(Get(s"$baseUrl/clusters/$cluster/services/$service/roles")))
       .flatMap(extract[ImpalaApp])
 
+  def hiveRequest(service: String): Future[HiveApp] =
+    http.request(secureRequest(Get(s"$baseUrl/clusters/$cluster/services/$service/roles")))
+      .flatMap(extract[HiveApp])
+
   def hostRequest(id: String): Future[HostInfo] =
     http.request(secureRequest(Get(s"$baseUrl/hosts/$id")))
       .flatMap(extract[HostInfo])
@@ -81,13 +90,17 @@ class CDHClusterService(http: HttpClient,
       details <- clusterDetailsRequest;
       services <- servicesRequest;
       impala <- impalaRequest(services.items.find(_.`type` == CDHClusterService.IMPALA_SERVICE_TYPE).get.name);
-      host <- hostRequest(impala.hostname(CDHClusterService.ImpalaDaemonRole).get)
+      hive <- hiveRequest(services.items.find(_.`type` == CDHClusterService.HIVE_SERVICE_TYPE).get.name);
+      impalaHost <- hostRequest(impala.hostname(CDHClusterService.ImpalaDaemonRole).get);
+      hiveHost <- hostRequest(hive.hostname(CDHClusterService.HiveServer2Role).get)
     ) yield Cluster(
       details.name,
       details.displayName,
       services.items.map {
         case ServiceInfo(_, CDHClusterService.IMPALA_SERVICE_TYPE, state, status, display) =>
-          CDHClusterService.IMPALA_SERVICE_TYPE -> HostClusterApp(display, status, state, host.hostname)
+          CDHClusterService.IMPALA_SERVICE_TYPE -> HostClusterApp(display, status, state, impalaHost.hostname)
+        case ServiceInfo(_, CDHClusterService.HIVE_SERVICE_TYPE, state, status, display) =>
+          CDHClusterService.HiveServer2Role -> HostClusterApp(display, status, state, hiveHost.hostname)
         case ServiceInfo(_, serviceType, state, status, display) =>
           serviceType -> BasicClusterApp(display, status, state)
       }.toMap,
@@ -109,4 +122,6 @@ class CDHClusterService(http: HttpClient,
 object CDHClusterService {
   val ImpalaDaemonRole: String = "IMPALAD"
   val IMPALA_SERVICE_TYPE = "IMPALA"
+  val HiveServer2Role: String = "HIVESERVER2"
+  val HIVE_SERVICE_TYPE = "HIVE"
 }

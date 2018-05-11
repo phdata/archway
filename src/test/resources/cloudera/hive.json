@@ -1,0 +1,307 @@
+{
+  "items" : [ {
+    "name" : "hive-GATEWAY-3bf169ed74b3ff01c3ed27c8310e41d1",
+    "type" : "GATEWAY",
+    "serviceRef" : {
+      "clusterName" : "cluster",
+      "serviceName" : "hive"
+    },
+    "hostRef" : {
+      "hostId" : "b4dec00c-1b80-4068-a3cc-b14ea445b963"
+    },
+    "roleUrl" : "https://manager.valhalla.phdata.io:7183/cmf/roleRedirect/hive-GATEWAY-3bf169ed74b3ff01c3ed27c8310e41d1",
+    "roleState" : "NA",
+    "healthSummary" : "GOOD",
+    "healthChecks" : [ ],
+    "configStalenessStatus" : "FRESH",
+    "maintenanceMode" : true,
+    "maintenanceOwners" : [ "CLUSTER" ],
+    "commissionState" : "COMMISSIONED",
+    "roleConfigGroupRef" : {
+      "roleConfigGroupName" : "hive-GATEWAY-BASE"
+    },
+    "entityStatus" : "NONE"
+  }, {
+    "name" : "hive-GATEWAY-15189a4f5b5da21d77e1b1852e3df38b",
+    "type" : "GATEWAY",
+    "serviceRef" : {
+      "clusterName" : "cluster",
+      "serviceName" : "hive"
+    },
+    "hostRef" : {
+      "hostId" : "02531e3c-6502-4e9a-a943-f714d37d4fb2"
+    },
+    "roleUrl" : "https://manager.valhalla.phdata.io:7183/cmf/roleRedirect/hive-GATEWAY-15189a4f5b5da21d77e1b1852e3df38b",
+    "roleState" : "NA",
+    "healthSummary" : "GOOD",
+    "healthChecks" : [ ],
+    "configStalenessStatus" : "FRESH",
+    "maintenanceMode" : true,
+    "maintenanceOwners" : [ "CLUSTER" ],
+    "commissionState" : "COMMISSIONED",
+    "roleConfigGroupRef" : {
+      "roleConfigGroupName" : "hive-GATEWAY-BASE"
+    },
+    "entityStatus" : "NONE"
+  }, {
+    "name" : "hive-GATEWAY-32e2985ab445932942be102b33ee9e6d",
+    "type" : "GATEWAY",
+    "serviceRef" : {
+      "clusterName" : "cluster",
+      "serviceName" : "hive"
+    },
+    "hostRef" : {
+      "hostId" : "d13e377b-a8b2-41c0-a2ce-dc6292b7312b"
+    },
+    "roleUrl" : "https://manager.valhalla.phdata.io:7183/cmf/roleRedirect/hive-GATEWAY-32e2985ab445932942be102b33ee9e6d",
+    "roleState" : "NA",
+    "healthSummary" : "GOOD",
+    "healthChecks" : [ ],
+    "configStalenessStatus" : "FRESH",
+    "maintenanceMode" : true,
+    "maintenanceOwners" : [ "CLUSTER" ],
+    "commissionState" : "COMMISSIONED",
+    "roleConfigGroupRef" : {
+      "roleConfigGroupName" : "hive-GATEWAY-BASE"
+    },
+    "entityStatus" : "NONE"
+  }, {
+    "name" : "hive-HIVEMETASTORE-3ec36fb4578a8c415ef7758b10450167",
+    "type" : "HIVEMETASTORE",
+    "serviceRef" : {
+      "clusterName" : "cluster",
+      "serviceName" : "hive"
+    },
+    "hostRef" : {
+      "hostId" : "0f374286-a085-451a-b0e5-15b535bfb94a"
+    },
+    "roleUrl" : "https://manager.valhalla.phdata.io:7183/cmf/roleRedirect/hive-HIVEMETASTORE-3ec36fb4578a8c415ef7758b10450167",
+    "roleState" : "STARTED",
+    "healthSummary" : "GOOD",
+    "healthChecks" : [ {
+      "name" : "HIVEMETASTORE_AUDIT_HEALTH",
+      "summary" : "GOOD",
+      "suppressed" : false
+    }, {
+      "name" : "HIVEMETASTORE_CANARY_HEALTH",
+      "summary" : "GOOD",
+      "suppressed" : false
+    }, {
+      "name" : "HIVEMETASTORE_FILE_DESCRIPTOR",
+      "summary" : "GOOD",
+      "suppressed" : false
+    }, {
+      "name" : "HIVEMETASTORE_HEAP_DUMP_DIRECTORY_FREE_SPACE",
+      "summary" : "GOOD",
+      "suppressed" : false
+    }, {
+      "name" : "HIVEMETASTORE_HOST_HEALTH",
+      "summary" : "GOOD",
+      "suppressed" : false
+    }, {
+      "name" : "HIVEMETASTORE_LOG_DIRECTORY_FREE_SPACE",
+      "summary" : "GOOD",
+      "suppressed" : false
+    }, {
+      "name" : "HIVEMETASTORE_PAUSE_DURATION",
+      "summary" : "GOOD",
+      "suppressed" : false
+    }, {
+      "name" : "HIVEMETASTORE_SCM_HEALTH",
+      "summary" : "GOOD",
+      "suppressed" : false
+    }, {
+      "name" : "HIVEMETASTORE_SWAP_MEMORY_USAGE",
+      "summary" : "GOOD",
+      "suppressed" : false
+    }, {
+      "name" : "HIVEMETASTORE_UNEXPECTED_EXITS",
+      "summary" : "GOOD",
+      "suppressed" : false
+    } ],
+    "configStalenessStatus" : "FRESH",
+    "maintenanceMode" : true,
+    "maintenanceOwners" : [ "CLUSTER" ],
+    "commissionState" : "COMMISSIONED",
+    "roleConfigGroupRef" : {
+      "roleConfigGroupName" : "hive-HIVEMETASTORE-BASE"
+    },
+    "entityStatus" : "GOOD_HEALTH"
+  }, {
+    "name" : "hive-GATEWAY-7f6c0f690d3081c6cd6ae3b04734dcea",
+    "type" : "GATEWAY",
+    "serviceRef" : {
+      "clusterName" : "cluster",
+      "serviceName" : "hive"
+    },
+    "hostRef" : {
+      "hostId" : "ab027853-3d9c-43b1-968c-b60b8ec5e648"
+    },
+    "roleUrl" : "https://manager.valhalla.phdata.io:7183/cmf/roleRedirect/hive-GATEWAY-7f6c0f690d3081c6cd6ae3b04734dcea",
+    "roleState" : "NA",
+    "healthSummary" : "GOOD",
+    "healthChecks" : [ ],
+    "configStalenessStatus" : "FRESH",
+    "maintenanceMode" : true,
+    "maintenanceOwners" : [ "CLUSTER" ],
+    "commissionState" : "COMMISSIONED",
+    "roleConfigGroupRef" : {
+      "roleConfigGroupName" : "hive-GATEWAY-BASE"
+    },
+    "entityStatus" : "NONE"
+  }, {
+    "name" : "hive-HIVESERVER2-08cae18992c1fb4b31814c972c866cdb",
+    "type" : "HIVESERVER2",
+    "serviceRef" : {
+      "clusterName" : "cluster",
+      "serviceName" : "hive"
+    },
+    "hostRef" : {
+      "hostId" : "add85153-1f7c-46af-80a0-facf32966e23"
+    },
+    "roleUrl" : "https://manager.valhalla.phdata.io:7183/cmf/roleRedirect/hive-HIVESERVER2-08cae18992c1fb4b31814c972c866cdb",
+    "roleState" : "STARTED",
+    "healthSummary" : "GOOD",
+    "healthChecks" : [ {
+      "name" : "HIVESERVER2_AUDIT_HEALTH",
+      "summary" : "GOOD",
+      "suppressed" : false
+    }, {
+      "name" : "HIVESERVER2_DOWNLOADED_RESOURCES_DIRECTORY_FREE_SPACE",
+      "summary" : "DISABLED",
+      "suppressed" : false
+    }, {
+      "name" : "HIVESERVER2_EXEC_LOCAL_SCRATCH_DIRECTORY_FREE_SPACE",
+      "summary" : "DISABLED",
+      "suppressed" : false
+    }, {
+      "name" : "HIVESERVER2_FILE_DESCRIPTOR",
+      "summary" : "GOOD",
+      "suppressed" : false
+    }, {
+      "name" : "HIVESERVER2_HEAP_DUMP_DIRECTORY_FREE_SPACE",
+      "summary" : "GOOD",
+      "suppressed" : false
+    }, {
+      "name" : "HIVESERVER2_HOST_HEALTH",
+      "summary" : "GOOD",
+      "suppressed" : false
+    }, {
+      "name" : "HIVESERVER2_LOG_DIRECTORY_FREE_SPACE",
+      "summary" : "GOOD",
+      "suppressed" : false
+    }, {
+      "name" : "HIVESERVER2_PAUSE_DURATION",
+      "summary" : "GOOD",
+      "suppressed" : false
+    }, {
+      "name" : "HIVESERVER2_SCM_HEALTH",
+      "summary" : "GOOD",
+      "suppressed" : false
+    }, {
+      "name" : "HIVESERVER2_SWAP_MEMORY_USAGE",
+      "summary" : "GOOD",
+      "suppressed" : false
+    }, {
+      "name" : "HIVESERVER2_UNEXPECTED_EXITS",
+      "summary" : "GOOD",
+      "suppressed" : false
+    } ],
+    "configStalenessStatus" : "FRESH",
+    "maintenanceMode" : true,
+    "maintenanceOwners" : [ "CLUSTER" ],
+    "commissionState" : "COMMISSIONED",
+    "roleConfigGroupRef" : {
+      "roleConfigGroupName" : "hive-HIVESERVER2-1"
+    },
+    "entityStatus" : "GOOD_HEALTH"
+  }, {
+    "name" : "hive-HIVESERVER2-3ec36fb4578a8c415ef7758b10450167",
+    "type" : "HIVESERVER2",
+    "serviceRef" : {
+      "clusterName" : "cluster",
+      "serviceName" : "hive"
+    },
+    "hostRef" : {
+      "hostId" : "0f374286-a085-451a-b0e5-15b535bfb94a"
+    },
+    "roleUrl" : "https://manager.valhalla.phdata.io:7183/cmf/roleRedirect/hive-HIVESERVER2-3ec36fb4578a8c415ef7758b10450167",
+    "roleState" : "STARTED",
+    "healthSummary" : "GOOD",
+    "healthChecks" : [ {
+      "name" : "HIVESERVER2_AUDIT_HEALTH",
+      "summary" : "GOOD",
+      "suppressed" : false
+    }, {
+      "name" : "HIVESERVER2_DOWNLOADED_RESOURCES_DIRECTORY_FREE_SPACE",
+      "summary" : "DISABLED",
+      "suppressed" : false
+    }, {
+      "name" : "HIVESERVER2_EXEC_LOCAL_SCRATCH_DIRECTORY_FREE_SPACE",
+      "summary" : "DISABLED",
+      "suppressed" : false
+    }, {
+      "name" : "HIVESERVER2_FILE_DESCRIPTOR",
+      "summary" : "GOOD",
+      "suppressed" : false
+    }, {
+      "name" : "HIVESERVER2_HEAP_DUMP_DIRECTORY_FREE_SPACE",
+      "summary" : "GOOD",
+      "suppressed" : false
+    }, {
+      "name" : "HIVESERVER2_HOST_HEALTH",
+      "summary" : "GOOD",
+      "suppressed" : false
+    }, {
+      "name" : "HIVESERVER2_LOG_DIRECTORY_FREE_SPACE",
+      "summary" : "GOOD",
+      "suppressed" : false
+    }, {
+      "name" : "HIVESERVER2_PAUSE_DURATION",
+      "summary" : "GOOD",
+      "suppressed" : false
+    }, {
+      "name" : "HIVESERVER2_SCM_HEALTH",
+      "summary" : "GOOD",
+      "suppressed" : false
+    }, {
+      "name" : "HIVESERVER2_SWAP_MEMORY_USAGE",
+      "summary" : "GOOD",
+      "suppressed" : false
+    }, {
+      "name" : "HIVESERVER2_UNEXPECTED_EXITS",
+      "summary" : "GOOD",
+      "suppressed" : false
+    } ],
+    "configStalenessStatus" : "FRESH",
+    "maintenanceMode" : true,
+    "maintenanceOwners" : [ "CLUSTER" ],
+    "commissionState" : "COMMISSIONED",
+    "roleConfigGroupRef" : {
+      "roleConfigGroupName" : "hive-HIVESERVER2-BASE"
+    },
+    "entityStatus" : "GOOD_HEALTH"
+  }, {
+    "name" : "hive-GATEWAY-d386a4927fffc36b28bff3012cce0d52",
+    "type" : "GATEWAY",
+    "serviceRef" : {
+      "clusterName" : "cluster",
+      "serviceName" : "hive"
+    },
+    "hostRef" : {
+      "hostId" : "81a2514c-d125-438e-821a-424226f79b36"
+    },
+    "roleUrl" : "https://manager.valhalla.phdata.io:7183/cmf/roleRedirect/hive-GATEWAY-d386a4927fffc36b28bff3012cce0d52",
+    "roleState" : "NA",
+    "healthSummary" : "GOOD",
+    "healthChecks" : [ ],
+    "configStalenessStatus" : "FRESH",
+    "maintenanceMode" : true,
+    "maintenanceOwners" : [ "CLUSTER" ],
+    "commissionState" : "COMMISSIONED",
+    "roleConfigGroupRef" : {
+      "roleConfigGroupName" : "hive-GATEWAY-BASE"
+    },
+    "entityStatus" : "NONE"
+  } ]
+}
