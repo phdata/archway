@@ -24,7 +24,7 @@ package object fixtures {
   val poolName: String = "pool"
   val compliance = Compliance(None, phiCompliance, pciCompliance, piiCompliance)
   val hive = HiveDatabase(None, "", "", "", 1)
-  val yarn = Yarn(1, poolName, maxCores, maxMemoryInGB)
+  val yarn = Yarn(Some(1), poolName, maxCores, maxMemoryInGB)
   val ldap = LDAPRegistration(None, ldapDn, s"edh_sw_$systemName")
 
   val standardUsername = "john.doe"

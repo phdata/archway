@@ -6,34 +6,40 @@ import akka.http.scaladsl.model.{HttpResponse, StatusCodes}
 import akka.http.scaladsl.unmarshalling.Unmarshal
 import akka.stream.Materializer
 import com.typesafe.config.Config
+import com.typesafe.scalalogging.LazyLogging
 import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport
-import io.circe.Json
+import io.circe.{ACursor, HCursor, Json, JsonObject}
 import io.circe.parser._
 import org.apache.http.HttpException
 
+import scala.Option
+import scala.collection.immutable.Queue
 import scala.concurrent.duration._
 import scala.concurrent.{Await, ExecutionContext, Future}
 
 case class YarnPool(name: String, maxCores: Int, maxMemoryInGB: Double)
 
 trait YarnClient {
-  def createPool(name: String, maxCores: Int, maxMemoryInGB: Double): Future[YarnPool]
+  def createPool(name: String, maxCores: Int, maxMemoryInGB: Double, parentPools: Queue[String]): Future[YarnPool]
 }
 
 class CDHYarnClient(http: HttpClient,
                     configuration: Config)
                    (implicit executionContext: ExecutionContext,
                     materializer: Materializer)
-  extends YarnClient with FailFastCirceSupport {
+  extends YarnClient
+    with FailFastCirceSupport
+    with LazyLogging {
 
   val clusterConfig = configuration.getConfig("cluster")
+  val cluster = clusterConfig.getString("name")
   val baseUrl = clusterConfig.getString("url")
   val adminConfig = clusterConfig.getConfig("admin")
   val username = adminConfig.getString("username")
   val password = adminConfig.getString("password")
 
-  val configURL = s"$baseUrl/services/yarn/config"
-  val refreshURL = s"$baseUrl/commands/poolsRefresh"
+  val configURL = s"$baseUrl/clusters/$cluster/services/yarn/config"
+  val refreshURL = s"$baseUrl/clusters/$cluster/commands/poolsRefresh"
 
   def config(pool: YarnPool): Json = Json.obj(
     "name" -> Json.fromString(pool.name),
@@ -50,16 +56,43 @@ class CDHYarnClient(http: HttpClient,
     "schedulingPolicy" -> Json.fromString("drf")
   )
 
-  def combine(existing: Json, pool: YarnPool): Json = {
-    existing.hcursor
-      .downField("queues")
-      .downAt(_.asObject.get.filter {
-        case ("name", json) => "root" == json.asString.get
-        case _ => false
-      }.nonEmpty)
+  def dig(cursor: ACursor, parents: Queue[String]): ACursor = {
+    parents.dequeueOption.map {
+      case (parent, newQueue) =>
+        val newCursor = cursor.downField("queues")
+          .downAt(_.asObject.get.filter {
+            case ("name", json) => parent == json.asString.get
+            case _ => false
+          }.nonEmpty)
+        dig(newCursor, newQueue)
+    }.getOrElse(cursor)
+  }
+
+  def combine(existing: Json, pool: YarnPool, parents: Queue[String]): Json = {
+    logger.debug("adding {} to {}", pool, existing)
+    val result = dig(existing.hcursor, parents)
       .downField("queues")
       .withFocus(_.withArray(arr => Json.arr(arr :+ config(pool): _*)))
       .top.get
+    logger.debug("new pool configuration: {}", result)
+    result
+  }
+
+  def prepare(container: Json, newConfig: Json): Json = {
+    import io.circe.optics.JsonPath._
+    container.hcursor
+      .downField("items")
+      .withFocus {
+        _.mapArray { arr =>
+          arr.map {
+            case json if root.name.string.getOption(json).get.contains("yarn_fs_scheduled_allocations") =>
+              logger.debug(root.value.string.modify(_ => newConfig.toString())(json).toString())
+              root.value.string.modify(_ => newConfig.toString())(json)
+            case json =>
+              json
+          }
+        }
+      }.top.get
   }
 
   def yarnConfig: Future[Json] = {
@@ -68,8 +101,18 @@ class CDHYarnClient(http: HttpClient,
       .flatMap {
         case HttpResponse(StatusCodes.OK, _, entity, _) =>
           val response = Await.result(Unmarshal(entity).to[Json], Duration.Inf)
+          logger.debug("configuration looks like: {}", response)
           Future(response)
-        case HttpResponse(_, _, _, _) => Future.failed(new HttpException())
+        case HttpResponse(status, _, entity, _) =>
+          Unmarshal(entity).to[String].map { result =>
+            logger.error("{} couldn't call resource pool configuration: {}", status, result)
+            throw new HttpException()
+          }
+      }
+      .recover {
+        case ex =>
+          logger.error("couldn't get resource pool configuration: {}", ex)
+          throw ex
       }
 
   }
@@ -78,23 +121,49 @@ class CDHYarnClient(http: HttpClient,
     val request = Put(configURL, updatedJson).addCredentials(BasicHttpCredentials(username, password))
     http.request(request)
       .flatMap {
-        case HttpResponse(StatusCodes.OK, _, entity, _) => Unmarshal(entity).to[Json]
-        case HttpResponse(_, _, _, _) => Future.failed(new HttpException())
+        case HttpResponse(StatusCodes.OK, _, entity, _) =>
+          Unmarshal(entity).to[Json].map { result =>
+            logger.debug("config update resulted with {}", result)
+            result
+          }
+        case HttpResponse(status, _, entity, _) =>
+          Unmarshal(entity).to[String].map { result =>
+            logger.error("{} couldn't update resource pool configuration: {}", status, result)
+            throw new HttpException()
+          }
+      }
+      .recover {
+        case ex =>
+          logger.error("couldn't update resource pool configuration: {}", ex)
+          throw ex
       }
   }
 
   def yarnConfigRefresh: Future[Json] = {
-    val request = Get(refreshURL)
+    val request = Post(refreshURL)
       .addCredentials(BasicHttpCredentials(username, password))
     http.request(request)
       .flatMap {
-        case HttpResponse(StatusCodes.OK, _, entity, _) => Unmarshal(entity).to[Json]
-        case HttpResponse(_, _, _, _) => Future.failed(new HttpException())
+        case HttpResponse(StatusCodes.OK, _, entity, _) =>
+          Unmarshal(entity).to[Json].map { result =>
+            logger.debug("config refresh resulted with {}", result)
+            result
+          }
+        case HttpResponse(status, _, entity, _) =>
+          Unmarshal(entity).to[String].map { result =>
+            logger.error("{} couldn't update resource pool configuration: {}", status, result)
+            throw new HttpException()
+          }
+      }
+      .recover {
+        case ex =>
+          logger.error("couldn't refresh resource pool configuration: {}", ex)
+          throw ex
       }
   }
 
 
-  override def createPool(poolName: String, maxCores: Int, maxMemoryInGB: Double): Future[YarnPool] = {
+  override def createPool(poolName: String, maxCores: Int, maxMemoryInGB: Double, parentPools: Queue[String]): Future[YarnPool] = {
     val yarnPool = YarnPool(poolName, maxCores, maxMemoryInGB)
     yarnConfig.flatMap { config =>
       val poolConfiguration = config.hcursor
@@ -108,9 +177,11 @@ class CDHYarnClient(http: HttpClient,
 
       val Right(configJson) = parse((poolConfiguration \\ "value").head.asString.get)
 
-      val updatedJson = combine(configJson, yarnPool)
+      val updatedJson = combine(configJson, yarnPool, parentPools)
+
+      val preparedJson = prepare(config, updatedJson)
       for {
-        _ <- yarnConfigUpdate(updatedJson)
+        _ <- yarnConfigUpdate(preparedJson)
         _ <- yarnConfigRefresh
       } yield yarnPool
     }

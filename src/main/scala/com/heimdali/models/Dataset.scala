@@ -15,9 +15,9 @@ case class Dataset(id: Option[Long] = None,
                    yarn: Option[Yarn] = None,
                    initialMembers: Seq[String] = Seq.empty)
   extends Workspace[Long] {
+  override def configName: String = "dataset"
 
-  override def requestedDiskSize(configuration: Config): Int =
-    configuration.getInt("hdfs.dataset.defaultSize")
+  override def poolName: String = systemName
 
   override lazy val workspaceId: Long = id.get
 
@@ -29,7 +29,7 @@ case class Dataset(id: Option[Long] = None,
   }
 
   override def dataDirectory(configuration: Config): String = {
-    val baseDirectory = configuration.getString("hdfs.dataset.root")
+    val baseDirectory = configuration.getString(s"workspaces.$configName.root")
     s"$baseDirectory/$name/$systemName"
   }
 
@@ -65,16 +65,20 @@ object Dataset extends SQLSyntaxSupport[Dataset] {
 
   sealed trait DatasetType {
     def name: String
+
     def purpose: String
   }
+
   case object RawDataset extends DatasetType {
     val name = "raw"
     val purpose = "BU or enterprise-wide data sets in raw form"
   }
+
   case object StagingDataset extends DatasetType {
     val name = "staging"
     val purpose = "ETL space for datasets"
   }
+
   case object ModeledDataset extends DatasetType {
     val name = "modeled"
     val purpose = "BU or enterprise-wide data sets in modeled or integrated form"

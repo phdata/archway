@@ -13,5 +13,7 @@ trait DatasetRepository extends WorkspaceRepository[Long, Dataset] {
   def setLDAP(datasetId: Long, ldapRegistrationId: Long): Future[Dataset]
 
   def setHive(datasetId: Long, hiveDatbaseId: Long): Future[Dataset]
+
+  def setYarn(id: Long, yarnId: Long): Future[Dataset]
 }
 

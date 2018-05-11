@@ -13,9 +13,9 @@ object Main extends App {
     with ContextModule
     with FileSystemModule
     with StartupModule
+    with HttpModule
     with ClientModule
     with RepoModule
-    with HttpModule
     with ServiceModule
     with AkkaModule
     with RestModule

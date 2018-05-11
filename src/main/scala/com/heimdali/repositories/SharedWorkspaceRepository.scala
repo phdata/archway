@@ -15,4 +15,6 @@ trait SharedWorkspaceRepository extends WorkspaceRepository[Long, SharedWorkspac
   def setLDAP(workspaceId: Long, ldapRegistrationId: Long): Future[SharedWorkspace]
 
   def setHive(workspaceId: Long, hiveDatbaseId: Long): Future[SharedWorkspace]
+
+  def setYarn(id: Long, yarnId: Long): Future[SharedWorkspace]
 }

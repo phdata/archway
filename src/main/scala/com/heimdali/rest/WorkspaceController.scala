@@ -59,6 +59,9 @@ class WorkspaceController(authService: AuthService,
   implicit final val encodeCompliance: Encoder[Compliance] =
     Encoder.forProduct3("phi_data", "pci_data", "pii_data")(c => (c.phiData, c.pciData, c.piiData))
 
+  implicit final val encodeYarn: Encoder[Yarn] =
+    Encoder.forProduct3("pool_name", "max_cores", "max_memory")(c => (c.poolName, c.maxCores, c.maxMemoryInGB))
+
   implicit final val encodeHive: Encoder[HiveDatabase] =
     Encoder.forProduct4("name", "location", "role", "size_in_gb")(c => (c.name, c.location, c.role, c.sizeInGB))
 

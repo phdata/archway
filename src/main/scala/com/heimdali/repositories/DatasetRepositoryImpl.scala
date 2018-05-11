@@ -83,5 +83,18 @@ class DatasetRepositoryImpl(implicit executionContext: ExecutionContext)
       get(datasetId)
     }
   }
+
+  override def setYarn(datasetId: Long, yarnId: Long): Future[Dataset] = Future {
+    NamedDB('default) localTx { implicit session =>
+      applyUpdate {
+        update(Dataset)
+          .set(
+            Dataset.column.yarnId -> yarnId
+          )
+          .where.eq(Dataset.column.id, datasetId)
+      }
+      get(datasetId)
+    }
+  }
 }
 

@@ -9,6 +9,7 @@ import org.scalamock.scalatest.MockFactory
 import org.scalatest.FlatSpec
 import com.heimdali.test.fixtures._
 
+import scala.collection.immutable.Queue
 import scala.concurrent.Future
 
 class YarnActorSpec extends FlatSpec with MockFactory {
@@ -23,13 +24,14 @@ class YarnActorSpec extends FlatSpec with MockFactory {
     val maxMemoryInGB = 1.0
     val config = ConfigFactory.load()
     val yarnPool = YarnPool(name, maxCores, maxMemoryInGB)
+    val parents = Queue("root")
 
     val yarnClient = mock[YarnClient]
     implicit val executionContext = scala.concurrent.ExecutionContext.global
-    yarnClient.createPool _ expects(name, maxCores, maxMemoryInGB) returning Future(yarnPool)
+    yarnClient.createPool _ expects(name, maxCores, maxMemoryInGB, parents) returning Future(yarnPool)
 
     val actor = actorSystem.actorOf(YarnActor.props(yarnClient))
-    val request = CreatePool(yarn.poolName, yarn.maxCores, yarn.maxMemoryInGB)
+    val request = CreatePool(parents, yarn.poolName, yarn.maxCores, yarn.maxMemoryInGB)
     actor.tell(request, testActor)
     expectMsgClass(classOf[PoolCreated])
   }

@@ -13,4 +13,6 @@ trait UserWorkspaceRepository extends WorkspaceRepository[String, UserWorkspace]
   def setLDAP(username: String, ldapRegistrationId: Long): Future[UserWorkspace]
 
   def setHive(username: String, hiveDatbaseId: Long): Future[UserWorkspace]
+
+  def setYarn(id: String, yarnId: Long): Future[UserWorkspace]
 }

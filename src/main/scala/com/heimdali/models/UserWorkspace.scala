@@ -10,8 +10,10 @@ case class UserWorkspace(username: String,
                          hiveDatabase: Option[HiveDatabase] = None,
                          yarnId: Option[Long] = None,
                          yarn: Option[Yarn] = None) extends Workspace[String] {
-  override def requestedDiskSize(configuration: Config): Int =
-    configuration.getInt("hdfs.user.defaultSize")
+
+  override val configName: String = "user"
+
+  override val poolName: String = s"user_$username"
 
   override val workspaceId: String = username
 
@@ -20,7 +22,7 @@ case class UserWorkspace(username: String,
   override def role(configuration: Config): String = s"role_$username"
 
   override def dataDirectory(configuration: Config): String = {
-    val userDirectory = configuration.getString("hdfs.user.root")
+    val userDirectory = configuration.getString("workspaces.user.root")
     s"$userDirectory/$username/db"
   }
 

@@ -16,6 +16,7 @@ import io.circe.parser._
 import org.scalamock.scalatest.AsyncMockFactory
 import org.scalatest.{AsyncFlatSpec, Matchers}
 
+import scala.collection.immutable.Queue
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
 import scala.io.Source
@@ -28,8 +29,8 @@ class CDHYarnClientSpec extends AsyncFlatSpec with AsyncMockFactory with Matcher
     implicit val actorSystem: ActorSystem = ActorSystem()
     implicit val actorMaterializer: ActorMaterializer = ActorMaterializer()
 
-    val configUrl = "/services/yarn/config"
-    val refreshUrl = "/commands/poolsRefresh"
+    val configUrl = "/clusters/cluster/services/yarn/config"
+    val refreshUrl = "/clusters/cluster/commands/poolsRefresh"
     val initialJsonString: String = Source.fromResource("cloudera/config.json").getLines().mkString
     val Right(initialJson) = parse(initialJsonString)
     val updateJsonString: String = Source.fromResource("cloudera/config_update.json").getLines().mkString
@@ -56,10 +57,10 @@ class CDHYarnClientSpec extends AsyncFlatSpec with AsyncMockFactory with Matcher
     cdhClient.request _ expects where {
       request: HttpRequest => request.uri.toString() == configUrl && request.method == HttpMethods.PUT
     } returning Future(HttpResponse(StatusCodes.OK, entity = updateEntity))
-    (cdhClient.request _).expects(Get(refreshUrl).addCredentials(BasicHttpCredentials("admin", "admin"))).returning(Future(HttpResponse(StatusCodes.OK, entity = refreshEntity)))
+    (cdhClient.request _).expects(Post(refreshUrl).addCredentials(BasicHttpCredentials("admin", "admin"))).returning(Future(HttpResponse(StatusCodes.OK, entity = refreshEntity)))
 
     val client = new CDHYarnClient(cdhClient, configuration)
-    client.createPool("pool", 1, 1.0).map { result =>
+    client.createPool("pool", 1, 1.0, Queue("root")).map { result =>
       result.name should be ("pool")
     }
   }
@@ -83,7 +84,7 @@ class CDHYarnClientSpec extends AsyncFlatSpec with AsyncMockFactory with Matcher
     val Right(expected) = parse(Source.fromResource("cloudera/pool_after.json").getLines().mkString)
 
     val client = new CDHYarnClient(mock[HttpClient], ConfigFactory.load())
-    val result = client.combine(input, YarnPool("test", 1, 1.0))
+    val result = client.combine(input, YarnPool("test", 1, 1.0), Queue("root"))
     result should be(expected)
   }
 

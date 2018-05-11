@@ -15,7 +15,7 @@ class DatasetSpec extends FlatSpec with TableDrivenPropertyChecks with Matchers 
   def config(environment: String) =
     ConfigFactory.parseString(
       s"""
-        | hdfs.dataset.root = /data/governed
+        | workspaces.dataset.root = /data/governed
         | cluster.environment = $environment
       """.stripMargin)
 

@@ -1,10 +1,11 @@
 package com.heimdali.modules
 
-import java.sql.DriverManager
+import java.sql.{Connection, DriverManager}
 
-import akka.actor.{ActorRef, Props}
-import com.heimdali.models.{Dataset, GovernedDataset, SharedWorkspace, UserWorkspace}
-import com.heimdali.provisioning.{WorkspaceProvisioner, _}
+import akka.actor.ActorRef
+import com.heimdali.models.{Dataset, SharedWorkspace, UserWorkspace}
+import com.heimdali.provisioning._
+import com.typesafe.config.Config
 
 
 trait AkkaModule {
@@ -15,15 +16,16 @@ trait AkkaModule {
     with RepoModule
     with ContextModule =>
 
-  val hiveConfig = configuration.getConfig("db.hive")
+  val hiveConfig: Config = configuration.getConfig("db.hive")
+
   Class.forName(hiveConfig.getString("driver"))
-  val hiveConnectionFactory =
-    () => DriverManager.getConnection(hiveConfig.getString("url"), "", "")
+
+  val hiveConnectionFactory: () => Connection = () => DriverManager.getConnection(hiveConfig.getString("url"), "", "")
 
   val ldapActor: ActorRef = actorSystem.actorOf(LDAPActor.props(ldapClient))
-  val sharedWorkspaceSaver: ActorRef = actorSystem.actorOf(WorkspaceSaver[Long, SharedWorkspace](sharedWorkspaceRepository, ldapRepository, hiveDatabaseRepository))
-  val userWorkspaceSaver: ActorRef = actorSystem.actorOf(WorkspaceSaver[String, UserWorkspace](userWorkspaceRepository, ldapRepository, hiveDatabaseRepository))
-  val datasetWorkspaceSaver: ActorRef = actorSystem.actorOf(WorkspaceSaver[Long, Dataset](datasetRepository, ldapRepository, hiveDatabaseRepository))
+  val sharedWorkspaceSaver: ActorRef = actorSystem.actorOf(WorkspaceSaver[Long, SharedWorkspace](sharedWorkspaceRepository, ldapRepository, hiveDatabaseRepository, yarnRepository))
+  val userWorkspaceSaver: ActorRef = actorSystem.actorOf(WorkspaceSaver[String, UserWorkspace](userWorkspaceRepository, ldapRepository, hiveDatabaseRepository, yarnRepository))
+  val datasetWorkspaceSaver: ActorRef = actorSystem.actorOf(WorkspaceSaver[Long, Dataset](datasetRepository, ldapRepository, hiveDatabaseRepository, yarnRepository))
   val hdfsActor: ActorRef = actorSystem.actorOf(HDFSActor.props(hdfsClient, loginContextProvider))
   val keytabActor: ActorRef = actorSystem.actorOf(KeytabActor.props(hdfsClient, keytabService, configuration))
   val yarnActor: ActorRef = actorSystem.actorOf(YarnActor.props(yarnClient))

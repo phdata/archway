@@ -6,7 +6,7 @@ import akka.http.scaladsl.server.Directives._
 import akka.pattern.ask
 import akka.util.Timeout
 import cats.kernel.Semigroup
-import com.heimdali.models.{HiveDatabase, LDAPRegistration, UserWorkspace}
+import com.heimdali.models.{HiveDatabase, LDAPRegistration, UserWorkspace, Yarn}
 import com.heimdali.provisioning.WorkspaceProvisioner.Start
 import com.heimdali.services.AccountService
 import com.typesafe.config.Config
@@ -41,12 +41,21 @@ class AccountController(authService: AuthService,
     )
   )
 
+  def yarn(yarn: Yarn) = Json.obj(
+    "processing" -> Json.obj(
+      "pool_name" -> Json.fromString(yarn.poolName),
+      "max_cores" -> Json.fromLong(yarn.maxCores),
+      "max_memory" -> Json.fromLong(yarn.maxMemoryInGB)
+    )
+  )
+
   implicit final val encodeSharedWorkspace: Encoder[UserWorkspace] =
     (userWorkspace: UserWorkspace) => {
       Seq(
         Some(Json.obj("username" -> Json.fromString(userWorkspace.username))),
         userWorkspace.ldap.map(ldap),
-        userWorkspace.hiveDatabase.map(hive)
+        userWorkspace.hiveDatabase.map(hive),
+        userWorkspace.yarn.map(yarn)
       ).flatten
         .reduce(_ deepMerge _)
     }

@@ -59,6 +59,9 @@ class GovernedDatasetController(authService: AuthService,
   implicit final val encodeCompliance: Encoder[Compliance] =
     Encoder.forProduct3("phi_data", "pci_data", "pii_data")(c => (c.phiData, c.pciData, c.piiData))
 
+  implicit final val encodeYarn: Encoder[Yarn] =
+    Encoder.forProduct3("pool_name", "max_cores", "max_memory")(c => (c.poolName, c.maxCores, c.maxMemoryInGB))
+
   implicit final val encodeSharedWorkspace: Encoder[Dataset] =
     Encoder.forProduct6("name", "system_name", "purpose", "ldap", "data", "processing") { u =>
       (u.name, u.systemName, u.purpose, u.ldap, u.hiveDatabase, u.yarn)

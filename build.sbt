@@ -34,6 +34,7 @@ libraryDependencies ++= Seq(
   "io.circe" %% "circe-generic" % circeVersion,
   "io.circe" %% "circe-parser" % circeVersion,
   "io.circe" %% "circe-generic-extras" % circeVersion,
+  "io.circe" %% "circe-optics" % circeVersion,
 
   ("com.pauldijou" %% "jwt-core" % "0.14.1").exclude("org.bouncycastle", "bcpkix-jdk15on"),
   ("com.pauldijou" %% "jwt-circe" % "0.14.1").exclude("org.bouncycastle", "bcpkix-jdk15on"),

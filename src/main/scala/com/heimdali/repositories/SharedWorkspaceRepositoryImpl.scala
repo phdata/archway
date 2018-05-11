@@ -92,4 +92,21 @@ class SharedWorkspaceRepositoryImpl(implicit ec: ExecutionContext)
         .get
     }
   }
+
+  override def setYarn(workspaceId: Long, yarnId: Long): Future[SharedWorkspace] = Future {
+    NamedDB('default) localTx { implicit session =>
+      applyUpdate {
+        update(SharedWorkspace)
+          .set(
+            SharedWorkspace.column.yarnId -> yarnId
+          )
+          .where.eq(SharedWorkspace.column.id, workspaceId)
+      }
+
+      baseSql((sw, _, _, _, _) => _.eq(sw.id, workspaceId))
+        .single()
+        .apply()
+        .get
+    }
+  }
 }

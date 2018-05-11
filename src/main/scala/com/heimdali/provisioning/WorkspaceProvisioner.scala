@@ -1,8 +1,9 @@
 package com.heimdali.provisioning
 
 import akka.actor.{ActorLogging, ActorRef, FSM, Props}
-import com.heimdali.models.{LDAPRegistration, Workspace}
+import com.heimdali.models.{LDAPRegistration, Workspace, Yarn}
 import com.heimdali.provisioning.HiveActor.{CreateDatabase, DatabaseCreated}
+import com.heimdali.provisioning.YarnActor.{CreatePool, PoolCreated}
 import com.typesafe.config.Config
 
 
@@ -12,8 +13,8 @@ object WorkspaceProvisioner {
 
   case object Started
 
-  def props[A, T <: Workspace[A]](ldapActor: ActorRef, hdfsActor: ActorRef, hiveActor: ActorRef, saveActor: ActorRef, configuration: Config, sharedWorkspace: T) =
-    Props(new WorkspaceProvisioner[A, T](ldapActor, hdfsActor, hiveActor, saveActor, configuration, sharedWorkspace))
+  def props[A, T <: Workspace[A]](ldapActor: ActorRef, hdfsActor: ActorRef, hiveActor: ActorRef, saveActor: ActorRef, yarnActor: ActorRef, configuration: Config, sharedWorkspace: T) =
+    Props(new WorkspaceProvisioner[A, T](ldapActor, hdfsActor, hiveActor, saveActor, yarnActor, configuration, sharedWorkspace))
 
 }
 
@@ -21,6 +22,7 @@ class WorkspaceProvisioner[A, T <: Workspace[A]](ldapActor: ActorRef,
                                                  hdfsActor: ActorRef,
                                                  hiveActor: ActorRef,
                                                  saveActor: ActorRef,
+                                                 yarnActor: ActorRef,
                                                  configuration: Config,
                                                  workspace: T)
   extends FSM[WorkspaceState, T] with ActorLogging {
@@ -36,6 +38,7 @@ class WorkspaceProvisioner[A, T <: Workspace[A]](ldapActor: ActorRef,
     case Event(Start, _) =>
       ldapActor ! CreateGroup(workspace.groupName(configuration), workspace.initialMembers)
       hdfsActor ! CreateDirectory(workspace.dataDirectory(configuration), workspace.requestedDiskSize(configuration), workspace.onBehalfOf)
+      yarnActor ! CreatePool(workspace.parentPools(configuration), workspace.poolName, workspace.requestedCores(configuration), workspace.requestedMemory(configuration))
       goto(Provisioning) replying Started
   }
 
@@ -50,6 +53,10 @@ class WorkspaceProvisioner[A, T <: Workspace[A]](ldapActor: ActorRef,
 
     case Event(LDAPGroupCreated(name, dn), _) =>
       saveActor ! LDAPUpdate[A](workspace.workspaceId, LDAPRegistration(None, dn, name))
+      stay()
+
+    case Event(PoolCreated(name), _) =>
+      saveActor ! YarnUpdate[A](workspace.workspaceId, Yarn(None, name, workspace.requestedCores(configuration), workspace.requestedMemory(configuration)))
       stay()
   }
 

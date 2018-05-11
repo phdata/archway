@@ -31,4 +31,6 @@ trait RepoModule {
 
   val userWorkspaceRepository: UserWorkspaceRepository = new UserWorkspaceRepositoryImpl()
 
+  val yarnRepository: YarnRepository = new YarnRepositoryImpl()
+
 }

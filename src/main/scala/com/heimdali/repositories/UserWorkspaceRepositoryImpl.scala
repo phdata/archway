@@ -84,4 +84,19 @@ class UserWorkspaceRepositoryImpl(implicit executionContext: ExecutionContext)
     }
   }
 
+  override def setYarn(username: String, yarnId: Long): Future[UserWorkspace] = Future {
+    NamedDB('default) localTx { implicit session =>
+      applyUpdate {
+        update(UserWorkspace)
+          .set(
+            UserWorkspace.column.yarnId -> yarnId
+          )
+          .where.eq(UserWorkspace.column.username, username)
+      }
+
+      baseSql((uw, _, _, _) => _.eq(uw.username, username))
+        .single().apply().get
+    }
+  }
+
 }
