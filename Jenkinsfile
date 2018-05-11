@@ -22,7 +22,7 @@ pipeline {
                 container('jdk') {
                     withAWS(credentials: 'jenkins-aws-user') {
                         sh '''
-                           sed -i "s/0.1.0/${VERSION}/g" descriptor/service.sdl
+                           sed -i -e "s/0.1.0/${VERSION}/g" descriptor/service.sdl
                            jar cvf HEIMDALI-${VERSION}.jar `find . -mindepth 1 -not -path "./.git*"`
                         '''
 
