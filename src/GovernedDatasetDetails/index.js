@@ -4,6 +4,7 @@ import {connect} from "react-redux";
 import Spinner from "../Common/Spinner";
 import Compliance from "./Compliance";
 import DatabaseDisplay from "../Common/DatabaseDisplay";
+import ProcessingDisplay from "../Common/ProcessingDisplay";
 import WorkspaceMemberList from "../SharedWorkspaceDetails/WorkspaceMemberList";
 import "./GovernedDatasetDetails.css"
 
@@ -12,6 +13,8 @@ const DatasetDetails = ({dataset, members, cluster, requestNewMember, removeMemb
         <div className="GovernedDatasetDetails-details-left">
             <DatabaseDisplay database={dataset.data}
                              cluster={cluster}/>
+           <ProcessingDisplay processing={dataset.processing}
+             cluster={cluster} />
         </div>
         <div className="GovernedDatasetDetails-details-right">
             <WorkspaceMemberList members={members} onAdd={requestNewMember} onRemove={removeMember} />

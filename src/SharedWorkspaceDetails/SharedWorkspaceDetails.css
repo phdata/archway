@@ -34,10 +34,6 @@
     align-items: center;
 }
 
-.SharedWorkspaceDetails-details-left {
-    flex: 1;
-}
-
 .SharedWorkspaceDetails-details-right {
     flex: 1;
     display: flex;

@@ -1,6 +1,7 @@
 import React from "react";
 import "./UserWorkspaceDisplay.css";
 import DatabaseDisplay from "../Common/DatabaseDisplay";
+import ProcessingDisplay from "../Common/ProcessingDisplay";
 
 const UserWorkspaceDisplay = ({workspace, cluster}) => {
     return (
@@ -9,6 +10,7 @@ const UserWorkspaceDisplay = ({workspace, cluster}) => {
                 Your workspace is set up<br />on "{cluster.name}"!
             </h2>
             <DatabaseDisplay database={workspace.database} cluster={cluster} />
+            <ProcessingDisplay processing={workspace.processing} cluster={cluster} />
         </div>
     );
 };
