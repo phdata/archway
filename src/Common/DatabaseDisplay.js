@@ -1,9 +1,9 @@
 import React from "react";
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import {tomorrowNightBlue} from 'react-syntax-highlighter/styles/hljs';
-import "./DatabaseDisplay.css"
 import Spinner from "./Spinner";
-import "./Panel.css";
+import MetricDisplay from "./MetricDisplay";
+import "./DatabaseDisplay.css"
 
 const syntaxStyle = {
     marginTop: 10,
@@ -36,8 +36,8 @@ const DatabaseDisplay = ({database, cluster}) => {
                         </SyntaxHighlighter>
                     </div>
                     <div className="DatabaseDisplay-Display-right">
-                        {database.size_in_gb}
-                        <h4>GB</h4>
+                        <MetricDisplay metric={database.size_in_gb}
+                                      label="gb quota" />
                     </div>
                 </div>
             </div>

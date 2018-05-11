@@ -3,6 +3,7 @@ import {connect} from "react-redux";
 import Spinner from "../Common/Spinner";
 import Compliance from "./Compliance";
 import DatabaseDisplay from "../Common/DatabaseDisplay";
+import ProcessingDisplay from "../Common/ProcessingDisplay";
 import WorkspaceMemberList from "./WorkspaceMemberList";
 import {requestNewMember, removeMember} from "./actions";
 import "./SharedWorkspaceDetails.css"
@@ -23,6 +24,8 @@ const SharedWorkspaceDetails = ({workspaceDetails: {workspace, members}, cluster
                     <div className="SharedWorkspaceDetails-details-left">
                         <DatabaseDisplay database={workspace.data}
                                          cluster={cluster}/>
+                       <ProcessingDisplay processing={workspace.processing}
+                         cluster={cluster} />
                     </div>
                     <div className="SharedWorkspaceDetails-details-right">
                         <WorkspaceMemberList members={members} onAdd={requestNewMember} onRemove={removeMember} />

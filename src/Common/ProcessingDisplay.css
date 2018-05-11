@@ -1,4 +1,4 @@
-.DatabaseDisplay {
+.ProcessingDisplay {
     background-color: white;
     display: flex;
     flex: 1;
@@ -8,6 +8,7 @@
     box-shadow: 0 3px 6px rgba(0, 0, 0, .16);
     border-radius: 10px;
     margin: 0px 50px 25px 50px;
+    width: 1225px;
 }
 
 pre {
@@ -19,42 +20,29 @@ pre {
     padding: 5px;
 }
 
-.DatabaseDisplay >h2 {
+.ProcessingDisplay > h2 {
     border-bottom: solid black 1px;
     font-weight: bold;
     padding-bottom: 10px;
 }
 
-.DatabaseDisplay-Display {
+.ProcessingDisplay-Display {
     display: flex;
     flex: 1;
     flex-direction: row;
 }
 
-.DatabaseDisplay-Display-left {
+.ProcessingDisplay-Display-left {
     display: flex;
     flex: 1;
     flex-direction: column;
     justify-content: space-evenly;
 }
 
-.DatabaseDisplay-Display-right {
+.ProcessingDisplay-Display-right {
     display: flex;
-    flex: 3;
-    flex-direction: column;
-    justify-content: center;
+    flex-direction: row;
+    justify-content: space-evenly;
     align-items: center;
-    font-size: 55px;
-}
-
-.DatabaseDisplay-Display-right h4 {
-  font-family: Roboto;
-  font-size: 36;
-  font-weight: 600;
-}
-
-.DatabaseDisplay-Display-right-size {
-  color: #FF9F1C;
-  font-family: Roboto;
-  font-weight: 100;
+    width: 250px;
 }
