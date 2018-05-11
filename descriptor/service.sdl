@@ -164,6 +164,36 @@
           "default": "250"
         },
         {
+          "name": "heimdali_yarn_user_cores",
+          "label": "Default User YARN Cores",
+          "description": "The default user workspace number of cores",
+          "type": "long",
+          "required": "true",
+          "configurableInWizard": "true",
+          "default": "1",
+          "unit": "gigabytes"
+        },
+        {
+          "name": "heimdali_yarn_user_memory",
+          "label": "User_m Default YARN Memory",
+          "description": "Default amount of memory for user workspaces",
+          "type": "long",
+          "required": "true",
+          "configurableInWizard": "true",
+          "default": "1",
+          "unit": "gigabytes"
+        },
+        {
+          "name": "heimdali_yarn_user_parents",
+          "label": "User YARN Pool Parents",
+          "description": "Default parent pools for user workspaces (eg. \"root\")",
+          "type": "string",
+          "required": "true",
+          "configurableInWizard": "true",
+          "default": "1",
+          "unit": "gigabytes"
+        },
+        {
           "name": "heimdali_hdfs_sw_root",
           "label": "Shared Workspace HDFS Path",
           "description": "The HDFS location for shared workspaces",
@@ -182,6 +212,34 @@
           "default": "250"
         },
         {
+          "name": "heimdali_yarn_shared_cores",
+          "label": "Default Shared YARN Cores",
+          "description": "The default shared workspace number of cores",
+          "type": "long",
+          "required": "true",
+          "configurableInWizard": "true",
+          "default": "1"
+        },
+        {
+          "name": "heimdali_yarn_shared_memory",
+          "label": "Shared Default YARN Memory",
+          "description": "Default amount of memory for shared workspaces",
+          "type": "long",
+          "required": "true",
+          "configurableInWizard": "true",
+          "default": "4",
+          "unit": "gigabytes"
+        },
+        {
+          "name": "heimdali_yarn_shared_parents",
+          "label": "Shared YARN Pool Parents",
+          "description": "Default parent pools for shared workspaces (eg. \"root\"",
+          "type": "string",
+          "required": "true",
+          "configurableInWizard": "true",
+          "default": "root"
+        },
+        {
           "name": "heimdali_hdfs_ds_root",
           "label": "Governed Dataset HDFS Path",
           "description": "The HDFS location for governed datasets",
@@ -198,6 +256,34 @@
           "unit": "gigabytes",
           "configurableInWizard": "true",
           "default": "250"
+        },
+        {
+          "name": "heimdali_yarn_dataset_cores",
+          "label": "Default Dataset YARN Cores",
+          "description": "The default dataset workspace number of cores",
+          "type": "long",
+          "required": "true",
+          "configurableInWizard": "true",
+          "default": "1"
+        },
+        {
+          "name": "heimdali_yarn_dataset_memory",
+          "label": "Datase Default YARN Memory",
+          "description": "Default amount of memory for dataset workspaces",
+          "type": "long",
+          "required": "true",
+          "configurableInWizard": "true",
+          "default": "1",
+          "unit": "gigabytes"
+        },
+        {
+          "name": "heimdali_yarn_dataset_parents",
+          "label": "Dataset YARN Pool Parents",
+          "description": "Default parent pools for dataset workspaces (eg. \"root\"",
+          "type": "string",
+          "required": "true",
+          "configurableInWizard": "true",
+          "default": "1"
         },
         {
           "name": "heimdali_db_driver",
@@ -309,8 +395,17 @@
         ],
         "environmentVariables": {
           "HEIMDALI_HDFS_USER_SIZE": "${heimdali_hdfs_user_size}",
+          "HEIMDALI_YARN_USER_CORES": "${heimdali_yarn_user_cores}",
+          "HEIMDALI_YARN_USER_MEMORY": "${heimdali_yarn_user_memory}",
+          "HEIMDALI_YARN_USER_PARENTS": "${heimdali_yarn_user_parents}",
           "HEIMDALI_HDFS_SHARED_SIZE": "${heimdali_hdfs_shared_size}",
+          "HEIMDALI_YARN_SHARED_CORES": "${heimdali_yarn_shared_cores}",
+          "HEIMDALI_YARN_SHARED_MEMORY": "${heimdali_yarn_shared_memory}",
+          "HEIMDALI_YARN_SHARED_PARENTS": "${heimdali_yarn_shared_parents}",
           "HEIMDALI_HDFS_DATASET_SIZE": "${heimdali_hdfs_dataset_size}",
+          "HEIMDALI_YARN_DATASET_CORES": "${heimdali_yarn_dataset_cores}",
+          "HEIMDALI_YARN_DATASET_MEMORY": "${heimdali_yarn_dataset_memory}",
+          "HEIMDALI_YARN_DATASET_PARENTS": "${heimdali_yarn_dataset_parents}",
           "HEIMDALI_KEYTAB_REFRESH": "${heimdali_keytab_refresh}",
           "HEIMDALI_SECRET": "${heimdali_rest_secret}",
           "HEIMDALI_REST_PORT": "${heimdali_rest_port}",
