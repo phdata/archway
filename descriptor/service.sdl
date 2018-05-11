@@ -27,6 +27,17 @@
       "required": "true"
     }
   ],
+  "parameters": [
+    {
+      "name": "heimdali_rest_port",
+      "label": "REST API Port",
+      "description": "Heimdali REST API Port",
+      "required": "true",
+      "type": "port",
+      "default": 8080,
+      "configurableInWizard": "true"
+    }
+  ],
   "roles": [
     {
       "name": "HEIMDALI_UI",
@@ -80,15 +91,6 @@
         "loggingType" : "log4j"
       },
       "parameters": [
-        {
-          "name": "heimdali_rest_port",
-          "label": "REST API Port",
-          "description": "Heimdali REST API Port",
-          "required": "true",
-          "type": "port",
-          "default": 8080,
-          "configurableInWizard": "true"
-        },
         {
           "name": "heimdali_rest_secret",
           "label": "REST API Secret",
