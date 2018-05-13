@@ -176,7 +176,7 @@
         },
         {
           "name": "heimdali_yarn_user_memory",
-          "label": "User_m Default YARN Memory",
+          "label": "User Default YARN Memory",
           "description": "Default amount of memory for user workspaces",
           "type": "long",
           "required": "true",
@@ -191,7 +191,7 @@
           "type": "string",
           "required": "true",
           "configurableInWizard": "true",
-          "default": "root"
+          "default": "root,users"
         },
         {
           "name": "heimdali_hdfs_sw_root",
