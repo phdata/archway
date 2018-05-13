@@ -209,7 +209,7 @@
           "type": "long",
           "unit": "gigabytes",
           "configurableInWizard": "true",
-          "default": "250"
+          "default": "1000"
         },
         {
           "name": "heimdali_yarn_shared_cores",
@@ -255,7 +255,7 @@
           "type": "long",
           "unit": "gigabytes",
           "configurableInWizard": "true",
-          "default": "250"
+          "default": "4000"
         },
         {
           "name": "heimdali_yarn_dataset_cores",
