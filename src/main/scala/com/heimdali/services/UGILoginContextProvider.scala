@@ -38,7 +38,7 @@ class UGILoginContextProvider(implicit executionContext: ExecutionContext)
       true
     } catch {
       case exc: Throwable =>
-        logger.error("Couldn't kinit")
+        logger.error("Couldn't kinit: {}", exc.toString, exc)
         false
     }
   }
