@@ -16,7 +16,7 @@ const ProcessingDisplay = ({processing, cluster}) => {
   let content;
   if (processing && processing.pool_name && cluster.services) {
     const sparkJob = `
-$ ./bin/spark-submit --class org.apache.spark.examples.SparkPi \\
+$ spark-submit --class org.apache.spark.examples.SparkPi \\
                      --master yarn \\
                      --deploy-mode cluster \\
                      --queue ${processing.pool_name} \\
