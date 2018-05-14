@@ -8,7 +8,13 @@ import org.apache.hadoop.fs.FileSystem
 import org.apache.hadoop.hdfs.client.HdfsAdmin
 
 trait ClientModule {
-  this: AkkaModule with ExecutionContextModule with ConfigurationModule with HttpModule with ContextModule with FileSystemModule =>
+  this: AkkaModule
+    with ExecutionContextModule
+    with ConfigurationModule
+    with HttpModule
+    with ContextModule
+    with FileSystemModule
+    with ClusterModule =>
 
   val hdfsUri = new URI(hadoopConfiguration.get("fs.defaultFS"))
 
@@ -21,6 +27,6 @@ trait ClientModule {
 
   val hdfsClient: HDFSClient = new HDFSClientImpl(fileSystemLoader, hdfsAdmin, loginContextProvider)
 
-  val yarnClient: YarnClient = new CDHYarnClient(http, configuration)
+  val yarnClient: YarnClient = new CDHYarnClient(http, configuration, clusterService)
 
 }

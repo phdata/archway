@@ -1,6 +1,7 @@
 package com.heimdali.test
 
 import com.heimdali.models._
+import com.heimdali.services.{BasicClusterApp, CDH, Cluster}
 import io.circe.parser._
 import org.joda.time.DateTime
 
@@ -26,6 +27,9 @@ package object fixtures {
   val hive = HiveDatabase(None, "", "", "", 1)
   val yarn = Yarn(Some(1), poolName, maxCores, maxMemoryInGB)
   val ldap = LDAPRegistration(None, ldapDn, s"edh_sw_$systemName")
+
+  val yarnApp = BasicClusterApp("ysr21", "GOOD_HEALTH", "STARTED")
+  val cluster = Cluster("cluster", "Cluster", Map("YARN" -> yarnApp), CDH(""), "GOOD_HEALTH")
 
   val standardUsername = "john.doe"
 

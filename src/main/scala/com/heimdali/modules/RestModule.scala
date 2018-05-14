@@ -7,7 +7,8 @@ trait RestModule {
     with ExecutionContextModule
     with ServiceModule
     with HttpModule
-    with ConfigurationModule =>
+    with ConfigurationModule
+    with ClusterModule =>
 
   val authService: AuthServiceImpl = new AuthServiceImpl(accountService)
   val accountController = new AccountController(authService, accountService, configuration)

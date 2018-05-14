@@ -19,8 +19,6 @@ trait ServiceModule {
 
   val accountService: AccountService = new AccountServiceImpl(ldapClient, accountRepository, configuration, userProvisionerFactory)
 
-  val clusterService: ClusterService = new CDHClusterService(http, configuration)
-
   val workspaceProvisionerFactory: SharedWorkspace => ActorRef =
     (sharedWorkspace) => actorSystem.actorOf(WorkspaceProvisioner.props[Long, SharedWorkspace](ldapActor, hdfsActor, hiveActor, sharedWorkspaceSaver, yarnActor, configuration, sharedWorkspace))
 

@@ -9,6 +9,8 @@ import akka.http.scaladsl.marshalling.Marshal
 import akka.http.scaladsl.model._
 import akka.http.scaladsl.model.headers.BasicHttpCredentials
 import akka.stream.ActorMaterializer
+import com.heimdali.services.{BasicClusterApp, CDH, Cluster, ClusterService}
+import com.heimdali.test.fixtures._
 import com.typesafe.config.ConfigFactory
 import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport
 import io.circe.Json
@@ -29,7 +31,7 @@ class CDHYarnClientSpec extends AsyncFlatSpec with AsyncMockFactory with Matcher
     implicit val actorSystem: ActorSystem = ActorSystem()
     implicit val actorMaterializer: ActorMaterializer = ActorMaterializer()
 
-    val configUrl = "/clusters/cluster/services/yarn/config"
+    val configUrl = s"/clusters/cluster/services/${yarnApp.name}/config"
     val refreshUrl = "/clusters/cluster/commands/poolsRefresh"
     val initialJsonString: String = Source.fromResource("cloudera/config.json").getLines().mkString
     val Right(initialJson) = parse(initialJsonString)
@@ -52,14 +54,16 @@ class CDHYarnClientSpec extends AsyncFlatSpec with AsyncMockFactory with Matcher
     val refreshEntity: ResponseEntity = Await.result(Marshal(refreshResponseJson).to[ResponseEntity], Duration.Inf)
 
     val cdhClient = mock[HttpClient]
-
     (cdhClient.request _).expects(Get(configUrl).addCredentials(BasicHttpCredentials("admin", "admin"))).returning(Future(HttpResponse(StatusCodes.OK, entity = initialEntity)))
     cdhClient.request _ expects where {
       request: HttpRequest => request.uri.toString() == configUrl && request.method == HttpMethods.PUT
     } returning Future(HttpResponse(StatusCodes.OK, entity = updateEntity))
     (cdhClient.request _).expects(Post(refreshUrl).addCredentials(BasicHttpCredentials("admin", "admin"))).returning(Future(HttpResponse(StatusCodes.OK, entity = refreshEntity)))
 
-    val client = new CDHYarnClient(cdhClient, configuration)
+    val clusterService = mock[ClusterService]
+    clusterService.list _ expects() returning Future(Seq(cluster))
+
+    val client = new CDHYarnClient(cdhClient, configuration, clusterService)
     client.createPool("pool", 1, 1.0, Queue("root")).map { result =>
       result.name should be ("pool")
     }
@@ -71,7 +75,7 @@ class CDHYarnClientSpec extends AsyncFlatSpec with AsyncMockFactory with Matcher
 
     val Right(expected) = parse(Source.fromResource("cloudera/pool_json.json").getLines().mkString)
 
-    val client = new CDHYarnClient(mock[HttpClient], ConfigFactory.load())
+    val client = new CDHYarnClient(mock[HttpClient], ConfigFactory.load(), mock[ClusterService])
     val result = client.config(YarnPool("test", 1, 1.0))
     result should be(expected)
   }
@@ -83,7 +87,7 @@ class CDHYarnClientSpec extends AsyncFlatSpec with AsyncMockFactory with Matcher
     val Right(input) = parse(Source.fromResource("cloudera/pool.json").getLines().mkString)
     val Right(expected) = parse(Source.fromResource("cloudera/pool_after.json").getLines().mkString)
 
-    val client = new CDHYarnClient(mock[HttpClient], ConfigFactory.load())
+    val client = new CDHYarnClient(mock[HttpClient], ConfigFactory.load(), mock[ClusterService])
     val result = client.combine(input, YarnPool("test", 1, 1.0), Queue("root"))
     result should be(expected)
   }

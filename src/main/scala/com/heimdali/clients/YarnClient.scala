@@ -5,14 +5,14 @@ import akka.http.scaladsl.model.headers.BasicHttpCredentials
 import akka.http.scaladsl.model.{HttpResponse, StatusCodes}
 import akka.http.scaladsl.unmarshalling.Unmarshal
 import akka.stream.Materializer
+import com.heimdali.services.{BasicClusterApp, ClusterService}
 import com.typesafe.config.Config
 import com.typesafe.scalalogging.LazyLogging
 import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport
-import io.circe.{ACursor, HCursor, Json, JsonObject}
 import io.circe.parser._
+import io.circe.{ACursor, Json}
 import org.apache.http.HttpException
 
-import scala.Option
 import scala.collection.immutable.Queue
 import scala.concurrent.duration._
 import scala.concurrent.{Await, ExecutionContext, Future}
@@ -24,21 +24,32 @@ trait YarnClient {
 }
 
 class CDHYarnClient(http: HttpClient,
-                    configuration: Config)
+                    configuration: Config,
+                    clusterService: ClusterService)
                    (implicit executionContext: ExecutionContext,
                     materializer: Materializer)
   extends YarnClient
     with FailFastCirceSupport
     with LazyLogging {
 
-  val clusterConfig = configuration.getConfig("cluster")
-  val cluster = clusterConfig.getString("name")
-  val baseUrl = clusterConfig.getString("url")
-  val adminConfig = clusterConfig.getConfig("admin")
-  val username = adminConfig.getString("username")
-  val password = adminConfig.getString("password")
+  val clusterConfig: Config = configuration.getConfig("cluster")
+  val cluster: String = clusterConfig.getString("name")
+  val baseUrl: String = clusterConfig.getString("url")
+  val adminConfig: Config = clusterConfig.getConfig("admin")
+  val username: String = adminConfig.getString("username")
+  val password: String = adminConfig.getString("password")
 
-  val configURL = s"$baseUrl/clusters/$cluster/services/yarn/config"
+  lazy val configURL: Future[String] = {
+    clusterService.list.map { clusterList =>
+      clusterList
+        .find(_.id == cluster)
+        .map { activeCluster =>
+          val BasicClusterApp(yarn, _, _) = activeCluster.clusterApps("YARN")
+          s"$baseUrl/clusters/$cluster/services/$yarn/config"
+        }.get
+    }
+  }
+
   val refreshURL = s"$baseUrl/clusters/$cluster/commands/poolsRefresh"
 
   def config(pool: YarnPool): Json = Json.obj(
@@ -96,47 +107,50 @@ class CDHYarnClient(http: HttpClient,
   }
 
   def yarnConfig: Future[Json] = {
-    val request = Get(configURL).addCredentials(BasicHttpCredentials(username, password))
-    http.request(request)
-      .flatMap {
-        case HttpResponse(StatusCodes.OK, _, entity, _) =>
-          val response = Await.result(Unmarshal(entity).to[Json], Duration.Inf)
-          logger.debug("configuration looks like: {}", response)
-          Future(response)
-        case HttpResponse(status, _, entity, _) =>
-          Unmarshal(entity).to[String].map { result =>
-            logger.error("{} couldn't call resource pool configuration: {}", status, result)
-            throw new HttpException()
-          }
-      }
-      .recover {
-        case ex =>
-          logger.error("couldn't get resource pool configuration: {}", ex)
-          throw ex
-      }
-
+    configURL.flatMap { url =>
+      val request = Get(url).addCredentials(BasicHttpCredentials(username, password))
+      http.request(request)
+        .flatMap {
+          case HttpResponse(StatusCodes.OK, _, entity, _) =>
+            val response = Await.result(Unmarshal(entity).to[Json], Duration.Inf)
+            logger.debug("configuration looks like: {}", response)
+            Future(response)
+          case HttpResponse(status, _, entity, _) =>
+            Unmarshal(entity).to[String].map { result =>
+              logger.error("{} couldn't call resource pool configuration: {}", status, result)
+              throw new HttpException()
+            }
+        }
+        .recover {
+          case ex =>
+            logger.error("couldn't get resource pool configuration: {}", ex)
+            throw ex
+        }
+    }
   }
 
   def yarnConfigUpdate(updatedJson: Json): Future[Json] = {
-    val request = Put(configURL, updatedJson).addCredentials(BasicHttpCredentials(username, password))
-    http.request(request)
-      .flatMap {
-        case HttpResponse(StatusCodes.OK, _, entity, _) =>
-          Unmarshal(entity).to[Json].map { result =>
-            logger.debug("config update resulted with {}", result)
-            result
-          }
-        case HttpResponse(status, _, entity, _) =>
-          Unmarshal(entity).to[String].map { result =>
-            logger.error("{} couldn't update resource pool configuration: {}", status, result)
-            throw new HttpException()
-          }
-      }
-      .recover {
-        case ex =>
-          logger.error("couldn't update resource pool configuration: {}", ex)
-          throw ex
-      }
+    configURL flatMap { url =>
+      val request = Put(url, updatedJson).addCredentials(BasicHttpCredentials(username, password))
+      http.request(request)
+        .flatMap {
+          case HttpResponse(StatusCodes.OK, _, entity, _) =>
+            Unmarshal(entity).to[Json].map { result =>
+              logger.debug("config update resulted with {}", result)
+              result
+            }
+          case HttpResponse(status, _, entity, _) =>
+            Unmarshal(entity).to[String].map { result =>
+              logger.error("{} couldn't update resource pool configuration: {}", status, result)
+              throw new HttpException()
+            }
+        }
+        .recover {
+          case ex =>
+            logger.error("couldn't update resource pool configuration: {}", ex)
+            throw ex
+        }
+    }
   }
 
   def yarnConfigRefresh: Future[Json] = {

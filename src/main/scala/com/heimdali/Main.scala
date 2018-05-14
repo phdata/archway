@@ -14,6 +14,7 @@ object Main extends App {
     with FileSystemModule
     with StartupModule
     with HttpModule
+    with ClusterModule
     with ClientModule
     with RepoModule
     with ServiceModule
