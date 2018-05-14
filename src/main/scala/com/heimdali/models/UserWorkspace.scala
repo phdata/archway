@@ -13,7 +13,7 @@ case class UserWorkspace(username: String,
 
   override val configName: String = "user"
 
-  override val poolName: String = s"user_$username"
+  override val poolName: String = username
 
   override val workspaceId: String = username
 
