@@ -34,7 +34,7 @@ class UGILoginContextProvider(implicit executionContext: ExecutionContext)
   override def kinit(): Boolean = {
     logger.info("kiniting api service principal")
     try {
-      UserGroupInformation.loginUserFromKeytab(sys.env("KEYTAB_FILE"), sys.env("HEIMDALI_API_SERVICE_PRINCIPAL"))
+      UserGroupInformation.loginUserFromKeytab(s"${sys.env("PWD")}/heimdali.keytab", sys.env("HEIMDALI_API_SERVICE_PRINCIPAL"))
       true
     } catch {
       case exc: Throwable =>
