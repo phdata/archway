@@ -58,11 +58,11 @@ class CDHClusterServiceSpec
     list.head.id should be(name)
     list.head.name should be("Valhalla")
     list.head.clusterApps should be(Map(
-      "ZOOKEEPER" -> BasicClusterApp("ZooKeeper", "GOOD_HEALTH", "STARTED"),
-      "OOZIE" -> BasicClusterApp("Oozie", "GOOD_HEALTH", "STARTED"),
-      "KS_INDEXER" -> BasicClusterApp("Key-Value Store Indexer", "GOOD_HEALTH", "STARTED"),
-      "IMPALA" -> HostClusterApp("Impala", "GOOD_HEALTH", "STARTED", "worker1.valhalla.phdata.io"),
-      "HIVESERVER2" -> HostClusterApp("Hive", "GOOD_HEALTH", "STARTED", "worker1.valhalla.phdata.io")
+      "ZOOKEEPER" -> BasicClusterApp("zookeeper", "ZooKeeper", "GOOD_HEALTH", "STARTED"),
+      "OOZIE" -> BasicClusterApp("oozie", "Oozie", "GOOD_HEALTH", "STARTED"),
+      "KS_INDEXER" -> BasicClusterApp("ks_indexer", "Key-Value Store Indexer", "GOOD_HEALTH", "STARTED"),
+      "IMPALA" -> HostClusterApp("impala", "Impala", "GOOD_HEALTH", "STARTED", "worker1.valhalla.phdata.io"),
+      "HIVESERVER2" -> HostClusterApp("hive", "Hive", "GOOD_HEALTH", "STARTED", "worker1.valhalla.phdata.io")
     ))
     list.head.distribution should be(CDH(version))
     list.head.status should be("GOOD_HEALTH")

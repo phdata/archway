@@ -13,14 +13,16 @@ class ClusterController(clusterService: ClusterService)
 
   implicit val fooDecoder: Encoder[Cluster] = (a: Cluster) => {
     val services: Map[String, Json] = a.clusterApps.map {
-      case (name, BasicClusterApp(display, status, state)) =>
+      case (name, BasicClusterApp(id, display, status, state)) =>
         (name, Json.obj(
+          ("id", Json.fromString(id)),
           ("state", Json.fromString(state)),
           ("status", Json.fromString(status)),
           ("name", Json.fromString(display))
         ))
-      case (name, HostClusterApp(display, status, state, host)) =>
+      case (name, HostClusterApp(id, display, status, state, host)) =>
         (name, Json.obj(
+          ("id", Json.fromString(id)),
           ("state", Json.fromString(state)),
           ("status", Json.fromString(status)),
           ("name", Json.fromString(display)),

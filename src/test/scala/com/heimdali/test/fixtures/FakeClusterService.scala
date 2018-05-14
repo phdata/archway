@@ -14,7 +14,7 @@ class FakeClusterService @Inject()(configuration: Config)
   extends CDHClusterService(null, configuration) {
   override def clusterDetails(baseUrl: String, username: String, password: String) =
     Future {
-      Cluster(username, username, Map("impala" -> HostClusterApp("", "", "", "")), FakeClusterService.cdh, "GOOD_HEALTH")
+      Cluster(username, username, Map("impala" -> HostClusterApp("", "", "", "", "")), FakeClusterService.cdh, "GOOD_HEALTH")
     }
 }
 

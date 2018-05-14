@@ -4,6 +4,7 @@
   "status": "GOOD_HEALTH",
   "services": {
     "IMPALA": {
+      "id": "impl31",
       "state": "STARTED",
       "status": "GOOD",
       "name": "Impala",

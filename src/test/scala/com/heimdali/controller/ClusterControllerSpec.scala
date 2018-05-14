@@ -28,7 +28,7 @@ class ClusterControllerSpec
   it should "get a list of clusters" in {
     val clusterService = mock[ClusterService]
     (clusterService.list _).expects().returning(Future(Seq(Cluster("cluster", "Odin", Map(
-      "IMPALA" -> HostClusterApp("Impala", "GOOD", "STARTED", "impala.example.com")
+      "IMPALA" -> HostClusterApp("impl31", "Impala", "GOOD", "STARTED", "impala.example.com")
     ), CDH("5.11"), "GOOD_HEALTH"))))
 
     val Right(expected) = parse(Source.fromResource("expected/cluster.json").getLines().mkString)

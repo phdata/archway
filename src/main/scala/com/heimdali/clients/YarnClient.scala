@@ -44,7 +44,7 @@ class CDHYarnClient(http: HttpClient,
       clusterList
         .find(_.id == cluster)
         .map { activeCluster =>
-          val BasicClusterApp(yarn, _, _) = activeCluster.clusterApps("YARN")
+          val BasicClusterApp(yarn, _, _, _) = activeCluster.clusterApps("YARN")
           s"$baseUrl/clusters/$cluster/services/$yarn/config"
         }.get
     }

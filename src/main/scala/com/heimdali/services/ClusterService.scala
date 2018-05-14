@@ -7,14 +7,15 @@ trait ClusterService {
 }
 
 sealed trait ClusterApp {
+  def id: String
   def name: String
   def status: String
   def state: String
 }
 
-case class BasicClusterApp(name: String, status: String, state: String) extends ClusterApp
+case class BasicClusterApp(id: String, name: String, status: String, state: String) extends ClusterApp
 
-case class HostClusterApp(name: String, status: String, state: String, host: String) extends ClusterApp
+case class HostClusterApp(id: String, name: String, status: String, state: String, host: String) extends ClusterApp
 
 case class Cluster(id: String, name: String, clusterApps: Map[String, _ <: ClusterApp], distribution: CDH, status: String)
 

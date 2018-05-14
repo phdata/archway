@@ -97,12 +97,12 @@ class CDHClusterService(http: HttpClient,
       details.name,
       details.displayName,
       services.items.map {
-        case ServiceInfo(_, CDHClusterService.IMPALA_SERVICE_TYPE, state, status, display) =>
-          CDHClusterService.IMPALA_SERVICE_TYPE -> HostClusterApp(display, status, state, impalaHost.hostname)
-        case ServiceInfo(_, CDHClusterService.HIVE_SERVICE_TYPE, state, status, display) =>
-          CDHClusterService.HiveServer2Role -> HostClusterApp(display, status, state, hiveHost.hostname)
-        case ServiceInfo(_, serviceType, state, status, display) =>
-          serviceType -> BasicClusterApp(display, status, state)
+        case ServiceInfo(id, CDHClusterService.IMPALA_SERVICE_TYPE, state, status, display) =>
+          CDHClusterService.IMPALA_SERVICE_TYPE -> HostClusterApp(id, display, status, state, impalaHost.hostname)
+        case ServiceInfo(id, CDHClusterService.HIVE_SERVICE_TYPE, state, status, display) =>
+          CDHClusterService.HiveServer2Role -> HostClusterApp(id, display, status, state, hiveHost.hostname)
+        case ServiceInfo(id, serviceType, state, status, display) =>
+          serviceType -> BasicClusterApp(id, display, status, state)
       }.toMap,
       CDH(details.fullVersion),
       details.status
