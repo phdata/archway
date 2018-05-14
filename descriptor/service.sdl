@@ -153,7 +153,8 @@
           "description": "The HDFS location for users",
           "required": "true",
           "type": "string",
-          "configurableInWizard": "true"
+          "configurableInWizard": "true",
+          "default": "/user"
         },
         {
           "name": "heimdali_hdfs_user_size",
@@ -199,7 +200,8 @@
           "description": "The HDFS location for shared workspaces",
           "required": "true",
           "type": "string",
-          "configurableInWizard": "true"
+          "configurableInWizard": "true",
+          "default": "/data/shared_workspace"
         },
         {
           "name": "heimdali_hdfs_shared_size",
@@ -245,7 +247,8 @@
           "description": "The HDFS location for governed datasets",
           "required": "true",
           "type": "string",
-          "configurableInWizard": "true"
+          "configurableInWizard": "true",
+          "default": "/data/governed"
         },
         {
           "name": "heimdali_hdfs_dataset_size",
