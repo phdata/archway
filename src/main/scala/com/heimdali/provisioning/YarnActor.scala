@@ -1,11 +1,12 @@
 package com.heimdali.provisioning
 
-import akka.actor.{Actor, Props}
+import akka.actor.{Actor, ActorLogging, Props}
 import akka.pattern.pipe
 import com.heimdali.clients.YarnClient
 
 import scala.collection.immutable.Queue
 import scala.concurrent.ExecutionContext
+import cats._
 
 object YarnActor {
 
@@ -20,7 +21,8 @@ object YarnActor {
 }
 
 class YarnActor(yarnClient: YarnClient)
-               (implicit val executionContext: ExecutionContext) extends Actor {
+               (implicit val executionContext: ExecutionContext)
+  extends Actor with ActorLogging {
 
   import YarnActor._
 
@@ -29,6 +31,10 @@ class YarnActor(yarnClient: YarnClient)
       (for (
         result <- yarnClient.createPool(poolName, maxCores, maxMemoryInGB, parentPools)
       ) yield PoolCreated(result.name))
+          .recover {
+            case exc =>
+              log.error(exc, "Failed to set up yarn: {}", exc.toString)
+          }
         .pipeTo(sender())
   }
 }
