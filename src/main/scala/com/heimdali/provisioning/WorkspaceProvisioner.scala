@@ -6,6 +6,8 @@ import com.heimdali.provisioning.HiveActor.{CreateDatabase, DatabaseCreated}
 import com.heimdali.provisioning.YarnActor.{CreatePool, PoolCreated}
 import com.typesafe.config.Config
 
+import scala.util.Failure
+
 
 object WorkspaceProvisioner {
 
@@ -61,6 +63,9 @@ class WorkspaceProvisioner[A, T <: Workspace[A]](ldapActor: ActorRef,
   }
 
   whenUnhandled {
+    case Event(Failure(exc), _) =>
+      log.error(exc, "Failure during provisioning: {}", exc.getMessage)
+      stop()
     case Event(e, s) ⇒
       log.warning("received unhandled request {} in state {}/{}", e, stateName, s)
       stay()
