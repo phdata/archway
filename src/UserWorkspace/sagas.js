@@ -31,7 +31,7 @@ function* getWorkspace() {
         yield put(actions.workspaceAbsent());
     }
     if (workspace) {
-        while (!workspace.ldap || !workspace.database) {
+        while (!workspace.ldap || !workspace.database || !workspace.processing) {
             yield call(delay, 2000);
             workspace = yield call(Api.workspace, token);
         }

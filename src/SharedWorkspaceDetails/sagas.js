@@ -25,12 +25,10 @@ function* workspaceDetails(token, id) {
     let workspace = yield call(Api.sharedWorkspaceDetails, token, id);
     yield put(sharedWorkspaceDetails(workspace));
 
-    while (!workspace.ldap || !workspace.data) {
+    while (!workspace.ldap || !workspace.data || !workspace.processing) {
         yield call(delay, 2000);
         workspace = yield call(Api.sharedWorkspaceDetails, token, id);
-        if (workspace.ldap || workspace.data) {
-            yield put(sharedWorkspaceDetails(workspace));
-        }
+        yield put(sharedWorkspaceDetails(workspace));
     }
     yield put(sharedWorkspaceDetails(workspace));
 }

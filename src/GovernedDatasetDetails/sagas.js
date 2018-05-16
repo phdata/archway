@@ -31,16 +31,10 @@ function* datasetDetails(id) {
     yield put(governedDatasetDetails(dataset));
     yield fork(fetchMembers, token, id, "raw");
 
-    while (!dataset.raw.ldap || !dataset.raw.data ||
-            !dataset.staging.ldap || !dataset.staging.data ||
-            !dataset.modeled.ldap || !dataset.modeled.data) {
+    while (!dataset.raw.ldap || !dataset.raw.data || !dataset.raw.processing) {
         yield call(delay, 2000);
         dataset = yield call(Api.datasetDetails, token, id);
-        if (dataset.raw.ldap || dataset.raw.data ||
-            dataset.staging.ldap || dataset.staging.data ||
-            dataset.modeled.ldap || dataset.modeled.data) {
-            yield put(governedDatasetDetails(dataset));
-        }
+        yield put(governedDatasetDetails(dataset));
     }
     yield put(governedDatasetDetails(dataset));
 }

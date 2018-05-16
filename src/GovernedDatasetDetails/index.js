@@ -31,7 +31,7 @@ const DatasetLink = ({setDataset, datasetName, active, children}) => (
 );
 
 const GovernedDatasetDetails = ({datasetDetails: {dataset, active: {dataset: activeDataset, name: activeName, members: activeMembers}}, cluster, setDataset, requestNewMember = () => {}, removeMember = () => {}}) => {
-    if (!activeDataset || !activeDataset.ldap)
+    if (!activeDataset)
         return <Spinner>Loading Details...</Spinner>;
     else {
         const {name, purpose} = dataset;

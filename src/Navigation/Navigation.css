@@ -35,6 +35,7 @@
 
 .Navigation-nav-link.active {
     border-bottom: 4px solid white;
+    margin-bottom: -4px;
 }
 
 .Navigation-nav > li:last-child:after {
