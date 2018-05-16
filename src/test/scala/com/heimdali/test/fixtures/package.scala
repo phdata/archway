@@ -29,7 +29,7 @@ package object fixtures {
   val ldap = LDAPRegistration(None, ldapDn, s"edh_sw_$systemName")
 
   val yarnApp = BasicClusterApp("ysr21", "Yarn", "GOOD_HEALTH", "STARTED")
-  val cluster = Cluster("cluster", "Cluster", Map("YARN" -> yarnApp), CDH(""), "GOOD_HEALTH")
+  val cluster = Cluster("cluster name", "Cluster", Map("YARN" -> yarnApp), CDH(""), "GOOD_HEALTH")
 
   val standardUsername = "john.doe"
 

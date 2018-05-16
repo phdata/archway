@@ -1,5 +1,7 @@
 package com.heimdali.clients
 
+import java.net.URLEncoder
+
 import akka.http.scaladsl.client.RequestBuilding._
 import akka.http.scaladsl.model.headers.BasicHttpCredentials
 import akka.http.scaladsl.model.{HttpResponse, StatusCodes}
@@ -34,6 +36,7 @@ class CDHYarnClient(http: HttpClient,
 
   val clusterConfig: Config = configuration.getConfig("cluster")
   val cluster: String = clusterConfig.getString("name")
+  val encodedClusterName: String = URLEncoder.encode(cluster, "utf-8")
   val baseUrl: String = clusterConfig.getString("url")
   val adminConfig: Config = clusterConfig.getConfig("admin")
   val username: String = adminConfig.getString("username")
@@ -45,12 +48,12 @@ class CDHYarnClient(http: HttpClient,
         .find(_.id == cluster)
         .map { activeCluster =>
           val BasicClusterApp(yarn, _, _, _) = activeCluster.clusterApps("YARN")
-          s"$baseUrl/clusters/$cluster/services/$yarn/config"
+          s"$baseUrl/clusters/$encodedClusterName/services/$yarn/config"
         }.get
     }
   }
 
-  val refreshURL = s"$baseUrl/clusters/$cluster/commands/poolsRefresh"
+  val refreshURL = s"$baseUrl/clusters/$encodedClusterName/commands/poolsRefresh"
 
   def config(pool: YarnPool): Json = Json.obj(
     "name" -> Json.fromString(pool.name),

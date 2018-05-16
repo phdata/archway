@@ -1,5 +1,7 @@
 package com.heimdali.services
 
+import java.net.URLEncoder
+
 import akka.http.scaladsl.client.RequestBuilding._
 import akka.http.scaladsl.model.headers.BasicHttpCredentials
 import akka.http.scaladsl.model.{HttpRequest, HttpResponse, StatusCodes}
@@ -57,7 +59,7 @@ class CDHClusterService(http: HttpClient,
 
   val clusterConfig: Config = configuration.getConfig("cluster")
   val baseUrl: String = clusterConfig.getString("url")
-  val cluster: String = clusterConfig.getString("name")
+  val cluster: String = URLEncoder.encode(clusterConfig.getString("name"), "utf-8")
   val adminConfig = clusterConfig.getConfig("admin")
   val username: String = adminConfig.getString("username")
   val password: String = adminConfig.getString("password")

@@ -25,7 +25,7 @@ class CDHClusterServiceSpec
 
   it should "return a cluster" in {
     val url = ""
-    val name = "cluster"
+    val name = "cluster name"
     val version = "5.11.2"
 
     val username = "admin"
@@ -39,17 +39,17 @@ class CDHClusterServiceSpec
     val Right(servicesJson) = io.circe.parser.parse(Source.fromResource("cloudera/services.json").getLines().mkString)
 
     val http = mock[HttpClient]
-    val clusterRequest = Get("/clusters/cluster").addCredentials(BasicHttpCredentials(username, password))
+    val clusterRequest = Get("/clusters/cluster+name").addCredentials(BasicHttpCredentials(username, password))
     (http.request _).expects(clusterRequest).returning(Marshal(clusterJson).to[HttpResponse])
-    val impalaRequest = Get("/clusters/cluster/services/impala/roles").addCredentials(BasicHttpCredentials(username, password))
+    val impalaRequest = Get("/clusters/cluster+name/services/impala/roles").addCredentials(BasicHttpCredentials(username, password))
     (http.request _).expects(impalaRequest).returning(Marshal(impalaJson).to[HttpResponse])
     val impalaHostRequest = Get("/hosts/9e29e533-10f5-4f87-b40a-0f2c58f8fdb1").addCredentials(BasicHttpCredentials(username, password))
     (http.request _).expects(impalaHostRequest).returning(Marshal(hostsJson).to[HttpResponse])
-    val hiveRequest = Get("/clusters/cluster/services/hive/roles").addCredentials(BasicHttpCredentials(username, password))
+    val hiveRequest = Get("/clusters/cluster+name/services/hive/roles").addCredentials(BasicHttpCredentials(username, password))
     (http.request _).expects(hiveRequest).returning(Marshal(hiveJson).to[HttpResponse])
     val hs2HostRequest = Get("/hosts/add85153-1f7c-46af-80a0-facf32966e23").addCredentials(BasicHttpCredentials(username, password))
     (http.request _).expects(hs2HostRequest).returning(Marshal(hostsJson).to[HttpResponse])
-    val servicesRequest = Get("/clusters/cluster/services").addCredentials(BasicHttpCredentials(username, password))
+    val servicesRequest = Get("/clusters/cluster+name/services").addCredentials(BasicHttpCredentials(username, password))
     (http.request _).expects(servicesRequest).returning(Marshal(servicesJson).to[HttpResponse])
 
     val service = new CDHClusterService(http, configuration)(ExecutionContext.global, materializer)
