@@ -59,7 +59,7 @@ class CDHClusterService(http: HttpClient,
 
   val clusterConfig: Config = configuration.getConfig("cluster")
   val baseUrl: String = clusterConfig.getString("url")
-  val cluster: String = URLEncoder.encode(clusterConfig.getString("name"), "utf-8")
+  val cluster: String = URLEncoder.encode(clusterConfig.getString("name"), "utf-8").replaceAll("\\+", "%20")
   val adminConfig = clusterConfig.getConfig("admin")
   val username: String = adminConfig.getString("username")
   val password: String = adminConfig.getString("password")

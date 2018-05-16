@@ -36,7 +36,7 @@ class CDHYarnClient(http: HttpClient,
 
   val clusterConfig: Config = configuration.getConfig("cluster")
   val cluster: String = clusterConfig.getString("name")
-  val encodedClusterName: String = URLEncoder.encode(cluster, "utf-8")
+  val encodedClusterName: String = URLEncoder.encode(cluster, "utf-8").replaceAll("\\+", "%20")
   val baseUrl: String = clusterConfig.getString("url")
   val adminConfig: Config = clusterConfig.getConfig("admin")
   val username: String = adminConfig.getString("username")

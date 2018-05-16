@@ -31,8 +31,8 @@ class CDHYarnClientSpec extends AsyncFlatSpec with AsyncMockFactory with Matcher
     implicit val actorSystem: ActorSystem = ActorSystem()
     implicit val actorMaterializer: ActorMaterializer = ActorMaterializer()
 
-    val configUrl = s"/clusters/cluster+name/services/${yarnApp.id}/config"
-    val refreshUrl = "/clusters/cluster+name/commands/poolsRefresh"
+    val configUrl = s"/clusters/cluster%20name/services/${yarnApp.id}/config"
+    val refreshUrl = "/clusters/cluster%20name/commands/poolsRefresh"
     val initialJsonString: String = Source.fromResource("cloudera/config.json").getLines().mkString
     val Right(initialJson) = parse(initialJsonString)
     val updateJsonString: String = Source.fromResource("cloudera/config_update.json").getLines().mkString
