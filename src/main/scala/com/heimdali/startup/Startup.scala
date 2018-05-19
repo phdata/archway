@@ -24,7 +24,7 @@ class HeimdaliStartup(configuration: Config,
     val user = configuration.getString("db.meta.user")
     val pass = configuration.getString("db.meta.password")
 
-    //    dbMigration.migrate(url, user, pass)
+    dbMigration.migrate(url, user, pass)
 
     val every = Duration.fromNanos(configuration.getDuration("cluster.sessionRefresh").toNanos)
 

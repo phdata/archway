@@ -28,7 +28,7 @@ class AccountControllerSpec
     with MockFactory
     with FailFastCirceSupport {
 
-  implicit val configuration: Configuration = Configuration.default.withDefaults.withSnakeCaseKeys
+  implicit val configuration: Configuration = Configuration.default.withSnakeCaseMemberNames
 
   import io.circe.generic.extras.auto._
 
@@ -42,12 +42,19 @@ class AccountControllerSpec
     val authService = mock[AuthService]
     (authService.validateCredentials _)
       .expects(*)
-      .returning(Future(Right(AuthenticationResult.success(Token("", "")))))
+      .returning(Future(Right(AuthenticationResult.success(Token("abc", "abc")))))
+
+    val Right(expected) = parse(
+      """
+        | {
+        |   "access_token":"abc",
+        |   "refresh_token":"abc"
+        | }""".stripMargin)
 
     val accountController = new AccountController(authService, accountService, config)
     Get("/account/token") ~> addCredentials(OAuth2BearerToken("abc123")) ~> accountController.route ~> check {
       status should be(StatusCodes.OK)
-      responseAs[Token] should be(Token("", ""))
+      responseAs[Json] should be(expected)
     }
   }
 

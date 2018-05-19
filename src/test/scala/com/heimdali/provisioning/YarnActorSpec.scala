@@ -16,19 +16,16 @@ class YarnActorSpec extends FlatSpec with MockFactory {
 
   behavior of "Yarn actor"
 
-  ignore should "request a pool" in new TestKit(ActorSystem()) with ImplicitSender {
+  it should "request a pool" in new TestKit(ActorSystem()) with ImplicitSender {
     implicit val actorSystem = ActorSystem()
 
-    val name = "sesame"
-    val maxCores = 1
-    val maxMemoryInGB = 1.0
     val config = ConfigFactory.load()
     val yarnPool = YarnPool(name, maxCores, maxMemoryInGB)
     val parents = Queue("root")
 
     val yarnClient = mock[YarnClient]
     implicit val executionContext = scala.concurrent.ExecutionContext.global
-    yarnClient.createPool _ expects(name, maxCores, maxMemoryInGB, parents) returning Future(yarnPool)
+    yarnClient.createPool _ expects(poolName, maxCores, maxMemoryInGB, parents) returning Future(yarnPool)
 
     val actor = actorSystem.actorOf(YarnActor.props(yarnClient))
     val request = CreatePool(parents, yarn.poolName, yarn.maxCores, yarn.maxMemoryInGB)

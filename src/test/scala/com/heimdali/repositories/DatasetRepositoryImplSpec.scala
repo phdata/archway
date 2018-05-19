@@ -4,11 +4,14 @@ import com.heimdali.models.Dataset
 import com.heimdali.test.fixtures.DBTest
 import org.scalatest.{AsyncFlatSpec, Matchers}
 
-class DatasetRepositoryImplSpec extends AsyncFlatSpec with Matchers with DBTest {
+class DatasetRepositoryImplSpec
+  extends AsyncFlatSpec
+    with Matchers
+    with DBTest {
 
   behavior of "ComplianceRepositoryImplSpec"
 
-  ignore should "create" in {
+  it should "create" in {
 
     val datasetRepository = new DatasetRepositoryImpl
 

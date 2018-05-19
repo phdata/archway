@@ -3,19 +3,23 @@ package com.heimdali.services
 import akka.actor.{ActorRef, ActorSystem}
 import akka.testkit.{TestActor, TestKit}
 import com.heimdali.clients.LDAPClient
-import com.heimdali.models.{Dataset, GovernedDataset}
+import com.heimdali.models.{Compliance, Dataset, GovernedDataset}
 import com.heimdali.provisioning.WorkspaceProvisioner.Start
 import com.heimdali.repositories._
 import com.heimdali.test.fixtures._
 import org.joda.time.DateTime
 import org.scalamock.scalatest.MockFactory
-import org.scalatest.{FlatSpec, Matchers}
-import scalikejdbc.ConnectionPool
+import org.scalatest.{BeforeAndAfterEach, FlatSpec, Matchers}
+import scalikejdbc._
 
 import scala.concurrent.Await
 import scala.concurrent.duration._
 
-class GovernedDatasetServiceIntegrationSpec extends FlatSpec with Matchers with MockFactory with DBTest {
+class GovernedDatasetServiceIntegrationSpec
+  extends FlatSpec
+    with Matchers
+    with MockFactory
+    with DBTest {
 
   import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -71,16 +75,12 @@ class GovernedDatasetServiceIntegrationSpec extends FlatSpec with Matchers with 
       "CN=edm_abc_row_abc,OU=groups,ou=example,ou=com",
       "CN=edh_dev_raw_tony,OU=groups,ou=example,ou=com",
       "CN=edh_dev_raw_home_mortgage,OU=groups,ou=example,ou=com"
-    )) should be (Seq(
+    )) should be(Seq(
       "tony",
       "home_mortgage"
     ))
   }
 
-  //TODO: Add find test
-  ignore should "find" in {
-
-  }
-
-  override def tables: Seq[scalikejdbc.SQLSyntaxSupport[_]] = Seq.empty
+  override def tables: Seq[scalikejdbc.SQLSyntaxSupport[_]] =
+    Seq(GovernedDataset, Compliance, Dataset)
 }

@@ -24,8 +24,8 @@ package object fixtures {
   val maxMemoryInGB = 16
   val poolName: String = "pool"
   val compliance = Compliance(None, phiCompliance, pciCompliance, piiCompliance)
-  val hive = HiveDatabase(None, "", "", "", 1)
-  val yarn = Yarn(Some(1), poolName, maxCores, maxMemoryInGB)
+  val hive = HiveDatabase(None, "", "", "", hdfsRequestedSize)
+  val yarn = Yarn(None, poolName, maxCores, maxMemoryInGB)
   val ldap = LDAPRegistration(None, ldapDn, s"edh_sw_$systemName")
 
   val yarnApp = BasicClusterApp("ysr21", "Yarn", "GOOD_HEALTH", "STARTED")

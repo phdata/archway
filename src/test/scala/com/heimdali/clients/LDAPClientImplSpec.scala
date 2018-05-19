@@ -11,7 +11,7 @@ class LDAPClientImplSpec extends AsyncFlatSpec
 
   behavior of "LDAPClientImpl"
 
-  ignore should "validate a user" in {
+  it should "validate a user" in {
     val client = new LDAPClientImpl(config)(executionContext) with OpenLDAPClient
     client.validateUser(username, password).map { maybeUser =>
       maybeUser shouldBe defined
@@ -23,7 +23,7 @@ class LDAPClientImplSpec extends AsyncFlatSpec
     }(executionContext)
   }
 
-  ignore should "create a group" in {
+  it should "create a group" in {
     val client = new LDAPClientImpl(config)(executionContext) with OpenLDAPClient
     client.createGroup("edh_sw_sesame").map { _ =>
       val entry = client.adminConnectionPool.getConnection.getEntry(s"cn=edh_sw_sesame,$groupDN,$baseDN")
@@ -31,7 +31,7 @@ class LDAPClientImplSpec extends AsyncFlatSpec
     }(executionContext)
   }
 
-  ignore should "add a user" in {
+  it should "add a user" in {
     val client = new LDAPClientImpl(config)(executionContext) with OpenLDAPClient
     client.addUser("edh_sw_sesame", "username").map { _ =>
       val entry = client.adminConnectionPool.getConnection.getEntry(s"cn=username,$userDN,$baseDN")
@@ -39,7 +39,7 @@ class LDAPClientImplSpec extends AsyncFlatSpec
     }(executionContext)
   }
 
-  ignore should "find a user" in {
+  it should "find a user" in {
     val client = new LDAPClientImpl(config)(executionContext) with OpenLDAPClient
     client.findUser(username).map { maybeUser =>
       maybeUser shouldBe defined

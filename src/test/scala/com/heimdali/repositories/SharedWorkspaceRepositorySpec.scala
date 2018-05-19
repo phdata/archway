@@ -10,7 +10,7 @@ class SharedWorkspaceRepositorySpec extends AsyncFlatSpec with Matchers with DBT
 
   behavior of "Account Repository"
 
-  ignore should "Save and extract a record just fine" in {
+  it should "Save and extract a record just fine" in {
     val repository = new SharedWorkspaceRepositoryImpl()
     repository.create(initialSharedWorkspace.copy(complianceId = Some(newComplianceId))).map { newRecord =>
       newRecord.id shouldBe defined
@@ -18,7 +18,7 @@ class SharedWorkspaceRepositorySpec extends AsyncFlatSpec with Matchers with DBT
   }
 
   override val tables: Seq[scalikejdbc.SQLSyntaxSupport[_]] =
-    Seq(SharedWorkspace)
+    Seq.empty
 
   override protected def beforeAll(): Unit = {
     NamedDB('default) localTx { implicit session =>
@@ -31,9 +31,8 @@ class SharedWorkspaceRepositorySpec extends AsyncFlatSpec with Matchers with DBT
 
   override protected def afterAll(): Unit = {
     NamedDB('default) localTx { implicit session =>
-      applyUpdate {
-        delete.from(Compliance)
-      }
+      applyUpdate(delete.from(SharedWorkspace))
+      applyUpdate(delete.from(Compliance))
     }
   }
 }

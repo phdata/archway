@@ -21,7 +21,7 @@ class AccountController(authService: AuthService,
                         config: Config)
   extends FailFastCirceSupport {
 
-  implicit val configuration: Configuration = Configuration.default.withDefaults.withSnakeCaseKeys
+  implicit val configuration: Configuration = Configuration.default.withSnakeCaseMemberNames
   implicit val timeout: Timeout = Timeout(1 second)
 
   import io.circe.generic.extras.auto._

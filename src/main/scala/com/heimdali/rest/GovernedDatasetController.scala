@@ -20,7 +20,7 @@ class GovernedDatasetController(authService: AuthService,
                                 config: Config)
   extends FailFastCirceSupport {
 
-  implicit val configuration: Configuration = Configuration.default.withDefaults.withSnakeCaseKeys
+  implicit val configuration: Configuration = Configuration.default.withSnakeCaseMemberNames
   implicit val printer: Printer = Printer.spaces2.copy(dropNullValues = true)
   implicit val timeout: Timeout = Timeout(1 second)
 

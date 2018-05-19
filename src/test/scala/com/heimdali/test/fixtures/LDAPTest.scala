@@ -22,16 +22,25 @@ trait LDAPTest extends BeforeAndAfterEach {
   lazy val ldapConnection = new LDAPConnection(config.getString("ldap.server"), config.getInt("ldap.port"), config.getString("ldap.bind_dn"), config.getString("ldap.bind_password"))
 
   override protected def beforeEach(): Unit =
-    Try(ldapConnection.add(
+    try {
+      ldapConnection.add(
         s"dn: cn=$username,$userDN,$baseDN",
         "objectClass: inetOrgPerson",
         "sn: Doe",
         "givenName: Dude",
-        "userPassword: password"))
+        "userPassword: password")
+      ldapConnection.add(
+        s"dn: cn=edh_sw_sesame,$groupDN,$baseDN",
+        "objectClass: group",
+        "objectClass: top",
+        "sAMAccountName: edh_sw_sesame",
+        "cn: edh_sw_sesame"
+      )
+    }
 
   override protected def afterEach(): Unit = {
-    val users = ldapConnection.search("ou=users,ou=hadoop,dc=jotunn,dc=io", SearchScope.SUB, "(objectClass=person)").getSearchEntries.asScala
-    val groups = ldapConnection.search("ou=groups,ou=hadoop,dc=jotunn,dc=io", SearchScope.SUB, "(objectClass=groupOfNames)").getSearchEntries.asScala
+    val users = ldapConnection.search("ou=users,ou=hadoop,dc=jotunn,dc=io", SearchScope.SUB, "(objectClass=inetOrgPerson)").getSearchEntries.asScala
+    val groups = ldapConnection.search("ou=groups,ou=hadoop,dc=jotunn,dc=io", SearchScope.SUB, "(objectClass=group)").getSearchEntries.asScala
     (users ++ groups).map(_.getDN).map(ldapConnection.delete)
   }
 }

@@ -7,7 +7,7 @@ scalaVersion := "2.12.5"
 resolvers += "Cloudera" at "https://repository.cloudera.com/artifactory/cloudera-repos"
 
 val akkaVersion = "2.5.6"
-val circeVersion = "0.9.2"
+val circeVersion = "0.10.0-M1"
 val akkaHttpVersion = "10.0.10"
 val cdhVersion = "cdh5.11.1"
 val hiveVersion = s"1.1.0-$cdhVersion"
@@ -23,7 +23,7 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-http-testkit" % akkaHttpVersion % Test,
 
   "ch.megard" %% "akka-http-cors" % "0.2.2",
-  "de.heikoseeberger" %% "akka-http-circe" % "1.18.0",
+  "de.heikoseeberger" %% "akka-http-circe" % "1.20.1",
 
   "com.github.dnvriend" %% "akka-persistence-inmemory" % "2.5.1.1",
 

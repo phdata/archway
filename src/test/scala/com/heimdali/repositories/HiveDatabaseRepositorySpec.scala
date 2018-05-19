@@ -8,7 +8,7 @@ class HiveDatabaseRepositorySpec extends AsyncFlatSpec with Matchers with DBTest
 
   behavior of "Hive Database Repository"
 
-  ignore should "Save and extract a record just fine" in {
+  it should "Save and extract a record just fine" in {
     val repository = new HiveDatabaseRepositoryImpl()
     repository.create(hive).map { newRecord =>
       newRecord.id shouldBe defined

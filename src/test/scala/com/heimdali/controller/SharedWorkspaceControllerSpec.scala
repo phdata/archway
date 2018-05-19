@@ -33,7 +33,7 @@ class SharedWorkspaceControllerSpec
   def stripCreated(json: Json): Json =
     json.hcursor.withFocus(_.mapObject(_.remove("created"))).top.get
 
-  implicit val configuration: Configuration = Configuration.default.withDefaults.withSnakeCaseKeys
+  implicit val configuration: Configuration = Configuration.default.withSnakeCaseMemberNames
 
   behavior of "ProjectController"
 
@@ -52,8 +52,7 @@ class SharedWorkspaceControllerSpec
     }
   }
 
-  //TODO: Fix read-only field test
-  ignore should "not accept read-only fields" in new TestKit(ActorSystem()) {
+  it should "not accept read-only fields" in new TestKit(ActorSystem()) {
 
     val oldDate = LocalDateTime.of(2010, 1, 1, 0, 0, 0)
     val oldDateString = oldDate.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
@@ -68,30 +67,22 @@ class SharedWorkspaceControllerSpec
          |   "purpose": "${initialSharedWorkspace.purpose}",
          |   "system_name": "blahblah",
          |   "compliance": {
-         |     "pii_data": $piiCompliance,
-         |     "phi_data": $phiCompliance,
-         |     "pci_data": $pciCompliance
+         |     "pii_data": true,
+         |     "pci_data": false,
+         |     "phi_data": false
          |   },
-         |   "data": {
-         |     "location": "/here/we/go",
-         |     "requested_size_in_gb": $hdfsRequestedSize,
-         |     "actual_gb": 1000
-         |   },
-         |   "processing": {
-         |     "pool_name": "something cool",
-         |     "max_cores": $maxCores,
-         |     "max_memory_in_gb": $maxMemoryInGB
-         |   },
-         |   "created": "$oldDateString",
-         |   "created_by": "$wrongUser"
+         |   "requested_size_in_gb": 1,
+         |   "requested_cores": 1,
+         |   "requested_memory_in_gb": 1,
+         |   "created": "$oldDateString"
          | }""".stripMargin)
 
-    val factory = mockFunction[SharedWorkspace, ActorRef]
-    factory expects initialSharedWorkspace returning testActor
-
     val workspaceService = mock[WorkspaceService]
+    workspaceService.create _ expects * returning Future(initialSharedWorkspace)
+
     val authService = mock[AuthService]
     (authService.validateToken _).expects(*).returning(Future(Some(User("", rightUser))))
+
     val restApi = new WorkspaceController(authService, workspaceService)
 
     Post("/workspaces", json) ~>

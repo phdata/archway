@@ -20,7 +20,7 @@ class WorkspaceController(authService: AuthService,
                          (implicit executionContext: ExecutionContext)
   extends ErrorAccumulatingCirceSupport {
 
-  implicit val configuration: Configuration = Configuration.default.withDefaults.withSnakeCaseKeys
+  implicit val configuration: Configuration = Configuration.default.withSnakeCaseMemberNames
   implicit val printer: Printer = Printer.spaces2.copy(dropNullValues = true)
   implicit val timeout: Timeout = Timeout(1 second)
 
