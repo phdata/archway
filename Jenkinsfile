@@ -2,7 +2,7 @@ pipeline {
     agent {
         kubernetes {
             cloud "kubernetes"
-            label "parcels"
+            label "validator"
             containerTemplate {
                 name 'curl'
                 image 'appropriate/curl'
@@ -17,14 +17,24 @@ pipeline {
         })
     }
     stages {
+        stage('validate') {
+          steps {
+            container('jdk') {
+              sh '''
+                mkdir build
+                cp -R meta build/
+                sed -i "s/0.1.5/${VERSION}/g" build/meta/parcel.json
+                java -jar /usr/src/validator.jar -f meta/parcel.json
+                java -jar /usr/src/validator.jar -r meta/permissions.json
+              '''
+            }
+          }
+        }
         stage('build') {
             steps {
                 container('curl') {
                     withAWS(credentials: 'jenkins-aws-user') {
                         sh '''
-                           mkdir build
-                           cp -R meta build/
-                           sed -i "s/0.1.5/${VERSION}/g" build/meta/parcel.json
                            mkdir -p build/usr/lib/heimdali-api
                            chown -R 10000:10000 build
                         '''
