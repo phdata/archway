@@ -1,9 +1,9 @@
 package com.heimdali.services
 
-import scala.concurrent.Future
+import cats.effect.{Async, IO}
 
 trait LoginContextProvider {
-  def kinit(): Boolean
+  def kinit(): IO[Unit]
 
-  def elevate[A](user: String)(block: () => A): Future[Option[A]]
+  def elevate[F[_] : Async, A](user: String)(block: () => A): F[A]
 }

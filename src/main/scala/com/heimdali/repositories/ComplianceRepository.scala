@@ -1,10 +1,9 @@
 package com.heimdali.repositories
 
 import com.heimdali.models.Compliance
-
-import scala.concurrent.Future
+import doobie.free.connection.ConnectionIO
 
 trait ComplianceRepository {
-  def create(compliance: Compliance): Future[Compliance]
+  def create(compliance: Compliance): ConnectionIO[Compliance]
 }
 

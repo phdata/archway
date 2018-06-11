@@ -2,7 +2,7 @@ package com.heimdali.clients
 
 import com.unboundid.ldap.sdk.SearchResultEntry
 
-trait ActiveDirectoryClient { this: LDAPClientImpl =>
+trait ActiveDirectoryClient[F[_]] { this: LDAPClientImpl[F] =>
 
   override def searchQuery(username: String): String =
     s"(sAMAccountName=$username)"

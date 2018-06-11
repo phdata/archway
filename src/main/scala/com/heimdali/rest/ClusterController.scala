@@ -1,52 +1,20 @@
 package com.heimdali.rest
 
-import akka.http.scaladsl.server.Directives._
-import com.heimdali.services.{BasicClusterApp, Cluster, ClusterService, HostClusterApp}
-import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport
-import io.circe.{Encoder, Json}
+import cats.effect._
+import com.heimdali.services.ClusterService
+import io.circe.syntax._
+import org.http4s._
+import org.http4s.circe._
+import org.http4s.dsl.io._
 
-import scala.concurrent.ExecutionContext
+class ClusterController(clusterService: ClusterService[IO]) {
 
-class ClusterController(clusterService: ClusterService)
-                       (implicit executionContext: ExecutionContext)
-  extends FailFastCirceSupport {
-
-  implicit val fooDecoder: Encoder[Cluster] = (a: Cluster) => {
-    val services: Map[String, Json] = a.clusterApps.map {
-      case (name, BasicClusterApp(id, display, status, state)) =>
-        (name, Json.obj(
-          ("id", Json.fromString(id)),
-          ("state", Json.fromString(state)),
-          ("status", Json.fromString(status)),
-          ("name", Json.fromString(display))
-        ))
-      case (name, HostClusterApp(id, display, status, state, host)) =>
-        (name, Json.obj(
-          ("id", Json.fromString(id)),
-          ("state", Json.fromString(state)),
-          ("status", Json.fromString(status)),
-          ("name", Json.fromString(display)),
-          ("host", Json.fromString(host))
-        ))
-    }
-    Json.obj(
-      ("id", Json.fromString(a.id)),
-      ("name", Json.fromString(a.name)),
-      ("services", Json.obj(services.to:_*)),
-      ("distribution", Json.obj(
-        ("name", Json.fromString(a.distribution.name)),
-        ("version", Json.fromString(a.distribution.version))
-      )),
-      ("status", Json.fromString(a.status)))
+  val route: HttpService[IO] = HttpService {
+    case GET -> Root =>
+      for {
+        clusters <- clusterService.list
+        response <- Ok(clusters.asJson)
+      } yield response
   }
-
-  val route =
-    path("clusters") {
-      get {
-        onSuccess(clusterService.list) { clusters =>
-          complete(clusters)
-        }
-      }
-    }
 
 }

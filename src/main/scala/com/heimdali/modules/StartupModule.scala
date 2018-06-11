@@ -1,19 +1,21 @@
 package com.heimdali.modules
 
-import com.heimdali.startup.{DBMigration, FlywayMigration, HeimdaliStartup, Startup}
+import com.heimdali.startup._
 import org.flywaydb.core.Flyway
 
-trait StartupModule {
-  this: ConfigurationModule
-    with ExecutionContextModule
-    with ContextModule =>
+trait StartupModule[F[_]] {
+  this: ExecutionContextModule
+    with ConfigurationModule
+    with ContextModule[F] =>
 
   val flyway: Flyway = new Flyway()
 
-  val dbMigration: DBMigration =
+  val dbMigration: DBMigration[F] =
     new FlywayMigration(flyway)
 
-  val startup: Startup =
-    new HeimdaliStartup(configuration, dbMigration, loginContextProvider)
+  val sessionMaintainer: SessionMaintainer = new SessionMaintainerImpl(appConfig.cluster, loginContextProvider)
+
+  val startup: Startup[F] =
+    new HeimdaliStartup[F](appConfig.db, appConfig.cluster, dbMigration, sessionMaintainer)
 
 }

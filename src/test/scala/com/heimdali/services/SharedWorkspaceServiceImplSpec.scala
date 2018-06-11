@@ -1,28 +1,29 @@
 package com.heimdali.services
 
-import java.util.concurrent.LinkedBlockingDeque
-
-import akka.actor.{ActorRef, ActorSystem, Props}
-import akka.testkit.TestActor.Message
-import akka.testkit.{TestActor, TestActorRef, TestProbe}
-import com.heimdali.clients.{LDAPClient, LDAPUser}
-import com.heimdali.models.{LDAPRegistration, SharedWorkspace, WorkspaceMember}
-import com.heimdali.repositories.{ComplianceRepository, SharedWorkspaceRepository}
+import cats._
+import cats.data.{EitherT, OptionT}
+import cats.effect.IO
+import cats.syntax.applicative._
+import com.heimdali.clients._
+import com.heimdali.models.WorkspaceMember
+import com.heimdali.repositories._
 import com.heimdali.test.fixtures._
+import doobie._
+import doobie.implicits._
+import org.apache.hadoop.fs.Path
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.prop.TableDrivenPropertyChecks._
 import org.scalatest.prop.TableFor2
 import org.scalatest.{FlatSpec, Matchers}
 
+import scala.collection.immutable.Queue
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.duration._
-import scala.concurrent.{Await, Future}
 
 class SharedWorkspaceServiceImplSpec extends FlatSpec with Matchers with MockFactory {
 
   behavior of "ProjectServiceImpl"
 
-  it should "list projects" in {
+  it should "list projects" in new Context {
     val invalidWorkspace = "CN=non_workspace,OU=groups,dn=example,dn=com"
     val validWorkspace = "CN=edh_sw_project,OU=groups,dn=example,dn=com"
     val memberships = Seq(
@@ -30,92 +31,95 @@ class SharedWorkspaceServiceImplSpec extends FlatSpec with Matchers with MockFac
       validWorkspace
     )
 
-    val client = mock[LDAPClient]
-    client.findUser _ expects standardUsername returning Future {
-      Some(LDAPUser("name", standardUsername, memberships))
-    }
+    ldapClient.findUser _ expects standardUsername returning OptionT.some(LDAPUser("name", standardUsername, memberships))
+    workspaceRepository.list _ expects List("project") returning List(savedWorkspaceRequest).pure[ConnectionIO]
 
-    val workspaceRepository = mock[SharedWorkspaceRepository]
-    workspaceRepository.list _ expects Seq("project") returning Future {
-      Seq(initialSharedWorkspace)
-    }
-
-    val complianceRepository = mock[ComplianceRepository]
-    val factory = mockFunction[SharedWorkspace, ActorRef]
-
-    val projectServiceImpl = new WorkspaceServiceImpl(client, workspaceRepository, complianceRepository, factory)
-    val projects = Await.result(projectServiceImpl.list(standardUsername), 1 second)
-      projects.length should be(1)
-      projects.head should be(initialSharedWorkspace)
+    val projects = projectServiceImpl.list(standardUsername).unsafeRunSync()
+    projects.length should be(1)
+    projects.head should be(savedWorkspaceRequest)
   }
 
-  it should "get memberships accurately" in {
-    val table: TableFor2[Option[LDAPUser], Seq[String]] = Table(
+  it should "get memberships accurately" in new Context {
+    val table: TableFor2[LDAPUser, Seq[String]] = Table(
       ("user", "memberships"),
-      (Some(LDAPUser("name", "username", Seq("something_else"))), Seq.empty)
+      (LDAPUser("name", "username", Seq("something_else")), Seq.empty)
     )
 
     forAll(table) { (user, memberships) =>
-      val ldapClient = mock[LDAPClient]
-      val workspaceRepo = mock[SharedWorkspaceRepository]
-      val complianceRepository = mock[ComplianceRepository]
-      val factory = mockFunction[SharedWorkspace, ActorRef]
-
-      val projectServiceImpl = new WorkspaceServiceImpl(ldapClient, workspaceRepo, complianceRepository, factory)
-
       projectServiceImpl.sharedMemberships(user) should be(memberships)
     }
   }
 
-  it should "create a workspace" in {
-    val probe = TestProbe()
+  it should "create a workspace" in new Context {
+    inSequence {
+      complianceRepository.create _ expects initialCompliance returning savedCompliance.pure[ConnectionIO]
+      workspaceRepository.create _ expects initialWorkspaceRequest.copy(compliance = savedCompliance) returning initialWorkspaceRequest.copy(id = Some(id), compliance = savedCompliance).pure[ConnectionIO]
+      ldapRepository.create _ expects initialLDAP returning savedLDAP.pure[ConnectionIO]
+      hiveDatabaseRepository.create _ expects initialHive.copy(managingGroup = savedLDAP) returning savedHive.pure[ConnectionIO]
+      yarnRepository.create _ expects initialYarn returning savedYarn.pure[ConnectionIO]
 
-    val ldapClient = mock[LDAPClient]
-    val complianceRepository = mock[ComplianceRepository]
-    complianceRepository.create _ expects compliance returning Future(compliance.copy(id = Some(123)))
-    val workspaceRepo = mock[SharedWorkspaceRepository]
-    workspaceRepo.create _ expects initialSharedWorkspace.copy(complianceId = Some(123)) returning Future(initialSharedWorkspace.copy(complianceId = Some(123)))
-    val factory = mockFunction[SharedWorkspace, ActorRef]
-    factory expects initialSharedWorkspace.copy(complianceId = Some(123)) returning probe.ref
+      hdfsClient.createDirectory _ expects(savedHive.location, None) returning IO.pure(new Path(savedHive.location))
+      hdfsClient.setQuota _ expects(savedHive.location, savedHive.sizeInGB) returning IO.pure(HDFSAllocation(savedHive.location, savedHive.sizeInGB))
+      hiveClient.createDatabase _ expects(savedHive.name, savedHive.location) returning IO.unit
 
-    val projectServiceImpl = new WorkspaceServiceImpl(ldapClient, workspaceRepo, complianceRepository, factory)
+      ldapClient.createGroup _ expects(savedLDAP.commonName, savedLDAP.distinguishedName) returning EitherT.right(IO.unit)
+      ldapClient.addUser _ expects(savedLDAP.commonName, standardUsername) returning OptionT.some(LDAPUser("John Doe", standardUsername, Seq.empty))
+      ldapRepository.complete _ expects 123 returning savedLDAP.pure[ConnectionIO]
+      hiveClient.createRole _ expects savedLDAP.sentryRole returning IO.unit
+      hiveClient.grantGroup _ expects(savedLDAP.commonName, savedLDAP.sentryRole) returning IO.unit
+      hiveClient.enableAccessToDB _ expects(savedHive.name, savedLDAP.sentryRole) returning IO.unit
+      hiveClient.enableAccessToLocation _ expects(savedHive.location, savedLDAP.sentryRole) returning IO.unit
+      hiveDatabaseRepository.complete _ expects savedHive.id.get returning 1.pure[ConnectionIO]
 
-    val newWorkspace = Await.result(projectServiceImpl.create(initialSharedWorkspace), Duration.Inf)
+      yarnClient.createPool _ expects(savedYarn, Queue("root")) returning IO.unit
+      yarnRepository.complete _ expects savedYarn.id.get returning 1.pure[ConnectionIO]
+    }
 
-    newWorkspace.complianceId shouldBe defined
+    val newWorkspace = projectServiceImpl.create(initialWorkspaceRequest).unsafeRunSync()
   }
 
-  it should "find a record" in {
-    val ldapClient = mock[LDAPClient]
-    val complianceRepository = mock[ComplianceRepository]
-    val factory = mockFunction[SharedWorkspace, ActorRef]
+  it should "find a record" in new Context {
+    workspaceRepository.find _ expects id returning OptionT.some(savedWorkspaceRequest)
 
-    val workspaceRepo = mock[SharedWorkspaceRepository]
-    workspaceRepo.find _ expects id returning Future(Some(initialSharedWorkspace))
-
-    val projectServiceImpl = new WorkspaceServiceImpl(ldapClient, workspaceRepo, complianceRepository, factory)
-    val foundWorkspace = Await.result(projectServiceImpl.find(id), Duration.Inf)
+    val foundWorkspace = projectServiceImpl.find(id).value.unsafeRunSync()
 
     foundWorkspace shouldBe defined
   }
 
-  it should "list members" in {
-    val ldapClient = mock[LDAPClient]
-    ldapClient.groupMembers _ expects ldapDn returning Future(Seq(LDAPUser("John Doe", "johndoe", Seq.empty)))
-    val complianceRepository = mock[ComplianceRepository]
-    val factory = mockFunction[SharedWorkspace, ActorRef]
-    val workspaceRepo = mock[SharedWorkspaceRepository]
-    workspaceRepo.find _ expects id returning Future(Some(initialSharedWorkspace.copy(ldap = Some(ldap))))
+  it should "list members" in new Context {
+    ldapClient.groupMembers _ expects ldapDn returning IO(List(LDAPUser("John Doe", "johndoe", Seq.empty)))
+    ldapRepository.find _ expects(id, "sesame", Manager) returning OptionT.some(savedLDAP)
 
-    val projectServiceImpl = new WorkspaceServiceImpl(ldapClient, workspaceRepo, complianceRepository, factory)
-    val members = Await.result(projectServiceImpl.members(id), Duration.Inf)
+    val members = projectServiceImpl.members(id, "sesame", Manager).unsafeRunSync()
 
     members shouldBe Seq(WorkspaceMember("johndoe", "John Doe"))
   }
 
-  implicit val system: ActorSystem = ActorSystem()
+  trait Context {
+    val ldapClient: LDAPClient[IO] = mock[LDAPClient[IO]]
+    val hdfsClient: HDFSClient[IO] = mock[HDFSClient[IO]]
+    val hiveClient: HiveClient[IO] = mock[HiveClient[IO]]
+    val yarnClient: YarnClient[IO] = mock[YarnClient[IO]]
 
-  def factory(project: SharedWorkspace): ActorRef =
-    TestActorRef.create(system, Props(classOf[TestActor], new LinkedBlockingDeque[Message]()))
+    val workspaceRepository: WorkspaceRequestRepository = mock[WorkspaceRequestRepository]
+    val complianceRepository: ComplianceRepository = mock[ComplianceRepository]
+    val yarnRepository: YarnRepository = mock[YarnRepository]
+    val hiveDatabaseRepository: HiveDatabaseRepository = mock[HiveDatabaseRepository]
+    val ldapRepository: LDAPRepository = mock[LDAPRepository]
+
+    def projectServiceImpl =
+      new WorkspaceServiceImpl[IO](ldapClient,
+        hdfsClient,
+        hiveClient,
+        yarnClient,
+        yarnRepository,
+        hiveDatabaseRepository,
+        ldapRepository,
+        workspaceRepository,
+        complianceRepository,
+        () => null,
+        null
+      )
+  }
 
 }

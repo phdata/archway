@@ -1,104 +1,67 @@
 package com.heimdali.services
 
-import akka.actor.ActorRef
-import akka.pattern.ask
-import akka.util.Timeout
-import com.heimdali.clients.LDAPClient
-import com.heimdali.models.UserWorkspace
-import com.heimdali.provisioning.WorkspaceProvisioner.Start
-import com.heimdali.repositories.UserWorkspaceRepository
-import com.typesafe.config.Config
+import cats.data.{EitherT, OptionT}
+import cats.effect.Sync
+import cats.implicits._
+import cats.syntax.either._
+import com.heimdali.clients.{LDAPClient, LDAPUser}
+import com.heimdali.config.{ApprovalConfig, RestConfig}
+import com.heimdali.models.{Token, User, UserPermissions}
 import com.typesafe.scalalogging.LazyLogging
-import io.circe.Json
-import scala.concurrent.duration._
+import io.circe.generic.extras.Configuration
+import io.circe.{Decoder, HCursor, Json, Printer}
+import io.circe.syntax._
+import pdi.jwt.algorithms.JwtHmacAlgorithm
 import pdi.jwt.{JwtAlgorithm, JwtCirce}
 
-import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Failure, Success}
+trait AccountService[F[_]] {
+  def validate(token: String): EitherT[F, Throwable, User]
 
-case class User(name: String, username: String)
+  def login(username: String, password: String): OptionT[F, Token]
 
-case class Token(accessToken: String, refreshToken: String)
-
-trait AccountService {
-  def validate(token: String): Future[Option[User]]
-
-  def login(username: String, password: String): Future[Option[Token]]
-
-  def refresh(user: User): Future[Token]
-
-  def createWorkspace(username: String): Future[UserWorkspace]
-
-  def findWorkspace(username: String): Future[Option[UserWorkspace]]
+  def refresh(user: User): F[Token]
 }
 
-class AccountServiceImpl(ldapClient: LDAPClient,
-                         accountRepo: UserWorkspaceRepository,
-                         configuration: Config,
-                         provisionFactory: UserWorkspace => ActorRef)
-                        (implicit val executionContext: ExecutionContext)
-  extends AccountService with LazyLogging {
+class AccountServiceImpl[F[_] : Sync](ldapClient: LDAPClient[F],
+                                      restConfig: RestConfig,
+                                      approvalConfig: ApprovalConfig)
+  extends AccountService[F]
+    with LazyLogging {
 
-  val algo: JwtAlgorithm.HS512.type = JwtAlgorithm.HS512
-  lazy val secret: String = configuration.getString("rest.secret")
+  private val algo: JwtAlgorithm.HS512.type = JwtAlgorithm.HS512
 
-  override def login(username: String, password: String): Future[Option[Token]] = {
-    logger.info(s"logging in $username")
-    ldapClient.validateUser(username, password) flatMap {
-      case Some(user) =>
-        logger.info(s"found $user")
-        refresh(User(user.name, user.username)).map(Some(_))
-      case _ =>
-        logger.info(s"no user found for $username using $password")
-        Future(None)
-    }
+  implicit def convertUser(ldapUser: LDAPUser): User =
+    User(ldapUser.name,
+      ldapUser.username,
+      UserPermissions(riskManagement = ldapUser.memberships.contains(approvalConfig.risk),
+        platformOperations = ldapUser.memberships.contains(approvalConfig.infrastructure)))
+
+  private def decode(token: String, secret: String, algo: JwtHmacAlgorithm): Either[Throwable, Json] = {
+    val result = JwtCirce.decodeJson(token, secret, Seq(algo)).toEither
+    logger.warn(result.toString)
+    result
   }
 
-  override def refresh(user: User): Future[Token] = Future {
-    val accessJson = Json.obj(
-      "name" -> Json.fromString(user.name),
-      "username" -> Json.fromString(user.username)
-    )
+  private def encode(json: Json, secret: String, algo: JwtAlgorithm): F[String] =
+    Sync[F].delay(JwtCirce.encode(json, secret, algo))
 
-    val refreshJson = Json.obj(
-      "username" -> Json.fromString(user.username)
-    )
+  override def login(username: String, password: String): OptionT[F, Token] =
+    for {
+      user <- ldapClient.validateUser(username, password)
+      token <- OptionT.liftF(refresh(user))
+    } yield token
 
-    try {
-      val accessToken = JwtCirce.encode(accessJson, secret, algo)
-      val refreshToken = JwtCirce.encode(refreshJson, secret, algo)
+  override def refresh(user: User): F[Token] =
+    for {
+      accessToken <- encode(user.asJson, restConfig.secret, algo)
+      refreshToken <- encode(user.asJson, restConfig.secret, algo)
+    } yield Token(accessToken, refreshToken)
 
-      logger.info(s"generated new token for $user")
-
-      Token(accessToken, refreshToken)
-    } catch {
-      case exc: Throwable =>
-        exc.printStackTrace()
-        throw exc
-    }
+  override def validate(token: String): EitherT[F, Throwable, User] = {
+    EitherT.fromEither(for {
+      maybeToken <- decode(token, restConfig.secret, algo)
+      result <- maybeToken.as[User]
+    } yield result)
   }
 
-  override def validate(token: String): Future[Option[User]] = Future {
-    import io.circe.generic.auto._
-    JwtCirce.decodeJson(token, secret, Seq(algo)) match {
-      case Success(json) =>
-        val Right(user) = json.as[User]
-        logger.info(s"validated ${user.username}")
-        Some(user)
-      case Failure(_) =>
-        logger.info(s"no user found for $token")
-        None
-    }
-  }
-
-  override def findWorkspace(username: String): Future[Option[UserWorkspace]] =
-    accountRepo.findUser(username)
-
-  implicit val timeout = Timeout(1 second)
-
-  override def createWorkspace(username: String): Future[UserWorkspace] =
-    accountRepo.create(username).map { workspace =>
-      provisionFactory(workspace) ! Start
-      workspace
-    }
 }

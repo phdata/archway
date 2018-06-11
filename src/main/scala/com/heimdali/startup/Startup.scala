@@ -1,34 +1,26 @@
 package com.heimdali.startup
 
-import akka.actor.ActorSystem
-import com.heimdali.services.LoginContextProvider
-import com.typesafe.config.Config
-import com.typesafe.scalalogging.LazyLogging
+import cats.{Applicative, Monad}
+import cats.data.OptionT
+import com.heimdali.config.{ClusterConfig, DatabaseConfig}
 
-import scala.concurrent.duration._
-import scala.concurrent.{ExecutionContext, Future}
-
-trait Startup {
-  def start(): Future[Unit]
+trait Startup[F[_]] {
+  def start()(implicit monadEvidence: Monad[F]): F[Unit]
 }
 
-class HeimdaliStartup(configuration: Config,
-                      dbMigration: DBMigration,
-                      loginContextProvider: LoginContextProvider)
-                     (implicit executionContext: ExecutionContext,
-                      actorSystem: ActorSystem)
-  extends Startup with LazyLogging {
+class HeimdaliStartup[F[_]](databaseConfig: DatabaseConfig,
+                            clusterConfig: ClusterConfig,
+                            dbMigration: DBMigration[F],
+                            maintainer: SessionMaintainer)
+  extends Startup[F] {
 
-  def start(): Future[Unit] = Future {
-    val url = configuration.getString("db.meta.url")
-    val user = configuration.getString("db.meta.user")
-    val pass = configuration.getString("db.meta.password")
-
-    dbMigration.migrate(url, user, pass)
-
-    val every = Duration.fromNanos(configuration.getDuration("cluster.sessionRefresh").toNanos)
-
-    actorSystem.scheduler.schedule(0 seconds, every, () => loginContextProvider.kinit())
-  }
+  def start()(implicit monadEvidence: Monad[F]): F[Unit] =
+    (for {
+      _ <- OptionT.fromOption(for {
+        user <- databaseConfig.meta.username
+        pass <- databaseConfig.meta.password
+      } yield dbMigration.migrate(databaseConfig.meta.url, user, pass))
+      _ <- OptionT.some(maintainer.setup)
+    } yield ()).getOrElse(())
 
 }

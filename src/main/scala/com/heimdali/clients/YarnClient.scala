@@ -1,62 +1,39 @@
 package com.heimdali.clients
 
-import java.net.URLEncoder
-
-import akka.http.scaladsl.client.RequestBuilding._
-import akka.http.scaladsl.model.headers.BasicHttpCredentials
-import akka.http.scaladsl.model.{HttpResponse, StatusCodes}
-import akka.http.scaladsl.unmarshalling.Unmarshal
-import akka.stream.Materializer
-import com.heimdali.services.{BasicClusterApp, ClusterService}
-import com.typesafe.config.Config
+import cats.effect._
+import cats.implicits._
+import com.heimdali.config.ClusterConfig
+import com.heimdali.models.Yarn
+import com.heimdali.services.ClusterService
 import com.typesafe.scalalogging.LazyLogging
-import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport
 import io.circe.parser._
 import io.circe.{ACursor, Json}
-import org.apache.http.HttpException
+import org.http4s._
+import org.http4s.circe._
 
 import scala.collection.immutable.Queue
-import scala.concurrent.duration._
-import scala.concurrent.{Await, ExecutionContext, Future}
 
 case class YarnPool(name: String, maxCores: Int, maxMemoryInGB: Double)
 
-trait YarnClient {
-  def createPool(name: String, maxCores: Int, maxMemoryInGB: Double, parentPools: Queue[String]): Future[YarnPool]
+trait YarnClient[F[_]] {
+  def createPool(yarn: Yarn, parentPools: Queue[String]): F[Unit]
 }
 
-class CDHYarnClient(http: HttpClient,
-                    configuration: Config,
-                    clusterService: ClusterService)
-                   (implicit executionContext: ExecutionContext,
-                    materializer: Materializer)
-  extends YarnClient
-    with FailFastCirceSupport
+class CDHYarnClient[F[_] : Sync](http: HttpClient[F],
+                                 clusterConfig: ClusterConfig,
+                                 clusterService: ClusterService[F])
+  extends YarnClient[F]
     with LazyLogging {
 
-  val clusterConfig: Config = configuration.getConfig("cluster")
-  val cluster: String = clusterConfig.getString("name")
-  val encodedClusterName: String = URLEncoder.encode(cluster, "utf-8").replaceAll("\\+", "%20")
-  val baseUrl: String = clusterConfig.getString("url")
-  val adminConfig: Config = clusterConfig.getConfig("admin")
-  val username: String = adminConfig.getString("username")
-  val password: String = adminConfig.getString("password")
+  lazy val configURL: F[String] =
+    for {
+      list <- clusterService.list
+      activeCluster <- Sync[F].delay(list.find(_.id == clusterConfig.name).get)
+      result <- Sync[F].delay(clusterConfig.serviceConfigUrl(activeCluster.clusterApps("YARN").id))
+    } yield result
 
-  lazy val configURL: Future[String] = {
-    clusterService.list.map { clusterList =>
-      clusterList
-        .find(_.id == cluster)
-        .map { activeCluster =>
-          val BasicClusterApp(yarn, _, _, _) = activeCluster.clusterApps("YARN")
-          s"$baseUrl/clusters/$encodedClusterName/services/$yarn/config"
-        }.get
-    }
-  }
-
-  val refreshURL = s"$baseUrl/clusters/$encodedClusterName/commands/poolsRefresh"
-
-  def config(pool: YarnPool): Json = Json.obj(
-    "name" -> Json.fromString(pool.name),
+  def config(pool: Yarn): Json = Json.obj(
+    "name" -> Json.fromString(pool.poolName),
     "schedulablePropertiesList" -> Json.arr(
       Json.obj(
         "maxResources" -> Json.obj(
@@ -82,7 +59,7 @@ class CDHYarnClient(http: HttpClient,
     }.getOrElse(cursor)
   }
 
-  def combine(existing: Json, pool: YarnPool, parents: Queue[String]): Json = {
+  def combine(existing: Json, pool: Yarn, parents: Queue[String]): Json = {
     logger.debug("adding {} to {}", pool, existing)
     val result = dig(existing.hcursor, parents)
       .downField("queues")
@@ -109,81 +86,28 @@ class CDHYarnClient(http: HttpClient,
       }.top.get
   }
 
-  def yarnConfig: Future[Json] = {
-    configURL.flatMap { url =>
-      val request = Get(url).addCredentials(BasicHttpCredentials(username, password))
-      http.request(request)
-        .flatMap {
-          case HttpResponse(StatusCodes.OK, _, entity, _) =>
-            val response = Await.result(Unmarshal(entity).to[Json], Duration.Inf)
-            logger.debug("configuration looks like: {}", response)
-            Future(response)
-          case HttpResponse(status, _, entity, _) =>
-            Unmarshal(entity).to[String].map { result =>
-              logger.error("{} couldn't call resource pool configuration: {}", status, result)
-              throw new HttpException()
-            }
-        }
-        .recover {
-          case ex =>
-            logger.error("couldn't get resource pool configuration: {}", ex)
-            throw ex
-        }
-    }
-  }
+  def yarnConfig: F[Json] =
+    for {
+      url <- configURL
+      response <- http.request[Json](Request[F](Method.GET, Uri.fromString(url).toOption.get))
+    } yield response
 
-  def yarnConfigUpdate(updatedJson: Json): Future[Json] = {
-    configURL flatMap { url =>
-      val request = Put(url, updatedJson).addCredentials(BasicHttpCredentials(username, password))
-      http.request(request)
-        .flatMap {
-          case HttpResponse(StatusCodes.OK, _, entity, _) =>
-            Unmarshal(entity).to[Json].map { result =>
-              logger.debug("config update resulted with {}", result)
-              result
-            }
-          case HttpResponse(status, _, entity, _) =>
-            Unmarshal(entity).to[String].map { result =>
-              logger.error("{} couldn't update resource pool configuration: {}", status, result)
-              throw new HttpException()
-            }
-        }
-        .recover {
-          case ex =>
-            logger.error("couldn't update resource pool configuration: {}", ex)
-            throw ex
-        }
-    }
-  }
+  def yarnConfigUpdate(updatedJson: Json): F[Json] =
+    for {
+      url <- configURL
+      request <- Request[F](Method.PUT, Uri.fromString(url).toOption.get).withBody(updatedJson)
+      response <- http.request[Json](request)
+    } yield response
 
-  def yarnConfigRefresh: Future[Json] = {
-    val request = Post(refreshURL)
-      .addCredentials(BasicHttpCredentials(username, password))
-    http.request(request)
-      .flatMap {
-        case HttpResponse(StatusCodes.OK, _, entity, _) =>
-          Unmarshal(entity).to[Json].map { result =>
-            logger.debug("config refresh resulted with {}", result)
-            result
-          }
-        case HttpResponse(status, _, entity, _) =>
-          Unmarshal(entity).to[String].map { result =>
-            logger.error("{} couldn't update resource pool configuration: {}", status, result)
-            throw new HttpException()
-          }
-      }
-      .recover {
-        case ex =>
-          logger.error("couldn't refresh resource pool configuration: {}", ex)
-          throw ex
-      }
-  }
+  def yarnConfigRefresh: F[Json] =
+    for {
+      response <- http.request[Json](Request[F](Method.POST, Uri.fromString(clusterConfig.refreshUrl).right.get))
+    } yield response
 
-
-  override def createPool(poolName: String, maxCores: Int, maxMemoryInGB: Double, parentPools: Queue[String]): Future[YarnPool] = {
-    val yarnPool = YarnPool(poolName, maxCores, maxMemoryInGB)
-    yarnConfig.flatMap { config =>
-      val poolConfiguration = config.hcursor
+  def poolConfiguration(config: Json)
+                       (implicit evidence: Sync[F]): F[Json] =
+    evidence.delay {
+      config.hcursor
         .downField("items")
         .downAt {
           item =>
@@ -191,16 +115,16 @@ class CDHYarnClient(http: HttpClient,
               field._1 == "name" && field._2.asString.contains("yarn_fs_scheduled_allocations")
             }.nonEmpty
         }.focus.get
-
-      val Right(configJson) = parse((poolConfiguration \\ "value").head.asString.get)
-
-      val updatedJson = combine(configJson, yarnPool, parentPools)
-
-      val preparedJson = prepare(config, updatedJson)
-      for {
-        _ <- yarnConfigUpdate(preparedJson)
-        _ <- yarnConfigRefresh
-      } yield yarnPool
     }
-  }
+
+  override def createPool(yarn: Yarn, parentPools: Queue[String]): F[Unit] =
+    for {
+      config <- yarnConfig
+      poolConfig <- poolConfiguration(config)
+      configJson <- Sync[F].delay(parse((poolConfig \\ "value").head.asString.get).right)
+      updatedJson <- Sync[F].delay(combine(configJson.get, yarn, parentPools))
+      preparedJson <- Sync[F].delay(prepare(config, updatedJson))
+      _ <- yarnConfigUpdate(preparedJson)
+      _ <- yarnConfigRefresh
+    } yield ()
 }

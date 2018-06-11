@@ -7,14 +7,13 @@ import com.heimdali.services._
 import org.apache.hadoop.fs.FileSystem
 import org.apache.hadoop.hdfs.client.HdfsAdmin
 
-trait ClientModule {
-  this: AkkaModule
-    with ExecutionContextModule
+trait ClientModule[F[_]] {
+  this: AppModule[F]
     with ConfigurationModule
-    with HttpModule
-    with ContextModule
-    with FileSystemModule
-    with ClusterModule =>
+    with HttpModule[F]
+    with ContextModule[F]
+    with FileSystemModule[F]
+    with ClusterModule[F] =>
 
   val hdfsUri = new URI(hadoopConfiguration.get("fs.defaultFS"))
 
@@ -23,10 +22,10 @@ trait ClientModule {
 
   val hdfsAdmin: () => HdfsAdmin = () => new HdfsAdmin(hdfsUri, hadoopConfiguration)
 
-  val ldapClient: LDAPClient = new LDAPClientImpl(configuration) with ActiveDirectoryClient
+  val ldapClient: LDAPClient[F] = new LDAPClientImpl(appConfig.ldap) with ActiveDirectoryClient[F]
 
-  val hdfsClient: HDFSClient = new HDFSClientImpl(fileSystemLoader, hdfsAdmin, loginContextProvider)
+  val hdfsClient: HDFSClient[F] = new HDFSClientImpl[F](fileSystemLoader, hdfsAdmin, loginContextProvider)
 
-  val yarnClient: YarnClient = new CDHYarnClient(http, configuration, clusterService)
+  val yarnClient: YarnClient[F] = new CDHYarnClient[F](http, appConfig.cluster, clusterService)
 
 }
