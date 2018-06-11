@@ -24,7 +24,7 @@ class AccountControllerSpec
     val authService = new TestAuthService
 
     val accountController = new AccountController(authService, accountService)
-    val response: IO[Response[IO]] = accountController.openRoutes.orNotFound.run(Request(uri = Uri.uri("/token")))
+    val response: IO[Response[IO]] = accountController.openRoutes.orNotFound.run(Request(uri = Uri.uri("/")))
     check(response, Status.Ok, Some(fromResource("rest/token.expected.json")))(jsonDecoder)
   }
 
