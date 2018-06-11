@@ -33,6 +33,8 @@ trait WorkspaceService[F[_]] {
 
   def removeMember[A <: DatabaseRole](id: Long, databaseName: String, roleName: A, username: String): OptionT[F, WorkspaceMember]
 
+  def approve[A <: ApproverRole](id: Long, approverRole: A): F[Approval]
+
 }
 
 class WorkspaceServiceImpl[F[_] : Effect](ldapClient: LDAPClient[F],

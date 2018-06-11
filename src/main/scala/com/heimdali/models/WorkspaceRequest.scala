@@ -11,15 +11,15 @@ sealed trait ApproverRole
 
 object ApproverRole {
 
-  implicit def approverShow[A <: ApproverRole]: Show[A] = Show.show(_.getClass.getSimpleName)
+  implicit def approverShow[A <: ApproverRole]: Show[A] = Show.show(_.getClass.getSimpleName.toLowerCase)
 
 }
 
-case object Infrastructure
+case object Infrastructure extends ApproverRole
 
-case object Risk
+case object Risk extends ApproverRole
 
-case class Approval(role: ApproverRole, approver: String, approvalTime: Instant, id: Option[Long])
+case class Approval(role: ApproverRole, approver: String, approvalTime: Instant, id: Option[Long] = None)
 
 object Approval {
 

@@ -5,12 +5,14 @@ import cats.effect._
 import com.heimdali.models.{Token, User}
 import com.heimdali.services.AccountService
 import com.typesafe.scalalogging.LazyLogging
+import io.circe.syntax._
+import io.circe.Json
 import org.http4s.dsl.Http4sDsl
 import org.http4s.headers.Authorization
 import org.http4s.server.AuthMiddleware
 import org.http4s.server.middleware.authentication.BasicAuth
 import org.http4s.server.middleware.authentication.BasicAuth.BasicAuthenticator
-import org.http4s.util.CaseInsensitiveString
+import org.http4s.circe._
 import org.http4s.{AuthedService, BasicCredentials, Request}
 
 trait AuthService[F[_]] {
@@ -26,6 +28,10 @@ class AuthServiceImpl[F[_] : Sync](accountService: AccountService[F])
 
   import dsl._
 
+  def failure(reason: String): Json = Json.obj(
+    "message" -> reason.asJson
+  )
+
   def authStore(accountService: AccountService[F]): BasicAuthenticator[F, Token] =
     (creds: BasicCredentials) =>
       accountService.login(creds.username, creds.password).value
@@ -33,18 +39,18 @@ class AuthServiceImpl[F[_] : Sync](accountService: AccountService[F])
   def basicAuth: AuthMiddleware[F, Token] =
     BasicAuth("heimdali", authStore(accountService))
 
-  val onFailure: AuthedService[String, F] =
+  val onFailure: AuthedService[Json, F] =
     Kleisli({
       req =>
         OptionT.liftF(Forbidden(req.authInfo))
     })
 
-  val validate: Kleisli[F, Request[F], Either[String, User]] =
-    Kleisli[F, Request[F], Either[String, User]] { request =>
-      val lookup: EitherT[F, String, User] = for {
-        header <- EitherT.fromEither[F](request.headers.get(Authorization.name).toRight("Missing authorization header"))
-        token <- accountService.validate(header.value).leftMap(_.getMessage)
-      } yield token
+  val validate: Kleisli[F, Request[F], Either[Json, User]] =
+    Kleisli[F, Request[F], Either[Json, User]] { request =>
+      val lookup: EitherT[F, Json, User] = for {
+        header <- EitherT.fromEither[F](request.headers.get(Authorization.name).toRight(failure("Missing authorization header")))
+        user <- accountService.validate(header.value).leftMap(e => failure(e.getMessage))
+      } yield user
       lookup.value
     }
 

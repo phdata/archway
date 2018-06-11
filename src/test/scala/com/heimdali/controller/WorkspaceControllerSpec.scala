@@ -1,8 +1,10 @@
 package com.heimdali.controller
 
+import java.time.Instant
+
 import cats.effect.IO
 import com.heimdali.clients.HttpTest
-import com.heimdali.models.WorkspaceMember
+import com.heimdali.models.{Approval, Infrastructure, WorkspaceMember}
 import com.heimdali.repositories.Manager
 import com.heimdali.rest.WorkspaceController
 import com.heimdali.services._
@@ -73,5 +75,19 @@ class WorkspaceControllerSpec
         | ]
       """.stripMargin)
     check(response, Status.Ok, Some(json))
+  }
+
+  it should "updated approvals" in new Http4sClientDsl[IO] {
+    implicit val configuration: Configuration = Configuration.default.withSnakeCaseMemberNames
+    val authService = new TestAuthService(riskApprover = true)
+
+    val instant = Instant.now()
+
+    val workspaceService = mock[WorkspaceService[IO]]
+    workspaceService.approve _ expects(id, Infrastructure) returning IO.pure(Approval(Infrastructure, standardUsername, instant))
+
+    val restApi = new WorkspaceController(authService, workspaceService)
+    val response = restApi.route.orNotFound.run(POST(uri("/123/approval")).unsafeRunSync())
+    check(response, Created, Json.obj("risk" -> Json.obj("approver" -> standardUsername.asJson, "approval_time" -> instant.asJson)))
   }
 }
