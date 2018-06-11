@@ -62,10 +62,13 @@ class WorkspaceServiceImpl[F[_] : Effect](ldapClient: LDAPClient[F],
 
   override def find(id: Long): OptionT[F, WorkspaceRequest] =
     OptionT {
-      workspaceRepository
-        .find(id)
-        .value
+      (for {
+        workspace <- workspaceRepository.find(id).value
+        datas <- hiveDatabaseRepository.findByWorkspace(id)
+        yarns <- yarnRepository.findByWorkspace(id)
+      } yield (workspace, datas, yarns))
         .transact(transactor)
+        .map(r => r._1.map(_.copy(data = r._2, processing = r._3)))
     }
 
   override def list(username: String): F[List[WorkspaceRequest]] =
@@ -74,42 +77,36 @@ class WorkspaceServiceImpl[F[_] : Effect](ldapClient: LDAPClient[F],
       workspaceRepository.list(memberships).transact(transactor)
     }.getOrElse(List.empty)
 
-  def createDatabase(database: HiveDatabase, initialUser: String, elevate: Option[String]): F[HiveDatabase] = {
+  def createDatabase(database: HiveDatabase, initialUser: String, elevate: Option[String]): F[Unit] = {
     implicit val connection: Connection = connectionFactory()
     for {
       _ <- hdfsClient.createDirectory(database.location, elevate)
       _ <- hdfsClient.setQuota(database.location, database.sizeInGB)
       _ <- hiveService.createDatabase(database.name, database.location)
 
-      managing <- createLDAP(database.managingGroup, database, initialUser)
-      readonly <- database.readonlyGroup.map(createLDAP(_, database, initialUser)).sequence
+      _ <- createLDAP(database.managingGroup, database, initialUser)
+      _ <- database.readonlyGroup.map(createLDAP(_, database, initialUser)).sequence
 
-      completed <- (for {
-        id <- hiveDatabaseRepository.complete(database.id.get)
-        result <- hiveDatabaseRepository.find(id).value
-      } yield result).transact(transactor)
-    } yield completed.get.copy(managingGroup = managing, readonlyGroup = readonly)
+      _ <- hiveDatabaseRepository.complete(database.id.get).transact(transactor)
+    } yield ()
   }
 
-  def createLDAP(ldap: LDAPRegistration, database: HiveDatabase, requestedBy: String): F[LDAPRegistration] =
+  def createLDAP(ldap: LDAPRegistration, database: HiveDatabase, requestedBy: String): F[Unit] =
     for {
       _ <- ldapClient.createGroup(ldap.commonName, ldap.distinguishedName).toOption.value
       _ <- ldapClient.addUser(ldap.commonName, requestedBy).value
-      completed <- ldapRepository.complete(ldap.id.get).transact(transactor)
+      _ <- ldapRepository.complete(ldap.id.get).transact(transactor)
       _ <- hiveService.createRole(ldap.sentryRole)
       _ <- hiveService.grantGroup(ldap.commonName, ldap.sentryRole)
       _ <- hiveService.enableAccessToDB(database.name, ldap.sentryRole)
       _ <- hiveService.enableAccessToLocation(database.location, ldap.sentryRole)
-    } yield completed
+    } yield ()
 
-  def createYarn(yarn: Yarn): F[Yarn] =
+  def createYarn(yarn: Yarn): F[Unit] =
     for {
       _ <- yarnClient.createPool(yarn, Queue("root"))
-      updated <- (for {
-        _ <- yarnRepository.complete(yarn.id.get)
-        complete <- yarnRepository.find(yarn.id.get).value
-      } yield complete.get).transact(transactor)
-    } yield updated
+      _ <- yarnRepository.complete(yarn.id.get).transact(transactor)
+    } yield ()
 
   def create(workspace: WorkspaceRequest): F[WorkspaceRequest] =
     (for {
@@ -136,8 +133,8 @@ class WorkspaceServiceImpl[F[_] : Effect](ldapClient: LDAPClient[F],
 
   def provision(workspaceRequest: WorkspaceRequest): F[Unit] =
     for {
-      hive <- workspaceRequest.data.traverse(createDatabase(_, workspaceRequest.requestedBy, if (workspaceRequest.singleUser) Some(workspaceRequest.requestedBy) else None))
-      yarn <- workspaceRequest.processing.traverse(createYarn)
+      _ <- workspaceRequest.data.traverse(createDatabase(_, workspaceRequest.requestedBy, if (workspaceRequest.singleUser) Some(workspaceRequest.requestedBy) else None))
+      _ <- workspaceRequest.processing.traverse(createYarn)
     } yield ()
 
   def members[A <: DatabaseRole](id: Long, databaseName: String, roleName: A): F[List[WorkspaceMember]] =

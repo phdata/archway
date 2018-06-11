@@ -2,7 +2,7 @@
   "name" : "John Doe",
   "username" : "john.doe",
   "permissions" : {
-    "acceptRisk" : false,
-    "resourceApprover" : false
+    "risk_management" : false,
+    "platform_operations" : false
   }
 }

@@ -5,11 +5,12 @@ import cats.data.{EitherT, OptionT}
 import cats.effect.IO
 import cats.syntax.applicative._
 import com.heimdali.clients._
-import com.heimdali.models.WorkspaceMember
+import com.heimdali.models.{WorkspaceMember, WorkspaceRequest}
 import com.heimdali.repositories._
 import com.heimdali.test.fixtures._
 import doobie._
 import doobie.implicits._
+import doobie.util.transactor.Transactor
 import org.apache.hadoop.fs.Path
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.prop.TableDrivenPropertyChecks._
@@ -19,7 +20,7 @@ import org.scalatest.{FlatSpec, Matchers}
 import scala.collection.immutable.Queue
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class SharedWorkspaceServiceImplSpec extends FlatSpec with Matchers with MockFactory {
+class SharedWorkspaceServiceImplSpec extends FlatSpec with Matchers with MockFactory with DBTest {
 
   behavior of "ProjectServiceImpl"
 
@@ -56,8 +57,19 @@ class SharedWorkspaceServiceImplSpec extends FlatSpec with Matchers with MockFac
       workspaceRepository.create _ expects initialWorkspaceRequest.copy(compliance = savedCompliance) returning initialWorkspaceRequest.copy(id = Some(id), compliance = savedCompliance).pure[ConnectionIO]
       ldapRepository.create _ expects initialLDAP returning savedLDAP.pure[ConnectionIO]
       hiveDatabaseRepository.create _ expects initialHive.copy(managingGroup = savedLDAP) returning savedHive.pure[ConnectionIO]
+      workspaceRepository.linkHive _ expects(id, id) returning 1.pure[ConnectionIO]
       yarnRepository.create _ expects initialYarn returning savedYarn.pure[ConnectionIO]
+      workspaceRepository.linkYarn _ expects(id, id) returning 1.pure[ConnectionIO]
+    }
 
+    val newWorkspace = projectServiceImpl.create(initialWorkspaceRequest).unsafeRunSync()
+
+    newWorkspace.processing should not be empty
+    newWorkspace.data should not be empty
+  }
+
+  it should "provision a workspace" in new Context {
+    inSequence {
       hdfsClient.createDirectory _ expects(savedHive.location, None) returning IO.pure(new Path(savedHive.location))
       hdfsClient.setQuota _ expects(savedHive.location, savedHive.sizeInGB) returning IO.pure(HDFSAllocation(savedHive.location, savedHive.sizeInGB))
       hiveClient.createDatabase _ expects(savedHive.name, savedHive.location) returning IO.unit
@@ -75,15 +87,19 @@ class SharedWorkspaceServiceImplSpec extends FlatSpec with Matchers with MockFac
       yarnRepository.complete _ expects savedYarn.id.get returning 1.pure[ConnectionIO]
     }
 
-    val newWorkspace = projectServiceImpl.create(initialWorkspaceRequest).unsafeRunSync()
+    val newWorkspace = projectServiceImpl.provision(savedWorkspaceRequest).unsafeRunSync()
   }
 
   it should "find a record" in new Context {
     workspaceRepository.find _ expects id returning OptionT.some(savedWorkspaceRequest)
+    hiveDatabaseRepository.findByWorkspace _ expects id returning List(savedHive).pure[ConnectionIO]
+    yarnRepository.findByWorkspace _ expects id returning List(savedYarn).pure[ConnectionIO]
 
     val foundWorkspace = projectServiceImpl.find(id).value.unsafeRunSync()
 
     foundWorkspace shouldBe defined
+    foundWorkspace.get.data should not be empty
+    foundWorkspace.get.processing should not be empty
   }
 
   it should "list members" in new Context {
@@ -118,7 +134,7 @@ class SharedWorkspaceServiceImplSpec extends FlatSpec with Matchers with MockFac
         workspaceRepository,
         complianceRepository,
         () => null,
-        null
+        transactor
       )
   }
 

@@ -10,4 +10,6 @@ trait YarnRepository {
   def complete(id: Long): ConnectionIO[Int]
 
   def find(id: Long): OptionT[ConnectionIO, Yarn]
+
+  def findByWorkspace(id: Long): ConnectionIO[List[Yarn]]
 }

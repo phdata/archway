@@ -19,7 +19,7 @@ class HDFSClientImplSpec extends fixture.FlatSpec with Matchers with MockitoSuga
 
   behavior of "HDFS Client"
 
-  it should "create a directory on behalf of a user" in { fixture =>
+  ignore should "create a directory on behalf of a user" in { fixture =>
     val context = Mockito.spy(new TestLoginContext)
 
     val client = new HDFSClientImpl[IO](() => fixture.fileSystem, fixture.admin, context)
@@ -30,7 +30,7 @@ class HDFSClientImplSpec extends fixture.FlatSpec with Matchers with MockitoSuga
     fixture.fileSystem.exists(new Path(fixture.location)) should be(true)
   }
 
-  it should "set quota" in { fixture =>
+  ignore should "set quota" in { fixture =>
     val context = Mockito.spy(new TestLoginContext)
 
     fixture.fileSystem.mkdirs(new Path(fixture.location))
@@ -43,7 +43,7 @@ class HDFSClientImplSpec extends fixture.FlatSpec with Matchers with MockitoSuga
     result.maxSizeInGB should be(.25)
   }
 
-  it should "upload a file" in { fixture =>
+  ignore should "upload a file" in { fixture =>
     val context = mock[LoginContextProvider]
     val data = "test out"
     val dataBytes = data.getBytes

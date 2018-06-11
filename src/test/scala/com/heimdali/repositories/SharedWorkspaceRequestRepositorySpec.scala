@@ -25,8 +25,6 @@ class SharedWorkspaceRequestRepositorySpec extends FlatSpec with Matchers with D
 
     val newRecord = repository.create(newRequest.unsafeRunSync()).transact(transactor).unsafeRunSync()
     newRecord.id shouldBe defined
-    newRecord.processing should not be empty
-    newRecord.data should not be empty
 
     sql"delete from workspace_request".update.run.transact(transactor).unsafeRunSync
     sql"delete from yarn".update.run.transact(transactor).unsafeRunSync

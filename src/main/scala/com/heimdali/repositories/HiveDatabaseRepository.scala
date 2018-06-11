@@ -9,6 +9,8 @@ trait HiveDatabaseRepository {
 
   def find(id: Long): OptionT[ConnectionIO, HiveDatabase]
 
+  def findByWorkspace(id: Long): ConnectionIO[List[HiveDatabase]]
+
   def complete(id: Long): ConnectionIO[Int]
 }
 
