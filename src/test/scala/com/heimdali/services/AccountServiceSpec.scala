@@ -3,6 +3,7 @@ package com.heimdali.services
 import cats.effect.IO
 import com.heimdali.clients.LDAPClient
 import com.heimdali.config.{ApprovalConfig, RestConfig}
+import com.heimdali.test.fixtures._
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FlatSpec, Matchers}
 
@@ -16,17 +17,7 @@ class AccountServiceSpec extends FlatSpec with MockFactory with Matchers {
 
     val accountService = new AccountServiceImpl[IO](mock[LDAPClient[IO]], restConfig, approvalConfig)
 
-    val Right(user) = accountService.validate().value.unsafeRunSync()
-    /**
-      * {
-          "name": "Dude Doe",
-          "username": "username",
-          "permissions": {
-            "risk_management": false,
-            "platform_operations": true
-          }
-      * }
-      */
+    val Right(user) = accountService.validate(infraApproverToken).value.unsafeRunSync()
 
     user.permissions.platformOperations should be(true)
   }
