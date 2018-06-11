@@ -19,6 +19,8 @@ case object Infrastructure extends ApproverRole
 
 case object Risk extends ApproverRole
 
+case object NA extends ApproverRole
+
 case class Approval(role: ApproverRole, approver: String, approvalTime: Instant, id: Option[Long] = None)
 
 object Approval {

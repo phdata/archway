@@ -23,4 +23,7 @@ class TestAuthService(riskApprover: Boolean = false, platformApprover: Boolean =
 
   override def tokenAuth: AuthMiddleware[IO, User] =
     AuthMiddleware(tokenValidator, failure)
+
+  override def tokenRoleAuth(auth: User => Boolean): AuthMiddleware[IO, User] =
+    AuthMiddleware(tokenValidator, failure)
 }

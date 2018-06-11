@@ -14,11 +14,14 @@ import org.http4s.server.middleware.authentication.BasicAuth
 import org.http4s.server.middleware.authentication.BasicAuth.BasicAuthenticator
 import org.http4s.circe._
 import org.http4s.{AuthedService, BasicCredentials, Request}
+import cats.syntax.applicative._
 
 trait AuthService[F[_]] {
   def basicAuth: AuthMiddleware[F, Token]
 
   def tokenAuth: AuthMiddleware[F, User]
+
+  def tokenRoleAuth(auth: User => Boolean): AuthMiddleware[F, User]
 }
 
 class AuthServiceImpl[F[_] : Sync](accountService: AccountService[F])
@@ -45,15 +48,18 @@ class AuthServiceImpl[F[_] : Sync](accountService: AccountService[F])
         OptionT.liftF(Forbidden(req.authInfo))
     })
 
-  val validate: Kleisli[F, Request[F], Either[Json, User]] =
+  def validate(auth: User => Boolean = _ => true): Kleisli[F, Request[F], Either[Json, User]] =
     Kleisli[F, Request[F], Either[Json, User]] { request =>
-      val lookup: EitherT[F, Json, User] = for {
+      (for {
         header <- EitherT.fromEither[F](request.headers.get(Authorization.name).toRight(failure("Missing authorization header")))
         user <- accountService.validate(header.value).leftMap(e => failure(e.getMessage))
-      } yield user
-      lookup.value
+        result <- EitherT.fromEither[F](if(auth(user)) Right(user) else Left(failure("Not allowed")))
+      } yield result).value
     }
 
-  override val tokenAuth: AuthMiddleware[F, User] = AuthMiddleware(validate, onFailure)
+  override val tokenAuth: AuthMiddleware[F, User] =
+    AuthMiddleware(validate(), onFailure)
 
+  override def tokenRoleAuth(auth: User => Boolean): AuthMiddleware[F, User] =
+    AuthMiddleware(validate(auth), onFailure)
 }

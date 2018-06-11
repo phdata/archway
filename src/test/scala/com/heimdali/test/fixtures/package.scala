@@ -43,6 +43,8 @@ package object fixtures {
   val standardUsername = "john.doe"
   val infraApproverToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJuYW1lIjoiRHVkZSBEb2UiLCJ1c2VybmFtZSI6InVzZXJuYW1lIiwicGVybWlzc2lvbnMiOnsicmlza19tYW5hZ2VtZW50IjpmYWxzZSwicGxhdGZvcm1fb3BlcmF0aW9ucyI6dHJ1ZX19.uNJ0uQevSRL8aqYqmfsijVoj3gjlHbk07XBwGSXRuOboA1zkcMHhmHhiKVmFW_AVwDvqVdYAJ-XpNp7qTMHuQg"
   val infraApproverUser = User(personName, standardUsername, UserPermissions(riskManagement = false, platformOperations = true))
+  val basicUserToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJuYW1lIjoiRHVkZSBEb2UiLCJ1c2VybmFtZSI6InVzZXJuYW1lIiwicGVybWlzc2lvbnMiOnsicmlza19tYW5hZ2VtZW50IjpmYWxzZSwicGxhdGZvcm1fb3BlcmF0aW9ucyI6ZmFsc2V9fQ.ltGXxBh4S7gwmIbcKz22IFWpGI2-zxad2XYOoxuGm734L8GlzfwvLRWIs-ZVKn7T8w3RJy5bKZWZoPj8951Qug"
+  val basicUser = User(personName, standardUsername, UserPermissions(riskManagement = false, platformOperations = false))
 
   val clusterConfig = ClusterConfig(1 second, "", "cluster name", "dev", CredentialsConfig("admin", "admin"))
 
