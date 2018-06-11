@@ -156,4 +156,6 @@ class WorkspaceServiceImpl[F[_] : Effect](ldapClient: LDAPClient[F],
       ldap <- OptionT(ldapRepository.find(id, databaseName, roleName).value.transact(transactor))
       member <- ldapClient.removeUser(ldap.commonName, username).map(member => WorkspaceMember(member.username, member.name))
     } yield member
+
+  override def approve[A <: ApproverRole](id: Long, approverRole: A): F[Approval] = ???
 }

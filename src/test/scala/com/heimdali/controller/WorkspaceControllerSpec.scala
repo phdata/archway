@@ -9,6 +9,7 @@ import com.heimdali.repositories.Manager
 import com.heimdali.rest.WorkspaceController
 import com.heimdali.services._
 import com.heimdali.test.fixtures._
+import io.circe.syntax._
 import io.circe.parser._
 import io.circe.Json
 import io.circe.generic.extras.Configuration
@@ -78,6 +79,7 @@ class WorkspaceControllerSpec
   }
 
   it should "updated approvals" in new Http4sClientDsl[IO] {
+    import io.circe.java8.time._
     implicit val configuration: Configuration = Configuration.default.withSnakeCaseMemberNames
     val authService = new TestAuthService(riskApprover = true)
 
@@ -88,6 +90,6 @@ class WorkspaceControllerSpec
 
     val restApi = new WorkspaceController(authService, workspaceService)
     val response = restApi.route.orNotFound.run(POST(uri("/123/approval")).unsafeRunSync())
-    check(response, Created, Json.obj("risk" -> Json.obj("approver" -> standardUsername.asJson, "approval_time" -> instant.asJson)))
+    check(response, Created, Some(Json.obj("risk" -> Json.obj("approver" -> standardUsername.asJson, "approval_time" -> instant.asJson))))
   }
 }
