@@ -1,22 +1,21 @@
 package com.heimdali.models
 
-import scalikejdbc._
+import io.circe._
 
-case class HiveDatabase(id: Option[Long],
-                        name: String,
-                        role: String,
+case class HiveDatabase(name: String,
                         location: String,
-                        sizeInGB: Int)
+                        sizeInGB: Int,
+                        managingGroup: LDAPRegistration,
+                        readonlyGroup: Option[LDAPRegistration] = None,
+                        id: Option[Long] = None)
 
-object HiveDatabase extends SQLSyntaxSupport[HiveDatabase] {
-  def apply(g: ResultName[HiveDatabase], rs: WrappedResultSet): Option[HiveDatabase] =
-    rs.longOpt(g.id).map { _ =>
-      HiveDatabase(
-        rs.longOpt(g.id),
-        rs.string(g.name),
-        rs.string(g.role),
-        rs.string(g.location),
-        rs.int(g.sizeInGB),
-      )
-    }
+object HiveDatabase {
+  implicit val printer: Printer = Printer.noSpaces.copy(dropNullValues = true)
+
+  implicit val encoder: Encoder[HiveDatabase] =
+    Encoder.forProduct5("name", "location", "size_in_gb", "managing_group", "readonly_group")(s => (s.name, s.location, s.sizeInGB, s.managingGroup, s.readonlyGroup))
+
+  implicit final val decoder: Decoder[HiveDatabase] =
+    Decoder.forProduct5("name", "location", "size_in_gb", "managing_group", "readonly_group")((name: String, location: String, size: Int, managing: LDAPRegistration, readonly: Option[LDAPRegistration]) => HiveDatabase(name, location, size, managing, readonly))
+
 }

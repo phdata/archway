@@ -1,20 +1,19 @@
 package com.heimdali.modules
 
+import cats.effect.IO
 import com.heimdali.rest._
 
 trait RestModule {
-  this: AkkaModule
-    with ExecutionContextModule
-    with ServiceModule
-    with HttpModule
+  this: ServiceModule[IO]
+    with HttpModule[IO]
     with ConfigurationModule
-    with ClusterModule =>
+    with ClusterModule[IO] =>
 
-  val authService: AuthServiceImpl = new AuthServiceImpl(accountService)
-  val accountController = new AccountController(authService, accountService, configuration)
+  val authService: AuthServiceImpl[IO] = new AuthServiceImpl[IO](accountService)
+  val accountController = new AccountController(authService, accountService)
   val clusterController = new ClusterController(clusterService)
   val workspaceController = new WorkspaceController(authService, workspaceService)
-  val governedDatasetController = new GovernedDatasetController(authService, governedDatasetService, configuration)
+  val templateController = new TemplateController(authService)
 
-  val restAPI = new RestAPI(httpExt, configuration, accountController, clusterController, workspaceController, governedDatasetController)
+  val restAPI: RestAPI = new RestAPI(accountController, clusterController, workspaceController, templateController)
 }

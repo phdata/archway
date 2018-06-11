@@ -1,32 +1,29 @@
 package com.heimdali
 
+import cats.effect.IO
 import com.heimdali.modules._
+import fs2.{Stream, StreamApp}
 
-import scala.concurrent.Await
-import scala.concurrent.duration.Duration
+import scala.concurrent.ExecutionContext
 
-object Main extends App {
-
-  val app = new AppModule
+object Main extends StreamApp[IO] {
+  val heimdaliApp = new AppModule[IO]
     with ExecutionContextModule
     with ConfigurationModule
-    with ContextModule
-    with FileSystemModule
-    with StartupModule
-    with HttpModule
-    with ClusterModule
-    with ClientModule
+    with ContextModule[IO]
+    with FileSystemModule[IO]
+    with StartupModule[IO]
+    with HttpModule[IO]
+    with ClusterModule[IO]
+    with ClientModule[IO]
     with RepoModule
-    with ServiceModule
-    with AkkaModule
+    with ServiceModule[IO]
     with RestModule
 
-  import app.executionContext
+  override def stream(args: List[String], requestShutdown: IO[Unit]): Stream[IO, StreamApp.ExitCode] = {
+    implicit val ec: ExecutionContext =  heimdaliApp.executionContext
 
-  Await.ready(
-    for {
-      _ <- app.startup.start()
-      _ <- app.restAPI.start()
-    } yield Unit, Duration.Inf)
-
+    heimdaliApp.startup.start().unsafeRunSync()
+    heimdaliApp.restAPI.build().serve
+  }
 }

@@ -3,32 +3,31 @@ package com.heimdali.clients
 import java.io.{File, InputStream, OutputStream}
 import java.text.DecimalFormat
 
+import cats.effect.{Async, IO, Sync}
 import com.heimdali.services.LoginContextProvider
 import com.typesafe.scalalogging.LazyLogging
 import org.apache.hadoop.fs.{FileSystem, FileUtil, Path}
 import org.apache.hadoop.hdfs.client.HdfsAdmin
 
-import scala.concurrent.{ExecutionContext, Future}
-
 case class HDFSAllocation(location: String, maxSizeInGB: Double)
 
-trait HDFSClient {
-  def uploadFile(stream: InputStream, hdfsLocation: Path): Future[Path]
+trait HDFSClient[F[_]] {
+  def uploadFile(stream: InputStream, hdfsLocation: String): F[Path]
 
-  def createDirectory(location: String, onBehalfOf: Option[String]): Future[Path]
+  def createDirectory(location: String, onBehalfOf: Option[String]): F[Path]
 
-  def changeOwner(location: String, user: String): Future[Path]
+  def changeOwner(location: String, user: String): F[Path]
 
-  def setQuota(path: Path, maxSizeInGB: Double): Future[HDFSAllocation]
+  def setQuota(path: String, maxSizeInGB: Double): F[HDFSAllocation]
 
-  def getQuota(path: Path): Future[Double]
+  def getQuota(path: Path): F[Double]
 }
 
-class HDFSClientImpl(fileSystem: () => FileSystem,
-                     hdfsAdmin: () => HdfsAdmin,
-                     loginContextProvider: LoginContextProvider)
-                    (implicit val executionContext: ExecutionContext)
-  extends HDFSClient with LazyLogging {
+class HDFSClientImpl[F[_] : Async](fileSystem: () => FileSystem,
+                                   hdfsAdmin: () => HdfsAdmin,
+                                   loginContextProvider: LoginContextProvider)
+  extends HDFSClient[F]
+    with LazyLogging {
 
   implicit def locationToPath(location: String): Path =
     new Path(location)
@@ -39,33 +38,37 @@ class HDFSClientImpl(fileSystem: () => FileSystem,
     location
   }
 
-  override def createDirectory(location: String, onBehalfOf: Option[String] = None): Future[Path] =
+  override def createDirectory(location: String, onBehalfOf: Option[String] = None): F[Path] =
     loginContextProvider.elevate(onBehalfOf.getOrElse("hdfs")) { () =>
       createDirectory(location)
-    }.map(_.get)
+    }
 
-  override def changeOwner(location: String, user: String): Future[Path] = Future {
-    FileUtil.setOwner(new File(location), user, user)
-    location
-  }
+  override def changeOwner(location: String, user: String): F[Path] =
+    Sync[F].delay {
+      FileUtil.setOwner(new File(location), user, user)
+      location
+    }
 
-  override def setQuota(path: Path, maxSizeInGB: Double): Future[HDFSAllocation] =
+  override def setQuota(path: String, maxSizeInGB: Double): F[HDFSAllocation] =
     loginContextProvider.elevate("hdfs") { () =>
-      hdfsAdmin().setSpaceQuota(path, (maxSizeInGB * 1024 * 1024 * 1024).toLong)
+      hdfsAdmin().setSpaceQuota(new Path(path), (maxSizeInGB * 1024 * 1024 * 1024).toLong)
       HDFSAllocation(path.toUri.getPath, maxSizeInGB)
-    }.map(_.get)
+    }
 
-  override def getQuota(path: Path): Future[Double] = Future {
-    val dec = new DecimalFormat("0.00")
-    dec.format(((fileSystem().getContentSummary(path).getSpaceQuota / 1024.0) / 1024.0) / 1024.0).toDouble
-  }
+  override def getQuota(path: Path): F[Double] =
+    Sync[F].delay {
+      val dec = new DecimalFormat("0.00")
+      dec.format(((fileSystem().getContentSummary(path).getSpaceQuota / 1024.0) / 1024.0) / 1024.0).toDouble
+    }
 
-  override def uploadFile(stream: InputStream, hdfsLocation: Path): Future[Path] = Future {
-    val output: OutputStream = fileSystem().create(hdfsLocation)
-    Iterator.continually(stream.read())
-      .takeWhile(-1 !=)
-      .foreach(output.write)
-    output.close()
-    hdfsLocation
-  }
+  override def uploadFile(stream: InputStream, hdfsLocation: String): F[Path] =
+    Sync[F].delay {
+      val path = new Path(hdfsLocation)
+      val output: OutputStream = fileSystem().create(path)
+      Iterator.continually(stream.read())
+        .takeWhile(-1 !=)
+        .foreach(output.write)
+      output.close()
+      path
+    }
 }

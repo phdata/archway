@@ -1,34 +1,42 @@
 package com.heimdali.clients
 
-import com.typesafe.config.Config
+import cats.data.{EitherT, OptionT}
+import cats.effect.{Effect, Sync}
+import cats.implicits._
+import com.heimdali.config._
 import com.typesafe.scalalogging.LazyLogging
 import com.unboundid.ldap.sdk._
 import org.slf4j.MarkerFactory
 
 import scala.collection.JavaConverters._
-import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Failure, Success, Try}
+import scala.util.Try
+
+sealed trait GroupCreationError
+
+case object GroupAlreadyExists extends GroupCreationError
+
+case class GeneralError(throwable: Throwable) extends GroupCreationError
 
 case class LDAPUser(name: String, username: String, memberships: Seq[String])
 
-trait LDAPClient {
-  def findUser(username: String): Future[Option[LDAPUser]]
+trait LDAPClient[F[_]] {
+  def findUser(username: String): OptionT[F, LDAPUser]
 
-  def validateUser(username: String, password: String): Future[Option[LDAPUser]]
+  def validateUser(username: String, password: String): OptionT[F, LDAPUser]
 
-  def createGroup(groupName: String): Future[String]
+  def createGroup(groupName: String, groupDN: String): EitherT[F, _ <: GroupCreationError, Unit]
 
-  def addUser(groupName: String, username: String): Future[LDAPUser]
+  def addUser(groupName: String, username: String): OptionT[F, LDAPUser]
 
-  def removeUser(groupName: String, username: String): Future[LDAPUser]
+  def removeUser(groupName: String, username: String): OptionT[F, LDAPUser]
 
-  def groupMembers(groupDN: String): Future[Seq[LDAPUser]]
+  def groupMembers(groupDN: String): F[List[LDAPUser]]
 }
 
-abstract class LDAPClientImpl(configuration: Config)
-                             (implicit executionContext: ExecutionContext)
-  extends LDAPClient with LazyLogging {
-  val marker = MarkerFactory.getMarker("LDAP")
+abstract class LDAPClientImpl[F[_] : Effect](val ldapConfig: LDAPConfig)
+
+  extends LDAPClient[F] with LazyLogging {
+  private val marker = MarkerFactory.getMarker("LDAP")
 
   def searchQuery(username: String): String
 
@@ -38,126 +46,93 @@ abstract class LDAPClientImpl(configuration: Config)
 
   def groupObjectClass: String
 
-  val ldapConfiguration: Config = configuration.getConfig("ldap")
-  val groupPath: String = ldapConfiguration.getString("group_path")
-  val baseDN: String = ldapConfiguration.getString("base_dn")
-  val server: String = ldapConfiguration.getString("server")
-  val port: Int = ldapConfiguration.getInt("port")
-  val connections: Int = Try(ldapConfiguration.getInt("connections")).getOrElse(10)
-
   val connectionPool: LDAPConnectionPool = {
-    val connection = new LDAPConnection(server, port)
-    new LDAPConnectionPool(connection, connections)
+    val connection = new LDAPConnection(ldapConfig.server, ldapConfig.port)
+    new LDAPConnectionPool(connection, 10)
   }
-
-  def groupDN(groupName: String): String =
-    s"cn=$groupName,$groupPath"
 
 
   val adminConnectionPool: LDAPConnectionPool = {
-    val username = ldapConfiguration.getString("bind_dn")
-    val password = ldapConfiguration.getString("bind_password")
-    logger.info(marker, "logging into ldap with {}", username)
-    val connection = new LDAPConnection(server, port, username, password)
-    new LDAPConnectionPool(connection, connections)
+    logger.info(marker, "logging into ldap with {}", ldapConfig.bindDN)
+    val connection = new LDAPConnection(ldapConfig.server, ldapConfig.port, ldapConfig.bindDN, ldapConfig.bindPassword)
+    new LDAPConnectionPool(connection, 10)
   }
 
-  def getUserEntry(username: String): Option[SearchResultEntry] = {
-    val searchResult = adminConnectionPool.search(baseDN, SearchScope.SUB, searchQuery(username))
-    searchResult
-      .getSearchEntries
-      .asScala
-      .headOption
-  }
+  def getUserEntry(username: String): OptionT[F, SearchResultEntry] =
+    OptionT(Sync[F].delay {
+      val searchResult = adminConnectionPool.search(ldapConfig.baseDN, SearchScope.SUB, searchQuery(username))
+      searchResult
+        .getSearchEntries
+        .asScala
+        .headOption
+    })
 
-  override def findUser(username: String): Future[Option[LDAPUser]] = Future {
-    getUserEntry(username)
-      .map(ldapUser)
-  }
+  def getGroupEntry(dn: String): OptionT[F, SearchResultEntry] =
+    OptionT(Sync[F].delay(Try(adminConnectionPool.getEntry(dn)).toOption))
 
-  override def validateUser(username: String, password: String): Future[Option[LDAPUser]] = Future {
-    Try(connectionPool.bindAndRevertAuthentication(fullUsername(username), password)) match {
-      case Success(result) if result.getResultCode == ResultCode.SUCCESS =>
-        getUserEntry(username)
-          .map(ldapUser)
-      case Failure(exc) =>
-        exc.printStackTrace()
+  override def findUser(username: String): OptionT[F, LDAPUser] =
+    getUserEntry(username).map(ldapUser)
+
+  override def validateUser(username: String, password: String): OptionT[F, LDAPUser] =
+    for {
+      bindResult <- OptionT(Sync[F].delay(Try(connectionPool.bindAndRevertAuthentication(fullUsername(username), password)).toOption))
+      result <- if (bindResult.getResultCode == ResultCode.SUCCESS) getUserEntry(username).map(ldapUser) else OptionT[F, LDAPUser](Sync[F].pure(None))
+    } yield result
+
+  override def createGroup(groupName: String, groupDN: String): EitherT[F, _ <: GroupCreationError, Unit] =
+    EitherT(Sync[F].delay {
+      try {
+        adminConnectionPool.add(s"dn: $groupDN",
+          s"objectClass: $groupObjectClass",
+          "objectClass: top",
+          s"sAMAccountName: $groupName",
+          s"cn: $groupName"
+        )
+        Right(())
+      } catch {
+        case exc: LDAPException if exc.getResultCode == ResultCode.ENTRY_ALREADY_EXISTS =>
+          logger.warn("group {} already exists", groupName)
+          Left(GroupAlreadyExists)
+        case exc: Throwable =>
+          logger.error("couldn't create ldap group")
+          logger.error(exc.getMessage, exc)
+          Left(GeneralError(exc))
+      }
+    })
+
+  override def addUser(groupDN: String, username: String): OptionT[F, LDAPUser] = OptionT {
+    (for {
+      userEntry <- getUserEntry(username).value
+      groupEntry <- getGroupEntry(groupDN).value
+    } yield (userEntry, groupEntry)).map {
+      case (Some(user), Some(group)) if !group.hasAttribute("member") || !group.getAttributeValues("member").contains(user.getDN) =>
+        adminConnectionPool.modify(groupDN, new Modification(ModificationType.ADD, "member", user.getDN))
+        Some(ldapUser(user))
+      case _ =>
         None
     }
   }
 
-  override def createGroup(groupName: String): Future[String] = Future {
-    val dn = groupDN(groupName)
-    try {
-      adminConnectionPool.add(
-        s"dn: $dn",
-        s"objectClass: $groupObjectClass",
-        "objectClass: top",
-        s"sAMAccountName: $groupName",
-        s"cn: $groupName"
-      )
-      dn
-    } catch {
-      case exc: LDAPException if exc.getResultCode == ResultCode.ENTRY_ALREADY_EXISTS =>
-        logger.warn("group {} already exists", groupName)
-        dn
-      case exc =>
-        logger.error("couldn't create ldap group")
-        logger.error(exc.getMessage, exc)
-        throw exc
+  override def groupMembers(groupDN: String): F[List[LDAPUser]] =
+    Sync[F].delay {
+      val searchResult = adminConnectionPool.search(ldapConfig.baseDN, SearchScope.SUB, s"(&(objectClass=user)(memberOf=$groupDN))")
+      searchResult
+        .getSearchEntries
+        .asScala
+        .map(ldapUser)
+        .toList
     }
-  }
 
-  override def addUser(groupName: String, username: String): Future[LDAPUser] = Future {
-    try {
-      val Some(user) = getUserEntry(username)
-
-      val dn = groupDN(groupName)
-      val groupEntry = Option(adminConnectionPool.getEntry(dn))
-
-      if (groupEntry.isDefined &&
-        groupEntry.get.hasAttribute("member") &&
-        groupEntry.get.getAttributeValues("member").contains(user.getDN)) {
-        logger.info("{} is already a member of {}", username, groupName)
-      } else {
-        logger.info("adding user {} to group {}", user, groupName)
-        adminConnectionPool.modify(dn, new Modification(ModificationType.ADD, "member", user.getDN))
-      }
-
-      ldapUser(user)
-    } catch {
-      case exc: Throwable =>
-        logger.error("couldn't add user", exc)
-        throw exc
-    }
-  }
-
-  override def groupMembers(groupDN: String): Future[Seq[LDAPUser]] = Future {
-    val searchResult = adminConnectionPool.search(baseDN, SearchScope.SUB, s"(&(objectClass=user)(memberOf=$groupDN))")
-    searchResult.getSearchEntries.asScala.map(ldapUser)
-  }
-
-  override def removeUser(groupName: String, username: String): Future[LDAPUser] = Future {
-    try {
-      val Some(user) = getUserEntry(username)
-
-      val dn = groupDN(groupName)
-      val groupEntry = Option(adminConnectionPool.getEntry(dn))
-
-      if (groupEntry.isDefined &&
-        groupEntry.get.hasAttribute("member") &&
-        groupEntry.get.getAttributeValues("member").contains(user.getDN)) {
-        logger.info("removing {} from group {}", user, groupName)
-        adminConnectionPool.modify(dn, new Modification(ModificationType.DELETE, "member", user.getDN))
-      } else {
-        logger.info("{} is not a member of {}", username, groupName)
-      }
-
-      ldapUser(user)
-    } catch {
-      case exc: Throwable =>
-        logger.error("couldn't remove user", exc)
-        throw exc
+  override def removeUser(groupDN: String, username: String): OptionT[F, LDAPUser] = OptionT {
+    (for {
+      userEntry <- getUserEntry(username).value
+      groupEntry <- getGroupEntry(groupDN).value
+    } yield (userEntry, groupEntry)).map {
+      case (Some(user), Some(group)) if group.hasAttribute("member") && group.getAttributeValues("member").contains(user.getDN) =>
+        adminConnectionPool.modify(groupDN, new Modification(ModificationType.DELETE, "member", user.getDN))
+        Some(ldapUser(user))
+      case _ =>
+        None
     }
   }
 }

@@ -1,13 +1,15 @@
 package com.heimdali.modules
 
-import akka.http.scaladsl.Http
-import com.heimdali.clients.{AkkaHttpClient, HttpClient}
+import com.heimdali.clients.{CMClient, HttpClient}
+import org.http4s.client.Client
+import org.http4s.client.blaze.Http1Client
 
-trait HttpModule {
-  this: ConfigurationModule =>
+trait HttpModule[F[_]] {
+  this: AppModule[F]
+    with ConfigurationModule =>
 
-  val httpExt = Http()
+  private val client: F[Client[F]] = Http1Client[F]()
 
-  val http: HttpClient = new AkkaHttpClient(httpExt)
+  val http: HttpClient[F] = new CMClient[F](client, appConfig.cluster)
 
 }

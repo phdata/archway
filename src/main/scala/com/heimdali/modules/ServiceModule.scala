@@ -1,37 +1,62 @@
 package com.heimdali.modules
 
-import akka.actor.ActorRef
-import com.heimdali.models.{Dataset, SharedWorkspace, UserWorkspace}
-import com.heimdali.provisioning.WorkspaceProvisioner
-import com.heimdali.services._
+import java.sql.{Connection, DriverManager}
 
-trait ServiceModule {
-  this: AkkaModule
+import com.heimdali.clients.{HiveClient, HiveClientImpl}
+import com.heimdali.config
+import com.heimdali.services._
+import doobie._
+import doobie.util.transactor.{Strategy, Transactor}
+
+trait ServiceModule[F[_]] {
+  this: AppModule[F]
     with ExecutionContextModule
-    with RepoModule
-    with ClientModule
+    with ClientModule[F]
     with RepoModule
     with ConfigurationModule
-    with HttpModule =>
+    with HttpModule[F] =>
 
-  val userProvisionerFactory: UserWorkspace => ActorRef =
-    (userWorkspace) => actorSystem.actorOf(WorkspaceProvisioner.props[String, UserWorkspace](ldapActor, hdfsActor, hiveActor, userWorkspaceSaver, yarnActor, configuration, userWorkspace))
+  val hiveConfig = appConfig.db.hive
 
-  val accountService: AccountService = new AccountServiceImpl(ldapClient, accountRepository, configuration, userProvisionerFactory)
+  private val initialHiveTransactor = Transactor.fromDriverManager[F](hiveConfig.driver, hiveConfig.url, "", "")
+  val strategy = Strategy.void.copy(always = FC.close)
+  val hiveTransactor = Transactor.strategy.set(initialHiveTransactor, strategy)
 
-  val workspaceProvisionerFactory: SharedWorkspace => ActorRef =
-    (sharedWorkspace) => actorSystem.actorOf(WorkspaceProvisioner.props[Long, SharedWorkspace](ldapActor, hdfsActor, hiveActor, sharedWorkspaceSaver, yarnActor, configuration, sharedWorkspace))
+  private val metaConfig: config.DatabaseConfigItem = appConfig.db.meta
 
-  val workspaceService: WorkspaceService = new WorkspaceServiceImpl(ldapClient, sharedWorkspaceRepository, complianceRepository, workspaceProvisionerFactory)
+  private val metaTransactor = Transactor.fromDriverManager[F](
+    metaConfig.driver,
+    metaConfig.url,
+    metaConfig.username.get,
+    metaConfig.password.get
+  )
 
-  val keytabService: KeytabService = new KeytabServiceImpl()
+  val keytabService: KeytabService[F] =
+    new KeytabServiceImpl[F]()
 
-  val hiveService: HiveService = new HiveServiceImpl
+  val hiveService: HiveClient[F] =
+    new HiveClientImpl[F](hiveTransactor)
 
-  val datasetProvisionerFactory: Dataset => ActorRef =
-    (dataset) => actorSystem.actorOf(WorkspaceProvisioner.props[Long, Dataset](ldapActor, hdfsActor, hiveActor, datasetWorkspaceSaver, yarnActor, configuration, dataset))
+  val environment: String =
+    configuration.getString("cluster.environment")
 
-  val environment = configuration.getString("cluster.environment")
+  val accountService: AccountService[F] =
+    new AccountServiceImpl[F](ldapClient, appConfig.rest, appConfig.approvers)
 
-  val governedDatasetService: GovernedDatasetService = new GovernedDatasetServiceImpl(governedDatasetRepository, datasetRepository, complianceRepository, environment, ldapClient, datasetProvisionerFactory)
+  val hiveConnectionFactory: () => Connection =
+    () => DriverManager.getConnection(appConfig.db.hive.url, appConfig.db.hive.username.getOrElse(""), appConfig.db.hive.password.getOrElse(""))
+
+  val workspaceService: WorkspaceService[F] =
+    new WorkspaceServiceImpl[F](
+      ldapClient,
+      hdfsClient,
+      hiveService,
+      yarnClient,
+      yarnRepository,
+      hiveDatabaseRepository,
+      ldapRepository,
+      workspaceRepository,
+      complianceRepository,
+      hiveConnectionFactory,
+      metaTransactor)
 }

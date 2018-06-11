@@ -1,21 +1,20 @@
 package com.heimdali.models
 
-import scalikejdbc._
+import io.circe.{Decoder, Encoder}
 
-case class Compliance(id: Option[Long],
-                      phiData: Boolean,
+case class Compliance(phiData: Boolean,
                       pciData: Boolean,
-                      piiData: Boolean)
+                      piiData: Boolean,
+                      id: Option[Long] = None)
 
-object Compliance extends SQLSyntaxSupport[Compliance] {
-  def apply(g: ResultName[Compliance], rs: WrappedResultSet): Option[Compliance] =
-    rs.longOpt(g.id).map { _ =>
-      Compliance(
-        rs.longOpt(g.id),
-        rs.boolean(g.phiData),
-        rs.boolean(g.pciData),
-        rs.boolean(g.piiData)
-      )
-    }
+object Compliance {
+
+  val empty = Compliance(phiData = false, pciData = false, piiData = false)
+
+  implicit final val encoder: Encoder[Compliance] =
+    Encoder.forProduct3("phi_data", "pci_data", "pii_data")(c => (c.phiData, c.pciData, c.piiData))
+
+  implicit final val decoder: Decoder[Compliance] =
+    Decoder.forProduct3("phi_data", "pci_data", "pii_data")((phi: Boolean, pci: Boolean, pii: Boolean) => Compliance(phi, pci, pii))
 
 }

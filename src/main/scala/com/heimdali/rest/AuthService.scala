@@ -1,40 +1,53 @@
 package com.heimdali.rest
 
-import akka.http.scaladsl.model.headers.{BasicHttpCredentials, HttpChallenge, HttpChallenges, HttpCredentials}
-import akka.http.scaladsl.server.directives.{AuthenticationResult, Credentials, SecurityDirectives}
-import com.heimdali.services.{AccountService, Token, User}
+import cats.data._
+import cats.effect._
+import com.heimdali.models.{Token, User}
+import com.heimdali.services.AccountService
+import com.typesafe.scalalogging.LazyLogging
+import org.http4s.dsl.Http4sDsl
+import org.http4s.headers.Authorization
+import org.http4s.server.AuthMiddleware
+import org.http4s.server.middleware.authentication.BasicAuth
+import org.http4s.server.middleware.authentication.BasicAuth.BasicAuthenticator
+import org.http4s.util.CaseInsensitiveString
+import org.http4s.{AuthedService, BasicCredentials, Request}
 
-import scala.concurrent.{ExecutionContext, Future}
+trait AuthService[F[_]] {
+  def basicAuth: AuthMiddleware[F, Token]
 
-trait AuthService {
-  def validateCredentials(creds: Option[HttpCredentials]): Future[Either[HttpChallenge, SecurityDirectives.AuthenticationResult[Token]]]
-
-  def validateToken(creds: Credentials): Future[Option[User]]
+  def tokenAuth: AuthMiddleware[F, User]
 }
 
-class AuthServiceImpl(accountService: AccountService)
-                     (implicit executionContext: ExecutionContext) extends AuthService {
+class AuthServiceImpl[F[_] : Sync](accountService: AccountService[F])
+  extends AuthService[F] with LazyLogging {
 
-  override def validateCredentials(creds: Option[HttpCredentials]): Future[Either[HttpChallenge, SecurityDirectives.AuthenticationResult[Token]]] =
-    creds match {
-      case Some(BasicHttpCredentials(username, password)) =>
-        accountService.login(username, password).map {
-          case Some(user) =>
-            Right(AuthenticationResult.success(user))
-          case None =>
-            Left(HttpChallenges.basic("heimdali"))
-        }.recover {
-          case x =>
-            Left(HttpChallenges.basic("heimdali"))
-        }
+  object dsl extends Http4sDsl[F]
+
+  import dsl._
+
+  def authStore(accountService: AccountService[F]): BasicAuthenticator[F, Token] =
+    (creds: BasicCredentials) =>
+      accountService.login(creds.username, creds.password).value
+
+  def basicAuth: AuthMiddleware[F, Token] =
+    BasicAuth("heimdali", authStore(accountService))
+
+  val onFailure: AuthedService[String, F] =
+    Kleisli({
+      req =>
+        OptionT.liftF(Forbidden(req.authInfo))
+    })
+
+  val validate: Kleisli[F, Request[F], Either[String, User]] =
+    Kleisli[F, Request[F], Either[String, User]] { request =>
+      val lookup: EitherT[F, String, User] = for {
+        header <- EitherT.fromEither[F](request.headers.get(Authorization.name).toRight("Missing authorization header"))
+        token <- accountService.validate(header.value).leftMap(_.getMessage)
+      } yield token
+      lookup.value
     }
 
-  override def validateToken(creds: Credentials): Future[Option[User]] =
-    creds match {
-      case Credentials.Provided(token) =>
-        accountService.validate(token)
-      case _ =>
-        Future(None)
-    }
+  override val tokenAuth: AuthMiddleware[F, User] = AuthMiddleware(validate, onFailure)
 
 }

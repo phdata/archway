@@ -1,11 +1,9 @@
 package com.heimdali.repositories
 
-import com.heimdali.models.Compliance
 import com.heimdali.test.fixtures._
-import org.scalatest.{AsyncFlatSpec, Matchers}
-import scalikejdbc.ConnectionPool
+import org.scalatest.{FlatSpec, Matchers}
 
-class ComplianceRepositoryImplSpec extends AsyncFlatSpec with Matchers with DBTest {
+class ComplianceRepositoryImplSpec extends FlatSpec with Matchers with DBTest {
 
   behavior of "ComplianceRepositoryImplSpec"
 
@@ -13,12 +11,9 @@ class ComplianceRepositoryImplSpec extends AsyncFlatSpec with Matchers with DBTe
 
     val complianceRepository = new ComplianceRepositoryImpl
 
-    complianceRepository.create(compliance).map { newRecord =>
+    complianceRepository.create(savedCompliance).map { newRecord =>
       newRecord.id shouldBe defined
     }
 
   }
-
-  override val tables: Seq[scalikejdbc.SQLSyntaxSupport[_]] =
-    Seq(Compliance)
 }

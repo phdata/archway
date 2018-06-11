@@ -19,7 +19,7 @@ trait LDAPTest extends BeforeAndAfterEach {
   val password = "password"
 
   val config = ConfigFactory.load()
-  lazy val ldapConnection = new LDAPConnection(config.getString("ldap.server"), config.getInt("ldap.port"), config.getString("ldap.bind_dn"), config.getString("ldap.bind_password"))
+  lazy val ldapConnection = new LDAPConnection(config.getString("ldap.server"), config.getInt("ldap.port"), config.getString("ldap.bindDN"), config.getString("ldap.bindPassword"))
 
   override protected def beforeEach(): Unit =
     try {
@@ -36,6 +36,8 @@ trait LDAPTest extends BeforeAndAfterEach {
         "sAMAccountName: edh_sw_sesame",
         "cn: edh_sw_sesame"
       )
+    } catch {
+      case _: Throwable =>
     }
 
   override protected def afterEach(): Unit = {

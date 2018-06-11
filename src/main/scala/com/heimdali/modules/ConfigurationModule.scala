@@ -1,9 +1,9 @@
 package com.heimdali.modules
 
-import akka.actor.ActorSystem
-import akka.stream.{ActorMaterializer, Materializer}
+import com.heimdali.config.AppConfig
 import com.typesafe.config.{Config, ConfigFactory}
 import org.apache.hadoop.conf.Configuration
+import pureconfig.{CamelCase, ConfigFieldMapping, ProductHint}
 
 trait ConfigurationModule {
 
@@ -17,7 +17,7 @@ trait ConfigurationModule {
     config
   }
 
-  implicit val actorSystem: ActorSystem = ActorSystem()
-  implicit val materializer: Materializer = ActorMaterializer()
+  private implicit def hint[T] = ProductHint[T](ConfigFieldMapping(CamelCase, CamelCase))
+  val Right(appConfig) = pureconfig.loadConfig[AppConfig]
 
 }

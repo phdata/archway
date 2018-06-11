@@ -1,0 +1,28 @@
+{
+  "name": "Sesame",
+  "compliance": {
+    "phi_data": false,
+    "pci_data": false,
+    "pii_data": false
+  },
+  "data": [
+    {
+      "name": "sw_sesame",
+      "location": "/data/shared_workspace/sesame",
+      "size_in_gb": "250",
+      "managing_group": {
+        "distinguished_name": "cn=edh_sw_sesame,dn=groups,dc=jotunn,dc=io",
+        "common_name": "edh_sw_sesame",
+        "sentry_role": "role_sesame"
+      }
+    }
+  ],
+  "processing": [
+    {
+      "pool_name": "sesame",
+      "max_cores": 1,
+      "max_memory_in_gb": 1
+    }
+  ],
+  "single_user": false
+}

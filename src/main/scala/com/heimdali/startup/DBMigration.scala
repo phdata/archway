@@ -1,5 +1,7 @@
 package com.heimdali.startup
 
-trait DBMigration {
-  def migrate(url: String, user: String, password: String): Int
+import cats.Applicative
+
+trait DBMigration[F[_]] {
+  def migrate(url: String, user: String, password: String)(implicit appEvidence: Applicative[F]): F[Unit]
 }

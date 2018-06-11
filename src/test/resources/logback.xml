@@ -6,7 +6,7 @@
     </appender>
     <logger name="org.flywaydb" level="DEBUG"/>
     <logger name="com.typesafe" level="DEBUG"/>
-    <root level="INFO">
+    <root level="DEBUG">
         <appender-ref ref="STDOUT" />
     </root>
 </configuration>

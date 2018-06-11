@@ -1,0 +1,8 @@
+{
+  "name" : "John Doe",
+  "username" : "john.doe",
+  "permissions" : {
+    "acceptRisk" : false,
+    "resourceApprover" : false
+  }
+}
