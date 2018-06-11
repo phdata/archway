@@ -1,5 +1,6 @@
 package com.heimdali.rest
 
+import cats.data.{Kleisli, OptionT}
 import cats.effect._
 import com.heimdali.models._
 import com.heimdali.repositories.DatabaseRole
@@ -18,6 +19,16 @@ class WorkspaceController(authService: AuthService[IO],
   implicit val memberRequestEntityDecoder: EntityDecoder[IO, MemberRequest] = jsonOf[IO, MemberRequest]
 
   val route: HttpService[IO] =
+    (general <*> approvers)
+
+  val approvers =
+    authService.tokenRoleAuth(u => u.permissions.riskManagement || u.permissions.platformOperations) {
+      AuthedService[User, IO] {
+        case _ => IO.pure(NotFound)
+      }
+    }
+
+  val general: Kleisli[OptionT[IO, _], Request[IO], Response[IO]] =
     authService.tokenAuth {
       AuthedService[User, IO] {
         case req@POST -> Root as user =>
