@@ -2,7 +2,8 @@ package com.heimdali.clients
 
 import cats.data.{EitherT, OptionT}
 import cats.effect.{Effect, Sync}
-import cats.implicits._
+import cats.syntax.flatMap._
+import cats.syntax.functor._
 import com.heimdali.config._
 import com.typesafe.scalalogging.LazyLogging
 import com.unboundid.ldap.sdk._

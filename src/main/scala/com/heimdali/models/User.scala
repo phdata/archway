@@ -8,7 +8,7 @@ case class User(name: String, username: String, permissions: UserPermissions = U
   val canApprove: Boolean = permissions.platformOperations || permissions.riskManagement
   val role: ApproverRole = permissions match {
     case UserPermissions(true, false) => Risk
-    case UserPermissions(false, true) => Infrastructure
+    case UserPermissions(false, true) => Infra
     case _ => NA
   }
 }

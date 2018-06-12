@@ -58,5 +58,6 @@ trait ServiceModule[F[_]] {
       workspaceRepository,
       complianceRepository,
       hiveConnectionFactory,
+      approvalRepository,
       metaTransactor)
 }

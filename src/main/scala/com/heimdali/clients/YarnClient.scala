@@ -1,7 +1,8 @@
 package com.heimdali.clients
 
 import cats.effect._
-import cats.implicits._
+import cats.syntax.flatMap._
+import cats.syntax.functor._
 import com.heimdali.config.ClusterConfig
 import com.heimdali.models.Yarn
 import com.heimdali.services.ClusterService
