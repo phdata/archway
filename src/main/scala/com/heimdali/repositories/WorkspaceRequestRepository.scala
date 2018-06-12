@@ -1,10 +1,11 @@
 package com.heimdali.repositories
 
 import cats.data.OptionT
-import com.heimdali.models.WorkspaceRequest
+import com.heimdali.models.{Approval, WorkspaceRequest}
 import doobie.free.connection.ConnectionIO
 
 trait WorkspaceRequestRepository {
+  def approve(id: Long, approval: Approval): ConnectionIO[Approval]
 
   def create(updatedWorkspace: WorkspaceRequest): ConnectionIO[WorkspaceRequest]
 

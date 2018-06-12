@@ -33,7 +33,7 @@ trait WorkspaceService[F[_]] {
 
   def removeMember[A <: DatabaseRole](id: Long, databaseName: String, roleName: A, username: String): OptionT[F, WorkspaceMember]
 
-  def approve[A <: ApproverRole](id: Long, approverRole: A): F[Approval]
+  def approve(id: Long, approval: Approval): F[Approval]
 
 }
 
@@ -157,5 +157,6 @@ class WorkspaceServiceImpl[F[_] : Effect](ldapClient: LDAPClient[F],
       member <- ldapClient.removeUser(ldap.commonName, username).map(member => WorkspaceMember(member.username, member.name))
     } yield member
 
-  override def approve[A <: ApproverRole](id: Long, approverRole: A): F[Approval] = ???
+  override def approve(id: Long, approval: Approval): F[Approval] =
+    workspaceRepository.approve(id, approval).transact(transactor)
 }

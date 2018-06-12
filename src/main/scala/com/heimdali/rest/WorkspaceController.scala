@@ -1,6 +1,7 @@
 package com.heimdali.rest
 
-import cats.data.{Kleisli, OptionT}
+import java.time.Instant
+
 import cats.effect._
 import com.heimdali.models._
 import com.heimdali.repositories.DatabaseRole
@@ -19,18 +20,17 @@ class WorkspaceController(authService: AuthService[IO],
   implicit val memberRequestEntityDecoder: EntityDecoder[IO, MemberRequest] = jsonOf[IO, MemberRequest]
 
   val route: HttpService[IO] =
-    (general <*> approvers)
-
-  val approvers =
-    authService.tokenRoleAuth(u => u.permissions.riskManagement || u.permissions.platformOperations) {
-      AuthedService[User, IO] {
-        case _ => IO.pure(NotFound)
-      }
-    }
-
-  val general: Kleisli[OptionT[IO, _], Request[IO], Response[IO]] =
     authService.tokenAuth {
       AuthedService[User, IO] {
+        case POST -> Root / LongVar(id) / "approval" as user =>
+          if(user.canApprove)
+            for {
+              approved <- workspaceService.approve(id, Approval(user.role, user.username, Instant.now()))
+              response <- Created(approved.asJson)
+            } yield response
+          else
+            Forbidden()
+
         case req@POST -> Root as user =>
           /* explicit implicit declaration because of `user` variable */
           implicit val decoder: Decoder[WorkspaceRequest] = WorkspaceRequest.decoder(user)

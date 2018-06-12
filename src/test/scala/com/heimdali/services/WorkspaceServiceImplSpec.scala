@@ -5,7 +5,7 @@ import cats.data.{EitherT, OptionT}
 import cats.effect.IO
 import cats.syntax.applicative._
 import com.heimdali.clients._
-import com.heimdali.models.{WorkspaceMember, WorkspaceRequest}
+import com.heimdali.models.{Approval, Risk, WorkspaceMember, WorkspaceRequest}
 import com.heimdali.repositories._
 import com.heimdali.test.fixtures._
 import doobie._
@@ -20,9 +20,9 @@ import org.scalatest.{FlatSpec, Matchers}
 import scala.collection.immutable.Queue
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class SharedWorkspaceServiceImplSpec extends FlatSpec with Matchers with MockFactory with DBTest {
+class WorkspaceServiceImplSpec extends FlatSpec with Matchers with MockFactory with DBTest {
 
-  behavior of "ProjectServiceImpl"
+  behavior of "Workspace Service"
 
   it should "list projects" in new Context {
     val invalidWorkspace = "CN=non_workspace,OU=groups,dn=example,dn=com"
@@ -109,6 +109,12 @@ class SharedWorkspaceServiceImplSpec extends FlatSpec with Matchers with MockFac
     val members = projectServiceImpl.members(id, "sesame", Manager).unsafeRunSync()
 
     members shouldBe Seq(WorkspaceMember("johndoe", "John Doe"))
+  }
+
+  it should "approve the workspace" in new Context {
+    workspaceRepository.approve _ expects(id, approval) returning approval.copy(id = Some(id)).pure[ConnectionIO]
+
+    projectServiceImpl.approve(id, approval)
   }
 
   trait Context {

@@ -4,7 +4,7 @@ import java.time.Instant
 
 import cats.effect.IO
 import com.heimdali.clients.HttpTest
-import com.heimdali.models.{Approval, Infrastructure, WorkspaceMember}
+import com.heimdali.models.{Approval, Infrastructure, Risk, WorkspaceMember}
 import com.heimdali.repositories.Manager
 import com.heimdali.rest.WorkspaceController
 import com.heimdali.services._
@@ -86,7 +86,7 @@ class WorkspaceControllerSpec
     val instant = Instant.now()
 
     val workspaceService = mock[WorkspaceService[IO]]
-    workspaceService.approve _ expects(id, Infrastructure) returning IO.pure(Approval(Infrastructure, standardUsername, instant))
+    workspaceService.approve _ expects(id, approval) returning IO.pure(approval.copy(id = Some(id)))
 
     val restApi = new WorkspaceController(authService, workspaceService)
     val response = restApi.route.orNotFound.run(POST(uri("/123/approval")).unsafeRunSync())

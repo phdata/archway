@@ -15,7 +15,7 @@ object ApproverRole {
 
 }
 
-case object Infrastructure extends ApproverRole
+case object Infra extends ApproverRole
 
 case object Risk extends ApproverRole
 
@@ -27,7 +27,7 @@ object Approval {
 
   implicit val encoder: Encoder[Approval] = Encoder.instance { approval =>
     Json.obj(
-      approval.role.toString -> Json.obj(
+      approval.role.toString.toLowerCase -> Json.obj(
         "approver" -> approval.approver.asJson,
         "approval_time" -> approval.approvalTime.asJson
       )

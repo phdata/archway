@@ -36,6 +36,8 @@ package object fixtures {
   val savedYarn = Yarn(poolName, maxCores, maxMemoryInGB, Some(id))
   val initialYarn = savedYarn.copy(id = None)
 
+  val approval = Approval(Risk, standardUsername, Instant.now())
+
   val yarnApp = BasicClusterApp("ysr21", "Yarn", "GOOD_HEALTH", "STARTED")
   val cluster = Cluster("cluster name", "Cluster", Map("YARN" -> yarnApp), CDH(""), "GOOD_HEALTH")
 
