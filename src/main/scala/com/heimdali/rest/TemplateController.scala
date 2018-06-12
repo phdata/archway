@@ -11,7 +11,7 @@ import org.http4s.circe._
 import org.http4s.dsl.io._
 
 class TemplateController(authService: AuthService[IO]) {
-  val printer: Printer = Printer.noSpaces.copy(dropNullValues = true)
+  implicit val printer: Printer = Printer.noSpaces.copy(dropNullValues = true)
 
   val route: HttpService[IO] =
     authService.tokenAuth {
@@ -24,7 +24,7 @@ class TemplateController(authService: AuthService[IO]) {
           for {
             userTemplate <- req.req.as[UserTemplate]
             workspaceRequest <- IO.pure(userTemplate.generate())
-            response <- Ok(workspaceRequest.asJson.pretty(printer))
+            response <- Ok(workspaceRequest.asJson)
           } yield response
 
         case GET -> Root  / "simple" as user =>

@@ -35,11 +35,8 @@ class AccountServiceImpl[F[_] : Sync](ldapClient: LDAPClient[F],
       UserPermissions(riskManagement = ldapUser.memberships.contains(approvalConfig.risk),
         platformOperations = ldapUser.memberships.contains(approvalConfig.infrastructure)))
 
-  private def decode(token: String, secret: String, algo: JwtHmacAlgorithm): Either[Throwable, Json] = {
-    val result = JwtCirce.decodeJson(token, secret, Seq(algo)).toEither
-    logger.warn(result.toString)
-    result
-  }
+  private def decode(token: String, secret: String, algo: JwtHmacAlgorithm): Either[Throwable, Json] =
+    JwtCirce.decodeJson(token, secret, Seq(algo)).toEither
 
   private def encode(json: Json, secret: String, algo: JwtAlgorithm): F[String] =
     Sync[F].delay(JwtCirce.encode(json, secret, algo))

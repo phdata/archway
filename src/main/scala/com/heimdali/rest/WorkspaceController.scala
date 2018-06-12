@@ -16,7 +16,6 @@ import org.http4s.dsl.io._
 class WorkspaceController(authService: AuthService[IO],
                           workspaceService: WorkspaceService[IO]) {
 
-  val printer: Printer = Printer.noSpaces.copy(dropNullValues = true)
   implicit val memberRequestEntityDecoder: EntityDecoder[IO, MemberRequest] = jsonOf[IO, MemberRequest]
 
   val route: HttpService[IO] =
@@ -39,13 +38,13 @@ class WorkspaceController(authService: AuthService[IO],
           for {
             workspaceRequest <- req.req.as[WorkspaceRequest]
             newWorkspace <- workspaceService.create(workspaceRequest)
-            response <- Created(newWorkspace.asJson.pretty(printer))
+            response <- Created(newWorkspace.asJson)
           } yield response
 
         case GET -> Root as user =>
           for {
             workspaces <- workspaceService.list(user.username)
-            response <- Ok(workspaces.asJson.pretty(printer))
+            response <- Ok(workspaces.asJson)
           } yield response
 
         case GET -> Root / LongVar(id) as _ =>
