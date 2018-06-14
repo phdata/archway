@@ -45,16 +45,16 @@ libraryDependencies ++= Seq(
 
   ("com.pauldijou" %% "jwt-core" % "0.14.1").exclude("org.bouncycastle", "bcpkix-jdk15on"),
   ("com.pauldijou" %% "jwt-circe" % "0.14.1").exclude("org.bouncycastle", "bcpkix-jdk15on"),
-  "org.bouncycastle" % "bcpkix-jdk15on" % "1.57" % "provided",
+  "org.bouncycastle" % "bcpkix-jdk15on" % "1.57",
 
   "com.unboundid" % "unboundid-ldapsdk" % "4.0.0",
 
   "org.flywaydb" % "flyway-core" % "4.2.0",
   "postgresql" % "postgresql" % "9.0-801.jdbc4" % "provided",
-  "mysql" % "mysql-connector-java" % "6.0.6" % "provided",
+  "mysql" % "mysql-connector-java" % "6.0.6",
 
-  "org.apache.hadoop" % "hadoop-client" % hadoopVersion % "provided",
-  "org.apache.hive" % "hive-jdbc" % hiveVersion % "provided",
+  "org.apache.hadoop" % "hadoop-client" % hadoopVersion,
+  "org.apache.hive" % "hive-jdbc" % hiveVersion,
   "org.apache.hadoop" % "hadoop-hdfs" % hadoopVersion % Test classifier "" classifier "tests",
   "org.apache.hadoop" % "hadoop-common" % hadoopVersion % Test classifier "" classifier "tests",
   "org.apache.hadoop" % "hadoop-client" % hadoopVersion % Test classifier "" classifier "tests",
@@ -66,6 +66,10 @@ libraryDependencies ++= Seq(
 assemblyJarName in assembly := "heimdali-api.jar"
 
 parallelExecution in Test := false
+
+addCompilerPlugin("org.spire-math" % "kind-projector" % "0.9.7" cross CrossVersion.binary)
+
+addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.2.4")
 
 scalacOptions ++= Seq("-Ypartial-unification", "-language:higherKinds")
 

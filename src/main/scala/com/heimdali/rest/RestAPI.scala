@@ -2,7 +2,10 @@ package com.heimdali.rest
 
 import cats.effect.IO
 import com.typesafe.scalalogging.LazyLogging
+import org.http4s.server._
 import org.http4s.server.blaze._
+import org.http4s.server.middleware.{ CORS, CORSConfig }
+import scala.concurrent.duration._
 
 class RestAPI(accountController: AccountController,
               clusterController: ClusterController,
@@ -12,11 +15,15 @@ class RestAPI(accountController: AccountController,
 
   def build(): BlazeBuilder[IO] =
     BlazeBuilder[IO]
-      .bindHttp(8080, "localhost")
-      .mountService(accountController.openRoutes, "/token")
-      .mountService(accountController.tokenizedRoutes, "/account")
-      .mountService(templateController.route, "/templates")
-      .mountService(clusterController.route, "/clusters")
-      .mountService(workspaceController.route, "/workspaces")
+      .bindHttp(8080)
+      .mountService(router, "/")
+
+  def router = Router[IO](
+      "/token" -> CORS(accountController.openRoutes),
+      "/account" -> accountController.tokenizedRoutes,
+      "/templates" -> templateController.route,
+      "/clusters" -> clusterController.route,
+      "/workspaces" -> workspaceController.route
+  )
 
 }

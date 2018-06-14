@@ -9,7 +9,7 @@ import io.circe.syntax._
 import io.circe.Json
 import org.http4s.dsl.Http4sDsl
 import org.http4s.headers.Authorization
-import org.http4s.server.AuthMiddleware
+import org.http4s.server._
 import org.http4s.server.middleware.authentication.BasicAuth
 import org.http4s.server.middleware.authentication.BasicAuth.BasicAuthenticator
 import org.http4s.circe._
@@ -35,12 +35,18 @@ class AuthServiceImpl[F[_] : Sync](accountService: AccountService[F])
     "message" -> reason.asJson
   )
 
-  def authStore(accountService: AccountService[F]): BasicAuthenticator[F, Token] =
-    (creds: BasicCredentials) =>
-      accountService.login(creds.username, creds.password).value
+  def authStore: Kleisli[OptionT[F, ?], Request[F], Token] =
+    Kleisli[OptionT[F, ?], Request[F], Token] { request =>
+      request.headers.get(Authorization) match {
+        case Some(Authorization(BasicCredentials(creds))) =>
+          accountService.login(creds.username, creds.password)
+        case _ =>
+         OptionT.none
+      }
+    }
 
   def basicAuth: AuthMiddleware[F, Token] =
-    BasicAuth("heimdali", authStore(accountService))
+    AuthMiddleware.withFallThrough(authStore)
 
   val onFailure: AuthedService[Json, F] =
     Kleisli({

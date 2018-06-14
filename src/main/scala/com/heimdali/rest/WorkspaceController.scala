@@ -6,11 +6,10 @@ import cats.effect._
 import com.heimdali.models._
 import com.heimdali.repositories.DatabaseRole
 import com.heimdali.services._
+import io.circe.Decoder
 import io.circe.generic.auto._
 import io.circe.syntax._
-import io.circe.{Decoder, Printer}
 import org.http4s._
-import org.http4s.circe._
 import org.http4s.dsl.io._
 
 class WorkspaceController(authService: AuthService[IO],
