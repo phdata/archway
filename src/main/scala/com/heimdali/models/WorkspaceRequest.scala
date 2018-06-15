@@ -3,6 +3,8 @@ package com.heimdali.models
 import java.time.Instant
 
 import cats.Show
+import doobie.util.composite.Composite
+import doobie.util.meta.Meta
 import io.circe._
 import io.circe.syntax._
 import io.circe.java8.time._
@@ -11,21 +13,38 @@ sealed trait ApproverRole
 
 object ApproverRole {
 
-  implicit def approverShow[A <: ApproverRole]: Show[A] = Show.show(_.getClass.getSimpleName)
+  def parseRole(role: String): ApproverRole =
+    role match {
+      case "superman" => Infra
+      case "risk" => Risk
+    }
+
+  implicit val approverComposite: Meta[ApproverRole] =
+    Meta[String].xmap(parseRole, _.toString.toLowerCase)
+
+  implicit def approverShow[A <: ApproverRole]: Show[A] = Show.show(_.getClass.getSimpleName.toLowerCase)
 
 }
 
-case object Infrastructure
+case object Infra extends ApproverRole
 
-case object Risk
+case object Risk extends ApproverRole
 
-case class Approval(role: ApproverRole, approver: String, approvalTime: Instant, id: Option[Long])
+case object NA extends ApproverRole
+
+case class Approval(role: ApproverRole, approver: String, approvalTime: Instant, id: Option[Long] = None)
 
 object Approval {
 
+  implicit val Point2DComposite: Composite[Approval] =
+    Composite[(ApproverRole, String, Instant, Option[Long])].imap(
+      (t: (ApproverRole, String, Instant, Option[Long])) => Approval(t._1, t._2, t._3, t._4))(
+      (p: Approval) => (p.role, p.approver, p.approvalTime, p.id)
+    )
+
   implicit val encoder: Encoder[Approval] = Encoder.instance { approval =>
     Json.obj(
-      approval.role.toString -> Json.obj(
+      approval.role.toString.toLowerCase -> Json.obj(
         "approver" -> approval.approver.asJson,
         "approval_time" -> approval.approvalTime.asJson
       )
@@ -54,7 +73,7 @@ object WorkspaceRequest {
     WorkspaceRequest(name, requestedBy, requestDate, compliance, singleUser, None, List.empty, List.empty, List.empty)
 
   implicit val encoder: Encoder[WorkspaceRequest] = Encoder.instance { request =>
-//    request.approvals.foldLeft(
+    request.approvals.foldLeft(
       Json.obj(
         "id" -> request.id.asJson,
         "name" -> request.name.asJson,
@@ -63,7 +82,7 @@ object WorkspaceRequest {
         "processing" -> request.processing.asJson,
         "single_user" -> request.singleUser.asJson
       )
-//    )(_ deepMerge _.asJson)
+    )(_ deepMerge _.asJson)
   }
 
   implicit def decoder(implicit user: User): Decoder[WorkspaceRequest] = Decoder.instance { json =>

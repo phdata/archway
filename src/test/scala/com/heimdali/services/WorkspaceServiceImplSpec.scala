@@ -1,16 +1,16 @@
 package com.heimdali.services
 
-import cats._
+import java.time.Instant
+
 import cats.data.{EitherT, OptionT}
 import cats.effect.IO
 import cats.syntax.applicative._
 import com.heimdali.clients._
-import com.heimdali.models.{WorkspaceMember, WorkspaceRequest}
+import com.heimdali.models.WorkspaceMember
 import com.heimdali.repositories._
 import com.heimdali.test.fixtures._
 import doobie._
 import doobie.implicits._
-import doobie.util.transactor.Transactor
 import org.apache.hadoop.fs.Path
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.prop.TableDrivenPropertyChecks._
@@ -20,9 +20,9 @@ import org.scalatest.{FlatSpec, Matchers}
 import scala.collection.immutable.Queue
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class SharedWorkspaceServiceImplSpec extends FlatSpec with Matchers with MockFactory with DBTest {
+class WorkspaceServiceImplSpec extends FlatSpec with Matchers with MockFactory with DBTest {
 
-  behavior of "ProjectServiceImpl"
+  behavior of "Workspace Service"
 
   it should "list projects" in new Context {
     val invalidWorkspace = "CN=non_workspace,OU=groups,dn=example,dn=com"
@@ -94,6 +94,7 @@ class SharedWorkspaceServiceImplSpec extends FlatSpec with Matchers with MockFac
     workspaceRepository.find _ expects id returning OptionT.some(savedWorkspaceRequest)
     hiveDatabaseRepository.findByWorkspace _ expects id returning List(savedHive).pure[ConnectionIO]
     yarnRepository.findByWorkspace _ expects id returning List(savedYarn).pure[ConnectionIO]
+    approvalRepository.findByWorkspaceId _ expects id returning List(approval()).pure[ConnectionIO]
 
     val foundWorkspace = projectServiceImpl.find(id).value.unsafeRunSync()
 
@@ -111,6 +112,13 @@ class SharedWorkspaceServiceImplSpec extends FlatSpec with Matchers with MockFac
     members shouldBe Seq(WorkspaceMember("johndoe", "John Doe"))
   }
 
+  it should "approve the workspace" in new Context {
+    val instant = Instant.now()
+    approvalRepository.create _ expects(id, approval(instant)) returning approval(instant).copy(id = Some(id)).pure[ConnectionIO]
+
+    projectServiceImpl.approve(id, approval(instant))
+  }
+
   trait Context {
     val ldapClient: LDAPClient[IO] = mock[LDAPClient[IO]]
     val hdfsClient: HDFSClient[IO] = mock[HDFSClient[IO]]
@@ -122,6 +130,7 @@ class SharedWorkspaceServiceImplSpec extends FlatSpec with Matchers with MockFac
     val yarnRepository: YarnRepository = mock[YarnRepository]
     val hiveDatabaseRepository: HiveDatabaseRepository = mock[HiveDatabaseRepository]
     val ldapRepository: LDAPRepository = mock[LDAPRepository]
+    val approvalRepository: ApprovalRepository = mock[ApprovalRepository]
 
     def projectServiceImpl =
       new WorkspaceServiceImpl[IO](ldapClient,
@@ -134,6 +143,7 @@ class SharedWorkspaceServiceImplSpec extends FlatSpec with Matchers with MockFac
         workspaceRepository,
         complianceRepository,
         () => null,
+        approvalRepository,
         transactor
       )
   }

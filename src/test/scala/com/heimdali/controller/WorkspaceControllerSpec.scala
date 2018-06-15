@@ -1,15 +1,18 @@
 package com.heimdali.controller
 
+import java.time.Instant
+
 import cats.effect.IO
 import com.heimdali.clients.HttpTest
-import com.heimdali.models.WorkspaceMember
+import com.heimdali.models.{Approval, WorkspaceMember}
 import com.heimdali.repositories.Manager
 import com.heimdali.rest.WorkspaceController
 import com.heimdali.services._
 import com.heimdali.test.fixtures._
-import io.circe.parser._
 import io.circe.Json
 import io.circe.generic.extras.Configuration
+import io.circe.parser._
+import io.circe.syntax._
 import org.http4s._
 import org.http4s.circe._
 import org.http4s.client.dsl.Http4sClientDsl
@@ -73,5 +76,22 @@ class WorkspaceControllerSpec
         | ]
       """.stripMargin)
     check(response, Status.Ok, Some(json))
+  }
+
+  it should "updated approvals" in new Http4sClientDsl[IO] {
+    import io.circe.java8.time._
+    implicit val configuration: Configuration = Configuration.default.withSnakeCaseMemberNames
+    val authService = new TestAuthService(riskApprover = true)
+
+    val instant = Instant.now()
+
+    val workspaceService = mock[WorkspaceService[IO]]
+    (workspaceService.approve _)
+      .expects(where { (newId, newApproval) => newId == id && newApproval.role == approval().role && newApproval.approver == approval().approver })
+      .returning(IO.pure(approval(instant).copy(id = Some(id))))
+
+    val restApi = new WorkspaceController(authService, workspaceService)
+    val response = restApi.route.orNotFound.run(POST(uri("/123/approval")).unsafeRunSync())
+    check(response, Created, Some(Json.obj("risk" -> Json.obj("approver" -> standardUsername.asJson, "approval_time" -> instant.asJson))))
   }
 }

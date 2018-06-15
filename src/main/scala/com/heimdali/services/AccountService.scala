@@ -2,14 +2,13 @@ package com.heimdali.services
 
 import cats.data.{EitherT, OptionT}
 import cats.effect.Sync
-import cats.implicits._
-import cats.syntax.either._
+import cats.syntax.flatMap._
+import cats.syntax.functor._
 import com.heimdali.clients.{LDAPClient, LDAPUser}
 import com.heimdali.config.{ApprovalConfig, RestConfig}
 import com.heimdali.models.{Token, User, UserPermissions}
 import com.typesafe.scalalogging.LazyLogging
-import io.circe.generic.extras.Configuration
-import io.circe.{Decoder, HCursor, Json, Printer}
+import io.circe.Json
 import io.circe.syntax._
 import pdi.jwt.algorithms.JwtHmacAlgorithm
 import pdi.jwt.{JwtAlgorithm, JwtCirce}
@@ -36,11 +35,8 @@ class AccountServiceImpl[F[_] : Sync](ldapClient: LDAPClient[F],
       UserPermissions(riskManagement = ldapUser.memberships.contains(approvalConfig.risk),
         platformOperations = ldapUser.memberships.contains(approvalConfig.infrastructure)))
 
-  private def decode(token: String, secret: String, algo: JwtHmacAlgorithm): Either[Throwable, Json] = {
-    val result = JwtCirce.decodeJson(token, secret, Seq(algo)).toEither
-    logger.warn(result.toString)
-    result
-  }
+  private def decode(token: String, secret: String, algo: JwtHmacAlgorithm): Either[Throwable, Json] =
+    JwtCirce.decodeJson(token, secret, Seq(algo)).toEither
 
   private def encode(json: Json, secret: String, algo: JwtAlgorithm): F[String] =
     Sync[F].delay(JwtCirce.encode(json, secret, algo))

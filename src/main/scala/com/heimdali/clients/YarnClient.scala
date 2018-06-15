@@ -1,7 +1,8 @@
 package com.heimdali.clients
 
 import cats.effect._
-import cats.implicits._
+import cats.syntax.flatMap._
+import cats.syntax.functor._
 import com.heimdali.config.ClusterConfig
 import com.heimdali.models.Yarn
 import com.heimdali.services.ClusterService
@@ -59,15 +60,11 @@ class CDHYarnClient[F[_] : Sync](http: HttpClient[F],
     }.getOrElse(cursor)
   }
 
-  def combine(existing: Json, pool: Yarn, parents: Queue[String]): Json = {
-    logger.debug("adding {} to {}", pool, existing)
-    val result = dig(existing.hcursor, parents)
+  def combine(existing: Json, pool: Yarn, parents: Queue[String]): Json =
+    dig(existing.hcursor, parents)
       .downField("queues")
       .withFocus(_.withArray(arr => Json.arr(arr :+ config(pool): _*)))
       .top.get
-    logger.debug("new pool configuration: {}", result)
-    result
-  }
 
   def prepare(container: Json, newConfig: Json): Json = {
     import io.circe.optics.JsonPath._
@@ -77,7 +74,6 @@ class CDHYarnClient[F[_] : Sync](http: HttpClient[F],
         _.mapArray { arr =>
           arr.map {
             case json if root.name.string.getOption(json).get.contains("yarn_fs_scheduled_allocations") =>
-              logger.debug(root.value.string.modify(_ => newConfig.toString())(json).toString())
               root.value.string.modify(_ => newConfig.toString())(json)
             case json =>
               json

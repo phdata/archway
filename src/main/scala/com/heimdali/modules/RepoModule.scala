@@ -14,4 +14,6 @@ trait RepoModule {
 
   val workspaceRepository: WorkspaceRequestRepository = new WorkspaceRequestRepositoryImpl
 
+  val approvalRepository: ApprovalRepository = new ApprovalRepositoryImpl
+
 }

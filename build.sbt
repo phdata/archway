@@ -67,6 +67,10 @@ assemblyJarName in assembly := "heimdali-api.jar"
 
 parallelExecution in Test := false
 
+addCompilerPlugin("org.spire-math" % "kind-projector" % "0.9.7" cross CrossVersion.binary)
+
+addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.2.4")
+
 scalacOptions ++= Seq("-Ypartial-unification", "-language:higherKinds")
 
 scalaVersion in ThisBuild := "2.12.5"

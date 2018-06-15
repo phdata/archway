@@ -33,6 +33,8 @@ trait WorkspaceService[F[_]] {
 
   def removeMember[A <: DatabaseRole](id: Long, databaseName: String, roleName: A, username: String): OptionT[F, WorkspaceMember]
 
+  def approve(id: Long, approval: Approval): F[Approval]
+
 }
 
 class WorkspaceServiceImpl[F[_] : Effect](ldapClient: LDAPClient[F],
@@ -45,6 +47,7 @@ class WorkspaceServiceImpl[F[_] : Effect](ldapClient: LDAPClient[F],
                                           workspaceRepository: WorkspaceRequestRepository,
                                           complianceRepository: ComplianceRepository,
                                           connectionFactory: () => Connection,
+                                          approvalRepository: ApprovalRepository,
                                           transactor: Transactor[F])
                                          (implicit val executionContext: ExecutionContext)
   extends WorkspaceService[F]
@@ -66,9 +69,10 @@ class WorkspaceServiceImpl[F[_] : Effect](ldapClient: LDAPClient[F],
         workspace <- workspaceRepository.find(id).value
         datas <- hiveDatabaseRepository.findByWorkspace(id)
         yarns <- yarnRepository.findByWorkspace(id)
-      } yield (workspace, datas, yarns))
+        approvals <- approvalRepository.findByWorkspaceId(id)
+      } yield (workspace, datas, yarns, approvals))
         .transact(transactor)
-        .map(r => r._1.map(_.copy(data = r._2, processing = r._3)))
+        .map(r => r._1.map(_.copy(data = r._2, processing = r._3, approvals = r._4)))
     }
 
   override def list(username: String): F[List[WorkspaceRequest]] =
@@ -154,4 +158,7 @@ class WorkspaceServiceImpl[F[_] : Effect](ldapClient: LDAPClient[F],
       ldap <- OptionT(ldapRepository.find(id, databaseName, roleName).value.transact(transactor))
       member <- ldapClient.removeUser(ldap.commonName, username).map(member => WorkspaceMember(member.username, member.name))
     } yield member
+
+  override def approve(id: Long, approval: Approval): F[Approval] =
+    approvalRepository.create(id, approval).transact(transactor)
 }

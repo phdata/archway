@@ -7,7 +7,8 @@ import org.http4s._
 import org.http4s.circe._
 import org.http4s.client.Client
 import org.http4s.headers.Authorization
-import cats.implicits._
+import cats.syntax.flatMap._
+import cats.syntax.functor._
 
 trait HttpClient[F[_]] {
   def request[A](request: Request[F])

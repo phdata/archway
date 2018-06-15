@@ -5,7 +5,6 @@ import com.heimdali.models.{Token, User}
 import com.heimdali.services.AccountService
 import io.circe.syntax._
 import org.http4s._
-import org.http4s.circe._
 import org.http4s.dsl.io._
 
 class AccountController(authService: AuthService[IO],
@@ -26,40 +25,5 @@ class AccountController(authService: AuthService[IO],
           Ok(user.asJson)
       }
     }
-
-
-  //    pathPrefix("account") {
-  //      path("token") {
-  //        get {
-  //          authenticateOrRejectWithChallenge(authService.validateCredentials _) {
-  //            case Right(user) => complete(user)
-  //            case Left(challenge) => reject()
-  //          }
-  //        }
-  //      } ~
-  //        path("profile") {
-  //          get {
-  //            authenticateOAuth2Async("heimdali", authService.validateToken) { user =>
-  //              complete(user)
-  //            }
-  //          }
-  //        } ~
-  //        path("workspace") {
-  //          post {
-  //            authenticateOAuth2Async("heimdali", authService.validateToken) { user =>
-  //              onSuccess(accountService.createWorkspace(user.username).unsafeToFuture()) { _ =>
-  //                complete(StatusCodes.Created)
-  //              }
-  //            }
-  //          } ~
-  //            get {
-  //              authenticateOAuth2Async("heimdali", authService.validateToken) { user =>
-  //                onSuccess(accountService.findWorkspace(user.username).unsafeToFuture()) {
-  //                  case Some(workspace) => complete(workspace)
-  //                  case None => complete(StatusCodes.NotFound)
-  //                }
-  //              }
-  //            }
-  //        }
 
 }
