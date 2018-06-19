@@ -48,24 +48,18 @@ class AuthServiceImpl[F[_] : Sync](accountService: AccountService[F])
   def basicAuth: AuthMiddleware[F, Token] =
     AuthMiddleware.withFallThrough(authStore)
 
-  val onFailure: AuthedService[Json, F] =
-    Kleisli({
-      req =>
-        OptionT.liftF(Forbidden(req.authInfo))
-    })
-
-  def validate(auth: User => Boolean = _ => true): Kleisli[F, Request[F], Either[Json, User]] =
-    Kleisli[F, Request[F], Either[Json, User]] { request =>
-      (for {
-        header <- EitherT.fromEither[F](request.headers.get(Authorization.name).toRight(failure("Missing authorization header")))
-        user <- accountService.validate(header.value).leftMap(e => failure(e.getMessage))
-        result <- EitherT.fromEither[F](if(auth(user)) Right(user) else Left(failure("Not allowed")))
-      } yield result).value
+  def validate(auth: User => Boolean = _ => true): Kleisli[OptionT[F, ?], Request[F], User] =
+    Kleisli[OptionT[F, ?], Request[F], User] { request =>
+      for {
+        header <- OptionT.fromOption(request.headers.get(Authorization.name))
+        user <- accountService.validate(header.value).toOption
+        result <- if(auth(user)) OptionT.some(user) else OptionT.none
+      } yield result
     }
 
   override val tokenAuth: AuthMiddleware[F, User] =
-    AuthMiddleware(validate(), onFailure)
+    AuthMiddleware.withFallThrough(validate())
 
   override def tokenRoleAuth(auth: User => Boolean): AuthMiddleware[F, User] =
-    AuthMiddleware(validate(auth), onFailure)
+    AuthMiddleware.withFallThrough(validate(auth))
 }

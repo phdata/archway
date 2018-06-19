@@ -16,7 +16,7 @@ class RestAPI(accountController: AccountController,
   def build(): BlazeBuilder[IO] =
     BlazeBuilder[IO]
       .bindHttp(8080)
-      .mountService(router, "/")
+      .mountService(CORS(router), "/")
 
   def router = Router[IO](
       "/token" -> CORS(accountController.openRoutes),

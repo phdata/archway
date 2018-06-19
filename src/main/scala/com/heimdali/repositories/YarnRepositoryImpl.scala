@@ -56,6 +56,6 @@ class YarnRepositoryImpl
       (selectQuery ++
         fr"inner join request_yarn ry on ry.yarn_id = y.id" ++
         fr"inner join workspace_request w on ry.workspace_request_id = w.id" ++
-        whereAnd(fr"y.id = $id")).query[Yarn].to[List]
+        whereAnd(fr"w.id = $id")).query[Yarn].to[List]
 
 }

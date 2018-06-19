@@ -63,7 +63,7 @@ class LDAPRepositoryImpl
         fr"inner join hive_database h on " ++ Fragment.const(s"h.${databaseRole.getClass.getSimpleName}_id") ++ fr" = l.id" ++
         fr"""
         inner join request_database rd on rd.hive_database_id = h.id
-        inner join workspace_request w on w.id = rd.workspace_id
+        inner join workspace_request w on w.id = rd.workspace_request_id
         where
           w.id = $workspaceId and h.name = $databaseName
         """).query[LDAPRegistration].option

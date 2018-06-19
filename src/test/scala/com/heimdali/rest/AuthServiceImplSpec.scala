@@ -18,8 +18,8 @@ class AuthServiceImplSpec extends FlatSpec with Matchers with MockFactory {
     accountService.validate _ expects infraApproverToken returning EitherT.right(infraApproverUser.pure[IO])
 
     val authService = new AuthServiceImpl[IO](accountService)
-    val Right(result) = authService.validate(u => u.permissions.platformOperations || u.permissions.riskManagement)(
-      Request(uri = Uri.uri("/profile"), headers = Headers(Header("Authorization", infraApproverToken)))).unsafeRunSync()
+    val Some(result) = authService.validate(u => u.permissions.platformOperations || u.permissions.riskManagement)(
+      Request(uri = Uri.uri("/profile"), headers = Headers(Header("Authorization", infraApproverToken)))).value.unsafeRunSync()
     result.permissions.platformOperations shouldBe true
   }
 
@@ -29,8 +29,8 @@ class AuthServiceImplSpec extends FlatSpec with Matchers with MockFactory {
 
     val authService = new AuthServiceImpl[IO](accountService)
     val result = authService.validate(u => u.permissions.platformOperations || u.permissions.riskManagement)(
-      Request(uri = Uri.uri("/profile"), headers = Headers(Header("Authorization", basicUserToken)))).unsafeRunSync()
-    result.isLeft shouldBe true
+      Request(uri = Uri.uri("/profile"), headers = Headers(Header("Authorization", basicUserToken)))).value.unsafeRunSync()
+    result shouldBe defined
   }
 
 }

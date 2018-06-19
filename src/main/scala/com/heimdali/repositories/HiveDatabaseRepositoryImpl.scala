@@ -63,7 +63,7 @@ class HiveDatabaseRepositoryImpl
 
   override def findByWorkspace(id: Long): ConnectionIO[List[HiveDatabase]] =
     (selectQuery ++
-      fr"inner join request_hive rh on rh.hive_id = h.id" ++
+      fr"inner join request_hive rh on rh.hive_database_id = h.id" ++
       fr"inner join workspace_request w on rh.workspace_request_id = w.id" ++
       whereAnd(fr"w.id = $id")).query[HiveDatabase].to[List]
 }

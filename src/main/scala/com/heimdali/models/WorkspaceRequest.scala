@@ -15,7 +15,7 @@ object ApproverRole {
 
   def parseRole(role: String): ApproverRole =
     role match {
-      case "superman" => Infra
+      case "infra" => Infra
       case "risk" => Risk
     }
 
@@ -80,9 +80,11 @@ object WorkspaceRequest {
         "compliance" -> request.compliance.asJson,
         "data" -> request.data.asJson,
         "processing" -> request.processing.asJson,
-        "single_user" -> request.singleUser.asJson
+        "single_user" -> request.singleUser.asJson,
+        "requester" -> request.requestedBy.asJson,
+        "requested_date" -> request.requestDate.asJson,
       )
-    )(_ deepMerge _.asJson)
+    )((initial, approvals) => initial deepMerge Json.obj("approvals" -> approvals.asJson))
   }
 
   implicit def decoder(implicit user: User): Decoder[WorkspaceRequest] = Decoder.instance { json =>
