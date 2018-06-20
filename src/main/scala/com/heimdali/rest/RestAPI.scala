@@ -19,7 +19,7 @@ class RestAPI(accountController: AccountController,
       .mountService(CORS(router), "/")
 
   def router = Router[IO](
-      "/token" -> CORS(accountController.openRoutes),
+      "/token" -> accountController.openRoutes,
       "/account" -> accountController.tokenizedRoutes,
       "/templates" -> templateController.route,
       "/clusters" -> clusterController.route,

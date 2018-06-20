@@ -4,6 +4,7 @@ import cats.data.{EitherT, OptionT}
 import cats.effect.Sync
 import cats.syntax.flatMap._
 import cats.syntax.functor._
+import cats.syntax.either._
 import com.heimdali.clients.{LDAPClient, LDAPUser}
 import com.heimdali.config.{ApprovalConfig, RestConfig}
 import com.heimdali.models.{Token, User, UserPermissions}
@@ -29,11 +30,21 @@ class AccountServiceImpl[F[_] : Sync](ldapClient: LDAPClient[F],
 
   private val algo: JwtAlgorithm.HS512.type = JwtAlgorithm.HS512
 
-  implicit def convertUser(ldapUser: LDAPUser): User =
+  implicit def convertUser(ldapUser: LDAPUser): User = {
+    logger.warn(ldapUser.toString())
     User(ldapUser.name,
       ldapUser.username,
-      UserPermissions(riskManagement = ldapUser.memberships.contains(approvalConfig.risk),
-        platformOperations = ldapUser.memberships.contains(approvalConfig.infrastructure)))
+         UserPermissions(riskManagement =
+                           ldapUser
+                             .memberships
+                             .map(_.toLowerCase())
+                           .contains(approvalConfig.risk.toLowerCase()),
+                         platformOperations =
+                           ldapUser
+                             .memberships
+                             .map(_.toLowerCase())
+                             .contains(approvalConfig.infrastructure.toLowerCase())))
+  }
 
   private def decode(token: String, secret: String, algo: JwtHmacAlgorithm): Either[Throwable, Json] =
     JwtCirce.decodeJson(token, secret, Seq(algo)).toEither
@@ -54,10 +65,11 @@ class AccountServiceImpl[F[_] : Sync](ldapClient: LDAPClient[F],
     } yield Token(accessToken, refreshToken)
 
   override def validate(token: String): EitherT[F, Throwable, User] = {
-    EitherT.fromEither(for {
-      maybeToken <- decode(token, restConfig.secret, algo)
-      result <- maybeToken.as[User]
-    } yield result)
+    for {
+      maybeToken <- EitherT.fromEither(decode(token, restConfig.secret, algo))
+      user <- EitherT.fromEither(maybeToken.as[User])
+      result <- EitherT.fromOptionF(ldapClient.findUser(user.username).value, new Throwable())
+    } yield convertUser(result)
   }
 
 }
