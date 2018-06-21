@@ -42,6 +42,13 @@ object Approval {
       (p: Approval) => (p.role, p.approver, p.approvalTime, p.id)
     )
 
+  implicit val decoder: Decoder[Approval] = Decoder.instance( cursor =>
+    for {
+      role <- cursor.downField("role").as[String]
+      approver <- cursor.downField("approver").as[String]
+    } yield Approval(ApproverRole.parseRole(role), approver, Instant.now())
+  )
+
   implicit val encoder: Encoder[Approval] = Encoder.instance { approval =>
     Json.obj(
       approval.role.toString.toLowerCase -> Json.obj(

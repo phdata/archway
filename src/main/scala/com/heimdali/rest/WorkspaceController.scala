@@ -20,12 +20,15 @@ class WorkspaceController(authService: AuthService[IO],
   val route: HttpService[IO] =
     authService.tokenAuth {
       AuthedService[User, IO] {
-        case POST -> Root / LongVar(id) / "approval" as user =>
-          if(user.canApprove)
+        case req@POST -> Root / LongVar(id) / "approval" as user =>
+          if(user.canApprove) {
+            implicit val approvalEntityDecoder: EntityDecoder[IO, Approval] = jsonOf[IO, Approval]
             for {
-              approved <- workspaceService.approve(id, Approval(user.role, user.username, Instant.now()))
+              approval <- req.req.as[Approval]
+              approved <- workspaceService.approve(id, approval)
               response <- Created(approved.asJson)
             } yield response
+          }
           else
             Forbidden()
 
