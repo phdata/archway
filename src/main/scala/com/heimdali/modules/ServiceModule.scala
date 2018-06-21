@@ -10,14 +10,14 @@ import doobie.util.transactor.{Strategy, Transactor}
 
 trait ServiceModule[F[_]] {
   this: AppModule[F]
-    with ExecutionContextModule
-    with ClientModule[F]
-    with RepoModule
-    with ConfigurationModule
-    with HttpModule[F] =>
+      with ExecutionContextModule
+      with ClientModule[F]
+      with RepoModule
+      with ConfigurationModule
+      with HttpModule[F] =>
 
   val hiveConfig = appConfig.db.hive
-
+  Class.forName("org.apache.hive.jdbc.HiveDriver")
   private val initialHiveTransactor = Transactor.fromDriverManager[F](hiveConfig.driver, hiveConfig.url, "", "")
   val strategy = Strategy.void.copy(always = FC.close)
   val hiveTransactor = Transactor.strategy.set(initialHiveTransactor, strategy)

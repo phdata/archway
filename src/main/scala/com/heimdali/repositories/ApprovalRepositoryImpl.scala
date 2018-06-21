@@ -34,5 +34,5 @@ class ApprovalRepositoryImpl
     OptionT((selectQuery ++ whereAnd(fr"id = $id")).query[Approval].option)
 
   override def findByWorkspaceId(id: Long): ConnectionIO[List[Approval]] =
-    (selectQuery ++ whereAnd(fr"workspace_request_id = id")).query[Approval].to[List]
+    (selectQuery ++ whereAnd(fr"workspace_request_id = $id")).query[Approval].to[List]
 }

@@ -5,8 +5,9 @@ import java.security.PrivilegedAction
 import cats.effect.{Async, IO}
 import com.typesafe.scalalogging.LazyLogging
 import org.apache.hadoop.security.UserGroupInformation
+import scala.concurrent.ExecutionContext
 
-class UGILoginContextProvider
+class UGILoginContextProvider(implicit val executionContext: ExecutionContext)
   extends LoginContextProvider with LazyLogging {
 
   override def elevate[F[_] : Async, A](user: String)(block: () => A): F[A] =

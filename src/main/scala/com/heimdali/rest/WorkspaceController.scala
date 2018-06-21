@@ -20,8 +20,9 @@ class WorkspaceController(authService: AuthService[IO],
   val route: HttpService[IO] =
     authService.tokenAuth {
       AuthedService[User, IO] {
-        case req@POST -> Root / LongVar(id) / "approval" as user =>
+        case req@POST -> Root / LongVar(id) / "approve" as user =>
           if(user.canApprove) {
+            implicit val decoder: Decoder[Approval] = Approval.decoder(user)
             implicit val approvalEntityDecoder: EntityDecoder[IO, Approval] = jsonOf[IO, Approval]
             for {
               approval <- req.req.as[Approval]

@@ -136,10 +136,14 @@ class WorkspaceServiceImpl[F[_] : Effect](ldapClient: LDAPClient[F],
     } yield newWorkspace.copy(data = insertedHive, processing = insertedYarn)).transact(transactor)
 
   def provision(workspaceRequest: WorkspaceRequest): F[Unit] =
-    for {
-      _ <- workspaceRequest.data.traverse(createDatabase(_, workspaceRequest.requestedBy, if (workspaceRequest.singleUser) Some(workspaceRequest.requestedBy) else None))
-      _ <- workspaceRequest.processing.traverse(createYarn)
-    } yield ()
+    if(workspaceRequest.approvals.lengthCompare(2) == 0) {
+      for {
+        _ <- workspaceRequest.data.traverse(createDatabase(_, workspaceRequest.requestedBy, if (workspaceRequest.singleUser) Some(workspaceRequest.requestedBy) else None))
+        _ <- workspaceRequest.processing.traverse(createYarn)
+      } yield ()
+    } else {
+      Effect[F].unit
+    }
 
   def members[A <: DatabaseRole](id: Long, databaseName: String, roleName: A): F[List[WorkspaceMember]] =
     ldapRepository.find(id, databaseName, roleName).value.transact(transactor).flatMap {
@@ -160,5 +164,9 @@ class WorkspaceServiceImpl[F[_] : Effect](ldapClient: LDAPClient[F],
     } yield member
 
   override def approve(id: Long, approval: Approval): F[Approval] =
-    approvalRepository.create(id, approval).transact(transactor)
+    for {
+      result <- OptionT.liftF(approvalRepository.create(id, approval).transact(transactor)).value
+      workspace <- find(id).value
+      _ <- OptionT.some[F](fs2.async.fork[F, Unit](provision(workspace.get))).value
+    } yield result.get
 }
