@@ -8,11 +8,11 @@
     "group": "heimdali_api",
     "principal": "heimdali_api"
   },
-  "maxInstances" : 1,
-  "icon" : "images/favicon_symbol.png",
-  "parcel" : {
-    "repoUrl" : "http://parcels.jotunn.io/",
-    "requiredTags" : [
+  "maxInstances": 1,
+  "icon": "images/favicon_symbol.png",
+  "parcel": {
+    "repoUrl": "http://parcels.jotunn.io/",
+    "requiredTags": [
       "heimdali-api",
       "heimdali-ui"
     ]
@@ -43,11 +43,11 @@
       "name": "HEIMDALI_UI",
       "label": "Heimdali UI",
       "pluralLabel": "Heimdali UIs",
-      "kerberosPrincipals" : [
+      "kerberosPrincipals": [
         {
-          "name" : "HEIMDALI_UI_PRINCIPAL",
-          "primary" : "heimdali_ui",
-          "instance" : "${host}"
+          "name": "HEIMDALI_UI_PRINCIPAL",
+          "primary": "heimdali_ui",
+          "instance": "${host}"
         }
       ],
       "parameters": [
@@ -76,19 +76,19 @@
       "name": "HEIMDALI_SERVICE",
       "label": "Heimdali API",
       "pluralLabel": "Heimdali APIs",
-      "kerberosPrincipals" : [
+      "kerberosPrincipals": [
         {
-          "name" : "HEIMDALI_API_SERVICE_PRINCIPAL",
-          "primary" : "heimdali_api",
-          "instance" : "${host}"
+          "name": "HEIMDALI_API_SERVICE_PRINCIPAL",
+          "primary": "heimdali_api",
+          "instance": "${host}"
         }
       ],
-      "logging" : {
-        "dir" : "/var/log/heimdali-api",
-        "filename" : "heimdali-api.log",
-        "modifiable" : true,
-        "configName" : "log.dir",
-        "loggingType" : "log4j"
+      "logging": {
+        "dir": "/var/log/heimdali-api",
+        "filename": "heimdali-api.log",
+        "modifiable": true,
+        "configName": "log.dir",
+        "loggingType": "log4j"
       },
       "parameters": [
         {
@@ -101,7 +101,7 @@
         },
         {
           "name": "heimdali_keytab_refresh",
-          "label" : "Kerberos Refresh Interval",
+          "label": "Kerberos Refresh Interval",
           "description": "Interval between refreshing kerberos cache (eg. 1h, 30m, etc)",
           "required": "true",
           "type": "string",
@@ -388,6 +388,22 @@
           "required": "true",
           "type": "password",
           "configurableInWizard": "true"
+        },
+        {
+          "name": "heimdali_infra_approvers",
+          "label": "Operations Group DN",
+          "description": "Group DN for Platform Operations",
+          "required": "true",
+          "type": "string",
+          "configurableInWizard": "true"
+        },
+        {
+          "name": "heimdali_risk_approvers",
+          "label": "Risk Group DN",
+          "description": "Group DN for Risk",
+          "required": "true",
+          "type": "string",
+          "configurableInWizard": "true"
         }
       ],
       "startRunner": {
@@ -431,7 +447,9 @@
           "HEIMDALI_REALM": "${heimdali_realm}",
           "HEIMDALI_LDAP_GROUP_PATH": "${heimdali_ldap_group_path}",
           "HEIMDALI_LDAP_ADMIN_DN": "${heimdali_ldap_admin_dn}",
-          "HEIMDALI_LDAP_ADMIN_PASS": "${heimdali_ldap_admin_pass}"
+          "HEIMDALI_LDAP_ADMIN_PASS": "${heimdali_ldap_admin_pass}",
+          "HEIMDALI_INFRA_APPROVERS": "${heimdali_infra_approvers}",
+          "HEIMDALI_RISK_APPROVERS": "${heimdali_risk_approvers}"
         }
       }
     }
