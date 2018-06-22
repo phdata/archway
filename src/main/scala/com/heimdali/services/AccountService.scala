@@ -31,7 +31,6 @@ class AccountServiceImpl[F[_] : Sync](ldapClient: LDAPClient[F],
   private val algo: JwtAlgorithm.HS512.type = JwtAlgorithm.HS512
 
   implicit def convertUser(ldapUser: LDAPUser): User = {
-    logger.warn(ldapUser.toString())
     User(ldapUser.name,
       ldapUser.username,
          UserPermissions(riskManagement =

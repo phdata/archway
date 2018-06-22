@@ -3,11 +3,12 @@ package com.heimdali.repositories
 import java.time.Instant
 
 import cats.data.OptionT
+import cats.implicits._
 import com.heimdali.models._
 import com.typesafe.scalalogging.LazyLogging
 import doobie._
 import doobie.implicits._
-import doobie.util.fragments.whereAnd
+import doobie.util.fragments.{ whereAnd, whereAndOpt, in }
 
 class WorkspaceRequestRepositoryImpl
   extends WorkspaceRequestRepository
@@ -38,9 +39,22 @@ class WorkspaceRequestRepositoryImpl
           )
       """.update.withUniqueGeneratedKeys("id")
 
+  val innerQuery =
+    fr"""
+        select rh.workspace_request_id
+        from request_hive rh
+        inner join hive_database h on rh.hive_database_id = h.id
+        inner join ldap_registration lr on h.managing_group_id = lr.id
+        """
+
+  def innerQueryWith(memberships: List[String]): Fragment =
+    innerQuery ++ whereAnd(whereAndOpt(memberships.toNel.map(m => in(fr"system_name", m))))
+
+  def listQuery(memberships: List[String]): Fragment =
+    selectFragment ++ fr"where wr.id in (" ++ innerQueryWith(memberships) ++ fr")"
+
   override def list(memberships: List[String]): ConnectionIO[List[WorkspaceRequest]] =
-  (selectFragment /* ++ whereAndOpt(memberships.toNel.map(m => in(fr"system_name", m))*/)
-    .query[WorkspaceRequest].to[List]
+    listQuery(memberships).query[WorkspaceRequest].to[List]
 
   val selectFragment: Fragment = fr"""
                                   select

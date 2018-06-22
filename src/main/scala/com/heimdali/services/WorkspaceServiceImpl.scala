@@ -167,13 +167,18 @@ class WorkspaceServiceImpl[F[_]](ldapClient: LDAPClient[F],
     approvalRepository
       .create(id, approval)
       .transact(transactor)
-      .map { result =>
-        find(id).map {
+      .flatMap { result =>
+        find(id)
+          .map {
           case workspace if workspace.approvals.lengthCompare(2) == 0 =>
+            logger.info(show"All approvals ready: ${workspace.approvals}")
             fs2.async.fork[F, Unit](provision(workspace))(F, provisionContext)
-          case _ =>
+          case workspace =>
+            logger.warn(show"Not enough approvals to provision: ${workspace.approvals}")
             ()
-        }
-        result
+          }
+          .map(_ => result)
+          .value
+          .map(_.get)
       }
 }

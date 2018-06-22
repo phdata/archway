@@ -1,9 +1,8 @@
 package com.heimdali.models
 
-import com.heimdali.models.User
-import java.time.Instant
-
 import cats.Show
+import cats.syntax.show._
+import java.time.Instant
 import doobie.util.composite.Composite
 import doobie.util.meta.Meta
 import io.circe._
@@ -57,6 +56,9 @@ object Approval {
       )
     )
   }
+
+  implicit val approvalShow: Show[Approval] =
+    Show.show(a => s"${a.approver} (${a.role.toString}) @ ${a.approvalTime.toString}")
 
 }
 

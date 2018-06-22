@@ -23,6 +23,8 @@ class HiveClientImpl[F[_] : Sync](transactor: Transactor[F])
   extends HiveClient[F]
     with LazyLogging {
 
+  implicit val han = LogHandler.jdkLogHandler
+
   override def createRole(name: String): F[Unit] = {
     sql"""SHOW ROLES""".query[String].to[Seq].transact(transactor).map {
       case roles if !roles.contains(name) =>
