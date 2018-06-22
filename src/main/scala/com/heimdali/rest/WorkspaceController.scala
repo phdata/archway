@@ -33,6 +33,18 @@ class WorkspaceController(authService: AuthService[IO],
           else
             Forbidden()
 
+        case POST -> Root / LongVar(id) / "provision" as user =>
+          println(user)
+          if(user.isSuperUser) {
+            for {
+              workspace <- workspaceService.find(id).value
+              _ <- workspaceService.provision(workspace.get)
+              response <- Created()
+            } yield response
+          }
+          else
+            Forbidden()
+
         case req@POST -> Root as user =>
           /* explicit implicit declaration because of `user` variable */
           implicit val decoder: Decoder[WorkspaceRequest] = WorkspaceRequest.decoder(user)

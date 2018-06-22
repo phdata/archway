@@ -131,6 +131,7 @@ class WorkspaceServiceImplSpec extends FlatSpec with Matchers with MockFactory w
     val hiveDatabaseRepository: HiveDatabaseRepository = mock[HiveDatabaseRepository]
     val ldapRepository: LDAPRepository = mock[LDAPRepository]
     val approvalRepository: ApprovalRepository = mock[ApprovalRepository]
+    val contextProvider: LoginContextProvider = mock[LoginContextProvider]
 
     def projectServiceImpl =
       new WorkspaceServiceImpl[IO](ldapClient,
@@ -144,8 +145,8 @@ class WorkspaceServiceImplSpec extends FlatSpec with Matchers with MockFactory w
         complianceRepository,
         () => null,
         approvalRepository,
-        transactor
-      )
+        transactor,
+        contextProvider)
   }
 
 }

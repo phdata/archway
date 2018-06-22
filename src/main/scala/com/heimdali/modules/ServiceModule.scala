@@ -10,11 +10,12 @@ import doobie.util.transactor.{Strategy, Transactor}
 
 trait ServiceModule[F[_]] {
   this: AppModule[F]
-      with ExecutionContextModule
-      with ClientModule[F]
-      with RepoModule
-      with ConfigurationModule
-      with HttpModule[F] =>
+    with ContextModule[F]
+    with ExecutionContextModule
+    with ClientModule[F]
+    with RepoModule
+    with ConfigurationModule
+    with HttpModule[F] =>
 
   val hiveConfig = appConfig.db.hive
   Class.forName("org.apache.hive.jdbc.HiveDriver")
@@ -59,5 +60,6 @@ trait ServiceModule[F[_]] {
       complianceRepository,
       hiveConnectionFactory,
       approvalRepository,
-      metaTransactor)
+      metaTransactor,
+      loginContextProvider)
 }

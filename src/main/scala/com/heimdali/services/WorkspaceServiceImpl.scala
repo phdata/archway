@@ -1,6 +1,7 @@
 package com.heimdali.services
 
 import java.sql.Connection
+import java.util.concurrent.Executors
 
 import cats.data.OptionT
 import cats.effect.{Async, Concurrent, Effect, IO}
@@ -37,21 +38,24 @@ trait WorkspaceService[F[_]] {
 
 }
 
-class WorkspaceServiceImpl[F[_] : Effect](ldapClient: LDAPClient[F],
-                                          hdfsClient: HDFSClient[F],
-                                          hiveService: HiveClient[F],
-                                          yarnClient: YarnClient[F],
-                                          yarnRepository: YarnRepository,
-                                          hiveDatabaseRepository: HiveDatabaseRepository,
-                                          ldapRepository: LDAPRepository,
-                                          workspaceRepository: WorkspaceRequestRepository,
-                                          complianceRepository: ComplianceRepository,
-                                          connectionFactory: () => Connection,
-                                          approvalRepository: ApprovalRepository,
-                                          transactor: Transactor[F])
-                                         (implicit val executionContext: ExecutionContext)
+class WorkspaceServiceImpl[F[_]](ldapClient: LDAPClient[F],
+                                 hdfsClient: HDFSClient[F],
+                                 hiveService: HiveClient[F],
+                                 yarnClient: YarnClient[F],
+                                 yarnRepository: YarnRepository,
+                                 hiveDatabaseRepository: HiveDatabaseRepository,
+                                 ldapRepository: LDAPRepository,
+                                 workspaceRepository: WorkspaceRequestRepository,
+                                 complianceRepository: ComplianceRepository,
+                                 connectionFactory: () => Connection,
+                                 approvalRepository: ApprovalRepository,
+                                 transactor: Transactor[F],
+                                 contextProvider: LoginContextProvider)
+                                (implicit val F: Effect[F], val executionContext: ExecutionContext)
   extends WorkspaceService[F]
     with LazyLogging {
+
+  private val provisionContext = ExecutionContext.fromExecutor(Executors.newFixedThreadPool(10))
 
   private val GroupExtractor = "CN=edh_sw_([A-z0-9_]+),OU=.*".r
 
@@ -136,14 +140,10 @@ class WorkspaceServiceImpl[F[_] : Effect](ldapClient: LDAPClient[F],
     } yield newWorkspace.copy(data = insertedHive, processing = insertedYarn)).transact(transactor)
 
   def provision(workspaceRequest: WorkspaceRequest): F[Unit] =
-    if(workspaceRequest.approvals.lengthCompare(2) == 0) {
-      for {
-        _ <- workspaceRequest.data.traverse(createDatabase(_, workspaceRequest.requestedBy, if (workspaceRequest.singleUser) Some(workspaceRequest.requestedBy) else None))
-        _ <- workspaceRequest.processing.traverse(createYarn)
-      } yield ()
-    } else {
-      Effect[F].unit
-    }
+    for {
+      _ <- workspaceRequest.data.traverse(createDatabase(_, workspaceRequest.requestedBy, if (workspaceRequest.singleUser) Some(workspaceRequest.requestedBy) else None))
+      _ <- workspaceRequest.processing.traverse(createYarn)
+    } yield ()
 
   def members[A <: DatabaseRole](id: Long, databaseName: String, roleName: A): F[List[WorkspaceMember]] =
     ldapRepository.find(id, databaseName, roleName).value.transact(transactor).flatMap {
@@ -164,9 +164,16 @@ class WorkspaceServiceImpl[F[_] : Effect](ldapClient: LDAPClient[F],
     } yield member
 
   override def approve(id: Long, approval: Approval): F[Approval] =
-    for {
-      result <- OptionT.liftF(approvalRepository.create(id, approval).transact(transactor)).value
-      workspace <- find(id).value
-      _ <- OptionT.some[F](fs2.async.fork[F, Unit](provision(workspace.get))).value
-    } yield result.get
+    approvalRepository
+      .create(id, approval)
+      .transact(transactor)
+      .map { result =>
+        find(id).map {
+          case workspace if workspace.approvals.lengthCompare(2) == 0 =>
+            fs2.async.fork[F, Unit](provision(workspace))(F, provisionContext)
+          case _ =>
+            ()
+        }
+        result
+      }
 }

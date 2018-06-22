@@ -16,7 +16,7 @@ class YarnRepositoryImpl
   override def complete(id: Long): ConnectionIO[Int] =
     sql"""
       update yarn
-      set completed = ${Instant.now()}
+      set created = ${Instant.now()}
       where id = $id
       """.update.run
 

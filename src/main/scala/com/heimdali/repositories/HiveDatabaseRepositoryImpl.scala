@@ -14,7 +14,7 @@ class HiveDatabaseRepositoryImpl
   override def complete(id: Long): ConnectionIO[Int] =
     sql"""
       update hive_database
-      set completed = ${Instant.now()}
+      set created = ${Instant.now()}
       where id = $id
       """.update.run
 

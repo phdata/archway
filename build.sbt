@@ -45,16 +45,16 @@ libraryDependencies ++= Seq(
 
   ("com.pauldijou" %% "jwt-core" % "0.14.1").exclude("org.bouncycastle", "bcpkix-jdk15on"),
   ("com.pauldijou" %% "jwt-circe" % "0.14.1").exclude("org.bouncycastle", "bcpkix-jdk15on"),
-  "org.bouncycastle" % "bcpkix-jdk15on" % "1.57",
+  "org.bouncycastle" % "bcpkix-jdk15on" % "1.57" % "provided",
 
   "com.unboundid" % "unboundid-ldapsdk" % "4.0.0",
 
   "org.flywaydb" % "flyway-core" % "4.2.0",
-  "postgresql" % "postgresql" % "9.0-801.jdbc4",
-  "mysql" % "mysql-connector-java" % "6.0.6",
+  "postgresql" % "postgresql" % "9.0-801.jdbc4" % "provided",
+  "mysql" % "mysql-connector-java" % "6.0.6" % "provided",
 
-  "org.apache.hadoop" % "hadoop-client" % hadoopVersion,
-  "org.apache.hive" % "hive-jdbc" % hiveVersion,
+  "org.apache.hadoop" % "hadoop-client" % hadoopVersion % "provided",
+  "org.apache.hive" % "hive-jdbc" % hiveVersion % "provided",
   "org.apache.hadoop" % "hadoop-hdfs" % hadoopVersion % Test classifier "" classifier "tests",
   "org.apache.hadoop" % "hadoop-common" % hadoopVersion % Test classifier "" classifier "tests",
   "org.apache.hadoop" % "hadoop-client" % hadoopVersion % Test classifier "" classifier "tests",

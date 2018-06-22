@@ -17,7 +17,7 @@ class LDAPRepositoryImpl
   def updateCreated(id: Long): ConnectionIO[Int] =
     sql"""
       update ldap_registration
-      set completed = ${Instant.now()}
+      set created = ${Instant.now()}
       where id = $id
       """.update.run
 

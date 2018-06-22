@@ -11,6 +11,8 @@ case class User(name: String, username: String, permissions: UserPermissions = U
     case UserPermissions(false, true) => Infra
     case _ => NA
   }
+
+  val isSuperUser = permissions.platformOperations && permissions.riskManagement
 }
 
 object User {
