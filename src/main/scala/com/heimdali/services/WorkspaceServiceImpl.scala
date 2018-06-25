@@ -4,14 +4,12 @@ import java.sql.Connection
 import java.util.concurrent.Executors
 
 import cats.data.OptionT
-import cats.effect.{Async, Concurrent, Effect, IO}
+import cats.effect.Effect
 import cats.implicits._
 import com.heimdali.clients._
 import com.heimdali.models._
-import com.heimdali.repositories._
-import com.heimdali.repositories.MemberRepository
+import com.heimdali.repositories.{MemberRepository, _}
 import com.typesafe.scalalogging.LazyLogging
-import cats.effect.implicits._
 import doobie._
 import doobie.implicits._
 import doobie.util.transactor.Transactor
@@ -218,31 +216,16 @@ class WorkspaceServiceImpl[F[_]](
       databaseName: String,
       roleName: A,
       username: String
-  ): OptionT[F, WorkspaceMember] = {
-    val result = ldapRepository
-      .find(id, databaseName, roleName)
-      .value
-      .transact(transactor)
-      .flatMap {
-        case Some(registration) =>
-          memberRepository
-              .create(username, id)
-              .transact(transactor)
-              .map {
-                case memberId if registration.created.isDefined =>
-                  for {
-                    _ <- ldapClient.addUser(registration.commonName, username).value
-                    _ <- memberRepository.complete(memberId).transact(transactor)
-                    member <- memberRepository.get(memberId).transact(transactor)
-                  } yield Some(member)
-                case _ =>
-                  Effect[F].pure(None)
-              }
-        case None =>
-          Effect[F].pure(None)
-      }
-    res
-  }
+  ): OptionT[F, WorkspaceMember] =
+    for {
+      registration <- OptionT(ldapRepository.find(id, databaseName, roleName).value.transact(transactor))
+      memberId <- OptionT.liftF(memberRepository.create(username, id).transact(transactor))
+      _ <- ldapClient.addUser(registration.commonName, username)
+      member <- OptionT.liftF(
+        (memberRepository.complete(memberId), memberRepository.get(memberId))
+            .mapN((_, member) => member).transact(transactor) // run the complete and get in the same transaction
+      )
+    } yield member
 
   def removeMember[A <: DatabaseRole](
       id: Long,
@@ -251,15 +234,10 @@ class WorkspaceServiceImpl[F[_]](
       username: String
   ): OptionT[F, WorkspaceMember] =
     for {
-      ldap <- OptionT(
-        ldapRepository
-          .find(id, databaseName, roleName)
-          .value
-          .transact(transactor)
-      )
-      member <- ldapClient
-        .removeUser(ldap.commonName, username)
-        .map(member => WorkspaceMember(member.username, member.name))
+      registration <- OptionT(ldapRepository.find(id, databaseName, roleName).value.transact(transactor))
+      member <- OptionT(memberRepository.find(registration.id.get, username).value.transact(transactor))
+      _ <- ldapClient.removeUser(registration.commonName, username)
+      _ <- OptionT.liftF(memberRepository.delete(member.id.get).transact(transactor))
     } yield member
 
   override def approve(id: Long, approval: Approval): F[Approval] =

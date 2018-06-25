@@ -6,6 +6,8 @@ import doobie.implicits._
 import doobie.util.fragments.whereAnd
 import java.time.Instant
 
+import cats.data.OptionT
+
 class MemberRepositoryImpl extends MemberRepository {
 
   val baseSelect =
@@ -14,14 +16,14 @@ class MemberRepositoryImpl extends MemberRepository {
          from member m
          """
 
-  def create(username: String, ldapRegistrationId: Long): ConnectionIO[Long] =
+  override def create(username: String, ldapRegistrationId: Long): ConnectionIO[Long] =
     sql"""
           insert into member (username, ldap_registration_id)
           values ($username, $ldapRegistrationId)
        """.update
       .withUniqueGeneratedKeys("id")
 
-  def findByDatabase(
+  override def findByDatabase(
       databaseName: String,
       role: DatabaseRole
   ): ConnectionIO[List[WorkspaceMember]] =
@@ -35,10 +37,15 @@ class MemberRepositoryImpl extends MemberRepository {
       .query[WorkspaceMember]
       .to[List]
 
-  def complete(id: Long): ConnectionIO[Int] =
+  override def complete(id: Long): ConnectionIO[Int] =
     sql"update member set created = ${Instant.now()} where id = $id".update.run
 
-  def get(id: Long): ConnectionIO[WorkspaceMember] =
+  override def get(id: Long): ConnectionIO[WorkspaceMember] =
     (baseSelect ++ whereAnd(fr"m.id = $id")).query[WorkspaceMember].unique
 
+  override def delete(id: Long): doobie.ConnectionIO[Int] =
+    sql"delete from member where id = $id".update.run
+
+  override def find(registrationId: Long, username: String): OptionT[doobie.ConnectionIO, WorkspaceMember] =
+    OptionT((baseSelect ++ whereAnd(fr"m.ldap_registration_id = $registrationId")).query[WorkspaceMember].option)
 }
