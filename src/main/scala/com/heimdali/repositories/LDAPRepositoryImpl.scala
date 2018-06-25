@@ -14,6 +14,8 @@ class LDAPRepositoryImpl
   extends LDAPRepository
     with LazyLogging {
 
+  implicit val han = LogHandler.jdkLogHandler
+
   def updateCreated(id: Long): ConnectionIO[Int] =
     sql"""
       update ldap_registration

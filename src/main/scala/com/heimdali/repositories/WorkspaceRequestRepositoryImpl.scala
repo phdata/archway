@@ -14,6 +14,8 @@ class WorkspaceRequestRepositoryImpl
   extends WorkspaceRequestRepository
     with LazyLogging {
 
+  implicit val han = LogHandler.jdkLogHandler
+
   implicit val workspaceRequestComposite: Composite[WorkspaceRequest] =
     Composite[(String, String, Instant, Boolean, Boolean, Boolean, Option[Long], Boolean, Option[Long])].imap(
       (t: (String, String, Instant, Boolean, Boolean, Boolean, Option[Long], Boolean, Option[Long])) =>

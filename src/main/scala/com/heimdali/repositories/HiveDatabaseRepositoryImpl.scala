@@ -9,7 +9,9 @@ import doobie.implicits._
 import doobie.util.fragments.whereAnd
 
 class HiveDatabaseRepositoryImpl
-  extends HiveDatabaseRepository {
+    extends HiveDatabaseRepository {
+
+  implicit val han = LogHandler.jdkLogHandler
 
   override def complete(id: Long): ConnectionIO[Int] =
     sql"""
@@ -40,10 +42,12 @@ class HiveDatabaseRepositoryImpl
          m.common_name,
          m.sentry_role,
          m.id,
+         m.created,
          r.distinguished_name,
          r.common_name,
          r.sentry_role,
          r.id,
+         r.created,
          h.id
        from hive_database h
        inner join ldap_registration m on h.managing_group_id = m.id

@@ -2,7 +2,7 @@ package com.heimdali.models
 
 import cats.Show
 import cats.syntax.show._
-import java.time.Instant
+import java.time.{ Clock, Instant }
 import doobie.util.composite.Composite
 import doobie.util.meta.Meta
 import io.circe._
@@ -42,10 +42,10 @@ object Approval {
       (p: Approval) => (p.role, p.approver, p.approvalTime, p.id)
     )
 
-  implicit def decoder(user: User): Decoder[Approval] = Decoder.instance( cursor =>
+  implicit def decoder(user: User, clock: Clock): Decoder[Approval] = Decoder.instance( cursor =>
     for {
       role <- cursor.downField("role").as[String]
-    } yield Approval(ApproverRole.parseRole(role), user.username, Instant.now())
+    } yield Approval(ApproverRole.parseRole(role), user.username, Instant.now(clock))
   )
 
   implicit val encoder: Encoder[Approval] = Encoder.instance { approval =>
@@ -96,14 +96,14 @@ object WorkspaceRequest {
     )((initial, approvals) => initial deepMerge Json.obj("approvals" -> approvals.asJson))
   }
 
-  implicit def decoder(implicit user: User): Decoder[WorkspaceRequest] = Decoder.instance { json =>
+  implicit def decoder(user: User, clock: Clock): Decoder[WorkspaceRequest] = Decoder.instance { json =>
     for {
       name <- json.downField("name").as[String]
       compliance <- json.downField("compliance").as[Compliance]
       singleUser <- json.downField("single_user").as[Boolean]
       data <- json.downField("data").as[List[HiveDatabase]]
       processing <- json.downField("processing").as[List[Yarn]]
-    } yield WorkspaceRequest(name, user.username, Instant.now(), compliance, singleUser, data = data, processing = processing)
+    } yield WorkspaceRequest(name, user.username, Instant.now(clock), compliance, singleUser, data = data, processing = processing)
   }
 
 }

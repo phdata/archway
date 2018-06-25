@@ -1,11 +1,12 @@
 package com.heimdali.test
 
-import java.time.Instant
+import java.time.{ Clock, Instant, ZoneId }
 
 import com.heimdali.config.{ClusterConfig, CredentialsConfig}
 import com.heimdali.models._
 import com.heimdali.services.{BasicClusterApp, CDH, Cluster}
 import io.circe.parser._
+import java.util.TimeZone
 import org.joda.time.DateTime
 import scala.concurrent.duration._
 
@@ -34,6 +35,7 @@ package object fixtures {
   val initialHive = savedHive.copy(id = None, managingGroup = initialLDAP)
   val savedYarn = Yarn(poolName, maxCores, maxMemoryInGB, Some(id))
   val initialYarn = savedYarn.copy(id = None)
+  val clock = Clock.fixed(Instant.now(), ZoneId.of("UTC"))
 
   val yarnApp = BasicClusterApp("ysr21", "Yarn", "GOOD_HEALTH", "STARTED")
   val cluster = Cluster("cluster name", "Cluster", Map("YARN" -> yarnApp), CDH(""), "GOOD_HEALTH")
@@ -45,14 +47,14 @@ package object fixtures {
   val basicUserToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJuYW1lIjoiRHVkZSBEb2UiLCJ1c2VybmFtZSI6InVzZXJuYW1lIiwicGVybWlzc2lvbnMiOnsicmlza19tYW5hZ2VtZW50IjpmYWxzZSwicGxhdGZvcm1fb3BlcmF0aW9ucyI6ZmFsc2V9fQ.ltGXxBh4S7gwmIbcKz22IFWpGI2-zxad2XYOoxuGm734L8GlzfwvLRWIs-ZVKn7T8w3RJy5bKZWZoPj8951Qug"
   val basicUser = User(personName, standardUsername, UserPermissions(riskManagement = false, platformOperations = false))
 
-  def approval(instant: Instant = Instant.now()) = Approval(Risk, standardUsername, instant)
+  def approval(instant: Instant = Instant.now(clock)) = Approval(Risk, standardUsername, instant)
 
   val clusterConfig = ClusterConfig(1 second, "", "cluster name", "dev", CredentialsConfig("admin", "admin"))
 
   val savedWorkspaceRequest = WorkspaceRequest(
     name,
     standardUsername,
-    Instant.now(),
+    Instant.now(clock),
     savedCompliance,
     singleUser = false,
     id = Some(id),
@@ -110,7 +112,9 @@ package object fixtures {
        |      }
        |    }
        |  ],
-       |  "single_user": false
+       |  "single_user": false,
+       |  "requester": "${standardUsername}",
+       |  "requested_date": "${Instant.now(clock)}"
        |}
        """.stripMargin
   )

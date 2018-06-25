@@ -1,5 +1,6 @@
 package com.heimdali.modules
 
+import cats.effect.Effect
 import java.sql.{Connection, DriverManager}
 
 import com.heimdali.clients.{HiveClient, HiveClientImpl}
@@ -19,7 +20,8 @@ trait ServiceModule[F[_]] {
 
   val hiveConfig = appConfig.db.hive
   Class.forName("org.apache.hive.jdbc.HiveDriver")
-  private val initialHiveTransactor = Transactor.fromDriverManager[F](hiveConfig.driver, hiveConfig.url, "", "")
+  private val initialHiveTransactor =
+    Transactor.fromDriverManager[F](hiveConfig.driver, hiveConfig.url, "", "")
   val strategy = Strategy.void.copy(always = FC.close)
   val hiveTransactor = Transactor.strategy.set(initialHiveTransactor, strategy)
 
@@ -45,7 +47,12 @@ trait ServiceModule[F[_]] {
     new AccountServiceImpl[F](ldapClient, appConfig.rest, appConfig.approvers)
 
   val hiveConnectionFactory: () => Connection =
-    () => DriverManager.getConnection(appConfig.db.hive.url, appConfig.db.hive.username.getOrElse(""), appConfig.db.hive.password.getOrElse(""))
+    () =>
+      DriverManager.getConnection(
+        appConfig.db.hive.url,
+        appConfig.db.hive.username.getOrElse(""),
+        appConfig.db.hive.password.getOrElse("")
+      )
 
   val workspaceService: WorkspaceService[F] =
     new WorkspaceServiceImpl[F](
@@ -61,5 +68,6 @@ trait ServiceModule[F[_]] {
       hiveConnectionFactory,
       approvalRepository,
       metaTransactor,
-      loginContextProvider)
+      loginContextProvider,
+      memberRepository)
 }

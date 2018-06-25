@@ -1,6 +1,6 @@
 package com.heimdali.rest
 
-import java.time.Instant
+import java.time.{ Clock, Instant }
 
 import cats.effect._
 import com.heimdali.models._
@@ -13,7 +13,8 @@ import org.http4s._
 import org.http4s.dsl.io._
 
 class WorkspaceController(authService: AuthService[IO],
-                          workspaceService: WorkspaceService[IO]) {
+                          workspaceService: WorkspaceService[IO],
+                          clock: Clock) {
 
   implicit val memberRequestEntityDecoder: EntityDecoder[IO, MemberRequest] = jsonOf[IO, MemberRequest]
 
@@ -22,7 +23,7 @@ class WorkspaceController(authService: AuthService[IO],
       AuthedService[User, IO] {
         case req@POST -> Root / LongVar(id) / "approve" as user =>
           if(user.canApprove) {
-            implicit val decoder: Decoder[Approval] = Approval.decoder(user)
+            implicit val decoder: Decoder[Approval] = Approval.decoder(user, clock)
             implicit val approvalEntityDecoder: EntityDecoder[IO, Approval] = jsonOf[IO, Approval]
             for {
               approval <- req.req.as[Approval]
@@ -34,7 +35,6 @@ class WorkspaceController(authService: AuthService[IO],
             Forbidden()
 
         case POST -> Root / LongVar(id) / "provision" as user =>
-          println(user)
           if(user.isSuperUser) {
             for {
               workspace <- workspaceService.find(id).value
@@ -47,7 +47,7 @@ class WorkspaceController(authService: AuthService[IO],
 
         case req@POST -> Root as user =>
           /* explicit implicit declaration because of `user` variable */
-          implicit val decoder: Decoder[WorkspaceRequest] = WorkspaceRequest.decoder(user)
+          implicit val decoder: Decoder[WorkspaceRequest] = WorkspaceRequest.decoder(user, clock)
           implicit val workspaceRequestEntityDecoder: EntityDecoder[IO, WorkspaceRequest] = jsonOf[IO, WorkspaceRequest]
 
           for {
