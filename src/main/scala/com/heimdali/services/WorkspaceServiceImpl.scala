@@ -9,6 +9,7 @@ import cats.implicits._
 import com.heimdali.clients._
 import com.heimdali.models._
 import com.heimdali.repositories._
+import com.heimdali.repositories.MemberRepository
 import com.typesafe.scalalogging.LazyLogging
 import cats.effect.implicits._
 import doobie._
@@ -28,34 +29,51 @@ trait WorkspaceService[F[_]] {
 
   def provision(workspace: WorkspaceRequest): F[Unit]
 
-  def members[A <: DatabaseRole](id: Long, databaseName: String, roleName: A): F[List[WorkspaceMember]]
+  def members[A <: DatabaseRole](
+      id: Long,
+      databaseName: String,
+      roleName: A
+  ): F[List[WorkspaceMember]]
 
-  def addMember[A <: DatabaseRole](id: Long, databaseName: String, roleName: A, username: String): OptionT[F, WorkspaceMember]
+  def addMember[A <: DatabaseRole](
+      id: Long,
+      databaseName: String,
+      roleName: A,
+      username: String
+  ): OptionT[F, WorkspaceMember]
 
-  def removeMember[A <: DatabaseRole](id: Long, databaseName: String, roleName: A, username: String): OptionT[F, WorkspaceMember]
+  def removeMember[A <: DatabaseRole](
+      id: Long,
+      databaseName: String,
+      roleName: A,
+      username: String
+  ): OptionT[F, WorkspaceMember]
 
   def approve(id: Long, approval: Approval): F[Approval]
 
 }
 
-class WorkspaceServiceImpl[F[_]](ldapClient: LDAPClient[F],
-                                 hdfsClient: HDFSClient[F],
-                                 hiveService: HiveClient[F],
-                                 yarnClient: YarnClient[F],
-                                 yarnRepository: YarnRepository,
-                                 hiveDatabaseRepository: HiveDatabaseRepository,
-                                 ldapRepository: LDAPRepository,
-                                 workspaceRepository: WorkspaceRequestRepository,
-                                 complianceRepository: ComplianceRepository,
-                                 connectionFactory: () => Connection,
-                                 approvalRepository: ApprovalRepository,
-                                 transactor: Transactor[F],
-                                 contextProvider: LoginContextProvider)
-                                (implicit val F: Effect[F], val executionContext: ExecutionContext)
-  extends WorkspaceService[F]
+class WorkspaceServiceImpl[F[_]](
+    ldapClient: LDAPClient[F],
+    hdfsClient: HDFSClient[F],
+    hiveService: HiveClient[F],
+    yarnClient: YarnClient[F],
+    yarnRepository: YarnRepository,
+    hiveDatabaseRepository: HiveDatabaseRepository,
+    ldapRepository: LDAPRepository,
+    workspaceRepository: WorkspaceRequestRepository,
+    complianceRepository: ComplianceRepository,
+    connectionFactory: () => Connection,
+    approvalRepository: ApprovalRepository,
+    transactor: Transactor[F],
+    contextProvider: LoginContextProvider,
+    memberRepository: MemberRepository
+)(implicit val F: Effect[F], val executionContext: ExecutionContext)
+    extends WorkspaceService[F]
     with LazyLogging {
 
-  private val provisionContext = ExecutionContext.fromExecutor(Executors.newFixedThreadPool(10))
+  private val provisionContext =
+    ExecutionContext.fromExecutor(Executors.newFixedThreadPool(10))
 
   private val GroupExtractor = "CN=edh_sw_([A-z0-9_]+),OU=.*".r
 
@@ -76,16 +94,26 @@ class WorkspaceServiceImpl[F[_]](ldapClient: LDAPClient[F],
         approvals <- approvalRepository.findByWorkspaceId(id)
       } yield (workspace, datas, yarns, approvals))
         .transact(transactor)
-        .map(r => r._1.map(_.copy(data = r._2, processing = r._3, approvals = r._4)))
+        .map(
+          r =>
+            r._1.map(_.copy(data = r._2, processing = r._3, approvals = r._4))
+        )
     }
 
   override def list(username: String): F[List[WorkspaceRequest]] =
-    ldapClient.findUser(username).semiflatMap { user =>
-      val memberships = sharedMemberships(user)
-      workspaceRepository.list(memberships).transact(transactor)
-    }.getOrElse(List.empty)
+    ldapClient
+      .findUser(username)
+      .semiflatMap { user =>
+        val memberships = sharedMemberships(user)
+        workspaceRepository.list(memberships).transact(transactor)
+      }
+      .getOrElse(List.empty)
 
-  def createDatabase(database: HiveDatabase, initialUser: String, elevate: Option[String]): F[Unit] = {
+  def createDatabase(
+      database: HiveDatabase,
+      initialUser: String,
+      elevate: Option[String]
+  ): F[Unit] = {
     implicit val connection: Connection = connectionFactory()
     for {
       _ <- hdfsClient.createDirectory(database.location, elevate)
@@ -93,21 +121,33 @@ class WorkspaceServiceImpl[F[_]](ldapClient: LDAPClient[F],
       _ <- hiveService.createDatabase(database.name, database.location)
 
       _ <- createLDAP(database.managingGroup, database, initialUser)
-      _ <- database.readonlyGroup.map(createLDAP(_, database, initialUser)).sequence
+      _ <- database.readonlyGroup
+        .map(createLDAP(_, database, initialUser))
+        .sequence
 
       _ <- hiveDatabaseRepository.complete(database.id.get).transact(transactor)
     } yield ()
   }
 
-  def createLDAP(ldap: LDAPRegistration, database: HiveDatabase, requestedBy: String): F[Unit] =
+  def createLDAP(
+      ldap: LDAPRegistration,
+      database: HiveDatabase,
+      requestedBy: String
+  ): F[Unit] =
     for {
-      _ <- ldapClient.createGroup(ldap.commonName, ldap.distinguishedName).toOption.value
+      _ <- ldapClient
+        .createGroup(ldap.commonName, ldap.distinguishedName)
+        .toOption
+        .value
       _ <- ldapClient.addUser(ldap.commonName, requestedBy).value
       _ <- ldapRepository.complete(ldap.id.get).transact(transactor)
       _ <- hiveService.createRole(ldap.sentryRole)
       _ <- hiveService.grantGroup(ldap.commonName, ldap.sentryRole)
       _ <- hiveService.enableAccessToDB(database.name, ldap.sentryRole)
-      _ <- hiveService.enableAccessToLocation(database.location, ldap.sentryRole)
+      _ <- hiveService.enableAccessToLocation(
+        database.location,
+        ldap.sentryRole
+      )
     } yield ()
 
   def createYarn(yarn: Yarn): F[Unit] =
@@ -122,45 +162,104 @@ class WorkspaceServiceImpl[F[_]](ldapClient: LDAPClient[F],
       updatedWorkspace = workspace.copy(compliance = compliance)
       newWorkspace <- workspaceRepository.create(updatedWorkspace)
 
-      insertedHive <- workspace.data.traverse[ConnectionIO, HiveDatabase] { db =>
-        for {
-          manager <- ldapRepository.create(db.managingGroup)
-          readonly <- db.readonlyGroup.map(ldapRepository.create).sequence[ConnectionIO, LDAPRegistration]
-          newHive <- hiveDatabaseRepository.create(db.copy(managingGroup = manager, readonlyGroup = readonly))
-          _ <- workspaceRepository.linkHive(newWorkspace.id.get, newHive.id.get)
-        } yield newHive.copy(managingGroup = manager, readonlyGroup = readonly)
+      insertedHive <- workspace.data.traverse[ConnectionIO, HiveDatabase] {
+        db =>
+          for {
+            manager <- ldapRepository.create(db.managingGroup)
+            readonly <- db.readonlyGroup
+              .map(ldapRepository.create)
+              .sequence[ConnectionIO, LDAPRegistration]
+            newHive <- hiveDatabaseRepository.create(
+              db.copy(managingGroup = manager, readonlyGroup = readonly)
+            )
+            _ <- workspaceRepository.linkHive(
+              newWorkspace.id.get,
+              newHive.id.get
+            )
+          } yield
+            newHive.copy(managingGroup = manager, readonlyGroup = readonly)
       }
 
-      insertedYarn <- workspace.processing.traverse[ConnectionIO, Yarn] { yarn =>
-        for {
-          newYarn <- yarnRepository.create(yarn)
-          _ <- workspaceRepository.linkYarn(newWorkspace.id.get, newYarn.id.get)
-        } yield newYarn
+      insertedYarn <- workspace.processing.traverse[ConnectionIO, Yarn] {
+        yarn =>
+          for {
+            newYarn <- yarnRepository.create(yarn)
+            _ <- workspaceRepository.linkYarn(
+              newWorkspace.id.get,
+              newYarn.id.get
+            )
+          } yield newYarn
       }
-    } yield newWorkspace.copy(data = insertedHive, processing = insertedYarn)).transact(transactor)
+    } yield newWorkspace.copy(data = insertedHive, processing = insertedYarn))
+      .transact(transactor)
 
   def provision(workspaceRequest: WorkspaceRequest): F[Unit] =
     for {
-      _ <- workspaceRequest.data.traverse(createDatabase(_, workspaceRequest.requestedBy, if (workspaceRequest.singleUser) Some(workspaceRequest.requestedBy) else None))
+      _ <- workspaceRequest.data.traverse(
+        createDatabase(
+          _,
+          workspaceRequest.requestedBy,
+          if (workspaceRequest.singleUser) Some(workspaceRequest.requestedBy)
+          else None
+        )
+      )
       _ <- workspaceRequest.processing.traverse(createYarn)
     } yield ()
 
-  def members[A <: DatabaseRole](id: Long, databaseName: String, roleName: A): F[List[WorkspaceMember]] =
-    ldapRepository.find(id, databaseName, roleName).value.transact(transactor).flatMap {
-      case Some(ldap) => ldapClient.groupMembers(ldap.distinguishedName).map(w => w.map { m => WorkspaceMember(m.username, m.name) })
-      case _ => Effect[F].pure(List.empty)
-    }
+  def members[A <: DatabaseRole](
+      id: Long,
+      databaseName: String,
+      roleName: A
+  ): F[List[WorkspaceMember]] =
+    memberRepository.findByDatabase(databaseName, roleName).transact(transactor)
 
-  def addMember[A <: DatabaseRole](id: Long, databaseName: String, roleName: A, username: String): OptionT[F, WorkspaceMember] =
-    for {
-      ldap <- OptionT(ldapRepository.find(id, databaseName, roleName).value.transact(transactor))
-      member <- ldapClient.addUser(ldap.commonName, username).map(member => WorkspaceMember(member.username, member.name))
-    } yield member
+  def addMember[A <: DatabaseRole](
+      id: Long,
+      databaseName: String,
+      roleName: A,
+      username: String
+  ): OptionT[F, WorkspaceMember] = {
+    val result = ldapRepository
+      .find(id, databaseName, roleName)
+      .value
+      .transact(transactor)
+      .flatMap {
+        case Some(registration) =>
+          memberRepository
+              .create(username, id)
+              .transact(transactor)
+              .map {
+                case memberId if registration.created.isDefined =>
+                  for {
+                    _ <- ldapClient.addUser(registration.commonName, username).value
+                    _ <- memberRepository.complete(memberId).transact(transactor)
+                    member <- memberRepository.get(memberId).transact(transactor)
+                  } yield Some(member)
+                case _ =>
+                  Effect[F].pure(None)
+              }
+        case None =>
+          Effect[F].pure(None)
+      }
+    res
+  }
 
-  def removeMember[A <: DatabaseRole](id: Long, databaseName: String, roleName: A, username: String): OptionT[F, WorkspaceMember] =
+  def removeMember[A <: DatabaseRole](
+      id: Long,
+      databaseName: String,
+      roleName: A,
+      username: String
+  ): OptionT[F, WorkspaceMember] =
     for {
-      ldap <- OptionT(ldapRepository.find(id, databaseName, roleName).value.transact(transactor))
-      member <- ldapClient.removeUser(ldap.commonName, username).map(member => WorkspaceMember(member.username, member.name))
+      ldap <- OptionT(
+        ldapRepository
+          .find(id, databaseName, roleName)
+          .value
+          .transact(transactor)
+      )
+      member <- ldapClient
+        .removeUser(ldap.commonName, username)
+        .map(member => WorkspaceMember(member.username, member.name))
     } yield member
 
   override def approve(id: Long, approval: Approval): F[Approval] =
@@ -170,12 +269,14 @@ class WorkspaceServiceImpl[F[_]](ldapClient: LDAPClient[F],
       .flatMap { result =>
         find(id)
           .map {
-          case workspace if workspace.approvals.lengthCompare(2) == 0 =>
-            logger.info(show"All approvals ready: ${workspace.approvals}")
-            fs2.async.fork[F, Unit](provision(workspace))(F, provisionContext)
-          case workspace =>
-            logger.warn(show"Not enough approvals to provision: ${workspace.approvals}")
-            ()
+            case workspace if workspace.approvals.lengthCompare(2) == 0 =>
+              logger.info(show"All approvals ready: ${workspace.approvals}")
+              fs2.async.fork[F, Unit](provision(workspace))(F, provisionContext)
+            case workspace =>
+              logger.warn(
+                show"Not enough approvals to provision: ${workspace.approvals}"
+              )
+              ()
           }
           .map(_ => result)
           .value

@@ -1,3 +1,5 @@
 package com.heimdali.models
 
-case class WorkspaceMember(username: String, name: String)
+import java.time.Instant
+
+case class WorkspaceMember(username: String, created: Option[Instant])
