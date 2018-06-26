@@ -19,19 +19,15 @@ import scala.concurrent.ExecutionContext
 
 class WorkspaceServiceImpl[F[_]](
     ldapClient: LDAPClient[F],
-    hdfsClient: HDFSClient[F],
-    hiveService: HiveClient[F],
-    yarnClient: YarnClient[F],
     yarnRepository: YarnRepository,
     hiveDatabaseRepository: HiveDatabaseRepository,
     ldapRepository: LDAPRepository,
     workspaceRepository: WorkspaceRequestRepository,
     complianceRepository: ComplianceRepository,
-    connectionFactory: () => Connection,
     approvalRepository: ApprovalRepository,
     transactor: Transactor[F],
-    contextProvider: LoginContextProvider,
-    provisionService: ProvisionService[F]
+    provisionService: ProvisionService[F],
+    memberRepository: MemberRepository
 )(implicit val F: Effect[F], val executionContext: ExecutionContext)
     extends WorkspaceService[F]
     with LazyLogging {
@@ -65,13 +61,7 @@ class WorkspaceServiceImpl[F[_]](
     }
 
   override def list(username: String): F[List[WorkspaceRequest]] =
-    ldapClient
-      .findUser(username)
-      .semiflatMap { user =>
-        val memberships = sharedMemberships(user)
-        workspaceRepository.list(memberships).transact(transactor)
-      }
-      .getOrElse(List.empty)
+    workspaceRepository.list(username).transact(transactor)
 
   def create(workspace: WorkspaceRequest): F[WorkspaceRequest] =
     (for {
@@ -83,6 +73,7 @@ class WorkspaceServiceImpl[F[_]](
         db =>
           for {
             manager <- ldapRepository.create(db.managingGroup)
+            _ <- memberRepository.create(workspace.requestedBy, manager.id.get)
             readonly <- db.readonlyGroup
               .map(ldapRepository.create)
               .sequence[ConnectionIO, LDAPRegistration]

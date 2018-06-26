@@ -8,7 +8,7 @@ import com.heimdali.models._
 import com.typesafe.scalalogging.LazyLogging
 import doobie._
 import doobie.implicits._
-import doobie.util.fragments.{ whereAnd, whereAndOpt, in }
+import doobie.util.fragments.{ whereAnd, whereAndOpt, in, whereOr }
 
 class WorkspaceRequestRepositoryImpl
   extends WorkspaceRequestRepository
@@ -46,17 +46,20 @@ class WorkspaceRequestRepositoryImpl
         select rh.workspace_request_id
         from request_hive rh
         inner join hive_database h on rh.hive_database_id = h.id
-        inner join ldap_registration lr on h.managing_group_id = lr.id
+        inner join ldap_registration mr on h.managing_group_id = mr.id
+        inner join member mrm on mrm.ldap_registration_id = mr.id
+        left join ldap_registration rr on h.read_only_group_id = rr.id
+        left join member rrm on rrm.ldap_registration_id = mr.id
         """
 
-  def innerQueryWith(memberships: List[String]): Fragment =
-    innerQuery ++ whereAnd(whereAndOpt(memberships.toNel.map(m => in(fr"system_name", m))))
+  def innerQueryWith(username: String): Fragment =
+    innerQuery ++ whereOr(fr"mrm.username = $username", fr"rrm.username = $username")
 
-  def listQuery(memberships: List[String]): Fragment =
-    selectFragment ++ fr"where wr.id in (" ++ innerQueryWith(memberships) ++ fr")"
+  def listQuery(username: String): Fragment =
+    selectFragment ++ fr"where wr.id in (" ++ innerQueryWith(username) ++ fr")"
 
-  override def list(memberships: List[String]): ConnectionIO[List[WorkspaceRequest]] =
-    listQuery(memberships).query[WorkspaceRequest].to[List]
+  override def list(username: String): ConnectionIO[List[WorkspaceRequest]] =
+    listQuery(username).query[WorkspaceRequest].to[List]
 
   val selectFragment: Fragment = fr"""
                                   select

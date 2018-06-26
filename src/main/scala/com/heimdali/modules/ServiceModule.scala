@@ -49,7 +49,7 @@ trait ServiceModule[F[_]] {
   val memberService: MemberService[F] =
     new MemberServiceImpl(
       memberRepository,
-      hiveTransactor,
+      metaTransactor,
       ldapRepository,
       ldapClient
     )
@@ -77,18 +77,14 @@ trait ServiceModule[F[_]] {
   val workspaceService: WorkspaceService[F] =
     new WorkspaceServiceImpl[F](
       ldapClient,
-      hdfsClient,
-      hiveService,
-      yarnClient,
       yarnRepository,
       hiveDatabaseRepository,
       ldapRepository,
       workspaceRepository,
       complianceRepository,
-      hiveConnectionFactory,
       approvalRepository,
       metaTransactor,
-      loginContextProvider,
-      provisionService
+      provisionService,
+      memberRepository
     )
 }

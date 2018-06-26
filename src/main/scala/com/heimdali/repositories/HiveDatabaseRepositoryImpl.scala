@@ -22,7 +22,7 @@ class HiveDatabaseRepositoryImpl
 
   def insert(hiveDatabase: HiveDatabase): ConnectionIO[Long] =
     sql"""
-       insert into hive_database (name, location, size_in_gb, managing_group_id, read_only_group_id)
+       insert into hive_database (name, location, size_in_gb, manager_group_id, readonly_group_id)
        values(
         ${hiveDatabase.name},
         ${hiveDatabase.location},
@@ -50,8 +50,8 @@ class HiveDatabaseRepositoryImpl
          r.created,
          h.id
        from hive_database h
-       inner join ldap_registration m on h.managing_group_id = m.id
-       left join ldap_registration r on h.read_only_group_id = r.id
+       inner join ldap_registration m on h.manager_group_id = m.id
+       left join ldap_registration r on h.readonly_group_id = r.id
       """
 
   def find(id: Long): OptionT[ConnectionIO, HiveDatabase] =

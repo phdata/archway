@@ -40,7 +40,7 @@ class WorkspaceServiceImplSpec
     ldapClient.findUser _ expects standardUsername returning OptionT.some(
       LDAPUser("name", standardUsername, memberships)
     )
-    workspaceRepository.list _ expects List("project") returning List(
+    workspaceRepository.list _ expects standardUsername returning List(
       savedWorkspaceRequest
     ).pure[ConnectionIO]
 
@@ -119,9 +119,6 @@ class WorkspaceServiceImplSpec
 
   trait Context {
     val ldapClient: LDAPClient[IO] = mock[LDAPClient[IO]]
-    val hdfsClient: HDFSClient[IO] = mock[HDFSClient[IO]]
-    val hiveClient: HiveClient[IO] = mock[HiveClient[IO]]
-    val yarnClient: YarnClient[IO] = mock[YarnClient[IO]]
 
     val workspaceRepository: WorkspaceRequestRepository =
       mock[WorkspaceRequestRepository]
@@ -138,19 +135,15 @@ class WorkspaceServiceImplSpec
     def projectServiceImpl =
       new WorkspaceServiceImpl[IO](
         ldapClient,
-        hdfsClient,
-        hiveClient,
-        yarnClient,
         yarnRepository,
         hiveDatabaseRepository,
         ldapRepository,
         workspaceRepository,
         complianceRepository,
-        () => null,
         approvalRepository,
         transactor,
-        contextProvider,
-        provisionService
+        provisionService,
+        memberRepository
       )
   }
 

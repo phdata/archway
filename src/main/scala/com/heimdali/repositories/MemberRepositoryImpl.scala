@@ -9,10 +9,11 @@ import java.time.Instant
 import cats.data.OptionT
 
 class MemberRepositoryImpl extends MemberRepository {
+  implicit val han = LogHandler.jdkLogHandler
 
   val baseSelect =
     sql"""
-         select m.username, m.created
+         select m.username, m.created, m.id
          from member m
          """
 

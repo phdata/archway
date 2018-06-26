@@ -25,6 +25,9 @@ class MemberServiceImpl[F[_]](
   ): F[List[WorkspaceMember]] =
     memberRepository.findByDatabase(databaseName, roleName).transact(transactor)
 
+  def addMember(id: Long, username: String): F[Long] =
+    memberRepository.create(username, id).transact(transactor)
+
   def addMember[A <: DatabaseRole](
       id: Long,
       databaseName: String,
