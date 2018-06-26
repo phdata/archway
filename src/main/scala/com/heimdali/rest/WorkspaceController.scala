@@ -14,6 +14,8 @@ import org.http4s.dsl.io._
 
 class WorkspaceController(authService: AuthService[IO],
                           workspaceService: WorkspaceService[IO],
+                          memberService: MemberService[IO],
+                          provisionService: ProvisionService[IO],
                           clock: Clock) {
 
   implicit val memberRequestEntityDecoder: EntityDecoder[IO, MemberRequest] = jsonOf[IO, MemberRequest]
@@ -38,7 +40,7 @@ class WorkspaceController(authService: AuthService[IO],
           if(user.isSuperUser) {
             for {
               workspace <- workspaceService.find(id).value
-              _ <- workspaceService.provision(workspace.get)
+              _ <- provisionService.provision(workspace.get)
               response <- Created()
             } yield response
           }
@@ -70,20 +72,20 @@ class WorkspaceController(authService: AuthService[IO],
 
         case GET -> Root / LongVar(id) / database / DatabaseRole(role) as _ =>
           for {
-            members <- workspaceService.members(id, database, role)
+            members <- memberService.members(id, database, role)
             response <- Ok(members.asJson)
           } yield response
 
         case req@POST -> Root / LongVar(id) / database / DatabaseRole(role) as _ =>
           for {
             memberRequest <- req.req.as[MemberRequest]
-            newMember <- workspaceService.addMember(id, database, role, memberRequest.username).value
+            newMember <- memberService.addMember(id, database, role, memberRequest.username).value
             response <- newMember.fold(NotFound())(member => Created(member.asJson))
           } yield response
 
         case DELETE -> Root / LongVar(id) / database / DatabaseRole(role) / username as _ =>
           for {
-            removedMember <- workspaceService.removeMember(id, database, role, username).value
+            removedMember <- memberService.removeMember(id, database, role, username).value
             response <- removedMember.fold(NotFound())(member => Ok(member.asJson))
           } yield response
       }

@@ -46,6 +46,14 @@ trait ServiceModule[F[_]] {
   val accountService: AccountService[F] =
     new AccountServiceImpl[F](ldapClient, appConfig.rest, appConfig.approvers)
 
+  val memberService: MemberService[F] =
+    new MemberServiceImpl(
+      memberRepository,
+      hiveTransactor,
+      ldapRepository,
+      ldapClient
+    )
+
   val hiveConnectionFactory: () => Connection =
     () =>
       DriverManager.getConnection(
@@ -53,6 +61,18 @@ trait ServiceModule[F[_]] {
         appConfig.db.hive.username.getOrElse(""),
         appConfig.db.hive.password.getOrElse("")
       )
+
+  val provisionService: ProvisionService[F] = new ProvisionServiceImpl[F](
+    ldapClient,
+    hdfsClient,
+    hiveService,
+    yarnClient,
+    yarnRepository,
+    hiveDatabaseRepository,
+    ldapRepository,
+    hiveConnectionFactory,
+    metaTransactor
+  )
 
   val workspaceService: WorkspaceService[F] =
     new WorkspaceServiceImpl[F](
@@ -69,5 +89,6 @@ trait ServiceModule[F[_]] {
       approvalRepository,
       metaTransactor,
       loginContextProvider,
-      memberRepository)
+      provisionService
+    )
 }

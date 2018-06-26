@@ -16,7 +16,13 @@ trait RestModule {
   val accountController = new AccountController(authService, accountService)
   val clusterController = new ClusterController(clusterService)
   val workspaceController =
-    new WorkspaceController(authService, workspaceService, clock)
+    new WorkspaceController(
+      authService,
+      workspaceService,
+      memberService,
+      provisionService,
+      clock
+    )
   val templateController = new TemplateController(authService)
 
   val restAPI: RestAPI = new RestAPI(

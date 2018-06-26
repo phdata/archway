@@ -89,36 +89,6 @@ class WorkspaceServiceImplSpec
     newWorkspace.data should not be empty
   }
 
-  it should "provision a workspace" in new Context {
-    inSequence {
-      hdfsClient.createDirectory _ expects (savedHive.location, None) returning IO
-        .pure(new Path(savedHive.location))
-      hdfsClient.setQuota _ expects (savedHive.location, savedHive.sizeInGB) returning IO
-        .pure(HDFSAllocation(savedHive.location, savedHive.sizeInGB))
-      hiveClient.createDatabase _ expects (savedHive.name, savedHive.location) returning IO.unit
-
-      ldapClient.createGroup _ expects (savedLDAP.commonName, savedLDAP.distinguishedName) returning EitherT
-        .right(IO.unit)
-      ldapClient.addUser _ expects (savedLDAP.commonName, standardUsername) returning OptionT
-        .some(LDAPUser("John Doe", standardUsername, Seq.empty))
-      ldapRepository.complete _ expects 123 returning savedLDAP
-        .pure[ConnectionIO]
-      hiveClient.createRole _ expects savedLDAP.sentryRole returning IO.unit
-      hiveClient.grantGroup _ expects (savedLDAP.commonName, savedLDAP.sentryRole) returning IO.unit
-      hiveClient.enableAccessToDB _ expects (savedHive.name, savedLDAP.sentryRole) returning IO.unit
-      hiveClient.enableAccessToLocation _ expects (savedHive.location, savedLDAP.sentryRole) returning IO.unit
-      hiveDatabaseRepository.complete _ expects savedHive.id.get returning 1
-        .pure[ConnectionIO]
-
-      yarnClient.createPool _ expects (savedYarn, Queue("root")) returning IO.unit
-      yarnRepository.complete _ expects savedYarn.id.get returning 1
-        .pure[ConnectionIO]
-    }
-
-    val newWorkspace =
-      projectServiceImpl.provision(savedWorkspaceRequest).unsafeRunSync()
-  }
-
   it should "find a record" in new Context {
     workspaceRepository.find _ expects id returning OptionT.some(
       savedWorkspaceRequest
@@ -136,15 +106,6 @@ class WorkspaceServiceImplSpec
     foundWorkspace shouldBe defined
     foundWorkspace.get.data should not be empty
     foundWorkspace.get.processing should not be empty
-  }
-
-  it should "list members" in new Context {
-    memberRepository.findByDatabase _ expects ("sesame", Manager) returning List(WorkspaceMember(standardUsername, None, None)).pure[ConnectionIO]
-
-    val members =
-      projectServiceImpl.members(id, "sesame", Manager).unsafeRunSync()
-
-    members shouldBe Seq(WorkspaceMember(standardUsername, None))
   }
 
   it should "approve the workspace" in new Context {
@@ -172,6 +133,7 @@ class WorkspaceServiceImplSpec
     val approvalRepository: ApprovalRepository = mock[ApprovalRepository]
     val contextProvider: LoginContextProvider = mock[LoginContextProvider]
     val memberRepository: MemberRepository = mock[MemberRepository]
+    val provisionService: ProvisionService[IO] = mock[ProvisionService[IO]]
 
     def projectServiceImpl =
       new WorkspaceServiceImpl[IO](
@@ -188,7 +150,7 @@ class WorkspaceServiceImplSpec
         approvalRepository,
         transactor,
         contextProvider,
-        memberRepository
+        provisionService
       )
   }
 
