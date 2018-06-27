@@ -14,6 +14,8 @@ class LDAPRepositoryImpl
   extends LDAPRepository
     with LazyLogging {
 
+  implicit val han = LogHandler.jdkLogHandler
+
   def updateCreated(id: Long): ConnectionIO[Int] =
     sql"""
       update ldap_registration
@@ -46,7 +48,8 @@ class LDAPRepositoryImpl
          distinguished_name,
          common_name,
          sentry_role,
-         id
+         id,
+         created
        from
          ldap_registration
       """
@@ -59,13 +62,14 @@ class LDAPRepositoryImpl
 
   override def find[A <: DatabaseRole](workspaceId: Long, databaseName: String, databaseRole: A): OptionT[ConnectionIO, LDAPRegistration] =
     OptionT(
-      (select ++
-        fr"inner join hive_database h on " ++ Fragment.const(s"h.${databaseRole.getClass.getSimpleName}_id") ++ fr" = l.id" ++
-        fr"""
+      (
+        select ++
+        fr"inner join hive_database h on "
+        ++ Fragment.const(s"h.${databaseRole.getClass.getSimpleName}_id") ++ fr" = l.id"
+        ++ fr"""
         inner join request_database rd on rd.hive_database_id = h.id
         inner join workspace_request w on w.id = rd.workspace_request_id
-        where
-          w.id = $workspaceId and h.name = $databaseName
+        where w.id = $workspaceId and h.name = $databaseName
         """).query[LDAPRegistration].option
     )
 

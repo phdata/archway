@@ -30,7 +30,7 @@ class AuthServiceImplSpec extends FlatSpec with Matchers with MockFactory {
     val authService = new AuthServiceImpl[IO](accountService)
     val result = authService.validate(u => u.permissions.platformOperations || u.permissions.riskManagement)(
       Request(uri = Uri.uri("/profile"), headers = Headers(Header("Authorization", basicUserToken)))).value.unsafeRunSync()
-    result shouldBe defined
+    result should not be defined
   }
 
 }

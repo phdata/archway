@@ -1,11 +1,14 @@
 package com.heimdali.models
 
+import java.time.Instant
+
 import io.circe._
 
 case class LDAPRegistration(distinguishedName: String,
                             commonName: String,
                             sentryRole: String,
-                            id: Option[Long] = None)
+                            id: Option[Long] = None,
+                            created: Option[Instant] = None)
 
 object LDAPRegistration {
 

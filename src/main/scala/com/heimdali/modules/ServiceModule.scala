@@ -1,5 +1,6 @@
 package com.heimdali.modules
 
+import cats.effect.Effect
 import java.sql.{Connection, DriverManager}
 
 import com.heimdali.clients.{HiveClient, HiveClientImpl}
@@ -19,7 +20,8 @@ trait ServiceModule[F[_]] {
 
   val hiveConfig = appConfig.db.hive
   Class.forName("org.apache.hive.jdbc.HiveDriver")
-  private val initialHiveTransactor = Transactor.fromDriverManager[F](hiveConfig.driver, hiveConfig.url, "", "")
+  private val initialHiveTransactor =
+    Transactor.fromDriverManager[F](hiveConfig.driver, hiveConfig.url, "", "")
   val strategy = Strategy.void.copy(always = FC.close)
   val hiveTransactor = Transactor.strategy.set(initialHiveTransactor, strategy)
 
@@ -44,22 +46,45 @@ trait ServiceModule[F[_]] {
   val accountService: AccountService[F] =
     new AccountServiceImpl[F](ldapClient, appConfig.rest, appConfig.approvers)
 
+  val memberService: MemberService[F] =
+    new MemberServiceImpl(
+      memberRepository,
+      metaTransactor,
+      ldapRepository,
+      ldapClient
+    )
+
   val hiveConnectionFactory: () => Connection =
-    () => DriverManager.getConnection(appConfig.db.hive.url, appConfig.db.hive.username.getOrElse(""), appConfig.db.hive.password.getOrElse(""))
+    () =>
+      DriverManager.getConnection(
+        appConfig.db.hive.url,
+        "",
+        "")
+
+  val provisionService: ProvisionService[F] = new ProvisionServiceImpl[F](
+    ldapClient,
+    hdfsClient,
+    hiveService,
+    yarnClient,
+    yarnRepository,
+    hiveDatabaseRepository,
+    ldapRepository,
+    memberRepository,
+    hiveConnectionFactory,
+    metaTransactor
+  )
 
   val workspaceService: WorkspaceService[F] =
     new WorkspaceServiceImpl[F](
       ldapClient,
-      hdfsClient,
-      hiveService,
-      yarnClient,
       yarnRepository,
       hiveDatabaseRepository,
       ldapRepository,
       workspaceRepository,
       complianceRepository,
-      hiveConnectionFactory,
       approvalRepository,
       metaTransactor,
-      loginContextProvider)
+      provisionService,
+      memberRepository
+    )
 }

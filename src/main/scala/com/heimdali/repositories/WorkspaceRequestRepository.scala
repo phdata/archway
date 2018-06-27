@@ -8,7 +8,7 @@ trait WorkspaceRequestRepository {
 
   def create(updatedWorkspace: WorkspaceRequest): ConnectionIO[WorkspaceRequest]
 
-  def list(memberships: List[String]): ConnectionIO[List[WorkspaceRequest]]
+  def list(username: String): ConnectionIO[List[WorkspaceRequest]]
 
   def find(id: Long): OptionT[ConnectionIO, WorkspaceRequest]
 

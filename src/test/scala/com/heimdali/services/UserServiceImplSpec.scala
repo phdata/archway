@@ -75,6 +75,7 @@ class UserServiceImplSpec extends FlatSpec with Matchers with MockFactory {
   }
 
   it should "validate a valid token" in new Context {
+    ldapClient.findUser _ expects username returning OptionT.some(ldapUser)
     val maybeUser = ldapAccountService.validate(token).value.unsafeRunSync()
     maybeUser.isRight shouldBe true
     maybeUser.right.get should be(user)

@@ -16,4 +16,6 @@ trait RepoModule {
 
   val approvalRepository: ApprovalRepository = new ApprovalRepositoryImpl
 
+  val memberRepository: MemberRepository = new MemberRepositoryImpl
+
 }
