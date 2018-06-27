@@ -102,26 +102,10 @@ class WorkspaceServiceImpl[F[_]](
       .transact(transactor)
 
   override def approve(id: Long, approval: Approval): F[Approval] =
-    approvalRepository
-      .create(id, approval)
-      .transact(transactor)
-      .flatMap { result =>
-        find(id)
-          .map {
-            case workspace if workspace.approvals.lengthCompare(2) == 0 =>
-              logger.info(show"All approvals ready: ${workspace.approvals}")
-              fs2.async.fork[F, Unit](provisionService.provision(workspace))(
-                F,
-                provisionContext
-              )
-            case workspace =>
-              logger.warn(
-                show"Not enough approvals to provision: ${workspace.approvals}"
-              )
-              ()
-          }
-          .map(_ => result)
-          .value
-          .map(_.get)
-      }
+    for {
+      approval <- OptionT.liftF(approvalRepository.create(id, approval).transact(transactor)).value
+      workspace <- find(id).value
+      _ <- if (workspace.get.approvals.lengthCompare(2) == 0) OptionT.liftF(fs2.async.fork(provisionService.provision(workspace.get))).value else OptionT.none(F).value
+    } yield approval.get
+
 }

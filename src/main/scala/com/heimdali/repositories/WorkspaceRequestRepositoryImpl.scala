@@ -46,9 +46,9 @@ class WorkspaceRequestRepositoryImpl
         select rh.workspace_request_id
         from request_hive rh
         inner join hive_database h on rh.hive_database_id = h.id
-        inner join ldap_registration mr on h.managing_group_id = mr.id
+        inner join ldap_registration mr on h.manager_group_id = mr.id
         inner join member mrm on mrm.ldap_registration_id = mr.id
-        left join ldap_registration rr on h.read_only_group_id = rr.id
+        left join ldap_registration rr on h.readonly_group_id = rr.id
         left join member rrm on rrm.ldap_registration_id = mr.id
         """
 

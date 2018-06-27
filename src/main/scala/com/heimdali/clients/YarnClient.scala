@@ -10,9 +10,14 @@ import com.typesafe.scalalogging.LazyLogging
 import io.circe.parser._
 import io.circe.{ACursor, Json}
 import org.http4s._
+import org.http4s.client.dsl.Http4sClientDsl
 import org.http4s.circe._
-
+import org.http4s.client.blaze._
+import org.http4s.client.dsl.io._
 import scala.collection.immutable.Queue
+import org.http4s.Method._
+import org.http4s.headers._
+import org.http4s.MediaType._
 
 case class YarnPool(name: String, maxCores: Int, maxMemoryInGB: Double)
 
@@ -23,7 +28,8 @@ trait YarnClient[F[_]] {
 class CDHYarnClient[F[_] : Sync](http: HttpClient[F],
                                  clusterConfig: ClusterConfig,
                                  clusterService: ClusterService[F])
-  extends YarnClient[F]
+    extends YarnClient[F]
+    with Http4sClientDsl[F]
     with LazyLogging {
 
   lazy val configURL: F[String] =
@@ -91,12 +97,15 @@ class CDHYarnClient[F[_] : Sync](http: HttpClient[F],
   def yarnConfigUpdate(updatedJson: Json): F[Json] =
     for {
       url <- configURL
-      request <- Request[F](Method.PUT, Uri.fromString(url).toOption.get).withBody(updatedJson)
+      _ <- Sync[F].pure(logger.info("updating yarn at {} with {}", url, updatedJson))
+      request <- PUT(Uri.fromString(url).right.get, updatedJson)
+      _ <- Sync[F].pure(logger.info("here's the yarn update request: {}", request))
       response <- http.request[Json](request)
     } yield response
 
   def yarnConfigRefresh: F[Json] =
     for {
+      _ <- Sync[F].pure(logger.info("refreshing the resource pools via {}", clusterConfig.refreshUrl))
       response <- http.request[Json](Request[F](Method.POST, Uri.fromString(clusterConfig.refreshUrl).right.get))
     } yield response
 
