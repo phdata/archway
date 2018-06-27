@@ -1,0 +1,21 @@
+.WorkspaceDetails .Data,
+.WorkspaceDetails .Processing {
+  margin: 15px 0;
+  padding: 15px;
+  background: #F0F3F5;
+}
+
+.WorkspaceDetails .Header {
+  text-align: center;
+  border-right: 1px solid black;
+}
+
+.WorkspaceDetails .Header > .fa {
+  font-size: 32px;
+}
+
+.WorkspaceDetails .Header > .Label {
+  font-size: 24px;
+  font-weight: 200;
+  font-family: "Roboto";
+}
