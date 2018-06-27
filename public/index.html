@@ -6,51 +6,46 @@
     <meta name="theme-color" content="#000000">
     <script>
         window.config = {
-            baseUrl: "%%BASE_URL%%"
+            baseUrl: "http://edge1.valhalla.phdata.io:8080" //%%BASE_URL%%"
         };
     </script>
     <!--
       manifest.json provides metadata used when your web app is added to the
       homescreen on Android. See https://developers.google.com/web/fundamentals/engage-and-retain/web-app-manifest/
     -->
-    <link href="https://fonts.googleapis.com/css?family=Roboto:100,200,300,400|Playfair+Display" rel="stylesheet">
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json">
     <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.png">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="%PUBLIC_URL%/line-awesome-font-awesome.min.css">
     <style>
         @font-face {
             font-family: FontAwesome;
             src: url('/line-awesome.woff') format('woff');
         }
-        html { height: 100%; }
-        body { height: 100%; font-family: "Roboto"; background: #E9E9E9; margin: 0; }
-        h1, h2, h3, h4, h5, h6 { font-family: "Playfair Display"; margin: 10px 0; }
-        input, textarea {
-            font-size: 28px;
-            padding: 10px;
-            border: none;
-            border-bottom: 1px solid #707070;
-            background-color: transparent;
-        }
-
-        input.error {
-            border-bottom: 1px solid red;
-        }
-
-        input.valid {
-            border-bottom: 1px solid #2EC4B6;
-        }
-
-        textarea:focus,
-        input:focus,
-        button:focus {
-            outline: none;
-        }
-        h4 { font-size: 18px; }
-        h3 { font-size: 28px; }
-        h2 { font-size: 32px; }
-        h1 { font-size: 40px; }
+     @font-face {
+       font-family: 'Roboto', sans-serif;
+       src: url('/Roboto/Roboto-Medium.ttf') format('ttf');
+       font-weight: 500;
+     }
+     @font-face {
+       font-family: 'Roboto', sans-serif;
+       src: url('/Roboto/Roboto-Regular.ttf') format('ttf');
+       font-weight: 400;
+     }
+     @font-face {
+       font-family: 'Roboto', sans-serif;
+       src: url('/Roboto/Roboto-Light.ttf') format('ttf');
+       font-weight: 300;
+     }
+     @font-face {
+       font-family: 'Roboto', sans-serif;
+       src: url('/Roboto/Roboto-Thin.ttf') format('ttf');
+       font-weight: 100;
+     }
+     @font-face {
+       font-family: 'Playfair Display', serif;
+       src: url('/Playfair_Display/PlayfairDisplay-Regular.ttf') format('ttf');
+       font-weight: 400;
+     }
     </style>
     <!--
       Notice the use of %PUBLIC_URL% in the tags above.
@@ -67,7 +62,7 @@
 <noscript>
     You need to enable JavaScript to run this app.
 </noscript>
-<div id="root" style="display: flex; min-height: 100%;"></div>
+<div id="root" style="height: 100%"></div>
 <!--
   This HTML file is a template.
   If you open it directly in the browser, you will see an empty page.
