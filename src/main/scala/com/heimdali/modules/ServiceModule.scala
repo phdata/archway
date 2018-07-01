@@ -54,13 +54,6 @@ trait ServiceModule[F[_]] {
       ldapClient
     )
 
-  val hiveConnectionFactory: () => Connection =
-    () =>
-      DriverManager.getConnection(
-        appConfig.db.hive.url,
-        "",
-        "")
-
   val provisionService: ProvisionService[F] = new ProvisionServiceImpl[F](
     ldapClient,
     hdfsClient,
@@ -70,7 +63,6 @@ trait ServiceModule[F[_]] {
     hiveDatabaseRepository,
     ldapRepository,
     memberRepository,
-    hiveConnectionFactory,
     metaTransactor
   )
 

@@ -1,24 +1,20 @@
 package com.heimdali.services
 
-import com.heimdali.repositories.MemberRepository
 import java.time.Instant
 
-import cats.data.{EitherT, OptionT}
+import cats.data.OptionT
 import cats.effect.IO
 import cats.syntax.applicative._
 import com.heimdali.clients._
-import com.heimdali.models.WorkspaceMember
-import com.heimdali.repositories._
+import com.heimdali.repositories.{MemberRepository, _}
 import com.heimdali.test.fixtures._
 import doobie._
 import doobie.implicits._
-import org.apache.hadoop.fs.Path
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.prop.TableDrivenPropertyChecks._
 import org.scalatest.prop.TableFor2
 import org.scalatest.{FlatSpec, Matchers}
 
-import scala.collection.immutable.Queue
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class WorkspaceServiceImplSpec
@@ -37,9 +33,6 @@ class WorkspaceServiceImplSpec
       validWorkspace
     )
 
-    ldapClient.findUser _ expects standardUsername returning OptionT.some(
-      LDAPUser("name", standardUsername, memberships)
-    )
     workspaceRepository.list _ expects standardUsername returning List(
       savedWorkspaceRequest
     ).pure[ConnectionIO]
@@ -62,24 +55,14 @@ class WorkspaceServiceImplSpec
 
   it should "create a workspace" in new Context {
     inSequence {
-      complianceRepository.create _ expects initialCompliance returning savedCompliance
-        .pure[ConnectionIO]
-      workspaceRepository.create _ expects initialWorkspaceRequest.copy(
-        compliance = savedCompliance
-      ) returning initialWorkspaceRequest
-        .copy(id = Some(id), compliance = savedCompliance)
-        .pure[ConnectionIO]
-      ldapRepository.create _ expects initialLDAP returning savedLDAP
-        .pure[ConnectionIO]
-      hiveDatabaseRepository.create _ expects initialHive.copy(
-        managingGroup = savedLDAP
-      ) returning savedHive.pure[ConnectionIO]
-      workspaceRepository.linkHive _ expects (id, id) returning 1
-        .pure[ConnectionIO]
-      yarnRepository.create _ expects initialYarn returning savedYarn
-        .pure[ConnectionIO]
-      workspaceRepository.linkYarn _ expects (id, id) returning 1
-        .pure[ConnectionIO]
+      (complianceRepository.create _).expects(initialCompliance).returning(savedCompliance.pure[ConnectionIO])
+      (workspaceRepository.create _).expects(initialWorkspaceRequest.copy(compliance = savedCompliance)).returning(initialWorkspaceRequest.copy(id = Some(id), compliance = savedCompliance).pure[ConnectionIO])
+      (ldapRepository.create _).expects(initialLDAP).returning(savedLDAP.pure[ConnectionIO])
+      (memberRepository.create _).expects(standardUsername, id).returning(1L.pure[ConnectionIO])
+      (hiveDatabaseRepository.create _).expects(initialHive.copy(managingGroup = savedLDAP)).returning(savedHive.pure[ConnectionIO])
+      (workspaceRepository.linkHive _).expects(id, id).returning(1.pure[ConnectionIO])
+      (yarnRepository.create _).expects(initialYarn).returning(savedYarn.pure[ConnectionIO])
+      (workspaceRepository.linkYarn _).expects(id, id).returning(1.pure[ConnectionIO])
     }
 
     val newWorkspace =

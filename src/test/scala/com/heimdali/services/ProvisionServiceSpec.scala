@@ -41,10 +41,12 @@ class ProvisionServiceSpec
         .pure(HDFSAllocation(savedHive.location, savedHive.sizeInGB))
       hiveClient.createDatabase _ expects (savedHive.name, savedHive.location) returning IO.unit
 
-      ldapClient.createGroup _ expects (savedLDAP.commonName, savedLDAP.distinguishedName) returning EitherT
+      ldapClient.createGroup _ expects (savedLDAP.id.get, savedLDAP.commonName, savedLDAP.distinguishedName) returning EitherT
         .right(IO.unit)
-      ldapClient.addUser _ expects (savedLDAP.commonName, standardUsername) returning OptionT
+      ldapClient.addUser _ expects (savedLDAP.distinguishedName, standardUsername) returning OptionT
         .some(LDAPUser("John Doe", standardUsername, Seq.empty))
+      memberRepository.find _ expects (123, standardUsername) returning OptionT.some(WorkspaceMember(standardUsername, None, Some(123)))
+      memberRepository.complete _ expects 123 returning 0.pure[ConnectionIO]
       ldapRepository.complete _ expects 123 returning savedLDAP
         .pure[ConnectionIO]
       hiveClient.createRole _ expects savedLDAP.sentryRole returning IO.unit
@@ -54,9 +56,9 @@ class ProvisionServiceSpec
       hiveDatabaseRepository.complete _ expects savedHive.id.get returning 1
         .pure[ConnectionIO]
 
-      yarnClient.createPool _ expects (savedYarn, Queue("root")) returning IO.unit
-      yarnRepository.complete _ expects savedYarn.id.get returning 1
-        .pure[ConnectionIO]
+//      yarnClient.createPool _ expects (savedYarn, Queue("root")) returning IO.unit
+//      yarnRepository.complete _ expects savedYarn.id.get returning 1
+//        .pure[ConnectionIO]
     }
 
     val newWorkspace =
@@ -89,6 +91,7 @@ class ProvisionServiceSpec
         yarnRepository,
         hiveDatabaseRepository,
         ldapRepository,
+        memberRepository,
         () => null,
         transactor
       )

@@ -28,7 +28,6 @@ class ProvisionServiceImpl[F[_]](
     hiveDatabaseRepository: HiveDatabaseRepository,
     ldapRepository: LDAPRepository,
     memberRepository: MemberRepository,
-    connectionFactory: () => Connection,
     transactor: Transactor[F]
 )(implicit val F: Effect[F]) extends ProvisionService[F] with LazyLogging {
 
@@ -64,11 +63,11 @@ class ProvisionServiceImpl[F[_]](
     for {
       _ <- F.pure(logger.info(s"creating ${ldap.commonName} group at ${ldap.distinguishedName}"))
       _ <- ldapClient
-        .createGroup(ldap.commonName, ldap.distinguishedName)
+        .createGroup(ldap.id.get, ldap.commonName, ldap.distinguishedName)
         .toOption
       .value
       _ <- logger.info(s"adding requester ${requestedBy} to ${ldap.commonName}").pure[F]
-      _ <- ldapClient.addUser(ldap.commonName, requestedBy).value
+      _ <- ldapClient.addUser(ldap.distinguishedName, requestedBy).value
       member <- memberRepository.find(ldap.id.get, requestedBy).value.transact(transactor)
       _ <- memberRepository.complete(member.get.id.get).transact(transactor)
       _ <- logger.info(s"marking ${ldap.commonName} as complete").pure[F]
@@ -104,7 +103,7 @@ class ProvisionServiceImpl[F[_]](
           else None
         )
       )
-      _ <- workspaceRequest.processing.traverse(createYarn)
+//      _ <- workspaceRequest.processing.traverse(createYarn)
     } yield ()
 
 }

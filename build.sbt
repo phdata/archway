@@ -52,7 +52,8 @@ libraryDependencies ++= Seq(
   "org.apache.hadoop" % "hadoop-client" % hadoopVersion % Test classifier "" classifier "tests",
   "org.apache.hadoop" % "hadoop-minicluster" % hadoopVersion % Test,
   "org.mockito" % "mockito-core" % "2.18.3" % Test,
-  "org.scalamock" %% "scalamock-scalatest-support" % "3.6.0" % Test
+  "org.scalamock" %% "scalamock-scalatest-support" % "3.6.0" % Test,
+  "org.powermock" % "powermock-core" % "2.0.0-beta.5" % Test
 )
 
 assemblyJarName in assembly := "heimdali-api.jar"

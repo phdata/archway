@@ -1,5 +1,6 @@
 package com.heimdali.modules
 
+import com.unboundid.ldap.sdk.{LDAPConnection, LDAPConnectionPool}
 import java.net.URI
 
 import com.heimdali.clients._
@@ -15,17 +16,32 @@ trait ClientModule[F[_]] {
     with FileSystemModule[F]
     with ClusterModule[F] =>
 
+  val ldapConnectionPool: LDAPConnectionPool = {
+    val connection = new LDAPConnection(
+      appConfig.ldap.server,
+      appConfig.ldap.port,
+      appConfig.ldap.bindDN,
+      appConfig.ldap.bindPassword
+    )
+    new LDAPConnectionPool(connection, 10)
+  }
+
   val hdfsUri = new URI(hadoopConfiguration.get("fs.defaultFS"))
 
   def fileSystemLoader(): FileSystem =
     FileSystem.get(hadoopConfiguration)
 
-  val hdfsAdmin: () => HdfsAdmin = () => new HdfsAdmin(hdfsUri, hadoopConfiguration)
+  val hdfsAdmin: () => HdfsAdmin = () =>
+    new HdfsAdmin(hdfsUri, hadoopConfiguration)
 
-  val ldapClient: LDAPClient[F] = new LDAPClientImpl(appConfig.ldap) with ActiveDirectoryClient[F]
+  val ldapClient: LDAPClient[F] =
+    new LDAPClientImpl(appConfig.ldap, () => ldapConnectionPool.getConnection)
+    with ActiveDirectoryClient[F]
 
-  val hdfsClient: HDFSClient[F] = new HDFSClientImpl[F](fileSystemLoader, hdfsAdmin, loginContextProvider)
+  val hdfsClient: HDFSClient[F] =
+    new HDFSClientImpl[F](fileSystemLoader, hdfsAdmin, loginContextProvider)
 
-  val yarnClient: YarnClient[F] = new CDHYarnClient[F](http, appConfig.cluster, clusterService)
+  val yarnClient: YarnClient[F] =
+    new CDHYarnClient[F](http, appConfig.cluster, clusterService)
 
 }
