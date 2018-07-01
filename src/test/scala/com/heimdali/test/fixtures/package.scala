@@ -26,7 +26,7 @@ package object fixtures {
   val environment = "dev"
   val maxCores = 4
   val maxMemoryInGB = 16
-  val poolName: String = "pool"
+  val poolName: String = "root.workspaces.pool"
   val savedCompliance = Compliance(phiCompliance, pciCompliance, piiCompliance, Some(id))
   val initialCompliance = savedCompliance.copy(id = None)
   val savedLDAP = LDAPRegistration(ldapDn, s"edh_sw_$systemName", "role_sesame", Some(id))

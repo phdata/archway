@@ -1,5 +1,6 @@
 package com.heimdali.clients
 
+import cats.data.NonEmptyList
 import cats.effect._
 import cats.syntax.flatMap._
 import cats.syntax.functor._
@@ -23,6 +24,8 @@ case class YarnPool(name: String, maxCores: Int, maxMemoryInGB: Double)
 
 trait YarnClient[F[_]] {
   def createPool(yarn: Yarn, parentPools: Queue[String]): F[Unit]
+
+  def getParents(yarn: Yarn): F[Queue[String]]
 }
 
 class CDHYarnClient[F[_] : Sync](http: HttpClient[F],
@@ -40,7 +43,7 @@ class CDHYarnClient[F[_] : Sync](http: HttpClient[F],
     } yield result
 
   def config(pool: Yarn): Json = Json.obj(
-    "name" -> Json.fromString(pool.poolName),
+    "name" -> Json.fromString(pool.poolName.split("\\.").last),
     "schedulablePropertiesList" -> Json.arr(
       Json.obj(
         "maxResources" -> Json.obj(
@@ -59,7 +62,8 @@ class CDHYarnClient[F[_] : Sync](http: HttpClient[F],
       case (parent, newQueue) =>
         val newCursor = cursor.downField("queues")
           .downAt(_.asObject.get.filter {
-            case ("name", json) => parent == json.asString.get
+            case ("name", json) => 
+              parent == json.asString.get
             case _ => false
           }.nonEmpty)
         dig(newCursor, newQueue)
@@ -97,9 +101,8 @@ class CDHYarnClient[F[_] : Sync](http: HttpClient[F],
   def yarnConfigUpdate(updatedJson: Json): F[Json] =
     for {
       url <- configURL
-      _ <- Sync[F].pure(logger.info("updating yarn at {} with {}", url, updatedJson))
+      _ <- Sync[F].pure(logger.debug("updating yarn at {}", url))
       request <- PUT(Uri.fromString(url).right.get, updatedJson)
-      _ <- Sync[F].pure(logger.info("here's the yarn update request: {}", request))
       response <- http.request[Json](request)
     } yield response
 
@@ -121,6 +124,15 @@ class CDHYarnClient[F[_] : Sync](http: HttpClient[F],
             }.nonEmpty
         }.focus.get
     }
+
+  def getParents(yarn: Yarn): F[Queue[String]] = Sync[F].delay {
+    logger.debug("getting parents for {}", yarn.poolName)
+    val fullList = yarn.poolName.split("\\.").toList
+    logger.debug("{} broken down: {}", yarn.poolName, fullList)
+    val parents = fullList.filterNot(_ == fullList.last)
+    logger.debug("{} parents: {}", yarn.poolName, parents)
+    Queue(parents: _*)
+  }
 
   override def createPool(yarn: Yarn, parentPools: Queue[String]): F[Unit] =
     for {

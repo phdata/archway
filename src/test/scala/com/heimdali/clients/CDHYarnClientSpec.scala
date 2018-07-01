@@ -5,7 +5,8 @@ import com.heimdali.config.{ClusterConfig, CredentialsConfig}
 import com.heimdali.models.Yarn
 import com.heimdali.services.ClusterService
 import com.heimdali.test.fixtures._
-import io.circe.Json
+import io.circe._
+import io.circe.syntax._
 import io.circe.parser._
 import org.http4s.{EntityDecoder, HttpService, Response, Status}
 import org.http4s.circe._
@@ -37,7 +38,7 @@ class CDHYarnClientSpec extends FlatSpec with MockFactory with Matchers with Htt
     clusterService.list _ expects() returning IO(Seq(cluster))
 
     val client = new CDHYarnClient[IO](httpClient, clusterConfig, clusterService)
-    client.createPool(Yarn("pool", 1, 1), Queue("root")).unsafeRunSync()
+    client.createPool(Yarn("root.pool", 1, 1), Queue("root")).unsafeRunSync()
   }
 
   it should "evaluate the correct json" in {
@@ -55,6 +56,20 @@ class CDHYarnClientSpec extends FlatSpec with MockFactory with Matchers with Htt
     val client = new CDHYarnClient(null, clusterConfig, mock[ClusterService[IO]])
     val result = client.combine(input, Yarn("test", 1, 1), Queue("root"))
     result should be(expected)
+  }
+
+  it should "find correct queue" in {
+    val Right(json) = parse(Source.fromResource("cloudera/pool.json").getLines().mkString)
+    val client = new CDHYarnClient(null, clusterConfig, mock[ClusterService[IO]])
+    val result = client.dig(json.hcursor, Queue("root"))
+    result.top shouldBe defined
+  }
+
+  it should "generate parent pools" in {
+    val client = new CDHYarnClient(null, clusterConfig, mock[ClusterService[IO]])
+    val result = client.getParents(savedYarn).unsafeRunSync()
+
+    result.toList shouldBe List("root", "workspaces")
   }
 
 }

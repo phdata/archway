@@ -1,7 +1,8 @@
 package com.heimdali.clients
 
-import cats.effect.Sync
 import cats.implicits._
+import cats.effect.Sync
+import cats.free.Free
 import com.typesafe.scalalogging.LazyLogging
 import doobie._
 import doobie.implicits._

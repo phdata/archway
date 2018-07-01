@@ -56,9 +56,10 @@ class ProvisionServiceSpec
       hiveDatabaseRepository.complete _ expects savedHive.id.get returning 1
         .pure[ConnectionIO]
 
-//      yarnClient.createPool _ expects (savedYarn, Queue("root")) returning IO.unit
-//      yarnRepository.complete _ expects savedYarn.id.get returning 1
-//        .pure[ConnectionIO]
+      yarnClient.getParents _ expects savedYarn returning Queue("root").pure[IO]
+      yarnClient.createPool _ expects (savedYarn, Queue("root")) returning IO.unit
+      yarnRepository.complete _ expects savedYarn.id.get returning 1
+        .pure[ConnectionIO]
     }
 
     val newWorkspace =
@@ -92,7 +93,6 @@ class ProvisionServiceSpec
         hiveDatabaseRepository,
         ldapRepository,
         memberRepository,
-        () => null,
         transactor
       )
   }
