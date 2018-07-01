@@ -36,7 +36,6 @@ class ProvisionServiceImpl[F[_]](
       initialUser: String,
       elevate: Option[String]
   ): F[Unit] = {
-    implicit val connection: Connection = connectionFactory()
     for {
       _ <- F.pure(logger.info(s"creating directory ${database.location}"))
       _ <- hdfsClient.createDirectory(database.location, elevate)
@@ -73,13 +72,13 @@ class ProvisionServiceImpl[F[_]](
       _ <- logger.info(s"marking ${ldap.commonName} as complete").pure[F]
       _ <- ldapRepository.complete(ldap.id.get).transact(transactor)
       _ <- logger.info(s"creating role called ${ldap.sentryRole}").pure[F]
-        _ <- hiveService.createRole(ldap.sentryRole)
+      _ <- hiveService.createRole(ldap.sentryRole)
       _ <- logger.info(s"granting role ${ldap.sentryRole} to ${ldap.commonName}").pure[F]
-        _ <- hiveService.grantGroup(ldap.commonName, ldap.sentryRole)
+      _ <- hiveService.grantGroup(ldap.commonName, ldap.sentryRole)
       _ <- logger.info(s"granting role ${ldap.sentryRole} access to database ${database.name}").pure[F]
-        _ <- hiveService.enableAccessToDB(database.name, ldap.sentryRole)
+      _ <- hiveService.enableAccessToDB(database.name, ldap.sentryRole)
       _ <- logger.info(s"granting role ${ldap.sentryRole} access to HDFS location ${database.location}").pure[F]
-        _ <- hiveService.enableAccessToLocation(
+      _ <- hiveService.enableAccessToLocation(
           database.location,
           ldap.sentryRole
         )
@@ -87,8 +86,9 @@ class ProvisionServiceImpl[F[_]](
 
   def createYarn(yarn: Yarn): F[Unit] =
     for {
-      _ <- logger.info(s"creating ${yarn.poolName} yarn pool").pure[F]
-      _ <- yarnClient.createPool(yarn, Queue("root"))
+      parents <- yarnClient.getParents(yarn)
+      _ <- logger.info(s"creating ${yarn.poolName} yarn pool with ${parents.show}").pure[F]
+      _ <- yarnClient.createPool(yarn, parents)
       _ <- logger.info(s"marking ${yarn.poolName} yarn pool complete").pure[F]
       _ <- yarnRepository.complete(yarn.id.get).transact(transactor)
     } yield ()
@@ -103,7 +103,7 @@ class ProvisionServiceImpl[F[_]](
           else None
         )
       )
-//      _ <- workspaceRequest.processing.traverse(createYarn)
+      _ <- workspaceRequest.processing.traverse(createYarn)
     } yield ()
 
 }

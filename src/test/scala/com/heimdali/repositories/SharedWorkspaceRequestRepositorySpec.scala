@@ -26,12 +26,14 @@ class SharedWorkspaceRequestRepositorySpec extends FlatSpec with Matchers with D
     val newRecord = repository.create(newRequest.unsafeRunSync()).transact(transactor).unsafeRunSync()
     newRecord.id shouldBe defined
 
+    sql"delete from approval".update.run.transact(transactor).unsafeRunSync
     sql"delete from request_hive".update.run.transact(transactor).unsafeRunSync
     sql"delete from request_yarn".update.run.transact(transactor).unsafeRunSync
     sql"delete from workspace_request".update.run.transact(transactor).unsafeRunSync
     sql"delete from yarn".update.run.transact(transactor).unsafeRunSync
     sql"delete from hive_database".update.run.transact(transactor).unsafeRunSync
     sql"delete from compliance".update.run.transact(transactor).unsafeRunSync
+    sql"delete from member".update.run.transact(transactor).unsafeRunSync
     sql"delete from ldap_registration".update.run.transact(transactor).unsafeRunSync
   }
 
