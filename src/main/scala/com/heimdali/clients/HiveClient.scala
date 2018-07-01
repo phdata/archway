@@ -1,9 +1,7 @@
 package com.heimdali.clients
 
-import cats.implicits._
 import cats.effect.Sync
-import cats.free.Free
-import cats.syntax.functor._
+import cats.implicits._
 import com.typesafe.scalalogging.LazyLogging
 import doobie._
 import doobie.implicits._
@@ -38,7 +36,7 @@ class HiveClientImpl[F[_] : Sync](transactor: Transactor[F])
   override def createDatabase(name: String, location: String): F[Unit] =
     sql"""SHOW DATABASES""".query[String].to[Seq].transact(transactor).flatMap {
       case roles if !roles.contains(name) =>
-        (fr"CREATE DATABASE" ++ Fragment.const(name) ++ fr"LOCATION '" ++ Fragment.const(location) ++ fr"'")
+        (fr"CREATE DATABASE" ++ Fragment.const(name) ++ fr"LOCATION " ++ Fragment.const(s"'$location'"))
           .update.run.transact(transactor).void
       case _ =>
         Sync[F].unit
