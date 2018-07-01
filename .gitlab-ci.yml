@@ -1,0 +1,42 @@
+variables:
+  MYSQL_DATABASE: heimdali
+  MYSQL_ROOT_PASSWORD: my-secret-pw
+  LDAP_DOMAIN: jotunn.io
+  LDAP_READONLY: "true"
+
+stages:
+  - package
+  - publish
+  - notify
+
+package:
+  services:
+    - mysql:5
+    - name: registry.gitlab.com/jotunnllc/heimdali/heimdali-api/openldap
+      alias: ldap
+  tags:
+    - docker
+  stage: package
+  image: registry.gitlab.com/jotunnllc/heimdali/heimdali-api/jdk-mysql
+  script:
+    - "mysql -h mysql --password=my-secret-pw < ./src/main/resources/db/migration/*.sql"
+    - ./sbt assembly
+  artifacts:
+    paths:
+      - target/scala-2.12/heimdali-api.jar
+
+publish:
+  stage: publish
+  dependencies:
+    - package
+  script: aws s3 mv target/scala-2.12/heimdali-api.jar s3://heimdali-repo
+  
+successful_build:
+  stage: notify
+  script: 'curl -X POST --data-urlencode "payload={\"channel\": \"#heimdali-builds\", \"username\": \"Heimdali Builder\", \"text\": \"Heimdali API -$CI_PIPELINE_URL build $CI_PIPELINE_IID Succeeded\"}" https://hooks.slack.com/services/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'
+  when: on_success
+  
+failed_build:
+  stage: notify
+  script: 'curl -X POST --data-urlencode "payload={\"channel\": \"#heimdali-builds\", \"username\": \"Heimdali Builder\", \"text\": \"Heimdali API -$CI_PIPELINE_URL build $CI_PIPELINE_IID Failed\"}" https://hooks.slack.com/services/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'
+  when: on_failure
