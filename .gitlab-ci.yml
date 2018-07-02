@@ -1,9 +1,3 @@
-services:
-  - name: mysql:5
-    alias: mysql
-  - name: registry.gitlab.com/jotunnllc/heimdali/heimdali-api/openldap
-    alias: ldap
-
 variables:
   MYSQL_DATABASE: heimdali
   MYSQL_ROOT_PASSWORD: my-secret-pw
@@ -11,30 +5,23 @@ variables:
   LDAP_READONLY: "true"
 
 stages:
-  - setup
   - package
   - publish
   - notify
 
-setup:
-  stage: setup
-  image: mysql:5
-  script:
-    - "mysql -h mysql --password=my-secret-pw < ./src/main/resources/db/migration/V1__*.sql"  
-
 package:
   stage: package
-  image: java:jdk-8
+  image: registry.gitlab.com/jotunnllc/heimdali/heimdali-api/jdk-mysql
   script:
+    - "mysql -h mysql --password=my-secret-pw < ./src/main/resources/db/migration/V1__*.sql"
     - ./sbt assembly
-  dependencies:
-    - setup
   artifacts:
     paths:
       - target/scala-2.12/heimdali-api.jar
 
 publish:
   stage: publish
+  image: brentley/awscli
   dependencies:
     - package
   script: aws s3 mv target/scala-2.12/heimdali-api.jar s3://heimdali-repo
