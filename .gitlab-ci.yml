@@ -19,7 +19,7 @@ package:
   stage: package
   image: registry.gitlab.com/jotunnllc/heimdali/heimdali-api/jdk-mysql
   script:
-    - "mysql -h mysql --password=my-secret-pw < ./src/main/resources/db/migration/*.sql"
+    - "mysql -h mysql --password=my-secret-pw < ./src/main/resources/db/migration/V1__*.sql"
     - ./sbt assembly
   artifacts:
     paths:
