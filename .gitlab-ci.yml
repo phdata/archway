@@ -12,6 +12,8 @@ stages:
 package:
   services:
     - mysql:5
+    - name: registry.gitlab.com/jotunnllc/heimdali/heimdali-api/openldap
+      alias: ldap
   stage: package
   image: registry.gitlab.com/jotunnllc/heimdali/heimdali-api/jdk-mysql
   script:
