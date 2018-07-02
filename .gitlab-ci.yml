@@ -30,7 +30,9 @@ package:
 
 publish:
   stage: publish
-  image: brentley/awscli
+  image:
+    name: brentley/awscli
+    entrypoint: ["/bin/sh"]
   dependencies:
     - package
   script:
