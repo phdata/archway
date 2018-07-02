@@ -30,12 +30,11 @@ package:
 
 publish:
   stage: publish
-  image:
-    name: brentley/awscli
+  image: garland/aws-cli-docker
   dependencies:
     - package
   script:
-    - "s3 mv target/scala-2.12/heimdali-api.jar s3://heimdali-repo"
+    - "aws s3 mv target/scala-2.12/heimdali-api.jar s3://heimdali-repo"
   
 successful_build:
   stage: notify
