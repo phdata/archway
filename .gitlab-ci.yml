@@ -30,13 +30,11 @@ package:
 
 publish:
   stage: publish
-  image:
-    name: brentley/awscli
-    entrypoint: ["/bin/sh"]
+  image: brentley/awscli
   dependencies:
     - package
   script:
-    - aws s3 mv target/scala-2.12/heimdali-api.jar s3://heimdali-repo
+    - s3 mv target/scala-2.12/heimdali-api.jar s3://heimdali-repo
   
 successful_build:
   stage: notify
