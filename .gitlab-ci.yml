@@ -17,7 +17,7 @@ stages:
   - notify
 
 setup:
-  stage: package
+  stage: setup
   image: mysql:5
   script:
     - "mysql -h mysql --password=my-secret-pw < ./src/main/resources/db/migration/V1__*.sql"  
