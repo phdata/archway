@@ -10,6 +10,8 @@ stages:
   - notify
 
 package:
+  services:
+    - mysql:5
   stage: package
   image: registry.gitlab.com/jotunnllc/heimdali/heimdali-api/jdk-mysql
   script:
