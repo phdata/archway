@@ -6,7 +6,7 @@ import { Spin, Row, Col, Icon, Button, Tabs, Tag } from 'antd';
 import TabIcon from './TabIcon';
 import DBDisplay from './DBDisplay';
 import ProcessingDisplay from './ProcessingDisplay';
-import { changeDB, approveInfra, approveRisk, getWorkspace } from './actions';
+import { changeDB, approveInfra, approveRisk, getWorkspace, addMember, newMemberFormChanged } from './actions';
 import './WorkspaceDetails.css';
 
 const ComplianceCheck = ({ value, label }) => {
@@ -38,8 +38,8 @@ const ApprovalActions = ({
 }) => {
   if (!risk_management && !platform_operations) return <div />;
 
-  const infraButton = platform_operations ? <Button disabled={!!approvals.infra} loading={approving} type="primary" onClick={approveInfra}><Icon type="check" />Infrastructure</Button> : null;
-  const riskButton = risk_management ? <Button disabled={!!approvals.risk} loading={approving} type="primary" onClick={approveRisk}><Icon type="check" />Risk</Button> : null;
+  const infraButton = platform_operations ? <Button key="infra" disabled={!!approvals.infra} loading={approving} type="primary" onClick={approveInfra}><Icon type="check" />Infrastructure</Button> : null;
+  const riskButton = risk_management ? <Button key="risk" disabled={!!approvals.risk} loading={approving} type="primary" onClick={approveRisk}><Icon type="check" />Risk</Button> : null;
 
   const buttons = [infraButton, riskButton].filter(i => i != null);
 
@@ -65,6 +65,9 @@ class WorkspaceDetails extends React.Component {
       approving,
       changeDB,
       members,
+      addMember,
+      newMemberForm,
+      newMemberFormChanged,
     } = this.props;
     if (!activeWorkspace) return <Spin spinning={fetching}>Loading...</Spin>;
     const {
@@ -106,8 +109,11 @@ class WorkspaceDetails extends React.Component {
                 id={id}
                 name={item.name}
                 size_in_gb={item.size_in_gb}
-                managers={members.managers}
-                readonly={members.readonly}
+                managers={members.managers || []}
+                readonly={members.readonly || []}
+                addMember={addMember}
+                newMemberForm={newMemberForm}
+                newMemberFormChanged={newMemberFormChanged}
               />
             </Tabs.TabPane>
           ))}
@@ -126,6 +132,9 @@ WorkspaceDetails.propTypes = {
   approveInfra: PropTypes.func,
   approveRisk: PropTypes.func,
   changeDB: PropTypes.func,
+  addMember: PropTypes.func,
+  newMemberForm: PropTypes.obj,
+  newMemberFormChanged: PropTypes.func,
 };
 
 export default connect(
@@ -134,11 +143,14 @@ export default connect(
     activeWorkspace: state.workspaces.activeWorkspace,
     profile: state.auth.profile || { permissions: { risk_management: false, platform_operations: false } },
     members: state.workspaces.members,
+    newMemberForm: state.workspaces.newMemberForm,
   }),
   {
     getWorkspace,
     approveRisk,
     approveInfra,
     changeDB,
+    addMember,
+    newMemberFormChanged,
   },
 )(WorkspaceDetails);

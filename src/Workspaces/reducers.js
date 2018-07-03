@@ -14,6 +14,8 @@ import {
   APPROVE_WORKSPACE_COMPLETED,
   SET_MANAGERS,
   SET_READONLY,
+  NEW_MEMBER_FORM_CHANGED,
+  CHANGE_DB,
 } from './actions';
 
 const initialState = {
@@ -27,6 +29,7 @@ const initialState = {
   requesting: false,
   approving: false,
   members: {},
+  newMemberForm: { role: 'manager' },
 };
 
 const workspaces = (state = initialState, action) => {
@@ -120,6 +123,16 @@ const workspaces = (state = initialState, action) => {
           ...state.members,
           managers: action.members,
         },
+      };
+    case NEW_MEMBER_FORM_CHANGED:
+      const memberFieldKey = Object.keys(action.field)[0];
+      console.log(memberFieldKey);
+      state.newMemberForm[memberFieldKey] = action.field[memberFieldKey].value;
+      return state;
+    case CHANGE_DB:
+      return {
+        ...state,
+        activeDatabase: action.name,
       };
     default:
       return state;

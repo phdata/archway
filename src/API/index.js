@@ -48,7 +48,7 @@ export const workspaceMemberList =
     (token, id) => get(`/workspaces/${id}/members`, token);
 
 export const workspaceNewMember =
-    (username, token, id) => withBody(`/workspaces/${id}/members`, token, { username });
+    (token, id, db, role, username) => withBody(`/workspaces/${id}/${db}/${role}`, token, { username });
 
 export const removeWorkspaceMember =
     (username, token, id) => withBody(`/workspaces/${id}/members/${username}`, token, {}, 'DELETE');

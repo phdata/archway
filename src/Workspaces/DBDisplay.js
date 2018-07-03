@@ -1,9 +1,58 @@
 import React from 'react';
-import { List, Tabs, Row, Col } from 'antd';
+import { List, Row, Col, Form, Select, Input, Avatar, Icon } from 'antd';
 import PropTypes from 'prop-types';
 
 import ValueDisplay from './ValueDisplay';
-import TabIcon from './TabIcon';
+
+const UserForm = Form.create({
+  onFieldsChange(props, changedFields) {
+    props.onChange(changedFields);
+  },
+  mapPropsToFields(props) {
+    return {
+      username: Form.createFormField({
+        value: props.newMemberForm.username,
+      }),
+      role: Form.createFormField({
+        value: props.newMemberForm.role,
+      }),
+    };
+  },
+})(({
+  form: {
+    getFieldDecorator,
+  },
+  addMember,
+  addingUser,
+}) => {
+  const RoleSelect = getFieldDecorator('role', {})(<Select>
+    <Select.Option value="manager">Read/Write</Select.Option>
+  </Select>);
+  return (
+    <Form
+        onSubmit={(e) => {
+          e.preventDefault();
+          addMember();
+        }}
+        layout="horizontal"
+      >
+      <Form.Item>
+        {getFieldDecorator('username', { rules: [{ required: true }] })(
+            <Input addonAfter={RoleSelect} placeholder="username" />
+        )}
+       <div style={{ color: '#aaa', fontSize: 12 }}>
+          <Icon type="info-circle-o" /> enter a username and hit enter to add
+      </div>
+      </Form.Item>
+    </Form>
+  );
+});
+
+const ListFooter = ({ newMemberForm, addMember, onChange }) => (
+  <div>
+    <UserForm onChange={onChange} addMember={addMember} addingUser={false} newMemberForm={newMemberForm} />
+  </div>
+);
 
 const ListHeader = ({ name }) => (
   <h3 style={{ textAlign: 'center' }}>
@@ -11,13 +60,30 @@ const ListHeader = ({ name }) => (
   </h3>
 );
 
+const ListItem = ({ username, role }) => {
+  const avatar = role === 'readonly' ? 'RO' : 'RW';
+  return (
+    <List.Item>
+      <List.Item.Meta
+        style={{ alignItems: 'center' }}
+        avatar={<Avatar style={{ backgroundColor: '#D7C9AA' }}>{avatar}</Avatar>}
+        title={username}
+      />
+    </List.Item>
+  );
+};
+
 const DBDisplay = ({
   name,
   size_in_gb,
   managers,
   readonly,
+  addMember,
+  newMemberForm,
+  newMemberFormChanged,
 }) => {
-  console.log(name);
+  const managerList = (managers && managers.map(member => ({ ...member, role: 'manager' }))) || [];
+  const readonlyList = (readonly && readonly.map(member => ({ ...member, role: 'readonly' }))) || [];
   return (
     <div>
       <Row className="Data" type="flex" align="center">
@@ -31,15 +97,10 @@ const DBDisplay = ({
         </Col>
         <Col span={6}>
           <List
-            itemLayout="vertical"
             header={<ListHeader name="Workspace Managers" />}
-            dataSource={managers}
-            renderItem={item => <List.Item style={{ textAlign: 'center' }}>{item.username}</List.Item>}
-          />
-          <List
-            header={<ListHeader name="Read Only Members" />}
-            dataSource={readonly}
-            renderItem={item => <List.Item>{item.name}</List.Item>}
+            footer={<ListFooter onChange={newMemberFormChanged} newMemberForm={newMemberForm} addMember={addMember} />}
+            dataSource={managerList.concat(readonlyList)}
+            renderItem={ListItem}
           />
         </Col>
       </Row>
@@ -52,6 +113,9 @@ DBDisplay.propTypes = {
   size_in_gb: PropTypes.number.isRequired,
   managers: PropTypes.arr,
   readonly: PropTypes.arr,
+  addMember: PropTypes.func,
+  newMemberForm: PropTypes.obj,
+  newMemberFormChanged: PropTypes.func,
 };
 
 export default DBDisplay;
