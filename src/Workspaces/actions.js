@@ -148,3 +148,21 @@ export function setMembers(role, members) {
     members,
   };
 }
+
+export const ADD_MEMBER = 'ADD_MEMBER';
+
+export function addMember() {
+  return {
+    type: ADD_MEMBER,
+  };
+}
+
+
+export const NEW_MEMBER_FORM_CHANGED = 'NEW_MEMBER_FORM_CHANGED';
+
+export function newMemberFormChanged(field) {
+    return {
+        type: NEW_MEMBER_FORM_CHANGED,
+        field,
+    };
+}

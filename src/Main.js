@@ -2,7 +2,7 @@ import React from 'react';
 import { ConnectedRouter } from 'react-router-redux';
 import { Route, Redirect } from 'react-router';
 import PropTypes from 'prop-types';
-import { Layout, Menu, Icon } from 'antd';
+import { Layout, Menu } from 'antd';
 import { NavLink } from 'react-router-dom';
 import './less/index.css';
 

@@ -65,7 +65,7 @@ const RequestForm = Form.create({
         </Radio.Button>
       </Radio.Group>
     </Form.Item>
-    {pendingRequestType && pendingRequestType != 'user' &&
+    {pendingRequestType && pendingRequestType !== 'user' &&
     <div>
       <Form.Item label="name" {...FormItemDefaults} wrapperCol={{ span: 3 }}>
         {getFieldDecorator('name', {})(<Input />)}
