@@ -45,13 +45,13 @@ class LDAPRepositoryImpl
   val select: Fragment =
     sql"""
        select
-         distinguished_name,
-         common_name,
-         sentry_role,
-         id,
-         created
+         l.distinguished_name,
+         l.common_name,
+         l.sentry_role,
+         l.id,
+         l.created
        from
-         ldap_registration
+         ldap_registration l
       """
 
   override def create(ldapRegistration: LDAPRegistration): ConnectionIO[LDAPRegistration] =
@@ -65,10 +65,10 @@ class LDAPRepositoryImpl
       (
         select ++
         fr"inner join hive_database h on "
-        ++ Fragment.const(s"h.${databaseRole.getClass.getSimpleName}_id") ++ fr" = l.id"
+        ++ Fragment.const(s"h.${databaseRole.getClass.getSimpleName.toLowerCase().replace("$", "")}_group_id") ++ fr" = l.id"
         ++ fr"""
-        inner join request_database rd on rd.hive_database_id = h.id
-        inner join workspace_request w on w.id = rd.workspace_request_id
+        inner join request_hive rh on rh.hive_database_id = h.id
+        inner join workspace_request w on w.id = rh.workspace_request_id
         where w.id = $workspaceId and h.name = $databaseName
         """).query[LDAPRegistration].option
     )

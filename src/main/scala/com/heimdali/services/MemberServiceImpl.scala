@@ -6,6 +6,7 @@ import cats.effect.Effect
 import com.heimdali.clients.LDAPClient
 import com.heimdali.models.WorkspaceMember
 import com.heimdali.repositories.{ DatabaseRole, LDAPRepository, MemberRepository }
+import com.typesafe.scalalogging.LazyLogging
 import doobie.implicits._
 import doobie.util.transactor.Transactor
 
@@ -16,7 +17,8 @@ class MemberServiceImpl[F[_]](
   ldapRepository: LDAPRepository,
   ldapClient: LDAPClient[F],
   )(implicit val F: Effect[F])
-    extends MemberService[F] {
+    extends MemberService[F]
+    with LazyLogging {
 
   def members[A <: DatabaseRole](
       id: Long,
@@ -35,16 +37,20 @@ class MemberServiceImpl[F[_]](
       username: String
   ): OptionT[F, WorkspaceMember] =
     for {
+      _ <- OptionT.pure[F](logger.info("looking up info for request id {} db {} and role {}", id, databaseName, roleName))
       registration <- OptionT(
         ldapRepository
           .find(id, databaseName, roleName)
           .value
           .transact(transactor)
       )
+      _ <- OptionT.some[F](logger.info(s"adding $username to ${registration.commonName} in db"))
       memberId <- OptionT.liftF(
-        memberRepository.create(username, id).transact(transactor)
+        memberRepository.create(username, registration.id.get).transact(transactor)
       )
-      _ <- ldapClient.addUser(registration.commonName, username)
+      _ <- OptionT.some[F](logger.info(s"adding $username to ${registration.commonName} in ldap"))
+      _ <- ldapClient.addUser(registration.distinguishedName, username)
+      _ <- OptionT.some[F](logger.info(s"completing $username"))
       member <- OptionT.liftF(
         (memberRepository.complete(memberId), memberRepository.get(memberId))
           .mapN((_, member) => member)
