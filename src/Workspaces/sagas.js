@@ -12,6 +12,7 @@ import {
   APPROVE_WORKSPACE_REQUESTED,
   CHANGE_DB,
   ADD_MEMBER,
+  REMOVE_MEMBER,
 
   workspaceGenerated,
   setRequest,
@@ -132,6 +133,17 @@ function* memberRequested() {
     yield takeLatest(ADD_MEMBER, addMember);
 }
 
+function* removeMember({ username, role }) {
+  const token = yield select(s => s.auth.token);
+  const { activeWorkspace: { id }, activeDatabase } = yield select(s => s.workspaces);
+  yield call(Api.removeWorkspaceMember, token, id, activeDatabase, role, username);
+  yield put(changeDB(activeDatabase)); 
+}
+
+function* removeMemberRequested() {
+    yield takeLatest(REMOVE_MEMBER, removeMember);
+}
+
 export default function* root() {
   yield all([
     fork(typeChanged),
@@ -143,5 +155,6 @@ export default function* root() {
     fork(approveWorkspace),
     fork(dbChanging),
     fork(memberRequested),
+    fork(removeMemberRequested),
   ]);
 }

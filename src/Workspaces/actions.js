@@ -166,3 +166,13 @@ export function newMemberFormChanged(field) {
         field,
     };
 }
+
+export const REMOVE_MEMBER = 'REMOVE_MEMBER';
+
+export function removeMember(username, role) {
+  return {
+    type: REMOVE_MEMBER,
+    username,
+    role
+  };
+}

@@ -1,8 +1,10 @@
 import React from 'react';
-import { List, Row, Col, Form, Select, Input, Avatar, Icon } from 'antd';
+import { List, Row, Col, Form, Select, Input, Avatar, Icon, Button, Popconfirm } from 'antd';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 
 import ValueDisplay from './ValueDisplay';
+import { addMember, removeMember, newMemberFormChanged } from './actions';
 
 const UserForm = Form.create({
   onFieldsChange(props, changedFields) {
@@ -48,11 +50,6 @@ const UserForm = Form.create({
   );
 });
 
-const ListFooter = ({ newMemberForm, addMember, onChange }) => (
-  <div>
-    <UserForm onChange={onChange} addMember={addMember} addingUser={false} newMemberForm={newMemberForm} />
-  </div>
-);
 
 const ListHeader = ({ name }) => (
   <h3 style={{ textAlign: 'center' }}>
@@ -60,7 +57,7 @@ const ListHeader = ({ name }) => (
   </h3>
 );
 
-const ListItem = ({ username, role }) => {
+const ListItem = ({ member: { username, role }, removeMember }) => {
   const avatar = role === 'readonly' ? 'RO' : 'RW';
   return (
     <List.Item>
@@ -69,19 +66,29 @@ const ListItem = ({ username, role }) => {
         avatar={<Avatar style={{ backgroundColor: '#D7C9AA' }}>{avatar}</Avatar>}
         title={username}
       />
+      <Popconfirm title={`Are you sure you want to remove ${username}?`} onConfirm={_ => removeMember(username, role)} >
+        <Button size="small" icon="minus" shape="circle" style={{ backgroundColor: '#7B2D26', color: '#F0F3F5' }} />
+      </Popconfirm>
     </List.Item>
   );
 };
 
-const DBDisplay = ({
-  name,
-  size_in_gb,
-  managers,
-  readonly,
-  addMember,
-  newMemberForm,
-  newMemberFormChanged,
-}) => {
+class DBDisplay extends React.Component {
+  render() {
+    const {
+      database: {
+        name,
+        size_in_gb,
+      },
+      members: {
+        managers,
+        readonly,
+      },
+      addMember,
+      newMemberForm,
+      newMemberFormChanged,
+      removeMember,
+    } = this.props;
   const managerList = (managers && managers.map(member => ({ ...member, role: 'manager' }))) || [];
   const readonlyList = (readonly && readonly.map(member => ({ ...member, role: 'readonly' }))) || [];
   return (
@@ -98,24 +105,37 @@ const DBDisplay = ({
         <Col span={6}>
           <List
             header={<ListHeader name="Workspace Managers" />}
-            footer={<ListFooter onChange={newMemberFormChanged} newMemberForm={newMemberForm} addMember={addMember} />}
+            footer={<UserForm onChange={newMemberFormChanged} addMember={addMember} addingUser={false} newMemberForm={newMemberForm} />}
             dataSource={managerList.concat(readonlyList)}
-            renderItem={ListItem}
+            renderItem={item => <ListItem member={item} removeMember={removeMember} />}
           />
         </Col>
       </Row>
     </div>
   );
-};
+  }
+}
 
 DBDisplay.propTypes = {
-  name: PropTypes.string.isRequired,
-  size_in_gb: PropTypes.number.isRequired,
-  managers: PropTypes.arr,
-  readonly: PropTypes.arr,
+  database: PropTypes.shape({
+    name: PropTypes.string.isRequired,
+    size_in_gb: PropTypes.number.isRequired,
+  }),
+  members: PropTypes.shape({
+    managers: PropTypes.arr,
+    readonly: PropTypes.arr,
+  }),
   addMember: PropTypes.func,
   newMemberForm: PropTypes.obj,
   newMemberFormChanged: PropTypes.func,
+  removeMember: PropTypes.func,
 };
 
-export default DBDisplay;
+export default connect(
+  state => state.workspaces,
+  { 
+    addMember, 
+    newMemberFormChanged,
+    removeMember,
+  }
+)(DBDisplay);

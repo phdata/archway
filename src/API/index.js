@@ -51,7 +51,7 @@ export const workspaceNewMember =
     (token, id, db, role, username) => withBody(`/workspaces/${id}/${db}/${role}`, token, { username });
 
 export const removeWorkspaceMember =
-    (username, token, id) => withBody(`/workspaces/${id}/members/${username}`, token, {}, 'DELETE');
+    (token, id, db, role, username) => withBody(`/workspaces/${id}/${db}/${role}/${username}`, token, {}, 'DELETE');
 
 export const getTemplate =
     (token, type) => get(`/templates/${type}`, token);
