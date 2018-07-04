@@ -105,16 +105,7 @@ class WorkspaceDetails extends React.Component {
               tab={<TabIcon icon="database" name={item.name} />}
               key={item.name}
             >
-              <DBDisplay
-                id={id}
-                name={item.name}
-                size_in_gb={item.size_in_gb}
-                managers={members.managers || []}
-                readonly={members.readonly || []}
-                addMember={addMember}
-                newMemberForm={newMemberForm}
-                newMemberFormChanged={newMemberFormChanged}
-              />
+              <DBDisplay database={item} />
             </Tabs.TabPane>
           ))}
           {processing.map(ProcessingDisplay)}
@@ -132,9 +123,6 @@ WorkspaceDetails.propTypes = {
   approveInfra: PropTypes.func,
   approveRisk: PropTypes.func,
   changeDB: PropTypes.func,
-  addMember: PropTypes.func,
-  newMemberForm: PropTypes.obj,
-  newMemberFormChanged: PropTypes.func,
 };
 
 export default connect(
@@ -142,15 +130,11 @@ export default connect(
     fetching: state.workspaces.fetching,
     activeWorkspace: state.workspaces.activeWorkspace,
     profile: state.auth.profile || { permissions: { risk_management: false, platform_operations: false } },
-    members: state.workspaces.members,
-    newMemberForm: state.workspaces.newMemberForm,
   }),
   {
     getWorkspace,
     approveRisk,
     approveInfra,
     changeDB,
-    addMember,
-    newMemberFormChanged,
   },
 )(WorkspaceDetails);
