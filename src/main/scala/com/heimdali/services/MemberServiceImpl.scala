@@ -77,7 +77,7 @@ class MemberServiceImpl[F[_]](
           .value
           .transact(transactor)
       )
-      _ <- ldapClient.removeUser(registration.commonName, username)
+      _ <- ldapClient.removeUser(registration.distinguishedName, username)
       _ <- OptionT.liftF(
         memberRepository.delete(member.id.get).transact(transactor)
       )

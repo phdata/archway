@@ -48,5 +48,5 @@ class MemberRepositoryImpl extends MemberRepository {
     sql"delete from member where id = $id".update.run
 
   override def find(registrationId: Long, username: String): OptionT[doobie.ConnectionIO, WorkspaceMember] =
-    OptionT((baseSelect ++ whereAnd(fr"m.ldap_registration_id = $registrationId")).query[WorkspaceMember].option)
+    OptionT((baseSelect ++ whereAnd(fr"m.ldap_registration_id = $registrationId", fr"m.username = $username")).query[WorkspaceMember].option)
 }
