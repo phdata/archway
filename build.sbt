@@ -6,9 +6,10 @@ scalaVersion := "2.12.5"
 
 resolvers += "Cloudera" at "https://repository.cloudera.com/artifactory/cloudera-repos"
 
-val cdhVersion = "cdh5.11.1"
+val cdhVersion = "cdh5.13.0"
 val hiveVersion = s"1.1.0-$cdhVersion"
 val hadoopVersion = s"2.6.0-$cdhVersion"
+val sentryVersion = s"1.5.1-$cdhVersion"
 
 val circeVersion = "0.9.3"
 val doobieVersion = "0.5.3"
@@ -36,6 +37,7 @@ libraryDependencies ++= Seq(
   "io.circe" %% "circe-generic-extras" % circeVersion,
   "io.circe" %% "circe-optics" % circeVersion,
   "io.circe" %% "circe-java8" % circeVersion,
+  "org.apache.kafka" %% "kafka" % "0.10.1.1",
   ("com.pauldijou" %% "jwt-core" % "0.14.1")
     .exclude("org.bouncycastle", "bcpkix-jdk15on"),
   ("com.pauldijou" %% "jwt-circe" % "0.14.1")
@@ -45,6 +47,7 @@ libraryDependencies ++= Seq(
   "org.flywaydb" % "flyway-core" % "4.2.0",
   "postgresql" % "postgresql" % "9.0-801.jdbc4" % "provided",
   "mysql" % "mysql-connector-java" % "6.0.6" % "provided",
+  "org.apache.sentry" % "sentry-provider" % sentryVersion % "provided",
   "org.apache.hadoop" % "hadoop-client" % hadoopVersion % "provided",
   "org.apache.hive" % "hive-jdbc" % hiveVersion % "provided",
   "org.apache.hadoop" % "hadoop-hdfs" % hadoopVersion % Test classifier "" classifier "tests",
