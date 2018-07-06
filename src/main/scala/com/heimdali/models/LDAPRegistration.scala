@@ -8,7 +8,16 @@ case class LDAPRegistration(distinguishedName: String,
                             commonName: String,
                             sentryRole: String,
                             id: Option[Long] = None,
-                            created: Option[Instant] = None)
+                            created: Option[Instant] = None) {
+
+  import com.heimdali.tasks._
+
+  val tasks: List[ProvisionTask] = List(
+    CreateLDAPGroup(distinguishedName),
+    CreateRole(sentryRole),
+  )
+
+}
 
 object LDAPRegistration {
 

@@ -6,6 +6,8 @@ scalaVersion := "2.12.5"
 
 resolvers += "Cloudera" at "https://repository.cloudera.com/artifactory/cloudera-repos"
 
+resolvers += "Apache" at "http://repo.spring.io/plugins-release/"
+
 val cdhVersion = "cdh5.13.0"
 val hiveVersion = s"1.1.0-$cdhVersion"
 val hadoopVersion = s"2.6.0-$cdhVersion"
@@ -47,7 +49,7 @@ libraryDependencies ++= Seq(
   "org.flywaydb" % "flyway-core" % "4.2.0",
   "postgresql" % "postgresql" % "9.0-801.jdbc4" % "provided",
   "mysql" % "mysql-connector-java" % "6.0.6" % "provided",
-  "org.apache.sentry" % "sentry-provider" % sentryVersion % "provided",
+  "org.apache.sentry" % "sentry-provider-db" % sentryVersion % "provided",
   "org.apache.hadoop" % "hadoop-client" % hadoopVersion % "provided",
   "org.apache.hive" % "hive-jdbc" % hiveVersion % "provided",
   "org.apache.hadoop" % "hadoop-hdfs" % hadoopVersion % Test classifier "" classifier "tests",

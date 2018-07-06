@@ -1,66 +1,12 @@
 package com.heimdali.models
 
-import cats.Show
-import cats.syntax.show._
-import java.time.{ Clock, Instant }
-import doobie.util.composite.Composite
-import doobie.util.meta.Meta
+import java.time.{Clock, Instant}
+
+import cats.data.Kleisli
+import com.heimdali.tasks.ProvisionResult
 import io.circe._
-import io.circe.syntax._
 import io.circe.java8.time._
-
-sealed trait ApproverRole
-
-object ApproverRole {
-
-  def parseRole(role: String): ApproverRole =
-    role match {
-      case "infra" => Infra
-      case "risk" => Risk
-    }
-
-  implicit val approverComposite: Meta[ApproverRole] =
-    Meta[String].xmap(parseRole, _.toString.toLowerCase)
-
-  implicit def approverShow[A <: ApproverRole]: Show[A] = Show.show(_.getClass.getSimpleName.toLowerCase)
-
-}
-
-case object Infra extends ApproverRole
-
-case object Risk extends ApproverRole
-
-case object NA extends ApproverRole
-
-case class Approval(role: ApproverRole, approver: String, approvalTime: Instant, id: Option[Long] = None)
-
-object Approval {
-
-  implicit val Point2DComposite: Composite[Approval] =
-    Composite[(ApproverRole, String, Instant, Option[Long])].imap(
-      (t: (ApproverRole, String, Instant, Option[Long])) => Approval(t._1, t._2, t._3, t._4))(
-      (p: Approval) => (p.role, p.approver, p.approvalTime, p.id)
-    )
-
-  implicit def decoder(user: User, clock: Clock): Decoder[Approval] = Decoder.instance( cursor =>
-    for {
-      role <- cursor.downField("role").as[String]
-    } yield Approval(ApproverRole.parseRole(role), user.username, Instant.now(clock))
-  )
-
-  implicit val encoder: Encoder[Approval] = Encoder.instance { approval =>
-    Json.obj(
-      approval.role.toString.toLowerCase -> Json.obj(
-        "approver" -> approval.approver.asJson,
-        "approval_time" -> approval.approvalTime.asJson
-      )
-    )
-  }
-
-  implicit val approvalShow: Show[Approval] =
-    Show.show(a => s"${a.approver} (${a.role.toString}) @ ${a.approvalTime.toString}")
-
-}
+import io.circe.syntax._
 
 case class WorkspaceRequest(name: String,
                             requestedBy: String,
@@ -70,7 +16,13 @@ case class WorkspaceRequest(name: String,
                             id: Option[Long] = None,
                             approvals: List[Approval] = List.empty,
                             data: List[HiveDatabase] = List.empty,
-                            processing: List[Yarn] = List.empty)
+                            processing: List[Yarn] = List.empty) {
+
+  def provision() = Kleisli[List, AppConfig, ProvisionResult] =
+    Kleisli[List, AppConfig, ProvisionResult] { appConfig =>
+      data.map(_.tasks.)
+    }
+}
 
 object WorkspaceRequest {
 
