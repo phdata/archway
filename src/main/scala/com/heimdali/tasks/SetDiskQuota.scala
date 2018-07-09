@@ -5,10 +5,12 @@ import cats.data.Kleisli
 import cats.effect.IO
 import com.heimdali.models.AppConfig
 
-case class SetDiskQuota(location: String, sizeInGB: Int) extends ProvisionTask {
-  override def provision: Kleisli[IO, AppConfig, ProvisionResult] = ???
-}
+case class SetDiskQuota(location: String, sizeInGB: Int)
 
 object SetDiskQuota {
-  def show: Show[SetDiskQuota] = ???
+
+  implicit val show: Show[SetDiskQuota] = ???
+
+  implicit val provisioner: ProvisionTask[SetDiskQuota] = ???
+
 }

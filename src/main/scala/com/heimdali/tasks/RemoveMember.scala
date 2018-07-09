@@ -5,10 +5,12 @@ import cats.data.Kleisli
 import cats.effect.IO
 import com.heimdali.models.AppConfig
 
-case class RemoveMember(groupDN: String, userDN: String) extends ProvisionTask {
-  override def provision: Kleisli[IO, AppConfig, ProvisionResult] = ???
-}
+case class RemoveMember(groupDN: String, userDN: String)
 
 object RemoveMember {
-  def show: Show[RemoveMember] = ???
+
+  implicit val show: Show[RemoveMember] = ???
+
+  implicit val provisioner: ProvisionTask[RemoveMember] = ???
+
 }

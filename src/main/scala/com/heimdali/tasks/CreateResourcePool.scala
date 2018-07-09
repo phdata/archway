@@ -5,10 +5,12 @@ import cats.data.Kleisli
 import cats.effect.IO
 import com.heimdali.models.AppConfig
 
-case class CreateResourcePool(name: String, cores: Int, memory: Int) extends ProvisionTask {
-  override def provision: Kleisli[IO, AppConfig, ProvisionResult] = ???
-}
+case class CreateResourcePool(name: String, cores: Int, memory: Int)
 
 object CreateResourcePool {
-  def show: Show[CreateResourcePool] = ???
+
+  implicit val show: Show[CreateResourcePool] = ???
+
+  implicit val provisioner: ProvisionTask[CreateResourcePool] = ???
+
 }

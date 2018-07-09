@@ -5,10 +5,12 @@ import cats.data.Kleisli
 import cats.effect.IO
 import com.heimdali.models.AppConfig
 
-case class AllowDatabaseAccess(databaseName: String, roleName: String) extends ProvisionTask {
-  override def provision: Kleisli[IO, AppConfig, ProvisionResult] = ???
-}
+case class AllowDatabaseAccess(databaseName: String, roleName: String)
 
 object AllowDatabaseAccess {
-  def show: Show[AllowDatabaseAccess] = ???
+
+  implicit val show: Show[AllowDatabaseAccess] = ???
+
+  implicit val provisioner: ProvisionTask[AllowDatabaseAccess] = ???
+
 }

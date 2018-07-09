@@ -6,10 +6,12 @@ import cats.effect.IO
 import com.heimdali.models.AppConfig
 import org.apache.hadoop.fs.Path
 
-case class GrantLocationAccess(role: String, location: Path) extends ProvisionTask {
-  override def provision: Kleisli[IO, AppConfig, ProvisionResult] = ???
-}
+case class GrantLocationAccess(role: String, location: String)
 
 object GrantLocationAccess {
-  def show: Show[GrantLocationAccess] = ???
+
+  implicit val show: Show[GrantLocationAccess] = ???
+
+  implicit val provisioner: ProvisionTask[GrantLocationAccess] = ???
+
 }

@@ -5,10 +5,12 @@ import cats.data.Kleisli
 import cats.effect.IO
 import com.heimdali.models.AppConfig
 
-case class GrantGroupAccess(role: String, groupName: String) extends ProvisionTask {
-  override def provision: Kleisli[IO, AppConfig, ProvisionResult] = ???
-}
+case class GrantGroupAccess(role: String, groupName: String)
 
 object GrantGroupAccess {
-  def show: Show[GrantGroupAccess] = ???
+
+  implicit val show: Show[GrantGroupAccess] = ???
+
+  implicit val provisioner: ProvisionTask[GrantGroupAccess] = ???
+
 }

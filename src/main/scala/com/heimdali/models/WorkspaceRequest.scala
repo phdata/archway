@@ -2,8 +2,9 @@ package com.heimdali.models
 
 import java.time.{Clock, Instant}
 
+import cats.Show
 import cats.data.Kleisli
-import com.heimdali.tasks.ProvisionResult
+import com.heimdali.tasks.{ProvisionResult, ProvisionTask}
 import io.circe._
 import io.circe.java8.time._
 import io.circe.syntax._
@@ -16,15 +17,13 @@ case class WorkspaceRequest(name: String,
                             id: Option[Long] = None,
                             approvals: List[Approval] = List.empty,
                             data: List[HiveDatabase] = List.empty,
-                            processing: List[Yarn] = List.empty) {
-
-  def provision() = Kleisli[List, AppConfig, ProvisionResult] =
-    Kleisli[List, AppConfig, ProvisionResult] { appConfig =>
-      data.map(_.tasks.)
-    }
-}
+                            processing: List[Yarn] = List.empty)
 
 object WorkspaceRequest {
+
+  implicit val show: Show[WorkspaceRequest] = ???
+
+  implicit val provision: ProvisionTask[WorkspaceRequest] = ???
 
   def apply(name: String,
             requestedBy: String,

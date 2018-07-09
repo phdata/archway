@@ -1,19 +1,22 @@
 package com.heimdali.tasks
 
-import cats._
+import cats.Show
 import cats.data._
 import cats.effect._
 import com.heimdali.models.AppConfig
 
-case class CreateRole(name: String) extends ProvisionTask {
+case class CreateRole(name: String)
 
-  override val provision: Kleisli[EitherT[IO, String, ?], AppConfig, Unit] =
-      Kleisli[EitherT[IO, String, ?], AppConfig, Unit] { config =>
-        EitherT.liftF(IO(config.sentryService.createRole("heimdali_api", name)).attempt.map {
-          case Left(exception) => EitherT.left(exception.getMessage)
-          case Right(_) => EitherT.rightT(())
-        })
+object CreateRole {
+
+  implicit val show: Show[CreateRole] = ???
+
+  implicit val provisioner: ProvisionTask[CreateRole] =
+      createRole => Kleisli[IO, AppConfig, ProvisionResult] { config =>
+        IO(config.sentryService.createRole("heimdali_api", createRole.name)).attempt.map {
+          case Left(exception) => Error[CreateRole](exception)
+          case Right(_) => Success("")
+        }
       }
-  }
 
 }

@@ -6,10 +6,12 @@ import cats.effect.IO
 import cats.syntax.show
 import com.heimdali.models.AppConfig
 
-case class AddMember(groupDN: String, userDN: String) extends ProvisionTask {
-  override def provision: Kleisli[IO, AppConfig, ProvisionResult] = ???
-}
+case class AddMember(groupDN: String, userDN: String)
 
 object AddMember {
-  def show: Show[AddMember] = Show.show(am => s"adding \"${am.userDN}\" to \"${am.groupDN}")
+
+  implicit val show: Show[AddMember] =
+    Show.show(am => s"""adding "${am.userDN}" to "${am.groupDN}""")
+
+  implicit val provisioner: ProvisionTask[AddMember] = ???
 }

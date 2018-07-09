@@ -5,10 +5,10 @@ import cats.data.Kleisli
 import cats.effect.IO
 import com.heimdali.models.AppConfig
 
-case class CreateDatabaseDirectory() extends ProvisionTask {
-  override def provision: Kleisli[IO, AppConfig, ProvisionResult] = ???
-}
+case class CreateDatabaseDirectory(location: String)
 
 object CreateDatabaseDirectory {
-  def show: Show[CreateDatabaseDirectory] = ???
+  implicit val show: Show[CreateDatabaseDirectory] = ???
+
+  implicit val provisioner: ProvisionTask[CreateDatabaseDirectory] = ???
 }

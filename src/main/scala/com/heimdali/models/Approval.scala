@@ -6,6 +6,7 @@ import cats.Show
 import doobie.util.composite.Composite
 import io.circe._
 import io.circe.syntax._
+import io.circe.java8.time._
 
 case class Approval(role: ApproverRole, approver: String, approvalTime: Instant, id: Option[Long] = None)
 
