@@ -22,7 +22,7 @@ object HiveDatabase {
 
   implicit val provisioner: ProvisionTask[HiveDatabase] =
     hive => for {
-      _ <- CreateDatabaseDirectory(hive.location).provision
+      _ <- CreateDatabaseDirectory(hive.location, None).provision
       _ <- SetDiskQuota(hive.location, hive.sizeInGB).provision
       _ <- hive.managingGroup.provision
       _ <- GrantGroupAccess(hive.managingGroup.sentryRole, hive.managingGroup.commonName).provision

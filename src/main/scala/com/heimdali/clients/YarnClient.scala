@@ -1,31 +1,26 @@
 package com.heimdali.clients
 
-import cats.data.NonEmptyList
 import cats.effect._
 import cats.syntax.flatMap._
 import cats.syntax.functor._
 import com.heimdali.config.ClusterConfig
-import com.heimdali.models.Yarn
 import com.heimdali.services.ClusterService
 import com.typesafe.scalalogging.LazyLogging
 import io.circe.parser._
 import io.circe.{ACursor, Json}
-import org.http4s._
-import org.http4s.client.dsl.Http4sClientDsl
-import org.http4s.circe._
-import org.http4s.client.blaze._
-import org.http4s.client.dsl.io._
-import scala.collection.immutable.Queue
 import org.http4s.Method._
-import org.http4s.headers._
-import org.http4s.MediaType._
+import org.http4s._
+import org.http4s.circe._
+import org.http4s.client.dsl.Http4sClientDsl
+
+import scala.collection.immutable.Queue
 
 case class YarnPool(name: String, maxCores: Int, maxMemoryInGB: Double)
 
 trait YarnClient[F[_]] {
-  def createPool(yarn: Yarn, parentPools: Queue[String]): F[Unit]
 
-  def getParents(yarn: Yarn): F[Queue[String]]
+  def createPool(poolName: String, cores: Int, memory: Int): F[Unit]
+
 }
 
 class CDHYarnClient[F[_] : Sync](http: HttpClient[F],
@@ -35,6 +30,9 @@ class CDHYarnClient[F[_] : Sync](http: HttpClient[F],
     with Http4sClientDsl[F]
     with LazyLogging {
 
+  type Memory = Int
+  type Cores = Int
+
   lazy val configURL: F[String] =
     for {
       list <- clusterService.list
@@ -42,13 +40,13 @@ class CDHYarnClient[F[_] : Sync](http: HttpClient[F],
       result <- Sync[F].delay(clusterConfig.serviceConfigUrl(activeCluster.clusterApps("YARN").id))
     } yield result
 
-  def config(pool: Yarn): Json = Json.obj(
-    "name" -> Json.fromString(pool.poolName.split("\\.").last),
+  def config(poolName: String, cores: Cores, memory: Memory): Json = Json.obj(
+    "name" -> Json.fromString(poolName.split("\\.").last),
     "schedulablePropertiesList" -> Json.arr(
       Json.obj(
         "maxResources" -> Json.obj(
-          "memory" -> Json.fromDouble(pool.maxMemoryInGB * 1024).get,
-          "vcores" -> Json.fromInt(pool.maxCores)
+          "memory" -> Json.fromDouble(memory * 1024).get,
+          "vcores" -> Json.fromInt(cores)
         ),
         "scheduleName" -> Json.fromString("default"),
         "weight" -> Json.fromDouble(1.0).get
@@ -70,10 +68,10 @@ class CDHYarnClient[F[_] : Sync](http: HttpClient[F],
     }.getOrElse(cursor)
   }
 
-  def combine(existing: Json, pool: Yarn, parents: Queue[String]): Json =
+  def combine(existing: Json, poolName: String, cores: Cores, memory: Memory, parents: Queue[String]): Json =
     dig(existing.hcursor, parents)
       .downField("queues")
-      .withFocus(_.withArray(arr => Json.arr(arr :+ config(pool): _*)))
+      .withFocus(_.withArray(arr => Json.arr(arr :+ config(poolName, cores, memory): _*)))
       .top.get
 
   def prepare(container: Json, newConfig: Json): Json = {
@@ -125,21 +123,22 @@ class CDHYarnClient[F[_] : Sync](http: HttpClient[F],
         }.focus.get
     }
 
-  def getParents(yarn: Yarn): F[Queue[String]] = Sync[F].delay {
-    logger.debug("getting parents for {}", yarn.poolName)
-    val fullList = yarn.poolName.split("\\.").toList
-    logger.debug("{} broken down: {}", yarn.poolName, fullList)
+  def getParents(poolName: String): F[Queue[String]] = Sync[F].delay {
+    logger.debug("getting parents for {}", poolName)
+    val fullList = poolName.split("\\.").toList
+    logger.debug("{} broken down: {}", poolName, fullList)
     val parents = fullList.filterNot(_ == fullList.last)
-    logger.debug("{} parents: {}", yarn.poolName, parents)
+    logger.debug("{} parents: {}", poolName, parents)
     Queue(parents: _*)
   }
 
-  override def createPool(yarn: Yarn, parentPools: Queue[String]): F[Unit] =
+  override def createPool(poolName: String, cores: Int, memory: Int): F[Unit] =
     for {
+      parentPools <- getParents(poolName)
       config <- yarnConfig
       poolConfig <- poolConfiguration(config)
       configJson <- Sync[F].delay(parse((poolConfig \\ "value").head.asString.get).right)
-      updatedJson <- Sync[F].delay(combine(configJson.get, yarn, parentPools))
+      updatedJson <- Sync[F].delay(combine(configJson.get, poolName, cores, memory, parentPools))
       preparedJson <- Sync[F].delay(prepare(config, updatedJson))
       _ <- yarnConfigUpdate(preparedJson)
       _ <- yarnConfigRefresh

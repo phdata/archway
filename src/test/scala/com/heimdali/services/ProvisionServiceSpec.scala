@@ -56,14 +56,10 @@ class ProvisionServiceSpec
       hiveDatabaseRepository.complete _ expects savedHive.id.get returning 1
         .pure[ConnectionIO]
 
-      yarnClient.getParents _ expects savedYarn returning Queue("root").pure[IO]
-      yarnClient.createPool _ expects (savedYarn, Queue("root")) returning IO.unit
+      yarnClient.createPool _ expects (poolName, maxCores, maxMemoryInGB) returning IO.unit
       yarnRepository.complete _ expects savedYarn.id.get returning 1
         .pure[ConnectionIO]
     }
-
-    val newWorkspace =
-      provisionService.provision(savedWorkspaceRequest).unsafeRunSync()
   }
 
   trait Context {
@@ -82,18 +78,5 @@ class ProvisionServiceSpec
     val approvalRepository: ApprovalRepository = mock[ApprovalRepository]
     val contextProvider: LoginContextProvider = mock[LoginContextProvider]
     val memberRepository: MemberRepository = mock[MemberRepository]
-
-    def provisionService =
-      new ProvisionServiceImpl(
-        ldapClient,
-        hdfsClient,
-        hiveClient,
-        yarnClient,
-        yarnRepository,
-        hiveDatabaseRepository,
-        ldapRepository,
-        memberRepository,
-        transactor
-      )
   }
 }

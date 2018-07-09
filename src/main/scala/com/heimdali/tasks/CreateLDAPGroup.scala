@@ -1,9 +1,8 @@
 package com.heimdali.tasks
 
 import cats.Show
-import cats.data.{Kleisli, NonEmptyList}
+import cats.data.Kleisli
 import cats.effect.IO
-import cats.implicits._
 import com.heimdali.clients.{GeneralError, GroupAlreadyExists}
 import com.heimdali.models.AppConfig
 
@@ -15,18 +14,18 @@ object CreateLDAPGroup {
     Show.show(c => s"creating ${c.commonName} group using gid ${c.groupId} at ${c.distinguishedName}}")
 
   implicit val provisioner: ProvisionTask[CreateLDAPGroup] =
-    createLDAPGroup => Kleisli[IO, AppConfig, ProvisionResult] { config =>
+    create => Kleisli[IO, AppConfig, ProvisionResult[CreateLDAPGroup]] { config =>
       config
-        .lDAPClient
+        .ldapClient
         .createGroup(
-          createLDAPGroup.groupId,
-          createLDAPGroup.commonName,
-          createLDAPGroup.distinguishedName)
+          create.groupId,
+          create.commonName,
+          create.distinguishedName)
           .value
         .map {
-          case Left(GroupAlreadyExists) => Success[CreateLDAPGroup]("a group already existsed with that name")
-          case Left(GeneralError(error)) => Error[CreateLDAPGroup](error)
           case Right(_) => Success[CreateLDAPGroup]
+          case Left(GroupAlreadyExists) => Success("a group already existsed with that name")
+          case Left(GeneralError(error)) => Error(error)
         }
     }
 }

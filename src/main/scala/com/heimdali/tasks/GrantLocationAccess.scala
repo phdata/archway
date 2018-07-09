@@ -6,12 +6,19 @@ import cats.effect.IO
 import com.heimdali.models.AppConfig
 import org.apache.hadoop.fs.Path
 
-case class GrantLocationAccess(role: String, location: String)
+case class GrantLocationAccess(roleName: String, location: String)
 
 object GrantLocationAccess {
 
-  implicit val show: Show[GrantLocationAccess] = ???
+  implicit val show: Show[GrantLocationAccess] =
+    Show.show(g => s"granting role ${g.roleName} rights to location ${g.location}")
 
-  implicit val provisioner: ProvisionTask[GrantLocationAccess] = ???
+  implicit val provisioner: ProvisionTask[GrantLocationAccess] =
+    grant => Kleisli[IO, AppConfig, ProvisionResult[GrantLocationAccess]] { config =>
+      config.hiveClient.enableAccessToLocation(grant.location, grant.roleName).attempt.map {
+        case Left(exception) => Error(exception)
+        case Right(_) => Success[GrantLocationAccess]
+      }
+    }
 
 }

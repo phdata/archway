@@ -12,16 +12,14 @@ case class CreateHiveDatabase(name: String, location: String)
 object CreateHiveDatabase {
 
   implicit val viewer: Show[CreateHiveDatabase] =
-    Show.show(s => s"""create(d) Hive database "${s.name}" at "${s.location}"""")
+    Show.show(c => s"""creating Hive database "${c.name}" at "${c.location}"""")
 
-  implicit val provisioner: ProvisionTask[CreateHiveDatabase] = ???
-
-  //    override val provision: Kleisli[IO, AppConfig, ProvisionResult] =
-  //      Kleisli[IO, AppConfig, ProvisionResult] { config =>
-  //          config.hiveClient.createDatabase(name, location).attempt.map {
-  //            case Left(exception) => Error(s"${show()} due to \"$exception\"")
-  //            case Right(_) => Success(show())
-  //          }
-  //      }
+  implicit val provisioner: ProvisionTask[CreateHiveDatabase] =
+        create => Kleisli[IO, AppConfig, ProvisionResult[CreateHiveDatabase]] { config =>
+            config.hiveClient.createDatabase(create.name, create.location).attempt.map {
+              case Left(exception) => Error(exception)
+              case Right(_) => Success[CreateHiveDatabase]
+            }
+        }
 
 }

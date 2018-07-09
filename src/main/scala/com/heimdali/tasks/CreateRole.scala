@@ -9,13 +9,14 @@ case class CreateRole(name: String)
 
 object CreateRole {
 
-  implicit val show: Show[CreateRole] = ???
+  implicit val show: Show[CreateRole] =
+    Show.show(c => s"creating sentry role ${c.name}")
 
   implicit val provisioner: ProvisionTask[CreateRole] =
-      createRole => Kleisli[IO, AppConfig, ProvisionResult] { config =>
-        IO(config.sentryService.createRole("heimdali_api", createRole.name)).attempt.map {
-          case Left(exception) => Error[CreateRole](exception)
-          case Right(_) => Success("")
+      create => Kleisli[IO, AppConfig, ProvisionResult[CreateRole]] { config =>
+        config.hiveClient.createRole(create.name).attempt.map {
+          case Left(exception) => Error(exception)
+          case Right(_) => Success[CreateRole]
         }
       }
 

@@ -9,8 +9,15 @@ case class SetDiskQuota(location: String, sizeInGB: Int)
 
 object SetDiskQuota {
 
-  implicit val show: Show[SetDiskQuota] = ???
+  implicit val show: Show[SetDiskQuota] =
+    Show.show(s => s"""setting disk quota of ${s.sizeInGB}GB to "${s.location}""")
 
-  implicit val provisioner: ProvisionTask[SetDiskQuota] = ???
+  implicit val provisioner: ProvisionTask[SetDiskQuota] =
+    set => Kleisli[IO, AppConfig, ProvisionResult[SetDiskQuota]] { config =>
+      config.hdfsClient.setQuota(set.location, set.sizeInGB).attempt.map {
+        case Left(exception) => Error(exception)
+        case Right(_) => Success[SetDiskQuota]
+      }
+    }
 
 }

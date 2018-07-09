@@ -6,7 +6,7 @@ import com.heimdali.models.AppConfig
 
 trait ProvisionTask[A] {
 
-  def provision(provisionable: A): Kleisli[IO, AppConfig, ProvisionResult]
+  def provision(provisionable: A): Kleisli[IO, AppConfig, ProvisionResult[A]]
 
 }
 
