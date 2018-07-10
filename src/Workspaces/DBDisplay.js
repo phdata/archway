@@ -9,10 +9,9 @@ import ValueDisplay from './ValueDisplay';
 import { addMember, removeMember, newMemberFormChanged } from './actions';
 
 const syntaxStyle = {
-  marginTop: 10,
+  marginRight: 10,
   marginBottom: 10,
-  fontSize: 18,
-  padding: 20
+  padding: 10
 };
 
 const CodeHelp = ({ cluster, database }) => {
@@ -94,8 +93,9 @@ const ListItem = ({ member: { username, role }, removeMember }) => {
     <List.Item>
       <List.Item.Meta
         style={{ alignItems: 'center' }}
-        avatar={<Avatar style={{ backgroundColor: '#D7C9AA' }}>{avatar}</Avatar>}
+        avatar={<Avatar icon="user" />}
         title={username}
+        description={role}
       />
       <Popconfirm title={`Are you sure you want to remove ${username}?`} onConfirm={_ => removeMember(username, role)} >
         <Button size="small" icon="minus" shape="circle" style={{ backgroundColor: '#7B2D26', color: '#F0F3F5' }} />
@@ -124,7 +124,7 @@ class DBDisplay extends React.Component {
   return (
     <div>
       <Row type="flex" align="center">
-        <Col span={18}>
+        <Col span={16}>
           <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around' }}>
             <ValueDisplay label="database name">
               {name}
@@ -133,11 +133,11 @@ class DBDisplay extends React.Component {
               {`${size_in_gb}gb`}
             </ValueDisplay>
           </div>
-          <CodeHelp cluster={cluster} database={database} />
+          { (cluster.services) && <CodeHelp cluster={cluster} database={database} /> }
         </Col>
-        <Col span={6}>
+        <Col offset={1} span={6}>
           <List
-            header={<ListHeader name="Workspace Managers" />}
+            header={<ListHeader name="Workspace Members" />}
             footer={<UserForm onChange={newMemberFormChanged} addMember={addMember} addingUser={false} newMemberForm={newMemberForm} />}
             dataSource={managerList.concat(readonlyList)}
             renderItem={item => <ListItem member={item} removeMember={removeMember} />}
@@ -169,8 +169,8 @@ export default connect(
       ...state.workspaces,
       cluster: state.cluster,
   }),
-  { 
-    addMember, 
+  {
+    addMember,
     newMemberFormChanged,
     removeMember,
   }
