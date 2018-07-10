@@ -1,11 +1,39 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Button, Icon, List, Tabs, Avatar, Input } from 'antd';
+import { Button, Icon, List, Tabs, Avatar, Input, Form } from 'antd';
 import { connect } from 'react-redux';
 import TimeAgo from 'react-timeago';
 import { Link } from 'react-router-dom';
 
-import { listWorkspaces } from './actions';
+import { listWorkspaces, filterChanged } from './actions';
+
+const SearchForm = Form.create({
+  onFieldsChange(props, changedFields) {
+    props.onChange(changedFields);
+  },
+  mapPropsToFields(props) {
+    return {
+      filter: Form.createFormField({
+        value: props.searchForm.filter,
+      }),
+    };
+  },
+})(({
+  form: {
+    getFieldDecorator,
+  },
+}) => (
+  <Form onSubmit={(e) => {e.preventDefault()}}>
+      <Form.Item>
+        {getFieldDecorator('filter', {})(
+          <Input.Search
+            placeholder="find a workspace..."
+            size="large"
+          />
+        )}
+      </Form.Item>
+  </Form>
+));
 
 const WorkspaceItem = ({ item, onSelected }) => {
   const {
@@ -27,7 +55,7 @@ const WorkspaceItem = ({ item, onSelected }) => {
 };
 
 WorkspaceItem.propTypes = {
-  item: PropTypes.objectOf({
+  item: PropTypes.shape ({
     id: PropTypes.number.isRequired,
     name: PropTypes.string.isRequired,
     requester: PropTypes.string.isRequired,
@@ -43,19 +71,15 @@ class WorkspaceList extends React.Component {
   }
 
   render() {
-    const { fetching, onSelected, workspaceList } = this.props;
+    const { fetching, onSelected, filteredList, searchForm, filterChanged } = this.props;
     return (
       <div>
         <Tabs tabPosition="left">
-          <Tabs.TabPane tab={<Icon type="search" />}>
-            <Input.Search
-              placeholder="find a workspace..."
-              size="large"
-              onSearch={value => console.log(value)}
-            />
+          <Tabs.TabPane tab={<Icon type="search" />} key="search">
+            <SearchForm onChange={filterChanged} searchForm={searchForm} />
             <List
               loading={fetching}
-              dataSource={workspaceList}
+              dataSource={filteredList}
               renderItem={item => <WorkspaceItem item={item} onSelected={onSelected} />}
             />
           </Tabs.TabPane>
@@ -78,13 +102,16 @@ class WorkspaceList extends React.Component {
 
 WorkspaceList.propTypes = {
   fetching: PropTypes.bool.isRequired,
-  workspaceList: PropTypes.array,
+  filteredList: PropTypes.array,
   onSelected: PropTypes.func.isRequired,
+  searchForm: PropTypes.object,
+  filterChanged: PropTypes.func.isRequired,
 };
 
 export default connect(
   s => s.workspaces,
   {
     listWorkspaces,
+    filterChanged,
   },
 )(WorkspaceList);

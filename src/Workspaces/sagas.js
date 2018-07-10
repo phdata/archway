@@ -1,6 +1,7 @@
 import { call, select, all, fork, takeLatest, put } from 'redux-saga/effects';
 import { delay } from 'redux-saga';
 import { push } from 'react-router-redux';
+import Fuse from 'fuse.js';
 import * as Api from '../API';
 import {
   SET_REQUEST_TYPE,
@@ -13,6 +14,7 @@ import {
   CHANGE_DB,
   ADD_MEMBER,
   REMOVE_MEMBER,
+  FILTER_CHANGED,
 
   workspaceGenerated,
   setRequest,
@@ -23,7 +25,15 @@ import {
   approveWorkspaceCompleted,
   setMembers,
   changeDB,
+  setFilteredList,
+  filterChanged,
 } from './actions';
+
+const fuseOptions = {
+  keys: [
+    'name',
+  ]
+}
 
 function* handleTypeChanged({ requestType }) {
   yield put(setGenerating(true));
@@ -73,7 +83,8 @@ function* workspaceRequested() {
 function* getAllWorkspaces() {
   const token = yield select(s => s.auth.token);
   const workspaces = yield call(Api.listWorkspaces, token);
-  yield put(setWorkspaceList(workspaces));
+  yield put(setWorkspaceList(new Fuse(workspaces, fuseOptions)));
+  yield put(filterChanged({ filter: { value: ''} }));
 }
 
 function* listWorkspaces() {
@@ -126,7 +137,7 @@ function* addMember() {
   const token = yield select(s => s.auth.token);
   const { activeWorkspace: { id }, newMemberForm: { username, role }, activeDatabase } = yield select(s => s.workspaces);
   yield call(Api.workspaceNewMember, token, id, activeDatabase, role, username);
-  yield put(changeDB(activeDatabase)); 
+  yield put(changeDB(activeDatabase));
 }
 
 function* memberRequested() {
@@ -137,11 +148,23 @@ function* removeMember({ username, role }) {
   const token = yield select(s => s.auth.token);
   const { activeWorkspace: { id }, activeDatabase } = yield select(s => s.workspaces);
   yield call(Api.removeWorkspaceMember, token, id, activeDatabase, role, username);
-  yield put(changeDB(activeDatabase)); 
+  yield put(changeDB(activeDatabase));
 }
 
 function* removeMemberRequested() {
     yield takeLatest(REMOVE_MEMBER, removeMember);
+}
+
+function* updateFilter({ filter }) {
+  const workspaceList = yield select(s => s.workspaces.workspaceList);
+  let filtered = workspaceList.list;
+  if(filter && filter !== '')
+    filtered = workspaceList.search(filter);
+  yield put(setFilteredList(filtered));
+}
+
+function* filterChange() {
+  yield takeLatest(FILTER_CHANGED, updateFilter);
 }
 
 export default function* root() {
@@ -156,5 +179,6 @@ export default function* root() {
     fork(dbChanging),
     fork(memberRequested),
     fork(removeMemberRequested),
+    fork(filterChange),
   ]);
 }

@@ -159,7 +159,7 @@ DBDisplay.propTypes = {
     readonly: PropTypes.arr,
   }),
   addMember: PropTypes.func,
-  newMemberForm: PropTypes.obj,
+  newMemberForm: PropTypes.object,
   newMemberFormChanged: PropTypes.func,
   removeMember: PropTypes.func,
 };
