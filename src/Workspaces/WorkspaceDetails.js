@@ -104,7 +104,7 @@ class WorkspaceDetails extends React.Component {
               tab={<TabIcon icon="database" name={item.name} />}
               key={item.name}
             >
-              <DBDisplay database={item} />
+              <DBDisplay database={item} provisioned={approvals && approvals.infra && approvals.risk} />
             </Tabs.TabPane>
           ))}
           {processing.map(ProcessingDisplay)}
