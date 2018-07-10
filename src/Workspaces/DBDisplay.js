@@ -58,7 +58,7 @@ const UserForm = Form.create({
   addingUser,
 }) => {
   const RoleSelect = getFieldDecorator('role', {})(<Select>
-    <Select.Option value="manager">Read/Write</Select.Option>
+    <Select.Option value="manager">Manager</Select.Option>
   </Select>);
   return (
     <Form
