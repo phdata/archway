@@ -9,15 +9,6 @@
     margin: 0px 50px 25px 50px;
 }
 
-pre {
-    display: inline-block;
-    background: #e2e2e2;
-    color: red;
-    font-family: monospace;
-    font-size: .7em;
-    padding: 5px;
-}
-
 .ProcessingDisplay > h2 {
     border-bottom: solid black 1px;
     font-weight: bold;

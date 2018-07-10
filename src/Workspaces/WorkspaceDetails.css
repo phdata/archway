@@ -1,10 +1,3 @@
-.WorkspaceDetails .Data,
-.WorkspaceDetails .Processing {
-  margin: 15px 0;
-  padding: 15px;
-  background: #F0F3F5;
-}
-
 .WorkspaceDetails .Header {
   text-align: center;
   border-right: 1px solid black;
