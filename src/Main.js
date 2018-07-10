@@ -18,7 +18,7 @@ const Main = ({
   history,
 }) => (
   <ConnectedRouter history={history}>
-    <Layout>
+    <Layout style={{ minHeight: '100%' }}>
       <Header style={{ height: 71 }}>
         <span style={{ float: 'left', maxHeight: 50, margin: '5px 24px 10px 0' }}>
           <img src={logo} alt="logo" style={{ maxHeight: 50, marginTop: -15, marginRight: 15 }} />

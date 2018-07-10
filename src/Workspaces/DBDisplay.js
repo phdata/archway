@@ -2,9 +2,40 @@ import React from 'react';
 import { List, Row, Col, Form, Select, Input, Avatar, Icon, Button, Popconfirm } from 'antd';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import SyntaxHighlighter from 'react-syntax-highlighter';
+import {tomorrowNightBlue} from 'react-syntax-highlighter/styles/hljs';
 
 import ValueDisplay from './ValueDisplay';
 import { addMember, removeMember, newMemberFormChanged } from './actions';
+
+const syntaxStyle = {
+  marginTop: 10,
+  marginBottom: 10,
+  fontSize: 18,
+  padding: 20
+};
+
+const CodeHelp = ({ cluster, database }) => {
+  const impala = `$ impala-shell -i ${cluster.services.IMPALA.host}:21000 -d ${database.name}`;
+  const jdbc = `jdbc:impala://${cluster.services.IMPALA.host}:21050/${database.name}`;
+  const beeline = `$ beeline -u 'jdbc:hive2://${cluster.services.HIVESERVER2.host}:10000/${database.name};auth=noSasl'`;
+  return (
+    <div className="CodeDisplay">
+      <h4>Connect Via JDBC</h4>
+      <SyntaxHighlighter language="sql" customStyle={syntaxStyle} style={tomorrowNightBlue}>
+        {jdbc}
+      </SyntaxHighlighter>
+      <h4>Connect Via impala-shell</h4>
+      <SyntaxHighlighter language="shell" customStyle={syntaxStyle} style={tomorrowNightBlue}>
+        {impala}
+      </SyntaxHighlighter>
+      <h4>Connect Via Beeline</h4>
+      <SyntaxHighlighter language="shell" customStyle={syntaxStyle} style={tomorrowNightBlue}>
+        {beeline}
+      </SyntaxHighlighter>
+    </div>
+  );
+}
 
 const UserForm = Form.create({
   onFieldsChange(props, changedFields) {
@@ -76,10 +107,7 @@ const ListItem = ({ member: { username, role }, removeMember }) => {
 class DBDisplay extends React.Component {
   render() {
     const {
-      database: {
-        name,
-        size_in_gb,
-      },
+      database,
       members: {
         managers,
         readonly,
@@ -88,19 +116,24 @@ class DBDisplay extends React.Component {
       newMemberForm,
       newMemberFormChanged,
       removeMember,
+      cluster,
     } = this.props;
+  const { name, size_in_gb } = database;
   const managerList = (managers && managers.map(member => ({ ...member, role: 'manager' }))) || [];
   const readonlyList = (readonly && readonly.map(member => ({ ...member, role: 'readonly' }))) || [];
   return (
     <div>
-      <Row className="Data" type="flex" align="center">
-        <Col span={18} style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-around' }}>
-          <ValueDisplay label="database name">
-            {name}
-          </ValueDisplay>
-          <ValueDisplay label="disk quota">
-            {`${size_in_gb}gb`}
-          </ValueDisplay>
+      <Row type="flex" align="center">
+        <Col span={18}>
+          <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around' }}>
+            <ValueDisplay label="database name">
+              {name}
+            </ValueDisplay>
+            <ValueDisplay label="disk quota">
+              {`${size_in_gb}gb`}
+            </ValueDisplay>
+          </div>
+          <CodeHelp cluster={cluster} database={database} />
         </Col>
         <Col span={6}>
           <List
@@ -132,7 +165,10 @@ DBDisplay.propTypes = {
 };
 
 export default connect(
-  state => state.workspaces,
+  state => ({
+      ...state.workspaces,
+      cluster: state.cluster,
+  }),
   { 
     addMember, 
     newMemberFormChanged,
