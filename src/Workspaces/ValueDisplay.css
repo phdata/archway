@@ -1,11 +1,17 @@
 .ValueDisplay {
   text-align: center;
   font-family: "Roboto";
-  
+  background-color: #ffffff;
+  padding: 10px;
+  margin: 10px;
+  border-radius: 10px;
+  border: 1px solid #f0f3f5;
+  flex: 1;
 }
 
 .ValueDisplay > .Value {
   font-weight: 100;
   color: #FF5900;
-  font-size: 32px;
+  font-size: 24px;
+  font-family: "Roboto";
 }

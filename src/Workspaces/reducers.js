@@ -16,12 +16,15 @@ import {
   SET_READONLY,
   NEW_MEMBER_FORM_CHANGED,
   CHANGE_DB,
+  FILTER_CHANGED,
+  SET_FILTERED_LIST,
 } from './actions';
 
 const initialState = {
   generating: false,
   fetching: false,
   workspaceList: [],
+  filteredList: [],
   activeWorkspace: null,
   pendingRequestType: null,
   pendingRequest: { compliance: {} },
@@ -30,6 +33,7 @@ const initialState = {
   approving: false,
   members: {},
   newMemberForm: { role: 'manager' },
+  searchForm: { filter: '' },
 };
 
 const workspaces = (state = initialState, action) => {
@@ -133,6 +137,16 @@ const workspaces = (state = initialState, action) => {
       return {
         ...state,
         activeDatabase: action.name,
+      };
+    case FILTER_CHANGED:
+      return {
+        ...state,
+        searchForm: { filter: action.filter }
+      };
+    case SET_FILTERED_LIST:
+      return {
+        ...state,
+        filteredList: action.filteredList,
       };
     default:
       return state;

@@ -176,3 +176,21 @@ export function removeMember(username, role) {
     role
   };
 }
+
+export const FILTER_CHANGED = 'FILTER_CHANGED';
+
+export function filterChanged(field) {
+  return {
+    type: FILTER_CHANGED,
+    filter: field.filter.value
+  };
+}
+
+export const SET_FILTERED_LIST = 'SET_FILTERED_LIST';
+
+export function setFilteredList(workspaces) {
+  return {
+    type: SET_FILTERED_LIST,
+    filteredList: workspaces,
+  }
+}

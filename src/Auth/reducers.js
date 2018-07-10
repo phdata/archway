@@ -6,6 +6,7 @@ import {
   TOKEN_NOT_AVAILABLE,
   PROFILE_READY,
   LOGIN_FIELD_CHANGED,
+  SET_FILTERED_LIST,
 } from './actions';
 
 const initialState = {

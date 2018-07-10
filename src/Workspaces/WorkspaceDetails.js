@@ -59,7 +59,6 @@ class WorkspaceDetails extends React.Component {
     const {
       activeWorkspace,
       profile,
-      fetching,
       approveInfra,
       approveRisk,
       approving,
@@ -69,7 +68,7 @@ class WorkspaceDetails extends React.Component {
       newMemberForm,
       newMemberFormChanged,
     } = this.props;
-    if (!activeWorkspace) return <Spin spinning={fetching}>Loading...</Spin>;
+    if (!activeWorkspace) return <Spin spinning={true}>Loading...</Spin>;
     const {
       id, approvals, compliance, data, processing,
     } = activeWorkspace;
@@ -105,7 +104,7 @@ class WorkspaceDetails extends React.Component {
               tab={<TabIcon icon="database" name={item.name} />}
               key={item.name}
             >
-              <DBDisplay database={item} />
+              <DBDisplay database={item} provisioned={approvals && approvals.infra && approvals.risk} />
             </Tabs.TabPane>
           ))}
           {processing.map(ProcessingDisplay)}
@@ -119,7 +118,6 @@ WorkspaceDetails.propTypes = {
   activeWorkspace: PropTypes.object,
   profile: PropTypes.object,
   getWorkspace: PropTypes.func,
-  fetching: PropTypes.boolean,
   approveInfra: PropTypes.func,
   approveRisk: PropTypes.func,
   changeDB: PropTypes.func,
@@ -127,7 +125,6 @@ WorkspaceDetails.propTypes = {
 
 export default connect(
   state => ({
-    fetching: state.workspaces.fetching,
     activeWorkspace: state.workspaces.activeWorkspace,
     profile: state.auth.profile || { permissions: { risk_management: false, platform_operations: false } },
   }),
