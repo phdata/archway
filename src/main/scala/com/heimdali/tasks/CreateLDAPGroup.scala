@@ -14,7 +14,7 @@ object CreateLDAPGroup {
     Show.show(c => s"creating ${c.commonName} group using gid ${c.groupId} at ${c.distinguishedName}}")
 
   implicit val provisioner: ProvisionTask[CreateLDAPGroup] =
-    create => Kleisli[IO, AppConfig, ProvisionResult[CreateLDAPGroup]] { config =>
+    create => Kleisli[IO, AppConfig, ProvisionResult] { config =>
       config
         .ldapClient
         .createGroup(

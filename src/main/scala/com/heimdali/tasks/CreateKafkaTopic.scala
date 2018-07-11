@@ -13,7 +13,7 @@ object CreateKafkaTopic {
     Show.show(c => s"creating kafka topic ${c.name} with ${c.partitions} partitions and a replication factor of ${c.replicationFactor}")
 
   implicit val provision: ProvisionTask[CreateKafkaTopic] =
-    create => Kleisli[IO, AppConfig, ProvisionResult[CreateKafkaTopic]] { config =>
+    create => Kleisli[IO, AppConfig, ProvisionResult] { config =>
       config.kafkaClient.createTopic(create.name, create.partitions, create.replicationFactor).attempt.map {
         case Left(exception) => Error(exception)
         case Right(_) => Success[CreateKafkaTopic]

@@ -12,7 +12,7 @@ object CreateDatabaseDirectory {
     Show.show(c => s"creating db directory ${c.location}")
 
   implicit val provisioner: ProvisionTask[CreateDatabaseDirectory] =
-    create => Kleisli[IO, AppConfig, ProvisionResult[CreateDatabaseDirectory]] { config =>
+    create => Kleisli[IO, AppConfig, ProvisionResult] { config =>
       config.hdfsClient.createDirectory(create.location, create.onBehalfOf).attempt.map {
         case Left(exception) => Error(exception)
         case Right(_) => Success[CreateDatabaseDirectory]

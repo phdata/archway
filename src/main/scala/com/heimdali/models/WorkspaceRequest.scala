@@ -1,9 +1,12 @@
 package com.heimdali.models
 
+import com.heimdali.tasks.Success
 import java.time.{Clock, Instant}
 
 import cats.Show
+import cats.effect._
 import cats.data.Kleisli
+import com.heimdali.tasks.ProvisionTask._
 import com.heimdali.tasks.{ProvisionResult, ProvisionTask}
 import io.circe._
 import io.circe.java8.time._
@@ -20,10 +23,6 @@ case class WorkspaceRequest(name: String,
                             processing: List[Yarn] = List.empty)
 
 object WorkspaceRequest {
-
-  implicit val show: Show[WorkspaceRequest] = ???
-
-  implicit val provision: ProvisionTask[WorkspaceRequest] = ???
 
   def apply(name: String,
             requestedBy: String,

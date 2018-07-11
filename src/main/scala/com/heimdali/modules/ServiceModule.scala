@@ -54,18 +54,6 @@ trait ServiceModule[F[_]] {
       ldapClient
     )
 
-  val provisionService: ProvisionService[F] = new ProvisionServiceImpl[F](
-    ldapClient,
-    hdfsClient,
-    hiveService,
-    yarnClient,
-    yarnRepository,
-    hiveDatabaseRepository,
-    ldapRepository,
-    memberRepository,
-    metaTransactor
-  )
-
   val workspaceService: WorkspaceService[F] =
     new WorkspaceServiceImpl[F](
       ldapClient,
@@ -76,7 +64,7 @@ trait ServiceModule[F[_]] {
       complianceRepository,
       approvalRepository,
       metaTransactor,
-      provisionService,
-      memberRepository
+      memberRepository,
+      null
     )
 }

@@ -113,7 +113,7 @@ package object fixtures {
        |    }
        |  ],
        |  "single_user": false,
-       |  "requester": "${standardUsername}",
+       |  "requester": "$standardUsername",
        |  "requested_date": "${Instant.now(clock)}"
        |}
        """.stripMargin

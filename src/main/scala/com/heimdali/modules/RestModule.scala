@@ -20,7 +20,6 @@ trait RestModule {
       authService,
       workspaceService,
       memberService,
-      provisionService,
       clock
     )
   val templateController = new TemplateController(authService)

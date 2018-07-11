@@ -3,13 +3,14 @@ package com.heimdali.services
 import java.sql.Connection
 import java.util.concurrent.Executors
 
-import cats.data.OptionT
-import cats.effect.Effect
-import cats.implicits._
+import cats._, cats.data._, cats.effect._, cats.implicits._
+
 import com.heimdali.clients._
 import com.heimdali.models._
+import com.heimdali.tasks.ProvisionResult
 import com.heimdali.repositories.{MemberRepository, _}
 import com.typesafe.scalalogging.LazyLogging
+
 import doobie._
 import doobie.implicits._
 import doobie.util.transactor.Transactor
@@ -26,8 +27,8 @@ class WorkspaceServiceImpl[F[_]](
     complianceRepository: ComplianceRepository,
     approvalRepository: ApprovalRepository,
     transactor: Transactor[F],
-    provisionService: ProvisionService[F],
-    memberRepository: MemberRepository
+    memberRepository: MemberRepository,
+    appConfig: AppConfig
 )(implicit val F: Effect[F], val executionContext: ExecutionContext)
     extends WorkspaceService[F]
     with LazyLogging {
@@ -105,7 +106,22 @@ class WorkspaceServiceImpl[F[_]](
     for {
       approval <- OptionT.liftF(approvalRepository.create(id, approval).transact(transactor)).value
       workspace <- find(id).value
-      _ <- if (workspace.get.approvals.lengthCompare(2) == 0) OptionT.liftF(fs2.async.fork(provisionService.provision(workspace.get))).value else OptionT.none(F).value
+      _ <- if (workspace.get.approvals.lengthCompare(2) == 0) OptionT.liftF(fs2.async.fork(provision(workspace.get))).value else OptionT.none(F).value
     } yield approval.get
+
+  def provision(workspace: WorkspaceRequest): F[NonEmptyList[String]] = {
+    import com.heimdali.tasks.ProvisionTask._
+
+    val datas: List[Kleisli[IO, AppConfig, ProvisionResult]] = workspace.data.map(_.provision)
+    val yarns: List[Kleisli[IO, AppConfig, ProvisionResult]] = workspace.processing.map(_.provision)
+
+    (datas ++ yarns)
+    .map(item => Effect[F].liftIO(item(appConfig)).map(_.messages))
+    .toNel
+    .get
+    .sequence
+    .map(_.flatten)
+
+  }
 
 }

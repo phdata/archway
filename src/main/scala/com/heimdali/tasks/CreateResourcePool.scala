@@ -13,7 +13,7 @@ object CreateResourcePool {
     Show.show(c => s"creating resource pool ${c.name} with ${c.cores} cores and ${c.memory} memory")
 
   implicit val provisioner: ProvisionTask[CreateResourcePool] =
-    create => Kleisli[IO, AppConfig, ProvisionResult[CreateResourcePool]] { config =>
+    create => Kleisli[IO, AppConfig, ProvisionResult] { config =>
       config.yarnClient.createPool(create.name, create.cores, create.memory).attempt.map {
         case Left(exception) => Error(exception)
         case Right(_) => Success[CreateResourcePool]

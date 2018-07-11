@@ -15,9 +15,9 @@ object CreateHiveDatabase {
     Show.show(c => s"""creating Hive database "${c.name}" at "${c.location}"""")
 
   implicit val provisioner: ProvisionTask[CreateHiveDatabase] =
-        create => Kleisli[IO, AppConfig, ProvisionResult[CreateHiveDatabase]] { config =>
+        create => Kleisli[IO, AppConfig, ProvisionResult] { config =>
             config.hiveClient.createDatabase(create.name, create.location).attempt.map {
-              case Left(exception) => Error(exception)
+              case Left(exception) => Error[CreateHiveDatabase](exception)
               case Right(_) => Success[CreateHiveDatabase]
             }
         }

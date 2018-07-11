@@ -14,7 +14,7 @@ object GrantLocationAccess {
     Show.show(g => s"granting role ${g.roleName} rights to location ${g.location}")
 
   implicit val provisioner: ProvisionTask[GrantLocationAccess] =
-    grant => Kleisli[IO, AppConfig, ProvisionResult[GrantLocationAccess]] { config =>
+    grant => Kleisli[IO, AppConfig, ProvisionResult] { config =>
       config.hiveClient.enableAccessToLocation(grant.location, grant.roleName).attempt.map {
         case Left(exception) => Error(exception)
         case Right(_) => Success[GrantLocationAccess]

@@ -13,7 +13,7 @@ object CreateRole {
     Show.show(c => s"creating sentry role ${c.name}")
 
   implicit val provisioner: ProvisionTask[CreateRole] =
-      create => Kleisli[IO, AppConfig, ProvisionResult[CreateRole]] { config =>
+      create => Kleisli[IO, AppConfig, ProvisionResult] { config =>
         config.hiveClient.createRole(create.name).attempt.map {
           case Left(exception) => Error(exception)
           case Right(_) => Success[CreateRole]

@@ -33,13 +33,12 @@ class WorkspaceControllerSpec
   it should "create a workspace" in new Http4sClientDsl[IO] {
     implicit val configuration: Configuration = Configuration.default.withSnakeCaseMemberNames
     val authService = new TestAuthService()
-    val provisionService = mock[ProvisionService[IO]]
     val memberService = mock[MemberService[IO]]
 
     val workspaceService = mock[WorkspaceService[IO]]
     workspaceService.create _ expects * returning IO(savedWorkspaceRequest)
 
-    val restApi = new WorkspaceController(authService, workspaceService, memberService, provisionService, clock)
+    val restApi = new WorkspaceController(authService, workspaceService, memberService, clock)
     val response = restApi.route.orNotFound.run(POST(uri("/"), fromResource("rest/workspaces.request.actual.json")).unsafeRunSync())
     check(response, Status.Created, Some(defaultResponse))
   }
@@ -47,13 +46,12 @@ class WorkspaceControllerSpec
   it should "list all workspaces" in new Http4sClientDsl[IO] {
     implicit val configuration: Configuration = Configuration.default.withSnakeCaseMemberNames
     val authService = new TestAuthService()
-    val provisionService = mock[ProvisionService[IO]]
     val memberService = mock[MemberService[IO]]
 
     val workspaceService = mock[WorkspaceService[IO]]
     workspaceService.list _ expects * returning IO(List(savedWorkspaceRequest))
 
-    val restApi = new WorkspaceController(authService, workspaceService, memberService, provisionService, clock)
+    val restApi = new WorkspaceController(authService, workspaceService, memberService, clock)
     val response = restApi.route.orNotFound.run(GET(uri("/")).unsafeRunSync())
     check(response, Status.Ok, Some(Json.arr(defaultResponse)))
   }
@@ -61,13 +59,12 @@ class WorkspaceControllerSpec
   it should "list all members" in new Http4sClientDsl[IO] {
     implicit val configuration: Configuration = Configuration.default.withSnakeCaseMemberNames
     val authService = new TestAuthService()
-    val provisionService = mock[ProvisionService[IO]]
     val memberService = mock[MemberService[IO]]
 
     val workspaceService = mock[WorkspaceService[IO]]
     memberService.members _ expects(123, "sesame", Manager) returning IO.pure(List(WorkspaceMember("johndoe", Some(Instant.now(clock)))))
 
-    val restApi = new WorkspaceController(authService, workspaceService, memberService, provisionService, clock)
+    val restApi = new WorkspaceController(authService, workspaceService, memberService, clock)
     val response = restApi.route.orNotFound.run(GET(uri("/123/sesame/managers")).unsafeRunSync())
     val Right(json) = parse(
       s"""
@@ -85,7 +82,6 @@ class WorkspaceControllerSpec
     import io.circe.java8.time._
     implicit val configuration: Configuration = Configuration.default.withSnakeCaseMemberNames
     val authService = new TestAuthService(riskApprover = true)
-    val provisionService = mock[ProvisionService[IO]]
     val memberService = mock[MemberService[IO]]
 
     val instant = Instant.now()
@@ -95,7 +91,7 @@ class WorkspaceControllerSpec
       .expects(id, Approval(Infra, standardUsername, Instant.now(clock)))
       .returning(IO.pure(approval(instant).copy(id = Some(id))))
 
-    val restApi = new WorkspaceController(authService, workspaceService, memberService, provisionService, clock)
+    val restApi = new WorkspaceController(authService, workspaceService, memberService, clock)
     val response = restApi.route.orNotFound.run(POST(uri("/123/approve"), Json.obj("role" -> "infra".asJson)).unsafeRunSync())
     check(response, Created, Some(Json.obj("risk" -> Json.obj("approver" -> standardUsername.asJson, "approval_time" -> instant.asJson))))
   }

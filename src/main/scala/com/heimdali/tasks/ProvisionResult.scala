@@ -1,33 +1,44 @@
 package com.heimdali.tasks
 
-import cats.Show
-import cats.data.NonEmptyList
+import cats._
+import cats.data._
 
-sealed trait ProvisionResult[A] { def messages: NonEmptyList[String] }
+sealed trait ProvisionResult { def messages: NonEmptyList[String] }
 
-case class Error[A](messages: NonEmptyList[String]) extends ProvisionResult[A]
+object ProvisionResult {
+
+  implicit def resultSemigroup: Semigroup[ProvisionResult] =
+    (result1: ProvisionResult, result2: ProvisionResult) =>
+      (result1, result2) match {
+        case (Success(messages1), Success(messages2)) => Success(messages1.concat(messages2))
+        case (out1, out2) => Error(out1.messages.concat(out2.messages))
+      }
+
+}
+
+case class Error(messages: NonEmptyList[String]) extends ProvisionResult
 
 object Error {
 
-  def apply[A](exception: Throwable)(implicit show: Show[A]): Error[A] =
-    apply[A](NonEmptyList.of(
+  def apply[A](exception: Throwable)(implicit show: Show[A]): Error =
+    apply(NonEmptyList.of(
       s"""$show FAILED due to ${exception.getMessage}"""
     ))
 
 }
 
-case class Success[A](messages: NonEmptyList[String]) extends ProvisionResult[A]
+case class Success(messages: NonEmptyList[String]) extends ProvisionResult
 
 object Success {
 
-  def apply[A](message: String)(implicit show: Show[A]): Success[A] =
-    apply[A](NonEmptyList.of(
+  def apply[A](message: String)(implicit show: Show[A]): Success =
+    apply(NonEmptyList.of(
       s"$show SUCCEEDED",
       s"$show: message"
     ))
 
 
-  def apply[A](implicit show: Show[A]): Success[A] =
+  def apply[A](implicit show: Show[A]): Success =
     apply(NonEmptyList.one(
       s"$show SUCCEEDED"
     ))

@@ -33,7 +33,7 @@ class ProvisionServiceSpec
 
   behavior of "Provision Service"
 
-  it should "provision a workspace" in new Context {
+  ignore should "provision a workspace" in new Context {
     inSequence {
       hdfsClient.createDirectory _ expects (savedHive.location, None) returning IO
         .pure(new Path(savedHive.location))

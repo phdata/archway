@@ -13,7 +13,7 @@ object GrantGroupAccess {
     Show.show(g => s"granting role ${g.roleName} rights to group ${g.groupName}")
 
   implicit val provisioner: ProvisionTask[GrantGroupAccess] =
-    grant => Kleisli[IO, AppConfig, ProvisionResult[GrantGroupAccess]] { config =>
+    grant => Kleisli[IO, AppConfig, ProvisionResult] { config =>
       config.hiveClient.grantGroup(grant.groupName, grant.roleName).attempt.map {
         case Left(exception) => Error(exception)
         case Right(_) => Success[GrantGroupAccess]

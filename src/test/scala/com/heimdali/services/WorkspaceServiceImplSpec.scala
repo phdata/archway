@@ -113,7 +113,6 @@ class WorkspaceServiceImplSpec
     val approvalRepository: ApprovalRepository = mock[ApprovalRepository]
     val contextProvider: LoginContextProvider = mock[LoginContextProvider]
     val memberRepository: MemberRepository = mock[MemberRepository]
-    val provisionService: ProvisionService[IO] = mock[ProvisionService[IO]]
 
     def projectServiceImpl =
       new WorkspaceServiceImpl[IO](
@@ -125,8 +124,8 @@ class WorkspaceServiceImplSpec
         complianceRepository,
         approvalRepository,
         transactor,
-        provisionService,
-        memberRepository
+        memberRepository,
+        null
       )
   }
 

@@ -18,13 +18,14 @@ case class LDAPRegistration(distinguishedName: String,
 
 object LDAPRegistration {
 
-  implicit val show: Show[LDAPRegistration] = ???
+  implicit val show: Show[LDAPRegistration] =
+    Show.show(l => s"creating AD/LDAP group ${l.commonName}")
 
   implicit val provisioner: ProvisionTask[LDAPRegistration] =
     registration => for {
-      res <- CreateLDAPGroup(registration.id.get, registration.commonName, registration.distinguishedName).provision
-      _ <- CreateRole(registration.sentryRole).provision
-    } yield Success[LDAPRegistration]("")
+      group <- CreateLDAPGroup(registration.id.get, registration.commonName, registration.distinguishedName).provision
+      role <- CreateRole(registration.sentryRole).provision
+    } yield group.combine(role)
 
   implicit val encoder: Encoder[LDAPRegistration] =
     Encoder.forProduct3("common_name", "distinguished_name", "sentry_role")(s => (s.commonName, s.distinguishedName, s.sentryRole))

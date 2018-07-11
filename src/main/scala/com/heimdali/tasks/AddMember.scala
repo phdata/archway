@@ -14,7 +14,7 @@ object AddMember {
     Show.show(am => s"""adding "${am.username}" to "${am.groupDN}""")
 
   implicit val provisioner: ProvisionTask[AddMember] =
-    add => Kleisli[IO, AppConfig, ProvisionResult[AddMember]] { config =>
+    add => Kleisli[IO, AppConfig, ProvisionResult] { config =>
       config.ldapClient.addUser(add.groupDN, add.username).value.attempt.map {
         case Left(exception) => Error(exception)
         case Right(Some(_)) => Success[AddMember]

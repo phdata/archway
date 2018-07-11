@@ -6,6 +6,7 @@ import cats.effect._
 import com.heimdali.models._
 import com.heimdali.repositories.DatabaseRole
 import com.heimdali.services._
+import com.heimdali.tasks.ProvisionTask._
 import io.circe.Decoder
 import io.circe.generic.auto._
 import io.circe.syntax._
@@ -15,7 +16,6 @@ import org.http4s.dsl.io._
 class WorkspaceController(authService: AuthService[IO],
                           workspaceService: WorkspaceService[IO],
                           memberService: MemberService[IO],
-                          provisionService: ProvisionService[IO],
                           clock: Clock) {
 
   implicit val memberRequestEntityDecoder: EntityDecoder[IO, MemberRequest] = jsonOf[IO, MemberRequest]
@@ -40,7 +40,7 @@ class WorkspaceController(authService: AuthService[IO],
           if(user.isSuperUser) {
             for {
               workspace <- workspaceService.find(id).value
-              _ <- provisionService.provision(workspace.get)
+              _ <- workspaceService.provision(workspace.get)
               response <- Created()
             } yield response
           }

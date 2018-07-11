@@ -17,18 +17,20 @@ object HiveDatabase {
 
   import com.heimdali.tasks._
   import com.heimdali.tasks.ProvisionTask._
+  import com.heimdali.tasks.ProvisionResult._
 
-  implicit val viewer: Show[HiveDatabase] = ???
+  implicit val viewer: Show[HiveDatabase] =
+    Show.show(h => s"creating hive database ${h.name}")
 
   implicit val provisioner: ProvisionTask[HiveDatabase] =
     hive => for {
-      _ <- CreateDatabaseDirectory(hive.location, None).provision
-      _ <- SetDiskQuota(hive.location, hive.sizeInGB).provision
-      _ <- hive.managingGroup.provision
-      _ <- GrantGroupAccess(hive.managingGroup.sentryRole, hive.managingGroup.commonName).provision
-      _ <- GrantDatabaseAccess(hive.managingGroup.sentryRole, hive.name).provision
-      _ <- GrantLocationAccess(hive.managingGroup.sentryRole, hive.location).provision
-    } yield Success[HiveDatabase]("")
+      createDatabase <- CreateDatabaseDirectory(hive.location, None).provision
+      setDiskQuota <- SetDiskQuota(hive.location, hive.sizeInGB).provision
+      managers <- hive.managingGroup.provision
+      group <- GrantGroupAccess(hive.managingGroup.sentryRole, hive.managingGroup.commonName).provision
+      db <- GrantDatabaseAccess(hive.managingGroup.sentryRole, hive.name).provision
+      location <- GrantLocationAccess(hive.managingGroup.sentryRole, hive.location).provision
+    } yield createDatabase |+| setDiskQuota |+| managers |+| group |+| db |+| location
 
   implicit val encoder: Encoder[HiveDatabase] =
     Encoder.forProduct5("name", "location", "size_in_gb", "managing_group", "readonly_group")(s => (s.name, s.location, s.sizeInGB, s.managingGroup, s.readonlyGroup))

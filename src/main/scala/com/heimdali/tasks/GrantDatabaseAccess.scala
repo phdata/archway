@@ -13,7 +13,7 @@ object GrantDatabaseAccess {
     Show.show(g => s"granting role ${g.roleName} rights to ${g.databaseName}")
 
   implicit val provisioner: ProvisionTask[GrantDatabaseAccess] =
-    grant => Kleisli[IO, AppConfig, ProvisionResult[GrantDatabaseAccess]] { config =>
+    grant => Kleisli[IO, AppConfig, ProvisionResult] { config =>
       config.hiveClient.enableAccessToDB(grant.databaseName, grant.roleName).attempt.map {
         case Left(exception) => Error(exception)
         case Right(_) => Success[GrantDatabaseAccess]
