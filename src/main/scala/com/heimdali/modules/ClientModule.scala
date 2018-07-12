@@ -44,4 +44,6 @@ trait ClientModule[F[_]] {
   val yarnClient: YarnClient[F] =
     new CDHYarnClient[F](http, appConfig.cluster, clusterService)
 
+  val kafkaClient: KafkaClient[F] = ???
+
 }

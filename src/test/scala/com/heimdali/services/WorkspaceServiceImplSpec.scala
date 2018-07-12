@@ -2,14 +2,16 @@ package com.heimdali.services
 
 import java.time.Instant
 
-import cats.data.OptionT
+import cats.data.{EitherT, OptionT}
 import cats.effect.IO
 import cats.syntax.applicative._
 import com.heimdali.clients._
+import com.heimdali.models.{AppConfig, WorkspaceMember}
 import com.heimdali.repositories.{MemberRepository, _}
 import com.heimdali.test.fixtures._
 import doobie._
 import doobie.implicits._
+import org.apache.hadoop.fs.Path
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.prop.TableDrivenPropertyChecks._
 import org.scalatest.prop.TableFor2
@@ -18,7 +20,7 @@ import org.scalatest.{FlatSpec, Matchers}
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class WorkspaceServiceImplSpec
-    extends FlatSpec
+  extends FlatSpec
     with Matchers
     with MockFactory
     with DBTest {
@@ -93,15 +95,50 @@ class WorkspaceServiceImplSpec
 
   it should "approve the workspace" in new Context {
     val instant = Instant.now()
-    approvalRepository.create _ expects (id, approval(instant)) returning approval(
+    approvalRepository.create _ expects(id, approval(instant)) returning approval(
       instant
     ).copy(id = Some(id)).pure[ConnectionIO]
 
     projectServiceImpl.approve(id, approval(instant))
   }
 
+  it should "provision a workspace" in new Context {
+    inSequence {
+      hdfsClient.createDirectory _ expects(savedHive.location, None) returning IO
+        .pure(new Path(savedHive.location))
+      hdfsClient.setQuota _ expects(savedHive.location, savedHive.sizeInGB) returning IO
+        .pure(HDFSAllocation(savedHive.location, savedHive.sizeInGB))
+      hiveClient.createDatabase _ expects(savedHive.name, savedHive.location) returning IO.unit
+
+      ldapClient.createGroup _ expects(savedLDAP.id.get, savedLDAP.commonName, savedLDAP.distinguishedName) returning EitherT
+        .right(IO.unit)
+      hiveClient.createRole _ expects savedLDAP.sentryRole returning IO.unit
+      ldapClient.addUser _ expects(savedLDAP.distinguishedName, standardUsername) returning OptionT
+        .some(LDAPUser("John Doe", standardUsername, Seq.empty))
+      hiveClient.grantGroup _ expects(savedLDAP.commonName, savedLDAP.sentryRole) returning IO.unit
+      hiveClient.enableAccessToDB _ expects(savedHive.name, savedLDAP.sentryRole) returning IO.unit
+      hiveClient.enableAccessToLocation _ expects(savedHive.location, savedLDAP.sentryRole) returning IO.unit
+    }
+
+    yarnClient.createPool _ expects(poolName, maxCores, maxMemoryInGB) returning IO.unit
+
+    projectServiceImpl.provision(savedWorkspaceRequest).unsafeRunSync()
+  }
+
   trait Context {
     val ldapClient: LDAPClient[IO] = mock[LDAPClient[IO]]
+    val hdfsClient: HDFSClient[IO] = mock[HDFSClient[IO]]
+    val hiveClient: HiveClient[IO] = mock[HiveClient[IO]]
+    val yarnClient: YarnClient[IO] = mock[YarnClient[IO]]
+    val kafkaClient: KafkaClient[IO] = mock[KafkaClient[IO]]
+
+    lazy val appConfig: AppConfig[IO] = AppConfig(
+      hiveClient,
+      ldapClient,
+      hdfsClient,
+      yarnClient,
+      kafkaClient
+    )
 
     val workspaceRepository: WorkspaceRequestRepository =
       mock[WorkspaceRequestRepository]
@@ -125,7 +162,7 @@ class WorkspaceServiceImplSpec
         approvalRepository,
         transactor,
         memberRepository,
-        null
+        appConfig
       )
   }
 

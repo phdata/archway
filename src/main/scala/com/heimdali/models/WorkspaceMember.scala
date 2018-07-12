@@ -1,12 +1,10 @@
 package com.heimdali.models
 
-import io.circe.Encoder
 import java.time.Instant
 
-import io.circe.Json
-import io.circe.syntax._
-import io.circe.generic.semiauto._
+import io.circe.{Encoder, Json}
 import io.circe.java8.time._
+import io.circe.syntax._
 
 case class WorkspaceMember(username: String, created: Option[Instant] = None, id: Option[Long] = None)
 

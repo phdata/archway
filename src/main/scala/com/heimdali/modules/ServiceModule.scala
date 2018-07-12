@@ -1,10 +1,8 @@
 package com.heimdali.modules
 
-import cats.effect.Effect
-import java.sql.{Connection, DriverManager}
-
 import com.heimdali.clients.{HiveClient, HiveClientImpl}
 import com.heimdali.config
+import com.heimdali.models.AppConfig
 import com.heimdali.services._
 import doobie._
 import doobie.util.transactor.{Strategy, Transactor}
@@ -37,7 +35,7 @@ trait ServiceModule[F[_]] {
   val keytabService: KeytabService[F] =
     new KeytabServiceImpl[F]()
 
-  val hiveService: HiveClient[F] =
+  val hiveClient: HiveClient[F] =
     new HiveClientImpl[F](hiveTransactor)
 
   val environment: String =
@@ -54,6 +52,14 @@ trait ServiceModule[F[_]] {
       ldapClient
     )
 
+  val reader = AppConfig(
+    hiveClient,
+    ldapClient,
+    hdfsClient,
+    yarnClient,
+    kafkaClient
+  )
+
   val workspaceService: WorkspaceService[F] =
     new WorkspaceServiceImpl[F](
       ldapClient,
@@ -65,6 +71,6 @@ trait ServiceModule[F[_]] {
       approvalRepository,
       metaTransactor,
       memberRepository,
-      null
+      reader
     )
 }

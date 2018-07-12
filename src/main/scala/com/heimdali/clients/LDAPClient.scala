@@ -28,7 +28,7 @@ trait LDAPClient[F[_]] {
       gid: Long,
       groupName: String,
       groupDN: String
-  ): EitherT[F, _ <: GroupCreationError, Unit]
+  ): EitherT[F, GroupCreationError, Unit]
 
   def addUser(groupName: String, username: String): OptionT[F, LDAPUser]
 

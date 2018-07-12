@@ -1,36 +1,33 @@
 package com.heimdali.services
 
-import java.sql.Connection
 import java.util.concurrent.Executors
 
-import cats._, cats.data._, cats.effect._, cats.implicits._
-
+import cats.data._
+import cats.effect._
+import cats.implicits._
 import com.heimdali.clients._
 import com.heimdali.models._
-import com.heimdali.tasks.ProvisionResult
 import com.heimdali.repositories.{MemberRepository, _}
+import com.heimdali.tasks.ProvisionResult
 import com.typesafe.scalalogging.LazyLogging
-
 import doobie._
 import doobie.implicits._
 import doobie.util.transactor.Transactor
 
-import scala.collection.immutable.Queue
 import scala.concurrent.ExecutionContext
 
-class WorkspaceServiceImpl[F[_]](
-    ldapClient: LDAPClient[F],
-    yarnRepository: YarnRepository,
-    hiveDatabaseRepository: HiveDatabaseRepository,
-    ldapRepository: LDAPRepository,
-    workspaceRepository: WorkspaceRequestRepository,
-    complianceRepository: ComplianceRepository,
-    approvalRepository: ApprovalRepository,
-    transactor: Transactor[F],
-    memberRepository: MemberRepository,
-    appConfig: AppConfig
-)(implicit val F: Effect[F], val executionContext: ExecutionContext)
-    extends WorkspaceService[F]
+class WorkspaceServiceImpl[F[_]](ldapClient: LDAPClient[F],
+                                  yarnRepository: YarnRepository,
+                                  hiveDatabaseRepository: HiveDatabaseRepository,
+                                  ldapRepository: LDAPRepository,
+                                  workspaceRepository: WorkspaceRequestRepository,
+                                  complianceRepository: ComplianceRepository,
+                                  approvalRepository: ApprovalRepository,
+                                  transactor: Transactor[F],
+                                  memberRepository: MemberRepository,
+                                  appConfig: AppConfig[F]
+                                )(implicit val F: Effect[F], val executionContext: ExecutionContext)
+  extends WorkspaceService[F]
     with LazyLogging {
 
   private val provisionContext =
@@ -112,16 +109,15 @@ class WorkspaceServiceImpl[F[_]](
   def provision(workspace: WorkspaceRequest): F[NonEmptyList[String]] = {
     import com.heimdali.tasks.ProvisionTask._
 
-    val datas: List[Kleisli[IO, AppConfig, ProvisionResult]] = workspace.data.map(_.provision)
-    val yarns: List[Kleisli[IO, AppConfig, ProvisionResult]] = workspace.processing.map(_.provision)
+    val datas: List[Kleisli[F, AppConfig[F], ProvisionResult]] = workspace.data.map(_.provision)
+    val yarns: List[Kleisli[F, AppConfig[F], ProvisionResult]] = workspace.processing.map(_.provision)
 
     (datas ++ yarns)
-    .map(item => Effect[F].liftIO(item(appConfig)).map(_.messages))
-    .toNel
-    .get
-    .sequence
-    .map(_.flatten)
-
+      .map(item => item(appConfig).map(_.messages))
+      .toNel
+      .get
+      .sequence
+      .map(_.flatten)
   }
 
 }

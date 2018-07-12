@@ -1,29 +1,17 @@
 package com.heimdali.services
 
-import cats.effect.IO
-import com.heimdali.clients.{HDFSClient, HiveClient, LDAPClient, YarnClient}
-import org.scalamock.scalatest.MockFactory
-import org.scalatest.{FlatSpec, Matchers}
-import com.heimdali.repositories.MemberRepository
-import java.time.Instant
-
 import cats.data.{EitherT, OptionT}
 import cats.effect.IO
 import cats.syntax.applicative._
-import com.heimdali.clients._
+import com.heimdali.clients.{HDFSClient, HiveClient, LDAPClient, YarnClient, _}
 import com.heimdali.models.WorkspaceMember
-import com.heimdali.repositories._
+import com.heimdali.repositories.{MemberRepository, _}
 import com.heimdali.test.fixtures._
 import doobie._
 import doobie.implicits._
 import org.apache.hadoop.fs.Path
 import org.scalamock.scalatest.MockFactory
-import org.scalatest.prop.TableDrivenPropertyChecks._
-import org.scalatest.prop.TableFor2
 import org.scalatest.{FlatSpec, Matchers}
-
-import scala.collection.immutable.Queue
-import scala.concurrent.ExecutionContext.Implicits.global
 
 class ProvisionServiceSpec
     extends FlatSpec
