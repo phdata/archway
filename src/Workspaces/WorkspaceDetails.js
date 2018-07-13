@@ -20,9 +20,6 @@ const ComplianceCheck = ({ value, label }) => {
 
 const Compliance = ({ compliance: { pii_data, pci_data, phi_data } }) => (
   <div style={{ marginTop: 10, marginBottom: 10 }}>
-    <ComplianceCheck value={pii_data} label="PII" key="pii" />
-    <ComplianceCheck value={phi_data} label="PHI" key="phi" />
-    <ComplianceCheck value={pci_data} label="PCI" key="pci" />
   </div>
 );
 
@@ -70,7 +67,7 @@ class WorkspaceDetails extends React.Component {
     } = this.props;
     if (!activeWorkspace) return <Spin spinning={true}>Loading...</Spin>;
     const {
-      id, approvals, compliance, data, processing,
+      id, approvals, compliance: { pii_data, pci_data, phi_data }, data, processing,
     } = activeWorkspace;
     const { permissions } = profile;
     return (
@@ -89,8 +86,10 @@ class WorkspaceDetails extends React.Component {
             />
           </Col>
         </Row>
-        <Compliance compliance={compliance} />
-        <div style={{ marginTop: 10, marginBottom: 10 }}>
+        <div style={{ margin: '10px 0' }}>
+          <ComplianceCheck value={pii_data} label="PII" key="pii" />
+          <ComplianceCheck value={phi_data} label="PHI" key="phi" />
+          <ComplianceCheck value={pci_data} label="PCI" key="pci" />
           <Tag color={approvals && approvals.infra ? 'green' : 'red'}>
             {approvals && approvals.infra ? 'infra approved' : 'infra not approved'}
           </Tag>
@@ -98,6 +97,7 @@ class WorkspaceDetails extends React.Component {
             {approvals && approvals.risk ? 'risk approved' : 'risk not approved'}
           </Tag>
         </div>
+        <div style={{ margin: '25px -25px 15px -25px', backgroundColor: '#F0F3F5' }}>&nbsp;</div>
         <Tabs onChange={changeDB}>
           {data.map(item => (
             <Tabs.TabPane

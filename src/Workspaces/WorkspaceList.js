@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Button, Icon, List, Tabs, Avatar, Input, Form } from 'antd';
 import { connect } from 'react-redux';
 import TimeAgo from 'react-timeago';
-import { Link } from 'react-router-dom';
+import { push } from 'react-router-redux'
 
 import { listWorkspaces, filterChanged } from './actions';
 
@@ -44,7 +44,7 @@ const WorkspaceItem = ({ item, onSelected }) => {
     single_user,
   } = item;
   return (
-    <List.Item actions={[<Link to={`/workspaces/${id}`} type="default" onClick={() => onSelected(item)}>view</Link>]}>
+    <List.Item actions={[<Button icon="search" type="primary" onClick={() => onSelected(`/workspaces/${id}`)}>view</Button>]}>
       <List.Item.Meta
         avatar={<Avatar icon={single_user ? 'user' : 'team'} />}
         title={name}
@@ -71,30 +71,15 @@ class WorkspaceList extends React.Component {
   }
 
   render() {
-    const { fetching, onSelected, filteredList, searchForm, filterChanged } = this.props;
+    const { fetching, onSelected, filteredList, searchForm, filterChanged, push } = this.props;
     return (
       <div>
-        <Tabs tabPosition="left">
-          <Tabs.TabPane tab={<Icon type="search" />} key="search">
-            <SearchForm onChange={filterChanged} searchForm={searchForm} />
-            <List
-              loading={fetching}
-              dataSource={filteredList}
-              renderItem={item => <WorkspaceItem item={item} onSelected={onSelected} />}
-            />
-          </Tabs.TabPane>
-        </Tabs>
-        <div style={{ marginTop: 15 }}>
-          <Button
-            icon="plus"
-            href="/request"
-            type="primary"
-            size="large"
-            style={{ width: '100%' }}
-          >
-      Request a New Workspace
-          </Button>
-        </div>
+        <SearchForm onChange={filterChanged} searchForm={searchForm} />
+        <List
+          loading={fetching}
+          dataSource={filteredList}
+          renderItem={item => <WorkspaceItem item={item} onSelected={push} />}
+        />
       </div>
     );
   }
@@ -113,5 +98,6 @@ export default connect(
   {
     listWorkspaces,
     filterChanged,
+    push,
   },
 )(WorkspaceList);

@@ -1,6 +1,7 @@
 import React from 'react';
-import "./Profile.css";
 import {connect} from "react-redux";
+import { Button } from 'antd';
+
 import {requestLogout} from "../Auth/actions";
 
 const Profile = ({profile, requestLogout}) =>  {
@@ -9,15 +10,13 @@ const Profile = ({profile, requestLogout}) =>  {
         name = profile.name;
 
     return (
-        <div className="Profile">
-            <div className="Profile-name">
-                {name}
+        <div style={{ width: '100%', padding: 15, color: 'white', textAlign: 'center', backgroundColor: '#415161' }}>
+            <div>
+                Hey, {name}
             </div>
-            <div className="Profile-logout">
-                <button type="button" onClick={requestLogout}>
-                    Log Out
-                </button>
-            </div>
+            <Button ghost size="small" onClick={requestLogout}>
+                Log Out
+            </Button>
         </div>
     );
 };
