@@ -4,7 +4,7 @@ import cats._
 import cats.data._
 import cats.effect.Effect
 import cats.implicits._
-import com.heimdali.models.AppConfig
+import com.heimdali.models.AppContext
 
 case class CreateHiveDatabase(name: String, location: String)
 
@@ -15,7 +15,7 @@ object CreateHiveDatabase {
 
   implicit def provisioner[F[_]](implicit F: Effect[F]): ProvisionTask[F, CreateHiveDatabase] =
     ProvisionTask.instance { create =>
-      Kleisli[F, AppConfig[F], ProvisionResult] { config =>
+      Kleisli[F, AppContext[F], ProvisionResult] { config =>
         config.hiveClient.createDatabase(create.name, create.location).attempt.map {
           case Left(exception) => Error[CreateHiveDatabase](exception)
           case Right(_) => Success[CreateHiveDatabase]

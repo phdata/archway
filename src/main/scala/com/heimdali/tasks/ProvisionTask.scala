@@ -2,11 +2,11 @@ package com.heimdali.tasks
 
 import cats.data.Kleisli
 import cats.effect.Effect
-import com.heimdali.models.AppConfig
+import com.heimdali.models.AppContext
 
 trait ProvisionTask[F[_], A] {
 
-  def provision(provisionable: A)(implicit F: Effect[F]): Kleisli[F, AppConfig[F], ProvisionResult]
+  def provision(provisionable: A)(implicit F: Effect[F]): Kleisli[F, AppContext[F], ProvisionResult]
 
 }
 
@@ -21,8 +21,8 @@ object ProvisionTask {
 
   }
 
-  def instance[F[_] : Effect, A](kleisli: A => Kleisli[F, AppConfig[F], ProvisionResult]) = new ProvisionTask[F, A] {
-    override def provision(provisionable: A)(implicit F: Effect[F]): Kleisli[F, AppConfig[F], ProvisionResult] =
+  def instance[F[_] : Effect, A](kleisli: A => Kleisli[F, AppContext[F], ProvisionResult]) = new ProvisionTask[F, A] {
+    override def provision(provisionable: A)(implicit F: Effect[F]): Kleisli[F, AppContext[F], ProvisionResult] =
       kleisli(provisionable)
   }
 

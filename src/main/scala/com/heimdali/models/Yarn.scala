@@ -21,7 +21,7 @@ object Yarn {
     Show.show(y => s"creating resource pool ${y.poolName}")
 
   implicit def provisioner[F[_]](implicit F: Effect[F]): ProvisionTask[F, Yarn] = new ProvisionTask[F, Yarn] {
-    override def provision(yarn: Yarn)(implicit F: Effect[F]): Kleisli[F, AppConfig[F], ProvisionResult] =
+    override def provision(yarn: Yarn)(implicit F: Effect[F]): Kleisli[F, AppContext[F], ProvisionResult] =
       CreateResourcePool(yarn.poolName, yarn.maxCores, yarn.maxMemoryInGB).provision
   }
 

@@ -25,7 +25,7 @@ class WorkspaceServiceImpl[F[_]](ldapClient: LDAPClient[F],
                                   approvalRepository: ApprovalRepository,
                                   transactor: Transactor[F],
                                   memberRepository: MemberRepository,
-                                  appConfig: AppConfig[F]
+                                  appConfig: AppContext[F]
                                 )(implicit val F: Effect[F], val executionContext: ExecutionContext)
   extends WorkspaceService[F]
     with LazyLogging {
@@ -109,8 +109,8 @@ class WorkspaceServiceImpl[F[_]](ldapClient: LDAPClient[F],
   def provision(workspace: WorkspaceRequest): F[NonEmptyList[String]] = {
     import com.heimdali.tasks.ProvisionTask._
 
-    val datas: List[Kleisli[F, AppConfig[F], ProvisionResult]] = workspace.data.map(_.provision)
-    val yarns: List[Kleisli[F, AppConfig[F], ProvisionResult]] = workspace.processing.map(_.provision)
+    val datas: List[Kleisli[F, AppContext[F], ProvisionResult]] = workspace.data.map(_.provision)
+    val yarns: List[Kleisli[F, AppContext[F], ProvisionResult]] = workspace.processing.map(_.provision)
 
     (datas ++ yarns)
       .map(item => item(appConfig).map(_.messages))

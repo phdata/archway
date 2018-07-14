@@ -3,7 +3,7 @@ package com.heimdali.tasks
 import cats.Show
 import cats.data.Kleisli
 import cats.effect.Effect
-import com.heimdali.models.AppConfig
+import com.heimdali.models.AppContext
 
 case class GrantGroupAccess(roleName: String, groupName: String)
 
@@ -14,7 +14,7 @@ object GrantGroupAccess {
 
   implicit def provisioner[F[_]](implicit F: Effect[F]): ProvisionTask[F, GrantGroupAccess] =
     ProvisionTask.instance { grant =>
-      Kleisli[F, AppConfig[F], ProvisionResult] { config =>
+      Kleisli[F, AppContext[F], ProvisionResult] { config =>
         F.map(F.attempt(config.hiveClient.grantGroup(grant.groupName, grant.roleName))) {
           case Left(exception) => Error(exception)
           case Right(_) => Success[GrantGroupAccess]

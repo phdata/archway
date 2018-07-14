@@ -2,7 +2,7 @@ package com.heimdali.modules
 
 import com.heimdali.clients.{HiveClient, HiveClientImpl}
 import com.heimdali.config
-import com.heimdali.models.AppConfig
+import com.heimdali.models.AppContext
 import com.heimdali.services._
 import doobie._
 import doobie.util.transactor.{Strategy, Transactor}
@@ -52,13 +52,13 @@ trait ServiceModule[F[_]] {
       ldapClient
     )
 
-  val reader = AppConfig(
+  val reader = AppContext(
     hiveClient,
     ldapClient,
     hdfsClient,
     yarnClient,
-    kafkaClient
-  )
+    kafkaClient,
+    sentryClient)
 
   val workspaceService: WorkspaceService[F] =
     new WorkspaceServiceImpl[F](

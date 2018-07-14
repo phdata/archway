@@ -24,8 +24,6 @@ object HiveDatabase {
   implicit val viewer: Show[HiveDatabase] =
     Show.show(h => s"creating hive database ${h.name}")
 
-  new SentryPolicyServiceClientDefaultImpl(null, null).
-
   implicit def provisioner[F[_] : Effect](implicit executionContext: ExecutionContext): ProvisionTask[F, HiveDatabase] =
     ProvisionTask.instance { hive =>
       for {

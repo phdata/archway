@@ -2,6 +2,8 @@ package com.heimdali.modules
 
 import com.heimdali.config.AppConfig
 import com.typesafe.config.{Config, ConfigFactory}
+import kafka.utils.ZkUtils
+import org.I0Itec.zkclient.{ZkClient, ZkConnection}
 import org.apache.hadoop.conf.Configuration
 import pureconfig.{CamelCase, ConfigFieldMapping, ProductHint}
 
@@ -19,5 +21,11 @@ trait ConfigurationModule {
 
   private implicit def hint[T] = ProductHint[T](ConfigFieldMapping(CamelCase, CamelCase))
   val Right(appConfig) = pureconfig.loadConfig[AppConfig]
+
+  val zkConnectString: String = ???
+
+  val zkClient = new ZkClient(zkConnectString)
+
+  val zkUtils = new ZkUtils(zkClient, new ZkConnection(zkConnectString), true)
 
 }

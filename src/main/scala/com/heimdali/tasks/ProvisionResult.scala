@@ -8,10 +8,10 @@ sealed trait ProvisionResult { def messages: NonEmptyList[String] }
 object ProvisionResult {
 
   implicit def resultSemigroup: Monoid[ProvisionResult] = new Monoid[ProvisionResult] {
-    def combine(result1: ProvisionResult, result2: ProvisionResult) =
+    def combine(result1: ProvisionResult, result2: ProvisionResult): ProvisionResult =
       (result1, result2) match {
-        case (Success(messages1), Success(messages2)) => Success(messages1.concat(messages2))
-        case (out1, out2) => Error(out1.messages.concat(out2.messages))
+        case (Success(messages1), Success(messages2)) => Success(messages1.concatNel(messages2))
+        case (out1, out2) => Error(out1.messages.concatNel(out2.messages))
       }
     def empty: ProvisionResult = Unknown
   }

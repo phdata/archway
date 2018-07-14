@@ -6,7 +6,7 @@ import cats.data.{EitherT, OptionT}
 import cats.effect.IO
 import cats.syntax.applicative._
 import com.heimdali.clients._
-import com.heimdali.models.{AppConfig, WorkspaceMember}
+import com.heimdali.models.{AppContext, WorkspaceMember}
 import com.heimdali.repositories.{MemberRepository, _}
 import com.heimdali.test.fixtures._
 import doobie._
@@ -132,7 +132,7 @@ class WorkspaceServiceImplSpec
     val yarnClient: YarnClient[IO] = mock[YarnClient[IO]]
     val kafkaClient: KafkaClient[IO] = mock[KafkaClient[IO]]
 
-    lazy val appConfig: AppConfig[IO] = AppConfig(
+    lazy val appConfig: AppContext[IO] = AppContext(
       hiveClient,
       ldapClient,
       hdfsClient,

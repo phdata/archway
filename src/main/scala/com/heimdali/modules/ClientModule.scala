@@ -7,6 +7,7 @@ import com.heimdali.clients._
 import com.heimdali.services._
 import org.apache.hadoop.fs.FileSystem
 import org.apache.hadoop.hdfs.client.HdfsAdmin
+import org.apache.sentry.provider.db.generic.service.thrift.{SentryGenericServiceClient, SentryGenericServiceClientFactory}
 
 trait ClientModule[F[_]] {
   this: AppModule[F]
@@ -44,6 +45,10 @@ trait ClientModule[F[_]] {
   val yarnClient: YarnClient[F] =
     new CDHYarnClient[F](http, appConfig.cluster, clusterService)
 
-  val kafkaClient: KafkaClient[F] = ???
+  val kafkaClient: KafkaClient[F] =
+    new KafkaClientImpl[F](zkUtils)
+
+  val sentryClient: SentryGenericServiceClient =
+    SentryGenericServiceClientFactory.create(hadoopConfiguration)
 
 }
