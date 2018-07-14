@@ -2,9 +2,8 @@ package com.heimdali.models
 
 import java.time.Instant
 
-import cats.Show
-import cats.data.Kleisli
-import cats.effect.Effect
+import cats._
+import cats.effect._
 import cats.implicits._
 import com.heimdali.tasks.ProvisionTask._
 import com.heimdali.tasks._
@@ -23,12 +22,11 @@ object LDAPRegistration {
     Show.show(l => s"creating AD/LDAP group ${l.commonName}")
 
   implicit def provisioner[F[_] : Effect]: ProvisionTask[F, LDAPRegistration] = ProvisionTask.instance { registration =>
-//    val result = registration.members.map(m => AddMember(registration.distinguishedName, m.username).provision[F]).map(a => a)
-    Kleisli
     for {
       group <- CreateLDAPGroup(registration.id.get, registration.commonName, registration.distinguishedName).provision[F]
       role <- CreateRole(registration.sentryRole).provision[F]
-    } yield role |+| group
+      members <- registration.members.map(m => AddMember(registration.distinguishedName, m.username).provision[F]).sequence.map(_.combineAll)
+    } yield role |+| group |+| members
   }
 
   implicit val encoder: Encoder[LDAPRegistration] =
