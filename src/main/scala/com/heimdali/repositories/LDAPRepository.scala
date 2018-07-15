@@ -12,6 +12,12 @@ trait LDAPRepository {
 
   def find[A <: DatabaseRole](workspaceId: Long, databaseName: String, databaseRole: A): OptionT[ConnectionIO, LDAPRegistration]
 
+  def groupCreated(id: Long): ConnectionIO[Int]
+
+  def roleCreated(id: Long): ConnectionIO[Int]
+
+  def groupAssociated(id: Long): ConnectionIO[Int]
+
 }
 
 sealed trait DatabaseRole

@@ -12,5 +12,11 @@ trait HiveDatabaseRepository {
   def findByWorkspace(id: Long): ConnectionIO[List[HiveDatabase]]
 
   def complete(id: Long): ConnectionIO[Int]
+
+  def directoryCreated(id: Long): ConnectionIO[Int]
+
+  def quotaSet(id: Long): ConnectionIO[Int]
+
+  def databaseCreated(id: Long): ConnectionIO[Int]
 }
 

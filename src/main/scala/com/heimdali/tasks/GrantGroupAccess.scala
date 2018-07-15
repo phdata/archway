@@ -4,8 +4,9 @@ import cats.Show
 import cats.data.Kleisli
 import cats.effect.Effect
 import com.heimdali.models.AppContext
+import doobie.implicits._
 
-case class GrantGroupAccess(roleName: String, groupName: String)
+case class GrantGroupAccess(ldapId: Long, roleName: String, groupName: String)
 
 object GrantGroupAccess {
 
@@ -15,9 +16,13 @@ object GrantGroupAccess {
   implicit def provisioner[F[_]](implicit F: Effect[F]): ProvisionTask[F, GrantGroupAccess] =
     ProvisionTask.instance { grant =>
       Kleisli[F, AppContext[F], ProvisionResult] { config =>
-        F.map(F.attempt(config.hiveClient.grantGroup(grant.groupName, grant.roleName))) {
-          case Left(exception) => Error(exception)
-          case Right(_) => Success[GrantGroupAccess]
+        F.flatMap(F.attempt(config.hiveClient.grantGroup(grant.groupName, grant.roleName))) {
+          case Left(exception) => F.pure(Error(exception))
+          case Right(_) =>
+            F.map(config
+                .lDAPRepository
+              .groupAssociated(grant.ldapId)
+              .transact(config.transactor)) { _ => Success[GrantGroupAccess] }
         }
       }
     }

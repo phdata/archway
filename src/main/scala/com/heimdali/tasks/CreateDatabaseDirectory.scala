@@ -4,8 +4,9 @@ import cats.Show
 import cats.data.Kleisli
 import cats.effect.Effect
 import com.heimdali.models.AppContext
+import doobie.implicits._
 
-case class CreateDatabaseDirectory(location: String, onBehalfOf: Option[String])
+case class CreateDatabaseDirectory(workspaceId: Long, location: String, onBehalfOf: Option[String])
 
 object CreateDatabaseDirectory {
   implicit val show: Show[CreateDatabaseDirectory] =
@@ -15,9 +16,13 @@ object CreateDatabaseDirectory {
     ProvisionTask.instance[F, CreateDatabaseDirectory] {
       create =>
         Kleisli[F, AppContext[F], ProvisionResult] { config =>
-          F.map(F.attempt(config.hdfsClient.createDirectory(create.location, create.onBehalfOf))) {
-            case Left(exception) => Error(exception)
-            case Right(_) => Success[CreateDatabaseDirectory]
+          F.flatMap(F.attempt(config.hdfsClient.createDirectory(create.location, create.onBehalfOf))) {
+            case Left(exception) => F.pure(Error(exception))
+            case Right(_) =>
+              F.map(config
+                .databaseRepository
+                .directoryCreated(create.workspaceId)
+                .transact(config.transactor)) { _ => Success[CreateDatabaseDirectory] }
           }
         }
     }

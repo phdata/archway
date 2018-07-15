@@ -14,14 +14,16 @@ case class LDAPRegistration(distinguishedName: String,
                             sentryRole: String,
                             members: List[WorkspaceMember] = List.empty,
                             id: Option[Long] = None,
-                            created: Option[Instant] = None)
+                            groupCreated: Option[Instant] = None,
+                            )
 
 object LDAPRegistration {
 
   implicit val show: Show[LDAPRegistration] =
     Show.show(l => s"creating AD/LDAP group ${l.commonName}")
 
-  implicit def provisioner[F[_] : Effect]: ProvisionTask[F, LDAPRegistration] = ProvisionTask.instance { registration =>
+  implicit def provisioner[F[_] : Effect]: ProvisionTask[F, LDAPRegistration] =
+    ProvisionTask.instance { registration =>
     for {
       group <- CreateLDAPGroup(registration.id.get, registration.commonName, registration.distinguishedName).provision[F]
       role <- CreateRole(registration.sentryRole).provision[F]

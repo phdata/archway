@@ -1,10 +1,11 @@
 package com.heimdali.models
 
+import java.time.Instant
+
 import cats._
 import cats.effect.Effect
 import cats.implicits._
 import io.circe._
-import org.apache.sentry.provider.db.service.thrift.{SentryPolicyServiceClient, SentryPolicyServiceClientDefaultImpl}
 
 import scala.concurrent.ExecutionContext
 
@@ -13,7 +14,12 @@ case class HiveDatabase(name: String,
                         sizeInGB: Int,
                         managingGroup: LDAPRegistration,
                         readonlyGroup: Option[LDAPRegistration] = None,
-                        id: Option[Long] = None)
+                        id: Option[Long] = None,
+                        directoryCreated: Option[Instant] = None,
+                        databaseCreated: Option[Instant] = None,
+                        quotaSet: Option[Instant] = None,
+                        databaseAccessGranted: Option[Instant] = None,
+                        locationAccessGranted: Option[Instant] = None)
 
 object HiveDatabase {
 
@@ -27,11 +33,11 @@ object HiveDatabase {
   implicit def provisioner[F[_] : Effect](implicit executionContext: ExecutionContext): ProvisionTask[F, HiveDatabase] =
     ProvisionTask.instance { hive =>
       for {
-        createDirectory <- CreateDatabaseDirectory(hive.location, None).provision[F]
-        setDiskQuota <- SetDiskQuota(hive.location, hive.sizeInGB).provision[F]
-        createDatabase <- CreateHiveDatabase(hive.name, hive.location).provision[F]
+        createDirectory <- CreateDatabaseDirectory(hive.id.get, hive.location, None).provision[F]
+        setDiskQuota <- SetDiskQuota(hive.id.get, hive.location, hive.sizeInGB).provision[F]
+        createDatabase <- CreateHiveDatabase(hive.id.get, hive.name, hive.location).provision[F]
         managers <- hive.managingGroup.provision[F]
-        group <- GrantGroupAccess(hive.managingGroup.sentryRole, hive.managingGroup.commonName).provision[F]
+        group <- GrantGroupAccess(hive.managingGroup.id.get, hive.managingGroup.sentryRole, hive.managingGroup.commonName).provision[F]
         db <- GrantDatabaseAccess(hive.managingGroup.sentryRole, hive.name).provision[F]
         location <- GrantLocationAccess(hive.managingGroup.sentryRole, hive.location).provision[F]
       } yield createDirectory |+| setDiskQuota |+| createDatabase |+| managers |+| group |+| db |+| location

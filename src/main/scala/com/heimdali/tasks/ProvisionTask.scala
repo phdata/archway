@@ -3,6 +3,7 @@ package com.heimdali.tasks
 import cats.data.Kleisli
 import cats.effect.Effect
 import com.heimdali.models.AppContext
+import doobie.free.connection.ConnectionIO
 
 trait ProvisionTask[F[_], A] {
 

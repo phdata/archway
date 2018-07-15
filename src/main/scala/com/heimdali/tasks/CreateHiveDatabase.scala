@@ -5,8 +5,9 @@ import cats.data._
 import cats.effect.Effect
 import cats.implicits._
 import com.heimdali.models.AppContext
+import doobie.implicits._
 
-case class CreateHiveDatabase(name: String, location: String)
+case class CreateHiveDatabase(workspaceId: Long, name: String, location: String)
 
 object CreateHiveDatabase {
 
@@ -16,9 +17,13 @@ object CreateHiveDatabase {
   implicit def provisioner[F[_]](implicit F: Effect[F]): ProvisionTask[F, CreateHiveDatabase] =
     ProvisionTask.instance { create =>
       Kleisli[F, AppContext[F], ProvisionResult] { config =>
-        config.hiveClient.createDatabase(create.name, create.location).attempt.map {
-          case Left(exception) => Error[CreateHiveDatabase](exception)
-          case Right(_) => Success[CreateHiveDatabase]
+        config.hiveClient.createDatabase(create.name, create.location).attempt.flatMap {
+          case Left(exception) => F.pure(Error[CreateHiveDatabase](exception))
+          case Right(_) =>
+            F.map(config
+              .databaseRepository
+              .databaseCreated(create.workspaceId)
+              .transact(config.transactor)) { _ => Success[CreateHiveDatabase] }
         }
       }
     }
