@@ -20,7 +20,7 @@ object GrantGroupAccess {
           case Left(exception) => F.pure(Error(exception))
           case Right(_) =>
             F.map(config
-                .lDAPRepository
+              .ldapRepository
               .groupAssociated(grant.ldapId)
               .transact(config.transactor)) { _ => Success[GrantGroupAccess] }
         }

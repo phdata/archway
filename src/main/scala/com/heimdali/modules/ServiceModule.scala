@@ -58,7 +58,10 @@ trait ServiceModule[F[_]] {
     hdfsClient,
     yarnClient,
     kafkaClient,
-    sentryClient)
+    sentryClient,
+    metaTransactor,
+    hiveDatabaseRepository,
+    ldapRepository)
 
   val workspaceService: WorkspaceService[F] =
     new WorkspaceServiceImpl[F](

@@ -13,4 +13,4 @@ case class AppContext[F[_]](hiveClient: HiveClient[F],
                             sentryClient: SentryGenericServiceClient,
                             transactor: Transactor[F],
                             databaseRepository: HiveDatabaseRepository,
-                            lDAPRepository: LDAPRepository)
+                            ldapRepository: LDAPRepository)

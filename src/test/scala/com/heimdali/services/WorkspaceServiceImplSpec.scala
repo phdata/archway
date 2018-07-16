@@ -12,6 +12,7 @@ import com.heimdali.test.fixtures._
 import doobie._
 import doobie.implicits._
 import org.apache.hadoop.fs.Path
+import org.apache.sentry.provider.db.generic.service.thrift.SentryGenericServiceClient
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.prop.TableDrivenPropertyChecks._
 import org.scalatest.prop.TableFor2
@@ -131,14 +132,7 @@ class WorkspaceServiceImplSpec
     val hiveClient: HiveClient[IO] = mock[HiveClient[IO]]
     val yarnClient: YarnClient[IO] = mock[YarnClient[IO]]
     val kafkaClient: KafkaClient[IO] = mock[KafkaClient[IO]]
-
-    lazy val appConfig: AppContext[IO] = AppContext(
-      hiveClient,
-      ldapClient,
-      hdfsClient,
-      yarnClient,
-      kafkaClient
-    )
+    val sentryClient: SentryGenericServiceClient = mock[SentryGenericServiceClient]
 
     val workspaceRepository: WorkspaceRequestRepository =
       mock[WorkspaceRequestRepository]
@@ -150,6 +144,18 @@ class WorkspaceServiceImplSpec
     val approvalRepository: ApprovalRepository = mock[ApprovalRepository]
     val contextProvider: LoginContextProvider = mock[LoginContextProvider]
     val memberRepository: MemberRepository = mock[MemberRepository]
+
+    lazy val appConfig: AppContext[IO] = AppContext(
+      hiveClient,
+      ldapClient,
+      hdfsClient,
+      yarnClient,
+      kafkaClient,
+      sentryClient,
+      null,
+      hiveDatabaseRepository,
+      ldapRepository
+    )
 
     def projectServiceImpl =
       new WorkspaceServiceImpl[IO](

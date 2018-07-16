@@ -5,7 +5,9 @@ import java.time.Instant
 import cats._
 import cats.effect.Effect
 import cats.implicits._
+import com.heimdali.repositories.Manager
 import io.circe._
+import com.heimdali.tasks._
 
 import scala.concurrent.ExecutionContext
 
@@ -25,7 +27,6 @@ object HiveDatabase {
 
   import com.heimdali.tasks.ProvisionResult._
   import com.heimdali.tasks.ProvisionTask._
-  import com.heimdali.tasks._
 
   implicit val viewer: Show[HiveDatabase] =
     Show.show(h => s"creating hive database ${h.name}")
@@ -37,10 +38,9 @@ object HiveDatabase {
         setDiskQuota <- SetDiskQuota(hive.id.get, hive.location, hive.sizeInGB).provision[F]
         createDatabase <- CreateHiveDatabase(hive.id.get, hive.name, hive.location).provision[F]
         managers <- hive.managingGroup.provision[F]
-        group <- GrantGroupAccess(hive.managingGroup.id.get, hive.managingGroup.sentryRole, hive.managingGroup.commonName).provision[F]
-        db <- GrantDatabaseAccess(hive.managingGroup.sentryRole, hive.name).provision[F]
-        location <- GrantLocationAccess(hive.managingGroup.sentryRole, hive.location).provision[F]
-      } yield createDirectory |+| setDiskQuota |+| createDatabase |+| managers |+| group |+| db |+| location
+        db <- GrantDatabaseAccess(hive.id.get, Manager, hive.managingGroup.sentryRole, hive.name).provision[F]
+        location <- GrantLocationAccess(hive.id.get, Manager, hive.managingGroup.sentryRole, hive.location).provision[F]
+      } yield createDirectory |+| setDiskQuota |+| createDatabase |+| managers |+| db |+| location
     }
 
   implicit val encoder: Encoder[HiveDatabase] =

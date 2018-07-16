@@ -1,5 +1,6 @@
 package com.heimdali.repositories
 
+import cats.Show
 import cats.data.OptionT
 import com.heimdali.models.LDAPRegistration
 import doobie.free.connection.ConnectionIO
@@ -23,6 +24,12 @@ trait LDAPRepository {
 sealed trait DatabaseRole
 
 object DatabaseRole {
+
+  implicit val viewer: Show[DatabaseRole] =
+    Show.show {
+      case Manager => "manager"
+      case ReadOnly => "readonly"
+    }
 
   def unapply(role: String): Option[DatabaseRole] =
     role match {

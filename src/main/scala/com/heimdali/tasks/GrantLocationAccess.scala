@@ -3,9 +3,11 @@ package com.heimdali.tasks
 import cats.Show
 import cats.data.Kleisli
 import cats.effect.Effect
+import doobie.implicits._
 import com.heimdali.models.AppContext
+import com.heimdali.repositories.DatabaseRole
 
-case class GrantLocationAccess(roleName: String, location: String)
+case class GrantLocationAccess(id: Long, role: DatabaseRole, roleName: String, location: String)
 
 object GrantLocationAccess {
 
@@ -15,9 +17,13 @@ object GrantLocationAccess {
   implicit def provisioner[F[_]](implicit F: Effect[F]): ProvisionTask[F, GrantLocationAccess] =
     ProvisionTask.instance { grant =>
       Kleisli[F, AppContext[F], ProvisionResult] { config =>
-        F.map(F.attempt(config.hiveClient.enableAccessToLocation(grant.location, grant.roleName))) {
-          case Left(exception) => Error(exception)
-          case Right(_) => Success[GrantLocationAccess]
+        F.flatMap(F.attempt(config.hiveClient.enableAccessToLocation(grant.location, grant.roleName))) {
+          case Left(exception) => F.pure(Error(exception))
+          case Right(_) =>
+            F.map(config
+              .databaseRepository
+              .locationGranted(grant.role, grant.id)
+              .transact(config.transactor)) { _ => Success[GrantLocationAccess] }
         }
       }
     }

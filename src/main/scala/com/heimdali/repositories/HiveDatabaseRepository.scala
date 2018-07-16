@@ -18,5 +18,9 @@ trait HiveDatabaseRepository {
   def quotaSet(id: Long): ConnectionIO[Int]
 
   def databaseCreated(id: Long): ConnectionIO[Int]
+
+  def locationGranted(role: DatabaseRole, id: Long): ConnectionIO[Int]
+
+  def databaseGranted(role: DatabaseRole, id: Long): ConnectionIO[Int]
 }
 

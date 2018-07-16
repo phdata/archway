@@ -7,15 +7,16 @@ import cats.effect._
 import cats.implicits._
 import com.heimdali.tasks.ProvisionTask._
 import com.heimdali.tasks._
+import doobie.util.composite.Composite
 import io.circe._
 
 case class LDAPRegistration(distinguishedName: String,
                             commonName: String,
                             sentryRole: String,
-                            members: List[WorkspaceMember] = List.empty,
                             id: Option[Long] = None,
                             groupCreated: Option[Instant] = None,
-                            )
+                            roleCreated: Option[Instant] = None,
+                            roleAssociated: Option[Instant] = None)
 
 object LDAPRegistration {
 
@@ -27,8 +28,8 @@ object LDAPRegistration {
     for {
       group <- CreateLDAPGroup(registration.id.get, registration.commonName, registration.distinguishedName).provision[F]
       role <- CreateRole(registration.sentryRole).provision[F]
-      members <- registration.members.map(m => AddMember(registration.distinguishedName, m.username).provision[F]).sequence.map(_.combineAll)
-    } yield role |+| group |+| members
+      grant <- GrantGroupAccess(registration.id.get, registration.sentryRole, registration.commonName).provision[F]
+    } yield role |+| group |+| grant
   }
 
   implicit val encoder: Encoder[LDAPRegistration] =

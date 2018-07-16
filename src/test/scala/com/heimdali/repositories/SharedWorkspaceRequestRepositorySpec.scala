@@ -1,5 +1,7 @@
 package com.heimdali.repositories
 
+import java.time.Clock
+
 import cats.effect.IO
 import com.heimdali.test.fixtures._
 import doobie.implicits._
@@ -15,8 +17,8 @@ class SharedWorkspaceRequestRepositorySpec extends FlatSpec with Matchers with D
 
     val newRequest = (for {
       newCompliance <- new ComplianceRepositoryImpl().create(savedCompliance)
-      newLdap <- new LDAPRepositoryImpl().create(savedLDAP)
-      newHive <- new HiveDatabaseRepositoryImpl().create(savedHive.copy(managingGroup = newLdap))
+      newLdap <- new LDAPRepositoryImpl(Clock.systemUTC()).create(savedLDAP)
+      newHive <- new HiveDatabaseRepositoryImpl(Clock.systemUTC()).create(savedHive.copy(managingGroup = newLdap))
       newYarn <- new YarnRepositoryImpl().create(savedYarn)
     } yield savedWorkspaceRequest.copy(
       compliance = newCompliance,

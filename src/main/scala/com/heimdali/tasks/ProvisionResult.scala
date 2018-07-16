@@ -11,6 +11,9 @@ object ProvisionResult {
     def combine(result1: ProvisionResult, result2: ProvisionResult): ProvisionResult =
       (result1, result2) match {
         case (Success(messages1), Success(messages2)) => Success(messages1.concatNel(messages2))
+        case (Unknown, Unknown) => Unknown
+        case (Unknown, out) => out
+        case (out, Unknown) => out
         case (out1, out2) => Error(out1.messages.concatNel(out2.messages))
       }
     def empty: ProvisionResult = Unknown

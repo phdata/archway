@@ -1,16 +1,15 @@
 package com.heimdali.repositories
 
-import java.time.Instant
+import java.time.{Clock, Instant}
 
 import cats.data.OptionT
-import cats.effect.Sync
 import com.heimdali.models.LDAPRegistration
 import com.typesafe.scalalogging.LazyLogging
 import doobie._
 import doobie.implicits._
 import doobie.util.fragments.whereAnd
 
-class LDAPRepositoryImpl
+class LDAPRepositoryImpl(clock: Clock)
   extends LDAPRepository
     with LazyLogging {
 
@@ -49,7 +48,9 @@ class LDAPRepositoryImpl
          l.common_name,
          l.sentry_role,
          l.id,
-         l.created
+         l.group_created,
+         l.role_created,
+         l.role_associated
        from
          ldap_registration l
       """
@@ -73,4 +74,12 @@ class LDAPRepositoryImpl
         """).query[LDAPRegistration].option
     )
 
+  override def groupCreated(id: Long): ConnectionIO[Int] =
+    sql"update ldap_registration set group_created = ${Instant.now(clock)} where id = $id".update.run
+
+  override def roleCreated(id: Long): ConnectionIO[Int] =
+    sql"update ldap_registration set role_created = ${Instant.now(clock)} where id = $id".update.run
+
+  override def groupAssociated(id: Long): ConnectionIO[Int] =
+    sql"update ldap_registration set role_associated = ${Instant.now(clock)} where id = $id".update.run
 }

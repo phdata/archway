@@ -1,17 +1,15 @@
 package com.heimdali.repositories
 
-import java.time.Instant
+import java.time.{Clock, Instant}
 
-import cats.data.OptionT
+import cats._, cats.data._, cats.implicits._
 import com.heimdali.models.HiveDatabase
 import doobie._
 import doobie.implicits._
 import doobie.util.fragments.whereAnd
 
-class HiveDatabaseRepositoryImpl
+class HiveDatabaseRepositoryImpl(clock: Clock)
     extends HiveDatabaseRepository {
-
-  implicit val han = LogHandler.jdkLogHandler
 
   override def complete(id: Long): ConnectionIO[Int] =
     sql"""
@@ -54,10 +52,11 @@ class HiveDatabaseRepositoryImpl
        left join ldap_registration r on h.readonly_group_id = r.id
       """
 
-  def find(id: Long): OptionT[ConnectionIO, HiveDatabase] =
+  def find(id: Long): OptionT[ConnectionIO, HiveDatabase] = {
     OptionT {
       (selectQuery ++ whereAnd(fr"h.id = $id")).query[HiveDatabase].option
     }
+  }
 
   override def create(hiveDatabase: HiveDatabase): ConnectionIO[HiveDatabase] =
     for {
@@ -70,4 +69,20 @@ class HiveDatabaseRepositoryImpl
       fr"inner join request_hive rh on rh.hive_database_id = h.id" ++
       fr"inner join workspace_request w on rh.workspace_request_id = w.id" ++
       whereAnd(fr"w.id = $id")).query[HiveDatabase].to[List]
+
+  override def directoryCreated(id: Long): ConnectionIO[Int] =
+    sql"update hive_database set directory_created = ${Instant.now(clock)} where id = $id".update.run
+
+  override def quotaSet(id: Long): ConnectionIO[Int] =
+    sql"update hive_database set quota_set = ${Instant.now(clock)} where id = $id".update.run
+
+  override def databaseCreated(id: Long): ConnectionIO[Int] =
+    sql"update hive_database set database_created = ${Instant.now(clock)} where id = $id".update.run
+
+  override def locationGranted(role: DatabaseRole, id: Long): ConnectionIO[Int] =
+    (fr"update hive_database set " ++ Fragment.const(s"${role.show}_location_access") ++ fr" = ${Instant.now(clock)} where id = $id").update.run
+
+  override def databaseGranted(role: DatabaseRole, id: Long): ConnectionIO[Int] =
+    (fr"update hive_database set " ++ Fragment.const(s"${role.show}_db_access") ++ fr" = ${Instant.now(clock)} where id = $id").update.run
+
 }

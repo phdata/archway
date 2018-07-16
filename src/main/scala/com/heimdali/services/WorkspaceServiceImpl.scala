@@ -8,7 +8,7 @@ import cats.implicits._
 import com.heimdali.clients._
 import com.heimdali.models._
 import com.heimdali.repositories.{MemberRepository, _}
-import com.heimdali.tasks.ProvisionResult
+import com.heimdali.tasks.{AddMember, ProvisionResult}
 import com.typesafe.scalalogging.LazyLogging
 import doobie._
 import doobie.implicits._
@@ -17,15 +17,15 @@ import doobie.util.transactor.Transactor
 import scala.concurrent.ExecutionContext
 
 class WorkspaceServiceImpl[F[_]](ldapClient: LDAPClient[F],
-                                  yarnRepository: YarnRepository,
-                                  hiveDatabaseRepository: HiveDatabaseRepository,
-                                  ldapRepository: LDAPRepository,
-                                  workspaceRepository: WorkspaceRequestRepository,
-                                  complianceRepository: ComplianceRepository,
-                                  approvalRepository: ApprovalRepository,
-                                  transactor: Transactor[F],
-                                  memberRepository: MemberRepository,
-                                  appConfig: AppContext[F]
+                                 yarnRepository: YarnRepository,
+                                 hiveDatabaseRepository: HiveDatabaseRepository,
+                                 ldapRepository: LDAPRepository,
+                                 workspaceRepository: WorkspaceRequestRepository,
+                                 complianceRepository: ComplianceRepository,
+                                 approvalRepository: ApprovalRepository,
+                                 transactor: Transactor[F],
+                                 memberRepository: MemberRepository,
+                                 appConfig: AppContext[F]
                                 )(implicit val F: Effect[F], val executionContext: ExecutionContext)
   extends WorkspaceService[F]
     with LazyLogging {
@@ -109,15 +109,14 @@ class WorkspaceServiceImpl[F[_]](ldapClient: LDAPClient[F],
   def provision(workspace: WorkspaceRequest): F[NonEmptyList[String]] = {
     import com.heimdali.tasks.ProvisionTask._
 
-    val datas: List[Kleisli[F, AppContext[F], ProvisionResult]] = workspace.data.map(_.provision)
-    val yarns: List[Kleisli[F, AppContext[F], ProvisionResult]] = workspace.processing.map(_.provision)
+    val combined: List[ReaderT[F, AppContext[F], ProvisionResult]] =
+      for {
+        datas <- workspace.data.map(_.provision)
+        members <- workspace.data.map(d => AddMember(d.managingGroup.distinguishedName, workspace.requestedBy).provision)
+        yarns <- workspace.processing.map(_.provision)
+      } yield datas.flatMap(r1 => members.map(r2 => r1 |+| r2)).flatMap(r3 => yarns.map(r4 => r3 |+| r4))
 
-    (datas ++ yarns)
-      .map(item => item(appConfig).map(_.messages))
-      .toNel
-      .get
-      .sequence
-      .map(_.flatten)
+    combined.sequence.map(_.combineAll).apply(appConfig).map(_.messages)
   }
 
 }
