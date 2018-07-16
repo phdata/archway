@@ -13,6 +13,7 @@ import io.circe.syntax._
 case class Yarn(poolName: String,
                 maxCores: Int,
                 maxMemoryInGB: Int,
+                workspaceRequestId: Option[Long] = None,
                 id: Option[Long] = None)
 
 object Yarn {
@@ -22,7 +23,7 @@ object Yarn {
 
   implicit def provisioner[F[_]](implicit F: Effect[F]): ProvisionTask[F, Yarn] = new ProvisionTask[F, Yarn] {
     override def provision(yarn: Yarn)(implicit F: Effect[F]): Kleisli[F, AppContext[F], ProvisionResult] =
-      CreateResourcePool(yarn.poolName, yarn.maxCores, yarn.maxMemoryInGB).provision
+      CreateResourcePool(yarn.id.get, yarn.poolName, yarn.maxCores, yarn.maxMemoryInGB).provision
   }
 
   implicit val encoder: Encoder[Yarn] =

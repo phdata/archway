@@ -31,9 +31,9 @@ package object fixtures {
   val initialCompliance = savedCompliance.copy(id = None)
   val savedLDAP = LDAPRegistration(ldapDn, s"edh_sw_$systemName", "role_sesame", Some(id))
   val initialLDAP = savedLDAP.copy(id = None)
-  val savedHive = HiveDatabase("sw_sesame", "/shared_workspaces/sw_sesame", hdfsRequestedSize, savedLDAP, id = Some(id))
+  val savedHive = HiveDatabase("sw_sesame", "/shared_workspaces/sw_sesame", hdfsRequestedSize, savedLDAP, id = Some(id), workspaceRequestId = Some(id))
   val initialHive = savedHive.copy(id = None, managingGroup = initialLDAP)
-  val savedYarn = Yarn(poolName, maxCores, maxMemoryInGB, Some(id))
+  val savedYarn = Yarn(poolName, maxCores, maxMemoryInGB, Some(id), Some(id))
   val initialYarn = savedYarn.copy(id = None)
   val clock = Clock.fixed(Instant.now(), ZoneId.of("UTC"))
 

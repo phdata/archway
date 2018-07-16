@@ -61,7 +61,9 @@ trait ServiceModule[F[_]] {
     sentryClient,
     metaTransactor,
     hiveDatabaseRepository,
-    ldapRepository)
+    ldapRepository,
+    memberRepository,
+    yarnRepository)
 
   val workspaceService: WorkspaceService[F] =
     new WorkspaceServiceImpl[F](

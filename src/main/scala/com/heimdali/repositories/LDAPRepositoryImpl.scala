@@ -13,8 +13,6 @@ class LDAPRepositoryImpl(clock: Clock)
   extends LDAPRepository
     with LazyLogging {
 
-  implicit val han = LogHandler.jdkLogHandler
-
   def updateCreated(id: Long): ConnectionIO[Int] =
     sql"""
       update ldap_registration
@@ -50,7 +48,7 @@ class LDAPRepositoryImpl(clock: Clock)
          l.id,
          l.group_created,
          l.role_created,
-         l.role_associated
+         l.group_associated
        from
          ldap_registration l
       """
@@ -65,13 +63,10 @@ class LDAPRepositoryImpl(clock: Clock)
     OptionT(
       (
         select ++
-        fr"inner join hive_database h on "
-        ++ Fragment.const(s"h.${databaseRole.getClass.getSimpleName.toLowerCase().replace("$", "")}_group_id") ++ fr" = l.id"
-        ++ fr"""
-        inner join request_hive rh on rh.hive_database_id = h.id
-        inner join workspace_request w on w.id = rh.workspace_request_id
-        where w.id = $workspaceId and h.name = $databaseName
-        """).query[LDAPRegistration].option
+          fr"inner join hive_database h on "
+          ++ Fragment.const(s"h.${databaseRole.getClass.getSimpleName.toLowerCase().replace("$", "")}_group_id") ++ fr" = l.id"
+          ++ whereAnd(fr"h.workspace_request_id = $workspaceId", fr"h.name = $databaseName")
+        ).query[LDAPRegistration].option
     )
 
   override def groupCreated(id: Long): ConnectionIO[Int] =
@@ -81,5 +76,5 @@ class LDAPRepositoryImpl(clock: Clock)
     sql"update ldap_registration set role_created = ${Instant.now(clock)} where id = $id".update.run
 
   override def groupAssociated(id: Long): ConnectionIO[Int] =
-    sql"update ldap_registration set role_associated = ${Instant.now(clock)} where id = $id".update.run
+    sql"update ldap_registration set group_associated = ${Instant.now(clock)} where id = $id".update.run
 }

@@ -79,12 +79,6 @@ class WorkspaceRequestRepositoryImpl
   def find(id: Long): OptionT[ConnectionIO, WorkspaceRequest] =
     OptionT((selectFragment ++ whereAnd(fr"wr.id = $id")).query[WorkspaceRequest].option)
 
-  override def linkHive(id: Long, hiveId: Long): ConnectionIO[Int] =
-    sql"insert into request_hive values ($id, $hiveId)".update.run
-
-  override def linkYarn(id: Long, yarnId: Long): ConnectionIO[Int] =
-    sql"insert into request_yarn values ($id, $yarnId)".update.run
-
   override def create(updatedWorkspace: WorkspaceRequest): ConnectionIO[WorkspaceRequest] =
     for {
       id <- insert(updatedWorkspace)

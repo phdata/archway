@@ -16,12 +16,15 @@ case class HiveDatabase(name: String,
                         sizeInGB: Int,
                         managingGroup: LDAPRegistration,
                         readonlyGroup: Option[LDAPRegistration] = None,
+                        workspaceRequestId: Option[Long] = None,
                         id: Option[Long] = None,
                         directoryCreated: Option[Instant] = None,
                         databaseCreated: Option[Instant] = None,
                         quotaSet: Option[Instant] = None,
-                        databaseAccessGranted: Option[Instant] = None,
-                        locationAccessGranted: Option[Instant] = None)
+                        managerDatabaseAccessGranted: Option[Instant] = None,
+                        managerDataLocationGranted: Option[Instant] = None,
+                        readonlyDatabaseAccessGranted: Option[Instant] = None,
+                        readonlyLocationGranted: Option[Instant] = None)
 
 object HiveDatabase {
 

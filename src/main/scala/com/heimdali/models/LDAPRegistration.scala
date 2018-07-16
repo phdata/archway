@@ -27,7 +27,7 @@ object LDAPRegistration {
     ProvisionTask.instance { registration =>
     for {
       group <- CreateLDAPGroup(registration.id.get, registration.commonName, registration.distinguishedName).provision[F]
-      role <- CreateRole(registration.sentryRole).provision[F]
+      role <- CreateRole(registration.id.get, registration.sentryRole).provision[F]
       grant <- GrantGroupAccess(registration.id.get, registration.sentryRole, registration.commonName).provision[F]
     } yield role |+| group |+| grant
   }

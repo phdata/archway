@@ -63,9 +63,7 @@ class WorkspaceServiceImplSpec
       (ldapRepository.create _).expects(initialLDAP).returning(savedLDAP.pure[ConnectionIO])
       (memberRepository.create _).expects(standardUsername, id).returning(1L.pure[ConnectionIO])
       (hiveDatabaseRepository.create _).expects(initialHive.copy(managingGroup = savedLDAP)).returning(savedHive.pure[ConnectionIO])
-      (workspaceRepository.linkHive _).expects(id, id).returning(1.pure[ConnectionIO])
       (yarnRepository.create _).expects(initialYarn).returning(savedYarn.pure[ConnectionIO])
-      (workspaceRepository.linkYarn _).expects(id, id).returning(1.pure[ConnectionIO])
     }
 
     val newWorkspace =
@@ -107,21 +105,37 @@ class WorkspaceServiceImplSpec
     inSequence {
       hdfsClient.createDirectory _ expects(savedHive.location, None) returning IO
         .pure(new Path(savedHive.location))
+      hiveDatabaseRepository.directoryCreated _ expects id returning 0.pure[ConnectionIO]
       hdfsClient.setQuota _ expects(savedHive.location, savedHive.sizeInGB) returning IO
         .pure(HDFSAllocation(savedHive.location, savedHive.sizeInGB))
+      hiveDatabaseRepository.quotaSet _ expects id returning 0.pure[ConnectionIO]
       hiveClient.createDatabase _ expects(savedHive.name, savedHive.location) returning IO.unit
+      hiveDatabaseRepository.databaseCreated _ expects id returning 0.pure[ConnectionIO]
 
       ldapClient.createGroup _ expects(savedLDAP.id.get, savedLDAP.commonName, savedLDAP.distinguishedName) returning EitherT
         .right(IO.unit)
+      ldapRepository.groupCreated _ expects id returning 0.pure[ConnectionIO]
       hiveClient.createRole _ expects savedLDAP.sentryRole returning IO.unit
-      ldapClient.addUser _ expects(savedLDAP.distinguishedName, standardUsername) returning OptionT
-        .some(LDAPUser("John Doe", standardUsername, Seq.empty))
+      ldapRepository.roleCreated _ expects id returning 0.pure[ConnectionIO]
       hiveClient.grantGroup _ expects(savedLDAP.commonName, savedLDAP.sentryRole) returning IO.unit
+      ldapRepository.groupAssociated _ expects id returning 0.pure[ConnectionIO]
       hiveClient.enableAccessToDB _ expects(savedHive.name, savedLDAP.sentryRole) returning IO.unit
+      hiveDatabaseRepository.databaseGranted _ expects(Manager, id) returning 0.pure[ConnectionIO]
       hiveClient.enableAccessToLocation _ expects(savedHive.location, savedLDAP.sentryRole) returning IO.unit
+      hiveDatabaseRepository.locationGranted _ expects(Manager, id) returning 0.pure[ConnectionIO]
     }
 
-    yarnClient.createPool _ expects(poolName, maxCores, maxMemoryInGB) returning IO.unit
+    inSequence {
+      ldapClient.addUser _ expects(savedLDAP.distinguishedName, standardUsername) returning OptionT
+        .some(LDAPUser("John Doe", standardUsername, Seq.empty))
+      memberRepository.complete _ expects id returning 0.pure[ConnectionIO]
+    }
+
+
+    inSequence {
+      yarnClient.createPool _ expects(poolName, maxCores, maxMemoryInGB) returning IO.unit
+      yarnRepository.complete _ expects id returning 0.pure[ConnectionIO]
+    }
 
     projectServiceImpl.provision(savedWorkspaceRequest).unsafeRunSync()
   }
@@ -152,10 +166,11 @@ class WorkspaceServiceImplSpec
       yarnClient,
       kafkaClient,
       sentryClient,
-      null,
+      transactor,
       hiveDatabaseRepository,
-      ldapRepository
-    )
+      ldapRepository,
+      memberRepository,
+      yarnRepository)
 
     def projectServiceImpl =
       new WorkspaceServiceImpl[IO](

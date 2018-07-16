@@ -76,11 +76,7 @@ class WorkspaceServiceImpl[F[_]](ldapClient: LDAPClient[F],
               .map(ldapRepository.create)
               .sequence[ConnectionIO, LDAPRegistration]
             newHive <- hiveDatabaseRepository.create(
-              db.copy(managingGroup = manager, readonlyGroup = readonly)
-            )
-            _ <- workspaceRepository.linkHive(
-              newWorkspace.id.get,
-              newHive.id.get
+              db.copy(managingGroup = manager, readonlyGroup = readonly, workspaceRequestId = newWorkspace.id)
             )
           } yield
             newHive.copy(managingGroup = manager, readonlyGroup = readonly)
@@ -89,11 +85,7 @@ class WorkspaceServiceImpl[F[_]](ldapClient: LDAPClient[F],
       insertedYarn <- workspace.processing.traverse[ConnectionIO, Yarn] {
         yarn =>
           for {
-            newYarn <- yarnRepository.create(yarn)
-            _ <- workspaceRepository.linkYarn(
-              newWorkspace.id.get,
-              newYarn.id.get
-            )
+            newYarn <- yarnRepository.create(yarn.copy(workspaceRequestId = newWorkspace.id))
           } yield newYarn
       }
     } yield newWorkspace.copy(data = insertedHive, processing = insertedYarn))
@@ -112,7 +104,7 @@ class WorkspaceServiceImpl[F[_]](ldapClient: LDAPClient[F],
     val combined: List[ReaderT[F, AppContext[F], ProvisionResult]] =
       for {
         datas <- workspace.data.map(_.provision)
-        members <- workspace.data.map(d => AddMember(d.managingGroup.distinguishedName, workspace.requestedBy).provision)
+        members <- workspace.data.map(d => AddMember(d.id.get, d.managingGroup.distinguishedName, workspace.requestedBy).provision)
         yarns <- workspace.processing.map(_.provision)
       } yield datas.flatMap(r1 => members.map(r2 => r1 |+| r2)).flatMap(r3 => yarns.map(r4 => r3 |+| r4))
 

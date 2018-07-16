@@ -20,11 +20,12 @@ class HiveDatabaseRepositoryImpl(clock: Clock)
 
   def insert(hiveDatabase: HiveDatabase): ConnectionIO[Long] =
     sql"""
-       insert into hive_database (name, location, size_in_gb, manager_group_id, readonly_group_id)
+       insert into hive_database (name, location, size_in_gb, workspace_request_id, manager_group_id, readonly_group_id)
        values(
         ${hiveDatabase.name},
         ${hiveDatabase.location},
         ${hiveDatabase.sizeInGB},
+        ${hiveDatabase.workspaceRequestId},
         ${hiveDatabase.managingGroup.id},
         ${hiveDatabase.readonlyGroup.flatMap(_.id)}
        )
@@ -40,13 +41,25 @@ class HiveDatabaseRepositoryImpl(clock: Clock)
          m.common_name,
          m.sentry_role,
          m.id,
-         m.created,
+         m.group_created,
+         m.role_created,
+         m.group_associated,
          r.distinguished_name,
          r.common_name,
          r.sentry_role,
          r.id,
-         r.created,
-         h.id
+         r.group_created,
+         r.role_created,
+         r.group_associated,
+         h.workspace_request_id,
+         h.id,
+         h.directory_created,
+         h.database_created,
+         h.quota_set,
+         h.manager_location_access,
+         h.manager_db_access,
+         h.readonly_location_access,
+         h.readonly_db_access
        from hive_database h
        inner join ldap_registration m on h.manager_group_id = m.id
        left join ldap_registration r on h.readonly_group_id = r.id
@@ -65,10 +78,8 @@ class HiveDatabaseRepositoryImpl(clock: Clock)
     } yield hive.get
 
   override def findByWorkspace(id: Long): ConnectionIO[List[HiveDatabase]] =
-    (selectQuery ++
-      fr"inner join request_hive rh on rh.hive_database_id = h.id" ++
-      fr"inner join workspace_request w on rh.workspace_request_id = w.id" ++
-      whereAnd(fr"w.id = $id")).query[HiveDatabase].to[List]
+    (selectQuery ++ whereAnd(fr"h.workspace_request_id = $id"))
+      .query[HiveDatabase].to[List]
 
   override def directoryCreated(id: Long): ConnectionIO[Int] =
     sql"update hive_database set directory_created = ${Instant.now(clock)} where id = $id".update.run

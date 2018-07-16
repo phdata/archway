@@ -53,9 +53,6 @@ class YarnRepositoryImpl
     } yield result.get
 
   override def findByWorkspace(id: Long): ConnectionIO[List[Yarn]] =
-      (selectQuery ++
-        fr"inner join request_yarn ry on ry.yarn_id = y.id" ++
-        fr"inner join workspace_request w on ry.workspace_request_id = w.id" ++
-        whereAnd(fr"w.id = $id")).query[Yarn].to[List]
+      (selectQuery ++ whereAnd(fr"y.workpsace_request_id= $id")).query[Yarn].to[List]
 
 }
