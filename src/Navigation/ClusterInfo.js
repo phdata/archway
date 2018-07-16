@@ -1,50 +1,21 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Spin, Icon } from 'antd';
+import { Spin, Avatar, Icon, Menu, Tooltip } from 'antd';
+import { NavLink, withRouter } from 'react-router-dom';
 import './ClusterInfo.css';
 
-const ClusterInfo = ({ name, status = 'unknown' }) => {
+const ClusterInfo = ({ name, displayStatus, color, location }) => {
   if (name === 'Unknown') { return <Spin indicator={<Icon type="loading" spin style={{ color: 'white' }} />} />; }
-  let color = '#F0F3F5';
-  let displayStatus = 'unknown';
-  switch (status) {
-    case 'GOOD_HEALTH':
-      color = '#43AA8B';
-      displayStatus = 'good';
-      break;
-    case 'CONCERNING_HEALTH':
-      color = '#FF6F59';
-      displayStatus = 'concerning';
-      break;
-    case 'BAD_HEALTH':
-      color = '#DB504A';
-      displayStatus = 'bad';
-      break;
-    default:
-      color = '#aaa';
-      displayStatus = 'unknown';
-      break;
-  }
   return (
-    <div style={{ display: 'flex', alignItems: 'center', height: 70 }}>
-       <div>{name} status:</div>
-      <div style={{ 
-               marginLeft: 10, 
-               lineHeight: 'normal', 
-               borderRadius: 5, 
-               backgroundColor: color, 
-               fontSize: 12, 
-               color: "white",
-               padding: 5,
-               boxShadow: "0 0 5px white",
-           }}>
-          {displayStatus}
+    <Tooltip placement="right" title={`${name}'s status is currently ${displayStatus}`}>
+      <div style={{ padding: 10, color: 'white', backgroundColor: color, textAlign: 'center' }}>
+        {name} is {displayStatus}
       </div>
-    </div>
+    </Tooltip>
   );
 };
 
 export default connect(
   state => state.cluster,
   {},
-)(ClusterInfo);
+)(withRouter(ClusterInfo));

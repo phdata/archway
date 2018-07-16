@@ -1,37 +1,39 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { Layout, Menu, Icon } from 'antd';
+import { withRouter, NavLink } from 'react-router-dom';
+import { connect } from 'react-redux';
 
-import logo from './logo.png';
+import logo from '../Common/white_logo_transparent.png';
 import Profile from './Profile';
 import ClusterInfo from './ClusterInfo';
 import './Navigation.css';
 
-const Navigation = () => (
-  <div className="Navigation">
-    <div className="Navigation-left">
-      <NavLink to="/personal" className="Navigation-title-link">
-        <div className="Navigation-title">
-          <img src={logo} alt="logo" className="Navigation-logo" />
-          <h1>Heimdali</h1>
-        </div>
-      </NavLink>
-      <div className="Navigation-nav">
-        <NavLink to="/personal" className="Navigation-nav-link" activeClassName="active">
-          <i className="fa fa-home" />Home
+const { Sider } = Layout;
+
+const Navigation = ({ location }) => (
+  <Sider style={{ overflow: 'auto', height: '100vh', position: 'fixed', left: 0 }}>
+    <img src={logo} style={{ padding: 10, width: '100%' }} />
+    <Profile />
+    <ClusterInfo />
+    <Menu style={{ marginTop: 25 }} selectedKeys={[location.pathname]} theme="dark" mode="inline">
+      <Menu.Item key="/home">
+        <Icon type="home" />
+        <NavLink style={{ display: 'inline-block' }} to="/">
+          Overview
         </NavLink>
-        <NavLink to="/workspaces" className="Navigation-nav-link" activeClassName="active">
-          <i className="fa fa-users" />Workspaces
-        </NavLink>
-        <NavLink to="/datasets" className="Navigation-nav-link" activeClassName="active">
-          <i className="fa fa-info" />Governed
-        </NavLink>
-      </div>
-    </div>
-    <div className="Navigation-right">
-      <ClusterInfo />
-      <Profile />
-    </div>
-  </div>
+      </Menu.Item>
+      <Menu.ItemGroup title="Workspaces">
+        <Menu.Item key="/workspaces">
+          <Icon type="api" />
+          <NavLink style={{ display: 'inline-block' }} to="/workspaces">My Workspaces</NavLink>
+        </Menu.Item>
+        <Menu.Item key="/request">
+          <Icon type="plus" />
+          <NavLink style={{ display: 'inline-block' }} to="/request">Request New</NavLink>
+        </Menu.Item>
+      </Menu.ItemGroup>
+    </Menu>
+  </Sider>
 );
 
-export default Navigation;
+export default withRouter(Navigation);
