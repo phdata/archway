@@ -143,7 +143,7 @@ class WorkspaceServiceImplSpec
   trait Context {
     val ldapClient: LDAPClient[IO] = mock[LDAPClient[IO]]
     val hdfsClient: HDFSClient[IO] = mock[HDFSClient[IO]]
-    val hiveClient: HiveClient[IO] = mock[HiveClient[IO]]
+    val hiveClient: SentryClient[IO] = mock[SentryClient[IO]]
     val yarnClient: YarnClient[IO] = mock[YarnClient[IO]]
     val kafkaClient: KafkaClient[IO] = mock[KafkaClient[IO]]
     val sentryClient: SentryGenericServiceClient = mock[SentryGenericServiceClient]

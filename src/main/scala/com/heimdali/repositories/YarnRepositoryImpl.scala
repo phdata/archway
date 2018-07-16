@@ -15,35 +15,37 @@ class YarnRepositoryImpl
 
   override def complete(id: Long): ConnectionIO[Int] =
     sql"""
-      update yarn
+      update resource_pool
       set created = ${Instant.now()}
       where id = $id
       """.update.run
 
   def insert(yarn: Yarn): ConnectionIO[Long] =
     sql"""
-       insert into yarn (pool_name, max_cores, max_memory_in_gb)
+       insert into resource_pool (pool_name, max_cores, max_memory_in_gb, workspace_request_id)
        values(
         ${yarn.poolName},
         ${yarn.maxCores},
-        ${yarn.maxMemoryInGB}
+        ${yarn.maxMemoryInGB},
+        ${yarn.workspaceRequestId}
        )
       """.update.withUniqueGeneratedKeys[Long]("id")
 
   val selectQuery =
     sql"""
        select
-         y.pool_name,
-         y.max_cores,
-         y.max_memory_in_gb,
-         y.id
+         rp.pool_name,
+         rp.max_cores,
+         rp.max_memory_in_gb,
+         rp.workspace_request_id,
+         rp.id
        from
-         yarn y
+         resource_pool rp
       """
 
   def find(id: Long): OptionT[ConnectionIO, Yarn] =
     OptionT {
-      (selectQuery ++ whereAnd(fr"y.id = $id")).query[Yarn].option
+      (selectQuery ++ whereAnd(fr"rp.id = $id")).query[Yarn].option
     }
 
   override def create(yarn: Yarn): ConnectionIO[Yarn] =
@@ -53,6 +55,6 @@ class YarnRepositoryImpl
     } yield result.get
 
   override def findByWorkspace(id: Long): ConnectionIO[List[Yarn]] =
-      (selectQuery ++ whereAnd(fr"y.workpsace_request_id= $id")).query[Yarn].to[List]
+      (selectQuery ++ whereAnd(fr"rp.workspace_request_id= $id")).query[Yarn].to[List]
 
 }

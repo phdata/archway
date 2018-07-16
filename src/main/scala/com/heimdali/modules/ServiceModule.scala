@@ -1,6 +1,6 @@
 package com.heimdali.modules
 
-import com.heimdali.clients.{HiveClient, HiveClientImpl}
+import com.heimdali.clients.{SentryClient, SentryClientImpl}
 import com.heimdali.config
 import com.heimdali.models.AppContext
 import com.heimdali.services._
@@ -35,8 +35,8 @@ trait ServiceModule[F[_]] {
   val keytabService: KeytabService[F] =
     new KeytabServiceImpl[F]()
 
-  val hiveClient: HiveClient[F] =
-    new HiveClientImpl[F](hiveTransactor)
+  val hiveClient: SentryClient[F] =
+    new SentryClientImpl[F](hiveTransactor)
 
   val environment: String =
     configuration.getString("cluster.environment")

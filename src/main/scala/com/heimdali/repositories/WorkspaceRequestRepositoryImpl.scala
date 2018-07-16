@@ -43,9 +43,8 @@ class WorkspaceRequestRepositoryImpl
 
   val innerQuery =
     fr"""
-        select rh.workspace_request_id
-        from request_hive rh
-        inner join hive_database h on rh.hive_database_id = h.id
+        select h.workspace_request_id
+        from hive_database h
         inner join ldap_registration mr on h.manager_group_id = mr.id
         inner join member mrm on mrm.ldap_registration_id = mr.id
         left join ldap_registration rr on h.readonly_group_id = rr.id

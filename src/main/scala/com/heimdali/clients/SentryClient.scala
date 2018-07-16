@@ -8,7 +8,7 @@ import doobie._
 import doobie.implicits._
 import cats.data.OptionT
 
-trait HiveClient[F[_]] {
+trait SentryClient[F[_]] {
   def createRole(name: String): F[Unit]
 
   def createDatabase(name: String, location: String): F[Unit]
@@ -20,8 +20,8 @@ trait HiveClient[F[_]] {
   def enableAccessToLocation(location: String, role: String): F[Unit]
 }
 
-class HiveClientImpl[F[_] : Sync](transactor: Transactor[F])
-  extends HiveClient[F]
+class SentryClientImpl[F[_] : Sync](transactor: Transactor[F])
+  extends SentryClient[F]
     with LazyLogging {
 
   implicit val han = LogHandler.jdkLogHandler

@@ -7,6 +7,8 @@ import doobie.implicits._
 class ComplianceRepositoryImpl
   extends ComplianceRepository {
 
+  implicit val han = LogHandler.jdkLogHandler
+
   def insertRecord(compliance: Compliance): ConnectionIO[Long] =
     sql"""
        insert into compliance (phi_data, pci_data, pii_data)

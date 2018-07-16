@@ -106,7 +106,7 @@ class WorkspaceServiceImpl[F[_]](ldapClient: LDAPClient[F],
         datas <- workspace.data.map(_.provision)
         members <- workspace.data.map(d => AddMember(d.id.get, d.managingGroup.distinguishedName, workspace.requestedBy).provision)
         yarns <- workspace.processing.map(_.provision)
-      } yield datas.flatMap(r1 => members.map(r2 => r1 |+| r2)).flatMap(r3 => yarns.map(r4 => r3 |+| r4))
+      } yield (datas, members, yarns).mapN(_ |+| _ |+| _)
 
     combined.sequence.map(_.combineAll).apply(appConfig).map(_.messages)
   }

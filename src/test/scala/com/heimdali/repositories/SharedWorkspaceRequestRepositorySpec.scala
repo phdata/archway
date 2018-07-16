@@ -24,6 +24,7 @@ class SharedWorkspaceRequestRepositorySpec extends FlatSpec with Matchers with D
     newRecord.id shouldBe defined
 
     sql"delete from approval".update.run.transact(transactor).unsafeRunSync
+    sql"delete from hive_database".update.run.transact(transactor).unsafeRunSync
     sql"delete from workspace_request".update.run.transact(transactor).unsafeRunSync
     sql"delete from compliance".update.run.transact(transactor).unsafeRunSync
   }

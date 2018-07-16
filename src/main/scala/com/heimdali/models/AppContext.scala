@@ -5,7 +5,7 @@ import com.heimdali.repositories.{HiveDatabaseRepository, LDAPRepository, Member
 import doobie.util.transactor.Transactor
 import org.apache.sentry.provider.db.generic.service.thrift.SentryGenericServiceClient
 
-case class AppContext[F[_]](hiveClient: HiveClient[F],
+case class AppContext[F[_]](hiveClient: SentryClient[F],
                             ldapClient: LDAPClient[F],
                             hdfsClient: HDFSClient[F],
                             yarnClient: YarnClient[F],

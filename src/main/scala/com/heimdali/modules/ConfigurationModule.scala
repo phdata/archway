@@ -16,13 +16,14 @@ trait ConfigurationModule {
     config.addResource("core-site.xml")
     config.addResource("hdfs-site.xml")
     config.addResource("hive-site.xml")
+    config.addResource("sentry-site.xml")
     config
   }
 
   private implicit def hint[T] = ProductHint[T](ConfigFieldMapping(CamelCase, CamelCase))
   val Right(appConfig) = pureconfig.loadConfig[AppConfig]
 
-  val zkConnectString: String = ???
+  val zkConnectString: String = "master1.valhalla.phdata.io:2181,master2.valhalla.phdata.io:2181,master3.valhalla.phdata.io:2181"
 
   val zkClient = new ZkClient(zkConnectString)
 

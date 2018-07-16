@@ -11,6 +11,8 @@ import doobie.util.fragments.whereAnd
 class HiveDatabaseRepositoryImpl(clock: Clock)
     extends HiveDatabaseRepository {
 
+  implicit val han = LogHandler.jdkLogHandler
+
   override def complete(id: Long): ConnectionIO[Int] =
     sql"""
       update hive_database
