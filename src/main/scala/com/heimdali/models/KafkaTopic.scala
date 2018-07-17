@@ -4,6 +4,8 @@ import cats.effect.Effect
 import cats.implicits._
 import com.heimdali.tasks.ProvisionTask._
 import com.heimdali.tasks.{CreateKafkaTopic, ProvisionTask}
+import io.circe._
+import io.circe.syntax._
 
 case class KafkaTopic(name: String,
                       partitions: Int,
@@ -21,5 +23,18 @@ object KafkaTopic {
         readonly <- topic.managingGroup.provision
       } yield create |+| managingGroup |+| readonly
     )
+
+  implicit val encoder: Encoder[KafkaTopic] =
+    Encoder.instance { t =>
+      Json.obj(
+        "id" -> t.id.asJson,
+        "name" -> t.name.asJson,
+        "partitions" -> t.partitions.asJson,
+        "replication_factor" -> t.replicationFactor.asJson,
+        "managing_group" -> t.managingGroup.asJson
+      )
+    }
+
+  implicit val decoder: Decoder[KafkaTopic] = ???
 
 }

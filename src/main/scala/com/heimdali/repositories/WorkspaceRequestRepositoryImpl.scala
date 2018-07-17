@@ -16,13 +16,6 @@ class WorkspaceRequestRepositoryImpl
 
   implicit val han = LogHandler.jdkLogHandler
 
-  implicit val workspaceRequestComposite: Composite[WorkspaceRequest] =
-    Composite[(String, String, Instant, Boolean, Boolean, Boolean, Option[Long], Boolean, Option[Long])].imap(
-      (t: (String, String, Instant, Boolean, Boolean, Boolean, Option[Long], Boolean, Option[Long])) =>
-        WorkspaceRequest(t._1, t._2, t._3, Compliance(t._4, t._5, t._6, t._7), t._8, t._9))(
-      (w: WorkspaceRequest) => (w.name, w.requestedBy, w.requestDate, w.compliance.phiData, w.compliance.pciData, w.compliance.piiData, w.compliance.id, w.singleUser, w.id)
-    )
-
   def insert(workspaceRequest: WorkspaceRequest): ConnectionIO[Long] =
     sql"""
           insert into workspace_request (

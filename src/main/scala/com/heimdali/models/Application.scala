@@ -18,10 +18,10 @@ object Application {
 
   implicit def provisioner[F[_] : Effect]: ProvisionTask[F, Application] =
     ProvisionTask.instance { app =>
-      List(
-        app.group.provision,
-        GrantRoleToConsumerGroup(app.consumerGroup, app.group.sentryRole).provision
-      ).sequence.map(_.combineAll)
+      for {
+        group <- app.group.provision
+        grant <- GrantRoleToConsumerGroup(app.consumerGroup, app.group.sentryRole).provision
+      } yield group |+| grant
     }
 
   implicit val encoder: Encoder[Application] = Encoder.instance { application =>
@@ -31,5 +31,7 @@ object Application {
       "consumer_group" -> application.consumerGroup.asJson
     )
   }
+
+  implicit val decoder: Decoder[Application] = ???
 
 }

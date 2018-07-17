@@ -8,6 +8,8 @@ resolvers += "Cloudera" at "https://repository.cloudera.com/artifactory/cloudera
 
 resolvers += "Apache" at "http://repo.spring.io/plugins-release/"
 
+addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full)
+
 val cdhVersion = "cdh5.13.0"
 val hiveVersion = s"1.1.0-$cdhVersion"
 val hadoopVersion = s"2.6.0-$cdhVersion"
@@ -44,6 +46,7 @@ libraryDependencies ++= Seq(
     .exclude("org.bouncycastle", "bcpkix-jdk15on"),
   ("com.pauldijou" %% "jwt-circe" % "0.14.1")
     .exclude("org.bouncycastle", "bcpkix-jdk15on"),
+  "com.github.mpilquist" %% "simulacrum" % "0.12.0",
   "org.bouncycastle" % "bcpkix-jdk15on" % "1.57", // % "provided",
   "com.unboundid" % "unboundid-ldapsdk" % "4.0.0",
   "org.flywaydb" % "flyway-core" % "4.2.0",
