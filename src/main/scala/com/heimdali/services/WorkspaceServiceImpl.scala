@@ -73,10 +73,14 @@ class WorkspaceServiceImpl[F[_]](ldapClient: LDAPClient[F],
             managerLdap <- ldapRepository.create(db.managingGroup.ldapRegistration)
             manager <- appConfig.databaseGrantRepository.create(managerLdap.id.get)
             _ <- memberRepository.create(workspace.requestedBy, managerLdap.id.get)
-            readonlyLdap <- ldapRepository.create(db.readonlyGroup.ldapRegistration)
-            readonly <- appConfig.databaseGrantRepository.create(readonlyLdap.id.get)
+            readonly <- db.readonlyGroup.map { group =>
+              for {
+                ldap <- ldapRepository.create(group.ldapRegistration)
+                grant <- appConfig.databaseGrantRepository.create(ldap.id.get)
+              } yield grant.copy(ldapRegistration = ldap)
+            }.sequence[ConnectionIO, HiveGrant]
             newHive <- hiveDatabaseRepository.create(
-              db.copy(managingGroup = manager, readonlyGroup = readonly, workspaceRequestId = newWorkspace.id)
+              db.copy(managingGroup = manager.copy(ldapRegistration = managerLdap), readonlyGroup = readonly, workspaceRequestId = newWorkspace.id)
             )
           } yield
             newHive.copy(managingGroup = manager, readonlyGroup = readonly)

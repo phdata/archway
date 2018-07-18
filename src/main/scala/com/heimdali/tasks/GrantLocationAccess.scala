@@ -21,8 +21,8 @@ object GrantLocationAccess {
           case Left(exception) => F.pure(Error(exception))
           case Right(_) =>
             F.map(config
-              .databaseRepository
-              .locationGranted(grant.role, grant.id)
+              .databaseGrantRepository
+              .locationGranted(grant.id)
               .transact(config.transactor)) { _ => Success[GrantLocationAccess] }
         }
       }

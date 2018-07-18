@@ -20,4 +20,6 @@ trait RepoModule {
 
   val memberRepository: MemberRepository = new MemberRepositoryImpl
 
+  val hiveGrantRepository: HiveGrantRepository = new HiveGrantRepositoryImpl(Clock.systemUTC())
+
 }

@@ -29,7 +29,7 @@ class HiveDatabaseRepositoryImpl(clock: Clock)
         ${hiveDatabase.sizeInGB},
         ${hiveDatabase.workspaceRequestId},
         ${hiveDatabase.managingGroup.id},
-        ${hiveDatabase.readonlyGroup.id}
+        ${hiveDatabase.readonlyGroup.flatMap(_.id)}
        )
       """.updateWithLogHandler(LogHandler.jdkLogHandler).withUniqueGeneratedKeys[Long]("id")
 

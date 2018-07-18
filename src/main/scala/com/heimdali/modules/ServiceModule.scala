@@ -61,6 +61,7 @@ trait ServiceModule[F[_]] {
     sentryClient,
     metaTransactor,
     hiveDatabaseRepository,
+    hiveGrantRepository,
     ldapRepository,
     memberRepository,
     yarnRepository,

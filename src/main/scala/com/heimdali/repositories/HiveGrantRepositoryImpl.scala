@@ -2,6 +2,7 @@ package com.heimdali.repositories
 
 import java.time.{Clock, Instant}
 
+import com.heimdali.models.HiveGrant
 import doobie._
 import doobie.implicits._
 
