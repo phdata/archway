@@ -63,7 +63,9 @@ trait ServiceModule[F[_]] {
     hiveDatabaseRepository,
     ldapRepository,
     memberRepository,
-    yarnRepository)
+    yarnRepository,
+    complianceRepository,
+    workspaceRepository)
 
   val workspaceService: WorkspaceService[F] =
     new WorkspaceServiceImpl[F](

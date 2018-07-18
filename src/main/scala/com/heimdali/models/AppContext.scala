@@ -1,7 +1,7 @@
 package com.heimdali.models
 
 import com.heimdali.clients._
-import com.heimdali.repositories.{HiveDatabaseRepository, LDAPRepository, MemberRepository, YarnRepository}
+import com.heimdali.repositories._
 import doobie.util.transactor.Transactor
 import org.apache.sentry.provider.db.generic.service.thrift.SentryGenericServiceClient
 
@@ -13,6 +13,9 @@ case class AppContext[F[_]](hiveClient: SentryClient[F],
                             sentryClient: SentryGenericServiceClient,
                             transactor: Transactor[F],
                             databaseRepository: HiveDatabaseRepository,
+                            databaseGrantRepository: HiveGrantRepository,
                             ldapRepository: LDAPRepository,
                             memberRepository: MemberRepository,
-                            yarnRepository: YarnRepository)
+                            yarnRepository: YarnRepository,
+                            complianceRepository: ComplianceRepository,
+                            workspaceRequestRepository: WorkspaceRequestRepository)

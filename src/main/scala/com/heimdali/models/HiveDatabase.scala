@@ -3,33 +3,60 @@ package com.heimdali.models
 import java.time.Instant
 
 import cats._
+import cats.data.Kleisli
 import cats.effect.Effect
 import cats.implicits._
 import com.heimdali.repositories.Manager
 import io.circe._
 import com.heimdali.tasks._
 
+import com.heimdali.tasks.ProvisionResult._
+import com.heimdali.tasks.ProvisionTask._
+
 import scala.concurrent.ExecutionContext
+
+case class HiveGrant(databaseName: String,
+                     location: String,
+                     ldapRegistration: LDAPRegistration,
+                     id: Option[Long] = None,
+                     locationAccess: Option[Instant] = None,
+                     databaseAccess: Option[Instant] = None)
+
+object HiveGrant {
+
+  implicit val show: Show[HiveGrant] =
+    Show.show(g => s"granting ${g.ldapRegistration.commonName} access to ${g.databaseName}")
+
+  implicit def provisioner[F[_]](implicit F: Effect[F]): ProvisionTask[F, HiveGrant] =
+    ProvisionTask.instance { grant =>
+      for {
+        db <- GrantDatabaseAccess(grant.id.get, grant.ldapRegistration.sentryRole, grant.databaseName).provision[F]
+        location <- GrantLocationAccess(grant.id.get, grant.ldapRegistration.sentryRole, grant.location).provision[F]
+      } yield db |+| location
+    }
+
+  implicit val encoder: Encoder[HiveGrant] = ???
+
+  implicit val decoder: Decoder[HiveGrant] = ???
+
+}
 
 case class HiveDatabase(name: String,
                         location: String,
                         sizeInGB: Int,
-                        managingGroup: LDAPRegistration,
-                        readonlyGroup: Option[LDAPRegistration] = None,
+                        managingGroup: HiveGrant,
+                        readonlyGroup: HiveGrant,
                         workspaceRequestId: Option[Long] = None,
-                        id: Option[Long] = None,
-                        directoryCreated: Option[Instant] = None,
-                        databaseCreated: Option[Instant] = None,
-                        quotaSet: Option[Instant] = None,
-                        managerDatabaseAccessGranted: Option[Instant] = None,
-                        managerDataLocationGranted: Option[Instant] = None,
-                        readonlyDatabaseAccessGranted: Option[Instant] = None,
-                        readonlyLocationGranted: Option[Instant] = None)
+                        id: Option[Long] = None)
 
 object HiveDatabase {
 
-  import com.heimdali.tasks.ProvisionResult._
-  import com.heimdali.tasks.ProvisionTask._
+  def apply(name: String,
+            location: String,
+            sizeInGB: Int,
+            managerLDAP: LDAPRegistration,
+            readonlyLDAP: LDAPRegistration): HiveDatabase =
+    apply(name, location, sizeInGB, HiveGrant(name, location, managerLDAP), HiveGrant(name, location, readonlyLDAP))
 
   implicit val viewer: Show[HiveDatabase] =
     Show.show(h => s"creating hive database ${h.name}")
@@ -41,15 +68,14 @@ object HiveDatabase {
         setDiskQuota <- SetDiskQuota(hive.id.get, hive.location, hive.sizeInGB).provision[F]
         createDatabase <- CreateHiveDatabase(hive.id.get, hive.name, hive.location).provision[F]
         managers <- hive.managingGroup.provision[F]
-        db <- GrantDatabaseAccess(hive.id.get, Manager, hive.managingGroup.sentryRole, hive.name).provision[F]
-        location <- GrantLocationAccess(hive.id.get, Manager, hive.managingGroup.sentryRole, hive.location).provision[F]
-      } yield createDirectory |+| setDiskQuota |+| createDatabase |+| managers |+| db |+| location
+      } yield createDirectory |+| setDiskQuota |+| createDatabase |+| managers
     }
 
   implicit val encoder: Encoder[HiveDatabase] =
     Encoder.forProduct5("name", "location", "size_in_gb", "managing_group", "readonly_group")(s => (s.name, s.location, s.sizeInGB, s.managingGroup, s.readonlyGroup))
 
   implicit final val decoder: Decoder[HiveDatabase] =
-    Decoder.forProduct5("name", "location", "size_in_gb", "managing_group", "readonly_group")((name: String, location: String, size: Int, managing: LDAPRegistration, readonly: Option[LDAPRegistration]) => HiveDatabase(name, location, size, managing, readonly))
+    Decoder.forProduct5("name", "location", "size_in_gb", "managing_group", "readonly_group")((name: String, location: String, size: Int, managing: HiveGrant, readonly: HiveGrant) =>
+      HiveDatabase(name, location, size, managing, readonly))
 
 }

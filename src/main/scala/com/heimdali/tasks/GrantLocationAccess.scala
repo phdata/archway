@@ -7,7 +7,7 @@ import doobie.implicits._
 import com.heimdali.models.AppContext
 import com.heimdali.repositories.DatabaseRole
 
-case class GrantLocationAccess(id: Long, role: DatabaseRole, roleName: String, location: String)
+case class GrantLocationAccess(id: Long, roleName: String, location: String)
 
 object GrantLocationAccess {
 

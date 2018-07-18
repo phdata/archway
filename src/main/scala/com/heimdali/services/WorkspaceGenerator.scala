@@ -76,7 +76,8 @@ object Generator {
           s"user_${input.username}",
           s"${appConfig.workspaces.user.root}/${input.username}/db",
           appConfig.workspaces.user.defaultSize,
-          LDAPRegistration(s"cn=user_${input.username},${appConfig.ldap.groupPath}", s"user_${input.username}", s"role_user_${input.username}"))))
+          LDAPRegistration(s"cn=user_${input.username},${appConfig.ldap.groupPath}", s"user_${input.username}", s"role_user_${input.username}"),
+        )))
       }
       val afterProcessing = (input.memory |+| input.cores).fold(afterDisk) { _ =>
         afterDisk.copy(processing = List(Yarn(

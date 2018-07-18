@@ -32,31 +32,6 @@ object WorkspaceRequest {
       (w: WorkspaceRequest) => (w.name, w.requestedBy, w.requestDate, w.compliance.phiData, w.compliance.pciData, w.compliance.piiData, w.compliance.id, w.singleUser, w.id)
     )
 
-  def insert(workspaceRequest: WorkspaceRequest): Update0 =
-    sql"""
-          insert into workspace_request (
-            name,
-            compliance_id,
-            requested_by,
-            request_date,
-            single_user
-          )
-          values (
-            ${workspaceRequest.name},
-            ${workspaceRequest.compliance.id},
-            ${workspaceRequest.requestedBy},
-            ${workspaceRequest.requestDate},
-            ${workspaceRequest.singleUser}
-          )
-      """.update
-
-  implicit val savable: Savable[WorkspaceRequest] = new Savable[WorkspaceRequest] {
-    override def save[F[_]](workspace: WorkspaceRequest)(implicit F: Effect[F]): Kleisli[F, AppContext[F], Unit] =
-      Kleisli[F, AppContext[F], Unit] { config =>
-        insert(workspace).run.transact(config.transactor).void
-      }
-  }
-
   implicit val encoder: Encoder[WorkspaceRequest] = Encoder.instance { request =>
     request.approvals.foldLeft(
       Json.obj(

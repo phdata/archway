@@ -29,7 +29,7 @@ class HiveDatabaseRepositoryImpl(clock: Clock)
         ${hiveDatabase.sizeInGB},
         ${hiveDatabase.workspaceRequestId},
         ${hiveDatabase.managingGroup.id},
-        ${hiveDatabase.readonlyGroup.flatMap(_.id)}
+        ${hiveDatabase.readonlyGroup.id}
        )
       """.updateWithLogHandler(LogHandler.jdkLogHandler).withUniqueGeneratedKeys[Long]("id")
 
@@ -91,11 +91,5 @@ class HiveDatabaseRepositoryImpl(clock: Clock)
 
   override def databaseCreated(id: Long): ConnectionIO[Int] =
     sql"update hive_database set database_created = ${Instant.now(clock)} where id = $id".update.run
-
-  override def locationGranted(role: DatabaseRole, id: Long): ConnectionIO[Int] =
-    (fr"update hive_database set " ++ Fragment.const(s"${role.show}_location_access") ++ fr" = ${Instant.now(clock)} where id = $id").update.run
-
-  override def databaseGranted(role: DatabaseRole, id: Long): ConnectionIO[Int] =
-    (fr"update hive_database set " ++ Fragment.const(s"${role.show}_db_access") ++ fr" = ${Instant.now(clock)} where id = $id").update.run
 
 }
