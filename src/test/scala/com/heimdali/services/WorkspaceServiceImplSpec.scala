@@ -59,10 +59,11 @@ class WorkspaceServiceImplSpec
   it should "create a workspace" in new Context {
     inSequence {
       (complianceRepository.create _).expects(initialCompliance).returning(savedCompliance.pure[ConnectionIO])
-      (workspaceRepository.create _).expects(initialWorkspaceRequest.copy(compliance = savedCompliance)).returning(initialWorkspaceRequest.copy(id = Some(id), compliance = savedCompliance).pure[ConnectionIO])
+      (workspaceRepository.create _).expects(initialWorkspaceRequest.copy(compliance = savedCompliance)).returning(id.pure[ConnectionIO])
       (ldapRepository.create _).expects(initialLDAP).returning(savedLDAP.pure[ConnectionIO])
       (memberRepository.create _).expects(standardUsername, id).returning(1L.pure[ConnectionIO])
-      (hiveDatabaseRepository.create _).expects(initialHive.copy(managingGroup = savedLDAP)).returning(savedHive.pure[ConnectionIO])
+      (grantRepository.create _).expects(id).returning(1L.pure[ConnectionIO])
+      (hiveDatabaseRepository.create _).expects(initialHive.copy(managingGroup = initialGrant.copy(ldapRegistration = savedLDAP))).returning(1L.pure[ConnectionIO])
       (yarnRepository.create _).expects(initialYarn).returning(savedYarn.pure[ConnectionIO])
     }
 
@@ -120,9 +121,9 @@ class WorkspaceServiceImplSpec
       hiveClient.grantGroup _ expects(savedLDAP.commonName, savedLDAP.sentryRole) returning IO.unit
       ldapRepository.groupAssociated _ expects id returning 0.pure[ConnectionIO]
       hiveClient.enableAccessToDB _ expects(savedHive.name, savedLDAP.sentryRole) returning IO.unit
-      hiveDatabaseRepository.databaseGranted _ expects(Manager, id) returning 0.pure[ConnectionIO]
+      grantRepository.databaseGranted _ expects id returning 0.pure[ConnectionIO]
       hiveClient.enableAccessToLocation _ expects(savedHive.location, savedLDAP.sentryRole) returning IO.unit
-      hiveDatabaseRepository.locationGranted _ expects(Manager, id) returning 0.pure[ConnectionIO]
+      grantRepository.locationGranted _ expects id returning 0.pure[ConnectionIO]
     }
 
     inSequence {
@@ -158,6 +159,7 @@ class WorkspaceServiceImplSpec
     val approvalRepository: ApprovalRepository = mock[ApprovalRepository]
     val contextProvider: LoginContextProvider = mock[LoginContextProvider]
     val memberRepository: MemberRepository = mock[MemberRepository]
+    val grantRepository: HiveGrantRepository = mock[HiveGrantRepository]
 
     lazy val appConfig: AppContext[IO] = AppContext(
       hiveClient,
@@ -168,9 +170,12 @@ class WorkspaceServiceImplSpec
       sentryClient,
       transactor,
       hiveDatabaseRepository,
+      grantRepository,
       ldapRepository,
       memberRepository,
-      yarnRepository)
+      yarnRepository,
+      complianceRepository,
+      workspaceRepository)
 
     def projectServiceImpl =
       new WorkspaceServiceImpl[IO](

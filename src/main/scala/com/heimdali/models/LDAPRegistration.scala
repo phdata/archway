@@ -7,7 +7,6 @@ import cats.effect._
 import cats.implicits._
 import com.heimdali.tasks.ProvisionTask._
 import com.heimdali.tasks._
-import doobie.util.composite.Composite
 import io.circe._
 
 case class LDAPRegistration(distinguishedName: String,

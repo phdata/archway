@@ -5,7 +5,7 @@ import doobie._
 
 trait HiveGrantRepository {
 
-  def create(ldapRegistrationId: Long): ConnectionIO[HiveGrant]
+  def create(ldapRegistrationId: Long): ConnectionIO[Long]
 
   def locationGranted(id: Long): ConnectionIO[Int]
 

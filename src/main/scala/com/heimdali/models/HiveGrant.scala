@@ -29,8 +29,10 @@ object HiveGrant {
       } yield db |+| location
     }
 
-  implicit val encoder: Encoder[HiveGrant] = ???
+  implicit val encoder: Encoder[HiveGrant] =
+    Encoder.forProduct3("location_access", "database_access", "group")(g => (g.locationAccess, g.databaseAccess, g.ldapRegistration))
 
-  implicit val decoder: Decoder[HiveGrant] = ???
+  implicit val decoder: Decoder[HiveGrant] =
+    Decoder.forProduct3("database_name", "location", "group")((db, loc, g) => HiveGrant(db, loc, g))
 
 }

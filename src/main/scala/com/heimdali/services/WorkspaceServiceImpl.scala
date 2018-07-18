@@ -65,34 +65,36 @@ class WorkspaceServiceImpl[F[_]](ldapClient: LDAPClient[F],
     (for {
       compliance <- complianceRepository.create(workspace.compliance)
       updatedWorkspace = workspace.copy(compliance = compliance)
-      newWorkspace <- workspaceRepository.create(updatedWorkspace)
+      newWorkspaceId <- workspaceRepository.create(updatedWorkspace)
 
       insertedHive <- workspace.data.traverse[ConnectionIO, HiveDatabase] {
         db =>
           for {
             managerLdap <- ldapRepository.create(db.managingGroup.ldapRegistration)
-            manager <- appConfig.databaseGrantRepository.create(managerLdap.id.get)
+            managerId <- appConfig.databaseGrantRepository.create(managerLdap.id.get)
+            manager = db.managingGroup.copy(id = Some(managerId))
+
             _ <- memberRepository.create(workspace.requestedBy, managerLdap.id.get)
+
             readonly <- db.readonlyGroup.map { group =>
               for {
                 ldap <- ldapRepository.create(group.ldapRegistration)
                 grant <- appConfig.databaseGrantRepository.create(ldap.id.get)
-              } yield grant.copy(ldapRegistration = ldap)
+              } yield group.copy(id = Some(grant), ldapRegistration = ldap)
             }.sequence[ConnectionIO, HiveGrant]
-            newHive <- hiveDatabaseRepository.create(
-              db.copy(managingGroup = manager.copy(ldapRegistration = managerLdap), readonlyGroup = readonly, workspaceRequestId = newWorkspace.id)
-            )
-          } yield
-            newHive.copy(managingGroup = manager, readonlyGroup = readonly)
+
+            beforeCreate = db.copy(managingGroup = manager, readonlyGroup = readonly)
+            newHiveId <- hiveDatabaseRepository.create(beforeCreate)
+          } yield beforeCreate.copy(id = Some(newHiveId))
       }
 
       insertedYarn <- workspace.processing.traverse[ConnectionIO, Yarn] {
         yarn =>
           for {
-            newYarn <- yarnRepository.create(yarn.copy(workspaceRequestId = newWorkspace.id))
+            newYarn <- yarnRepository.create(yarn.copy(workspaceRequestId = Some(newWorkspaceId)))
           } yield newYarn
       }
-    } yield newWorkspace.copy(data = insertedHive, processing = insertedYarn))
+    } yield updatedWorkspace.copy(id = Some(newWorkspaceId), data = insertedHive, processing = insertedYarn))
       .transact(transactor)
 
   override def approve(id: Long, approval: Approval): F[Approval] =

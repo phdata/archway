@@ -8,33 +8,46 @@ import doobie._
 import doobie.implicits._
 import doobie.util.fragments.whereAnd
 
-class HiveDatabaseRepositoryImpl(clock: Clock)
-    extends HiveDatabaseRepository {
+class HiveDatabaseRepositoryImpl(val clock: Clock)
+  extends HiveDatabaseRepository {
 
-  implicit val han = LogHandler.jdkLogHandler
+  def find(id: Long): OptionT[ConnectionIO, HiveDatabase] = {
+    OptionT {
+      Statements
+        .find(id)
+        .option
+    }
+  }
 
-  override def complete(id: Long): ConnectionIO[Int] =
-    sql"""
-      update hive_database
-      set created = ${Instant.now()}
-      where id = $id
-      """.update.run
+  override def create(hiveDatabase: HiveDatabase): ConnectionIO[Long] =
+    Statements
+      .insert(hiveDatabase)
+      .withUniqueGeneratedKeys("id")
 
-  def insert(hiveDatabase: HiveDatabase): ConnectionIO[Long] =
-    sql"""
-       insert into hive_database (name, location, size_in_gb, workspace_request_id, manager_group_id, readonly_group_id)
-       values(
-        ${hiveDatabase.name},
-        ${hiveDatabase.location},
-        ${hiveDatabase.sizeInGB},
-        ${hiveDatabase.workspaceRequestId},
-        ${hiveDatabase.managingGroup.id},
-        ${hiveDatabase.readonlyGroup.flatMap(_.id)}
-       )
-      """.updateWithLogHandler(LogHandler.jdkLogHandler).withUniqueGeneratedKeys[Long]("id")
+  override def findByWorkspace(id: Long): ConnectionIO[List[HiveDatabase]] =
+    Statements
+      .list(id)
+      .to[List]
 
-  val selectQuery: Fragment =
-    sql"""
+  override def directoryCreated(id: Long): ConnectionIO[Int] =
+    Statements
+      .directoryCreated(id)
+      .run
+
+  override def quotaSet(id: Long): ConnectionIO[Int] =
+    Statements
+      .quotaSet(id)
+      .run
+
+  override def databaseCreated(id: Long): ConnectionIO[Int] =
+    Statements
+      .databaseCreated(id)
+      .run
+
+  object Statements {
+
+    val selectQuery: Fragment =
+      sql"""
        select
          h.name,
          h.location,
@@ -67,29 +80,46 @@ class HiveDatabaseRepositoryImpl(clock: Clock)
        left join ldap_registration r on h.readonly_group_id = r.id
       """
 
-  def find(id: Long): OptionT[ConnectionIO, HiveDatabase] = {
-    OptionT {
-      (selectQuery ++ whereAnd(fr"h.id = $id")).query[HiveDatabase].option
-    }
+    def insert(hiveDatabase: HiveDatabase): Update0 =
+      sql"""
+       insert into hive_database (name, location, size_in_gb, workspace_request_id, manager_group_id, readonly_group_id)
+       values(
+        ${hiveDatabase.name},
+        ${hiveDatabase.location},
+        ${hiveDatabase.sizeInGB},
+        ${hiveDatabase.workspaceRequestId},
+        ${hiveDatabase.managingGroup.id},
+        ${hiveDatabase.readonlyGroup.flatMap(_.id)}
+       )
+      """.update
+
+    def find(id: Long): Query0[HiveDatabase] =
+      (selectQuery ++ whereAnd(fr"h.id = $id")).query[HiveDatabase]
+
+    def list(workspaceId: Long): Query0[HiveDatabase] =
+      (selectQuery ++ whereAnd(fr"h.workspace_request_id = $workspaceId")).query[HiveDatabase]
+
+    def directoryCreated(id: Long): Update0 =
+      sql"""
+          update hive_database
+          set directory_created = ${Instant.now(clock)}
+          where id = $id
+          """.update
+
+    def quotaSet(id: Long): Update0 =
+      sql"""
+          update hive_database
+          set quota_set = ${Instant.now(clock)}
+          where id = $id
+          """.update
+
+    def databaseCreated(id: Long): Update0 =
+      sql"""
+          update hive_database
+          set database_created = ${Instant.now(clock)}
+          where id = $id
+          """.update
+
   }
-
-  override def create(hiveDatabase: HiveDatabase): ConnectionIO[HiveDatabase] =
-    for {
-      id <- insert(hiveDatabase)
-      hive <- find(id).value
-    } yield hive.get
-
-  override def findByWorkspace(id: Long): ConnectionIO[List[HiveDatabase]] =
-    (selectQuery ++ whereAnd(fr"h.workspace_request_id = $id"))
-      .query[HiveDatabase].to[List]
-
-  override def directoryCreated(id: Long): ConnectionIO[Int] =
-    sql"update hive_database set directory_created = ${Instant.now(clock)} where id = $id".update.run
-
-  override def quotaSet(id: Long): ConnectionIO[Int] =
-    sql"update hive_database set quota_set = ${Instant.now(clock)} where id = $id".update.run
-
-  override def databaseCreated(id: Long): ConnectionIO[Int] =
-    sql"update hive_database set database_created = ${Instant.now(clock)} where id = $id".update.run
 
 }
