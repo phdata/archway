@@ -61,10 +61,13 @@ class WorkspaceServiceImplSpec
       (complianceRepository.create _).expects(initialCompliance).returning(savedCompliance.pure[ConnectionIO])
       (workspaceRepository.create _).expects(initialWorkspaceRequest.copy(compliance = savedCompliance)).returning(id.pure[ConnectionIO])
       (ldapRepository.create _).expects(initialLDAP).returning(savedLDAP.pure[ConnectionIO])
-      (memberRepository.create _).expects(standardUsername, id).returning(1L.pure[ConnectionIO])
-      (grantRepository.create _).expects(id).returning(1L.pure[ConnectionIO])
-      (hiveDatabaseRepository.create _).expects(initialHive.copy(managingGroup = initialGrant.copy(ldapRegistration = savedLDAP))).returning(1L.pure[ConnectionIO])
-      (yarnRepository.create _).expects(initialYarn).returning(savedYarn.pure[ConnectionIO])
+      (grantRepository.create _).expects(id).returning(id.pure[ConnectionIO])
+      (memberRepository.create _).expects(standardUsername, id).returning(id.pure[ConnectionIO])
+      (hiveDatabaseRepository.create _).expects(initialHive.copy(managingGroup = initialGrant.copy(id = Some(id), ldapRegistration = savedLDAP))).returning(id.pure[ConnectionIO])
+      (workspaceRepository.linkHive _).expects(id, id).returning(1.pure[ConnectionIO])
+
+      (yarnRepository.create _).expects(initialYarn).returning(id.pure[ConnectionIO])
+      (workspaceRepository.linkPool _).expects(id, id).returning(1.pure[ConnectionIO])
     }
 
     val newWorkspace =

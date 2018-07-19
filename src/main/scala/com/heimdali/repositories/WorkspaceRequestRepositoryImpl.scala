@@ -17,35 +17,56 @@ class WorkspaceRequestRepositoryImpl
 
   override def create(workspaceRequest: WorkspaceRequest): ConnectionIO[Long] =
     WorkspaceRequestRepositoryImpl.Statements.insert(workspaceRequest).withUniqueGeneratedKeys("id")
+
+  override def linkHive(workspaceId: Long, hiveDatabaseId: Long): doobie.ConnectionIO[Int] =
+    WorkspaceRequestRepositoryImpl.Statements.linkHive(workspaceId, hiveDatabaseId).run
+
+  override def linkPool(workspaceId: Long, resourcePoolId: Long): doobie.ConnectionIO[Int] =
+    WorkspaceRequestRepositoryImpl.Statements.linkPool(workspaceId, resourcePoolId).run
 }
 
 object WorkspaceRequestRepositoryImpl {
 
   object Statements {
+    def linkPool(workspaceId: Long, resourcePoolId: Long): Update0 =
+      sql"""
+        insert into workspace_pool (workspace_request_id, resource_pool_id)
+        values ($workspaceId, $resourcePoolId)
+        """.update
+
+    def linkHive(workspaceId: Long, hiveDatabaseId: Long): Update0 =
+      sql"""
+        insert into workspace_database (workspace_request_id, hive_database_id)
+        values ($workspaceId, $hiveDatabaseId)
+        """.update
+
 
     val selectFragment: Fragment =
       fr"""
-                                  select
-                                    wr.name,
-                                    wr.requested_by,
-                                    wr.request_date,
-                                    c.phi_data,
-                                    c.pci_data,
-                                    c.pii_data,
-                                    c.id,
-                                    wr.single_user,
-                                    wr.id
-                                  from workspace_request wr
-                                  inner join compliance c on wr.compliance_id = c.id
-                                  """
+        select
+          wr.name,
+          wr.requested_by,
+          wr.request_date,
+          c.phi_data,
+          c.pci_data,
+          c.pii_data,
+          c.id,
+          wr.single_user,
+          wr.id
+        from workspace_request wr
+        inner join compliance c on wr.compliance_id = c.id
+        """
 
     val innerQuery: Fragment =
       fr"""
-        select h.workspace_request_id
-        from hive_database h
-        inner join ldap_registration mr on h.manager_group_id = mr.id
+        select wd.workspace_request_id
+        from workspace_database wd
+        inner join hive_database h on wd.hive_database_id = h.id
+        inner join hive_grant mg on h.manager_group_id = mg.id
+        inner join ldap_registration mr on mg.ldap_registration_id = mr.id
         inner join member mrm on mrm.ldap_registration_id = mr.id
-        left join ldap_registration rr on h.readonly_group_id = rr.id
+        left join hive_grant rg on h.readonly_group_id = rg.id
+        left join ldap_registration rr on rg.ldap_registration_id = rr.id
         left join member rrm on rrm.ldap_registration_id = mr.id
         """
 

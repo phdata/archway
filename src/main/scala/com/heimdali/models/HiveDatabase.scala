@@ -15,7 +15,6 @@ case class HiveDatabase(name: String,
                         sizeInGB: Int,
                         managingGroup: HiveGrant,
                         readonlyGroup: Option[HiveGrant] = None,
-                        workspaceRequestId: Option[Long] = None,
                         id: Option[Long] = None)
 
 object HiveDatabase {

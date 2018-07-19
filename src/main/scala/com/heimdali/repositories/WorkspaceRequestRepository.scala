@@ -12,4 +12,8 @@ trait WorkspaceRequestRepository {
 
   def find(id: Long): OptionT[ConnectionIO, WorkspaceRequest]
 
+  def linkHive(workspaceId: Long, hiveDatabaseId: Long): ConnectionIO[Int]
+
+  def linkPool(workspaceId: Long, resourcePoolId: Long): ConnectionIO[Int]
+
 }

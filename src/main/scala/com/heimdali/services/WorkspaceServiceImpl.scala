@@ -72,7 +72,7 @@ class WorkspaceServiceImpl[F[_]](ldapClient: LDAPClient[F],
           for {
             managerLdap <- ldapRepository.create(db.managingGroup.ldapRegistration)
             managerId <- appConfig.databaseGrantRepository.create(managerLdap.id.get)
-            manager = db.managingGroup.copy(id = Some(managerId))
+            manager = db.managingGroup.copy(id = Some(managerId), ldapRegistration = managerLdap)
 
             _ <- memberRepository.create(workspace.requestedBy, managerLdap.id.get)
 
@@ -85,14 +85,16 @@ class WorkspaceServiceImpl[F[_]](ldapClient: LDAPClient[F],
 
             beforeCreate = db.copy(managingGroup = manager, readonlyGroup = readonly)
             newHiveId <- hiveDatabaseRepository.create(beforeCreate)
+            _ <- workspaceRepository.linkHive(newWorkspaceId, newHiveId)
           } yield beforeCreate.copy(id = Some(newHiveId))
       }
 
       insertedYarn <- workspace.processing.traverse[ConnectionIO, Yarn] {
         yarn =>
           for {
-            newYarn <- yarnRepository.create(yarn.copy(workspaceRequestId = Some(newWorkspaceId)))
-          } yield newYarn
+            newYarnId <- yarnRepository.create(yarn)
+            _ <- workspaceRepository.linkPool(newWorkspaceId, newYarnId)
+          } yield yarn.copy(id = Some(newYarnId))
       }
     } yield updatedWorkspace.copy(id = Some(newWorkspaceId), data = insertedHive, processing = insertedYarn))
       .transact(transactor)

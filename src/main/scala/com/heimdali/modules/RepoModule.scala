@@ -12,7 +12,7 @@ trait RepoModule {
 
   val hiveDatabaseRepository: HiveDatabaseRepository = new HiveDatabaseRepositoryImpl(Clock.systemUTC())
 
-  val yarnRepository: YarnRepository = new YarnRepositoryImpl
+  val yarnRepository: YarnRepository = new YarnRepositoryImpl(Clock.systemUTC)
 
   val workspaceRepository: WorkspaceRequestRepository = new WorkspaceRequestRepositoryImpl
 

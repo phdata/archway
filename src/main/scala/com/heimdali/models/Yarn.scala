@@ -13,7 +13,6 @@ import io.circe.syntax._
 case class Yarn(poolName: String,
                 maxCores: Int,
                 maxMemoryInGB: Int,
-                workspaceRequestId: Option[Long] = None,
                 id: Option[Long] = None)
 
 object Yarn {

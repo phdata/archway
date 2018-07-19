@@ -8,6 +8,7 @@ import cats.implicits._
 import com.heimdali.tasks.ProvisionTask._
 import com.heimdali.tasks._
 import io.circe._
+import io.circe.java8.time._
 
 case class HiveGrant(databaseName: String,
                      location: String,
@@ -24,15 +25,16 @@ object HiveGrant {
   implicit def provisioner[F[_]](implicit F: Effect[F]): ProvisionTask[F, HiveGrant] =
     ProvisionTask.instance { grant =>
       for {
+        ldap <- grant.ldapRegistration.provision[F]
         db <- GrantDatabaseAccess(grant.id.get, grant.ldapRegistration.sentryRole, grant.databaseName).provision[F]
         location <- GrantLocationAccess(grant.id.get, grant.ldapRegistration.sentryRole, grant.location).provision[F]
-      } yield db |+| location
+      } yield ldap |+| db |+| location
     }
 
   implicit val encoder: Encoder[HiveGrant] =
     Encoder.forProduct3("location_access", "database_access", "group")(g => (g.locationAccess, g.databaseAccess, g.ldapRegistration))
 
   implicit val decoder: Decoder[HiveGrant] =
-    Decoder.forProduct3("database_name", "location", "group")((db, loc, g) => HiveGrant(db, loc, g))
+    Decoder.forProduct3("database_name", "location", "group")((db: String, loc: String, g: LDAPRegistration) => HiveGrant(db, loc, g))
 
 }

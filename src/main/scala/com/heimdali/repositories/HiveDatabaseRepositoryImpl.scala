@@ -52,6 +52,9 @@ class HiveDatabaseRepositoryImpl(val clock: Clock)
          h.name,
          h.location,
          h.size_in_gb,
+
+         h.name,
+         h.location,
          m.distinguished_name,
          m.common_name,
          m.sentry_role,
@@ -59,6 +62,12 @@ class HiveDatabaseRepositoryImpl(val clock: Clock)
          m.group_created,
          m.role_created,
          m.group_associated,
+         mg.id,
+         mg.location_access,
+         mg.database_access,
+
+         h.name,
+         h.location,
          r.distinguished_name,
          r.common_name,
          r.sentry_role,
@@ -66,38 +75,26 @@ class HiveDatabaseRepositoryImpl(val clock: Clock)
          r.group_created,
          r.role_created,
          r.group_associated,
-         h.workspace_request_id,
-         h.id,
-         h.directory_created,
-         h.database_created,
-         h.quota_set,
-         h.manager_location_access,
-         h.manager_db_access,
-         h.readonly_location_access,
-         h.readonly_db_access
+         rg.id,
+         rg.location_access,
+         rg.database_access,
+
+         h.id
        from hive_database h
-       inner join ldap_registration m on h.manager_group_id = m.id
-       left join ldap_registration r on h.readonly_group_id = r.id
+       inner join hive_grant mg on h.manager_group_id = mg.id
+       inner join ldap_registration m on mg.ldap_registration_id = m.id
+       inner join hive_grant rg on h.readonly_group_id = rg.id
+       inner join ldap_registration r on rg.ldap_registration_id = r.id
       """
 
     def insert(hiveDatabase: HiveDatabase): Update0 =
-      sql"""
-       insert into hive_database (name, location, size_in_gb, workspace_request_id, manager_group_id, readonly_group_id)
-       values(
-        ${hiveDatabase.name},
-        ${hiveDatabase.location},
-        ${hiveDatabase.sizeInGB},
-        ${hiveDatabase.workspaceRequestId},
-        ${hiveDatabase.managingGroup.id},
-        ${hiveDatabase.readonlyGroup.flatMap(_.id)}
-       )
-      """.update
+      sql"insert into hive_database (name, location, size_in_gb) values (${hiveDatabase.name}, ${hiveDatabase.location}, ${hiveDatabase.sizeInGB})".update
 
     def find(id: Long): Query0[HiveDatabase] =
       (selectQuery ++ whereAnd(fr"h.id = $id")).query[HiveDatabase]
 
     def list(workspaceId: Long): Query0[HiveDatabase] =
-      (selectQuery ++ whereAnd(fr"h.workspace_request_id = $workspaceId")).query[HiveDatabase]
+      (selectQuery ++ fr"inner join workspace_database wd on wd.hive_database_id = h.id" ++ whereAnd(fr"wd.workspace_request_id = $workspaceId")).query[HiveDatabase]
 
     def directoryCreated(id: Long): Update0 =
       sql"""

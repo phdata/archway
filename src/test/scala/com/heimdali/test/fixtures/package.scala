@@ -31,15 +31,15 @@ package object fixtures {
   val initialCompliance = savedCompliance.copy(id = None)
   val savedLDAP = LDAPRegistration(ldapDn, s"edh_sw_$systemName", "role_sesame", Some(id))
   val initialLDAP = savedLDAP.copy(id = None)
-  val savedGrant = HiveGrant("sw_sesame", "/shared_workspaces/sw_sesame", savedLDAP)
-  val initialGrant = savedGrant.copy(id = None)
-  val savedHive = HiveDatabase("sw_sesame", "/shared_workspaces/sw_sesame", hdfsRequestedSize, savedGrant, id = Some(id), workspaceRequestId = Some(id))
+  val savedGrant = HiveGrant("sw_sesame", "/shared_workspaces/sw_sesame", savedLDAP, id = Some(id))
+  val initialGrant = savedGrant.copy(id = None, ldapRegistration = initialLDAP)
+  val savedHive = HiveDatabase("sw_sesame", "/shared_workspaces/sw_sesame", hdfsRequestedSize, savedGrant, id = Some(id))
   val initialHive = savedHive.copy(id = None, managingGroup = initialGrant)
-  val savedYarn = Yarn(poolName, maxCores, maxMemoryInGB, Some(id), Some(id))
+  val savedYarn = Yarn(poolName, maxCores, maxMemoryInGB, Some(id))
   val initialYarn = savedYarn.copy(id = None)
   val clock = Clock.fixed(Instant.now(), ZoneId.of("UTC"))
 
-  val yarnApp = BasicClusterApp("ysr21", "Yarn", "GOOD_HEALTH", "STARTED")
+  val yarnApp = BasicClusterApp("ysr21", "Yarn", "GOOD_HExALTH", "STARTED")
   val cluster = Cluster("cluster name", "Cluster", Map("YARN" -> yarnApp), CDH(""), "GOOD_HEALTH")
 
   val personName = "John Doe"
@@ -66,7 +66,7 @@ package object fixtures {
   val initialWorkspaceRequest =
     savedWorkspaceRequest.copy(
       id = None,
-      compliance = savedCompliance.copy(id = None),
+      compliance = initialCompliance,
       data = List(initialHive),
       processing = List(initialYarn)
     )
