@@ -21,7 +21,11 @@ case class WorkspaceRequest(name: String,
                             data: List[HiveDatabase] = List.empty,
                             processing: List[Yarn] = List.empty,
                             applications: List[Application] = List.empty,
-                            kafkaTopics: List[KafkaTopic] = List.empty)
+                            kafkaTopics: List[KafkaTopic] = List.empty) {
+
+  val approved: Boolean = approvals.lengthCompare(2) == 0
+
+}
 
 object WorkspaceRequest {
 

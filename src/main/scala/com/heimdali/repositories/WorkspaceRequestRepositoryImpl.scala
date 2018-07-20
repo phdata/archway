@@ -23,6 +23,9 @@ class WorkspaceRequestRepositoryImpl
 
   override def linkPool(workspaceId: Long, resourcePoolId: Long): doobie.ConnectionIO[Int] =
     WorkspaceRequestRepositoryImpl.Statements.linkPool(workspaceId, resourcePoolId).run
+
+  override def linkTopic(workspaceId: Long, KafkaTopicId: Long): ConnectionIO[Int] =
+    WorkspaceRequestRepositoryImpl.Statements.linkTopic(workspaceId, KafkaTopicId).run
 }
 
 object WorkspaceRequestRepositoryImpl {
@@ -40,6 +43,11 @@ object WorkspaceRequestRepositoryImpl {
         values ($workspaceId, $hiveDatabaseId)
         """.update
 
+    def linkTopic(workspaceId: Long, kafkaTopicId: Long): Update0 =
+      sql"""
+         insert into workspace_topic (workspace_request_id, kafka_topic_id)
+         values ($workspaceId, $kafkaTopicId)
+        """.update
 
     val selectFragment: Fragment =
       fr"""

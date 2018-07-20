@@ -40,7 +40,7 @@ object HiveDatabase {
     }
 
   implicit val encoder: Encoder[HiveDatabase] =
-    Encoder.forProduct5("name", "location", "size_in_gb", "managing_group", "readonly_group")(s => (s.name, s.location, s.sizeInGB, s.managingGroup, s.readonlyGroup))
+    Encoder.forProduct6("id", "name", "location", "size_in_gb", "managing_group", "readonly_group")(s => (s.id, s.name, s.location, s.sizeInGB, s.managingGroup, s.readonlyGroup))
 
   implicit final val decoder: Decoder[HiveDatabase] =
     Decoder.forProduct5("name", "location", "size_in_gb", "managing_group", "readonly_group")((name: String, location: String, size: Int, managing: HiveGrant, readonly: Option[HiveGrant]) =>

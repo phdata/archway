@@ -53,6 +53,7 @@ trait ServiceModule[F[_]] {
     )
 
   val reader = AppContext(
+    appConfig,
     hiveClient,
     ldapClient,
     hdfsClient,
@@ -66,7 +67,9 @@ trait ServiceModule[F[_]] {
     memberRepository,
     yarnRepository,
     complianceRepository,
-    workspaceRepository)
+    workspaceRepository,
+    kafkaRepository,
+    topicGrantRepository)
 
   val workspaceService: WorkspaceService[F] =
     new WorkspaceServiceImpl[F](
@@ -81,4 +84,7 @@ trait ServiceModule[F[_]] {
       memberRepository,
       reader
     )
+
+  val kafkaService: KafkaService[F] =
+    new KafkaServiceImpl[F](reader)
 }

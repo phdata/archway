@@ -1,5 +1,6 @@
 package com.heimdali.tasks
 
+import cats.implicits._
 import cats.Show
 import cats.data.Kleisli
 import cats.effect.Effect
@@ -18,12 +19,13 @@ object GrantDatabaseAccess {
     ProvisionTask.instance { grant =>
       Kleisli[F, AppContext[F], ProvisionResult] { config =>
         F.flatMap(F.attempt(config.hiveClient.enableAccessToDB(grant.databaseName, grant.roleName))) {
-          case Left(exception) => F.pure(Error(exception))
+          case Left(exception) => F.pure(Error[GrantDatabaseAccess](exception))
           case Right(_) =>
-            F.map(config
+            config
               .databaseGrantRepository
               .databaseGranted(grant.id)
-              .transact(config.transactor)) {_ => Success[GrantDatabaseAccess] }
+              .transact(config.transactor)
+              .map(_ => Success[GrantDatabaseAccess])
         }
       }
     }

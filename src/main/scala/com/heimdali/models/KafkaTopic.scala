@@ -9,23 +9,6 @@ import com.heimdali.tasks.{CreateKafkaTopic, ProvisionTask}
 import io.circe._
 import io.circe.syntax._
 
-case class TopicGrant(name: String,
-                      ldapRegistration: LDAPRegistration,
-                      id: Option[Long] = None,
-                      topicAccess: Option[Instant] = None)
-
-object TopicGrant {
-
-  implicit def provisioner[F[_] : Effect]: ProvisionTask[F, TopicGrant] =
-    ProvisionTask.instance(grant =>
-      for {
-        grant <- GrantTopicAccess(grant.name, grant.ldapRegistration.sentryRole)
-        ldap <- grant.ldapRegistration.provision
-      } yield grant |+| ldap
-    )
-
-}
-
 case class KafkaTopic(name: String,
                       partitions: Int,
                       replicationFactor: Int,
@@ -51,12 +34,22 @@ object KafkaTopic {
         "name" -> t.name.asJson,
         "partitions" -> t.partitions.asJson,
         "replication_factor" -> t.replicationFactor.asJson,
-        "managing_group" -> t.managingRole.asJson
+        "managing_role" -> t.managingRole.asJson,
+        "readonly_role" -> t.readonlyRole.asJson
       )
     }
 
   implicit val decoder: Decoder[KafkaTopic] =
-    Decoder.forProduct5("id", "name", "partitions", "replication_factor", "managing_role")((id: Option[Long], name: String, partitions: Int, replicationFactor: Int, group: LDAPRegistration) => KafkaTopic(name, partitions, replicationFactor, group, id))
+    Decoder.instance { t =>
+      for {
+        id <- t.downField("id").as[Option[Long]]
+        name <- t.downField("name").as[String]
+        partitions <- t.downField("partitions").as[Int]
+        replicationFactor <- t.downField("replication_factor").as[Int]
+        managingRole <- t.downField("managing_role").as[TopicGrant]
+        readonlyRole <- t.downField("readonly_role").as[TopicGrant]
+      } yield KafkaTopic(name, partitions, replicationFactor, managingRole, readonlyRole, id)
+    }
 
 
 }

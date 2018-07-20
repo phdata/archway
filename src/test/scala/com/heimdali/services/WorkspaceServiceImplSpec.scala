@@ -163,8 +163,11 @@ class WorkspaceServiceImplSpec
     val contextProvider: LoginContextProvider = mock[LoginContextProvider]
     val memberRepository: MemberRepository = mock[MemberRepository]
     val grantRepository: HiveGrantRepository = mock[HiveGrantRepository]
+    val kafkaRepository: KafkaRepository = mock[KafkaRepository]
+    val topicGrantRepository: TopicGrantRepository = mock[TopicGrantRepository]
 
     lazy val appConfig: AppContext[IO] = AppContext(
+      null,
       hiveClient,
       ldapClient,
       hdfsClient,
@@ -178,7 +181,9 @@ class WorkspaceServiceImplSpec
       memberRepository,
       yarnRepository,
       complianceRepository,
-      workspaceRepository)
+      workspaceRepository,
+      kafkaRepository,
+      topicGrantRepository)
 
     def projectServiceImpl =
       new WorkspaceServiceImpl[IO](

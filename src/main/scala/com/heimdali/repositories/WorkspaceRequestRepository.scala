@@ -16,4 +16,6 @@ trait WorkspaceRequestRepository {
 
   def linkPool(workspaceId: Long, resourcePoolId: Long): ConnectionIO[Int]
 
+  def linkTopic(workspaceId: Long, KafkaTopicId: Long): ConnectionIO[Int]
+
 }
