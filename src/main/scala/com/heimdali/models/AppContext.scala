@@ -18,4 +18,5 @@ case class AppContext[F[_]](hiveClient: SentryClient[F],
                             memberRepository: MemberRepository,
                             yarnRepository: YarnRepository,
                             complianceRepository: ComplianceRepository,
-                            workspaceRequestRepository: WorkspaceRequestRepository)
+                            workspaceRequestRepository: WorkspaceRequestRepository,
+                            kafkaRepository: KafkaRepository)

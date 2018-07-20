@@ -16,6 +16,7 @@ import org.http4s.dsl.io._
 class WorkspaceController(authService: AuthService[IO],
                           workspaceService: WorkspaceService[IO],
                           memberService: MemberService[IO],
+                          kafkaService: KafkaService[IO],
                           clock: Clock) {
 
   implicit val memberRequestEntityDecoder: EntityDecoder[IO, MemberRequest] = jsonOf[IO, MemberRequest]
@@ -87,6 +88,13 @@ class WorkspaceController(authService: AuthService[IO],
           for {
             removedMember <- memberService.removeMember(id, database, role, username).value
             response <- removedMember.fold(NotFound())(member => Ok(member.asJson))
+          } yield response
+
+        case req@POST -> Root / LongVar(id) / topics as _ =>
+          for {
+            topic <- req.req.as[KafkaTopic]
+            result <- kafkaService.create(id, topic)
+            response <- Ok(result.asJson)
           } yield response
       }
     }
