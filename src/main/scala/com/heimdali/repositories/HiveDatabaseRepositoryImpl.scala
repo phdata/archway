@@ -88,7 +88,10 @@ class HiveDatabaseRepositoryImpl(val clock: Clock)
       """
 
     def insert(hiveDatabase: HiveDatabase): Update0 =
-      sql"insert into hive_database (name, location, size_in_gb) values (${hiveDatabase.name}, ${hiveDatabase.location}, ${hiveDatabase.sizeInGB})".update
+      sql"""
+         insert into hive_database (name, location, size_in_gb, manager_group_id, readonly_group_id)
+         values (${hiveDatabase.name}, ${hiveDatabase.location}, ${hiveDatabase.sizeInGB}, ${hiveDatabase.managingGroup.id}, ${hiveDatabase.readonlyGroup.flatMap(_.id)})
+         """.update
 
     def find(id: Long): Query0[HiveDatabase] =
       (selectQuery ++ whereAnd(fr"h.id = $id")).query[HiveDatabase]

@@ -35,6 +35,8 @@ object KafkaTopic {
       )
     }
 
-  implicit val decoder: Decoder[KafkaTopic] = ???
+  implicit val decoder: Decoder[KafkaTopic] =
+    Decoder.forProduct5("id", "name", "partitions", "replication_factor", "managing_group")((id: Option[Long], name: String, partitions: Int, replicationFactor: Int, group: LDAPRegistration) => KafkaTopic(name, partitions, replicationFactor, group, id))
+
 
 }

@@ -32,6 +32,8 @@ object Application {
     )
   }
 
-  implicit val decoder: Decoder[Application] = ???
+  implicit val decoder: Decoder[Application] =
+    Decoder.forProduct4("id", "name", "group", "consumer_group")((id: Option[Long], name: String, group: LDAPRegistration, consumer: String) => Application(name, consumer, group, id))
+
 
 }
