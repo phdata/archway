@@ -12,7 +12,7 @@ const Profile = ({profile, requestLogout}) =>  {
     return (
         <div style={{ width: '100%', padding: 15, color: 'white', textAlign: 'center', backgroundColor: '#415161' }}>
             <div>
-                Hey, {name}
+                Hey, {name}!
             </div>
             <Button ghost size="small" onClick={requestLogout}>
                 Log Out

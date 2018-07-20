@@ -67,19 +67,19 @@ const RequestForm = Form.create({
     </Form.Item>
     {pendingRequestType && pendingRequestType !== 'user' &&
     <div>
-      <Form.Item label="name" {...FormItemDefaults} wrapperCol={{ span: 3 }}>
+      <Form.Item label="Name" {...FormItemDefaults} wrapperCol={{ span: 12 }}>
         {getFieldDecorator('name', {})(<Input />)}
       </Form.Item>
-      <Form.Item label="may contain" {...FormItemDefaults}>
+      <Form.Item label="Data May Contain" {...FormItemDefaults}>
         {getFieldDecorator('compliance', {})(<Checkbox.Group options={complianceOptions} />)}
       </Form.Item>
-      <Form.Item label="disk (hdfs)" {...FormItemDefaults} wrapperCol={{ span: 3 }}>
+      <Form.Item label="Disk Quota (HDFS)" {...FormItemDefaults} wrapperCol={{ span: 3 }}>
         {getFieldDecorator('disk', {})(<Input type="number" addonAfter="GB" />)}
       </Form.Item>
-      <Form.Item label="max cores (yarn)" {...FormItemDefaults} wrapperCol={{ span: 3 }}>
+      <Form.Item label="Max Cores (Resource Pool)" {...FormItemDefaults} wrapperCol={{ span: 3 }}>
         {getFieldDecorator('cores', {})(<Input type="number" />)}
       </Form.Item>
-      <Form.Item label="max memory (yarn)" {...FormItemDefaults} wrapperCol={{ span: 3 }}>
+      <Form.Item label="Max Memory (Resource Pool)" {...FormItemDefaults} wrapperCol={{ span: 3 }}>
         {getFieldDecorator('memory', {})(<Input type="number" addonAfter="GB" />)}
       </Form.Item>
     </div>
@@ -87,21 +87,27 @@ const RequestForm = Form.create({
   </Form>
 ));
 
-const GeneratedWorkspace = ({ data, processing }) => (
-  <Row justify="center">
-    <Col offset={4} span={6}>
-      <span className="Highlight">{data.length}</span> Hive database(s) will be requested
+const flex = {
+  display: 'flex',
+  flexDirection: 'column',
+  flex: 1,
+}
+
+const GeneratedWorkspace = ({ workspace }) => (
+  <div style={{ ...flex, alignItems: 'center' }}>
+    <div>
+      <span className="Highlight">{workspace.data.length}</span> Hive database(s) will be requested
       <ul>
-        {data.map(item => <li key={item.name}>{item.name}</li>)}
+        {workspace.data.map(item => <li key={item.name}>{item.name}</li>)}
       </ul>
-    </Col>
-    <Col offset={4} span={6}>
-      <span className="Highlight">{processing.length}</span> Yarn queue(s) will be requested
+    </div>
+    <div>
+      <span className="Highlight">{workspace.processing.length}</span> Resource pool(s) will be requested
       <ul>
-        {processing.map(item => <li key={item.name}>{item.pool_name}</li>)}
+        {workspace.processing.map(item => <li key={item.name}>{item.pool_name}</li>)}
       </ul>
-    </Col>
-  </Row>
+    </div>
+  </div>
 );
 
 const Request = ({
@@ -116,9 +122,8 @@ const Request = ({
   requesting,
 }) => (
   <div>
-    <Row>
-      <Col>
-        <h2>Select from the following...</h2>
+    <Row type="flex">
+      <Col span={12}>
         <RequestForm
           pendingRequest={pendingRequest}
           pendingRequestType={pendingRequestType}
@@ -127,12 +132,12 @@ const Request = ({
           typeChanged={setRequestType}
         />
       </Col>
+      <Col span={12} style={flex}>
+        {!generating && !pendingWorkspace && <h3 style={{ ...flex, justifyContent: 'center' }}><Icon type="arrow-left">Start by selecting a type of workspace on the left</Icon></h3>}
+        {generating && <Spin spinning={generating} tip="generating" style={{ width: '100%' }} /> }
+        {pendingWorkspace && !generating && <GeneratedWorkspace workspace={pendingWorkspace} /> }
+      </Col>
     </Row>
-    {pendingWorkspace &&
-      <Spin spinning={generating}>
-        <GeneratedWorkspace data={pendingWorkspace.data} processing={pendingWorkspace.processing} />
-      </Spin>
-    }
     <Row style={{ marginTop: 25 }}>
       <Col align="center">
         <Button disabled={!pendingWorkspace} loading={requesting} size="large" type="primary" onClick={workspaceRequested}>Submit for Approval</Button>

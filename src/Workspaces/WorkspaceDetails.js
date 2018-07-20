@@ -98,15 +98,20 @@ class WorkspaceDetails extends React.Component {
           </Tag>
         </div>
         <div style={{ margin: '25px -25px 15px -25px', backgroundColor: '#F0F3F5' }}>&nbsp;</div>
+        <h2><Icon type="database" /> Hive Database(s)</h2>
         <Tabs onChange={changeDB}>
           {data.map(item => (
             <Tabs.TabPane
-              tab={<TabIcon icon="database" name={item.name} />}
+              tab={<TabIcon name={item.name} />}
               key={item.name}
             >
               <DBDisplay database={item} provisioned={approvals && approvals.infra && approvals.risk} />
             </Tabs.TabPane>
           ))}
+        </Tabs>
+        <div style={{ margin: '25px -25px 15px -25px', backgroundColor: '#F0F3F5' }}>&nbsp;</div>
+        <h2><Icon type="dashboard" /> Resource Pool(s)</h2>
+        <Tabs>
           {processing.map(ProcessingDisplay)}
         </Tabs>
       </div>

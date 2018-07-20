@@ -42,19 +42,19 @@ const Home = ({ name, displayStatus, color, services }) => {
     {name: "Hive UI", url: `https://${services && services.HIVESERVER2.host}:10002`}
   ];
   const hueLinks = [
-    {name: "Hue UI", url: "http://google.com"}
+    {name: "Hue UI", url: "https://master2.valhalla.phdata.io:8889"}
   ]
   const yarnLinks = [
-    {name: "Node Manager UI", url: "http://google.com"},
-    {name: "Resource Manager UI", url: "http://google.com"},
+    {name: "Resource Manager UI", url: "https://master3.valhalla.phdata.io:8090"},
   ];
   return (
     <div style={{ textAlign: 'center', height: '100%' }}>
       <h1 style={{ fontWeight: 100  }}>
         You are currently connected to {name}!
       </h1>
-      <h3 style={{ fontWeight: 100 }}>The current status is</h3>
-      <h4 style={{ color: color }}>{displayStatus}</h4>
+      <h3 style={{ fontWeight: 100 }}>
+        The current status is <span style={{ color: color }}>{displayStatus}</span>
+      </h3>
       <div style={{ display: 'flex', justifyContent: 'center', marginTop: 25 }}>
         <Service name="Hive" status="Good" color={serviceColor(services && services.HIVESERVER2)} links={hiveLinks} />
         <Service name="Hue" status="Good" color={serviceColor(services && services.HUE)} links={hueLinks} />

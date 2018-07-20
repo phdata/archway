@@ -20,7 +20,7 @@ const ProcessingDisplay = ({ pool_name, max_cores, max_memory_in_gb }) => {
                 examples/jars/spark-examples*.jar \\
                 10`;
   return (
-    <Tabs.TabPane tab={<TabIcon icon="dashboard" name={`${pool_name} (yarn)`} />} key={`pool-${pool_name}`}>
+    <Tabs.TabPane tab={<TabIcon name={`${pool_name}`} />} key={`pool-${pool_name}`}>
       <Row className="Processing" type="flex" align="middle">
         <Col span={24}>
         <Row>
