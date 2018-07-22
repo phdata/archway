@@ -1,10 +1,8 @@
 package com.heimdali.services
 
-import cats.data.{EitherT, OptionT}
-import cats.effect.Sync
-import cats.syntax.flatMap._
-import cats.syntax.functor._
-import cats.syntax.either._
+import cats.data._
+import cats.effect._
+import cats.implicits._
 import com.heimdali.clients.{LDAPClient, LDAPUser}
 import com.heimdali.config.{ApprovalConfig, RestConfig}
 import com.heimdali.models.{Token, User, UserPermissions}
@@ -46,7 +44,7 @@ class AccountServiceImpl[F[_] : Sync](ldapClient: LDAPClient[F],
   }
 
   private def decode(token: String, secret: String, algo: JwtHmacAlgorithm): Either[Throwable, Json] =
-    JwtCirce.decodeJson(token, secret, Seq(algo)).toEither
+    JwtCirce.decodeJson(token, secret, Seq(algo)).attempt.get
 
   private def encode(json: Json, secret: String, algo: JwtAlgorithm): F[String] =
     Sync[F].delay(JwtCirce.encode(json, secret, algo))
@@ -65,8 +63,8 @@ class AccountServiceImpl[F[_] : Sync](ldapClient: LDAPClient[F],
 
   override def validate(token: String): EitherT[F, Throwable, User] = {
     for {
-      maybeToken <- EitherT.fromEither(decode(token, restConfig.secret, algo))
-      user <- EitherT.fromEither(maybeToken.as[User])
+      maybeToken <- EitherT.fromEither[F](decode(token, restConfig.secret, algo))
+      user <- EitherT.fromEither[F](maybeToken.as[User])
       result <- EitherT.fromOptionF(ldapClient.findUser(user.username).value, new Throwable())
     } yield convertUser(result)
   }

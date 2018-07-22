@@ -16,12 +16,12 @@ object CreateResourcePool {
     ProvisionTask.instance { create =>
       Kleisli { config =>
         F.flatMap(F.attempt(config.yarnClient.createPool(create.name, create.cores, create.memory))) {
-          case Left(exception) => F.pure(Error(exception))
+          case Left(exception) => F.pure(Error(create, exception))
           case Right(_) =>
             F.map(config
               .yarnRepository
               .complete(create.id)
-              .transact(config.transactor)) { _ => Success[CreateResourcePool] }
+              .transact(config.transactor)) { _ => Success(create) }
         }
       }
     }

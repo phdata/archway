@@ -18,12 +18,12 @@ object GrantLocationAccess {
     ProvisionTask.instance { grant =>
       Kleisli[F, AppContext[F], ProvisionResult] { config =>
         F.flatMap(F.attempt(config.hiveClient.enableAccessToLocation(grant.location, grant.roleName))) {
-          case Left(exception) => F.pure(Error(exception))
+          case Left(exception) => F.pure(Error(grant, exception))
           case Right(_) =>
             F.map(config
               .databaseGrantRepository
               .locationGranted(grant.id)
-              .transact(config.transactor)) { _ => Success[GrantLocationAccess] }
+              .transact(config.transactor)) { _ => Success(grant) }
         }
       }
     }

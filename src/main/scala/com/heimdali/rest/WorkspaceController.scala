@@ -90,11 +90,11 @@ class WorkspaceController(authService: AuthService[IO],
             response <- removedMember.fold(NotFound())(member => Ok(member.asJson))
           } yield response
 
-        case req@POST -> Root / LongVar(id) / "database" / LongVar(databaseId) / "topics" as _ =>
+        case req@POST -> Root / LongVar(id) / "database" / LongVar(databaseId) / "topics" as user =>
           implicit val kafkaTopicDecoder: EntityDecoder[IO, TopicRequest] = jsonOf[IO, TopicRequest]
           for {
             topic <- req.req.as[TopicRequest]
-            result <- kafkaService.create(id, databaseId, topic)
+            result <- kafkaService.create(user.username, id, databaseId, topic)
             response <- Ok(result.asJson)
           } yield response
       }

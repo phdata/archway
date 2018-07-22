@@ -8,7 +8,8 @@ import io.circe._
 import io.circe.syntax._
 
 
-case class TopicRequest(name: String,
+case class TopicRequest(username: String,
+                        name: String,
                         partitions: Int,
                         replicationFactor: Int)
 
@@ -21,15 +22,6 @@ object TopicRequest {
         "partitions" -> t.partitions.asJson,
         "replication_factor" -> t.replicationFactor.asJson
       )
-    }
-
-  implicit val decoder: Decoder[TopicRequest] =
-    Decoder.instance { t =>
-      for {
-        name <- t.downField("name").as[String]
-        partitions <- t.downField("partitions").as[Int]
-        replicationFactor <- t.downField("replication_factor").as[Int]
-      } yield TopicRequest(name, partitions, replicationFactor)
     }
 
 }

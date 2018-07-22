@@ -16,9 +16,9 @@ object RemoveMember {
     ProvisionTask.instance { remove =>
       Kleisli[F, AppContext[F], ProvisionResult] { config =>
         F.map(F.attempt(config.ldapClient.removeUser(remove.groupDN, remove.userDN).value)) {
-          case Left(exception) => Error(exception)
-          case Right(Some(_)) => Success[RemoveMember]
-          case Right(None) => Success(s"${remove.userDN} wasn't a member of ${remove.groupDN}")
+          case Left(exception) => Error(remove, exception)
+          case Right(Some(_)) => Success(remove)
+          case Right(None) => Success(remove, s"${remove.userDN} wasn't a member of ${remove.groupDN}")
         }
       }
     }

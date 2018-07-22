@@ -16,14 +16,14 @@ import doobie.implicits._
 
 trait KafkaService[F[_]] {
 
-  def create(workspaceId: Long, databaseId: Long, kafkaTopic: TopicRequest): F[KafkaTopic]
+  def create(username: String, workspaceId: Long, databaseId: Long, kafkaTopic: TopicRequest): F[NonEmptyList[String]]
 
 }
 
 class KafkaServiceImpl[F[_] : Effect](appContext: AppContext[F])
     extends KafkaService[F]
     with LazyLogging {
-  override def create(workspaceId: Long, databaseId: Long, topicRequest: TopicRequest): F[KafkaTopic] =
+  override def create(username: String, workspaceId: Long, databaseId: Long, topicRequest: TopicRequest): F[NonEmptyList[String]] =
     (for {
        workspace <- OptionT(
          appContext
@@ -33,8 +33,6 @@ class KafkaServiceImpl[F[_] : Effect](appContext: AppContext[F])
            .transact(appContext.transactor)
        )
 
-       _ <- OptionT.pure[F](logger.info("found {}", workspace))
-
        database <- OptionT(
          appContext
            .databaseRepository
@@ -43,15 +41,14 @@ class KafkaServiceImpl[F[_] : Effect](appContext: AppContext[F])
            .transact(appContext.transactor)
        )
 
-       _ <- OptionT.pure[F](logger.info("found {}", database))
-
        topicName = s"${database.name}_${Generator.generateName(topicRequest.name)}"
        kafkaTopic = KafkaTopic(
          topicName,
          topicRequest.partitions,
          topicRequest.replicationFactor,
-         TopicGrant(topicName, LDAPRegistration(s"${topicName},${appContext.appConfig.ldap.groupPath}", topicName, s"role_${topicName}"), "read,describe"),
-         TopicGrant(topicName, LDAPRegistration(s"${topicName}_ro,${appContext.appConfig.ldap.groupPath}", s"${topicName}_ro", s"role_${topicName}_ro"), "read")
+         TopicGrant(topicName, LDAPRegistration(s"cn=${topicName},${appContext.appConfig.ldap.groupPath}", topicName, s"role_${topicName}"), "read,describe"),
+         TopicGrant(topicName, LDAPRegistration(s"cn=${topicName}_ro,${appContext.appConfig.ldap.groupPath}", s"${topicName}_ro", s"role_${topicName}_ro"), "read"),
+         requestor = Some(username)
        )
 
        result <- OptionT.liftF {
@@ -67,16 +64,17 @@ class KafkaServiceImpl[F[_] : Effect](appContext: AppContext[F])
 
            id <- appContext.kafkaRepository.create(afterRoles)
 
+           _ <- appContext.memberRepository.create(username, managerLDAP.id.get)
+
            _ <- appContext.workspaceRequestRepository.linkTopic(workspaceId, id)
           } yield afterRoles.copy(id = Some(id))).transact(appContext.transactor)
        }
 
-       _ <- if(workspace.approved)
-       OptionT.liftF(
-         kafkaTopic
+       provisionResult <- OptionT.liftF(
+         result
            .provision
            .run(appContext)
-       ) else OptionT.some[F](Success(NonEmptyList.one("")))
+       )
 
-    } yield result).value.map(_.get)
+    } yield provisionResult.messages).value.map(_.get)
 }

@@ -17,12 +17,12 @@ object SetDiskQuota {
     ProvisionTask.instance[F, SetDiskQuota] { set =>
       Kleisli[F, AppContext[F], ProvisionResult] { config =>
         F.flatMap(F.attempt(config.hdfsClient.setQuota(set.location, set.sizeInGB))) {
-          case Left(exception) => F.pure(Error(exception))
+          case Left(exception) => F.pure(Error(set, exception))
           case Right(_) =>
             F.map(config
               .databaseRepository
               .quotaSet(set.workspaceId)
-              .transact(config.transactor)) { _ => Success[SetDiskQuota] }
+              .transact(config.transactor)) { _ => Success(set) }
         }
       }
     }

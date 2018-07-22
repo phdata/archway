@@ -27,8 +27,8 @@ object TopicGrant {
   implicit def provisioner[F[_]](implicit F: Effect[F]): ProvisionTask[F, TopicGrant] =
     ProvisionTask.instance { grant =>
       for {
-        access <- GrantTopicAccess(grant.id.get, grant.name, grant.ldapRegistration.sentryRole, NonEmptyList.fromListUnsafe(grant.actions.split(",").toList)).provision
         ldap <- grant.ldapRegistration.provision
+        access <- GrantTopicAccess(grant.id.get, grant.name, grant.ldapRegistration.sentryRole, NonEmptyList.fromListUnsafe(grant.actions.split(",").toList)).provision
       } yield access |+| ldap
     }
 

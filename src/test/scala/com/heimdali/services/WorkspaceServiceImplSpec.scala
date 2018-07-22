@@ -173,7 +173,6 @@ class WorkspaceServiceImplSpec
       hdfsClient,
       yarnClient,
       kafkaClient,
-      sentryClient,
       transactor,
       hiveDatabaseRepository,
       grantRepository,

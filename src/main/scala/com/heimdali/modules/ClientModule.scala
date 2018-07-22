@@ -3,8 +3,11 @@ package com.heimdali.modules
 import com.unboundid.ldap.sdk.{LDAPConnection, LDAPConnectionPool}
 import java.net.URI
 
+import cats.effect.Sync
 import com.heimdali.clients._
 import com.heimdali.services._
+import doobie.FC
+import doobie.util.transactor.{Strategy, Transactor}
 import org.apache.hadoop.fs.FileSystem
 import org.apache.hadoop.hdfs.client.HdfsAdmin
 import org.apache.sentry.provider.db.generic.service.thrift.{SentryGenericServiceClient, SentryGenericServiceClientFactory}
@@ -48,7 +51,36 @@ trait ClientModule[F[_]] {
   val kafkaClient: KafkaClient[F] =
     new KafkaClientImpl[F](zkUtils)
 
-  val sentryClient: SentryGenericServiceClient =
+  val hiveConfig = appConfig.db.hive
+  Class.forName("org.apache.hive.jdbc.HiveDriver")
+  // Turn the transactor into no
+  private val initialHiveTransactor =
+    Transactor.fromDriverManager[F](hiveConfig.driver, hiveConfig.url, "", "")
+  val strategy = Strategy.void.copy(always = FC.close)
+  val hiveTransactor = Transactor.strategy.set(initialHiveTransactor, strategy)
+
+  private lazy val sentryServiceClient: SentryGenericServiceClient =
     SentryGenericServiceClientFactory.create(hadoopConfiguration)
+
+  val sentryClient: SentryClient[F] =
+    new SentryClient[F] {
+      override def grantPrivilege(role: String, component: Component, grantString: String): F[Unit] =
+        Sync[F].unit
+
+      override def createRole(name: String): F[Unit] =
+        Sync[F].unit
+
+      override def createDatabase(name: String, location: String): F[Unit] =
+        Sync[F].unit
+
+      override def enableAccessToDB(database: String, role: String): F[Unit] =
+        Sync[F].unit
+
+      override def grantGroup(group: String, role: String): F[Unit] =
+        Sync[F].unit
+
+      override def enableAccessToLocation(location: String, role: String): F[Unit] =
+        Sync[F].unit
+    }
 
 }

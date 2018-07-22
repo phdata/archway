@@ -18,9 +18,9 @@ object CreateLDAPGroup {
     ProvisionTask.instance[F, CreateLDAPGroup] { create =>
       Kleisli[F, AppContext[F], ProvisionResult] { config =>
         F.flatMap(F.map(config.ldapClient.createGroup(create.groupId, create.commonName, create.distinguishedName).value) {
-          case Right(_) => Success[CreateLDAPGroup]
-          case Left(GroupAlreadyExists) => Success("a group already existsed with that name")
-          case Left(GeneralError(error)) => Error(error)
+          case Right(_) => Success(create)
+          case Left(GroupAlreadyExists) => Success(create, "a group already existsed with that name")
+          case Left(GeneralError(error)) => Error(create, error)
         }) {
           case out: Success =>
             F.map(config

@@ -17,12 +17,12 @@ object CreateDatabaseDirectory {
       create =>
         Kleisli[F, AppContext[F], ProvisionResult] { config =>
           F.flatMap(F.attempt(config.hdfsClient.createDirectory(create.location, create.onBehalfOf))) {
-            case Left(exception) => F.pure(Error(exception))
+            case Left(exception) => F.pure(Error(create, exception))
             case Right(_) =>
               F.map(config
                 .databaseRepository
                 .directoryCreated(create.workspaceId)
-                .transact(config.transactor)) { _ => Success[CreateDatabaseDirectory] }
+                .transact(config.transactor)) { _ => Success(create) }
           }
         }
     }

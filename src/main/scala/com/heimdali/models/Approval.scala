@@ -3,6 +3,7 @@ package com.heimdali.models
 import java.time.{Clock, Instant}
 
 import cats.Show
+import cats.implicits._
 import doobie.util.composite.Composite
 import io.circe._
 import io.circe.syntax._

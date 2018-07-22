@@ -29,10 +29,12 @@ case class Error(messages: NonEmptyList[String]) extends ProvisionResult
 
 object Error {
 
-  def apply[A](exception: Throwable)(implicit show: Show[A]): Error =
+  def apply[A](a: A, exception: Throwable)(implicit show: Show[A]): Error = {
+    exception.printStackTrace()
     apply(NonEmptyList.of(
-      s"""$show FAILED due to ${exception.getMessage}"""
+      s"""${show.show(a)} FAILED due to ${exception.getMessage}"""
     ))
+  }
 
 }
 
@@ -40,16 +42,16 @@ case class Success(messages: NonEmptyList[String]) extends ProvisionResult
 
 object Success {
 
-  def apply[A](message: String)(implicit show: Show[A]): Success =
+  def apply[A](a: A, message: String)(implicit show: Show[A]): Success =
     apply(NonEmptyList.of(
-      s"$show SUCCEEDED",
-      s"$show: message"
+      s"${show.show(a)} SUCCEEDED",
+      s"${show.show(a)}: message"
     ))
 
 
-  def apply[A](implicit show: Show[A]): Success =
+  def apply[A](a: A)(implicit show: Show[A]): Success =
     apply(NonEmptyList.one(
-      s"$show SUCCEEDED"
+      s"${show.show(a)} SUCCEEDED"
     ))
 
 }

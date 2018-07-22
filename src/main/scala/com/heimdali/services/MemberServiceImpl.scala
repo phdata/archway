@@ -15,8 +15,7 @@ class MemberServiceImpl[F[_]](
   memberRepository: MemberRepository,
   transactor: Transactor[F],
   ldapRepository: LDAPRepository,
-  ldapClient: LDAPClient[F],
-  )(implicit val F: Effect[F])
+  ldapClient: LDAPClient[F])(implicit val F: Effect[F])
     extends MemberService[F]
     with LazyLogging {
 

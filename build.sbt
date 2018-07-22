@@ -15,6 +15,7 @@ val hiveVersion = s"1.1.0-$cdhVersion"
 val hadoopVersion = s"2.6.0-$cdhVersion"
 val sentryVersion = s"1.5.1-$cdhVersion"
 
+
 val circeVersion = "0.9.3"
 val doobieVersion = "0.5.3"
 val catsVersion = "1.1.0"
@@ -32,7 +33,6 @@ libraryDependencies ++= Seq(
   "com.github.pureconfig" %% "pureconfig" % "0.9.1",
   "org.typelevel" %% "cats-effect" % "0.10.1",
   "org.typelevel" %% "cats-core" % catsVersion,
-  "com.casualmiracles" %% "treelog-cats" % "1.4.4",
   "com.typesafe.scala-logging" %% "scala-logging" % "3.8.0",
   "ch.qos.logback" % "logback-classic" % "1.2.3",
   "io.circe" %% "circe-core" % circeVersion,
@@ -52,9 +52,9 @@ libraryDependencies ++= Seq(
   "org.flywaydb" % "flyway-core" % "4.2.0",
   "postgresql" % "postgresql" % "9.0-801.jdbc4", // % "provided",
   "mysql" % "mysql-connector-java" % "6.0.6", // % "provided",
-  "org.apache.sentry" % "sentry-provider-db" % sentryVersion, // % "provided",
-  "org.apache.hadoop" % "hadoop-client" % hadoopVersion, // % "provided",
-  "org.apache.hive" % "hive-jdbc" % hiveVersion, // % "provided",
+  "org.apache.sentry" % "sentry-provider-db" % sentryVersion % "provided",
+  "org.apache.hadoop" % "hadoop-client" % hadoopVersion % "provided",
+  "org.apache.hive" % "hive-jdbc" % hiveVersion % "provided",
   "org.apache.hadoop" % "hadoop-hdfs" % hadoopVersion % Test classifier "" classifier "tests",
   "org.apache.hadoop" % "hadoop-common" % hadoopVersion % Test classifier "" classifier "tests",
   "org.apache.hadoop" % "hadoop-client" % hadoopVersion % Test classifier "" classifier "tests",

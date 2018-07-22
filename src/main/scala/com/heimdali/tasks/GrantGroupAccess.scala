@@ -17,12 +17,12 @@ object GrantGroupAccess {
     ProvisionTask.instance { grant =>
       Kleisli[F, AppContext[F], ProvisionResult] { config =>
         F.flatMap(F.attempt(config.hiveClient.grantGroup(grant.groupName, grant.roleName))) {
-          case Left(exception) => F.pure(Error(exception))
+          case Left(exception) => F.pure(Error(grant, exception))
           case Right(_) =>
             F.map(config
               .ldapRepository
               .groupAssociated(grant.ldapId)
-              .transact(config.transactor)) { _ => Success[GrantGroupAccess] }
+              .transact(config.transactor)) { _ => Success(grant) }
         }
       }
     }

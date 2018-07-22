@@ -5,7 +5,7 @@ import java.time.Instant
 import cats.effect.Effect
 import cats.implicits._
 import com.heimdali.tasks.ProvisionTask._
-import com.heimdali.tasks.{CreateKafkaTopic, ProvisionTask}
+import com.heimdali.tasks.{AddMember, CreateKafkaTopic, ProvisionTask}
 import io.circe._
 import io.circe.syntax._
 
@@ -14,15 +14,17 @@ case class KafkaTopic(name: String,
                       replicationFactor: Int,
                       managingRole: TopicGrant,
                       readonlyRole: TopicGrant,
-                      id: Option[Long] = None)
+                      id: Option[Long] = None,
+                      requestor: Option[String] = None)
 
 object KafkaTopic {
 
   implicit def provisioner[F[_] : Effect]: ProvisionTask[F, KafkaTopic] =
     ProvisionTask.instance(topic =>
       for {
-        create <- CreateKafkaTopic(topic.name, topic.partitions, topic.replicationFactor).provision
+        create <- CreateKafkaTopic(topic.id.get, topic.name, topic.partitions, topic.replicationFactor).provision
         managingRole <- topic.managingRole.provision
+        manager <- AddMember(topic.managingRole.ldapRegistration.id.get, topic.managingRole.ldapRegistration.distinguishedName, topic.requestor.get).provision
         readonlyRole <- topic.readonlyRole.provision
       } yield create |+| managingRole |+| readonlyRole
     )

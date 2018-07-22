@@ -25,7 +25,8 @@ class KafkaRepositoryImpl(val clock: Clock)
   override def create(kafkaTopic: KafkaTopic): ConnectionIO[Long] =
     Statements.create(kafkaTopic).withUniqueGeneratedKeys("id")
 
-  override def topicCreated(id: Long): ConnectionIO[Int] = ???
+  override def topicCreated(id: Long): ConnectionIO[Int] =
+    Statements.topicCreated(id).run
 
   override def find(id: Long): OptionT[ConnectionIO, KafkaTopic] = ???
 

@@ -17,12 +17,12 @@ object CreateRole {
     ProvisionTask.instance { create =>
         Kleisli[F, AppContext[F], ProvisionResult] { config =>
           F.flatMap(F.attempt(config.hiveClient.createRole(create.name))) {
-            case Left(exception) => F.pure(Error(exception))
+            case Left(exception) => F.pure(Error(create, exception))
             case Right(_) =>
               F.map(config
                 .ldapRepository
                 .roleCreated(create.id)
-                .transact(config.transactor)) { _ => Success[CreateRole] }
+                .transact(config.transactor)) { _ => Success(create) }
           }
         }
     }

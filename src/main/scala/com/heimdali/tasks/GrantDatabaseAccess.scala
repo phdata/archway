@@ -19,13 +19,13 @@ object GrantDatabaseAccess {
     ProvisionTask.instance { grant =>
       Kleisli[F, AppContext[F], ProvisionResult] { config =>
         F.flatMap(F.attempt(config.hiveClient.enableAccessToDB(grant.databaseName, grant.roleName))) {
-          case Left(exception) => F.pure(Error[GrantDatabaseAccess](exception))
+          case Left(exception) => F.pure(Error(grant, exception))
           case Right(_) =>
             config
               .databaseGrantRepository
               .databaseGranted(grant.id)
               .transact(config.transactor)
-              .map(_ => Success[GrantDatabaseAccess])
+              .map(_ => Success(grant))
         }
       }
     }

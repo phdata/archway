@@ -1,12 +1,34 @@
 package com.heimdali.clients
 
-import cats.implicits._
 import cats.effect.Sync
-import cats.free.Free
+import cats.implicits._
 import com.typesafe.scalalogging.LazyLogging
 import doobie._
 import doobie.implicits._
-import cats.data.OptionT
+import org.apache.sentry.provider.db.generic.service.thrift.{SentryGenericServiceClient, TSentryPrivilege}
+import org.apache.sentry.provider.db.generic.tools.KafkaTSentryPrivilegeConverter
+
+sealed trait Component {
+
+  def name: String
+
+  def privilege(grantString: String): TSentryPrivilege
+
+}
+
+case object Hive extends Component {
+  val name: String = "hive"
+
+  def privilege(grantString: String): TSentryPrivilege = ???
+}
+
+case object Kafka extends Component {
+  val name: String = "kafka"
+
+  def privilege(grantString: String): TSentryPrivilege =
+    new KafkaTSentryPrivilegeConverter("kafka", "kafka")
+      .fromString(grantString)
+}
 
 trait SentryClient[F[_]] {
   def createRole(name: String): F[Unit]
@@ -18,13 +40,17 @@ trait SentryClient[F[_]] {
   def enableAccessToDB(database: String, role: String): F[Unit]
 
   def enableAccessToLocation(location: String, role: String): F[Unit]
+
+  def grantPrivilege(role: String, component: Component, grantString: String): F[Unit]
 }
 
-class SentryClientImpl[F[_] : Sync](transactor: Transactor[F])
+class SentryClientImpl[F[_]](transactor: Transactor[F],
+                             client: SentryGenericServiceClient)
+                            (implicit val F: Sync[F])
   extends SentryClient[F]
     with LazyLogging {
 
-  implicit val han = LogHandler.jdkLogHandler
+  implicit val han: LogHandler = LogHandler.jdkLogHandler
 
   override def createRole(name: String): F[Unit] =
     sql"""SHOW ROLES""".query[String].to[Seq].transact(transactor).flatMap {
@@ -54,4 +80,14 @@ class SentryClientImpl[F[_] : Sync](transactor: Transactor[F])
   override def enableAccessToLocation(location: String, role: String): F[Unit] =
     (fr"GRANT ALL ON URI '" ++ Fragment.const(location) ++ fr"' TO ROLE" ++ Fragment.const(role) ++ fr"WITH GRANT OPTION")
       .update.run.transact(transactor).flatMap(_ => Sync[F].unit)
+
+  override def grantPrivilege(role: String, component: Component, grantString: String): F[Unit] =
+    F.delay(
+      client.grantPrivilege(
+        "heimdali_api",
+        component.name,
+        component.name,
+        component.privilege(grantString))
+    ).void
+
 }

@@ -3,6 +3,7 @@ package com.heimdali.tasks
 import cats.Show
 import cats.data.Kleisli
 import cats.effect.Effect
+import com.heimdali.clients.Kafka
 import org.apache.sentry.core.model.kafka.ConsumerGroup
 import org.apache.sentry.provider.db.generic.service.thrift.{TAuthorizable, TSentryPrivilege}
 
@@ -23,15 +24,15 @@ object GrantRoleToConsumerGroup {
         val auth = new TAuthorizable(grant.consumerGroupInstance.getTypeName, grant.consumerGroupInstance.getName)
         F.map(F.attempt(F.delay {
           config
-            .sentryClient
+            .hiveClient
             .grantPrivilege(
-              "heimdali_api",
               grant.roleName,
-              "kafka",
-              new TSentryPrivilege("kafka", "kafka", List(auth).asJava, "ALL"))
+              Kafka,
+              s"ConsumerGroup=${grant.consumerGroup}->action=ALL"
+            )
         })) {
-          case Left(exception) => Error(exception)
-          case Right(_) => Success[GrantRoleToConsumerGroup]
+          case Left(exception) => Error(grant, exception)
+          case Right(_) => Success(grant)
         }
       }
     }

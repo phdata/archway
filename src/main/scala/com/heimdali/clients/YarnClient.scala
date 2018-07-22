@@ -93,7 +93,7 @@ class CDHYarnClient[F[_] : Sync](http: HttpClient[F],
   def yarnConfig: F[Json] =
     for {
       url <- configURL
-      response <- http.request[Json](Request[F](Method.GET, Uri.fromString(url).toOption.get))
+      response <- http.request[Json](Request[F](Method.GET, Uri.unsafeFromString(url)))
     } yield response
 
   def yarnConfigUpdate(updatedJson: Json): F[Json] =
