@@ -8,6 +8,6 @@ package:
   only:
     - tags
   script:
-    - sed -i -e "s/0.1.0/${VERSION}/g" descriptor/service.sdl
+    - sed -i -e "s/0.1.0/${CI_COMMIT_TAG}/g" descriptor/service.sdl
     - java -jar /usr/src/validator.jar -s descriptor/service.sdl
-    - jar cvf HEIMDALI-${VERSION}.jar `find . -mindepth 1 -not -path "./.git*"`
+    - jar cvf HEIMDALI-${CI_COMMIT_TAG}.jar `find . -mindepth 1 -not -path "./.git*"`
