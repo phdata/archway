@@ -1,0 +1,13 @@
+image: registry.gitlab.com/jotunnllc/heimdali/heimdali-csd/cm-validator
+
+stages:
+  - package
+
+package:
+  stage: package
+  only:
+    - tags
+  script:
+    - sed -i -e "s/0.1.0/${VERSION}/g" descriptor/service.sdl
+    - java -jar /usr/src/validator.jar -s descriptor/service.sdl
+    - jar cvf HEIMDALI-${VERSION}.jar `find . -mindepth 1 -not -path "./.git*"`
