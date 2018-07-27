@@ -1,5 +1,5 @@
 import React from 'react';
-import { List, Row, Col, Form, Select, Input, Avatar, Icon, Button, Popconfirm } from 'antd';
+import { List, Row, Col, Form, Select, Input, Tabs, Avatar, Icon, Button, Popconfirm } from 'antd';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import SyntaxHighlighter from 'react-syntax-highlighter';
@@ -8,148 +8,62 @@ import {solarizedDark} from 'react-syntax-highlighter/styles/hljs';
 import ValueDisplay from './ValueDisplay';
 import { addMember, removeMember, newMemberFormChanged } from './actions';
 
-const syntaxStyle = {
-  marginRight: 10,
-  marginBottom: 10,
-  padding: 10
-};
-
-const CodeHelp = ({ cluster, database }) => {
-  const impala = `$ impala-shell -i ${cluster.services.IMPALA.host}:21000 -d ${database.name}`;
-  const jdbc = `jdbc:impala://${cluster.services.IMPALA.host}:21050/${database.name}`;
-  const beeline = `$ beeline -u 'jdbc:hive2://${cluster.services.HIVESERVER2.host}:10000/${database.name};auth=noSasl'`;
+const CodeHelp = ({ cluster, databaseName }) => {
+  const impala = `$ impala-shell -i ${cluster.services.IMPALA.host}:21000 -d ${databaseName}`;
+  const jdbc = `jdbc:impala://${cluster.services.IMPALA.host}:21050/${databaseName}`;
+  const beeline = `$ beeline -u 'jdbc:hive2://${cluster.services.HIVESERVER2.host}:10000/${databaseName};auth=noSasl'`;
   return (
-    <div className="CodeDisplay">
-      <h4>Connect Via JDBC</h4>
-      <SyntaxHighlighter language="sql" customStyle={syntaxStyle} style={solarizedDark}>
-        {jdbc}
-      </SyntaxHighlighter>
-      <h4>Connect Via impala-shell</h4>
-      <SyntaxHighlighter language="shell" customStyle={syntaxStyle} style={solarizedDark}>
-        {impala}
-      </SyntaxHighlighter>
-      <h4>Connect Via Beeline</h4>
-      <SyntaxHighlighter language="shell" customStyle={syntaxStyle} style={solarizedDark}>
-        {beeline}
-      </SyntaxHighlighter>
-    </div>
+    <Tabs animated={false}>
+      <Tabs.TabPane tab="JDBC" key="jdbc">
+        <SyntaxHighlighter language="sql" style={solarizedDark}>
+          {jdbc}
+        </SyntaxHighlighter>
+      </Tabs.TabPane>
+      <Tabs.TabPane tab="Impala" key="impala">
+        <SyntaxHighlighter language="shell" style={solarizedDark}>
+          {impala}
+        </SyntaxHighlighter>
+      </Tabs.TabPane>
+      <Tabs.TabPane tab="Beeline" key="beeline">
+        <SyntaxHighlighter language="shell" style={solarizedDark}>
+          {beeline}
+        </SyntaxHighlighter>
+      </Tabs.TabPane>
+    </Tabs>
   );
 }
 
-const UserForm = Form.create({
-  onFieldsChange(props, changedFields) {
-    props.onChange(changedFields);
-  },
-  mapPropsToFields(props) {
-    return {
-      username: Form.createFormField({
-        value: props.newMemberForm.username,
-      }),
-      role: Form.createFormField({
-        value: props.newMemberForm.role,
-      }),
-    };
-  },
-})(({
-  form: {
-    getFieldDecorator,
-  },
-  addMember,
-  addingUser,
-}) => {
-  const RoleSelect = getFieldDecorator('role', {})(<Select>
-    <Select.Option value="manager">Manager</Select.Option>
-  </Select>);
+const DatabaseItem = ({ database: { name, size_in_gb }, cluster }) => (
+  <div>
+    <Row type="flex" justify="space-around">
+      <Col span={8}>
+        <ValueDisplay label="database name">
+          {name}
+        </ValueDisplay>
+      </Col>
+      <Col span={8}>
+        <ValueDisplay label="disk quota">
+          {`${size_in_gb}gb`}
+        </ValueDisplay>
+      </Col>
+    </Row>
+    <h2>Connect to Your Database</h2>
+    { (cluster.services) && <CodeHelp cluster={cluster} databaseName={name} /> }
+  </div>
+)
+
+const DBDisplay = ({ workspace, cluster }) => {
+  if(workspace.data.length == 1)
+    return <DatabaseItem database={workspace.data[0]} cluster={cluster} />;
   return (
-    <Form
-        onSubmit={(e) => {
-          e.preventDefault();
-          addMember();
-        }}
-        layout="horizontal"
-      >
-      <Form.Item>
-        {getFieldDecorator('username', { rules: [{ required: true }] })(
-            <Input addonAfter={RoleSelect} placeholder="username" />
-        )}
-       <div style={{ color: '#aaa', fontSize: 12 }}>
-          <Icon type="info-circle-o" /> enter a username and hit enter to add
-      </div>
-      </Form.Item>
-    </Form>
+    <Tabs>
+      {workspace.data.map(db => (
+        <Tabs.TabPane tab={db.name}>
+          <DatabaseItem database={db} cluster={cluster} />
+        </Tabs.TabPane>
+      ))}
+    </Tabs>
   );
-});
-
-
-const ListHeader = ({ name }) => (
-  <h3 style={{ textAlign: 'center' }}>
-    {name}
-  </h3>
-);
-
-const ListItem = ({ member: { username, role }, removable, removeMember }) => {
-  const avatar = role === 'readonly' ? 'RO' : 'RW';
-  return (
-    <List.Item>
-      <List.Item.Meta
-        style={{ alignItems: 'center' }}
-        avatar={<Avatar icon="user" />}
-        title={username}
-        description={role}
-      />
-      { removable && (
-        <Popconfirm title={`Are you sure you want to remove ${username}?`} onConfirm={_ => removeMember(username, role)} >
-          <Button size="small" icon="minus" shape="circle" style={{ backgroundColor: '#7B2D26', color: '#F0F3F5' }} />
-        </Popconfirm>
-      )}
-    </List.Item>
-  );
-};
-
-class DBDisplay extends React.Component {
-  render() {
-    const {
-      provisioned,
-      database,
-      members: {
-        managers,
-        readonly,
-      },
-      addMember,
-      newMemberForm,
-      newMemberFormChanged,
-      removeMember,
-      cluster,
-    } = this.props;
-  const { name, size_in_gb } = database;
-  const managerList = (managers && managers.map(member => ({ ...member, role: 'manager' }))) || [];
-  const readonlyList = (readonly && readonly.map(member => ({ ...member, role: 'readonly' }))) || [];
-  return (
-    <div>
-      <Row type="flex" align="center">
-        <Col span={16}>
-          <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around' }}>
-            <ValueDisplay label="database name">
-              {name}
-            </ValueDisplay>
-            <ValueDisplay label="disk quota">
-              {`${size_in_gb}gb`}
-            </ValueDisplay>
-          </div>
-          { (cluster.services) && <CodeHelp cluster={cluster} database={database} /> }
-        </Col>
-        <Col offset={1} span={6}>
-          <List
-            header={<ListHeader name="Workspace Members" />}
-            footer={provisioned && <UserForm onChange={newMemberFormChanged} addMember={addMember} addingUser={false} newMemberForm={newMemberForm} />}
-            dataSource={managerList.concat(readonlyList)}
-            renderItem={(item, index) => <ListItem member={item} removable={index > 0} removeMember={removeMember} />}
-          />
-        </Col>
-      </Row>
-    </div>
-  );
-  }
 }
 
 DBDisplay.propTypes = {
@@ -157,25 +71,9 @@ DBDisplay.propTypes = {
     name: PropTypes.string.isRequired,
     size_in_gb: PropTypes.number.isRequired,
   }),
-  members: PropTypes.shape({
-    managers: PropTypes.arr,
-    readonly: PropTypes.arr,
-  }),
-  addMember: PropTypes.func,
-  newMemberForm: PropTypes.object,
-  newMemberFormChanged: PropTypes.func,
-  removeMember: PropTypes.func,
-  provisioned: PropTypes.bool,
+  cluster: PropTypes.shape({
+    services: PropTypes.array.isRequired,
+  })
 };
 
-export default connect(
-  state => ({
-      ...state.workspaces,
-      cluster: state.cluster,
-  }),
-  {
-    addMember,
-    newMemberFormChanged,
-    removeMember,
-  }
-)(DBDisplay);
+export default DBDisplay;

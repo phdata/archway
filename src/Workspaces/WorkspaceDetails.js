@@ -1,11 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Spin, Row, Col, Icon, Button, Tabs, Tag } from 'antd';
+import { Spin, Row, Col, Icon, Button, Tabs, Tag, Menu } from 'antd';
 
 import TabIcon from './TabIcon';
 import DBDisplay from './DBDisplay';
 import ProcessingDisplay from './ProcessingDisplay';
+import ValueDisplay from './ValueDisplay';
 import { changeDB, approveInfra, approveRisk, getWorkspace, addMember, newMemberFormChanged } from './actions';
 import './WorkspaceDetails.css';
 
@@ -47,96 +48,72 @@ const ApprovalActions = ({
   );
 };
 
+const Applications = () => (<div />);
+
+const Members = () => (<div />);
+
+const Status = ({ workspace: { status, approvals } }) => (
+  <div>
+    <h2>Overall Status: {status}</h2>
+    <Row type="flex" justify="center">
+      <Col span={8}>
+        <ValueDisplay label="Infrastructure" color={(approvals && approvals.infra) ? "#0B7A75" : "#FF5900"}>
+          {(approvals && approvals.infra) ? "approved" : "pending"}
+        </ValueDisplay>
+      </Col>
+      <Col span={8}>
+        <ValueDisplay label="Risk" color={(approvals && approvals.infra) ? "#0B7A75" : "#FF5900"}>
+          {(approvals && approvals.Risk) ? "approved" : "pending"}
+        </ValueDisplay>
+      </Col>
+    </Row>
+  </div>
+);
+
 class WorkspaceDetails extends React.Component {
+
   componentDidMount() {
     this.props.getWorkspace(this.props.match.params.id);
   }
 
   render() {
-    const {
-      activeWorkspace,
-      profile,
-      approveInfra,
-      approveRisk,
-      approving,
-      changeDB,
-      members,
-      addMember,
-      newMemberForm,
-      newMemberFormChanged,
-    } = this.props;
-    if (!activeWorkspace) return <Spin spinning={true}>Loading...</Spin>;
-    const {
-      id, approvals, compliance: { pii_data, pci_data, phi_data }, data, processing,
-    } = activeWorkspace;
-    const { permissions } = profile;
+    const { workspaces: { activeWorkspace }, cluster } = this.props;
+    if (!activeWorkspace)
+      return <Spin />;
     return (
       <div className="WorkspaceDetails">
-        <Row>
-          <Col span={14}>
-            <h1 style={{ marginBottom: 0 }}>{activeWorkspace.name}</h1>
-          </Col>
-          <Col span={10} align="right">
-            <ApprovalActions
-              approving={approving}
-              approvals={approvals}
-              approveInfra={approveInfra}
-              approveRisk={approveRisk}
-              permissions={permissions}
-            />
-          </Col>
-        </Row>
-        <div style={{ margin: '10px 0' }}>
-          <ComplianceCheck value={pii_data} label="PII" key="pii" />
-          <ComplianceCheck value={phi_data} label="PHI" key="phi" />
-          <ComplianceCheck value={pci_data} label="PCI" key="pci" />
-          <Tag color={approvals && approvals.infra ? 'green' : 'red'}>
-            {approvals && approvals.infra ? 'infra approved' : 'infra not approved'}
-          </Tag>
-          <Tag color={approvals && approvals.risk ? 'green' : 'red'}>
-            {approvals && approvals.risk ? 'risk approved' : 'risk not approved'}
-          </Tag>
-        </div>
-        <div style={{ margin: '25px -25px 15px -25px', backgroundColor: '#F0F3F5' }}>&nbsp;</div>
-        <h2><Icon type="database" /> Hive Database(s)</h2>
-        <Tabs onChange={changeDB}>
-          {data.map(item => (
-            <Tabs.TabPane
-              tab={<TabIcon name={item.name} />}
-              key={item.name}
-            >
-              <DBDisplay database={item} provisioned={approvals && approvals.infra && approvals.risk} />
-            </Tabs.TabPane>
-          ))}
-        </Tabs>
-        <div style={{ margin: '25px -25px 15px -25px', backgroundColor: '#F0F3F5' }}>&nbsp;</div>
-        <h2><Icon type="dashboard" /> Resource Pool(s)</h2>
-        <Tabs>
-          {processing.map(ProcessingDisplay)}
+        <h1>{activeWorkspace && activeWorkspace.name}</h1>
+        <Tabs selectedKeys={["data"]}>
+          <Tabs.TabPane key="status" tab={<span><Icon type="info-circle-o" /> Status</span>}>
+            <Status workspace={activeWorkspace} />
+          </Tabs.TabPane>
+          <Tabs.TabPane key="data" tab={<span><Icon type="database" /> Data</span>}>
+            <DBDisplay workspace={activeWorkspace} cluster={cluster} />
+          </Tabs.TabPane>
+          <Tabs.TabPane key="processing" tab={<span><Icon type="dashboard" /> Processing</span>}>
+            <ProcessingDisplay />
+          </Tabs.TabPane>
+          <Tabs.TabPane key="applications" tab={<span><Icon type="code" /> Applications</span>}>
+            <Applications />
+          </Tabs.TabPane>
+          <Tabs.TabPane key="members" tab={<span><Icon type="team" /> Members</span>}>
+            <Members />
+          </Tabs.TabPane>
         </Tabs>
       </div>
     );
   }
+
 }
 
 WorkspaceDetails.propTypes = {
-  activeWorkspace: PropTypes.object,
-  profile: PropTypes.object,
-  getWorkspace: PropTypes.func,
-  approveInfra: PropTypes.func,
-  approveRisk: PropTypes.func,
-  changeDB: PropTypes.func,
+  getWorkspace: PropTypes.func.isRequired,
 };
 
 export default connect(
   state => ({
-    activeWorkspace: state.workspaces.activeWorkspace,
-    profile: state.auth.profile || { permissions: { risk_management: false, platform_operations: false } },
+    workspaces: state.workspaces,
+    cluster: state.cluster,
   }),
-  {
-    getWorkspace,
-    approveRisk,
-    approveInfra,
-    changeDB,
-  },
+  { getWorkspace }
 )(WorkspaceDetails);

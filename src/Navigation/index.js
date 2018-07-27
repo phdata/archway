@@ -11,8 +11,8 @@ import './Navigation.css';
 const { Sider } = Layout;
 
 const Navigation = ({ location }) => (
-  <Sider style={{ overflow: 'auto', height: '100vh', position: 'fixed', left: 0 }}>
-    <img src={logo} style={{ padding: 10, width: '100%' }} />
+  <Sider width={250} style={{ overflow: 'auto', height: '100vh', position: 'fixed', left: 0 }}>
+    <img src={logo} style={{ padding: 25, width: '100%' }} />
     <Profile />
     <Menu style={{ marginTop: 25 }} selectedKeys={[location.pathname]} theme="dark" mode="inline">
       <Menu.Item key="/home">

@@ -3,6 +3,7 @@ import { Tabs, Row, Col } from 'antd';
 import PropTypes from 'prop-types';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import {solarizedDark} from 'react-syntax-highlighter/styles/hljs';
+import { connect } from 'react-redux';
 
 import ValueDisplay from './ValueDisplay';
 import TabIcon from './TabIcon';
@@ -11,44 +12,47 @@ const syntaxStyle = {
   padding: 10
 };
 
-const ProcessingDisplay = ({ pool_name, max_cores, max_memory_in_gb }) => {
+const ProcessingItem = ({ pool: { pool_name, max_cores, max_memory_in_gb }}) => {
   const sparkJob =
 `$ spark-submit --class org.apache.spark.examples.SparkPi \\
                 --master yarn \\
                 --deploy-mode cluster \\
-                --queue $pool_name \\
+                --queue ${pool_name} \\
                 examples/jars/spark-examples*.jar \\
                 10`;
   return (
-    <Tabs.TabPane tab={<TabIcon name={`${pool_name}`} />} key={`pool-${pool_name}`}>
-      <Row className="Processing" type="flex" align="middle">
-        <Col span={24}>
-        <Row>
-          <Col span={8}>
-            <ValueDisplay label="queue name">
-              {pool_name}
-            </ValueDisplay>
-          </Col>
-          <Col span={8}>
-            <ValueDisplay label="max cores">
-              {max_cores}
-            </ValueDisplay>
-          </Col>
-          <Col span={8}>
-            <ValueDisplay label="max memory">
-              {max_memory_in_gb}gb
-            </ValueDisplay>
-          </Col>
-        </Row>
-        <Row style={{ paddingTop: 10 }}>
-          <h4>Run SparkPi In Your New YARN Queue</h4>
-          <SyntaxHighlighter language="shell" customStyle={syntaxStyle} style={solarizedDark}>
-            {sparkJob}
-          </SyntaxHighlighter>
-        </Row>
-        </Col>
+    <div>
+      <Row type="flex" justify="space-around">
+        <ValueDisplay label="queue name">
+          {pool_name}
+        </ValueDisplay>
+        <ValueDisplay label="max cores">
+          {max_cores}
+        </ValueDisplay>
+        <ValueDisplay label="max memory">
+          {max_memory_in_gb}gb
+        </ValueDisplay>
       </Row>
-    </Tabs.TabPane>
+
+      <h2>Run SparkPi In Your New YARN Queue</h2>
+      <SyntaxHighlighter language="shell" customStyle={syntaxStyle} style={solarizedDark}>
+        {sparkJob}
+      </SyntaxHighlighter>
+    </div>
+  );
+}
+
+const ProcessingDisplay = ({ activeWorkspace }) => {
+  if (activeWorkspace.processing.length == 1)
+    return <ProcessingItem pool={activeWorkspace.processing[0]} />;
+  return (
+    <Tabs>
+      {activeWorkspace.processing.map(processing => (
+        <Tabs.TabPane tab={<TabIcon name={`${processing.pool_name}`} />} key={`pool-${processing.pool_name}`}>
+          <ProcessingItem pool={processing} />
+        </Tabs.TabPane>
+      ))}
+    </Tabs>
   );
 }
 
@@ -58,4 +62,7 @@ ProcessingDisplay.propTypes = {
   max_memory_in_gb: PropTypes.string.isRequired,
 };
 
-export default ProcessingDisplay;
+export default connect(
+  state => state.workspaces,
+  { }
+)(ProcessingDisplay);

@@ -73,13 +73,13 @@ const RequestForm = Form.create({
       <Form.Item label="Data May Contain" {...FormItemDefaults}>
         {getFieldDecorator('compliance', {})(<Checkbox.Group options={complianceOptions} />)}
       </Form.Item>
-      <Form.Item label="Disk Quota (HDFS)" {...FormItemDefaults} wrapperCol={{ span: 3 }}>
+      <Form.Item label="Disk Quota (HDFS)" {...FormItemDefaults} wrapperCol={{ span: 8 }}>
         {getFieldDecorator('disk', {})(<Input type="number" addonAfter="GB" />)}
       </Form.Item>
-      <Form.Item label="Max Cores (Resource Pool)" {...FormItemDefaults} wrapperCol={{ span: 3 }}>
+      <Form.Item label="Max Cores (Resource Pool)" {...FormItemDefaults} wrapperCol={{ span: 8 }}>
         {getFieldDecorator('cores', {})(<Input type="number" />)}
       </Form.Item>
-      <Form.Item label="Max Memory (Resource Pool)" {...FormItemDefaults} wrapperCol={{ span: 3 }}>
+      <Form.Item label="Max Memory (Resource Pool)" {...FormItemDefaults} wrapperCol={{ span: 8 }}>
         {getFieldDecorator('memory', {})(<Input type="number" addonAfter="GB" />)}
       </Form.Item>
     </div>

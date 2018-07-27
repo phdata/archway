@@ -12,23 +12,30 @@ const syntaxStyle = {
   padding: 20
 };
 
+const codeHelp = ({ pool_name }) => {
+  const sparkJob = `
+$ spark-submit --class org.apache.spark.examples.SparkPi \\
+                   --master yarn \\
+                   --deploy-mode cluster \\
+                   --queue ${processing.pool_name} \\
+                   examples/jars/spark-examples*.jar \\
+                   10
+                    `;
+  return (
+    <div>
+      <h4>Submit a Spark Job</h4>
+      <SyntaxHighlighter language="shell" customStyle={syntaxStyle} style={tomorrowNightBlue}>
+        {sparkJob}
+      </SyntaxHighlighter>
+    </div>
+  )
+}
+
 const ProcessingDisplay = ({processing, cluster}) => {
   let content;
   if (processing && processing.pool_name && cluster.services) {
-    const sparkJob = `
-$ spark-submit --class org.apache.spark.examples.SparkPi \\
-                     --master yarn \\
-                     --deploy-mode cluster \\
-                     --queue ${processing.pool_name} \\
-                     examples/jars/spark-examples*.jar \\
-                     10
-                      `;
     content = (<div className="ProcessingDisplay-Display">
       <div className="ProcessingDisplay-Display-left">
-        <h4>Submit a Spark Job</h4>
-        <SyntaxHighlighter language="shell" customStyle={syntaxStyle} style={tomorrowNightBlue}>
-          {sparkJob}
-        </SyntaxHighlighter>
       </div>
       <div className="ProcessingDisplay-Display-right">
         <MetricDisplay metric={processing.max_cores} label="max core(s)"/>

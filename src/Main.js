@@ -21,7 +21,7 @@ const Main = ({
   <ConnectedRouter history={history}>
     <Layout style={{ minHeight: '100%' }}>
       <Navigation />
-      <Layout style={{ minHeight: '100%', marginLeft: 200, backgroundColor: '#F0F3F5' }}>
+      <Layout style={{ minHeight: '100%', marginLeft: 250, backgroundColor: '#F0F3F5' }}>
         <Content style={{ margin: '24px 16px 0', overflow: 'initial' }}>
           <div style={{
             padding: 24,

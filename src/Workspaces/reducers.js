@@ -105,7 +105,10 @@ const workspaces = (state = initialState, action) => {
     case SET_WORKSPACE:
       return {
         ...state,
-        activeWorkspace: action.workspace,
+        activeWorkspace: {
+          ...action.workspace,
+          status: action.workspace.approvals && action.workspace.approvals.length == 2 ? 'Approved' : 'Pending'
+        },
       };
     case APPROVE_WORKSPACE_COMPLETED:
       return {
@@ -130,7 +133,6 @@ const workspaces = (state = initialState, action) => {
       };
     case NEW_MEMBER_FORM_CHANGED:
       const memberFieldKey = Object.keys(action.field)[0];
-      console.log(memberFieldKey);
       state.newMemberForm[memberFieldKey] = action.field[memberFieldKey].value;
       return state;
     case CHANGE_DB:
