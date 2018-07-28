@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Spin, Row, Col, Icon, Button, Tabs, Tag, Menu } from 'antd';
+import { Spin, Row, Col, Icon, Button, Tabs, Tag, Menu, List, Input, Form } from 'antd';
 
 import TabIcon from './TabIcon';
 import DBDisplay from './DBDisplay';
@@ -9,6 +9,34 @@ import ProcessingDisplay from './ProcessingDisplay';
 import ValueDisplay from './ValueDisplay';
 import { changeDB, approveInfra, approveRisk, getWorkspace, addMember, newMemberFormChanged } from './actions';
 import './WorkspaceDetails.css';
+
+const UsernameForm = Form.create({
+  onFieldsChange(props, changedFields) {
+    props.onChange(changedFields);
+  },
+  mapPropsToFields(props) {
+    return {
+      filter: Form.createFormField({
+        value: props.memberForm.filter,
+      }),
+    };
+  },
+})(({
+  form: {
+    getFieldDecorator,
+  },
+}) => (
+  <Form onSubmit={(e) => {e.preventDefault()}}>
+      <Form.Item>
+        {getFieldDecorator('filter', {})(
+          <Input.Search
+            placeholder="add or find a member..."
+            size="large"
+          />
+        )}
+      </Form.Item>
+  </Form>
+));
 
 const ComplianceCheck = ({ value, label }) => {
   if (!value) return <span />;
@@ -50,7 +78,31 @@ const ApprovalActions = ({
 
 const Applications = () => (<div />);
 
-const Members = () => (<div />);
+const Member = ({ member }) => (
+  <div>{member}</div>
+);
+
+const Members = ({ filterChanged, memberForm, existingMembers, newMembers }) => (
+  <Row>
+    <Col span={8}>
+      <div>
+        <UsernameForm onChange={filterChanged} memberForm={memberForm} />
+        {newMembers && (
+          <List
+            dataSource={newMembers}
+            renderItem={item => <Member member={item} />}
+          />
+        )}
+        {existingMembers && (
+          <List
+            dataSource={existingMembers}
+            renderItem={item => <Member member={item} />}
+          />
+        )}
+      </div>
+    </Col>
+  </Row>
+);
 
 const Status = ({ workspace: { status, approvals } }) => (
   <div>
@@ -77,13 +129,13 @@ class WorkspaceDetails extends React.Component {
   }
 
   render() {
-    const { workspaces: { activeWorkspace }, cluster } = this.props;
+    const { workspaces: { activeWorkspace, memberForm, existingMembers, newMembers }, cluster } = this.props;
     if (!activeWorkspace)
       return <Spin />;
     return (
       <div className="WorkspaceDetails">
         <h1>{activeWorkspace && activeWorkspace.name}</h1>
-        <Tabs selectedKeys={["data"]}>
+        <Tabs activeKey={"members"} size="large">
           <Tabs.TabPane key="status" tab={<span><Icon type="info-circle-o" /> Status</span>}>
             <Status workspace={activeWorkspace} />
           </Tabs.TabPane>
@@ -97,7 +149,7 @@ class WorkspaceDetails extends React.Component {
             <Applications />
           </Tabs.TabPane>
           <Tabs.TabPane key="members" tab={<span><Icon type="team" /> Members</span>}>
-            <Members />
+            <Members memberForm={memberForm} existingMembers={existingMembers} newMembers={newMembers} />
           </Tabs.TabPane>
         </Tabs>
       </div>

@@ -34,6 +34,7 @@ const initialState = {
   members: {},
   newMemberForm: { role: 'manager' },
   searchForm: { filter: '' },
+  memberForm: { filter: '' },
 };
 
 const workspaces = (state = initialState, action) => {

@@ -69,4 +69,4 @@ export const approveWorkspace =
     (token, id, role) => withBody(`/workspaces/${id}/approve`, token, { role });
 
 export const getMembers =
-    (token, id, name, role) => get(`/workspaces/${id}/${name}/${role}`, token);
+    (token, id, resource, resourceId, role) => get(`/workspaces/${id}/${resource}/${resourceId}/${role}`, token);
