@@ -36,37 +36,37 @@ function withBody(path, token, data, method = 'POST') {
 }
 
 export const cluster =
-    () => get('/clusters', null);
+  () => get('/clusters', null);
 
 export const profile =
-    token => get('/account/profile', token);
+  token => get('/account/profile', token);
 
 export const requestWorkspace =
-    (token, workspace) => withBody('/workspaces', token, workspace);
+  (token, workspace) => withBody('/workspaces', token, workspace);
 
 export const workspaceMemberList =
-    (token, id) => get(`/workspaces/${id}/members`, token);
+  (token, id) => get(`/workspaces/${id}/members`, token);
 
 export const workspaceNewMember =
-    (token, id, db, role, username) => withBody(`/workspaces/${id}/${db}/${role}`, token, { username });
+  (token, id, db, role, username) => withBody(`/workspaces/${id}/${db}/${role}`, token, { username });
 
 export const removeWorkspaceMember =
-    (token, id, db, role, username) => withBody(`/workspaces/${id}/${db}/${role}/${username}`, token, {}, 'DELETE');
+  (token, id, db, role, username) => withBody(`/workspaces/${id}/${db}/${role}/${username}`, token, {}, 'DELETE');
 
 export const getTemplate =
-    (token, type) => get(`/templates/${type}`, token);
+  (token, type) => get(`/templates/${type}`, token);
 
 export const processTemplate =
-    (token, type, input = {}) => withBody(`/templates/${type}`, token, input);
+  (token, type, input = {}) => withBody(`/templates/${type}`, token, input);
 
 export const listWorkspaces =
-    token => get('/workspaces', token);
+  token => get('/workspaces', token);
 
 export const getWorkspace =
-    (token, id) => get(`/workspaces/${id}`, token);
+  (token, id) => get(`/workspaces/${id}`, token);
 
 export const approveWorkspace =
-    (token, id, role) => withBody(`/workspaces/${id}/approve`, token, { role });
+  (token, id, role) => withBody(`/workspaces/${id}/approve`, token, { role });
 
 export const getMembers =
-    (token, id, resource, resourceId, role) => get(`/workspaces/${id}/${resource}/${resourceId}/${role}`, token);
+  (token, id) => get(`/workspaces/${id}/members`, token);

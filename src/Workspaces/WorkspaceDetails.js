@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Spin, Row, Col, Icon, Button, Tabs, Tag, Menu, List, Input, Form } from 'antd';
+import { Spin, Row, Col, Icon, Button, Tabs, Tag, Menu, List, Input, Form, Avatar } from 'antd';
 
 import TabIcon from './TabIcon';
 import DBDisplay from './DBDisplay';
@@ -79,7 +79,12 @@ const ApprovalActions = ({
 const Applications = () => (<div />);
 
 const Member = ({ member }) => (
-  <div>{member}</div>
+  <List.Item actions={[<Icon type="right" />]}>
+    <List.Item.Meta
+      avatar={<Avatar icon="user" />}
+      title={member.username}>
+    </List.Item.Meta>
+  </List.Item>
 );
 
 const Members = ({ filterChanged, memberForm, existingMembers, newMembers }) => (
@@ -95,6 +100,7 @@ const Members = ({ filterChanged, memberForm, existingMembers, newMembers }) => 
         )}
         {existingMembers && (
           <List
+            bordered
             dataSource={existingMembers}
             renderItem={item => <Member member={item} />}
           />
@@ -166,6 +172,5 @@ export default connect(
   state => ({
     workspaces: state.workspaces,
     cluster: state.cluster,
-  }),
-  { getWorkspace }
+  }), { getWorkspace }
 )(WorkspaceDetails);

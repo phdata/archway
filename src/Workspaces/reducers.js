@@ -12,8 +12,7 @@ import {
   GET_WORKSPACE,
   APPROVE_WORKSPACE_REQUESTED,
   APPROVE_WORKSPACE_COMPLETED,
-  SET_MANAGERS,
-  SET_READONLY,
+  SET_MEMBERS,
   NEW_MEMBER_FORM_CHANGED,
   CHANGE_DB,
   FILTER_CHANGED,
@@ -116,21 +115,10 @@ const workspaces = (state = initialState, action) => {
         ...state,
         approving: false,
       };
-    case SET_READONLY:
+    case SET_MEMBERS:
       return {
         ...state,
-        members: {
-          ...state.members,
-          readonly: action.members,
-        },
-      };
-    case SET_MANAGERS:
-      return {
-        ...state,
-        members: {
-          ...state.members,
-          managers: action.members,
-        },
+        existingMembers: action.members,
       };
     case NEW_MEMBER_FORM_CHANGED:
       const memberFieldKey = Object.keys(action.field)[0];

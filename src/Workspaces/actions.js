@@ -139,12 +139,11 @@ export function changeDB(name) {
   };
 }
 
-export const SET_MANAGERS = 'SET_MANAGERS';
-export const SET_READONLY = 'SET_READONLY';
+export const SET_MEMBERS = 'SET_MEMBERS';
 
-export function setMembers(role, members) {
+export function setMembers(members) {
   return {
-    type: `SET_${role.toUpperCase()}`,
+    type: SET_MEMBERS,
     members,
   };
 }
@@ -161,10 +160,10 @@ export function addMember() {
 export const NEW_MEMBER_FORM_CHANGED = 'NEW_MEMBER_FORM_CHANGED';
 
 export function newMemberFormChanged(field) {
-    return {
-        type: NEW_MEMBER_FORM_CHANGED,
-        field,
-    };
+  return {
+    type: NEW_MEMBER_FORM_CHANGED,
+    field,
+  };
 }
 
 export const REMOVE_MEMBER = 'REMOVE_MEMBER';

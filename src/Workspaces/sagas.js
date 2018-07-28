@@ -84,7 +84,7 @@ function* getAllWorkspaces() {
   const token = yield select(s => s.auth.token);
   const workspaces = yield call(Api.listWorkspaces, token);
   yield put(setWorkspaceList(new Fuse(workspaces, fuseOptions)));
-  yield put(filterChanged({ filter: { value: ''} }));
+  yield put(filterChanged({ filter: { value: '' } }));
 }
 
 function* listWorkspaces() {
@@ -119,14 +119,12 @@ function* approveWorkspace() {
   yield takeLatest(APPROVE_WORKSPACE_REQUESTED, requestApproval);
 }
 
-function* getMembers({ name }) {
+function* getMembers() {
   const token = yield select(s => s.auth.token);
-  const id = yield select(s => s.workspaces.activeWorkspace.id);
-  const { managers, readonly } = yield all({
-    managers: call(Api.getMembers, token, id, name, 'managers'),
-    readonly: call(Api.getMembers, token, id, name, 'readonly'),
-  });
-  yield all([put(setMembers('managers', managers)), put(setMembers('readonly', readonly))]);
+  const workspace = yield select(s => s.workspaces.activeWorkspace);
+  const id = workspace.id;
+  const members = yield call(Api.getMembers, token, id);
+  yield put(setMembers(members));
 }
 
 function* dbChanging() {
@@ -141,7 +139,7 @@ function* addMember() {
 }
 
 function* memberRequested() {
-    yield takeLatest(ADD_MEMBER, addMember);
+  yield takeLatest(ADD_MEMBER, addMember);
 }
 
 function* removeMember({ username, role }) {
@@ -152,13 +150,13 @@ function* removeMember({ username, role }) {
 }
 
 function* removeMemberRequested() {
-    yield takeLatest(REMOVE_MEMBER, removeMember);
+  yield takeLatest(REMOVE_MEMBER, removeMember);
 }
 
 function* updateFilter({ filter }) {
   const workspaceList = yield select(s => s.workspaces.workspaceList);
   let filtered = workspaceList.list;
-  if(filter && filter !== '')
+  if (filter && filter !== '')
     filtered = workspaceList.search(filter);
   yield put(setFilteredList(filtered));
 }
