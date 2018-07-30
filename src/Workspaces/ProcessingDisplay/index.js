@@ -5,8 +5,7 @@ import SyntaxHighlighter from 'react-syntax-highlighter';
 import {solarizedDark} from 'react-syntax-highlighter/styles/hljs';
 import { connect } from 'react-redux';
 
-import ValueDisplay from './ValueDisplay';
-import TabIcon from './TabIcon';
+import ValueDisplay from '../ValueDisplay';
 
 const syntaxStyle = {
   padding: 10
@@ -48,7 +47,7 @@ const ProcessingDisplay = ({ activeWorkspace }) => {
   return (
     <Tabs>
       {activeWorkspace.processing.map(processing => (
-        <Tabs.TabPane tab={<TabIcon name={`${processing.pool_name}`} />} key={`pool-${processing.pool_name}`}>
+        <Tabs.TabPane tab={processing.pool_name} key={`pool-${processing.pool_name}`}>
           <ProcessingItem pool={processing} />
         </Tabs.TabPane>
       ))}
@@ -63,6 +62,6 @@ ProcessingDisplay.propTypes = {
 };
 
 export default connect(
-  state => state.workspaces,
+  state => state.workspaces.details,
   { }
 )(ProcessingDisplay);

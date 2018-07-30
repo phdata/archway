@@ -71,7 +71,7 @@ class WorkspaceList extends React.Component {
   }
 
   render() {
-    const { fetching, onSelected, filteredList, searchForm, filterChanged, push } = this.props;
+    const { fetching, filteredList, searchForm, filterChanged, push } = this.props;
     return (
       <div>
         <SearchForm onChange={filterChanged} searchForm={searchForm} />
@@ -88,13 +88,12 @@ class WorkspaceList extends React.Component {
 WorkspaceList.propTypes = {
   fetching: PropTypes.bool.isRequired,
   filteredList: PropTypes.array,
-  onSelected: PropTypes.func.isRequired,
   searchForm: PropTypes.object,
   filterChanged: PropTypes.func.isRequired,
 };
 
 export default connect(
-  s => s.workspaces,
+  s => s.workspaces.listing,
   {
     listWorkspaces,
     filterChanged,

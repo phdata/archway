@@ -2,7 +2,7 @@ import React from 'react';
 import { Checkbox, Spin, Radio, Icon, Form, Input, Row, Col, Button } from 'antd';
 import { connect } from 'react-redux';
 
-import { approveInfra, approveRisk, workspaceRequested, setRequestType, requestChanged } from './actions';
+import { workspaceRequested, setRequestType, requestChanged } from './actions';
 import './Request.css';
 
 const FormItemDefaults = {
@@ -152,7 +152,5 @@ export default connect(
     setRequestType,
     requestChanged,
     workspaceRequested,
-    approveInfra,
-    approveRisk,
   },
 )(Request);

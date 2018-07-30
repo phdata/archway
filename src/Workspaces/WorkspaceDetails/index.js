@@ -3,40 +3,12 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Spin, Row, Col, Icon, Button, Tabs, Tag, Menu, List, Input, Form, Avatar } from 'antd';
 
-import TabIcon from './TabIcon';
-import DBDisplay from './DBDisplay';
-import ProcessingDisplay from './ProcessingDisplay';
-import ValueDisplay from './ValueDisplay';
-import { changeDB, approveInfra, approveRisk, getWorkspace, existingMemberSelected, newMemberSelected } from './actions';
+import DBDisplay from '../DBDisplay';
+import ProcessingDisplay from '../ProcessingDisplay';
+import ValueDisplay from '../ValueDisplay';
+import Members from '../Members';
+import { changeDB, approveInfra, approveRisk, getWorkspace } from './actions';
 import './WorkspaceDetails.css';
-
-const UsernameForm = Form.create({
-  onFieldsChange(props, changedFields) {
-    props.onChange(changedFields);
-  },
-  mapPropsToFields(props) {
-    return {
-      filter: Form.createFormField({
-        value: props.memberForm.filter,
-      }),
-    };
-  },
-})(({
-  form: {
-    getFieldDecorator,
-  },
-}) => (
-  <Form onSubmit={(e) => {e.preventDefault()}}>
-      <Form.Item>
-        {getFieldDecorator('filter', {})(
-          <Input.Search
-            placeholder="add or find a member..."
-            size="large"
-          />
-        )}
-      </Form.Item>
-  </Form>
-));
 
 const ComplianceCheck = ({ value, label }) => {
   if (!value) return <span />;
@@ -78,46 +50,6 @@ const ApprovalActions = ({
 
 const Applications = () => (<div />);
 
-const Member = ({ member, selected }) => (
-  <List.Item style={{ cursor: 'pointer', backgroundColor: selected ? '#B3B9C0' : 'white' }} actions={[<Icon type="right" />]}>
-    <div style={{ display: 'flex', alignItems: 'center' }}>
-      <Avatar icon="user" />
-      <h3 style={{ marginLeft: 10, marginBottom: 0 }}>{member.username}</h3>
-    </div>
-  </List.Item>
-);
-
-const Members = ({
-  filterChanged,
-  memberForm,
-  existingMembers,
-  existingSelected,
-  newMembers,
-  newSelected,
-}) => (
-  <Row>
-    <Col span={8}>
-      <div>
-        <UsernameForm onChange={filterChanged} memberForm={memberForm} />
-        {existingMembers && (
-          <List
-            bordered
-            dataSource={existingMembers}
-            renderItem={item => <Member onSelect={newSelected} member={item} />}
-          />
-        )}
-        {newMembers && (
-          <List
-            header={<h3>or add a new member...</h3>}
-            dataSource={newMembers}
-            renderItem={item => <Member onSelect={existingSelected} member={item} />}
-          />
-        )}
-      </div>
-    </Col>
-  </Row>
-);
-
 const Status = ({ workspace: { status, approvals } }) => (
   <div>
     <h2>Overall Status: {status}</h2>
@@ -149,7 +81,7 @@ class WorkspaceDetails extends React.Component {
     return (
       <div className="WorkspaceDetails">
         <h1>{activeWorkspace && activeWorkspace.name}</h1>
-        <Tabs activeKey={"members"} size="large">
+        <Tabs size="large">
           <Tabs.TabPane key="status" tab={<span><Icon type="info-circle-o" /> Status</span>}>
             <Status workspace={activeWorkspace} />
           </Tabs.TabPane>
@@ -178,11 +110,7 @@ WorkspaceDetails.propTypes = {
 
 export default connect(
   state => ({
-    workspaces: state.workspaces,
+    workspaces: state.workspaces.details,
     cluster: state.cluster,
-  }), {
-    getWorkspace,
-    existingMemberSelected,
-    newMemberSelected,
-  }
+  }), { getWorkspace }
 )(WorkspaceDetails);

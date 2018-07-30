@@ -1,12 +1,11 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import { List, Row, Col, Form, Select, Input, Tabs, Avatar, Icon, Button, Popconfirm } from 'antd';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import {solarizedDark} from 'react-syntax-highlighter/styles/hljs';
 
-import ValueDisplay from './ValueDisplay';
-import { addMember, removeMember, newMemberFormChanged } from './actions';
+import ValueDisplay from '../ValueDisplay';
 
 const CodeHelp = ({ cluster, databaseName }) => {
   const impala = `$ impala-shell -i ${cluster.services.IMPALA.host}:21000 -d ${databaseName}`;
@@ -72,7 +71,7 @@ DBDisplay.propTypes = {
     size_in_gb: PropTypes.number.isRequired,
   }),
   cluster: PropTypes.shape({
-    services: PropTypes.array.isRequired,
+    services: PropTypes.object.isRequired,
   })
 };
 
