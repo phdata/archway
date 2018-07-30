@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import {
   Spin,
   Row,
@@ -21,6 +21,7 @@ import {
   memberFilterChanged,
   existingMemberSelected,
   newMemberSelected,
+  roleChanged,
 } from './actions';
 
 const UsernameForm = Form.create({
@@ -29,64 +30,84 @@ const UsernameForm = Form.create({
   },
   mapPropsToFields(props) {
     return {
-      filter: Form.createFormField({value: props.memberForm.filter})
+      filter: Form.createFormField({ value: props.memberForm.filter })
     };
   }
-})(({form: {
+})(({
+  form: {
     getFieldDecorator
-  }}) => (<Form onSubmit={(e) => {
-      e.preventDefault()
-    }}>
+  }
+}) => (<Form onSubmit={e => e.preventDefault()}>
     <Form.Item>
       {getFieldDecorator('filter', {})(<Input.Search placeholder="add or find a member..." size="large"/>)}
     </Form.Item>
   </Form>));
 
-const MemberDetails = ({workspace, member}) => (
+const MemberRole = ({ member, area, workspaceArea, readonlyAlso, roleSet, roleChanged }) => (
+  <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', marginBottom: 25 }}>
+    <div style={{ marginRight: 15 }}>
+      {workspaceArea.name}
+    </div>
+    <Select
+      value={member[area] && member[area][workspaceArea.name] ? member[area][workspaceArea.name].role : "none"}
+      onSelect={newRole => {
+        const oldRole = member[area] && member[area][workspaceArea.name] && member[area][workspaceArea.name].role
+        roleChanged(member.username, area, workspaceArea.id, oldRole, newRole)
+      }}>
+      <Select.Option value="none">None</Select.Option>
+      {readonlyAlso && <Select.Option value="readonly">Read Only</Select.Option>}
+      <Select.Option value="manager">Manager</Select.Option>
+    </Select>
+  </div>
+);
+
+const WorkspaceArea = ({ roleChanged, label, workspace, member, area, readonlyAlso = false }) => (
   <div>
-    <h3>Data</h3>
+    <h3>{label}</h3>
     <hr />
-    {workspace.data.map(ds => (
-      <div>
-        {ds.name}: <Select value={member.data[ds.name] ? member.data[ds.name].role : "none"}>
-        <Select.Option value="none">None</Select.Option>
-        <Select.Option value="readonly">Read Only</Select.Option>
-        <Select.Option value="manager">Manager</Select.Option>
-      </Select>
-      </div>
+    {workspace[area].map(i => (
+      <MemberRole
+        member={member}
+        area={area}
+        workspaceArea={i}
+        roleChanged={roleChanged}
+        readonlyAlso={readonlyAlso} />
     ))}
-    <h3>Topics</h3>
-    <hr />
-    {workspace.topics.map(ds => (
-      <div>
-        {ds.name}: <Select value={member.topics[ds.name] ? member.topics[ds.name].role : "none"}>
-        <Select.Option value="none">None</Select.Option>
-        <Select.Option value="readonly">Read Only</Select.Option>
-        <Select.Option value="manager">Manager</Select.Option>
-      </Select>
-      </div>
-    ))}
-    <h3>Applications</h3>
-    <hr />
-    {workspace.applications.map(ds => (
-      <div>
-        {ds.name}: <Select value={member.applications[ds.name] ? member.applications[ds.name].role : "none"}>
-        <Select.Option value="none">None</Select.Option>
-        <Select.Option value="readonly">Read Only</Select.Option>
-        <Select.Option value="manager">Manager</Select.Option>
-      </Select>
-      </div>
-    ))}
+  </div>
+);
+
+const MemberDetails = ({ roleChanged, workspace, member }) => (
+  <div>
+    <WorkspaceArea
+      label="Database Access"
+      roleChanged={roleChanged}
+      workspace={workspace}
+      member={member}
+      area="data"
+      readonlyAlso />
+    <WorkspaceArea
+      label="Topic Access"
+      roleChanged={roleChanged}
+      workspace={workspace}
+      member={member}
+      area="topics"
+      readonlyAlso />
+    <WorkspaceArea
+      label="Application/Consumer Group Access"
+      roleChanged={roleChanged}
+      workspace={workspace}
+      member={member}
+      area="applications" />
   </div>
 )
 
-const MemberListItem = ({member, selected, onSelect}) => (
+const MemberListItem = ({ member, selected, onSelect, icon = 'user' }) => (
   <List.Item
     onClick={() => onSelect(member)}
     style={{
       cursor: 'pointer',
       backgroundColor: selected
-        ? '#B3B9C0'
+        ? '#D9DCDF'
         : 'white'
     }}
     actions={[<Icon type="right"/>]}>
@@ -94,7 +115,7 @@ const MemberListItem = ({member, selected, onSelect}) => (
         display: 'flex',
         alignItems: 'center'
       }}>
-      <Avatar icon="user"/>
+      <Avatar icon={icon}/>
       <h3 style={{
           marginLeft: 10,
           marginBottom: 0
@@ -113,37 +134,39 @@ class Members extends Component {
       activeWorkspace,
 
       memberForm,
-      existingMembers,
+      filteredMembers,
       newMembers,
       selectedUser,
 
       getMembers,
       memberFilterChanged,
       newMemberSelected,
-      existingMemberSelected
+      existingMemberSelected,
+      roleChanged,
     } = this.props;
     return (<Row gutter={12}>
-      <Col span={8}>
+      <Col span={6}>
           <UsernameForm
             onChange={memberFilterChanged}
             memberForm={memberForm}/>
-          {existingMembers && (
+          {filteredMembers && (
             <List
-              bordered="bordered"
-              dataSource={existingMembers}
+              bordered
+              locale={{ emptyText: 'No existing members match' }}
+              dataSource={filteredMembers}
               renderItem={item => <MemberListItem onSelect={existingMemberSelected} member={item} selected={item === selectedUser} />}
               />
           )}
           {newMembers && (
             <List
-              header={<h3> or add a new member ...</h3>}
+              bordered
               dataSource={newMembers}
-              renderItem={item => <MemberListItem onSelect={newMemberSelected} member={item}/>}
+              renderItem={item => <MemberListItem onSelect={existingMemberSelected} icon="plus" selected={item === selectedUser} member={item}/>}
               />
           )}
       </Col>
-      <Col span={16}>
-        {selectedUser && <MemberDetails workspace={activeWorkspace} member={selectedUser} />}
+      <Col span={17} offset={1}>
+        {selectedUser && <MemberDetails workspace={activeWorkspace} member={selectedUser} roleChanged={roleChanged} />}
       </Col>
     </Row>);
   }
@@ -153,10 +176,10 @@ export default connect(
   state => ({
     ...state.workspaces.members,
     activeWorkspace: state.workspaces.details.activeWorkspace,
-  }),
-  {
+  }), {
     getMembers,
     memberFilterChanged,
     existingMemberSelected,
-    newMemberSelected
+    newMemberSelected,
+    roleChanged
   })(Members);

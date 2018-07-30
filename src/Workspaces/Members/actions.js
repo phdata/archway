@@ -41,3 +41,25 @@ export function getMembers() {
     type: GET_MEMBERS,
   };
 }
+
+export const SET_FILTERED_LIST = 'SET_FILTERED_LIST';
+
+export function setFilteredList(members) {
+  return {
+    type: SET_FILTERED_LIST,
+    members,
+  }
+}
+
+export const ROLE_CHANGED = 'ROLE_CHANGED';
+
+export function roleChanged(username, resource, workspaceId, oldRole, newRole) {
+  return {
+    type: ROLE_CHANGED,
+    username,
+    resource,
+    workspaceId,
+    oldRole,
+    newRole,
+  }
+}

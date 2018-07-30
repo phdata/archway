@@ -3,7 +3,6 @@ import { Checkbox, Spin, Radio, Icon, Form, Input, Row, Col, Button } from 'antd
 import { connect } from 'react-redux';
 
 import { workspaceRequested, setRequestType, requestChanged } from './actions';
-import './Request.css';
 
 const FormItemDefaults = {
   labelCol: {
@@ -93,20 +92,19 @@ const flex = {
   flex: 1,
 }
 
+const Provisions = ({ label, items, dislpayField }) => (
+  <div>
+    <span style={{ fontWeight: 100, color: '#FF5900', fontSize: 32 }}>{items.length}</span> {label} will be requested
+    <ul>
+      {items.map(item => <li key={item[dislpayField]}>{item[dislpayField]}</li>)}
+    </ul>
+  </div>
+)
+
 const GeneratedWorkspace = ({ workspace }) => (
   <div style={{ ...flex, alignItems: 'center' }}>
-    <div>
-      <span className="Highlight">{workspace.data.length}</span> Hive database(s) will be requested
-      <ul>
-        {workspace.data.map(item => <li key={item.name}>{item.name}</li>)}
-      </ul>
-    </div>
-    <div>
-      <span className="Highlight">{workspace.processing.length}</span> Resource pool(s) will be requested
-      <ul>
-        {workspace.processing.map(item => <li key={item.name}>{item.pool_name}</li>)}
-      </ul>
-    </div>
+    <Provisions label="Hive database(s)" items={workspace.data} displayField="name" />
+    <Provisions label="Resource pool(s)" items={workspace.processing} displayField="pool_name" />
   </div>
 );
 
@@ -147,8 +145,7 @@ const Request = ({
 );
 
 export default connect(
-  state => state.workspaces,
-  {
+  state => state.workspaces.request, {
     setRequestType,
     requestChanged,
     workspaceRequested,
