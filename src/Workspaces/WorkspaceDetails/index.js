@@ -7,6 +7,7 @@ import DBDisplay from '../DBDisplay';
 import ProcessingDisplay from '../ProcessingDisplay';
 import ValueDisplay from '../ValueDisplay';
 import Members from '../Members';
+import Topics from '../Topics';
 import { changeDB, approveInfra, approveRisk, getWorkspace } from './actions';
 import './WorkspaceDetails.css';
 
@@ -81,12 +82,15 @@ class WorkspaceDetails extends React.Component {
     return (
       <div className="WorkspaceDetails">
         <h1>{activeWorkspace && activeWorkspace.name}</h1>
-        <Tabs size="large">
+        <Tabs activeKey="members" size="large">
           <Tabs.TabPane key="status" tab={<span><Icon type="info-circle-o" /> Status</span>}>
             <Status workspace={activeWorkspace} />
           </Tabs.TabPane>
           <Tabs.TabPane key="data" tab={<span><Icon type="database" /> Data</span>}>
             <DBDisplay workspace={activeWorkspace} cluster={cluster} />
+          </Tabs.TabPane>
+          <Tabs.TabPane key="topics" tab={<span><Icon type="message" /> Topics</span>}>
+            <Topics />
           </Tabs.TabPane>
           <Tabs.TabPane key="processing" tab={<span><Icon type="dashboard" /> Processing</span>}>
             <ProcessingDisplay />

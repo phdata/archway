@@ -12,7 +12,8 @@ import {
   List,
   Input,
   Form,
-  Avatar
+  Avatar,
+  Select,
 } from 'antd';
 
 import {
@@ -41,23 +42,66 @@ const UsernameForm = Form.create({
     </Form.Item>
   </Form>));
 
-const MemberListItem = ({member, selected}) => (<List.Item style={{
-    cursor: 'pointer',
-    backgroundColor: selected
-      ? '#B3B9C0'
-      : 'white'
-  }} actions={[<Icon type="right"/>]}>
-  <div style={{
-      display: 'flex',
-      alignItems: 'center'
-    }}>
-    <Avatar icon="user"/>
-    <h3 style={{
-        marginLeft: 10,
-        marginBottom: 0
-      }}>{member.username}</h3>
+const MemberDetails = ({workspace, member}) => (
+  <div>
+    <h3>Data</h3>
+    <hr />
+    {workspace.data.map(ds => (
+      <div>
+        {ds.name}: <Select value={member.data[ds.name] ? member.data[ds.name].role : "none"}>
+        <Select.Option value="none">None</Select.Option>
+        <Select.Option value="readonly">Read Only</Select.Option>
+        <Select.Option value="manager">Manager</Select.Option>
+      </Select>
+      </div>
+    ))}
+    <h3>Topics</h3>
+    <hr />
+    {workspace.topics.map(ds => (
+      <div>
+        {ds.name}: <Select value={member.topics[ds.name] ? member.topics[ds.name].role : "none"}>
+        <Select.Option value="none">None</Select.Option>
+        <Select.Option value="readonly">Read Only</Select.Option>
+        <Select.Option value="manager">Manager</Select.Option>
+      </Select>
+      </div>
+    ))}
+    <h3>Applications</h3>
+    <hr />
+    {workspace.applications.map(ds => (
+      <div>
+        {ds.name}: <Select value={member.applications[ds.name] ? member.applications[ds.name].role : "none"}>
+        <Select.Option value="none">None</Select.Option>
+        <Select.Option value="readonly">Read Only</Select.Option>
+        <Select.Option value="manager">Manager</Select.Option>
+      </Select>
+      </div>
+    ))}
   </div>
-</List.Item>);
+)
+
+const MemberListItem = ({member, selected, onSelect}) => (
+  <List.Item
+    onClick={() => onSelect(member)}
+    style={{
+      cursor: 'pointer',
+      backgroundColor: selected
+        ? '#B3B9C0'
+        : 'white'
+    }}
+    actions={[<Icon type="right"/>]}>
+    <div style={{
+        display: 'flex',
+        alignItems: 'center'
+      }}>
+      <Avatar icon="user"/>
+      <h3 style={{
+          marginLeft: 10,
+          marginBottom: 0
+        }}>{member.username}</h3>
+    </div>
+  </List.Item>
+);
 
 class Members extends Component {
   componentDidMount() {
@@ -66,18 +110,20 @@ class Members extends Component {
 
   render() {
     const {
+      activeWorkspace,
+
       memberForm,
       existingMembers,
       newMembers,
+      selectedUser,
 
       getMembers,
       memberFilterChanged,
       newMemberSelected,
       existingMemberSelected
     } = this.props;
-    return (<Row>
+    return (<Row gutter={12}>
       <Col span={8}>
-        <div>
           <UsernameForm
             onChange={memberFilterChanged}
             memberForm={memberForm}/>
@@ -85,24 +131,29 @@ class Members extends Component {
             <List
               bordered="bordered"
               dataSource={existingMembers}
-              renderItem={item => <MemberListItem onSelect={newMemberSelected} member={item}/>}
+              renderItem={item => <MemberListItem onSelect={existingMemberSelected} member={item} selected={item === selectedUser} />}
               />
           )}
           {newMembers && (
             <List
               header={<h3> or add a new member ...</h3>}
               dataSource={newMembers}
-              renderItem={item => <MemberListItem onSelect={existingMemberSelected} member={item}/>}
+              renderItem={item => <MemberListItem onSelect={newMemberSelected} member={item}/>}
               />
           )}
-        </div>
+      </Col>
+      <Col span={16}>
+        {selectedUser && <MemberDetails workspace={activeWorkspace} member={selectedUser} />}
       </Col>
     </Row>);
   }
 }
 
 export default connect(
-  state => state.workspaces.members,
+  state => ({
+    ...state.workspaces.members,
+    activeWorkspace: state.workspaces.details.activeWorkspace,
+  }),
   {
     getMembers,
     memberFilterChanged,

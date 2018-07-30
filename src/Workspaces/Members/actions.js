@@ -18,10 +18,10 @@ export function newMemberSelected(username) {
 
 export const EXISTING_MEMBER_SELECTED = 'EXISTING_MEMBER_SELECTED';
 
-export function existingMemberSelected(username) {
+export function existingMemberSelected(user) {
   return {
     type: EXISTING_MEMBER_SELECTED,
-    username,
+    user,
   }
 }
 

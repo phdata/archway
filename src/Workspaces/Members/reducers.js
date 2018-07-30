@@ -1,12 +1,14 @@
 import {
   SET_MEMBERS,
   MEMBER_FILTER_CHANGED,
- } from './actions';
+  EXISTING_MEMBER_SELECTED,
+} from './actions';
 
 const initialState = {
   existingMembers: false,
   newMembers: false,
   memberForm: { filter: '' },
+  selectedUser: false,
 }
 
 const members = (state = initialState, action) => {
@@ -16,11 +18,16 @@ const members = (state = initialState, action) => {
         ...state,
         existingMembers: action.members,
       };
-      case MEMBER_FILTER_CHANGED:
+    case MEMBER_FILTER_CHANGED:
       return {
         ...state,
         memberForm: { filter: action.filter }
-      }
+      };
+    case EXISTING_MEMBER_SELECTED:
+      return {
+        ...state,
+        selectedUser: action.user,
+      };
     default:
       return state;
   }
