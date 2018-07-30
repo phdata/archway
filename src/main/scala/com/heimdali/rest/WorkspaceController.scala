@@ -17,6 +17,7 @@ class WorkspaceController(authService: AuthService[IO],
                           workspaceService: WorkspaceService[IO],
                           memberService: MemberService[IO],
                           kafkaService: KafkaService[IO],
+                          applicationService: ApplicationService[IO],
                           clock: Clock) {
 
   implicit val memberRequestEntityDecoder: EntityDecoder[IO, MemberRequest] = jsonOf[IO, MemberRequest]
@@ -90,13 +91,23 @@ class WorkspaceController(authService: AuthService[IO],
             response <- removedMember.fold(NotFound())(member => Ok(member.asJson))
           } yield response
 
-        case req@POST -> Root / LongVar(id) / "database" / LongVar(databaseId) / "topics" as user =>
+        case req@POST -> Root / LongVar(id) / "databases" / LongVar(databaseId) / "topics" as user =>
+          implicit val kafkaTopicDecoderBase: Decoder[TopicRequest] = TopicRequest.decoder(user.username)
           implicit val kafkaTopicDecoder: EntityDecoder[IO, TopicRequest] = jsonOf[IO, TopicRequest]
           for {
             topic <- req.req.as[TopicRequest]
             result <- kafkaService.create(user.username, id, databaseId, topic)
             response <- Ok(result.asJson)
           } yield response
+
+        case req@POST -> Root / LongVar(id) / "applications" as _ =>
+          implicit val applicationDecoder: EntityDecoder[IO, ApplicationRequest] = jsonOf[IO, ApplicationRequest]
+          for {
+            request <- req.req.as[ApplicationRequest]
+            result <- applicationService.create(id, request)
+            response <- Ok(result.asJson)
+          } yield response
+
       }
     }
 

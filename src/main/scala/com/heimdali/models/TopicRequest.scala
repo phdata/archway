@@ -24,4 +24,13 @@ object TopicRequest {
       )
     }
 
+  def decoder(username: String): Decoder[TopicRequest] =
+    Decoder.instance { t =>
+      for {
+        name <- t.downField("name").as[String]
+        partitions <- t.downField("partitions").as[Int]
+        replicationFactor <- t.downField("replication_factor").as[Int]
+      } yield TopicRequest(username, name, partitions, replicationFactor)
+    }
+
 }

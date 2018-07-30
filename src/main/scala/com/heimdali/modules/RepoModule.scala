@@ -1,9 +1,6 @@
 package com.heimdali.modules
 
-import java.time.Clock
-
 import cats.effect.IO
-
 import com.heimdali.repositories._
 
 trait RepoModule {
@@ -25,8 +22,10 @@ trait RepoModule {
 
   val hiveGrantRepository: HiveGrantRepository = new HiveGrantRepositoryImpl(clock)
 
-  val kafkaRepository: KafkaRepository = new KafkaRepositoryImpl(clock)
+  val topicRepository: KafkaTopicRepository = new KafkaTopicRepositoryImpl(clock)
 
   val topicGrantRepository: TopicGrantRepository = new TopicGrantRepositoryImpl(clock)
+
+  val applicationRepository: ApplicationRepository = new ApplicationRepositoryImpl(clock)
 
 }

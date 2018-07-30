@@ -84,7 +84,7 @@ class WorkspaceServiceImplSpec
     hiveDatabaseRepository.findByWorkspace _ expects id returning List(
       savedHive
     ).pure[ConnectionIO]
-    yarnRepository.findByWorkspace _ expects id returning List(savedYarn)
+    yarnRepository.findByWorkspaceId _ expects id returning List(savedYarn)
       .pure[ConnectionIO]
     approvalRepository.findByWorkspaceId _ expects id returning List(approval())
       .pure[ConnectionIO]
@@ -163,8 +163,9 @@ class WorkspaceServiceImplSpec
     val contextProvider: LoginContextProvider = mock[LoginContextProvider]
     val memberRepository: MemberRepository = mock[MemberRepository]
     val grantRepository: HiveGrantRepository = mock[HiveGrantRepository]
-    val kafkaRepository: KafkaRepository = mock[KafkaRepository]
+    val topicRepository: KafkaTopicRepository = mock[KafkaTopicRepository]
     val topicGrantRepository: TopicGrantRepository = mock[TopicGrantRepository]
+    val applicationRepository: ApplicationRepository = mock[ApplicationRepository]
 
     lazy val appConfig: AppContext[IO] = AppContext(
       null,
@@ -181,8 +182,9 @@ class WorkspaceServiceImplSpec
       yarnRepository,
       complianceRepository,
       workspaceRepository,
-      kafkaRepository,
-      topicGrantRepository)
+      topicRepository,
+      topicGrantRepository,
+      applicationRepository)
 
     def projectServiceImpl =
       new WorkspaceServiceImpl[IO](
@@ -195,6 +197,8 @@ class WorkspaceServiceImplSpec
         approvalRepository,
         transactor,
         memberRepository,
+        topicRepository,
+        applicationRepository,
         appConfig
       )
   }

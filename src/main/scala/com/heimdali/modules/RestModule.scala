@@ -22,6 +22,7 @@ trait RestModule {
       workspaceService,
       memberService,
       kafkaService,
+      applicationService,
       clock
     )
   val templateController = new TemplateController(authService)

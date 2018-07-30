@@ -38,8 +38,8 @@ class MemberRepositoryImpl extends MemberRepository {
       .query[WorkspaceMember]
       .to[List]
 
-  override def complete(id: Long): ConnectionIO[Int] =
-    sql"update member set created = ${Instant.now()} where id = $id".update.run
+  override def complete(id: Long, username: String): ConnectionIO[Int] =
+    sql"update member set created = ${Instant.now()} where username = $username and ldap_registration_id = $id".update.run
 
   override def get(id: Long): ConnectionIO[WorkspaceMember] =
     (baseSelect ++ whereAnd(fr"m.id = $id")).query[WorkspaceMember].unique

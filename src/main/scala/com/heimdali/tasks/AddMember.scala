@@ -7,7 +7,7 @@ import cats.implicits._
 import com.heimdali.models.AppContext
 import doobie.implicits._
 
-case class AddMember(id: Long, groupDN: String, username: String)
+case class AddMember(ldapRegistrationId: Long, groupDN: String, username: String)
 
 object AddMember {
 
@@ -31,7 +31,7 @@ object AddMember {
             case out: Success =>
               F.map(config
                 .memberRepository
-                .complete(add.id)
+                .complete(add.ldapRegistrationId, add.username)
                 .transact(config.transactor)) { _ => out }
           }
       }

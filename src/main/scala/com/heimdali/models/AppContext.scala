@@ -20,5 +20,6 @@ case class AppContext[F[_]](appConfig: AppConfig,
                             yarnRepository: YarnRepository,
                             complianceRepository: ComplianceRepository,
                             workspaceRequestRepository: WorkspaceRequestRepository,
-                            kafkaRepository: KafkaRepository,
-                            topicGrantRepository: TopicGrantRepository)
+                            kafkaRepository: KafkaTopicRepository,
+                            topicGrantRepository: TopicGrantRepository,
+                            applicationRepository: ApplicationRepository)

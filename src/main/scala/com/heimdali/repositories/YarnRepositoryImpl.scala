@@ -29,7 +29,7 @@ class YarnRepositoryImpl(val clock: Clock)
       .insert(yarn)
       .withUniqueGeneratedKeys[Long]("id")
 
-  override def findByWorkspace(id: Long): ConnectionIO[List[Yarn]] =
+  override def findByWorkspaceId(id: Long): ConnectionIO[List[Yarn]] =
       Statements
         .findByWorkspace(id)
         .to[List]

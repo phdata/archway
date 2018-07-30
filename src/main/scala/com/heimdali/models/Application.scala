@@ -20,7 +20,7 @@ object Application {
     ProvisionTask.instance { app =>
       for {
         group <- app.group.provision
-        grant <- GrantRoleToConsumerGroup(app.consumerGroup, app.group.sentryRole).provision
+        grant <- GrantRoleToConsumerGroup(app.id.get, app.consumerGroup, app.group.sentryRole).provision
       } yield group |+| grant
     }
 

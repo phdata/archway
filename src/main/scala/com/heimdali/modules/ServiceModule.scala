@@ -37,7 +37,7 @@ trait ServiceModule[F[_]] {
       ldapClient
     )
 
-  val reader = AppContext[F](
+  val reader: AppContext[F] = AppContext[F](
     appConfig,
     sentryClient,
     ldapClient,
@@ -52,8 +52,9 @@ trait ServiceModule[F[_]] {
     yarnRepository,
     complianceRepository,
     workspaceRepository,
-    kafkaRepository,
-    topicGrantRepository)
+    topicRepository,
+    topicGrantRepository,
+    applicationRepository)
 
   val workspaceService: WorkspaceService[F] =
     new WorkspaceServiceImpl[F](
@@ -66,9 +67,14 @@ trait ServiceModule[F[_]] {
       approvalRepository,
       metaTransactor,
       memberRepository,
+      topicRepository,
+      applicationRepository,
       reader
     )
 
   val kafkaService: KafkaService[F] =
     new KafkaServiceImpl[F](reader)
+
+  val applicationService: ApplicationService[F] =
+    new ApplicationServiceImpl[F](reader)
 }

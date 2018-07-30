@@ -6,6 +6,7 @@ import java.net.URI
 import cats.effect.Sync
 import com.heimdali.clients._
 import com.heimdali.services._
+import com.typesafe.scalalogging.LazyLogging
 import doobie.FC
 import doobie.util.transactor.{Strategy, Transactor}
 import org.apache.hadoop.fs.FileSystem
@@ -63,24 +64,24 @@ trait ClientModule[F[_]] {
     SentryGenericServiceClientFactory.create(hadoopConfiguration)
 
   val sentryClient: SentryClient[F] =
-    new SentryClient[F] {
+    new SentryClient[F] with LazyLogging {
       override def grantPrivilege(role: String, component: Component, grantString: String): F[Unit] =
-        Sync[F].unit
+        Sync[F].pure(logger.warn("granting {} permissions {} for {}", role, grantString, component))
 
       override def createRole(name: String): F[Unit] =
-        Sync[F].unit
+        Sync[F].pure(logger.warn("creating role {}", name))
 
       override def createDatabase(name: String, location: String): F[Unit] =
-        Sync[F].unit
+        Sync[F].pure(logger.warn("creating database {} at {}", name, location))
 
       override def enableAccessToDB(database: String, role: String): F[Unit] =
-        Sync[F].unit
+        Sync[F].pure(logger.warn("allowing {} access to {}", role, database))
 
       override def grantGroup(group: String, role: String): F[Unit] =
-        Sync[F].unit
+        Sync[F].pure(logger.warn("granting group {} access to role {}", group, role))
 
       override def enableAccessToLocation(location: String, role: String): F[Unit] =
-        Sync[F].unit
+        Sync[F].pure(logger.warn("allowing {} access to {}", role, location))
     }
 
 }

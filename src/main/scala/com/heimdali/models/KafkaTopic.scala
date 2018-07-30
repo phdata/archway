@@ -1,7 +1,5 @@
 package com.heimdali.models
 
-import java.time.Instant
-
 import cats.effect.Effect
 import cats.implicits._
 import com.heimdali.tasks.ProvisionTask._

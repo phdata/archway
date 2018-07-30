@@ -26,6 +26,9 @@ class WorkspaceRequestRepositoryImpl
 
   override def linkTopic(workspaceId: Long, KafkaTopicId: Long): ConnectionIO[Int] =
     WorkspaceRequestRepositoryImpl.Statements.linkTopic(workspaceId, KafkaTopicId).run
+
+  override def linkApplication(workspaceId: Long, applicationId: Long): doobie.ConnectionIO[Int] =
+    WorkspaceRequestRepositoryImpl.Statements.linkApplication(workspaceId, applicationId).run
 }
 
 object WorkspaceRequestRepositoryImpl {
@@ -47,6 +50,12 @@ object WorkspaceRequestRepositoryImpl {
       sql"""
          insert into workspace_topic (workspace_request_id, kafka_topic_id)
          values ($workspaceId, $kafkaTopicId)
+        """.update
+
+    def linkApplication(workspaceId: Long, applicationId: Long): Update0 =
+      sql"""
+         insert into workspace_application (workspace_request_id, application_id)
+         values ($workspaceId, $applicationId)
         """.update
 
     val selectFragment: Fragment =

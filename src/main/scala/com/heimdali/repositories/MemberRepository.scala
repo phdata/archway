@@ -12,7 +12,7 @@ trait MemberRepository {
       role: DatabaseRole
   ): ConnectionIO[List[WorkspaceMember]]
 
-  def complete(id: Long): ConnectionIO[Int]
+  def complete(id: Long, username: String): ConnectionIO[Int]
 
   def get(id: Long): ConnectionIO[WorkspaceMember]
 

@@ -51,7 +51,7 @@ class MemberServiceImpl[F[_]](
       _ <- ldapClient.addUser(registration.distinguishedName, username)
       _ <- OptionT.some[F](logger.info(s"completing $username"))
       member <- OptionT.liftF(
-        (memberRepository.complete(memberId), memberRepository.get(memberId))
+        (memberRepository.complete(registration.id.get, username), memberRepository.get(memberId))
           .mapN((_, member) => member)
           .transact(transactor) // run the complete and get in the same transaction
       )

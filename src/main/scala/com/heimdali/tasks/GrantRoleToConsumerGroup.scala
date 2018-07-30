@@ -1,15 +1,14 @@
 package com.heimdali.tasks
 
-import cats.Show
-import cats.data.Kleisli
-import cats.effect.Effect
+import cats._
+import cats.data._
+import cats.effect._
+import cats.implicits._
 import com.heimdali.clients.Kafka
+import doobie.implicits._
 import org.apache.sentry.core.model.kafka.ConsumerGroup
-import org.apache.sentry.provider.db.generic.service.thrift.{TAuthorizable, TSentryPrivilege}
 
-import scala.collection.JavaConverters._
-
-case class GrantRoleToConsumerGroup(consumerGroup: String, roleName: String) {
+case class GrantRoleToConsumerGroup(applicationId: Long, consumerGroup: String, roleName: String) {
   val consumerGroupInstance: ConsumerGroup = new ConsumerGroup(consumerGroup)
 }
 
@@ -21,8 +20,7 @@ object GrantRoleToConsumerGroup {
   implicit def provisioner[F[_]](implicit F: Effect[F]): ProvisionTask[F, GrantRoleToConsumerGroup] =
     ProvisionTask.instance { grant =>
       Kleisli { config =>
-        val auth = new TAuthorizable(grant.consumerGroupInstance.getTypeName, grant.consumerGroupInstance.getName)
-        F.map(F.attempt(F.delay {
+        F.delay {
           config
             .hiveClient
             .grantPrivilege(
@@ -30,10 +28,16 @@ object GrantRoleToConsumerGroup {
               Kafka,
               s"ConsumerGroup=${grant.consumerGroup}->action=ALL"
             )
-        })) {
-          case Left(exception) => Error(grant, exception)
-          case Right(_) => Success(grant)
-        }
+        }.attempt
+          .flatMap {
+            case Left(exception) => F.pure(Error(grant, exception))
+            case Right(_) =>
+              config
+                .applicationRepository
+                .consumerGroupAccess(grant.applicationId)
+                .transact(config.transactor)
+                .map(_ => Success(grant))
+          }
       }
     }
 

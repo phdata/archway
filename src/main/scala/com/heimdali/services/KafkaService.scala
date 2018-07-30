@@ -9,7 +9,7 @@ import com.heimdali.models._
 import com.heimdali.tasks.Success
 import com.heimdali.tasks.ProvisionResult
 import com.heimdali.tasks.ProvisionTask._
-import com.heimdali.repositories.KafkaRepository
+import com.heimdali.repositories.KafkaTopicRepository
 import com.typesafe.scalalogging.LazyLogging
 import doobie._
 import doobie.implicits._

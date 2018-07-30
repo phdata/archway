@@ -11,5 +11,5 @@ trait YarnRepository {
 
   def find(id: Long): OptionT[ConnectionIO, Yarn]
 
-  def findByWorkspace(id: Long): ConnectionIO[List[Yarn]]
+  def findByWorkspaceId(id: Long): ConnectionIO[List[Yarn]]
 }
