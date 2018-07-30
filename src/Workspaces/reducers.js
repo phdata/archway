@@ -5,6 +5,7 @@ import request from './Request/reducers';
 import status from './Status/reducers';
 import details from './WorkspaceDetails/reducers';
 import listing from './WorkspaceList/reducers';
+import topics from './Topics/reducers';
 
 export default combineReducers({
   members,
@@ -12,4 +13,5 @@ export default combineReducers({
   status,
   details,
   listing,
+  topics,
 });

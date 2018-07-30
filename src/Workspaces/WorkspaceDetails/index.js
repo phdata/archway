@@ -9,7 +9,6 @@ import ValueDisplay from '../ValueDisplay';
 import Members from '../Members';
 import Topics from '../Topics';
 import { changeDB, approveInfra, approveRisk, getWorkspace } from './actions';
-import './WorkspaceDetails.css';
 
 const ComplianceCheck = ({ value, label }) => {
   if (!value) return <span />;
@@ -80,9 +79,9 @@ class WorkspaceDetails extends React.Component {
     if (!activeWorkspace)
       return <Spin />;
     return (
-      <div className="WorkspaceDetails">
+      <div>
         <h1>{activeWorkspace && activeWorkspace.name}</h1>
-        <Tabs activeKey="members" size="large">
+        <Tabs activeKey="topics" size="large">
           <Tabs.TabPane key="status" tab={<span><Icon type="info-circle-o" /> Status</span>}>
             <Status workspace={activeWorkspace} />
           </Tabs.TabPane>

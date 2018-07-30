@@ -5,7 +5,7 @@
   padding: 10px;
   margin: 10px;
   border-radius: 10px;
-  border: 1px solid #f0f3f5;
+  box-shadow: 0 0 5px #3d3d3d;
   flex: 1;
 }
 
