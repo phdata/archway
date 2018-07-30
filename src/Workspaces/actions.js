@@ -193,3 +193,21 @@ export function setFilteredList(workspaces) {
     filteredList: workspaces,
   }
 }
+
+export const NEW_MEMBER_SELECTED = 'NEW_MEMBER_SELECTED';
+
+export function newMemberSelected(username) {
+  return {
+    type: NEW_MEMBER_SELECTED,
+    username,
+  }
+}
+
+export const EXISTING_MEMBER_SELECTED = 'EXISTING_MEMBER_SELECTED';
+
+export function existingMemberSelected(username) {
+  return {
+    type: EXISTING_MEMBER_SELECTED,
+    username,
+  }
+}

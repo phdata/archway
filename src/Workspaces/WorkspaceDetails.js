@@ -7,7 +7,7 @@ import TabIcon from './TabIcon';
 import DBDisplay from './DBDisplay';
 import ProcessingDisplay from './ProcessingDisplay';
 import ValueDisplay from './ValueDisplay';
-import { changeDB, approveInfra, approveRisk, getWorkspace, addMember, newMemberFormChanged } from './actions';
+import { changeDB, approveInfra, approveRisk, getWorkspace, existingMemberSelected, newMemberSelected } from './actions';
 import './WorkspaceDetails.css';
 
 const UsernameForm = Form.create({
@@ -78,31 +78,39 @@ const ApprovalActions = ({
 
 const Applications = () => (<div />);
 
-const Member = ({ member }) => (
-  <List.Item actions={[<Icon type="right" />]}>
-    <List.Item.Meta
-      avatar={<Avatar icon="user" />}
-      title={member.username}>
-    </List.Item.Meta>
+const Member = ({ member, selected }) => (
+  <List.Item style={{ cursor: 'pointer', backgroundColor: selected ? '#B3B9C0' : 'white' }} actions={[<Icon type="right" />]}>
+    <div style={{ display: 'flex', alignItems: 'center' }}>
+      <Avatar icon="user" />
+      <h3 style={{ marginLeft: 10, marginBottom: 0 }}>{member.username}</h3>
+    </div>
   </List.Item>
 );
 
-const Members = ({ filterChanged, memberForm, existingMembers, newMembers }) => (
+const Members = ({
+  filterChanged,
+  memberForm,
+  existingMembers,
+  existingSelected,
+  newMembers,
+  newSelected,
+}) => (
   <Row>
     <Col span={8}>
       <div>
         <UsernameForm onChange={filterChanged} memberForm={memberForm} />
-        {newMembers && (
-          <List
-            dataSource={newMembers}
-            renderItem={item => <Member member={item} />}
-          />
-        )}
         {existingMembers && (
           <List
             bordered
             dataSource={existingMembers}
-            renderItem={item => <Member member={item} />}
+            renderItem={item => <Member onSelect={newSelected} member={item} />}
+          />
+        )}
+        {newMembers && (
+          <List
+            header={<h3>or add a new member...</h3>}
+            dataSource={newMembers}
+            renderItem={item => <Member onSelect={existingSelected} member={item} />}
           />
         )}
       </div>
@@ -172,5 +180,9 @@ export default connect(
   state => ({
     workspaces: state.workspaces,
     cluster: state.cluster,
-  }), { getWorkspace }
+  }), {
+    getWorkspace,
+    existingMemberSelected,
+    newMemberSelected,
+  }
 )(WorkspaceDetails);
