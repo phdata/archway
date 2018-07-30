@@ -53,12 +53,12 @@ export function setFilteredList(members) {
 
 export const ROLE_CHANGED = 'ROLE_CHANGED';
 
-export function roleChanged(username, resource, workspaceId, oldRole, newRole) {
+export function roleChanged(username, resource, resourceId, oldRole, newRole) {
   return {
     type: ROLE_CHANGED,
     username,
     resource,
-    workspaceId,
+    resourceId,
     oldRole,
     newRole,
   }

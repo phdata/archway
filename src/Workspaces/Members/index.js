@@ -154,14 +154,14 @@ class Members extends Component {
               bordered
               locale={{ emptyText: 'No existing members match' }}
               dataSource={filteredMembers}
-              renderItem={item => <MemberListItem onSelect={existingMemberSelected} member={item} selected={item === selectedUser} />}
+              renderItem={item => <MemberListItem onSelect={existingMemberSelected} member={item} selected={selectedUser && selectedUser.username === item.username} />}
               />
           )}
           {newMembers && (
             <List
               bordered
               dataSource={newMembers}
-              renderItem={item => <MemberListItem onSelect={existingMemberSelected} icon="plus" selected={item === selectedUser} member={item}/>}
+              renderItem={item => <MemberListItem onSelect={existingMemberSelected} icon="plus" selected={selectedUser && selectedUser.username === item.username} member={item}/>}
               />
           )}
       </Col>
