@@ -44,9 +44,6 @@ export const profile =
 export const requestWorkspace =
   (token, workspace) => withBody('/workspaces', token, workspace);
 
-export const workspaceMemberList =
-  (token, id) => get(`/workspaces/${id}/members`, token);
-
 export const newWorkspaceMember =
   (token, id, resource, resource_id, role, username) => withBody(`/workspaces/${id}/members`, token, { username, resource, resource_id, role });
 
@@ -70,3 +67,6 @@ export const approveWorkspace =
 
 export const getMembers =
   (token, id) => get(`/workspaces/${id}/members`, token);
+
+export const requestTopic =
+  (token, id, name, partitions, replication_factor) => withBody(`/workspaces/${id}/topics`, token, { name, partitions, replication_factor });

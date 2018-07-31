@@ -5,6 +5,7 @@ import request from './Request/sagas';
 import status from './Status/sagas';
 import details from './WorkspaceDetails/sagas';
 import listing from './WorkspaceList/sagas';
+import topics from './Topics/sagas';
 
 export default function* root() {
   yield all([
@@ -13,5 +14,6 @@ export default function* root() {
     fork(status),
     fork(details),
     fork(listing),
+    fork(topics),
   ]);
 }

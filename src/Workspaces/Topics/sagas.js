@@ -4,25 +4,27 @@ import * as Api from '../../API';
 import {
   CREATE_TOPIC,
 
-  getAllTopics
+  topicCreated,
 } from './actions';
+import {
+  getWorkspace,
+} from '../WorkspaceDetails/actions';
 
-function* requestTopic({ database, suffix, partitions, replicationFactor }) {
+function* requestTopic() {
   const token = yield select(s => s.auth.token);
   const workspace = yield select(s => s.workspaces.details.activeWorkspace);
-  yield call(Api.requestTopic, token, workspace.id, `${database.suffix}`, partitions, replicationFactor);
-  yield put(getAllTopics());
+  const { database, suffix, partitions, replicationFactor } = yield select(s => s.workspaces.topics.topicForm);
+  yield call(Api.requestTopic, token, workspace.id, `${database}.${suffix}`, partitions, replicationFactor);
+  yield put(topicCreated());
+  yield put(getWorkspace(workspace.id));
 }
 
 function* topicRequested() {
-  yield takeLatest(CREATE_TOPIC, requestWorkspace);
+  yield takeLatest(CREATE_TOPIC, requestTopic);
 }
 
 export default function* root() {
   yield all([
-    fork(typeChanged),
-    fork(requestChanged),
-    fork(inputChanged),
-    fork(workspaceRequested)
+    fork(topicRequested),
   ])
 }

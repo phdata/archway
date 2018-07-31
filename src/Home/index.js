@@ -5,7 +5,6 @@ import PropTypes from 'prop-types';
 import { Row, Col, Icon } from 'antd';
 
 const serviceColor = (service) => {
-  console.log(service);
   switch (service && service.status) {
     case 'GOOD_HEALTH':
       return '#43AA8B'
@@ -39,13 +38,13 @@ const Service = ({ name, color, status, links }) => (
 
 const Home = ({ name, displayStatus, color, services }) => {
   const hiveLinks = [
-    {name: "Hive UI", url: `https://${services && services.HIVESERVER2.host}:10002`}
+    { name: "Hive UI", url: `https://${services && services.HIVESERVER2.host}:10002` }
   ];
   const hueLinks = [
-    {name: "Hue UI", url: "https://master2.valhalla.phdata.io:8889"}
+    { name: "Hue UI", url: "https://master2.valhalla.phdata.io:8889" }
   ]
   const yarnLinks = [
-    {name: "Resource Manager UI", url: "https://master3.valhalla.phdata.io:8090"},
+    { name: "Resource Manager UI", url: "https://master3.valhalla.phdata.io:8090" },
   ];
   return (
     <div style={{ textAlign: 'center', height: '100%' }}>
@@ -65,6 +64,5 @@ const Home = ({ name, displayStatus, color, services }) => {
 }
 
 export default connect(
-  s => s.cluster,
-  {}
+  s => s.cluster, {}
 )(Home);

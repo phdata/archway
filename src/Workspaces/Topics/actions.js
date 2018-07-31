@@ -9,20 +9,16 @@ export function topicFormChanged(field) {
 
 export const CREATE_TOPIC = 'CREATE_TOPIC';
 
-export function createTopic(database, suffix, partitions, replicationFactor) {
+export function createTopic() {
   return {
     type: CREATE_TOPIC,
-    database,
-    suffix,
-    partitions,
-    replicationFactor,
   };
 }
 
-export const GET_ALL_TOPICS = 'GET_ALL_TOPICS';
+export const TOPIC_CREATED = 'TOPIC_CREATED';
 
-export function getAllTopics() {
+export function topicCreated() {
   return {
-    type: GET_ALL_TOPICS,
-  }
+    type: TOPIC_CREATED,
+  };
 }
