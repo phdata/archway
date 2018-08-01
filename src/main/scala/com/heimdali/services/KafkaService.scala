@@ -16,14 +16,14 @@ import doobie.implicits._
 
 trait KafkaService[F[_]] {
 
-  def create(username: String, workspaceId: Long, databaseId: Long, kafkaTopic: TopicRequest): F[NonEmptyList[String]]
+  def create(username: String, workspaceId: Long, kafkaTopic: TopicRequest): F[NonEmptyList[String]]
 
 }
 
 class KafkaServiceImpl[F[_] : Effect](appContext: AppContext[F])
     extends KafkaService[F]
     with LazyLogging {
-  override def create(username: String, workspaceId: Long, databaseId: Long, topicRequest: TopicRequest): F[NonEmptyList[String]] =
+  override def create(username: String, workspaceId: Long, topicRequest: TopicRequest): F[NonEmptyList[String]] =
     (for {
        workspace <- OptionT(
          appContext
@@ -33,21 +33,12 @@ class KafkaServiceImpl[F[_] : Effect](appContext: AppContext[F])
            .transact(appContext.transactor)
        )
 
-       database <- OptionT(
-         appContext
-           .databaseRepository
-           .find(databaseId)
-           .value
-           .transact(appContext.transactor)
-       )
-
-       topicName = s"${database.name}_${Generator.generateName(topicRequest.name)}"
        kafkaTopic = KafkaTopic(
-         topicName,
+         topicRequest.name,
          topicRequest.partitions,
          topicRequest.replicationFactor,
-         TopicGrant(topicName, LDAPRegistration(s"cn=${topicName},${appContext.appConfig.ldap.groupPath}", topicName, s"role_${topicName}"), "read,describe"),
-         TopicGrant(topicName, LDAPRegistration(s"cn=${topicName}_ro,${appContext.appConfig.ldap.groupPath}", s"${topicName}_ro", s"role_${topicName}_ro"), "read"),
+         TopicGrant(topicRequest.name, LDAPRegistration(s"cn=${topicRequest.name},${appContext.appConfig.ldap.groupPath}", topicRequest.name, s"role_${topicRequest.name}"), "read,describe"),
+         TopicGrant(topicRequest.name, LDAPRegistration(s"cn=${topicRequest.name}_ro,${appContext.appConfig.ldap.groupPath}", s"${topicRequest.name}_ro", s"role_${topicRequest.name}_ro"), "read"),
          requestor = Some(username)
        )
 

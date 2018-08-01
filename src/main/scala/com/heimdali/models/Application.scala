@@ -28,7 +28,8 @@ object Application {
     Json.obj(
       "id" -> application.id.asJson,
       "name" -> application.name.asJson,
-      "consumer_group" -> application.consumerGroup.asJson
+      "consumer_group" -> application.consumerGroup.asJson,
+      "group" -> application.group.asJson
     )
   }
 

@@ -45,7 +45,7 @@ object WorkspaceRequest {
         "data" -> request.data.asJson,
         "processing" -> request.processing.asJson,
         "applications" -> request.applications.asJson,
-        "kafka_topics" -> request.kafkaTopics.asJson,
+        "topics" -> request.kafkaTopics.asJson,
         "single_user" -> request.singleUser.asJson,
         "requester" -> request.requestedBy.asJson,
         "requested_date" -> request.requestDate.asJson
@@ -61,7 +61,7 @@ object WorkspaceRequest {
       data <- json.downField("data").as[List[HiveDatabase]]
       processing <- json.downField("processing").as[List[Yarn]]
       applications <- json.downField("applications").as[List[Application]]
-      topics <- json.downField("kafka_topics").as[List[KafkaTopic]]
+      topics <- json.downField("topics").as[List[KafkaTopic]]
     } yield WorkspaceRequest(name, user.username, Instant.now(clock), compliance, singleUser, data = data, processing = processing, applications = applications, kafkaTopics = topics)
   }
 

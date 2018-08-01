@@ -64,7 +64,8 @@ class KafkaTopicRepositoryImpl(val clock: Clock)
             rg.id,
             rg.topic_access,
 
-            k.id
+            k.id,
+            null
          from kafka_topic k
          inner join workspace_topic wt on wt.kafka_topic_id = k.id
 
