@@ -24,7 +24,7 @@ object KafkaTopic {
         managingRole <- topic.managingRole.provision
         manager <- AddMember(topic.managingRole.ldapRegistration.id.get, topic.managingRole.ldapRegistration.distinguishedName, topic.requestor.get).provision
         readonlyRole <- topic.readonlyRole.provision
-      } yield create |+| managingRole |+| readonlyRole
+      } yield create |+| managingRole |+| manager |+| readonlyRole
     )
 
   implicit val encoder: Encoder[KafkaTopic] =

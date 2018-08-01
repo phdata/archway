@@ -3,14 +3,15 @@ package com.heimdali.models
 import cats.effect.Effect
 import cats.implicits._
 import com.heimdali.tasks.ProvisionTask._
-import com.heimdali.tasks.{GrantRoleToConsumerGroup, ProvisionTask}
+import com.heimdali.tasks.{AddMember, GrantRoleToConsumerGroup, ProvisionTask}
 import io.circe._
 import io.circe.syntax._
 
 case class Application(name: String,
                        consumerGroup: String,
                        group: LDAPRegistration,
-                       id: Option[Long] = None)
+                       id: Option[Long] = None,
+                       requestor: Option[String] = None)
 
 object Application {
 
@@ -20,8 +21,9 @@ object Application {
     ProvisionTask.instance { app =>
       for {
         group <- app.group.provision
+        manager <- AddMember(app.group.id.get, app.group.distinguishedName, app.requestor.get).provision
         grant <- GrantRoleToConsumerGroup(app.id.get, app.consumerGroup, app.group.sentryRole).provision
-      } yield group |+| grant
+      } yield group |+| manager |+| grant
     }
 
   implicit val encoder: Encoder[Application] = Encoder.instance { application =>
