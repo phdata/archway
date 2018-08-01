@@ -65,6 +65,11 @@ const WorkspaceArea = ({ roleChanged, label, workspace, member, area, readonlyAl
   <div>
     <h3>{label}</h3>
     <hr />
+    {workspace[area].length == 0 && (
+      <div style={{ marginBottom: 25 }}>
+        Nothing here yet...
+      </div>
+    )}
     {workspace[area].map(i => (
       <MemberRole
         member={member}

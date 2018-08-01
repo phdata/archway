@@ -34,14 +34,12 @@ const CodeHelp = ({ cluster, databaseName }) => {
 
 const DatabaseItem = ({ database: { name, size_in_gb, location }, cluster }) => (
   <div>
-    <Row type="flex" justify="center">
+    <Row type="flex" justify="space-around">
       <Col span={8}>
         <ValueDisplay label="hdfs location">
           {location}
         </ValueDisplay>
       </Col>
-    </Row>
-    <Row type="flex" justify="space-around">
       <Col span={8}>
         <ValueDisplay label="database name">
           {name}

@@ -29,19 +29,19 @@ class WorkspaceDetails extends React.Component {
           <Tabs.TabPane key="status" tab={<span><Icon type="info-circle-o" /> Status</span>}>
             <Status workspace={activeWorkspace} profile={profile} />
           </Tabs.TabPane>
-          <Tabs.TabPane key="data" tab={<span><Icon type="database" /> Data</span>}>
+          <Tabs.TabPane key="data" tab={<span><Icon type="database" /> Data ({activeWorkspace.data.length})</span>}>
             <DBDisplay workspace={activeWorkspace} cluster={cluster} />
           </Tabs.TabPane>
           {activeWorkspace && activeWorkspace.approved && (
-            <Tabs.TabPane key="topics" tab={<span><Icon type="message" /> Topics</span>}>
+            <Tabs.TabPane key="topics" tab={<span><Icon type="message" /> Topics ({activeWorkspace.topics.length})</span>}>
               <Topics />
             </Tabs.TabPane>
           )}
-          <Tabs.TabPane key="processing" tab={<span><Icon type="dashboard" /> Processing</span>}>
+          <Tabs.TabPane key="processing" tab={<span><Icon type="dashboard" /> Pools ({activeWorkspace.processing.length})</span>}>
             <ProcessingDisplay />
           </Tabs.TabPane>
           {activeWorkspace && activeWorkspace.approved && (
-            <Tabs.TabPane key="applications" tab={<span><Icon type="code" /> Applications</span>}>
+            <Tabs.TabPane key="applications" tab={<span><Icon type="code" /> Applications ({activeWorkspace.applications.length})</span>}>
               <Applications />
             </Tabs.TabPane>
           )}
