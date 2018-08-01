@@ -19,7 +19,10 @@ const details = (state = initialState, action) => {
       return {
         ...state,
         fetching: false,
-        activeWorkspace: action.workspace,
+        activeWorkspace: {
+          ...action.workspace,
+          approved: action.workspace.approvals && action.workspace.approvals.infra && action.workspace.approvals.risk
+        },
       }
     default:
       return state;

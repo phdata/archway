@@ -1,17 +1,22 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import './ValueDisplay.css';
+import Panel from '../Panel';
 
 const ValueDisplay = ({ label, children, color = '#3d3d3d' }) => (
-  <div className="ValueDisplay">
-    <div className="Value" style={{ color, overflow: 'hidden' }}>
+  <Panel>
+    <div style={{
+      fontWeight: 100,
+      fontSize: 24,
+      color,
+      overflow: 'hidden'
+    }}>
       {children}
     </div>
-    <div className="Label">
+    <div>
       {label}
     </div>
-  </div>
+  </Panel>
 );
 
 ValueDisplay.propTypes = {

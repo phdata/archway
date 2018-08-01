@@ -2,7 +2,7 @@ import React from 'react';
 import { Tabs, Row, Col } from 'antd';
 import PropTypes from 'prop-types';
 import SyntaxHighlighter from 'react-syntax-highlighter';
-import {solarizedDark} from 'react-syntax-highlighter/styles/hljs';
+import { solarizedDark } from 'react-syntax-highlighter/styles/hljs';
 import { connect } from 'react-redux';
 
 import ValueDisplay from '../ValueDisplay';
@@ -11,9 +11,9 @@ const syntaxStyle = {
   padding: 10
 };
 
-const ProcessingItem = ({ pool: { pool_name, max_cores, max_memory_in_gb }}) => {
+const ProcessingItem = ({ pool: { pool_name, max_cores, max_memory_in_gb } }) => {
   const sparkJob =
-`$ spark-submit --class org.apache.spark.examples.SparkPi \\
+    `$ spark-submit --class org.apache.spark.examples.SparkPi \\
                 --master yarn \\
                 --deploy-mode cluster \\
                 --queue ${pool_name} \\
@@ -45,7 +45,7 @@ const ProcessingDisplay = ({ activeWorkspace }) => {
   if (activeWorkspace.processing.length == 1)
     return <ProcessingItem pool={activeWorkspace.processing[0]} />;
   return (
-    <Tabs>
+    <Tabs animated={false}>
       {activeWorkspace.processing.map(processing => (
         <Tabs.TabPane tab={processing.pool_name} key={`pool-${processing.pool_name}`}>
           <ProcessingItem pool={processing} />
@@ -62,6 +62,5 @@ ProcessingDisplay.propTypes = {
 };
 
 export default connect(
-  state => state.workspaces.details,
-  { }
+  state => state.workspaces.details, {}
 )(ProcessingDisplay);

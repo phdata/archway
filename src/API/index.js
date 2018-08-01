@@ -70,3 +70,6 @@ export const getMembers =
 
 export const requestTopic =
   (token, id, name, partitions, replication_factor) => withBody(`/workspaces/${id}/topics`, token, { name, partitions, replication_factor });
+
+export const requestApplication =
+  (token, id, name) => withBody(`/workspaces/${id}/applications`, token, { name });

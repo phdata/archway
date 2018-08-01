@@ -11,7 +11,7 @@ import { getWorkspace } from '../WorkspaceDetails/actions';
 
 function* requestApproval({ role }) {
   const token = yield select(s => s.auth.token);
-  const id = yield select(s => s.workspaces.activeWorkspace.id);
+  const { id } = yield select(s => s.workspaces.details.activeWorkspace);
   let error;
   try {
     yield call(Api.approveWorkspace, token, id, role);

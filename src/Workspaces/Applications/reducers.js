@@ -1,7 +1,7 @@
 import {
-  TOPIC_FORM_CHANGED,
-  CREATE_TOPIC,
-  TOPIC_CREATED,
+  APPLICATION_FORM_CHANGED,
+  CREATE_APPLICATION,
+  APPLICATION_CREATED,
 } from './actions';
 
 import {
@@ -9,32 +9,32 @@ import {
 } from '../WorkspaceDetails/actions';
 
 const initialState = {
-  topicForm: {},
+  applicationForm: {},
   creating: false,
 };
 
-const topics = (state = initialState, action) => {
+const applications = (state = initialState, action) => {
   switch (action.type) {
-    case TOPIC_FORM_CHANGED:
+    case APPLICATION_FORM_CHANGED:
       const key = Object.keys(action.field)[0];
-      state.topicForm[key] = action.field[key].value;
+      state.applicationForm[key] = action.field[key].value;
       return {
         ...state
       };
-    case CREATE_TOPIC:
+    case CREATE_APPLICATION:
       return {
         ...state,
         creating: true,
       };
-    case TOPIC_CREATED:
+    case APPLICATION_CREATED:
       return {
         ...state,
         creating: false,
-        topicForm: {},
+        applicationForm: {},
       }
     default:
       return state;
   }
 }
 
-export default topics;
+export default applications;

@@ -13,6 +13,7 @@ import { connect } from 'react-redux';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { solarizedDark } from 'react-syntax-highlighter/styles/hljs';
 
+import ValueDisplay from '../ValueDisplay';
 import { topicFormChanged, createTopic } from './actions';
 
 const TopicForm = Form.create({
@@ -37,7 +38,7 @@ const TopicForm = Form.create({
 }) => {
   const prefixSelector = getFieldDecorator('database', {})(
     <Select>
-      { workspace.data.map(db => <Select.Option key={db.id} value={db.name}>{db.name}</Select.Option>) }
+      { workspace.data.map(db => <Select.Option key={db.id} value={db.name}>{db.name}.</Select.Option>) }
     </Select>
   );
   return (
@@ -68,17 +69,29 @@ const TopicForm = Form.create({
 });
 
 const TopicItem = ({ topic }) => {
-  const consumer = `$ bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --from-beginning --topic ${topic.name}`;
   const producer = `$ bin/kafka-console-producer.sh --broker-list localhost:9092 --topic ${topic.name}`;
   return (
     <div>
-      <h2>Create a producer in one shell:</h2>
+      <Row type="flex" justify="center">
+        <Col span={12}>
+          <ValueDisplay label="name">
+            {topic.name}
+          </ValueDisplay>
+        </Col>
+        <Col span={6}>
+          <ValueDisplay label="partitions">
+            {topic.partitions}
+          </ValueDisplay>
+        </Col>
+        <Col span={6}>
+          <ValueDisplay label="replication factor">
+            {topic.replication_factor}
+          </ValueDisplay>
+        </Col>
+      </Row>
+      <h2>Start sending messages via a console producer:</h2>
       <SyntaxHighlighter language="shell" style={solarizedDark}>
         {producer}
-      </SyntaxHighlighter>
-      <h2>Create a consumer in another shell:</h2>
-      <SyntaxHighlighter language="shell" style={solarizedDark}>
-        {consumer}
       </SyntaxHighlighter>
     </div>
   );
@@ -92,13 +105,19 @@ class Topics extends Component {
     return (
       <Row>
         <Col span={16}>
-          <Tabs>
-            {activeWorkspace.topics.map(topic => (
-              <Tabs.TabPane tab={topic.name} key={topic.name}>
-                <TopicItem topic={topic} />
-              </Tabs.TabPane>
-            ))}
-          </Tabs>
+          {activeWorkspace.topics.length == 0 && (
+            <h2>No topics yet. Create one using the form to the right.</h2>
+          )}
+          {activeWorkspace.topics.length == 1 && <TopicItem topic={activeWorkspace.topics[0]} />}
+          {activeWorkspace.topics.length > 1 && (
+            <Tabs>
+              {activeWorkspace.topics.map(topic => (
+                <Tabs.TabPane tab={topic.name} key={topic.name}>
+                  <TopicItem topic={topic} />
+                </Tabs.TabPane>
+              ))}
+            </Tabs>
+          )}
         </Col>
         <Col offset={1} span={6}>
           <h3>Create a new topic:</h3>

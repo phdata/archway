@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { List, Row, Col, Form, Select, Input, Tabs, Avatar, Icon, Button, Popconfirm } from 'antd';
 import PropTypes from 'prop-types';
 import SyntaxHighlighter from 'react-syntax-highlighter';
-import {solarizedDark} from 'react-syntax-highlighter/styles/hljs';
+import { solarizedDark } from 'react-syntax-highlighter/styles/hljs';
 
 import ValueDisplay from '../ValueDisplay';
 
@@ -32,8 +32,15 @@ const CodeHelp = ({ cluster, databaseName }) => {
   );
 }
 
-const DatabaseItem = ({ database: { name, size_in_gb }, cluster }) => (
+const DatabaseItem = ({ database: { name, size_in_gb, location }, cluster }) => (
   <div>
+    <Row type="flex" justify="center">
+      <Col span={8}>
+        <ValueDisplay label="hdfs location">
+          {location}
+        </ValueDisplay>
+      </Col>
+    </Row>
     <Row type="flex" justify="space-around">
       <Col span={8}>
         <ValueDisplay label="database name">
@@ -52,12 +59,12 @@ const DatabaseItem = ({ database: { name, size_in_gb }, cluster }) => (
 )
 
 const DBDisplay = ({ workspace, cluster }) => {
-  if(workspace.data.length == 1)
+  if (workspace.data.length == 1)
     return <DatabaseItem database={workspace.data[0]} cluster={cluster} />;
   return (
-    <Tabs>
+    <Tabs animated={false}>
       {workspace.data.map(db => (
-        <Tabs.TabPane tab={db.name}>
+        <Tabs.TabPane tab={db.name} key={db.id}>
           <DatabaseItem database={db} cluster={cluster} />
         </Tabs.TabPane>
       ))}

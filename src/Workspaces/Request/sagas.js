@@ -28,7 +28,7 @@ function* typeChanged() {
 function* updateWorkspace({ request }) {
   yield delay(500);
   const token = yield select(s => s.auth.token);
-  const requestType = yield select(s => s.workspaces.pendingRequestType);
+  const requestType = yield select(s => s.workspaces.request.pendingRequestType);
   const workspace = yield call(Api.processTemplate, token, requestType, request);
   yield put(workspaceGenerated(workspace));
   yield put(setGenerating(false));
@@ -40,7 +40,7 @@ function* requestChanged() {
 
 function* updateRequest() {
   yield put(setGenerating(true));
-  const request = yield select(s => s.workspaces.pendingRequest);
+  const request = yield select(s => s.workspaces.request.pendingRequest);
   yield put(setRequest(request));
 }
 
@@ -50,7 +50,7 @@ function* inputChanged() {
 
 function* requestWorkspace() {
   const token = yield select(s => s.auth.token);
-  const workspace = yield select(s => s.workspaces.pendingWorkspace);
+  const workspace = yield select(s => s.workspaces.request.pendingWorkspace);
   const newWorkspace = yield call(Api.requestWorkspace, token, workspace);
   yield put(push({ pathname: `/workspaces/${newWorkspace.id}` }));
 }

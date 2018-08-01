@@ -55,7 +55,7 @@ const WorkspaceItem = ({ item, onSelected }) => {
 };
 
 WorkspaceItem.propTypes = {
-  item: PropTypes.shape ({
+  item: PropTypes.shape({
     id: PropTypes.number.isRequired,
     name: PropTypes.string.isRequired,
     requester: PropTypes.string.isRequired,
@@ -76,6 +76,7 @@ class WorkspaceList extends React.Component {
       <div>
         <SearchForm onChange={filterChanged} searchForm={searchForm} />
         <List
+          locale={{ emptyText: 'No workspaces yet. Create one from the link on the left.' }}
           loading={fetching}
           dataSource={filteredList}
           renderItem={item => <WorkspaceItem item={item} onSelected={push} />}
@@ -93,8 +94,7 @@ WorkspaceList.propTypes = {
 };
 
 export default connect(
-  s => s.workspaces.listing,
-  {
+  s => s.workspaces.listing, {
     listWorkspaces,
     filterChanged,
     push,
