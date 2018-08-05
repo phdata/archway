@@ -8,7 +8,7 @@ resolvers += "Cloudera" at "https://repository.cloudera.com/artifactory/cloudera
 
 resolvers += "Apache" at "http://repo.spring.io/plugins-release/"
 
-resolvers += "Jboss" at "https://repository.jboss.org/nexus/content/groups/public"
+resolvers += "Jboss" at "https://repository.jboss.org/maven2"
 
 addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full)
 
@@ -43,6 +43,7 @@ libraryDependencies ++= Seq(
   "io.circe" %% "circe-generic-extras" % circeVersion,
   "io.circe" %% "circe-optics" % circeVersion,
   "io.circe" %% "circe-java8" % circeVersion,
+  "javax.jms" % "jms" % "1.1",
   "org.apache.kafka" %% "kafka" % "0.10.1.1",
   ("com.pauldijou" %% "jwt-core" % "0.14.1")
     .exclude("org.bouncycastle", "bcpkix-jdk15on"),
