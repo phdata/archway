@@ -16,4 +16,4 @@ trait MemberRepository {
   def list(workspaceId: Long): ConnectionIO[List[MemberRightsRecord]]
 }
 
-case class MemberRightsRecord(resource: String, username: String, name: String, id: Long, role: String)
+case class MemberRightsRecord(resource: String, username: String, name: String, id: Long, role: DatabaseRole)

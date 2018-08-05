@@ -37,6 +37,10 @@ package object fixtures {
   val initialHive = savedHive.copy(id = None, managingGroup = initialGrant)
   val savedYarn = Yarn(poolName, maxCores, maxMemoryInGB, Some(id))
   val initialYarn = savedYarn.copy(id = None)
+  val savedTopic = KafkaTopic(s"$systemName.incoming", 1, 1, TopicGrant(s"$systemName.incoming", savedLDAP, "all", Some(id)), TopicGrant(s"$systemName.incoming", savedLDAP, "read", Some(id)), Some(id))
+  val initialTopic = savedTopic.copy(id = None, managingRole = savedTopic.managingRole.copy(id = None, ldapRegistration = initialLDAP), readonlyRole = savedTopic.readonlyRole.copy(id = None, ldapRegistration = initialLDAP))
+  val savedApplication = Application("Tiller", s"${systemName}_cg", savedLDAP, Some(id))
+  val initialApplication = savedApplication.copy(id = None, group = initialLDAP)
   val clock = Clock.fixed(Instant.now(), ZoneId.of("UTC"))
 
   val yarnApp = BasicClusterApp("ysr21", "Yarn", "GOOD_HExALTH", "STARTED")
@@ -104,6 +108,7 @@ package object fixtures {
        |  ],
        |  "data" : [
        |    {
+       |      "id" : "${id}",
        |      "name" : "${savedHive.name}",
        |      "location" : "${savedHive.location}",
        |      "size_in_gb" : ${savedHive.sizeInGB},
@@ -114,6 +119,8 @@ package object fixtures {
        |      }
        |    }
        |  ],
+       |  "applications": [],
+       |  "topics": [],
        |  "single_user": false,
        |  "requester": "$standardUsername",
        |  "requested_date": "${Instant.now(clock)}"

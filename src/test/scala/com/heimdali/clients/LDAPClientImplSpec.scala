@@ -33,10 +33,8 @@ class LDAPClientImplSpec
       )
     ).thenReturn(bindResult)
 
-    val client = new LDAPClientImpl[IO](config, () => connection)
-    with ActiveDirectoryClient[IO]
-    val maybeUser =
-      client.validateUser(username, password).value.unsafeRunSync()
+    val client = new LDAPClientImpl[IO](config, () => connection) with ActiveDirectoryClient[IO]
+    val maybeUser = client.validateUser(username, password).value.unsafeRunSync()
   }
 
   it should "create a group" in new Context {

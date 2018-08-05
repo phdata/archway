@@ -78,16 +78,12 @@ class WorkspaceServiceImplSpec
   }
 
   it should "find a record" in new Context {
-    workspaceRepository.find _ expects id returning OptionT.some(
-      savedWorkspaceRequest
-    )
-    hiveDatabaseRepository.findByWorkspace _ expects id returning List(
-      savedHive
-    ).pure[ConnectionIO]
-    yarnRepository.findByWorkspaceId _ expects id returning List(savedYarn)
-      .pure[ConnectionIO]
-    approvalRepository.findByWorkspaceId _ expects id returning List(approval())
-      .pure[ConnectionIO]
+    workspaceRepository.find _ expects id returning OptionT.some(savedWorkspaceRequest)
+    hiveDatabaseRepository.findByWorkspace _ expects id returning List(savedHive).pure[ConnectionIO]
+    yarnRepository.findByWorkspaceId _ expects id returning List(savedYarn).pure[ConnectionIO]
+    approvalRepository.findByWorkspaceId _ expects id returning List(approval()).pure[ConnectionIO]
+    topicRepository.findByWorkspaceId _ expects id returning List(savedTopic).pure[ConnectionIO]
+    applicationRepository.findByWorkspaceId _ expects id returning List(savedApplication).pure[ConnectionIO]
 
     val foundWorkspace = projectServiceImpl.find(id).value.unsafeRunSync()
 
@@ -132,7 +128,7 @@ class WorkspaceServiceImplSpec
     inSequence {
       ldapClient.addUser _ expects(savedLDAP.distinguishedName, standardUsername) returning OptionT
         .some(LDAPUser("John Doe", standardUsername, Seq.empty))
-      memberRepository.complete _ expects id returning 0.pure[ConnectionIO]
+      memberRepository.complete _ expects(id, standardUsername) returning 0.pure[ConnectionIO]
     }
 
 

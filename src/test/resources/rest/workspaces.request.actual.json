@@ -14,6 +14,11 @@
         "distinguished_name": "cn=edh_sw_sesame,dn=groups,dc=jotunn,dc=io",
         "common_name": "edh_sw_sesame",
         "sentry_role": "role_sesame"
+      },
+      "readonly_group": {
+        "distinguished_name": "cn=edh_sw_sesame_ro,dn=groups,dc=jotunn,dc=io",
+        "common_name": "edh_sw_sesame_ro",
+        "sentry_role": "role_sesame_ro"
       }
     }
   ],
@@ -24,5 +29,7 @@
       "max_memory_in_gb": 1
     }
   ],
+  "applications": [],
+  "topics": [],
   "single_user": false
 }
