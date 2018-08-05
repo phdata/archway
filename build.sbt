@@ -8,6 +8,8 @@ resolvers += "Cloudera" at "https://repository.cloudera.com/artifactory/cloudera
 
 resolvers += "Apache" at "http://repo.spring.io/plugins-release/"
 
+resolvers += "Jboss" at "https://repository.jboss.org/nexus/content/groups/public"
+
 addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full)
 
 val cdhVersion = "cdh5.13.0"
