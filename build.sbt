@@ -8,7 +8,7 @@ resolvers += "Cloudera" at "https://repository.cloudera.com/artifactory/cloudera
 
 resolvers += "Apache" at "http://repo.spring.io/plugins-release/"
 
-resolvers += "Jboss" at "https://repository.jboss.org/maven2"
+fullResolvers := ("Jboss" at "https://repository.jboss.org/maven2") +: resolvers.value
 
 addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full)
 
