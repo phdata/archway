@@ -6,6 +6,7 @@ import cats.effect._
 import com.heimdali.models._
 import com.heimdali.repositories.DatabaseRole
 import com.heimdali.services._
+import com.heimdali.tasks.ProvisionTask._
 import io.circe.Decoder
 import io.circe.generic.auto._
 import io.circe.syntax._
@@ -15,7 +16,8 @@ import org.http4s.dsl.io._
 class WorkspaceController(authService: AuthService[IO],
                           workspaceService: WorkspaceService[IO],
                           memberService: MemberService[IO],
-                          provisionService: ProvisionService[IO],
+                          kafkaService: KafkaService[IO],
+                          applicationService: ApplicationService[IO],
                           clock: Clock) {
 
   implicit val memberRequestEntityDecoder: EntityDecoder[IO, MemberRequest] = jsonOf[IO, MemberRequest]
@@ -40,7 +42,7 @@ class WorkspaceController(authService: AuthService[IO],
           if(user.isSuperUser) {
             for {
               workspace <- workspaceService.find(id).value
-              _ <- provisionService.provision(workspace.get)
+              _ <- workspaceService.provision(workspace.get)
               response <- Created()
             } yield response
           }
@@ -70,24 +72,45 @@ class WorkspaceController(authService: AuthService[IO],
             response <- maybeWorkspace.fold(NotFound())(workspace => Ok(workspace.asJson))
           } yield response
 
-        case GET -> Root / LongVar(id) / database / DatabaseRole(role) as _ =>
+        case GET -> Root / LongVar(id) / "members" as _ =>
           for {
-            members <- memberService.members(id, database, role)
+            members <- memberService.members(id)
             response <- Ok(members.asJson)
           } yield response
 
-        case req@POST -> Root / LongVar(id) / database / DatabaseRole(role) as _ =>
+        case req@POST -> Root / LongVar(id) / "members" as _ =>
+          implicit val roleDecoder: EntityDecoder[IO, MemberRoleRequest] = jsonOf[IO, MemberRoleRequest]
           for {
-            memberRequest <- req.req.as[MemberRequest]
-            newMember <- memberService.addMember(id, database, role, memberRequest.username).value
+            memberRequest <- req.req.as[MemberRoleRequest]
+            newMember <- memberService.addMember(id, memberRequest).value
             response <- newMember.fold(NotFound())(member => Created(member.asJson))
           } yield response
 
-        case DELETE -> Root / LongVar(id) / database / DatabaseRole(role) / username as _ =>
+        case req@DELETE -> Root / LongVar(id) / "members" as _ =>
+          implicit val roleDecoder: EntityDecoder[IO, MemberRoleRequest] = jsonOf[IO, MemberRoleRequest]
           for {
-            removedMember <- memberService.removeMember(id, database, role, username).value
+            memberRequest <- req.req.as[MemberRoleRequest]
+            removedMember <- memberService.removeMember(id, memberRequest).value
             response <- removedMember.fold(NotFound())(member => Ok(member.asJson))
           } yield response
+
+        case req@POST -> Root / LongVar(id) / "topics" as user =>
+          implicit val kafkaTopicDecoderBase: Decoder[TopicRequest] = TopicRequest.decoder(user.username)
+          implicit val kafkaTopicDecoder: EntityDecoder[IO, TopicRequest] = jsonOf[IO, TopicRequest]
+          for {
+            topic <- req.req.as[TopicRequest]
+            result <- kafkaService.create(user.username, id, topic)
+            response <- Ok(result.asJson)
+          } yield response
+
+        case req@POST -> Root / LongVar(id) / "applications" as user =>
+          implicit val applicationDecoder: EntityDecoder[IO, ApplicationRequest] = jsonOf[IO, ApplicationRequest]
+          for {
+            request <- req.req.as[ApplicationRequest]
+            result <- applicationService.create(user.username, id, request)
+            response <- Ok(result.asJson)
+          } yield response
+
       }
     }
 

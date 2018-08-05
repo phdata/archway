@@ -1,16 +1,15 @@
 package com.heimdali.repositories
 
-import java.time.Instant
+import java.time.{Clock, Instant}
 
 import cats.data.OptionT
-import cats.effect.Sync
 import com.heimdali.models.LDAPRegistration
 import com.typesafe.scalalogging.LazyLogging
 import doobie._
 import doobie.implicits._
 import doobie.util.fragments.whereAnd
 
-class LDAPRepositoryImpl
+class LDAPRepositoryImpl(clock: Clock)
   extends LDAPRepository
     with LazyLogging {
 
@@ -49,7 +48,9 @@ class LDAPRepositoryImpl
          l.common_name,
          l.sentry_role,
          l.id,
-         l.created
+         l.group_created,
+         l.role_created,
+         l.group_associated
        from
          ldap_registration l
       """
@@ -60,17 +61,24 @@ class LDAPRepositoryImpl
       result <- find(id).value
     } yield result.get
 
-  override def find[A <: DatabaseRole](workspaceId: Long, databaseName: String, databaseRole: A): OptionT[ConnectionIO, LDAPRegistration] =
-    OptionT(
-      (
-        select ++
-        fr"inner join hive_database h on "
-        ++ Fragment.const(s"h.${databaseRole.getClass.getSimpleName.toLowerCase().replace("$", "")}_group_id") ++ fr" = l.id"
-        ++ fr"""
-        inner join request_hive rh on rh.hive_database_id = h.id
-        inner join workspace_request w on w.id = rh.workspace_request_id
-        where w.id = $workspaceId and h.name = $databaseName
-        """).query[LDAPRegistration].option
-    )
+  def find(resource: String, resourceId: Long, role: String): OptionT[ConnectionIO, LDAPRegistration] =
+    OptionT {
+      resource match {
+        case "data" =>
+          (select ++ fr"inner join hive_grant hg on hg.ldap_registration_id = l.id inner join hive_database h on " ++ Fragment.const(s"h.${role}_group_id") ++ fr" = hg.id" ++ whereAnd(fr"h.id = $resourceId")).query[LDAPRegistration].option
+        case "topics" =>
+          (select ++ fr"inner join topic_grant tg on tg.ldap_registration_id = l.id inner join kafka_topic t on " ++ Fragment.const(s"t.${role}_role_id") ++ fr" = tg.id" ++ whereAnd(fr"t.id = $resourceId")).query[LDAPRegistration].option
+        case "applications" =>
+          (select ++ fr"inner join application a on a.ldap_registration_id = l.id inner join workspace_application wa on wa.application_id = a.id" ++ whereAnd(fr"a.id = $resourceId")).query[LDAPRegistration].option
+      }
+    }
 
+  override def groupCreated(id: Long): ConnectionIO[Int] =
+    sql"update ldap_registration set group_created = ${Instant.now(clock)} where id = $id".update.run
+
+  override def roleCreated(id: Long): ConnectionIO[Int] =
+    sql"update ldap_registration set role_created = ${Instant.now(clock)} where id = $id".update.run
+
+  override def groupAssociated(id: Long): ConnectionIO[Int] =
+    sql"update ldap_registration set group_associated = ${Instant.now(clock)} where id = $id".update.run
 }

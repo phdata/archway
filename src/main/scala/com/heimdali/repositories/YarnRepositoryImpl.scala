@@ -1,6 +1,6 @@
 package com.heimdali.repositories
 
-import java.time.Instant
+import java.time.{Clock, Instant}
 
 import cats.data.OptionT
 import com.heimdali.models.Yarn
@@ -9,53 +9,67 @@ import doobie._
 import doobie.implicits._
 import doobie.util.fragments.whereAnd
 
-class YarnRepositoryImpl
-  extends YarnRepository
-    with LazyLogging {
+class YarnRepositoryImpl(val clock: Clock)
+  extends YarnRepository {
 
   override def complete(id: Long): ConnectionIO[Int] =
-    sql"""
-      update yarn
-      set created = ${Instant.now()}
-      where id = $id
-      """.update.run
+    Statements
+      .complete(id)
+      .run
 
-  def insert(yarn: Yarn): ConnectionIO[Long] =
+  override def find(id: Long): OptionT[ConnectionIO, Yarn] =
+    OptionT {
+      Statements
+        .find(id)
+        .option
+    }
+
+  override def create(yarn: Yarn): ConnectionIO[Long] =
+    Statements
+      .insert(yarn)
+      .withUniqueGeneratedKeys[Long]("id")
+
+  override def findByWorkspaceId(id: Long): ConnectionIO[List[Yarn]] =
+      Statements
+        .findByWorkspace(id)
+        .to[List]
+
+  object Statements {
+
+    val selectQuery =
+      sql"""
+       select
+         rp.pool_name,
+         rp.max_cores,
+         rp.max_memory_in_gb,
+         rp.id
+       from
+         resource_pool rp
+      """
+
+    def insert(yarn: Yarn): Update0 =
     sql"""
-       insert into yarn (pool_name, max_cores, max_memory_in_gb)
+       insert into resource_pool (pool_name, max_cores, max_memory_in_gb)
        values(
         ${yarn.poolName},
         ${yarn.maxCores},
         ${yarn.maxMemoryInGB}
        )
-      """.update.withUniqueGeneratedKeys[Long]("id")
+      """.update
 
-  val selectQuery =
-    sql"""
-       select
-         y.pool_name,
-         y.max_cores,
-         y.max_memory_in_gb,
-         y.id
-       from
-         yarn y
-      """
+    def complete(id: Long): Update0 =
+      sql"""
+         update resource_pool
+         set completed = ${Instant.now(clock)}
+         where id = $id
+         """.update
 
-  def find(id: Long): OptionT[ConnectionIO, Yarn] =
-    OptionT {
-      (selectQuery ++ whereAnd(fr"y.id = $id")).query[Yarn].option
-    }
+    def find(id: Long): Query0[Yarn] =
+      (selectQuery ++ whereAnd(fr"rp.id = $id")).query[Yarn]
 
-  override def create(yarn: Yarn): ConnectionIO[Yarn] =
-    for {
-      id <- insert(yarn)
-      result <- find(id).value
-    } yield result.get
+    def findByWorkspace(id: Long): Query0[Yarn] =
+      (selectQuery ++ fr"inner join workspace_pool wp on wp.resource_pool_id = rp.id" ++ whereAnd(fr"wp.workspace_request_id= $id")).query[Yarn]
 
-  override def findByWorkspace(id: Long): ConnectionIO[List[Yarn]] =
-      (selectQuery ++
-        fr"inner join request_yarn ry on ry.yarn_id = y.id" ++
-        fr"inner join workspace_request w on ry.workspace_request_id = w.id" ++
-        whereAnd(fr"w.id = $id")).query[Yarn].to[List]
+  }
 
 }

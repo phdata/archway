@@ -1,5 +1,6 @@
 package com.heimdali.repositories
 
+import cats.Show
 import cats.data.OptionT
 import com.heimdali.models.LDAPRegistration
 import doobie.free.connection.ConnectionIO
@@ -10,13 +11,25 @@ trait LDAPRepository {
 
   def complete(id: Long): ConnectionIO[LDAPRegistration]
 
-  def find[A <: DatabaseRole](workspaceId: Long, databaseName: String, databaseRole: A): OptionT[ConnectionIO, LDAPRegistration]
+  def find(resource: String, resourceId: Long, role: String): OptionT[ConnectionIO, LDAPRegistration]
+
+  def groupCreated(id: Long): ConnectionIO[Int]
+
+  def roleCreated(id: Long): ConnectionIO[Int]
+
+  def groupAssociated(id: Long): ConnectionIO[Int]
 
 }
 
 sealed trait DatabaseRole
 
 object DatabaseRole {
+
+  implicit val viewer: Show[DatabaseRole] =
+    Show.show {
+      case Manager => "manager"
+      case ReadOnly => "readonly"
+    }
 
   def unapply(role: String): Option[DatabaseRole] =
     role match {

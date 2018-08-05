@@ -6,9 +6,15 @@ scalaVersion := "2.12.5"
 
 resolvers += "Cloudera" at "https://repository.cloudera.com/artifactory/cloudera-repos"
 
-val cdhVersion = "cdh5.11.1"
+resolvers += "Apache" at "http://repo.spring.io/plugins-release/"
+
+addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full)
+
+val cdhVersion = "cdh5.13.0"
 val hiveVersion = s"1.1.0-$cdhVersion"
 val hadoopVersion = s"2.6.0-$cdhVersion"
+val sentryVersion = s"1.5.1-$cdhVersion"
+
 
 val circeVersion = "0.9.3"
 val doobieVersion = "0.5.3"
@@ -27,7 +33,6 @@ libraryDependencies ++= Seq(
   "com.github.pureconfig" %% "pureconfig" % "0.9.1",
   "org.typelevel" %% "cats-effect" % "0.10.1",
   "org.typelevel" %% "cats-core" % catsVersion,
-  "com.casualmiracles" %% "treelog-cats" % "1.4.4",
   "com.typesafe.scala-logging" %% "scala-logging" % "3.8.0",
   "ch.qos.logback" % "logback-classic" % "1.2.3",
   "io.circe" %% "circe-core" % circeVersion,
@@ -36,17 +41,20 @@ libraryDependencies ++= Seq(
   "io.circe" %% "circe-generic-extras" % circeVersion,
   "io.circe" %% "circe-optics" % circeVersion,
   "io.circe" %% "circe-java8" % circeVersion,
+  "org.apache.kafka" %% "kafka" % "0.10.1.1",
   ("com.pauldijou" %% "jwt-core" % "0.14.1")
     .exclude("org.bouncycastle", "bcpkix-jdk15on"),
   ("com.pauldijou" %% "jwt-circe" % "0.14.1")
     .exclude("org.bouncycastle", "bcpkix-jdk15on"),
-  "org.bouncycastle" % "bcpkix-jdk15on" % "1.57" % "provided",
+  "com.github.mpilquist" %% "simulacrum" % "0.12.0",
+  "org.bouncycastle" % "bcpkix-jdk15on" % "1.57", // % "provided",
   "com.unboundid" % "unboundid-ldapsdk" % "4.0.0",
   "org.flywaydb" % "flyway-core" % "4.2.0",
-  "postgresql" % "postgresql" % "9.0-801.jdbc4" % "provided",
-  "mysql" % "mysql-connector-java" % "6.0.6" % "provided",
-  "org.apache.hadoop" % "hadoop-client" % hadoopVersion % "provided",
-  "org.apache.hive" % "hive-jdbc" % hiveVersion % "provided",
+  "postgresql" % "postgresql" % "9.0-801.jdbc4", // % "provided",
+  "mysql" % "mysql-connector-java" % "6.0.6", // % "provided",
+  "org.apache.sentry" % "sentry-provider-db" % sentryVersion, // % "provided",
+  "org.apache.hadoop" % "hadoop-client" % hadoopVersion, // % "provided",
+  "org.apache.hive" % "hive-jdbc" % hiveVersion, // % "provided",
   "org.apache.hadoop" % "hadoop-hdfs" % hadoopVersion % Test classifier "" classifier "tests",
   "org.apache.hadoop" % "hadoop-common" % hadoopVersion % Test classifier "" classifier "tests",
   "org.apache.hadoop" % "hadoop-client" % hadoopVersion % Test classifier "" classifier "tests",
@@ -83,10 +91,10 @@ unmanagedClasspath in Runtime += baseDirectory.value / "phdata-conf"
 
 envVars in reStart := Map(
   "HEIMDALI_LDAP_GROUP_PATH" -> "ou=groups,ou=Heimdali,DC=phdata,DC=io",
-  "HEIMDALI_SECRET" -> "NDg0MTZhMWI0MzI33zRmNjg1YzcxMWFm",
+  "HEIMDALI_SECRET" -> """r8,q8vx~AnU^U"W.""",
   "HEIMDALI_HDFS_DS_ROOT" -> "/data/governed",
   "HEIMDALI_LDAP_PORT" -> "389",
-  "HEIMDALI_CM_ADMIN_PASSWORD" -> "Jotunn123!",
+  "HEIMDALI_CM_ADMIN_PASSWORD" -> "!Heimdali14!",
   "HEIMDALI_DB_USER" -> "root",
   "HEIMDALI_DB_PASS" -> "my-secret-pw",
   "HEIMDALI_API_SERVICE_PRINCIPAL" -> "heimdali_api/edge1.valhalla.phdata.io@PHDATA.IO",

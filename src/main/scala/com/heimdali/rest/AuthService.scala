@@ -52,7 +52,7 @@ class AuthServiceImpl[F[_] : Sync](accountService: AccountService[F])
     Kleisli[OptionT[F, ?], Request[F], User] { request =>
       for {
         header <- OptionT.fromOption(request.headers.get(Authorization.name))
-        user <- accountService.validate(header.value).toOption
+        user <- accountService.validate(header.value.replace("Bearer ", "")).toOption
         result <- if(auth(user)) OptionT.some(user) else OptionT.none
       } yield result
     }

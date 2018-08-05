@@ -20,7 +20,8 @@ case class HostClusterApp(id: String, name: String, status: String, state: Strin
 case class Cluster(id: String, name: String, clusterApps: Map[String, _ <: ClusterApp], distribution: CDH, status: String)
 
 object Cluster {
-  implicit val fooDecoder: Encoder[Cluster] = (a: Cluster) => {
+  implicit val fooDecoder: Encoder[Cluster] =
+    Encoder.instance { a =>
     val services: Map[String, Json] = a.clusterApps.map {
       case (name, BasicClusterApp(id, display, status, state)) =>
         (name, Json.obj(

@@ -38,14 +38,14 @@ class CDHYarnClientSpec extends FlatSpec with MockFactory with Matchers with Htt
     clusterService.list _ expects() returning IO(Seq(cluster))
 
     val client = new CDHYarnClient[IO](httpClient, clusterConfig, clusterService)
-    client.createPool(Yarn("root.pool", 1, 1), Queue("root")).unsafeRunSync()
+    client.createPool("root.pool", 1, 1).unsafeRunSync()
   }
 
   it should "evaluate the correct json" in {
     val Right(expected) = parse(Source.fromResource("cloudera/pool_json.json").getLines().mkString)
 
     val client = new CDHYarnClient(null, clusterConfig, mock[ClusterService[IO]])
-    val result = client.config(Yarn("test", 1, 1))
+    val result = client.config("test", 1, 1)
     result should be(expected)
   }
 
@@ -54,7 +54,7 @@ class CDHYarnClientSpec extends FlatSpec with MockFactory with Matchers with Htt
     val Right(expected) = parse(Source.fromResource("cloudera/pool_after.json").getLines().mkString)
 
     val client = new CDHYarnClient(null, clusterConfig, mock[ClusterService[IO]])
-    val result = client.combine(input, Yarn("test", 1, 1), Queue("root"))
+    val result = client.combine(input, "test", 1, 1, Queue("root"))
     result should be(expected)
   }
 
@@ -67,7 +67,7 @@ class CDHYarnClientSpec extends FlatSpec with MockFactory with Matchers with Htt
 
   it should "generate parent pools" in {
     val client = new CDHYarnClient(null, clusterConfig, mock[ClusterService[IO]])
-    val result = client.getParents(savedYarn).unsafeRunSync()
+    val result = client.getParents(poolName).unsafeRunSync()
 
     result.toList shouldBe List("root", "workspaces")
   }

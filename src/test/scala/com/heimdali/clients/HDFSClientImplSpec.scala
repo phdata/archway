@@ -10,17 +10,28 @@ import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.fs.{FileSystem, Path}
 import org.apache.hadoop.hdfs.MiniDFSCluster
 import org.apache.hadoop.hdfs.client.HdfsAdmin
-import org.mockito.{ArgumentMatchers, Mockito}
+import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.scalatest.mockito.MockitoSugar
-import org.scalatest.{Matchers, Outcome, fixture}
+import org.scalatest.{BeforeAndAfterAll, Matchers, Outcome, fixture}
 
-class HDFSClientImplSpec extends fixture.FlatSpec with Matchers with MockitoSugar {
+class HDFSClientImplSpec extends fixture.FlatSpec with Matchers with MockitoSugar with BeforeAndAfterAll {
+
+  val configuration = new Configuration()
+  var cluster: MiniDFSCluster = _
+
+  override protected def beforeAll(): Unit = {
+    cluster = new MiniDFSCluster.Builder(configuration).build()
+  }
+
+  override protected def afterAll(): Unit = {
+    cluster.shutdown(true)
+  }
 
   behavior of "HDFS Client"
 
-  ignore should "create a directory on behalf of a user" in { fixture =>
-    val context = Mockito.spy(new TestLoginContext)
+  it should "create a directory on behalf of a user" in { fixture =>
+    val context = spy(new TestLoginContext)
 
     val client = new HDFSClientImpl[IO](() => fixture.fileSystem, fixture.admin, context)
     val result = client.createDirectory(fixture.location, Some("jdoe")).unsafeRunSync()
@@ -28,10 +39,11 @@ class HDFSClientImplSpec extends fixture.FlatSpec with Matchers with MockitoSuga
     verify(context).elevate[IO, Path](ArgumentMatchers.eq("jdoe"))(ArgumentMatchers.any(classOf[() => Path]))(ArgumentMatchers.eq(Async[IO]))
     result.toUri.getPath should be(fixture.location)
     fixture.fileSystem.exists(new Path(fixture.location)) should be(true)
+    fixture.fileSystem.delete(new Path(fixture.location), true)
   }
 
-  ignore should "set quota" in { fixture =>
-    val context = Mockito.spy(new TestLoginContext)
+  it should "set quota" in { fixture =>
+    val context = spy(new TestLoginContext)
 
     fixture.fileSystem.mkdirs(new Path(fixture.location))
 
@@ -41,9 +53,10 @@ class HDFSClientImplSpec extends fixture.FlatSpec with Matchers with MockitoSuga
     verify(context).elevate[IO, Path](ArgumentMatchers.eq("hdfs"))(ArgumentMatchers.any(classOf[() => Path]))(ArgumentMatchers.eq(Async[IO]))
     result.location should be(fixture.location.toString)
     result.maxSizeInGB should be(.25)
+    fixture.fileSystem.delete(new Path(fixture.location), true)
   }
 
-  ignore should "upload a file" in { fixture =>
+  it should "upload a file" in { fixture =>
     val context = mock[LoginContextProvider]
     val data = "test out"
     val dataBytes = data.getBytes
@@ -52,12 +65,11 @@ class HDFSClientImplSpec extends fixture.FlatSpec with Matchers with MockitoSuga
     val result = client.uploadFile(new ByteInputStream(dataBytes, dataBytes.length), fixture.location).unsafeRunSync()
     fixture.fileSystem.exists(result) should be(true)
     result.toString should be(fixture.location.toString)
+    fixture.fileSystem.delete(new Path(fixture.location), true)
   }
 
   override def withFixture(test: OneArgTest): Outcome = {
     val location = "/data/shared_workspaces/project_a"
-    val configuration = new Configuration()
-    val cluster = new MiniDFSCluster.Builder(configuration).build()
     val baseUri = new URI(s"hdfs://localhost:${cluster.getNameNodePort}/")
     val fileSystem = FileSystem.get(baseUri, configuration)
     val admin = () => new HdfsAdmin(baseUri, configuration)
@@ -72,6 +84,7 @@ class HDFSClientImplSpec extends fixture.FlatSpec with Matchers with MockitoSuga
 }
 
 class TestLoginContext extends LoginContextProvider {
+
   override def kinit(): IO[Unit] = IO.unit
 
   override def elevate[F[_] : Async, A](user: String)(block: () => A): F[A] =

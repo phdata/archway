@@ -1,13 +1,8 @@
 package com.heimdali.modules
 
-import cats.effect.Effect
-import java.sql.{Connection, DriverManager}
-
-import com.heimdali.clients.{HiveClient, HiveClientImpl}
-import com.heimdali.config
+import com.heimdali.models.AppContext
 import com.heimdali.services._
-import doobie._
-import doobie.util.transactor.{Strategy, Transactor}
+import doobie.util.transactor.Transactor
 
 trait ServiceModule[F[_]] {
   this: AppModule[F]
@@ -18,27 +13,15 @@ trait ServiceModule[F[_]] {
     with ConfigurationModule
     with HttpModule[F] =>
 
-  val hiveConfig = appConfig.db.hive
-  Class.forName("org.apache.hive.jdbc.HiveDriver")
-  private val initialHiveTransactor =
-    Transactor.fromDriverManager[F](hiveConfig.driver, hiveConfig.url, "", "")
-  val strategy = Strategy.void.copy(always = FC.close)
-  val hiveTransactor = Transactor.strategy.set(initialHiveTransactor, strategy)
-
-  private val metaConfig: config.DatabaseConfigItem = appConfig.db.meta
-
   private val metaTransactor = Transactor.fromDriverManager[F](
-    metaConfig.driver,
-    metaConfig.url,
-    metaConfig.username.get,
-    metaConfig.password.get
+    appConfig.db.meta.driver,
+    appConfig.db.meta.url,
+    appConfig.db.meta.username.get,
+    appConfig.db.meta.password.get
   )
 
   val keytabService: KeytabService[F] =
     new KeytabServiceImpl[F]()
-
-  val hiveService: HiveClient[F] =
-    new HiveClientImpl[F](hiveTransactor)
 
   val environment: String =
     configuration.getString("cluster.environment")
@@ -54,17 +37,24 @@ trait ServiceModule[F[_]] {
       ldapClient
     )
 
-  val provisionService: ProvisionService[F] = new ProvisionServiceImpl[F](
+  val reader: AppContext[F] = AppContext[F](
+    appConfig,
+    sentryClient,
     ldapClient,
     hdfsClient,
-    hiveService,
     yarnClient,
-    yarnRepository,
+    kafkaClient,
+    metaTransactor,
     hiveDatabaseRepository,
+    hiveGrantRepository,
     ldapRepository,
     memberRepository,
-    metaTransactor
-  )
+    yarnRepository,
+    complianceRepository,
+    workspaceRepository,
+    topicRepository,
+    topicGrantRepository,
+    applicationRepository)
 
   val workspaceService: WorkspaceService[F] =
     new WorkspaceServiceImpl[F](
@@ -76,7 +66,15 @@ trait ServiceModule[F[_]] {
       complianceRepository,
       approvalRepository,
       metaTransactor,
-      provisionService,
-      memberRepository
+      memberRepository,
+      topicRepository,
+      applicationRepository,
+      reader
     )
+
+  val kafkaService: KafkaService[F] =
+    new KafkaServiceImpl[F](reader)
+
+  val applicationService: ApplicationService[F] =
+    new ApplicationServiceImpl[F](reader)
 }

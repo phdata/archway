@@ -76,7 +76,9 @@ object Generator {
           s"user_${input.username}",
           s"${appConfig.workspaces.user.root}/${input.username}/db",
           appConfig.workspaces.user.defaultSize,
-          LDAPRegistration(s"cn=user_${input.username},${appConfig.ldap.groupPath}", s"user_${input.username}", s"role_user_${input.username}"))))
+          LDAPRegistration(s"cn=user_${input.username},${appConfig.ldap.groupPath}", s"user_${input.username}", s"role_user_${input.username}"),
+          None
+        )))
       }
       val afterProcessing = (input.memory |+| input.cores).fold(afterDisk) { _ =>
         afterDisk.copy(processing = List(Yarn(
@@ -105,7 +107,15 @@ object Generator {
           s"sw_$generatedName",
           s"${appConfig.workspaces.sharedWorkspace.root}/$generatedName",
           appConfig.workspaces.sharedWorkspace.defaultSize,
-          LDAPRegistration(s"cn=edh_sw_$generatedName,${appConfig.ldap.groupPath}", s"edh_sw_$generatedName", s"role_sw_$generatedName"))))
+          LDAPRegistration(
+            s"cn=edh_sw_$generatedName,${appConfig.ldap.groupPath}",
+            s"edh_sw_$generatedName",
+            s"role_sw_$generatedName"),
+          Some(
+            LDAPRegistration(
+              s"cn=edh_sw_$generatedName,${appConfig.ldap.groupPath}_ro",
+              s"edh_sw_${generatedName}_ro",
+              s"role_sw_${generatedName}_ro")))))
       }
       val afterProcessing = (input.memory |+| input.cores).fold(afterDisk) { _ =>
         afterDisk.copy(processing = List(Yarn(
@@ -135,7 +145,14 @@ object Generator {
           s"${dataset}_$generatedName",
           s"${appConfig.workspaces.dataset.root}/$dataset/$generatedName",
           disk,
-          LDAPRegistration(s"cn=edh_${appConfig.cluster.environment}_${dataset}_$generatedName,${appConfig.ldap.groupPath}", s"edh_${appConfig.cluster.environment}_${dataset}_$generatedName", s"role_${appConfig.cluster.environment}_${dataset}_$generatedName"))
+          LDAPRegistration(
+            s"cn=edh_${appConfig.cluster.environment}_${dataset}_$generatedName,${appConfig.ldap.groupPath}",
+            s"edh_${appConfig.cluster.environment}_${dataset}_$generatedName",
+            s"role_${appConfig.cluster.environment}_${dataset}_$generatedName"),
+          Some(LDAPRegistration(
+            s"cn=edh_${appConfig.cluster.environment}_${dataset}_${generatedName}_ro,${appConfig.ldap.groupPath}",
+            s"edh_${appConfig.cluster.environment}_${dataset}_${generatedName}_ro",
+            s"role_${appConfig.cluster.environment}_${dataset}_${generatedName}_ro")))
 
       val afterDisk = input.disk.fold(request) { disk =>
         request.copy(data = List(db(disk, "raw"), db(disk, "staging"), db(disk, "modeled")))

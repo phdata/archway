@@ -1,6 +1,6 @@
 package com.heimdali.services
 
-import cats.data.OptionT
+import cats.data._
 import com.heimdali.models._
 import com.heimdali.repositories._
 
@@ -13,5 +13,7 @@ trait WorkspaceService[F[_]] {
   def create(workspace: WorkspaceRequest): F[WorkspaceRequest]
 
   def approve(id: Long, approval: Approval): F[Approval]
+
+  def provision(workspace: WorkspaceRequest): F[NonEmptyList[String]]
 
 }
