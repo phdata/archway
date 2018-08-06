@@ -24,7 +24,7 @@ package:
   stage: package
   image: openjdk:8-jdk
   script:
-    - cd flyway && sh flyway migrate -url="jdbc:postgresql://postgres:5432/heimdali" -user=postgres -password=postgres
+    - './flyway/flyway migrate -url="jdbc:postgresql://postgres:5432/heimdali" -user=postgres -password=postgres'
     - ./sbt assembly
   artifacts:
     paths:
@@ -39,11 +39,13 @@ publish:
     - "aws s3 mv target/scala-2.12/heimdali-api.jar s3://heimdali-repo"
   
 successful_build:
+  image: appropriate/curl
   stage: notify
   script: 'curl -X POST --data-urlencode "payload={\"channel\": \"#heimdali-builds\", \"username\": \"Heimdali Builder\", \"text\": \"Heimdali API -$CI_PIPELINE_URL build $CI_PIPELINE_IID Succeeded\"}" https://hooks.slack.com/services/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'
   when: on_success
   
 failed_build:
+  image: appropriate/curl
   stage: notify
   script: 'curl -X POST --data-urlencode "payload={\"channel\": \"#heimdali-builds\", \"username\": \"Heimdali Builder\", \"text\": \"Heimdali API -$CI_PIPELINE_URL build $CI_PIPELINE_IID Failed\"}" https://hooks.slack.com/services/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'
   when: on_failure
