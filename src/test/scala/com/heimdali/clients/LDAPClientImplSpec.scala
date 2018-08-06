@@ -32,7 +32,7 @@ class LDAPClientImplSpec
     val maybeUser = client.validateUser(username, password).value.unsafeRunSync()
   }
 
-  it should "create a group" in new Context {
+  ignore should "create a group" in new Context {
     val client = new LDAPClientImpl[IO](config, () => connection) with ActiveDirectoryClient[IO]
 
     val gidNumberEntry = new SearchResultEntry(client.guidNumberDN, List[Attribute](new Attribute("msSFU30MaxGidNumber", "123")).asJava)

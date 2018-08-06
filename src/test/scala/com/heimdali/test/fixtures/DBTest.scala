@@ -8,8 +8,8 @@ trait DBTest extends BeforeAndAfterEach { this: Suite =>
 
   val transactor = Transactor.fromDriverManager[IO](
     "com.mysql.jdbc.Driver",
-    "jdbc:mysql://mysql:3306/heimdali",
-    "root",
-    "my-secret-pw"
+    "jdbc:postgresql://localhost:5432/heimdali",
+    "postgres",
+    "postgres"
   )
 }

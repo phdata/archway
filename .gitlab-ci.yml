@@ -1,6 +1,5 @@
 variables:
-  MYSQL_DATABASE: heimdali
-  MYSQL_ROOT_PASSWORD: my-secret-pw
+  POSTGRES_DB: heimdali
   LDAP_DOMAIN: jotunn.io
   LDAP_READONLY: "true"
   AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
@@ -19,13 +18,13 @@ stages:
 
 package:
   services:
-    - mysql:5
+    - postgres:9
     - name: registry.gitlab.com/jotunnllc/heimdali/heimdali-api/openldap
       alias: ldap
   stage: package
-  image: registry.gitlab.com/jotunnllc/heimdali/heimdali-api/jdk-mysql
+  image: openjdk:8-jdk
   script:
-    - "mysql -h mysql --password=my-secret-pw < ./src/main/resources/db/migration/V1__*.sql"
+    - cd flyway && ./flyway migrate -url="jdbc:postgresql://postgres:5432/heimdali" -user=postgres -password=postgres
     - ./sbt assembly
   artifacts:
     paths:
