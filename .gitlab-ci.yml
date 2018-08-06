@@ -24,7 +24,7 @@ package:
   stage: package
   image: openjdk:8-jdk
   script:
-    - cd flyway && ./flyway migrate -url="jdbc:postgresql://postgres:5432/heimdali" -user=postgres -password=postgres
+    - cd flyway && sh flyway migrate -url="jdbc:postgresql://postgres:5432/heimdali" -user=postgres -password=postgres
     - ./sbt assembly
   artifacts:
     paths:
