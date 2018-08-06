@@ -43,8 +43,8 @@ libraryDependencies ++= Seq(
   "io.circe" %% "circe-generic-extras" % circeVersion,
   "io.circe" %% "circe-optics" % circeVersion,
   "io.circe" %% "circe-java8" % circeVersion,
-  "javax.jms" % "jms" % "1.1",
-  "org.apache.kafka" %% "kafka" % "0.10.1.1",
+  ("org.apache.kafka" %% "kafka" % "0.10.1.1")
+    .exclude("org.slf4j", "slf4j-log4j12"),
   ("com.pauldijou" %% "jwt-core" % "0.14.1")
     .exclude("org.bouncycastle", "bcpkix-jdk15on"),
   ("com.pauldijou" %% "jwt-circe" % "0.14.1")
