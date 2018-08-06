@@ -108,14 +108,16 @@ package object fixtures {
        |  ],
        |  "data" : [
        |    {
-       |      "id" : "${id}",
+       |      "id" : $id,
        |      "name" : "${savedHive.name}",
        |      "location" : "${savedHive.location}",
        |      "size_in_gb" : ${savedHive.sizeInGB},
        |      "managing_group" : {
-       |        "common_name" : "${savedLDAP.commonName}",
-       |        "distinguished_name" : "${savedLDAP.distinguishedName}",
-       |        "sentry_role" : "${savedLDAP.sentryRole}"
+       |        "group": {
+       |          "common_name" : "${savedLDAP.commonName}",
+       |          "distinguished_name" : "${savedLDAP.distinguishedName}",
+       |          "sentry_role" : "${savedLDAP.sentryRole}"
+       |        }
        |      }
        |    }
        |  ],
