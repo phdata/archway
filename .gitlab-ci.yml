@@ -6,15 +6,8 @@ variables:
   AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
   AWS_DEFAULT_REGION: $AWS_DEFAULT_REGION
 
-cache:
-  paths:
-    - /root/.ivy
-    - /root/.sbt
-
 stages:
   - package
-  - publish
-  - notify
 
 package:
   services:
@@ -23,6 +16,10 @@ package:
       alias: ldap
   stage: package
   image: openjdk:8-jdk
+  cache:
+    paths:
+      - /root/.ivy
+      - /root/.sbt
   script:
     - './flyway/flyway migrate -url="jdbc:postgresql://postgres:5432/heimdali" -user=postgres -password=postgres'
     - ./sbt assembly
