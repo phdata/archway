@@ -24,9 +24,6 @@ publish:
     paths:
       - heimdali-ui.tar
     expire_in: 1 week
-  only:
-    variables:
-      - $VERSION_NUMBER
   script:
     - tar cvf heimdali-ui.tar build
 
