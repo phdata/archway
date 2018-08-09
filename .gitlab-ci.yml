@@ -20,6 +20,9 @@ publish:
   stage: publish
   dependencies:
     - build
+  only:
+    variables:
+      - $VERSION_NUMBER
   artifacts:
     paths:
       - heimdali-ui.tar
