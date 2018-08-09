@@ -26,17 +26,7 @@ package:
   script:
     - './flyway/flyway migrate -url="jdbc:postgresql://postgres:5432/heimdali" -user=postgres -password=postgres'
     - ./sbt assembly
-  artifacts:
-    paths:
-      - target/scala-2.12/heimdali-api.jar
-
-publish:
-  stage: publish
-  image: garland/aws-cli-docker
-  dependencies:
-    - package
-  script:
-    - "aws s3 mv target/scala-2.12/heimdali-api.jar s3://heimdali-repo"
+    - scp -i /srv/gitlab-runner/ssh/id_rsa target/scala-2.12/heimdali-api.jar ci@10.138.252.110:/srv/ci/builds/heimdali-api-${CI_COMMIT_TAG}.jar
   
 successful_build:
   image: appropriate/curl
