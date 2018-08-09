@@ -1,23 +1,17 @@
 import React from 'react';
-import { push } from 'react-router-redux';
 import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
-import { Row, Col, Icon } from 'antd';
+import { Icon } from 'antd';
 
 const serviceColor = (service) => {
   switch (service && service.status) {
     case 'GOOD_HEALTH':
       return '#43AA8B'
-      break;
     case 'CONCERNING_HEALTH':
       return '#FF6F59'
-      break;
     case 'BAD_HEALTH':
       return '#DB504A'
-      break;
     default:
       return '#aaa'
-      break;
   }
 }
 

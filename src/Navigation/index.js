@@ -1,7 +1,6 @@
 import React from 'react';
 import { Layout, Menu, Icon } from 'antd';
 import { withRouter, NavLink } from 'react-router-dom';
-import { connect } from 'react-redux';
 
 import logo from '../Common/white_logo_transparent.png';
 import Profile from './Profile';
@@ -12,7 +11,7 @@ const { Sider } = Layout;
 
 const Navigation = ({ location }) => (
   <Sider width={250} style={{ overflow: 'auto', height: '100vh', position: 'fixed', left: 0 }}>
-    <img src={logo} style={{ padding: 25, width: '100%' }} />
+    <img src={logo} style={{ padding: 25, width: '100%' }} alt="Heimdali Logo" />
     <Profile />
     <Menu style={{ marginTop: 25 }} selectedKeys={[location.pathname]} theme="dark" mode="inline">
       <Menu.Item key="/home">

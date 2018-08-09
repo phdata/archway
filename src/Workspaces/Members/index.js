@@ -1,14 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import {
-  Spin,
   Row,
   Col,
   Icon,
-  Button,
-  Tabs,
-  Tag,
-  Menu,
   List,
   Input,
   Form,
@@ -65,7 +60,7 @@ const WorkspaceArea = ({ roleChanged, label, workspace, member, area, readonlyAl
   <div>
     <h3>{label}</h3>
     <hr />
-    {workspace[area].length == 0 && (
+    {workspace[area].length === 0 && (
       <div style={{ marginBottom: 25 }}>
         Nothing here yet...
       </div>
@@ -143,9 +138,7 @@ class Members extends Component {
       newMembers,
       selectedUser,
 
-      getMembers,
       memberFilterChanged,
-      newMemberSelected,
       existingMemberSelected,
       roleChanged,
     } = this.props;

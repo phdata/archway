@@ -6,7 +6,6 @@ import {
   Input,
   Select,
   Button,
-  List,
   Tabs,
 } from 'antd';
 import { connect } from 'react-redux';
@@ -100,15 +99,15 @@ const TopicItem = ({ topic }) => {
 class Topics extends Component {
 
   render() {
-    const { topics, activeWorkspace, topicForm, topicFormChanged, createTopic, creating, } = this.props;
+    const { activeWorkspace, topicForm, topicFormChanged, createTopic, creating, } = this.props;
     topicFormChanged({ database: { value: activeWorkspace.data[0].name } });
     return (
       <Row>
         <Col span={16}>
-          {activeWorkspace.topics.length == 0 && (
+          {activeWorkspace.topics.length === 0 && (
             <h2>No topics yet. Create one using the form to the right.</h2>
           )}
-          {activeWorkspace.topics.length == 1 && <TopicItem topic={activeWorkspace.topics[0]} />}
+          {activeWorkspace.topics.length === 1 && <TopicItem topic={activeWorkspace.topics[0]} />}
           {activeWorkspace.topics.length > 1 && (
             <Tabs>
               {activeWorkspace.topics.map(topic => (

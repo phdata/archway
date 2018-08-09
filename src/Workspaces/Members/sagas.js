@@ -35,8 +35,9 @@ function* memberListRequested() {
 function* updateFilter({ filter }) {
   const existingMembers = yield select(s => s.workspaces.members.existingMembers);
   let filtered = existingMembers.list;
-  if (filter && filter !== '')
+  if (filter && filter !== '') {
     filtered = existingMembers.search(filter);
+  }
   yield put(setFilteredList(filtered));
 }
 
@@ -45,11 +46,11 @@ function* filterChange() {
 }
 
 function* changeRole({ username, resource, resourceId, oldRole, newRole }) {
-  if (oldRole != newRole) {
+  if (oldRole !== newRole) {
     const token = yield select(s => s.auth.token);
     const id = yield select(s => s.workspaces.details.activeWorkspace.id);
 
-    if (newRole != 'none') {
+    if (newRole !== 'none') {
       const newMember = yield call(Api.newWorkspaceMember, token, id, resource, resourceId, newRole, username);
       yield put(existingMemberSelected(newMember));
     }

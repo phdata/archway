@@ -4,10 +4,6 @@ import {
   APPLICATION_CREATED,
 } from './actions';
 
-import {
-  SET_WORKSPACE,
-} from '../WorkspaceDetails/actions';
-
 const initialState = {
   applicationForm: {},
   creating: false,

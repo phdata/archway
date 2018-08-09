@@ -90,7 +90,7 @@ const flex = {
   display: 'flex',
   flexDirection: 'column',
   flex: 1,
-}
+};
 
 const Provisions = ({ label, items, displayField }) => (
   <div>
@@ -103,7 +103,7 @@ const Provisions = ({ label, items, displayField }) => (
       ))}
     </ul>
   </div>
-)
+);
 
 const GeneratedWorkspace = ({ workspace }) => (
   <div style={{ ...flex, alignItems: 'center' }}>
@@ -113,15 +113,13 @@ const GeneratedWorkspace = ({ workspace }) => (
 );
 
 class Request extends Component {
-
   componentDidMount() {
-    this.props.setRequestType("simple");
+    this.props.setRequestType('simple');
   }
 
   render() {
     const {
       setRequestType,
-      requestForm,
       pendingRequest,
       pendingWorkspace,
       requestChanged,
@@ -159,13 +157,10 @@ class Request extends Component {
       </div>
     );
   }
-
 }
 
-export default connect(
-  state => state.workspaces.request, {
-    setRequestType,
-    requestChanged,
-    workspaceRequested,
-  },
-)(Request);
+export default connect(state => state.workspaces.request, {
+  setRequestType,
+  requestChanged,
+  workspaceRequested,
+})(Request);

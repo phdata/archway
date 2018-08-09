@@ -1,6 +1,5 @@
 import React from 'react';
-import { connect } from 'react-redux';
-import { List, Row, Col, Form, Select, Input, Tabs, Avatar, Icon, Button, Popconfirm } from 'antd';
+import { Row, Col, Tabs } from 'antd';
 import PropTypes from 'prop-types';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { solarizedDark } from 'react-syntax-highlighter/styles/hljs';
@@ -57,7 +56,7 @@ const DatabaseItem = ({ database: { name, size_in_gb, location }, cluster }) => 
 )
 
 const DBDisplay = ({ workspace, cluster }) => {
-  if (workspace.data.length == 1)
+  if (workspace.data.length === 1)
     return <DatabaseItem database={workspace.data[0]} cluster={cluster} />;
   return (
     <Tabs animated={false}>

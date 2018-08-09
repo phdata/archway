@@ -2,8 +2,7 @@ import React from 'react';
 import { ConnectedRouter } from 'react-router-redux';
 import { Route, Redirect } from 'react-router';
 import PropTypes from 'prop-types';
-import { Layout, Menu } from 'antd';
-import { NavLink } from 'react-router-dom';
+import { Layout } from 'antd';
 import './less/index.css';
 
 import Home from './Home';
@@ -12,7 +11,7 @@ import WorkspaceDetails from './Workspaces/WorkspaceDetails';
 import Request from './Workspaces/Request';
 import Navigation from './Navigation';
 
-const { Header, Content, Footer, Sider } = Layout;
+const { Content, Footer } = Layout;
 
 const Main = ({
   history,

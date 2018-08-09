@@ -4,10 +4,6 @@ import {
   TOPIC_CREATED,
 } from './actions';
 
-import {
-  SET_WORKSPACE,
-} from '../WorkspaceDetails/actions';
-
 const initialState = {
   topicForm: {},
   creating: false,

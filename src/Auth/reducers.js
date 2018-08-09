@@ -6,7 +6,6 @@ import {
   TOKEN_NOT_AVAILABLE,
   PROFILE_READY,
   LOGIN_FIELD_CHANGED,
-  SET_FILTERED_LIST,
 } from './actions';
 
 const initialState = {
@@ -49,7 +48,7 @@ const auth = (state = initialState, action) => {
       };
     case PROFILE_READY:
       action.profile.initials =
-                action.profile.name.split(' ').map(s => s.charAt(0));
+        action.profile.name.split(' ').map(s => s.charAt(0));
       return {
         ...state,
         profile: action.profile,

@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Button, Icon, List, Tabs, Avatar, Input, Form } from 'antd';
+import { Button, List, Avatar, Input, Form } from 'antd';
 import { connect } from 'react-redux';
 import TimeAgo from 'react-timeago';
 import { push } from 'react-router-redux'

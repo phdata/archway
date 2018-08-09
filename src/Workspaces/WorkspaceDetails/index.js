@@ -1,16 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Spin, Row, Col, Icon, Button, Tabs, Tag, Menu, List, Input, Form, Avatar } from 'antd';
+import { Spin, Icon, Tabs, } from 'antd';
 
 import DBDisplay from '../DBDisplay';
 import ProcessingDisplay from '../ProcessingDisplay';
-import ValueDisplay from '../ValueDisplay';
 import Members from '../Members';
 import Topics from '../Topics';
 import Status from '../Status';
 import Applications from '../Applications';
-import { changeDB, approveInfra, approveRisk, getWorkspace } from './actions';
+import { getWorkspace } from './actions';
 
 class WorkspaceDetails extends React.Component {
 

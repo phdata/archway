@@ -1,5 +1,5 @@
 import React from 'react';
-import { Tabs, Row, Col } from 'antd';
+import { Tabs, Row } from 'antd';
 import PropTypes from 'prop-types';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { solarizedDark } from 'react-syntax-highlighter/styles/hljs';
@@ -42,7 +42,7 @@ const ProcessingItem = ({ pool: { pool_name, max_cores, max_memory_in_gb } }) =>
 }
 
 const ProcessingDisplay = ({ activeWorkspace }) => {
-  if (activeWorkspace.processing.length == 1)
+  if (activeWorkspace.processing.length === 1)
     return <ProcessingItem pool={activeWorkspace.processing[0]} />;
   return (
     <Tabs animated={false}>

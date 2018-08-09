@@ -1,18 +1,10 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import {
-  Spin,
   Row,
   Col,
   Icon,
   Button,
-  Tabs,
-  Tag,
-  Menu,
-  List,
-  Input,
-  Form,
-  Avatar
 } from 'antd';
 
 import Panel from '../Panel';
