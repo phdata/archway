@@ -5,30 +5,32 @@ cache:
     - node_modules
 
 stages:
-  - package
+  - build
   - publish
   - notify
 
 package:
-  stage: package
+  stage: build
+  artifacts:
+    untracked: true
   script:
     - npm i
     - npm run-script build
 
 publish:
   stage: publish
+  dependencies:
+    - package
   script:
     - tar cvf heimdali-ui.tar build
     - scp -o StrictHostKeyChecking=no -i /srv/gitlab-runner/ssh/id_rsa heimdali-ui.jar ci@10.138.252.110:/srv/ci/builds/ui/heimdali-ui-${VERSION_NUMBER}.jar
 
 successful_build:
-  image: appropriate/curl
   stage: notify
   script: 'curl -X POST --data-urlencode "payload={\"channel\": \"#heimdali-builds\", \"username\": \"Heimdali Builder\", \"text\": \"Heimdali UI -$CI_PIPELINE_URL build $CI_PIPELINE_IID Succeeded\"}" https://hooks.slack.com/services/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'
   when: on_success
 
 failed_build:
-  image: appropriate/curl
   stage: notify
   script: 'curl -X POST --data-urlencode "payload={\"channel\": \"#heimdali-builds\", \"username\": \"Heimdali Builder\", \"text\": \"Heimdali UI -$CI_PIPELINE_URL build $CI_PIPELINE_IID Failed\"}" https://hooks.slack.com/services/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'
   when: on_failure
