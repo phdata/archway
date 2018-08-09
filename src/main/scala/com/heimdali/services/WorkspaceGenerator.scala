@@ -113,7 +113,7 @@ object Generator {
             s"role_sw_$generatedName"),
           Some(
             LDAPRegistration(
-              s"cn=edh_sw_$generatedName,${appConfig.ldap.groupPath}_ro",
+              s"cn=edh_sw_${generatedName}_ro,${appConfig.ldap.groupPath}",
               s"edh_sw_${generatedName}_ro",
               s"role_sw_${generatedName}_ro")))))
       }

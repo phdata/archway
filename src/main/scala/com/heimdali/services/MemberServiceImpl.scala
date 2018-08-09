@@ -22,7 +22,7 @@ class MemberServiceImpl[F[_]](memberRepository: MemberRepository,
     MemberRights(
       memberRightsRecord.name,
       memberRightsRecord.id,
-      DatabaseRole.unapply(memberRightsRecord.role).get)
+      memberRightsRecord.role)
 
   def convertRecord(memberRightsRecord: List[MemberRightsRecord]): List[WorkspaceMemberEntry] =
     memberRightsRecord.groupBy(_.username).map { e =>

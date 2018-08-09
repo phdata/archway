@@ -44,15 +44,18 @@ class WorkspaceControllerSpec
   }
 
   it should "list all members" in new Http4sClientDsl[IO] with Context {
-    memberService.members _ expects(123, "sesame", Manager) returning IO.pure(List(WorkspaceMember("johndoe", Some(Instant.now(clock)))))
+    memberService.members _ expects id returning IO.pure(List(WorkspaceMemberEntry("johndoe", List.empty, List.empty, List.empty, List.empty)))
 
-    val response = restApi.route.orNotFound.run(GET(uri("/123/sesame/managers")).unsafeRunSync())
+    val response = restApi.route.orNotFound.run(GET(uri("/123/members")).unsafeRunSync())
     val Right(json) = parse(
       s"""
         | [
         |   {
         |     "username": "johndoe",
-        |     "created": "${Instant.now(clock)}"
+        |     "data": {},
+        |     "processing": {},
+        |     "topics": {},
+        |     "applications": {}
         |   }
         | ]
       """.stripMargin)

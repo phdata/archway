@@ -7,9 +7,9 @@ import org.scalatest.{BeforeAndAfterEach, Suite}
 trait DBTest extends BeforeAndAfterEach { this: Suite =>
 
   val transactor = Transactor.fromDriverManager[IO](
-    "org.postgresql.Driver",
-    "jdbc:postgresql://localhost:5432/heimdali",
+    "com.mysql.jdbc.Driver",
+    "jdbc:postgresql://postgres:5432/heimdali",
     "postgres",
-    ""
+    "postgres"
   )
 }

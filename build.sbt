@@ -8,6 +8,8 @@ resolvers += "Cloudera" at "https://repository.cloudera.com/artifactory/cloudera
 
 resolvers += "Apache" at "http://repo.spring.io/plugins-release/"
 
+fullResolvers := ("Jboss" at "https://repository.jboss.org/maven2") +: resolvers.value
+
 addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full)
 
 val cdhVersion = "cdh5.13.0"
@@ -41,27 +43,30 @@ libraryDependencies ++= Seq(
   "io.circe" %% "circe-generic-extras" % circeVersion,
   "io.circe" %% "circe-optics" % circeVersion,
   "io.circe" %% "circe-java8" % circeVersion,
-  "org.apache.kafka" %% "kafka" % "0.10.1.1",
+  ("org.apache.kafka" %% "kafka" % "0.10.1.1")
+    .exclude("org.slf4j", "slf4j-log4j12")
+    .exclude("com.sun.jmx", "jmxri")
+    .exclude("com.sun.jdmk", "jmxtools"),
   ("com.pauldijou" %% "jwt-core" % "0.14.1")
     .exclude("org.bouncycastle", "bcpkix-jdk15on"),
   ("com.pauldijou" %% "jwt-circe" % "0.14.1")
     .exclude("org.bouncycastle", "bcpkix-jdk15on"),
   "com.github.mpilquist" %% "simulacrum" % "0.12.0",
-  "org.bouncycastle" % "bcpkix-jdk15on" % "1.57", // % "provided",
+  "org.bouncycastle" % "bcpkix-jdk15on" % "1.57" % "provided",
   "com.unboundid" % "unboundid-ldapsdk" % "4.0.0",
   "org.flywaydb" % "flyway-core" % "4.2.0",
-  "postgresql" % "postgresql" % "9.0-801.jdbc4", // % "provided",
-  "mysql" % "mysql-connector-java" % "6.0.6", // % "provided",
-  "org.apache.sentry" % "sentry-provider-db" % sentryVersion, // % "provided",
-  "org.apache.hadoop" % "hadoop-client" % hadoopVersion, // % "provided",
-  "org.apache.hive" % "hive-jdbc" % hiveVersion, // % "provided",
+  "postgresql" % "postgresql" % "9.0-801.jdbc4" % "provided",
+  "mysql" % "mysql-connector-java" % "6.0.6" % "provided",
+  "org.apache.sentry" % "sentry-provider-db" % sentryVersion % "provided",
+  "org.apache.hadoop" % "hadoop-client" % hadoopVersion % "provided",
+  "org.apache.hive" % "hive-jdbc" % hiveVersion % "provided",
   "org.apache.hadoop" % "hadoop-hdfs" % hadoopVersion % Test classifier "" classifier "tests",
   "org.apache.hadoop" % "hadoop-common" % hadoopVersion % Test classifier "" classifier "tests",
   "org.apache.hadoop" % "hadoop-client" % hadoopVersion % Test classifier "" classifier "tests",
   "org.apache.hadoop" % "hadoop-minicluster" % hadoopVersion % Test,
   "org.mockito" % "mockito-core" % "2.18.3" % Test,
   "org.scalamock" %% "scalamock-scalatest-support" % "3.6.0" % Test,
-  "org.powermock" % "powermock-core" % "2.0.0-beta.5" % Test
+  "org.powermock" % "powermock-core" % "1.7.4" % Test
 )
 
 assemblyJarName in assembly := "heimdali-api.jar"
@@ -86,8 +91,6 @@ javaOptions in reStart := Seq(
   "-Dhadoop.home.dir=$PWD",
   s"-Djava.security.krb5.conf=${baseDirectory.value}/phdata-conf/krb5.conf"
 )
-
-unmanagedClasspath in Runtime += baseDirectory.value / "phdata-conf"
 
 envVars in reStart := Map(
   "HEIMDALI_LDAP_GROUP_PATH" -> "ou=groups,ou=Heimdali,DC=phdata,DC=io",
