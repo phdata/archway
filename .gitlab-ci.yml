@@ -1,22 +1,48 @@
+image: java:8-jdk
+
 stages:
-  - package
+  - build
+  - publish
   - notify
 
-package:
-  stage: package
-  image: java:8-jdk
+build_ui:
+  stage: build
   only:
     - tags
+  script:
+    - "curl --request POST --form token=368a051ccbbf7ddb7e6b972f347947 --form ref=master --form variables[VERSION_NUMBER]=$CI_COMMIT_TAG https://gitlab.com/api/v4/projects/6757312/ref/REF_NAME/trigger/pipeline"
+
+build_api:
+  stage: build
+  only:
+    - tags
+  script:
+    - "curl --request POST --form token=a04baacc17aabcbcb8353c3c448def --form ref=master --form variables[VERSION_NUMBER]=$CI_COMMIT_TAG https://gitlab.com/api/v4/projects/6757317/ref/REF_NAME/trigger/pipeline"
+
+build_self:
+  stage: build
+  image: registry.gitlab.com/jotunnllc/heimdali/heimdali-csd/cm-validator
+  artifacts:
+    untracked: true
   script:
     - mkdir build
     - cp -R meta build/
     - sed -i "s/0.1.5/${CI_COMMIT_TAG}/g" build/meta/parcel.json
     - java -jar /usr/src/validator.jar -p meta/parcel.json
     - java -jar /usr/src/validator.jar -r meta/permissions.json
+
+publish:
+  stage: publish
+  dependencies:
+    - package
+  only:
+    - tags
+  script:
     - mkdir -p build/usr/lib/heimdali-api
     - chown -R 10000:10000 build
     - mv build HEIMDALI-${CI_COMMIT_TAG}
     - tar cvf HEIMDALI-${CI_COMMIT_TAG}-el7.parcel HEIMDALI-${CI_COMMIT_TAG}
+    - scp -o StrictHostKeyChecking=no -i /srv/gitlab-runner/ssh/id_rsa HEIMDALI-${CI_COMMIT_TAG}-el7.parcel ci@10.138.252.110:/srv/ci/builds/parcels/
 
 successful_build:
   image: appropriate/curl
