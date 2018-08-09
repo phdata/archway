@@ -1,6 +1,6 @@
 stages:
   - package
-  - notifyadd
+  - notify
 
 package:
   stage: package
