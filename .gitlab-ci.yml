@@ -11,7 +11,7 @@ build_ui:
   only:
     - tags
   script:
-    - trigger -a $API_TOKEN -p 368a051ccbbf7ddb7e6b972f347947 -e VERSION_NUMBER=$CI_COMMIT_TAG -t master 6757312
+    - trigger -a zX6Uuqq2HHNSeYtKcK1b -p 368a051ccbbf7ddb7e6b972f347947 -e VERSION_NUMBER=$CI_COMMIT_TAG -t master 6757312
 
 build_api:
   stage: build
@@ -19,7 +19,7 @@ build_api:
   only:
     - tags
   script:
-    - trigger -a $API_TOKEN -p a04baacc17aabcbcb8353c3c448def -e VERSION_NUMBER=$CI_COMMIT_TAG -t master 6757317
+    - trigger -a zX6Uuqq2HHNSeYtKcK1b -p a04baacc17aabcbcb8353c3c448def -e VERSION_NUMBER=$CI_COMMIT_TAG -t master 6757317
 
 build_self:
   stage: build
