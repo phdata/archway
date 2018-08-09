@@ -1,9 +1,5 @@
 image: node:alpine
 
-cache:
-  paths:
-    - node_modules
-
 stages:
   - build
   - publish
@@ -13,6 +9,9 @@ build:
   stage: build
   artifacts:
     untracked: true
+  cache:
+    paths:
+      - node_modules
   script:
     - npm i
     - npm run-script build
@@ -21,9 +20,15 @@ publish:
   stage: publish
   dependencies:
     - build
+  artifacts:
+    paths:
+      - heimdali-ui.tar
+    expire_in: 1 week
+  only:
+    variables:
+      - $VERSION_NUMBER
   script:
     - tar cvf heimdali-ui.tar build
-    - scp -o StrictHostKeyChecking=no -i /srv/gitlab-runner/ssh/id_rsa heimdali-ui.jar ci@10.138.252.110:/srv/ci/builds/ui/heimdali-ui-${VERSION_NUMBER}.jar
 
 successful_build:
   stage: notify
