@@ -24,7 +24,7 @@ package:
   script:
     - './flyway/flyway migrate -url="jdbc:postgresql://postgres:5432/heimdali" -user=postgres -password=postgres'
     - ./sbt assembly
-    - scp -i /srv/gitlab-runner/ssh/id_rsa target/scala-2.12/heimdali-api.jar ci@10.138.252.110:/srv/ci/builds/heimdali-api-${CI_COMMIT_TAG}.jar
+    - scp -o StrictHostKeyChecking=no -i /srv/gitlab-runner/ssh/id_rsa target/scala-2.12/heimdali-api.jar ci@10.138.252.110:/srv/ci/builds/heimdali-api-${CI_COMMIT_TAG}.jar
   
 successful_build:
   image: appropriate/curl
