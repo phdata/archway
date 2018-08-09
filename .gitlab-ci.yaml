@@ -1,18 +1,25 @@
+image: node:alpine
+
+cache:
+  paths:
+    - node_modules
+
 stages:
   - package
+  - publish
   - notify
 
 package:
   stage: package
-  image: node:alpine
-  cache:
-    paths:
-      - node_modules
   script:
     - npm i
     - npm run-script build
+
+publish:
+  stage: publish
+  script:
     - tar cvf heimdali-ui.tar build
-    - scp -o StrictHostKeyChecking=no -i /srv/gitlab-runner/ssh/id_rsa heimdali-ui.jar ci@10.138.252.110:/srv/ci/builds/ui/heimdali-ui-${CI_COMMIT_TAG}.jar
+    - scp -o StrictHostKeyChecking=no -i /srv/gitlab-runner/ssh/id_rsa heimdali-ui.jar ci@10.138.252.110:/srv/ci/builds/ui/heimdali-ui-${VERSION_NUMBER}.jar
 
 successful_build:
   image: appropriate/curl
