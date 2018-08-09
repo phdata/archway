@@ -125,7 +125,7 @@ class MemberRepositoryImpl extends MemberRepository {
         """
 
     def list(workspaceRequestId: Long): Query0[MemberRightsRecord] =
-      (listSelect ++ whereAnd(fr"workspace_request_id = $workspaceRequestId")).query
+      (listSelect ++ whereAnd(fr"workspace_request_id = $workspaceRequestId")).query[MemberRightsRecord]
 
     def create(username: String, ldapRegistrationId: Long): Update0 =
       sql"""

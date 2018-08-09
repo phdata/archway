@@ -4,9 +4,7 @@
             <pattern>[%highlight(%-5level)] %cyan(%logger{5}): %msg %n</pattern>
         </encoder>
     </appender>
-    <logger name="org.flywaydb" level="DEBUG"/>
-    <logger name="com.typesafe" level="DEBUG"/>
-    <root level="DEBUG">
+    <root level="INFO">
         <appender-ref ref="STDOUT" />
     </root>
 </configuration>

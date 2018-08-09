@@ -1,3 +1,0 @@
-# Packages for Cloudera's Distribution for Hadoop, Version 5, on Debian 7.0 amd64
-deb http://archive.cloudera.com/cdh5/debian/jessie/amd64/cdh jessie-cdh5 contrib
-deb-src http://archive.cloudera.com/cdh5/debian/jessie/amd64/cdh jessie-cdh5 contrib

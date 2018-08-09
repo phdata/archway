@@ -1,9 +1,12 @@
 package com.heimdali.repositories
 
 import cats.Show
+import cats.implicits._
 import cats.data.OptionT
 import com.heimdali.models.LDAPRegistration
 import doobie.free.connection.ConnectionIO
+import doobie.util.composite.Composite
+import doobie.util.meta.Meta
 
 trait LDAPRepository {
 
@@ -37,6 +40,8 @@ object DatabaseRole {
       case "readonly" => Some(ReadOnly)
       case _ => None
     }
+
+  implicit val composite: Meta[DatabaseRole] = Meta[String].xmap(unapply(_).get, _.show)
 }
 
 case object Manager extends DatabaseRole
