@@ -25,8 +25,8 @@ build_self:
   artifacts:
     untracked: true
   script:
-    - java -jar /usr/src/validator.jar -p meta/parcel.json
-    - java -jar /usr/src/validator.jar -r meta/permissions.json
+    - java -jar /usr/src/validator.jar -p $PWD/meta/parcel.json
+    - java -jar /usr/src/validator.jar -r $PWD/meta/permissions.json
 
 publish:
   stage: publish
