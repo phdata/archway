@@ -9,7 +9,7 @@ stages:
   - publish
   - notify
 
-package:
+build:
   stage: build
   artifacts:
     untracked: true
@@ -20,7 +20,7 @@ package:
 publish:
   stage: publish
   dependencies:
-    - package
+    - build
   script:
     - tar cvf heimdali-ui.tar build
     - scp -o StrictHostKeyChecking=no -i /srv/gitlab-runner/ssh/id_rsa heimdali-ui.jar ci@10.138.252.110:/srv/ci/builds/ui/heimdali-ui-${VERSION_NUMBER}.jar
