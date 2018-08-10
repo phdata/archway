@@ -23,12 +23,9 @@ publish:
   only:
     variables:
       - $VERSION_NUMBER
-  artifacts:
-    paths:
-      - heimdali-ui.tar
-    expire_in: 1 week
   script:
     - tar cvf heimdali-ui.tar build
+    - scp -o StrictHostKeyChecking=no -i /srv/gitlab-runner/ssh/id_rsa heimdali-ui.tar ci@10.138.252.110:/srv/ci/builds/ui/heimdali-ui-${VERSION_NUMBER}.tar
 
 successful_build:
   image: appropriate/curl
