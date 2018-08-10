@@ -40,8 +40,8 @@ publish:
     - mkdir build
     - cp -R meta build/
     - sed -i "s/0.1.5/${CI_COMMIT_TAG}/g" build/meta/parcel.json
-    - curl -o heimdali-ui.tar https://gitlab.com/jotunnllc/heimdali/heimdali-ui/-/jobs/artifacts/master/raw/heimdali-ui.tar?job=publish
-    - curl -o heimdali-api.jar https://gitlab.com/jotunnllc/heimdali/heimdali-api/-/jobs/artifacts/master/raw/target/scala-2.12/heimdali-api.jar?job=publish
+    - scp -o StrictHostKeyChecking=no -i /srv/gitlab-runner/ssh/id_rsa ci@10.138.252.110:/srv/ci/builds/api/heimdali-api-${CI_COMMIT_TAG}.jar heimdali-api.jar
+    - scp -o StrictHostKeyChecking=no -i /srv/gitlab-runner/ssh/id_rsa ci@10.138.252.110:/srv/ci/builds/ui/heimdali-ui-${CI_COMMIT_TAG}.tar heimdali-ui.tar
     - mkdir -p build/usr/lib/heimdali-api
     - mv heimdali-api.jar build/usr/lib/heimdali-api/heimdali-api.jar
     - tar xvf heimdali-ui.tar
@@ -49,7 +49,7 @@ publish:
     - chown -R 10000:10000 build
     - mv build HEIMDALI-${CI_COMMIT_TAG}
     - tar cvf HEIMDALI-${CI_COMMIT_TAG}-el7.parcel HEIMDALI-${CI_COMMIT_TAG}
-    - scp -o StrictHostKeyChecking=no -i /srv/gitlab-runner/ssh/id_rsa HEIMDALI-${CI_COMMIT_TAG}-el7.parcel ci@10.138.252.110:/srv/ci/builds/parcels/
+    - scp -o StrictHostKeyChecking=no -i /srv/gitlab-runner/ssh/id_rsa HEIMDALI-${CI_COMMIT_TAG}-el7.parcel ci@10.138.252.110:/srv/ci/parcels/
 
 successful_build:
   stage: notify
