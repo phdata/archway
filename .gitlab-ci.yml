@@ -39,6 +39,7 @@ publish:
     - build_self
   only:
     - tags
+  image: registry.gitlab.com/jotunnllc/heimdali/heimdali-parcel/heimdali-deployer
   script:
     - mkdir ready
     - cp -R meta ready/
@@ -52,7 +53,7 @@ publish:
     - chown -R 10000:10000 ready
     - mv ready HEIMDALI-${CI_COMMIT_TAG}
     - tar cvf HEIMDALI-${CI_COMMIT_TAG}-el7.parcel HEIMDALI-${CI_COMMIT_TAG}
-    - scp -o StrictHostKeyChecking=no -i /srv/gitlab-runner/ssh/id_rsa HEIMDALI-${CI_COMMIT_TAG}-el7.parcel ci@10.138.252.110:/srv/ci/parcels/
+    - scp -o StrictHostKeyChecking=no HEIMDALI-${CI_COMMIT_TAG}-el7.parcel ci@10.138.252.110:/srv/ci/parcels/
 
 successful_build:
   stage: notify
