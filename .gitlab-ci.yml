@@ -37,17 +37,17 @@ publish:
   only:
     - tags
   script:
-    - mkdir build
-    - cp -R meta build/
-    - sed -i "s/0.1.5/${CI_COMMIT_TAG}/g" build/meta/parcel.json
-    - scp -o StrictHostKeyChecking=no -i /srv/gitlab-runner/ssh/id_rsa ci@10.138.252.110:/srv/ci/builds/api/heimdali-api-${CI_COMMIT_TAG}.jar heimdali-api.jar
-    - scp -o StrictHostKeyChecking=no -i /srv/gitlab-runner/ssh/id_rsa ci@10.138.252.110:/srv/ci/builds/ui/heimdali-ui-${CI_COMMIT_TAG}.tar heimdali-ui.tar
-    - mkdir -p build/usr/lib/heimdali-api
-    - mv heimdali-api.jar build/usr/lib/heimdali-api/heimdali-api.jar
+    - mkdir ready
+    - cp -R meta ready/
+    - sed -i "s/0.1.5/${CI_COMMIT_TAG}/g" ready/meta/parcel.json
+    - scp -o StrictHostKeyChecking=no -i /srv/gitlab-runner/ssh/id_rsa ci@10.138.252.110:/srv/ci/readys/api/heimdali-api-${CI_COMMIT_TAG}.jar heimdali-api.jar
+    - scp -o StrictHostKeyChecking=no -i /srv/gitlab-runner/ssh/id_rsa ci@10.138.252.110:/srv/ci/readys/ui/heimdali-ui-${CI_COMMIT_TAG}.tar heimdali-ui.tar
+    - mkdir -p ready/usr/lib/heimdali-api
+    - mv heimdali-api.jar ready/usr/lib/heimdali-api/heimdali-api.jar
     - tar xvf heimdali-ui.tar
-    - mv build build/usr/lib/heimdali-ui
-    - chown -R 10000:10000 build
-    - mv build HEIMDALI-${CI_COMMIT_TAG}
+    - mv build ready/usr/lib/heimdali-ui
+    - chown -R 10000:10000 ready
+    - mv ready HEIMDALI-${CI_COMMIT_TAG}
     - tar cvf HEIMDALI-${CI_COMMIT_TAG}-el7.parcel HEIMDALI-${CI_COMMIT_TAG}
     - scp -o StrictHostKeyChecking=no -i /srv/gitlab-runner/ssh/id_rsa HEIMDALI-${CI_COMMIT_TAG}-el7.parcel ci@10.138.252.110:/srv/ci/parcels/
 
