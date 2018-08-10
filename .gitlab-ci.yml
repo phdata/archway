@@ -40,8 +40,8 @@ publish:
     - mkdir ready
     - cp -R meta ready/
     - sed -i "s/0.1.5/${CI_COMMIT_TAG}/g" ready/meta/parcel.json
-    - scp -o StrictHostKeyChecking=no -i /srv/gitlab-runner/ssh/id_rsa ci@10.138.252.110:/srv/ci/readys/api/heimdali-api-${CI_COMMIT_TAG}.jar heimdali-api.jar
-    - scp -o StrictHostKeyChecking=no -i /srv/gitlab-runner/ssh/id_rsa ci@10.138.252.110:/srv/ci/readys/ui/heimdali-ui-${CI_COMMIT_TAG}.tar heimdali-ui.tar
+    - curl -o heimdali-ui.tar https://gitlab.com/jotunnllc/heimdali/heimdali-ui/-/jobs/artifacts/master/raw/heimdali-ui.tar?job=publish&private_token=2CVydF3qPzVXwxL15bnq
+    - curl -o heimdali-api.jar https://gitlab.com/jotunnllc/heimdali/heimdali-api/-/jobs/artifacts/master/raw/target/scala-2.12/heimdali-api.jar?job=publish&private_token=2CVydF3qPzVXwxL15bnq
     - mkdir -p ready/usr/lib/heimdali-api
     - mv heimdali-api.jar ready/usr/lib/heimdali-api/heimdali-api.jar
     - tar xvf heimdali-ui.tar
