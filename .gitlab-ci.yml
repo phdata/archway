@@ -42,7 +42,7 @@ publish:
       - .sbt
   script:
     - ./sbt -ivy ./.ivy -sbt-dir ./.sbt "set test in assembly := {}" assembly
-    - scp -o StrictHostKeyChecking=no -i /srv/gitlab-runner/ssh/id_rsa target/scala-2.12/heimdali-api.jar ci@10.138.252.110:/srv/ci/builds/api/target/scala-2.12/heimdali-api-${VERSION_NUMBER}.jar
+    - scp -o StrictHostKeyChecking=no -i /srv/gitlab-runner/ssh/id_rsa target/scala-2.12/heimdali-api.jar ci@10.138.252.110:/srv/ci/builds/api/heimdali-api-${VERSION_NUMBER}.jar
 
 successful_build:
   stage: notify
