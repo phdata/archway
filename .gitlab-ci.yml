@@ -40,8 +40,8 @@ publish:
     - mkdir build
     - cp -R meta build/
     - sed -i "s/0.1.5/${CI_COMMIT_TAG}/g" build/meta/parcel.json
-    - curl -o heimdali-ui.tar https://gitlab.com/jotunnllc/heimdali/heimdali-ui/-/jobs/artifacts/master/download?job=publish
-    - curl -o heimdali-api.jar https://gitlab.com/jotunnllc/heimdali/heimdali-api/-/jobs/artifacts/master/download?job=publish
+    - curl -o heimdali-ui.tar https://gitlab.com/jotunnllc/heimdali/heimdali-ui/-/jobs/artifacts/master/raw/heimdali-ui.tar?job=publish
+    - curl -o heimdali-api.jar https://gitlab.com/jotunnllc/heimdali/heimdali-api/-/jobs/artifacts/master/raw/target/scala-2.12/heimdali-api.jar?job=publish
     - mkdir -p build/usr/lib/heimdali-api
     - mv heimdali-api.jar build/usr/lib/heimdali-api/heimdali-api.jar
     - tar xvf heimdali-ui.tar
