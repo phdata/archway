@@ -49,10 +49,10 @@ publish:
 
 successful_build:
   stage: notify
-  script: 'curl -X POST --data-urlencode "payload={\"channel\": \"#heimdali-builds\", \"username\": \"Heimdali Builder\", \"text\": \"Heimdali API <${CI_PIPELINE_URL}|build #${CI_PIPELINE_IID}> Succeeded\"}" https://hooks.slack.com/services/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'
+  script: 'curl -X POST --data-urlencode "payload={\"channel\":\"#heimdali-builds\",\"username\":\"Heimdali API\",\"text\":\"Build <$CI_PIPELINE_URL|$CI_PIPELINE_IID> Succeeded\",\"attachments\":[{\"color\":\"good\",\"title\":\"Commit Message\",\"text\":\"$CI_COMMIT_TITLE\"}]}" https://hooks.slack.com/services/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'
   when: on_success
 
 failed_build:
   stage: notify
-  script: 'curl -X POST --data-urlencode "payload={\"channel\": \"#heimdali-builds\", \"username\": \"Heimdali Builder\", \"text\": \"Heimdali API <${CI_PIPELINE_URL}|build #${CI_PIPELINE_IID}> Failed\"}" https://hooks.slack.com/services/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'
+  script: 'curl -X POST --data-urlencode "payload={\"channel\":\"#heimdali-builds\",\"username\":\"Heimdali API\",\"text\":\"Build <$CI_PIPELINE_URL|$CI_PIPELINE_IID> Failed\",\"attachments\":[{\"color\":\"danger\",\"title\":\"Commit Message\",\"text\":\"$CI_COMMIT_TITLE\"}]}" https://hooks.slack.com/services/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'
   when: on_failure
