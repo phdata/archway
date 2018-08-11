@@ -55,12 +55,26 @@ publish:
     - tar cvf HEIMDALI-${CI_COMMIT_TAG}-el7.parcel HEIMDALI-${CI_COMMIT_TAG}
     - scp -i /root/.ssh/id_rsa -o StrictHostKeyChecking=no HEIMDALI-${CI_COMMIT_TAG}-el7.parcel ci@167.99.175.193:/srv/ci/parcels/
 
-successful_build:
+successful_tagged_build:
+  image: appropriate/curl
   stage: notify
-  script: 'curl -X POST --data-urlencode "payload={\"channel\": \"#heimdali-builds\", \"username\": \"Heimdali Builder\", \"text\": \"Heimdali Parcel -$CI_PIPELINE_URL build $CI_PIPELINE_IID Succeeded\"}" https://hooks.slack.com/services/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'
+  script: 'curl -X POST --data-urlencode "payload={\"channel\":\"#heimdali-builds\",\"username\":\"Heimdali Parcel\",\"text\":\"Build <$CI_PIPELINE_URL|$CI_PIPELINE_IID> Succeeded\",\"attachments\":[{\"color\":\"good\",\"title\":\"Commit Message\",\"text\":\"$CI_COMMIT_TITLE\"},{\"color\":\"good\",\"title\":\"Version $CI_COMMIT_TAG Ready\",\"text\":\"http://parcels.jotunn.io\"}]}" https://hooks.slack.com/services/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'
   when: on_success
+  only:
+    variables:
+      - $CI_COMMIT_TAG
+
+successful_build:
+  image: appropriate/curl
+  stage: notify
+  script: 'curl -X POST --data-urlencode "payload={\"channel\":\"#heimdali-builds\",\"username\":\"Heimdali Parcel\",\"text\":\"Build <$CI_PIPELINE_URL|$CI_PIPELINE_IID> Succeeded\",\"attachments\":[{\"color\":\"good\",\"title\":\"Commit Message\",\"text\":\"$CI_COMMIT_TITLE\"}]}" https://hooks.slack.com/services/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'
+  when: on_success
+  except:
+    variables:
+      - $CI_COMMIT_TAG
 
 failed_build:
+  image: appropriate/curl
   stage: notify
-  script: 'curl -X POST --data-urlencode "payload={\"channel\": \"#heimdali-builds\", \"username\": \"Heimdali Builder\", \"text\": \"Heimdali Parcel -$CI_PIPELINE_URL build $CI_PIPELINE_IID Failed\"}" https://hooks.slack.com/services/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'
+  script: 'curl -X POST --data-urlencode "payload={\"channel\":\"#heimdali-builds\",\"username\":\"Heimdali Parcel\",\"text\":\"Build <$CI_PIPELINE_URL|$CI_PIPELINE_IID> Failed\",\"attachments\":[{\"color\":\"danger\",\"title\":\"Commit Message\",\"text\":\"$CI_COMMIT_TITLE\"}]}" https://hooks.slack.com/services/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'
   when: on_failure
