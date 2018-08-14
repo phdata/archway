@@ -60,7 +60,7 @@ class YarnRepositoryImpl(val clock: Clock)
     def complete(id: Long): Update0 =
       sql"""
          update resource_pool
-         set completed = ${Instant.now(clock)}
+         set created = ${Instant.now(clock)}
          where id = $id
          """.update
 

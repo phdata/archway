@@ -119,7 +119,7 @@ envVars in reStart := Map(
 
   "HEIMDALI_REALM" -> "JOTUNN.IO",
 
-  "HEIMDALI_HIVE_URL" -> "jdbc:hive2://master1.jotunn.io:10000/default;ssl=true;principal=hive/_HOST@JOTUNN.IO;",
+  "HEIMDALI_HIVE_URL" -> "jdbc:hive2://master1.jotunn.io:10000/default;principal=hive/_HOST@JOTUNN.IO;",
 
   "HEIMDALI_DB_URL" -> "jdbc:postgresql://localhost/heimdali",
   "HEIMDALI_DB_USER" -> "postgres",
@@ -143,7 +143,7 @@ envVars in reStart := Map(
   "HEIMDALI_YARN_SHARED_MEMORY" -> "1",
   "HEIMDALI_YARN_DATASET_CORES" -> "1",
   "HEIMDALI_YARN_DATASET_MEMORY" -> "1",
-  "HEIMDALI_YARN_USER_PARENTS" -> "root.user",
+  "HEIMDALI_YARN_USER_PARENTS" -> "root.users",
   "HEIMDALI_YARN_SHARED_PARENTS" -> "root",
   "HEIMDALI_YARN_DATASET_PARENTS" -> "root"
 )
