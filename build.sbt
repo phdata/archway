@@ -74,6 +74,13 @@ unmanagedClasspath in Runtime ++= Seq(
   baseDirectory.value / "hive-conf"
 )
 
+assemblyMergeStrategy in assembly := {
+  case PathList(ps @ _*) if ps.last endsWith "-site.xml" => MergeStrategy.discard
+  case x =>
+    val oldStrategy = (assemblyMergeStrategy in assembly).value
+    oldStrategy(x)
+}
+
 assemblyJarName in assembly := "heimdali-api.jar"
 
 parallelExecution in Test := false
