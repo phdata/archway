@@ -152,5 +152,7 @@ envVars in reStart := Map(
   "HEIMDALI_YARN_DATASET_MEMORY" -> "1",
   "HEIMDALI_YARN_USER_PARENTS" -> "root.users",
   "HEIMDALI_YARN_SHARED_PARENTS" -> "root",
-  "HEIMDALI_YARN_DATASET_PARENTS" -> "root"
+  "HEIMDALI_YARN_DATASET_PARENTS" -> "root",
+
+  "ZK_QUORUM" -> "master1.jotunn.io:2181"
 )

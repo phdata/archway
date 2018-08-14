@@ -53,11 +53,14 @@ package object config {
 
   case class DatabaseConfig(meta: DatabaseConfigItem, hive: DatabaseConfigItem)
 
+  case class KafkaConfig(zookeeperConnect: String)
+
   case class AppConfig(rest: RestConfig,
                        cluster: ClusterConfig,
                        approvers: ApprovalConfig,
                        ldap: LDAPConfig,
                        db: DatabaseConfig,
-                       workspaces: WorkspaceConfig)
+                       workspaces: WorkspaceConfig,
+                       kafka: KafkaConfig)
 
 }

@@ -27,13 +27,10 @@ trait ConfigurationModule {
   private implicit def hint[T] = ProductHint[T](ConfigFieldMapping(CamelCase, CamelCase))
   val Right(appConfig) = pureconfig.loadConfig[AppConfig]
 
-  val zkConnectString: String =
-    "master1.jotunn.io:2181"
-
   val sessionTimeOutInMs = 15 * 1000; // 15 secs
   val connectionTimeOutInMs = 10 * 1000; // 10 secs
-  val zkClient = new ZkClient(zkConnectString, sessionTimeOutInMs, connectionTimeOutInMs, ZKStringSerializer$.MODULE$ )
+  val zkClient = new ZkClient(appConfig.kafka.zookeeperConnect, sessionTimeOutInMs, connectionTimeOutInMs, ZKStringSerializer$.MODULE$ )
 
-  val zkUtils = new ZkUtils(zkClient, new ZkConnection(zkConnectString), false)
+  val zkUtils = new ZkUtils(zkClient, new ZkConnection(appConfig.kafka.zookeeperConnect), false)
 
 }
