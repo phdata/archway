@@ -83,8 +83,8 @@ class HiveDatabaseRepositoryImpl(val clock: Clock)
        from hive_database h
        inner join hive_grant mg on h.manager_group_id = mg.id
        inner join ldap_registration m on mg.ldap_registration_id = m.id
-       inner join hive_grant rg on h.readonly_group_id = rg.id
-       inner join ldap_registration r on rg.ldap_registration_id = r.id
+       left join hive_grant rg on h.readonly_group_id = rg.id
+       left join ldap_registration r on rg.ldap_registration_id = r.id
       """
 
     def insert(hiveDatabase: HiveDatabase): Update0 =
