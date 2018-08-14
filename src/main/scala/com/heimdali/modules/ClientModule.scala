@@ -1,9 +1,11 @@
 package com.heimdali.modules
 
 import java.net.URI
+import javax.net.ssl.SSLSocketFactory
 
 import com.heimdali.clients._
 import com.unboundid.ldap.sdk.{LDAPConnection, LDAPConnectionPool}
+import com.unboundid.util.ssl.{SSLUtil, TrustAllTrustManager}
 import doobie.FC
 import doobie.util.transactor.{Strategy, Transactor}
 import org.apache.hadoop.fs.FileSystem
@@ -19,7 +21,10 @@ trait ClientModule[F[_]] {
     with ClusterModule[F] =>
 
   val ldapConnectionPool: LDAPConnectionPool = {
+    val sslUtil = new SSLUtil(new TrustAllTrustManager)
+    val sslSocketFactory = sslUtil.createSSLSocketFactory
     val connection = new LDAPConnection(
+      sslSocketFactory,
       appConfig.ldap.server,
       appConfig.ldap.port,
       appConfig.ldap.bindDN,
