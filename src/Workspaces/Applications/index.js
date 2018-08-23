@@ -6,6 +6,9 @@ import {
   Input,
   Button,
   Tabs,
+  Card,
+  Table,
+  Modal
 } from 'antd';
 import { connect } from 'react-redux';
 import SyntaxHighlighter from 'react-syntax-highlighter';
@@ -48,64 +51,83 @@ const ApplicationForm = Form.create({
   );
 });
 
-const ApplicationItem = ({ application }) => {
+const CodeHelp = ({ application }) => {
   const consumer = `$ bin/kafka-console-consumer.sh --zookeeper localhost:2181 --application ${application.name} --consumer-property group.id=${application.consumer_group}`;
   return (
-    <div>
-      <Row type="flex" justify="center">
-        <Col span={12}>
-          <ValueDisplay label="name">
-            {application.name}
-          </ValueDisplay>
-        </Col>
-        <Col span={12}>
-          <ValueDisplay label="consumer group">
-            {application.consumer_group}
-          </ValueDisplay>
-        </Col>
-      </Row>
-      <h2>Create a consumer for your application in a shell:</h2>
-      <SyntaxHighlighter language="shell" style={solarizedDark}>
-        {consumer}
-      </SyntaxHighlighter>
-    </div>
+    <SyntaxHighlighter language="shell" style={solarizedDark}>
+      {consumer}
+    </SyntaxHighlighter>
   );
 }
 
-class Applications extends Component {
+class Applications extends React.Component {
+
+  state = {
+    selectedApplication: false,
+    visible: false,
+    createVisible: false,
+  }
+
+  showModal = (selectedApplication) => {
+    this.setState({
+      selectedApplication,
+      visible: true,
+    });
+  }
+
+  showNewModal = () => {
+    this.setState({
+      createVisible: true,
+    });
+  }
+
+  columns = [{
+    title: 'Name',
+    dataIndex: 'name',
+  }, {
+    title: 'Consumer Group',
+    dataIndex: 'consumer_group',
+  }, {
+    title: 'Help',
+    render: (text, record) => <a href="#" onClick={() => this.showModal(record.name)}>Example</a>
+  }];
 
   render() {
-    const { activeWorkspace, applicationForm, applicationFormChanged, createApplication, creating, } = this.props;
-    applicationFormChanged({ database: { value: activeWorkspace.data[0].name } });
+    const { activeWorkspace, applicationForm, applicationFormChanged, createApplication, creating } = this.props;
     return (
-      <Row>
-        <Col span={16}>
-          {activeWorkspace.applications.length === 0 && (
-            <h2>No applications yet. Create one using the form to the right.</h2>
-          )}
-          {activeWorkspace.applications.length === 1 && <ApplicationItem application={activeWorkspace.applications[0]} />}
-          {activeWorkspace.applications.length > 1 && (
-            <Tabs>
-              {activeWorkspace.applications.map(application => (
-                <Tabs.TabPane tab={application.name} key={application.name}>
-                  <ApplicationItem application={application} />
-                </Tabs.TabPane>
-              ))}
-            </Tabs>
-          )}
-        </Col>
-        <Col offset={1} span={6}>
-          <h3>Create a new application:</h3>
+    <Card
+      style={{ marginTop: 15 }}
+      title="Applications"
+      description="Use topics to stage data coming into and leaving your workspace databases"
+      actions={[<a href="#" onClick={this.showNewModal}>New Application</a>]}>
+        <Table
+          bordered
+          pagination={false}
+          visible={this.state.visible}
+          columns={this.columns}
+          dataSource={activeWorkspace.topics} />
+        <Modal
+          title="Create a Console Producer"
+          visible={this.state.visible}
+          onCancel={() => this.setState({ visible: false })}
+          footer={[<Button onClick={() => this.setState({ visible: false })}>OK</Button>]}>
+          <CodeHelp poolName={this.state.selectedTopic} />
+        </Modal>
+        <Modal
+          title="Add a New Application"
+          visible={this.state.createVisible}
+          onCancel={() => this.setState({ createVisible: false })}>
           <ApplicationForm
             creating={creating}
             createApplication={createApplication}
             onChange={applicationFormChanged}
             workspace={activeWorkspace}
             applicationForm={applicationForm} />
-        </Col>
-      </Row>
+        </Modal>
+      </Card>
     );
   }
+
 }
 
 export default connect(

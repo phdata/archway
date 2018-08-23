@@ -7,6 +7,9 @@ import {
   Select,
   Button,
   Tabs,
+  Table,
+  Modal,
+  Card,
 } from 'antd';
 import { connect } from 'react-redux';
 import SyntaxHighlighter from 'react-syntax-highlighter';
@@ -67,69 +70,86 @@ const TopicForm = Form.create({
   );
 });
 
-const TopicItem = ({ topic }) => {
+const CodeHelp = ({ topic }) => {
   const producer = `$ bin/kafka-console-producer.sh --broker-list localhost:9092 --topic ${topic.name}`;
   return (
-    <div>
-      <Row type="flex" justify="center">
-        <Col span={12}>
-          <ValueDisplay label="name">
-            {topic.name}
-          </ValueDisplay>
-        </Col>
-        <Col span={6}>
-          <ValueDisplay label="partitions">
-            {topic.partitions}
-          </ValueDisplay>
-        </Col>
-        <Col span={6}>
-          <ValueDisplay label="replication factor">
-            {topic.replication_factor}
-          </ValueDisplay>
-        </Col>
-      </Row>
-      <h2>Start sending messages via a console producer:</h2>
-      <SyntaxHighlighter language="shell" style={solarizedDark}>
-        {producer}
-      </SyntaxHighlighter>
-    </div>
+    <SyntaxHighlighter language="shell" style={solarizedDark}>
+      {producer}
+    </SyntaxHighlighter>
   );
 }
 
-class Topics extends Component {
+class Topics extends React.Component {
+
+  state = {
+    selectedTopic: false,
+    visible: false,
+    createVisible: false,
+  }
+
+  showModal = (selectedTopic) => {
+    this.setState({
+      selectedTopic,
+      visible: true,
+    });
+  }
+
+  showNewModal = () => {
+    this.setState({
+      createVisible: true,
+    });
+  }
+
+  columns = [{
+    title: 'Name',
+    dataIndex: 'name',
+  }, {
+    title: 'Partitions',
+    dataIndex: 'partitions',
+  }, {
+    title: 'Replication Factor',
+    dataIndex: 'replication_factor',
+  }, {
+    title: 'Help',
+    render: (text, record) => <a href="#" onClick={() => this.showModal(record.name)}>Example</a>
+  }];
 
   render() {
-    const { activeWorkspace, topicForm, topicFormChanged, createTopic, creating, } = this.props;
-    topicFormChanged({ database: { value: activeWorkspace.data[0].name } });
+    const { activeWorkspace, topicForm, topicFormChanged, createTopic, creating } = this.props;
     return (
-      <Row>
-        <Col span={16}>
-          {activeWorkspace.topics.length === 0 && (
-            <h2>No topics yet. Create one using the form to the right.</h2>
-          )}
-          {activeWorkspace.topics.length === 1 && <TopicItem topic={activeWorkspace.topics[0]} />}
-          {activeWorkspace.topics.length > 1 && (
-            <Tabs>
-              {activeWorkspace.topics.map(topic => (
-                <Tabs.TabPane tab={topic.name} key={topic.name}>
-                  <TopicItem topic={topic} />
-                </Tabs.TabPane>
-              ))}
-            </Tabs>
-          )}
-        </Col>
-        <Col offset={1} span={6}>
-          <h3>Create a new topic:</h3>
+    <Card
+      style={{ marginTop: 15 }}
+      title="Topics"
+      description="Use topics to stage data coming into and leaving your workspace databases"
+      actions={[<a href="#" onClick={this.showNewModal}>New Topic</a>]}>
+        <Table
+          bordered
+          pagination={false}
+          visible={this.state.visible}
+          columns={this.columns}
+          dataSource={activeWorkspace.topics} />
+        <Modal
+          title="Create a Console Producer"
+          visible={this.state.visible}
+          onCancel={() => this.setState({ visible: false })}
+          footer={[<Button onClick={() => this.setState({ visible: false })}>OK</Button>]}>
+          <CodeHelp poolName={this.state.selectedTopic} />
+        </Modal>
+        <Modal
+          title="Add a New Topic"
+          visible={this.state.createVisible}
+          onCancel={() => this.setState({ createVisible: false })}>
           <TopicForm
             creating={creating}
             createTopic={createTopic}
             onChange={topicFormChanged}
             workspace={activeWorkspace}
             topicForm={topicForm} />
-        </Col>
-      </Row>
+        </Modal>
+      </Card>
     );
   }
+
 }
 
 export default connect(

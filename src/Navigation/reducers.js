@@ -16,19 +16,19 @@ function cluster(state = initialState, action) {
           return {
             ...cluster,
             color: '#43AA8B',
-            displayStatus: 'swell',
+            displayStatus: '"good"',
           };
         case 'CONCERNING_HEALTH':
           return {
             ...cluster,
             color: '#FF6F59',
-            displayStatus: 'iffy',
+            displayStatus: 'concerning',
           };
         case 'BAD_HEALTH':
           return {
             ...cluster,
             color: '#DB504A',
-            displayStatus: 'not good',
+            displayStatus: 'bad',
           };
         default:
           return {

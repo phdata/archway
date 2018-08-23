@@ -22,12 +22,7 @@ const Main = ({
       <Navigation />
       <Layout style={{ minHeight: '100%', marginLeft: 250, backgroundColor: '#F0F3F5' }}>
         <Content style={{ margin: '24px 16px 0', overflow: 'initial' }}>
-          <div style={{
-            padding: 24,
-            minHeight: '100%',
-            background: '#fff',
-          }}
-          >
+          <div style={{ minHeight: '100%' }}>
             <Route exact path="/" component={() => <Redirect to="/home" />} />
             <Route path="/home" component={Home} />
             <Route exact path="/workspaces" component={Workspaces} />

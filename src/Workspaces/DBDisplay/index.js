@@ -1,5 +1,5 @@
 import React from 'react';
-import { Row, Col, Tabs } from 'antd';
+import { Row, Col, Tabs, Table, Modal, Button, } from 'antd';
 import PropTypes from 'prop-types';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { solarizedDark } from 'react-syntax-highlighter/styles/hljs';
@@ -31,42 +31,54 @@ const CodeHelp = ({ cluster, databaseName }) => {
   );
 }
 
-const DatabaseItem = ({ database: { name, size_in_gb, location }, cluster }) => (
-  <div>
-    <Row type="flex" justify="space-around">
-      <Col span={8}>
-        <ValueDisplay label="hdfs location">
-          {location}
-        </ValueDisplay>
-      </Col>
-      <Col span={8}>
-        <ValueDisplay label="database name">
-          {name}
-        </ValueDisplay>
-      </Col>
-      <Col span={8}>
-        <ValueDisplay label="disk quota">
-          {`${size_in_gb}gb`}
-        </ValueDisplay>
-      </Col>
-    </Row>
-    <h2>Connect to Your Database</h2>
-    { (cluster.services) && <CodeHelp cluster={cluster} databaseName={name} /> }
-  </div>
-)
+class DBDisplay extends React.Component {
+  state = {
+    selectedDatabase: false,
+    visible: false,
+  }
 
-const DBDisplay = ({ workspace, cluster }) => {
-  if (workspace.data.length === 1)
-    return <DatabaseItem database={workspace.data[0]} cluster={cluster} />;
-  return (
-    <Tabs animated={false}>
-      {workspace.data.map(db => (
-        <Tabs.TabPane tab={db.name} key={db.id}>
-          <DatabaseItem database={db} cluster={cluster} />
-        </Tabs.TabPane>
-      ))}
-    </Tabs>
-  );
+  showModal = (selectedDatabase) => {
+    this.setState({
+      selectedDatabase,
+      visible: true,
+    });
+  }
+
+  columns = [{
+    title: 'Name',
+    dataIndex: 'name',
+  }, {
+    title: 'Location',
+    dataIndex: 'location',
+  }, {
+    title: 'Max Size',
+    dataIndex: 'size_in_gb',
+    render: size => `${size}gb`
+  }, {
+    title: 'Help',
+    render: (text, record) => <a href="#" onClick={() => this.showModal(record.name)}>Examples</a>
+  }];
+
+  render() {
+    const { workspace, cluster } = this.props;
+    return (
+      <div>
+        <Table
+          bordered
+          pagination={false}
+          visible={this.state.visible}
+          columns={this.columns}
+          dataSource={workspace.data} />
+        <Modal
+          title="Code Examples"
+          visible={this.state.visible}
+          onCancel={() => this.setState({ visible: false })}
+          footer={[<Button onClick={() => this.setState({ visible: false })}>OK</Button>]}>
+          <CodeHelp cluster={cluster} databaseName={this.state.selectedDatabase} />
+        </Modal>
+      </div>
+    );
+  }
 }
 
 DBDisplay.propTypes = {

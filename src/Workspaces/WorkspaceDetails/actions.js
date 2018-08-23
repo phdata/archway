@@ -15,3 +15,13 @@ export function setWorkspace(workspace) {
     workspace
   };
 }
+
+
+export const SET_TAB = 'SET_TAB';
+
+export function setTab(tab) {
+  return {
+    type: SET_TAB,
+    tab
+  };
+}
