@@ -5,37 +5,43 @@ import {
   Col,
   Icon,
   Button,
-  Card,
-  Avatar,
 } from 'antd';
 
 import Panel from '../Panel';
 import { approveRisk, approveInfra } from './actions';
 
 const ComplianceCheck = ({ label, present }) => (
-  <div style={{ display: 'flex', flexDirection: 'column', justifyItems: 'space-between', textAlign: 'center' }}>
+  <div style={{ display: 'flex', flexDirection: 'column', justifyItems: 'space-between' }}>
     <Icon style={{ fontSize: 28, color: present ? "#FF5900" : "#0B7A75" }} type={present ? "warning" : "minus-circle-o"} />
-    <div style={{ fontSize: 18 }}>
-      {label}
-    </div>
+    <h3>{label}</h3>
   </div>
 );
 
 const ApprovalActions = ({ approving, approved, canApprove, approve, label }) => (
-  <Card
-    style={{ flex: 1 }}
-    actions={canApprove && !approved && [
-      <a
-        disabled={approved || approving}
-        href="#"
+  <Panel style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+    <div style={{
+      fontWeight: 100,
+      fontSize: 24,
+      color: approved ? "#0B7A75" : "#FF5900",
+      overflow: 'hidden'
+    }}>
+      {approved ? "approved" : "pending"}
+    </div>
+    <div>
+      {label}
+    </div>
+    {canApprove && (
+      <Button
+        icon="check"
+        disabled={approved}
+        loading={approving}
+        type="primary"
+        size="large"
         onClick={approve}>
-        Approve
-      </a>]}>
-    <Card.Meta
-      avatar={<Avatar size={50} style={{ backgroundColor: 'transparent', color: approved ? "#0B7A75" : "#FF5900" }} icon={approved ? "check" : "minus-circle-o"} />}
-      title={label}
-      description="not approved yet" />
-  </Card>
+        Approve {label}
+      </Button>
+    )}
+  </Panel>
 );
 
 const Status = ({
@@ -58,47 +64,46 @@ const Status = ({
     }
   }
 }) => (
-  <div style={{ display: 'flex', marginTop: 15 }}>
-    <Card
-      style={{ flex: 1 }}
-      title="Approvals"
-      bodyStyle={{ display: 'flex', justifyContent: 'space-between' }}>
-      <Card.Grid style={{ padding: 0, boxShadow: 'none' }}>
+  <div>
+    <h2>Approvals</h2>
+    <hr />
+    <Row type="flex" justify="center">
+      <Col span={8}>
         <ApprovalActions
           label="Infrastructure"
           approving={approving}
           approved={approvals && approvals.infra}
           canApprove={platform_operations}
           approve={approveInfra} />
-      </Card.Grid>
-      <Card.Grid style={{ padding: 0, boxShadow: 'none' }}>
+      </Col>
+      <Col span={8}>
         <ApprovalActions
           label="Risk"
           approving={approving}
           approved={approvals && approvals.risk}
           canApprove={risk_management}
           approve={approveRisk} />
-      </Card.Grid>
-    </Card>
-    <Card
-      style={{ marginLeft: 15, flex: 1 }}
-      title="Compliance">
-      <Card.Grid>
-        <ComplianceCheck
-          label="PHI"
-          present={phi_data} />
-      </Card.Grid>
-      <Card.Grid>
+      </Col>
+    </Row>
+    <h2>Compliance</h2>
+    <hr />
+    <Row type="flex" justify="center">
+      <Col span={4}>
         <ComplianceCheck
           label="PII"
           present={pii_data} />
-      </Card.Grid>
-      <Card.Grid>
+      </Col>
+      <Col span={4}>
         <ComplianceCheck
           label="PCI"
           present={pci_data} />
-      </Card.Grid>
-    </Card>
+      </Col>
+      <Col span={4}>
+        <ComplianceCheck
+          label="PHI"
+          present={phi_data} />
+      </Col>
+    </Row>
   </div>
 );
 

@@ -1,21 +1,35 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Icon, Tooltip, Row, Col, Card, Avatar, Dropdown, Menu } from 'antd';
+import { Icon, Tooltip, Row, Col, Card, Avatar, Dropdown, Menu, List } from 'antd';
 import Color from 'color';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { solarizedDark } from 'react-syntax-highlighter/styles/hljs';
+import { Line, Pie } from 'react-chartjs-2';
 
 import Panel from '../Workspaces/Panel';
 import ValueDisplay from '../Workspaces/ValueDisplay';
 
+const [
+  GreenColor,
+  BlueColor,
+  RedColor,
+  OrangeColor,
+] = [
+  Color('#43AA8B'),
+  Color('#2E4052'),
+  Color('#7B2D26'),
+  Color('#FF6F59'),
+];
+
+
 const serviceColor = (service) => {
   switch (service && service.status) {
     case 'GOOD_HEALTH':
-      return '#43AA8B'
+      return GreenColor.rgb().string();
     case 'CONCERNING_HEALTH':
-      return '#FF6F59'
+      return OrangeColor.rgb().string();
     case 'BAD_HEALTH':
-      return '#DB504A'
+      return RedColor.rgb().string();
     default:
       return '#aaa'
   }
@@ -37,11 +51,11 @@ const serviceText = (service) => {
 const GlowColor = (status) => {
   switch (status) {
     case 'GOOD_HEALTH':
-      return `0 0 5px 2px ${Color('#43AA8B').hsl().string()}`;
+      return `0 0 5px 2px ${GreenColor.hsl().string()}`;
     case 'CONCERNING_HEALTH':
-      return `0 0 5px 2px ${Color('#FF6F59').hsl().string()}`;
+      return `0 0 5px 2px ${OrangeColor.hsl().string()}`;
     case 'BAD_HEALTH':
-      return `0 0 5px 2px ${Color('#DB504A').hsl().string()}`;
+      return `0 0 5px 2px ${RedColor.hsl().string()}`;
     default:
       return false
   }
@@ -95,6 +109,90 @@ const PersonalWorkspace = ({ databaseName = 'user_benny', poolName = 'user.benny
   );
 }
 
+const workspaces = [
+  { name: "Thor", description: "Loan Application Archive", type: "Simple", totalDisk: 3000, totalCores: 5, totalMemory: 64 },
+  { name: "Ivar", description: "Customer satisfaction survey", type: "Simple", totalDisk: 1000, totalCores: 2, totalMemory: 16 },
+  { name: "Thor", description: "Loan Application Archive", type: "Simple", totalDisk: 3000, totalCores: 5, totalMemory: 64 }
+];
+
+const requestsData = {
+    labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+    datasets: [{
+      fill: true,
+      label: false,
+      borderColor: BlueColor.fade(.8).hsl().string(),
+      backgroundColor: BlueColor.fade(.8).hsl().string(),
+      data: [ 1, 3, 5, 3, 8, 4, 2 ]
+    }]
+}
+
+const capacityData = {
+    labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+    datasets: [{
+      label: "2",
+      fill: true,
+      borderColor: BlueColor.fade(.8).hsl().string(),
+      backgroundColor: BlueColor.fade(.8).hsl().string(),
+      data: [ 1000, 1000, 1000, 1000, 1000, 2500, 2500 ]
+    }, {
+      label: "1",
+      fill: true,
+      borderColor: BlueColor.lighten(.5).fade(.8).hsl().string(),
+      backgroundColor: BlueColor.lighten(.5).fade(.8).hsl().string(),
+      data: [ 250, 400, 484, 440, 780, 923, 1024 ]
+    }]
+}
+
+const WorkspaceItem = ({ workspace: { name, description, type, totalDisk, totalCores, totalMemory } }) => (
+  <Card
+    title={name}
+    actions={[ <a href="#">Details</a> ]}
+    >
+    <Card.Meta
+      style={{ marginBottom: 15 }}
+      description={description} />
+    <Card.Grid style={{ textAlign: 'center' }}>
+      <div style={{
+        fontWeight: 100,
+        fontSize: 24,
+        color: OrangeColor.rgb().string(),
+        overflow: 'hidden'
+      }}>
+        {totalDisk}gb
+      </div>
+      <div>
+        total hdfs disk
+      </div>
+    </Card.Grid>
+    <Card.Grid style={{ textAlign: 'center' }}>
+      <div style={{
+        fontWeight: 100,
+        fontSize: 24,
+        color: OrangeColor.rgb().string(),
+        overflow: 'hidden'
+      }}>
+        {totalCores}
+      </div>
+      <div>
+        max total cores
+      </div>
+    </Card.Grid>
+    <Card.Grid style={{ textAlign: 'center' }}>
+      <div style={{
+        fontWeight: 100,
+        fontSize: 24,
+        color: OrangeColor.rgb().string(),
+        overflow: 'hidden'
+      }}>
+        {totalMemory}gb
+      </div>
+      <div>
+        max total memory
+      </div>
+    </Card.Grid>
+  </Card>
+)
+
 const Home = ({ name, displayStatus, color, services }) => {
   const hiveLinks = [
     (<a target="_blank" rel="noreferrer noopener" href={`https://${services && services.HIVESERVER2.host}:10002`}>Hive UI</a>)
@@ -136,6 +234,20 @@ const Home = ({ name, displayStatus, color, services }) => {
         <Service target="_blank" rel="noreferrer noopener" name="Hue" index={1} rawStatus={services && services.HUE.status} status={serviceText(services && services.HUE)} color={serviceColor(services && services.HUE)} links={hueLinks} />
         <Service target="_blank" rel="noreferrer noopener" name="Yarn" index={2} rawStatus={services && services.YARN.status} status={serviceText(services && services.YARN)} color={serviceColor(services && services.YARN)} links={yarnLinks} />
       </div>
+      <div style={{ marginTop: 25, display: 'flex' }}>
+        <Card style={{ flex: 1 }} title="Project Requests">
+          <Line data={requestsData} height={250} options={{ legend: { display: false }, maintainAspectRatio: false }} />
+        </Card>
+        <Card style={{ flex: 1, marginLeft: 25 }} title="HDFS Capacity">
+          <Line data={capacityData} height={250} options={{ legend: { display: false }, maintainAspectRatio: false }} />
+        </Card>
+      </div>
+      <List
+        grid={{ gutter: 16, column: 3 }}
+        style={{ marginTop: 25 }}
+        dataSource={workspaces}
+        renderItem={workspace => <List.Item><WorkspaceItem workspace={workspace} /></List.Item>}
+        />
       <div style={{ marginTop: 25 }}>
         <PersonalWorkspace services={services} />
       </div>

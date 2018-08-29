@@ -22,7 +22,11 @@ const Navigation = ({ location }) => (
       </Menu.Item>
       <Menu.Item key="/workspaces">
         <Icon type="api" />
-        <NavLink style={{ display: 'inline-block' }} to="/workspaces">Workspaces</NavLink>
+        <NavLink style={{ display: 'inline-block' }} to="/workspaces">Your Workspaces</NavLink>
+      </Menu.Item>
+      <Menu.Item key="/workspaces">
+        <Icon type="inbox" />
+        <NavLink style={{ display: 'inline-block' }} to="/workspaces">Pending Requests</NavLink>
       </Menu.Item>
       <Menu.Item key="/request">
         <Icon type="plus" />
