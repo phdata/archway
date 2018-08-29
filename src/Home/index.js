@@ -1,35 +1,22 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { Icon, Tooltip, Row, Col, Card, Avatar, Dropdown, Menu, List } from 'antd';
-import Color from 'color';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { solarizedDark } from 'react-syntax-highlighter/styles/hljs';
 import { Line, Pie } from 'react-chartjs-2';
 
 import Panel from '../Workspaces/Panel';
 import ValueDisplay from '../Workspaces/ValueDisplay';
-
-const [
-  GreenColor,
-  BlueColor,
-  RedColor,
-  OrangeColor,
-] = [
-  Color('#43AA8B'),
-  Color('#2E4052'),
-  Color('#7B2D26'),
-  Color('#FF6F59'),
-];
-
+import Color from '../Common/Colors';
 
 const serviceColor = (service) => {
   switch (service && service.status) {
     case 'GOOD_HEALTH':
-      return GreenColor.rgb().string();
+      return Color.Green.rgb().string();
     case 'CONCERNING_HEALTH':
-      return OrangeColor.rgb().string();
+      return Color.Orange.rgb().string();
     case 'BAD_HEALTH':
-      return RedColor.rgb().string();
+      return Color.Red.rgb().string();
     default:
       return '#aaa'
   }
@@ -51,11 +38,11 @@ const serviceText = (service) => {
 const GlowColor = (status) => {
   switch (status) {
     case 'GOOD_HEALTH':
-      return `0 0 5px 2px ${GreenColor.hsl().string()}`;
+      return `0 0 5px 2px ${Color.Green.hsl().string()}`;
     case 'CONCERNING_HEALTH':
-      return `0 0 5px 2px ${OrangeColor.hsl().string()}`;
+      return `0 0 5px 2px ${Color.Orange.hsl().string()}`;
     case 'BAD_HEALTH':
-      return `0 0 5px 2px ${RedColor.hsl().string()}`;
+      return `0 0 5px 2px ${Color.Red.hsl().string()}`;
     default:
       return false
   }
@@ -116,31 +103,31 @@ const workspaces = [
 ];
 
 const requestsData = {
-    labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-    datasets: [{
-      fill: true,
-      label: false,
-      borderColor: BlueColor.fade(.8).hsl().string(),
-      backgroundColor: BlueColor.fade(.8).hsl().string(),
-      data: [ 1, 3, 5, 3, 8, 4, 2 ]
-    }]
+  labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+  datasets: [{
+    fill: true,
+    label: false,
+    borderColor: Color.Blue.fade(.8).hsl().string(),
+    backgroundColor: Color.Blue.fade(.8).hsl().string(),
+    data: [1, 3, 5, 3, 8, 4, 2]
+  }]
 }
 
 const capacityData = {
-    labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-    datasets: [{
-      label: "2",
-      fill: true,
-      borderColor: BlueColor.fade(.8).hsl().string(),
-      backgroundColor: BlueColor.fade(.8).hsl().string(),
-      data: [ 1000, 1000, 1000, 1000, 1000, 2500, 2500 ]
-    }, {
-      label: "1",
-      fill: true,
-      borderColor: BlueColor.lighten(.5).fade(.8).hsl().string(),
-      backgroundColor: BlueColor.lighten(.5).fade(.8).hsl().string(),
-      data: [ 250, 400, 484, 440, 780, 923, 1024 ]
-    }]
+  labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+  datasets: [{
+    label: "2",
+    fill: true,
+    borderColor: Color.Blue.fade(.8).hsl().string(),
+    backgroundColor: Color.Blue.fade(.8).hsl().string(),
+    data: [1000, 1000, 1000, 1000, 1000, 2500, 2500]
+  }, {
+    label: "1",
+    fill: true,
+    borderColor: Color.Blue.lighten(.5).fade(.8).hsl().string(),
+    backgroundColor: Color.Blue.lighten(.5).fade(.8).hsl().string(),
+    data: [250, 400, 484, 440, 780, 923, 1024]
+  }]
 }
 
 const WorkspaceItem = ({ workspace: { name, description, type, totalDisk, totalCores, totalMemory } }) => (
@@ -155,7 +142,7 @@ const WorkspaceItem = ({ workspace: { name, description, type, totalDisk, totalC
       <div style={{
         fontWeight: 100,
         fontSize: 24,
-        color: OrangeColor.rgb().string(),
+        color: Color.Orange.rgb().string(),
         overflow: 'hidden'
       }}>
         {totalDisk}gb
@@ -168,7 +155,7 @@ const WorkspaceItem = ({ workspace: { name, description, type, totalDisk, totalC
       <div style={{
         fontWeight: 100,
         fontSize: 24,
-        color: OrangeColor.rgb().string(),
+        color: Color.Orange.rgb().string(),
         overflow: 'hidden'
       }}>
         {totalCores}
@@ -181,7 +168,7 @@ const WorkspaceItem = ({ workspace: { name, description, type, totalDisk, totalC
       <div style={{
         fontWeight: 100,
         fontSize: 24,
-        color: OrangeColor.rgb().string(),
+        color: Color.Orange.rgb().string(),
         overflow: 'hidden'
       }}>
         {totalMemory}gb
