@@ -5,8 +5,7 @@ import SyntaxHighlighter from 'react-syntax-highlighter';
 import { solarizedDark } from 'react-syntax-highlighter/styles/hljs';
 import { Line, Pie } from 'react-chartjs-2';
 
-import Panel from '../Workspaces/Panel';
-import ValueDisplay from '../Workspaces/ValueDisplay';
+import WorkspaceListItem from '../Common/WorkspaceListItem';
 import Color from '../Common/Colors';
 
 const serviceColor = (service) => {
@@ -130,56 +129,6 @@ const capacityData = {
   }]
 }
 
-const WorkspaceItem = ({ workspace: { name, description, type, totalDisk, totalCores, totalMemory } }) => (
-  <Card
-    title={name}
-    actions={[ <a href="#">Details</a> ]}
-    >
-    <Card.Meta
-      style={{ marginBottom: 15 }}
-      description={description} />
-    <Card.Grid style={{ textAlign: 'center' }}>
-      <div style={{
-        fontWeight: 100,
-        fontSize: 24,
-        color: Color.Orange.rgb().string(),
-        overflow: 'hidden'
-      }}>
-        {totalDisk}gb
-      </div>
-      <div>
-        total hdfs disk
-      </div>
-    </Card.Grid>
-    <Card.Grid style={{ textAlign: 'center' }}>
-      <div style={{
-        fontWeight: 100,
-        fontSize: 24,
-        color: Color.Orange.rgb().string(),
-        overflow: 'hidden'
-      }}>
-        {totalCores}
-      </div>
-      <div>
-        max total cores
-      </div>
-    </Card.Grid>
-    <Card.Grid style={{ textAlign: 'center' }}>
-      <div style={{
-        fontWeight: 100,
-        fontSize: 24,
-        color: Color.Orange.rgb().string(),
-        overflow: 'hidden'
-      }}>
-        {totalMemory}gb
-      </div>
-      <div>
-        max total memory
-      </div>
-    </Card.Grid>
-  </Card>
-)
-
 const Home = ({ name, displayStatus, color, services }) => {
   const hiveLinks = [
     (<a target="_blank" rel="noreferrer noopener" href={`https://${services && services.HIVESERVER2.host}:10002`}>Hive UI</a>)
@@ -230,10 +179,10 @@ const Home = ({ name, displayStatus, color, services }) => {
         </Card>
       </div>
       <List
-        grid={{ gutter: 16, column: 3 }}
+        grid={{ column: 3 }}
         style={{ marginTop: 25 }}
         dataSource={workspaces}
-        renderItem={workspace => <List.Item><WorkspaceItem workspace={workspace} /></List.Item>}
+        renderItem={workspace => <WorkspaceListItem workspace={workspace} />}
         />
       <div style={{ marginTop: 25 }}>
         <PersonalWorkspace services={services} />

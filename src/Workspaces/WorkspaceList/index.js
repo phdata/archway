@@ -5,7 +5,10 @@ import { connect } from 'react-redux';
 import TimeAgo from 'react-timeago';
 import { push } from 'react-router-redux'
 
+import WorkspaceListItem from '../../Common/WorkspaceListItem';
+
 import { listWorkspaces, filterChanged } from './actions';
+
 import Color from '../../Common/Colors';
 
 const SearchForm = Form.create({
@@ -26,7 +29,7 @@ const SearchForm = Form.create({
 }) => (
   <Form
     layout="vertical"
-    onSubmit={(e) => {e.preventDefault()}}>
+    onSubmit={e => e.preventDefault()}>
       <Form.Item label="Search">
         {getFieldDecorator('filter', {})(
           <Input.Search
@@ -38,7 +41,7 @@ const SearchForm = Form.create({
       <h3>Workspace Type</h3>
       <hr />
       <Form.Item>
-        {getFieldDecorator('simple', {
+        {getFieldDecorator('workspaceType', {
           style: { marginBottom: 0 }
         })(
           <Checkbox.Group options={[ 'Simple', 'Structured' ]} />
@@ -47,74 +50,6 @@ const SearchForm = Form.create({
       <Button type="primary" style={{ width: '100%' }} onClick={() => {}}>Filter</Button>
   </Form>
 ));
-
-const WorkspaceStatus = () => (
-  <div
-    style={{
-      width: '50%',
-      backgroundColor: 'green',
-      display: 'inline-block',
-      color: 'white',
-      marginTop: 5
-    }}>
-    Approved
-  </div>
-);
-
-const detailStyle = {
-  width: '25%',
-  textAlign: 'center',
-  boxShadow: 'none'
-};
-
-const WorkspaceDetail = ({ label, value }) => (
-  <Card.Grid style={detailStyle}>
-    <h2 style={{ color: Color.Orange.rgb().string(), fontWeight: 100, textAlign: 'center' }}>
-      {value}
-    </h2>
-    <h5 style={{ textAlign: 'center' }}>
-      {label}
-    </h5>
-  </Card.Grid>
-)
-
-const WorkspaceItem = ({ item, onSelected }) => {
-  const gridStyle = { width: '33%', textAlign: 'center' };
-  const {
-    id,
-    name,
-    requester,
-    requested_date,
-    single_user,
-  } = item;
-  return (
-    <List.Item>
-      <Card
-        style={{ textAlign: 'center' }}
-        onClick={() => onSelected(`/workspaces/${id}`)}
-        hoverable>
-        <Avatar icon="user" />
-        <h2 style={{ textAlign: 'center' }}>{name}</h2>
-        <h4>partially approved</h4>
-        <WorkspaceDetail label="DBs" value={1} />
-        <WorkspaceDetail label="Pools" value={1} />
-        <WorkspaceDetail label="Topics" value={0} />
-        <WorkspaceDetail label="Apps" value={1} />
-      </Card>
-    </List.Item>
-  );
-};
-
-WorkspaceItem.propTypes = {
-  item: PropTypes.shape({
-    id: PropTypes.number.isRequired,
-    name: PropTypes.string.isRequired,
-    requester: PropTypes.string.isRequired,
-    requested_date: PropTypes.string.isRequired,
-    single_user: PropTypes.bool.isRequired,
-  }).isRequired,
-  onSelected: PropTypes.func.isRequired,
-};
 
 class WorkspaceList extends React.Component {
   componentDidMount() {
@@ -137,7 +72,7 @@ class WorkspaceList extends React.Component {
             locale={{ emptyText: 'No workspaces yet. Create one from the link on the left.' }}
             loading={fetching}
             dataSource={filteredList}
-            renderItem={item => <WorkspaceItem item={item} onSelected={push} />}
+            renderItem={item => <WorkspaceListItem workspace={item} onSelected={push} />}
           />
         </Col>
       </Row>
