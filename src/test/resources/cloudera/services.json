@@ -1,128 +1,334 @@
 {
-  "items" : [ {
-    "name" : "zookeeper",
-    "type" : "ZOOKEEPER",
-    "clusterRef" : {
-      "clusterName" : "cluster"
+  "items": [
+    {
+      "name": "impala",
+      "type": "IMPALA",
+      "clusterRef": {
+        "clusterName": "cluster"
+      },
+      "serviceUrl": "http://master1.jotunn.io:7180/cmf/serviceRedirect/impala",
+      "roleInstancesUrl": "http://master1.jotunn.io:7180/cmf/serviceRedirect/impala/instances",
+      "serviceState": "STARTED",
+      "healthSummary": "GOOD",
+      "healthChecks": [
+        {
+          "name": "IMPALA_ASSIGNMENT_LOCALITY",
+          "summary": "DISABLED",
+          "suppressed": false
+        },
+        {
+          "name": "IMPALA_CATALOGSERVER_HEALTH",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "IMPALA_IMPALADS_HEALTHY",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "IMPALA_STATESTORE_HEALTH",
+          "summary": "GOOD",
+          "suppressed": false
+        }
+      ],
+      "configStalenessStatus": "STALE",
+      "clientConfigStalenessStatus": "FRESH",
+      "maintenanceMode": false,
+      "maintenanceOwners": [
+      ],
+      "displayName": "Impala",
+      "entityStatus": "GOOD_HEALTH"
     },
-    "serviceUrl" : "https://manager.valhalla.phdata.io:7183/cmf/serviceRedirect/zookeeper",
-    "roleInstancesUrl" : "https://manager.valhalla.phdata.io:7183/cmf/serviceRedirect/zookeeper/instances",
-    "serviceState" : "STARTED",
-    "healthSummary" : "GOOD",
-    "healthChecks" : [ {
-      "name" : "ZOOKEEPER_CANARY_HEALTH",
-      "summary" : "DISABLED",
-      "suppressed" : false
-    }, {
-      "name" : "ZOOKEEPER_SERVERS_HEALTHY",
-      "summary" : "GOOD",
-      "suppressed" : false
-    } ],
-    "configStalenessStatus" : "FRESH",
-    "clientConfigStalenessStatus" : "FRESH",
-    "maintenanceMode" : true,
-    "maintenanceOwners" : [ "CLUSTER" ],
-    "displayName" : "ZooKeeper",
-    "entityStatus" : "GOOD_HEALTH"
-  }, {
-    "name" : "oozie",
-    "type" : "OOZIE",
-    "clusterRef" : {
-      "clusterName" : "cluster"
+    {
+      "name": "hue",
+      "type": "HUE",
+      "clusterRef": {
+        "clusterName": "cluster"
+      },
+      "serviceUrl": "http://master1.jotunn.io:7180/cmf/serviceRedirect/hue",
+      "roleInstancesUrl": "http://master1.jotunn.io:7180/cmf/serviceRedirect/hue/instances",
+      "serviceState": "STARTED",
+      "healthSummary": "DISABLED",
+      "healthChecks": [
+        {
+          "name": "HUE_HUE_SERVERS_HEALTHY",
+          "summary": "DISABLED",
+          "suppressed": false
+        },
+        {
+          "name": "HUE_KT_RENEWERS_HEALTHY",
+          "summary": "DISABLED",
+          "suppressed": false
+        },
+        {
+          "name": "HUE_LOAD_BALANCER_HEALTHY",
+          "summary": "DISABLED",
+          "suppressed": false
+        }
+      ],
+      "configStalenessStatus": "FRESH",
+      "clientConfigStalenessStatus": "FRESH",
+      "maintenanceMode": false,
+      "maintenanceOwners": [
+      ],
+      "displayName": "Hue",
+      "entityStatus": "GOOD_HEALTH"
     },
-    "serviceUrl" : "https://manager.valhalla.phdata.io:7183/cmf/serviceRedirect/oozie",
-    "roleInstancesUrl" : "https://manager.valhalla.phdata.io:7183/cmf/serviceRedirect/oozie/instances",
-    "serviceState" : "STARTED",
-    "healthSummary" : "GOOD",
-    "healthChecks" : [ {
-      "name" : "OOZIE_OOZIE_SERVERS_HEALTHY",
-      "summary" : "GOOD",
-      "suppressed" : false
-    } ],
-    "configStalenessStatus" : "FRESH",
-    "clientConfigStalenessStatus" : "FRESH",
-    "maintenanceMode" : true,
-    "maintenanceOwners" : [ "CLUSTER" ],
-    "displayName" : "Oozie",
-    "entityStatus" : "GOOD_HEALTH"
-  }, {
-    "name" : "impala",
-    "type" : "IMPALA",
-    "clusterRef" : {
-      "clusterName" : "cluster"
+    {
+      "name": "hive",
+      "type": "HIVE",
+      "clusterRef": {
+        "clusterName": "cluster"
+      },
+      "serviceUrl": "http://master1.jotunn.io:7180/cmf/serviceRedirect/hive",
+      "roleInstancesUrl": "http://master1.jotunn.io:7180/cmf/serviceRedirect/hive/instances",
+      "serviceState": "STARTED",
+      "healthSummary": "GOOD",
+      "healthChecks": [
+        {
+          "name": "HIVE_HIVEMETASTORES_HEALTHY",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "HIVE_HIVESERVER2S_HEALTHY",
+          "summary": "GOOD",
+          "suppressed": false
+        }
+      ],
+      "configStalenessStatus": "FRESH",
+      "clientConfigStalenessStatus": "FRESH",
+      "maintenanceMode": false,
+      "maintenanceOwners": [
+      ],
+      "displayName": "Hive",
+      "entityStatus": "GOOD_HEALTH"
     },
-    "serviceUrl" : "https://manager.valhalla.phdata.io:7183/cmf/serviceRedirect/impala",
-    "roleInstancesUrl" : "https://manager.valhalla.phdata.io:7183/cmf/serviceRedirect/impala/instances",
-    "serviceState" : "STARTED",
-    "healthSummary" : "GOOD",
-    "healthChecks" : [ {
-      "name" : "IMPALA_ASSIGNMENT_LOCALITY",
-      "summary" : "DISABLED",
-      "suppressed" : false
-    }, {
-      "name" : "IMPALA_CATALOGSERVER_HEALTH",
-      "summary" : "GOOD",
-      "suppressed" : false
-    }, {
-      "name" : "IMPALA_IMPALADS_HEALTHY",
-      "summary" : "GOOD",
-      "suppressed" : false
-    }, {
-      "name" : "IMPALA_STATESTORE_HEALTH",
-      "summary" : "GOOD",
-      "suppressed" : false
-    } ],
-    "configStalenessStatus" : "FRESH",
-    "clientConfigStalenessStatus" : "FRESH",
-    "maintenanceMode" : true,
-    "maintenanceOwners" : [ "CLUSTER" ],
-    "displayName" : "Impala",
-    "entityStatus" : "GOOD_HEALTH"
-  }, {
-    "name" : "ks_indexer",
-    "type" : "KS_INDEXER",
-    "clusterRef" : {
-      "clusterName" : "cluster"
+    {
+      "name": "yarn",
+      "type": "YARN",
+      "clusterRef": {
+        "clusterName": "cluster"
+      },
+      "serviceUrl": "http://master1.jotunn.io:7180/cmf/serviceRedirect/yarn",
+      "roleInstancesUrl": "http://master1.jotunn.io:7180/cmf/serviceRedirect/yarn/instances",
+      "serviceState": "STARTED",
+      "healthSummary": "GOOD",
+      "healthChecks": [
+        {
+          "name": "YARN_JOBHISTORY_HEALTH",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "YARN_NODE_MANAGERS_HEALTHY",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "YARN_RESOURCEMANAGERS_HEALTH",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "YARN_USAGE_AGGREGATION_HEALTH",
+          "summary": "DISABLED",
+          "suppressed": false
+        }
+      ],
+      "configStalenessStatus": "FRESH",
+      "clientConfigStalenessStatus": "FRESH",
+      "maintenanceMode": false,
+      "maintenanceOwners": [
+      ],
+      "displayName": "YARN (MR2 Included)",
+      "entityStatus": "GOOD_HEALTH"
     },
-    "serviceUrl" : "https://manager.valhalla.phdata.io:7183/cmf/serviceRedirect/ks_indexer",
-    "roleInstancesUrl" : "https://manager.valhalla.phdata.io:7183/cmf/serviceRedirect/ks_indexer/instances",
-    "serviceState" : "STARTED",
-    "healthSummary" : "GOOD",
-    "healthChecks" : [ {
-      "name" : "KS_INDEXER_HBASE_INDEXERS_HEALTHY",
-      "summary" : "GOOD",
-      "suppressed" : false
-    } ],
-    "configStalenessStatus" : "FRESH",
-    "clientConfigStalenessStatus" : "FRESH",
-    "maintenanceMode" : true,
-    "maintenanceOwners" : [ "CLUSTER" ],
-    "displayName" : "Key-Value Store Indexer",
-    "entityStatus" : "GOOD_HEALTH"
-  }, {
-    "name" : "hive",
-    "type" : "HIVE",
-    "clusterRef" : {
-      "clusterName" : "cluster"
+    {
+      "name": "zookeeper",
+      "type": "ZOOKEEPER",
+      "clusterRef": {
+        "clusterName": "cluster"
+      },
+      "serviceUrl": "http://master1.jotunn.io:7180/cmf/serviceRedirect/zookeeper",
+      "roleInstancesUrl": "http://master1.jotunn.io:7180/cmf/serviceRedirect/zookeeper/instances",
+      "serviceState": "STARTED",
+      "healthSummary": "GOOD",
+      "healthChecks": [
+        {
+          "name": "ZOOKEEPER_CANARY_HEALTH",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "ZOOKEEPER_SERVERS_HEALTHY",
+          "summary": "GOOD",
+          "suppressed": false
+        }
+      ],
+      "configStalenessStatus": "FRESH",
+      "clientConfigStalenessStatus": "FRESH",
+      "maintenanceMode": false,
+      "maintenanceOwners": [
+      ],
+      "displayName": "ZooKeeper",
+      "entityStatus": "GOOD_HEALTH"
     },
-    "serviceUrl" : "https://manager.valhalla.phdata.io:7183/cmf/serviceRedirect/hive",
-    "roleInstancesUrl" : "https://manager.valhalla.phdata.io:7183/cmf/serviceRedirect/hive/instances",
-    "serviceState" : "STARTED",
-    "healthSummary" : "GOOD",
-    "healthChecks" : [ {
-      "name" : "HIVE_HIVEMETASTORES_HEALTHY",
-      "summary" : "GOOD",
-      "suppressed" : false
-    }, {
-      "name" : "HIVE_HIVESERVER2S_HEALTHY",
-      "summary" : "GOOD",
-      "suppressed" : false
-    } ],
-    "configStalenessStatus" : "FRESH",
-    "clientConfigStalenessStatus" : "FRESH",
-    "maintenanceMode" : true,
-    "maintenanceOwners" : [ "CLUSTER" ],
-    "displayName" : "Hive",
-    "entityStatus" : "GOOD_HEALTH"
-  } ]
+    {
+      "name": "oozie",
+      "type": "OOZIE",
+      "clusterRef": {
+        "clusterName": "cluster"
+      },
+      "serviceUrl": "http://master1.jotunn.io:7180/cmf/serviceRedirect/oozie",
+      "roleInstancesUrl": "http://master1.jotunn.io:7180/cmf/serviceRedirect/oozie/instances",
+      "serviceState": "STARTED",
+      "healthSummary": "DISABLED",
+      "healthChecks": [
+        {
+          "name": "OOZIE_OOZIE_SERVERS_HEALTHY",
+          "summary": "DISABLED",
+          "suppressed": false
+        }
+      ],
+      "configStalenessStatus": "FRESH",
+      "clientConfigStalenessStatus": "FRESH",
+      "maintenanceMode": false,
+      "maintenanceOwners": [
+      ],
+      "displayName": "Oozie",
+      "entityStatus": "GOOD_HEALTH"
+    },
+    {
+      "name": "kafka",
+      "type": "KAFKA",
+      "clusterRef": {
+        "clusterName": "cluster"
+      },
+      "serviceUrl": "http://master1.jotunn.io:7180/cmf/serviceRedirect/kafka",
+      "roleInstancesUrl": "http://master1.jotunn.io:7180/cmf/serviceRedirect/kafka/instances",
+      "serviceState": "STARTED",
+      "healthSummary": "GOOD",
+      "healthChecks": [
+        {
+          "name": "KAFKA_KAFKA_BROKER_HEALTHY",
+          "summary": "GOOD",
+          "suppressed": false
+        }
+      ],
+      "configStalenessStatus": "FRESH",
+      "clientConfigStalenessStatus": "FRESH",
+      "maintenanceMode": false,
+      "maintenanceOwners": [
+      ],
+      "displayName": "Kafka",
+      "entityStatus": "GOOD_HEALTH"
+    },
+    {
+      "name": "hdfs",
+      "type": "HDFS",
+      "clusterRef": {
+        "clusterName": "cluster"
+      },
+      "serviceUrl": "http://master1.jotunn.io:7180/cmf/serviceRedirect/hdfs",
+      "roleInstancesUrl": "http://master1.jotunn.io:7180/cmf/serviceRedirect/hdfs/instances",
+      "serviceState": "STARTED",
+      "healthSummary": "GOOD",
+      "healthChecks": [
+        {
+          "name": "HDFS_BLOCKS_WITH_CORRUPT_REPLICAS",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "HDFS_CANARY_HEALTH",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "HDFS_DATA_NODES_HEALTHY",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "HDFS_FREE_SPACE_REMAINING",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "HDFS_HA_NAMENODE_HEALTH",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "HDFS_MISSING_BLOCKS",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "HDFS_UNDER_REPLICATED_BLOCKS",
+          "summary": "GOOD",
+          "suppressed": false
+        }
+      ],
+      "configStalenessStatus": "FRESH",
+      "clientConfigStalenessStatus": "FRESH",
+      "maintenanceMode": false,
+      "maintenanceOwners": [
+      ],
+      "displayName": "HDFS",
+      "entityStatus": "GOOD_HEALTH"
+    },
+    {
+      "name": "spark_on_yarn",
+      "type": "SPARK_ON_YARN",
+      "clusterRef": {
+        "clusterName": "cluster"
+      },
+      "serviceUrl": "http://master1.jotunn.io:7180/cmf/serviceRedirect/spark_on_yarn",
+      "roleInstancesUrl": "http://master1.jotunn.io:7180/cmf/serviceRedirect/spark_on_yarn/instances",
+      "serviceState": "STARTED",
+      "healthSummary": "GOOD",
+      "healthChecks": [
+        {
+          "name": "SPARK_ON_YARN_SPARK_ON_YARN_SPARK_YARN_HISTORY_SERVER_HEALTH",
+          "summary": "GOOD",
+          "suppressed": false
+        }
+      ],
+      "configStalenessStatus": "FRESH",
+      "clientConfigStalenessStatus": "FRESH",
+      "maintenanceMode": false,
+      "maintenanceOwners": [
+      ],
+      "displayName": "Spark",
+      "entityStatus": "GOOD_HEALTH"
+    },
+    {
+      "name": "sentry",
+      "type": "SENTRY",
+      "clusterRef": {
+        "clusterName": "cluster"
+      },
+      "serviceUrl": "http://master1.jotunn.io:7180/cmf/serviceRedirect/sentry",
+      "roleInstancesUrl": "http://master1.jotunn.io:7180/cmf/serviceRedirect/sentry/instances",
+      "serviceState": "STARTED",
+      "healthSummary": "GOOD",
+      "healthChecks": [
+        {
+          "name": "SENTRY_SENTRY_SERVERS_HEALTHY",
+          "summary": "GOOD",
+          "suppressed": false
+        }
+      ],
+      "configStalenessStatus": "FRESH",
+      "clientConfigStalenessStatus": "FRESH",
+      "maintenanceMode": false,
+      "maintenanceOwners": [
+      ],
+      "displayName": "Sentry",
+      "entityStatus": "GOOD_HEALTH"
+    }
+  ]
 }

@@ -15,7 +15,9 @@ package object config {
                            admin: CredentialsConfig) {
     private val encodedName: String = URLEncoder.encode(name, "utf-8").replaceAll("\\+", "%20")
 
-    val clusterUrl: String = s"$url/clusters/$encodedName"
+    val clusterUrl: String = s"$url/api/v18/clusters/$encodedName"
+
+    def hostListUrl = s"$url/api/v18/hosts"
 
     def hostUrl(hostId: String) = s"$url/hosts/$hostId"
 

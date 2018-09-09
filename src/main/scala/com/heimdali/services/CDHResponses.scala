@@ -8,23 +8,18 @@ object CDHResponses {
 
   case class HostRef(hostId: String)
 
-  case class AppRole(name: String, roleName: String, hostRef: HostRef)
-
-  case class ImpalaApp(items: Seq[AppRole]) {
-    def hostname(name: String): Option[String] =
-      items.find(_.roleName == name).map(_.hostRef.hostId)
-  }
-
-  case class HiveApp(items: Seq[AppRole]) {
-    def hostname(name: String): Option[String] =
-      items.find(_.roleName == name).map(_.hostRef.hostId)
-  }
+  case class AppRole(name: String, `type`: String, hostRef: HostRef)
 
   case class Services(items: Seq[ServiceInfo])
 
   case class ServiceInfo(name: String, `type`: String, serviceState: String, entityStatus: String, displayName: String)
 
   case class HostInfo(hostId: String, hostname: String)
+
+  case class ListContainer[A](items: List[A])
+
+  implicit val decodeHosInfo: Decoder[HostInfo] =
+    Decoder.forProduct2("hostId", "hostname")(HostInfo.apply)
 
   implicit val decodeServiceInfo: Decoder[ServiceInfo] =
     Decoder.forProduct5("name", "type", "serviceState", "entityStatus", "displayName")(ServiceInfo.apply)

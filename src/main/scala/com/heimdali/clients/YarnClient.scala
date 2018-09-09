@@ -37,7 +37,7 @@ class CDHYarnClient[F[_] : Sync](http: HttpClient[F],
     for {
       list <- clusterService.list
       activeCluster <- Sync[F].delay(list.find(_.id == clusterConfig.name).get)
-      result <- Sync[F].delay(clusterConfig.serviceConfigUrl(activeCluster.clusterApps("YARN").id))
+      result <- Sync[F].delay(clusterConfig.serviceConfigUrl(activeCluster.services.find(_.name == "yarn").get.id))
     } yield result
 
   def config(poolName: String, cores: Cores, memory: Memory): Json = Json.obj(

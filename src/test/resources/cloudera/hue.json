@@ -1,0 +1,189 @@
+{
+  "items": [
+    {
+      "name": "hue-HUE_SERVER-416c6afa711d68cad913a0f197301a36",
+      "type": "HUE_SERVER",
+      "serviceRef": {
+        "clusterName": "cluster",
+        "serviceName": "hue"
+      },
+      "hostRef": {
+        "hostId": "dcca7d0f-3526-462f-98de-5e7c0d256321"
+      },
+      "roleUrl": "http://master1.jotunn.io:7180/cmf/roleRedirect/hue-HUE_SERVER-416c6afa711d68cad913a0f197301a36",
+      "roleState": "STARTED",
+      "healthSummary": "GOOD",
+      "healthChecks": [
+        {
+          "name": "HUE_SERVER_FILE_DESCRIPTOR",
+          "summary": "DISABLED",
+          "suppressed": false
+        },
+        {
+          "name": "HUE_SERVER_HEAP_DUMP_DIRECTORY_FREE_SPACE",
+          "summary": "DISABLED",
+          "suppressed": false
+        },
+        {
+          "name": "HUE_SERVER_HOST_HEALTH",
+          "summary": "DISABLED",
+          "suppressed": false
+        },
+        {
+          "name": "HUE_SERVER_LOG_DIRECTORY_FREE_SPACE",
+          "summary": "DISABLED",
+          "suppressed": false
+        },
+        {
+          "name": "HUE_SERVER_SCM_HEALTH",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "HUE_SERVER_SWAP_MEMORY_USAGE",
+          "summary": "DISABLED",
+          "suppressed": false
+        },
+        {
+          "name": "HUE_SERVER_UNEXPECTED_EXITS",
+          "summary": "DISABLED",
+          "suppressed": false
+        },
+        {
+          "name": "HUE_SERVER_WEB_METRIC_COLLECTION",
+          "summary": "DISABLED",
+          "suppressed": false
+        }
+      ],
+      "configStalenessStatus": "FRESH",
+      "maintenanceMode": false,
+      "maintenanceOwners": [
+      ],
+      "commissionState": "COMMISSIONED",
+      "roleConfigGroupRef": {
+        "roleConfigGroupName": "hue-HUE_SERVER-BASE"
+      },
+      "entityStatus": "STARTED"
+    },
+    {
+      "name": "hue-HUE_LOAD_BALANCER-416c6afa711d68cad913a0f197301a36",
+      "type": "HUE_LOAD_BALANCER",
+      "serviceRef": {
+        "clusterName": "cluster",
+        "serviceName": "hue"
+      },
+      "hostRef": {
+        "hostId": "dcca7d0f-3526-462f-98de-5e7c0d256321"
+      },
+      "roleUrl": "http://master1.jotunn.io:7180/cmf/roleRedirect/hue-HUE_LOAD_BALANCER-416c6afa711d68cad913a0f197301a36",
+      "roleState": "STARTED",
+      "healthSummary": "GOOD",
+      "healthChecks": [
+        {
+          "name": "HUE_LOAD_BALANCER_FILE_DESCRIPTOR",
+          "summary": "DISABLED",
+          "suppressed": false
+        },
+        {
+          "name": "HUE_LOAD_BALANCER_HEAP_DUMP_DIRECTORY_FREE_SPACE",
+          "summary": "DISABLED",
+          "suppressed": false
+        },
+        {
+          "name": "HUE_LOAD_BALANCER_HOST_HEALTH",
+          "summary": "DISABLED",
+          "suppressed": false
+        },
+        {
+          "name": "HUE_LOAD_BALANCER_LOG_DIRECTORY_FREE_SPACE",
+          "summary": "DISABLED",
+          "suppressed": false
+        },
+        {
+          "name": "HUE_LOAD_BALANCER_SCM_HEALTH",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "HUE_LOAD_BALANCER_SWAP_MEMORY_USAGE",
+          "summary": "DISABLED",
+          "suppressed": false
+        },
+        {
+          "name": "HUE_LOAD_BALANCER_UNEXPECTED_EXITS",
+          "summary": "DISABLED",
+          "suppressed": false
+        }
+      ],
+      "configStalenessStatus": "FRESH",
+      "maintenanceMode": false,
+      "maintenanceOwners": [
+      ],
+      "commissionState": "COMMISSIONED",
+      "roleConfigGroupRef": {
+        "roleConfigGroupName": "hue-HUE_LOAD_BALANCER-BASE"
+      },
+      "entityStatus": "STARTED"
+    },
+    {
+      "name": "hue-KT_RENEWER-416c6afa711d68cad913a0f197301a36",
+      "type": "KT_RENEWER",
+      "serviceRef": {
+        "clusterName": "cluster",
+        "serviceName": "hue"
+      },
+      "hostRef": {
+        "hostId": "dcca7d0f-3526-462f-98de-5e7c0d256321"
+      },
+      "roleUrl": "http://master1.jotunn.io:7180/cmf/roleRedirect/hue-KT_RENEWER-416c6afa711d68cad913a0f197301a36",
+      "roleState": "STARTED",
+      "healthSummary": "GOOD",
+      "healthChecks": [
+        {
+          "name": "KT_RENEWER_FILE_DESCRIPTOR",
+          "summary": "DISABLED",
+          "suppressed": false
+        },
+        {
+          "name": "KT_RENEWER_HEAP_DUMP_DIRECTORY_FREE_SPACE",
+          "summary": "DISABLED",
+          "suppressed": false
+        },
+        {
+          "name": "KT_RENEWER_HOST_HEALTH",
+          "summary": "DISABLED",
+          "suppressed": false
+        },
+        {
+          "name": "KT_RENEWER_LOG_DIRECTORY_FREE_SPACE",
+          "summary": "DISABLED",
+          "suppressed": false
+        },
+        {
+          "name": "KT_RENEWER_SCM_HEALTH",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "KT_RENEWER_SWAP_MEMORY_USAGE",
+          "summary": "DISABLED",
+          "suppressed": false
+        },
+        {
+          "name": "KT_RENEWER_UNEXPECTED_EXITS",
+          "summary": "DISABLED",
+          "suppressed": false
+        }
+      ],
+      "configStalenessStatus": "FRESH",
+      "maintenanceMode": false,
+      "maintenanceOwners": [
+      ],
+      "commissionState": "COMMISSIONED",
+      "roleConfigGroupRef": {
+        "roleConfigGroupName": "hue-KT_RENEWER-BASE"
+      },
+      "entityStatus": "STARTED"
+    }
+  ]
+}

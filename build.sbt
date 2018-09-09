@@ -52,14 +52,14 @@ libraryDependencies ++= Seq(
   ("com.pauldijou" %% "jwt-circe" % "0.14.1")
     .exclude("org.bouncycastle", "bcpkix-jdk15on"),
   "com.github.mpilquist" %% "simulacrum" % "0.12.0",
-  "org.bouncycastle" % "bcpkix-jdk15on" % "1.57" % "provided",
+  "org.bouncycastle" % "bcpkix-jdk15on" % "1.57",// % "provided",
   "com.unboundid" % "unboundid-ldapsdk" % "4.0.0",
   "org.flywaydb" % "flyway-core" % "4.2.0",
-  "postgresql" % "postgresql" % "9.0-801.jdbc4" % "provided",
-  "mysql" % "mysql-connector-java" % "6.0.6" % "provided",
-  "org.apache.sentry" % "sentry-provider-db" % sentryVersion % "provided",
-  "org.apache.hadoop" % "hadoop-client" % hadoopVersion % "provided",
-  "org.apache.hive" % "hive-jdbc" % hiveVersion % "provided",
+  "postgresql" % "postgresql" % "9.0-801.jdbc4",// % "provided",
+  "mysql" % "mysql-connector-java" % "6.0.6",// % "provided",
+  "org.apache.sentry" % "sentry-provider-db" % sentryVersion,// % "provided",
+  "org.apache.hadoop" % "hadoop-client" % hadoopVersion,// % "provided",
+  "org.apache.hive" % "hive-jdbc" % hiveVersion,// % "provided",
   "org.apache.hadoop" % "hadoop-hdfs" % hadoopVersion % Test classifier "" classifier "tests",
   "org.apache.hadoop" % "hadoop-common" % hadoopVersion % Test classifier "" classifier "tests",
   "org.apache.hadoop" % "hadoop-client" % hadoopVersion % Test classifier "" classifier "tests",
@@ -67,11 +67,6 @@ libraryDependencies ++= Seq(
   "org.mockito" % "mockito-core" % "2.18.3" % Test,
   "org.scalamock" %% "scalamock-scalatest-support" % "3.6.0" % Test,
   "org.powermock" % "powermock-core" % "1.7.4" % Test
-)
-
-unmanagedClasspath in Runtime ++= Seq(
-  baseDirectory.value / "sentry-conf",
-  baseDirectory.value / "hive-conf"
 )
 
 assemblyMergeStrategy in assembly := {
@@ -135,7 +130,7 @@ envVars in reStart := Map(
 
   "HEIMDALI_CLUSTER_NAME" -> "cluster",
 
-  "HEIMDALI_CM_URL_BASE" -> "http://master1.jotunn.io:7180/api/v14",
+  "HEIMDALI_CM_URL_BASE" -> "http://master1.jotunn.io:7180",
   "HEIMDALI_CM_ADMIN_USER" -> "admin",
   "HEIMDALI_CM_ADMIN_PASSWORD" -> "admin",
 

@@ -5,6 +5,8 @@ import com.heimdali.clients.HttpTest
 import com.heimdali.rest.ClusterController
 import com.heimdali.services._
 import org.http4s.circe._
+import com.heimdali.test.fixtures._
+import org.apache.hadoop.conf.Configuration
 import org.http4s.dsl.io._
 import org.http4s.{Request, Response, Status, Uri}
 import org.scalamock.scalatest.MockFactory
@@ -19,11 +21,7 @@ class ClusterControllerSpec
   behavior of "Cluster Controller"
 
   it should "get a list of clusters" in {
-    val clusterService = mock[ClusterService[IO]]
-    (clusterService.list _).expects().returning(IO.pure(Seq(Cluster("cluster", "Odin", Map(
-      "IMPALA" -> HostClusterApp("impl31", "Impala", "GOOD", "STARTED", "impala.example.com")
-    ), CDH("5.11"), "GOOD_HEALTH"))))
-
+    val clusterService = new CDHClusterService[IO](httpClient, clusterConfig, new Configuration())
     val clusterController = new ClusterController(clusterService)
     val response: IO[Response[IO]] = clusterController.route.orNotFound.run(Request(uri = Uri.uri("/")))
     check(response, Status.Ok, Some(fromResource("rest/cluster.json")))
