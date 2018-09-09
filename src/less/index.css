@@ -2607,7 +2607,7 @@ mark {
   background-color: #52c41a;
 }
 .ant-badge-status-processing {
-  background-color: #D7C9AA;
+  background-color: #1890ff;
   position: relative;
 }
 .ant-badge-status-processing:after {
@@ -2617,7 +2617,7 @@ mark {
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  border: 1px solid #D7C9AA;
+  border: 1px solid #1890ff;
   content: '';
   animation: antStatusProcessing 1.2s infinite ease-in-out;
 }
@@ -13525,13 +13525,13 @@ textarea.ant-pagination-options-quick-jumper input {
   stroke: #f5f5f5;
 }
 .ant-progress-circle-path {
-  stroke: #D7C9AA;
+  stroke: #1890ff;
   animation: ant-progress-appear 0.3s;
 }
 .ant-progress-success-bg,
 .ant-progress-bg {
   border-radius: 100px;
-  background-color: #D7C9AA;
+  background-color: #1890ff;
   transition: all 0.4s cubic-bezier(0.08, 0.82, 0.17, 1) 0s;
   position: relative;
 }
@@ -14959,14 +14959,14 @@ span.ant-radio + * {
   background-color: #e8e8e8;
 }
 .ant-steps-item-process .ant-steps-item-icon {
-  border-color: #D7C9AA;
+  border-color: #1890ff;
   background-color: #fff;
 }
 .ant-steps-item-process .ant-steps-item-icon > .ant-steps-icon {
-  color: #D7C9AA;
+  color: #1890ff;
 }
 .ant-steps-item-process .ant-steps-item-icon > .ant-steps-icon .ant-steps-icon-dot {
-  background: #D7C9AA;
+  background: #1890ff;
 }
 .ant-steps-item-process > .ant-steps-item-content > .ant-steps-item-title {
   color: rgba(0, 0, 0, 0.85);
@@ -14981,7 +14981,7 @@ span.ant-radio + * {
   background-color: #e8e8e8;
 }
 .ant-steps-item-process .ant-steps-item-icon {
-  background: #D7C9AA;
+  background: #1890ff;
 }
 .ant-steps-item-process .ant-steps-item-icon > .ant-steps-icon {
   color: #fff;
@@ -14990,14 +14990,14 @@ span.ant-radio + * {
   font-weight: 500;
 }
 .ant-steps-item-finish .ant-steps-item-icon {
-  border-color: #D7C9AA;
+  border-color: #1890ff;
   background-color: #fff;
 }
 .ant-steps-item-finish .ant-steps-item-icon > .ant-steps-icon {
-  color: #D7C9AA;
+  color: #1890ff;
 }
 .ant-steps-item-finish .ant-steps-item-icon > .ant-steps-icon .ant-steps-icon-dot {
-  background: #D7C9AA;
+  background: #1890ff;
 }
 .ant-steps-item-finish > .ant-steps-item-content > .ant-steps-item-title {
   color: rgba(0, 0, 0, 0.65);
@@ -15067,7 +15067,7 @@ span.ant-radio + * {
   height: 32px;
 }
 .ant-steps-item-custom.ant-steps-item-process .ant-steps-item-icon > .ant-steps-icon {
-  color: #D7C9AA;
+  color: #1890ff;
 }
 .ant-steps-small.ant-steps-horizontal:not(.ant-steps-label-vertical) .ant-steps-item {
   margin-right: 12px;

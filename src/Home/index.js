@@ -67,7 +67,7 @@ const Service = ({ name, color, status, links, rawStatus, index }) => (
 const PersonalWorkspace = ({ databaseName = 'user_benny', poolName = 'user.benny', services }) => {
   const code = `
   from impala.dbapi import connect
-  conn = connect(host='${services && services.IMPALA.host}', port=21050, database='${databaseName}')
+  conn = connect(host='${services && services.impala.hiveServer2[0].host}', port=${services && services.impala.hiveServer2[0].port}, database='${databaseName}')
   cursor = conn.cursor()
   cursor.execute('SELECT * FROM mytable LIMIT 100')
   print cursor.description  # prints the result set's schema
@@ -129,25 +129,34 @@ const capacityData = {
   }]
 }
 
-const Home = ({ name, displayStatus, color, services }) => {
-  const hiveLinks = [
-    (<a target="_blank" rel="noreferrer noopener" href={`https://${services && services.HIVESERVER2.host}:10002`}>Hive UI</a>)
-  ];
-  const hueLinks = [
-    (<a target="_blank" rel="noreferrer noopener" href="https://master2.valhalla.phdata.io:8889">Hue UI</a>)
-  ]
+const Home = ({ name, displayStatus, color, services, cm_url }) => {
+  const hueLinks = services && services.hue.load_balancer.map(lb => (
+    <a target="_blank" rel="noreferrer noopener" href={`https://${lb.host}:${lb.port}`}>Hue UI</a>
+  ))
   const rmLinks = (
     <Menu>
-      <Menu.Item>
-        <a target="_blank" rel="noreferrer noopener" href="https://worker1.valhalla.phdata.io:8090">master1</a>
-      </Menu.Item>
-      <Menu.Item>
-        <a target="_blank" rel="noreferrer noopener" href="https://worker2.valhalla.phdata.io:8090">master2</a>
-      </Menu.Item>
+      {services && services.yarn.resource_manager.map(location => (
+        <Menu.Item>
+          <a target="_blank" rel="noreferrer noopener" href={`https://${location.host}:${location.port}`}>
+            {location.host}
+          </a>
+        </Menu.Item>
+      ))}
+    </Menu>
+  )
+  const nmLinks = (
+    <Menu>
+      {services && services.yarn.node_manager.map(location => (
+        <Menu.Item>
+          <a target="_blank" rel="noreferrer noopener" href={`https://${location.host}:${location.port}`}>
+            {location.host}
+          </a>
+        </Menu.Item>
+      ))}
     </Menu>
   )
   const yarnLinks = [
-    (<Dropdown overlay={rmLinks}><a href="#" className="ant-dropdown-link">Node Manager UI <Icon type="down" /></a></Dropdown>),
+    (<Dropdown overlay={nmLinks}><a href="#" className="ant-dropdown-link">Node Manager UI <Icon type="down" /></a></Dropdown>),
     (<Dropdown overlay={rmLinks}><a href="#" className="ant-dropdown-link">Resource Manager UI <Icon type="down" /></a></Dropdown>),
   ];
   return (
@@ -160,15 +169,15 @@ const Home = ({ name, displayStatus, color, services }) => {
           The current status of {name} is <span style={{ fontWeight: 'bold', color }}>{displayStatus}</span>
         </h3>
         <h2>
-          <a target="_blank" rel="noreferrer noopener" href="http://master1.jotunn.io:7180/">
+          <a target="_blank" rel="noreferrer noopener" href={cm_url}>
             {name}&apos;s Cloudera Manager UI
           </a>
         </h2>
       </div>
       <div style={{ display: 'flex', marginTop: 25 }}>
-        <Service target="_blank" rel="noreferrer noopener" name="Hive" index={0} rawStatus={services && services.HIVESERVER2.status} status={serviceText(services && services.HIVESERVER2)} color={serviceColor(services && services.HIVESERVER2)} links={hiveLinks} />
-        <Service target="_blank" rel="noreferrer noopener" name="Hue" index={1} rawStatus={services && services.HUE.status} status={serviceText(services && services.HUE)} color={serviceColor(services && services.HUE)} links={hueLinks} />
-        <Service target="_blank" rel="noreferrer noopener" name="Yarn" index={2} rawStatus={services && services.YARN.status} status={serviceText(services && services.YARN)} color={serviceColor(services && services.YARN)} links={yarnLinks} />
+        <Service target="_blank" rel="noreferrer noopener" name="Hive" index={0} rawStatus={services && services.hive.status} status={serviceText(services && services.hive)} color={serviceColor(services && services.hive)} links={[]} />
+        <Service target="_blank" rel="noreferrer noopener" name="Hue" index={1} rawStatus={services && services.hue.status} status={serviceText(services && services.hue)} color={serviceColor(services && services.hue)} links={hueLinks} />
+        <Service target="_blank" rel="noreferrer noopener" name="Yarn" index={2} rawStatus={services && services.yarn.status} status={serviceText(services && services.yarn)} color={serviceColor(services && services.yarn)} links={yarnLinks} />
       </div>
       <div style={{ marginTop: 25, display: 'flex' }}>
         <Card style={{ flex: 1 }} title="Project Requests">

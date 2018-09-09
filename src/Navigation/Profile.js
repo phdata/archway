@@ -13,7 +13,7 @@ const Profile = ({profile, requestLogout}) =>  {
         <div style={{ width: '100%', padding: 15, color: 'white', textAlign: 'center', borderTop: '1px solid #C6CACF', borderBottom: '1px solid #C6CACF', backgroundColor: '#415161' }}>
             <Avatar shape="circle" size="large" icon="user" style={{ backgroundColor: 'transparent', color: 'white' }} />
             <h3 style={{ color: 'white' }}>
-                Hey, {name}!
+                hey, {name}!
             </h3>
             <h6>
               <a href="#" style={{ textTransform: 'uppercase', fontWeight: 200, color: 'white' }} onClick={requestLogout}>
