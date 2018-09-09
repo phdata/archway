@@ -1,58 +1,66 @@
 package com.heimdali.services
 
-import io.circe.{Encoder, Json}
+import com.heimdali.services.CDHResponses.{AppRole, HostInfo, ListContainer, ServiceInfo}
+import io.circe._
+import io.circe.generic.auto._
+import io.circe.syntax._
 
 trait ClusterService[F[_]] {
   def list: F[Seq[Cluster]]
 }
 
-sealed trait ClusterApp {
-  def id: String
-  def name: String
-  def status: String
-  def state: String
+case class AppLocation(host: String, port: Int)
+
+case class ClusterApp(id: String, name: String, state: String, status: String, capabilities: Map[String, List[AppLocation]])
+
+object ClusterApp {
+  def apply(name: String, serviceInfo: ServiceInfo, hosts: ListContainer[HostInfo], appRoles: Map[String, (Int, List[AppRole])]): ClusterApp = {
+    ClusterApp(
+      serviceInfo.name,
+      name,
+      serviceInfo.serviceState,
+      serviceInfo.entityStatus,
+      appRoles.map { r =>
+        r._1 -> r._2._2.map { ri =>
+          AppLocation(hosts.items.find(h => ri.hostRef.hostId == h.hostId).get.hostname, r._2._1)
+        }
+      }
+    )
+  }
+
+  implicit val decoder: Encoder[ClusterApp] =
+    Encoder.instance { a =>
+      a.capabilities.foldLeft(Json.obj(
+        "state" -> a.state.asJson,
+        "status" -> a.status.asJson,
+      )) { (existing, next) =>
+        existing.deepMerge(Json.obj(next._1 -> next._2.asJson))
+      }
+    }
 }
 
-case class BasicClusterApp(id: String, name: String, status: String, state: String) extends ClusterApp
-
-case class HostClusterApp(id: String, name: String, status: String, state: String, host: String) extends ClusterApp
-
-case class Cluster(id: String, name: String, clusterApps: Map[String, _ <: ClusterApp], distribution: CDH, status: String)
+case class Cluster(id: String, name: String, cmURL: String, services: List[ClusterApp], distribution: CDH, status: String)
 
 object Cluster {
-  implicit val fooDecoder: Encoder[Cluster] =
+  implicit val decoder: Encoder[Cluster] =
     Encoder.instance { a =>
-    val services: Map[String, Json] = a.clusterApps.map {
-      case (name, BasicClusterApp(id, display, status, state)) =>
-        (name, Json.obj(
-          ("id", Json.fromString(id)),
-          ("state", Json.fromString(state)),
-          ("status", Json.fromString(status)),
-          ("name", Json.fromString(display))
-        ))
-      case (name, HostClusterApp(id, display, status, state, host)) =>
-        (name, Json.obj(
-          ("id", Json.fromString(id)),
-          ("state", Json.fromString(state)),
-          ("status", Json.fromString(status)),
-          ("name", Json.fromString(display)),
-          ("host", Json.fromString(host))
-        ))
+      Json.obj(
+        "id" -> a.id.asJson,
+        "name" -> a.name.asJson,
+        "cm_url" -> a.cmURL.asJson,
+        "services" -> a.services.foldLeft(Json.obj())((existing, next) => existing.deepMerge(Json.obj(next.name -> next.asJson))),
+        "distribution" -> Json.obj(
+          "name" -> a.distribution.name.asJson,
+          "version" -> a.distribution.version.asJson
+        ),
+        "status" -> a.status.asJson
+      )
     }
-    Json.obj(
-      ("id", Json.fromString(a.id)),
-      ("name", Json.fromString(a.name)),
-      ("services", Json.obj(services.to:_*)),
-      ("distribution", Json.obj(
-        ("name", Json.fromString(a.distribution.name)),
-        ("version", Json.fromString(a.distribution.version))
-      )),
-      ("status", Json.fromString(a.status)))
-  }
 }
 
 sealed trait Distribution {
   def version: String
+
   def name: String
 }
 

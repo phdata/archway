@@ -7,6 +7,6 @@ trait ClusterModule[F[_]] {
     with ConfigurationModule
     with HttpModule[F] =>
 
-  val clusterService: ClusterService[F] = new CDHClusterService[F](http, appConfig.cluster)
+  val clusterService: ClusterService[F] = new CDHClusterService[F](http, appConfig.cluster, hadoopConfiguration)
 
 }

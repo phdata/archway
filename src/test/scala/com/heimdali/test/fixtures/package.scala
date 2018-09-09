@@ -1,14 +1,27 @@
 package com.heimdali.test
 
-import java.time.{ Clock, Instant, ZoneId }
+import java.time.{Clock, Instant, ZoneId}
 
+import cats.effect.IO
+import com.heimdali.clients.{CMClient, HttpTest}
+import org.http4s.HttpService
+import org.http4s.circe._
+import org.http4s.client.Client
+import org.http4s.dsl.io._
+import cats.effect.IO
+import com.heimdali.clients.CMClient
 import com.heimdali.config.{ClusterConfig, CredentialsConfig}
 import com.heimdali.models._
-import com.heimdali.services.{BasicClusterApp, CDH, Cluster}
+import com.heimdali.services.{CDH, Cluster, ClusterApp}
+import io.circe._
 import io.circe.parser._
-import java.util.TimeZone
-import org.joda.time.DateTime
+import org.http4s.HttpService
+import org.http4s.circe._
+import org.http4s.client.Client
+import org.http4s.dsl.io._
+
 import scala.concurrent.duration._
+import scala.io.Source
 
 package object fixtures {
   val id = 123L
@@ -43,8 +56,8 @@ package object fixtures {
   val initialApplication = savedApplication.copy(id = None, group = initialLDAP)
   val clock = Clock.fixed(Instant.now(), ZoneId.of("UTC"))
 
-  val yarnApp = BasicClusterApp("ysr21", "Yarn", "GOOD_HExALTH", "STARTED")
-  val cluster = Cluster("cluster name", "Cluster", Map("YARN" -> yarnApp), CDH(""), "GOOD_HEALTH")
+  val yarnApp = ClusterApp("yarn", "Yarn", "GOOD_HExALTH", "STARTED", Map())
+  val cluster = Cluster("cluster name", "Cluster", "", List(yarnApp), CDH(""), "GOOD_HEALTH")
 
   val personName = "John Doe"
   val standardUsername = "john.doe"
@@ -55,7 +68,7 @@ package object fixtures {
 
   def approval(instant: Instant = Instant.now(clock)) = Approval(Risk, standardUsername, instant)
 
-  val clusterConfig = ClusterConfig(1 second, "", "cluster name", "dev", CredentialsConfig("admin", "admin"))
+  val clusterConfig = ClusterConfig(1 second, "http://master1.jotunn.io:7180", "cluster", "dev", CredentialsConfig("admin", "admin"))
 
   val savedWorkspaceRequest = WorkspaceRequest(
     name,
@@ -127,7 +140,28 @@ package object fixtures {
        |  "requester": "$standardUsername",
        |  "requested_date": "${Instant.now(clock)}"
        |}
-       """.stripMargin
-  )
+       """.stripMargin)
+
+  def fromResource(path: String): Json = {
+    val json = Source.fromResource(path).getLines().mkString
+    val Right(parsedJson) = parse(json)
+    parsedJson
+  }
+
+  val testClient = IO.pure(Client.fromHttpService(HttpService[IO] {
+    case GET -> Root / "api" / "v18" / "clusters" / "cluster" =>
+      Ok(fromResource("cloudera/clusters.cluster_name.actual.json"))
+
+    case GET -> Root / "api" / "v18" / "clusters" / "cluster" / "services" / serviceName / "roles" =>
+      Ok(fromResource(s"cloudera/$serviceName.json"))
+
+    case GET -> Root / "api" / "v18" / "hosts" =>
+      Ok(fromResource("cloudera/hosts.json"))
+
+    case GET -> Root / "api" / "v18" / "clusters" / "cluster" / "services" =>
+      Ok(fromResource("cloudera/services.json"))
+  }))
+
+  val httpClient = new CMClient[IO](testClient, clusterConfig)
 
 }

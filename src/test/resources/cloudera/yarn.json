@@ -1,61 +1,157 @@
 {
   "items": [
     {
-      "name": "impala-STATESTORE-416c6afa711d68cad913a0f197301a36",
-      "type": "STATESTORE",
+      "name": "yarn-RESOURCEMANAGER-416c6afa711d68cad913a0f197301a36",
+      "type": "RESOURCEMANAGER",
       "serviceRef": {
         "clusterName": "cluster",
-        "serviceName": "impala"
+        "serviceName": "yarn"
       },
       "hostRef": {
         "hostId": "dcca7d0f-3526-462f-98de-5e7c0d256321"
       },
-      "roleUrl": "http://master1.jotunn.io:7180/cmf/roleRedirect/impala-STATESTORE-416c6afa711d68cad913a0f197301a36",
+      "roleUrl": "http://master1.jotunn.io:7180/cmf/roleRedirect/yarn-RESOURCEMANAGER-416c6afa711d68cad913a0f197301a36",
       "roleState": "STARTED",
       "healthSummary": "GOOD",
       "healthChecks": [
         {
-          "name": "STATESTORE_FILE_DESCRIPTOR",
+          "name": "RESOURCE_MANAGER_FILE_DESCRIPTOR",
           "summary": "GOOD",
           "suppressed": false
         },
         {
-          "name": "STATESTORE_HEAP_DUMP_DIRECTORY_FREE_SPACE",
-          "summary": "DISABLED",
-          "suppressed": false
-        },
-        {
-          "name": "STATESTORE_HOST_HEALTH",
+          "name": "RESOURCE_MANAGER_GC_DURATION",
           "summary": "GOOD",
           "suppressed": false
         },
         {
-          "name": "STATESTORE_LOG_DIRECTORY_FREE_SPACE",
+          "name": "RESOURCE_MANAGER_HEAP_DUMP_DIRECTORY_FREE_SPACE",
           "summary": "GOOD",
           "suppressed": false
         },
         {
-          "name": "STATESTORE_MEMORY_RSS_HEALTH",
-          "summary": "DISABLED",
-          "suppressed": false
-        },
-        {
-          "name": "STATESTORE_SCM_HEALTH",
+          "name": "RESOURCE_MANAGER_HOST_HEALTH",
           "summary": "GOOD",
           "suppressed": false
         },
         {
-          "name": "STATESTORE_SWAP_MEMORY_USAGE",
+          "name": "RESOURCE_MANAGER_LOG_DIRECTORY_FREE_SPACE",
           "summary": "GOOD",
           "suppressed": false
         },
         {
-          "name": "STATESTORE_UNEXPECTED_EXITS",
+          "name": "RESOURCE_MANAGER_SCM_HEALTH",
           "summary": "GOOD",
           "suppressed": false
         },
         {
-          "name": "STATESTORE_WEB_METRIC_COLLECTION",
+          "name": "RESOURCE_MANAGER_SWAP_MEMORY_USAGE",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "RESOURCE_MANAGER_UNEXPECTED_EXITS",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "RESOURCE_MANAGER_WEB_METRIC_COLLECTION",
+          "summary": "GOOD",
+          "suppressed": false
+        }
+      ],
+      "configStalenessStatus": "FRESH",
+      "haStatus": "ACTIVE",
+      "maintenanceMode": false,
+      "maintenanceOwners": [
+      ],
+      "commissionState": "COMMISSIONED",
+      "roleConfigGroupRef": {
+        "roleConfigGroupName": "yarn-RESOURCEMANAGER-BASE"
+      },
+      "entityStatus": "GOOD_HEALTH"
+    },
+    {
+      "name": "yarn-NODEMANAGER-416c6afa711d68cad913a0f197301a36",
+      "type": "NODEMANAGER",
+      "serviceRef": {
+        "clusterName": "cluster",
+        "serviceName": "yarn"
+      },
+      "hostRef": {
+        "hostId": "dcca7d0f-3526-462f-98de-5e7c0d256321"
+      },
+      "roleUrl": "http://master1.jotunn.io:7180/cmf/roleRedirect/yarn-NODEMANAGER-416c6afa711d68cad913a0f197301a36",
+      "roleState": "STARTED",
+      "healthSummary": "GOOD",
+      "healthChecks": [
+        {
+          "name": "NODEMANAGER_LOCAL_DATA_DIRECTORIES_FREE_SPACE",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "NODEMANAGER_LOG_DIRECTORIES_FREE_SPACE",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "NODEMANAGER_RECOVERY_DIRECTORY_FREE_SPACE",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "NODE_MANAGER_CONNECTIVITY",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "NODE_MANAGER_FILE_DESCRIPTOR",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "NODE_MANAGER_GC_DURATION",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "NODE_MANAGER_HEALTH_CHECKER",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "NODE_MANAGER_HEAP_DUMP_DIRECTORY_FREE_SPACE",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "NODE_MANAGER_HOST_HEALTH",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "NODE_MANAGER_LOG_DIRECTORY_FREE_SPACE",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "NODE_MANAGER_SCM_HEALTH",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "NODE_MANAGER_SWAP_MEMORY_USAGE",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "NODE_MANAGER_UNEXPECTED_EXITS",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "NODE_MANAGER_WEB_METRIC_COLLECTION",
           "summary": "GOOD",
           "suppressed": false
         }
@@ -66,71 +162,66 @@
       ],
       "commissionState": "COMMISSIONED",
       "roleConfigGroupRef": {
-        "roleConfigGroupName": "impala-STATESTORE-BASE"
+        "roleConfigGroupName": "yarn-NODEMANAGER-BASE"
       },
       "entityStatus": "GOOD_HEALTH"
     },
     {
-      "name": "impala-CATALOGSERVER-416c6afa711d68cad913a0f197301a36",
-      "type": "CATALOGSERVER",
+      "name": "yarn-JOBHISTORY-416c6afa711d68cad913a0f197301a36",
+      "type": "JOBHISTORY",
       "serviceRef": {
         "clusterName": "cluster",
-        "serviceName": "impala"
+        "serviceName": "yarn"
       },
       "hostRef": {
         "hostId": "dcca7d0f-3526-462f-98de-5e7c0d256321"
       },
-      "roleUrl": "http://master1.jotunn.io:7180/cmf/roleRedirect/impala-CATALOGSERVER-416c6afa711d68cad913a0f197301a36",
+      "roleUrl": "http://master1.jotunn.io:7180/cmf/roleRedirect/yarn-JOBHISTORY-416c6afa711d68cad913a0f197301a36",
       "roleState": "STARTED",
       "healthSummary": "GOOD",
       "healthChecks": [
         {
-          "name": "CATALOGSERVER_CONNECTIVITY",
+          "name": "JOBHISTORY_FILE_DESCRIPTOR",
           "summary": "GOOD",
           "suppressed": false
         },
         {
-          "name": "CATALOGSERVER_FILE_DESCRIPTOR",
+          "name": "JOBHISTORY_GC_DURATION",
           "summary": "GOOD",
           "suppressed": false
         },
         {
-          "name": "CATALOGSERVER_HEAP_DUMP_DIRECTORY_FREE_SPACE",
+          "name": "JOBHISTORY_HEAP_DUMP_DIRECTORY_FREE_SPACE",
           "summary": "GOOD",
           "suppressed": false
         },
         {
-          "name": "CATALOGSERVER_HOST_HEALTH",
+          "name": "JOBHISTORY_HOST_HEALTH",
           "summary": "GOOD",
           "suppressed": false
         },
         {
-          "name": "CATALOGSERVER_LOG_DIRECTORY_FREE_SPACE",
+          "name": "JOBHISTORY_LOG_DIRECTORY_FREE_SPACE",
           "summary": "GOOD",
           "suppressed": false
         },
         {
-          "name": "CATALOGSERVER_MEMORY_RSS_HEALTH",
-          "summary": "DISABLED",
-          "suppressed": false
-        },
-        {
-          "name": "CATALOGSERVER_SCM_HEALTH",
+          "name": "JOBHISTORY_SCM_HEALTH",
           "summary": "GOOD",
           "suppressed": false
         },
         {
-          "name": "CATALOGSERVER_SWAP_MEMORY_USAGE",
+          "name": "JOBHISTORY_SWAP_MEMORY_USAGE",
           "summary": "GOOD",
           "suppressed": false
         },
         {
-          "name": "CATALOGSERVER_UNEXPECTED_EXITS",
+          "name": "JOBHISTORY_UNEXPECTED_EXITS",
           "summary": "GOOD",
           "suppressed": false
         },
         {
-          "name": "CATALOGSERVER_WEB_METRIC_COLLECTION",
+          "name": "JOBHISTORY_WEB_METRIC_COLLECTION",
           "summary": "GOOD",
           "suppressed": false
         }
@@ -141,97 +232,7 @@
       ],
       "commissionState": "COMMISSIONED",
       "roleConfigGroupRef": {
-        "roleConfigGroupName": "impala-CATALOGSERVER-BASE"
-      },
-      "entityStatus": "GOOD_HEALTH"
-    },
-    {
-      "name": "impala-IMPALAD-416c6afa711d68cad913a0f197301a36",
-      "type": "IMPALAD",
-      "serviceRef": {
-        "clusterName": "cluster",
-        "serviceName": "impala"
-      },
-      "hostRef": {
-        "hostId": "dcca7d0f-3526-462f-98de-5e7c0d256321"
-      },
-      "roleUrl": "http://master1.jotunn.io:7180/cmf/roleRedirect/impala-IMPALAD-416c6afa711d68cad913a0f197301a36",
-      "roleState": "STARTED",
-      "healthSummary": "GOOD_HEALTH",
-      "healthChecks": [
-        {
-          "name": "IMPALAD_CONNECTIVITY",
-          "summary": "GOOD",
-          "suppressed": false
-        },
-        {
-          "name": "IMPALAD_FILE_DESCRIPTOR",
-          "summary": "GOOD",
-          "suppressed": false
-        },
-        {
-          "name": "IMPALAD_HEAP_DUMP_DIRECTORY_FREE_SPACE",
-          "summary": "DISABLED",
-          "suppressed": false
-        },
-        {
-          "name": "IMPALAD_HOST_HEALTH",
-          "summary": "GOOD",
-          "suppressed": false
-        },
-        {
-          "name": "IMPALAD_LOG_DIRECTORY_FREE_SPACE",
-          "summary": "GOOD",
-          "suppressed": false
-        },
-        {
-          "name": "IMPALAD_MEMORY_RSS_HEALTH",
-          "summary": "DISABLED",
-          "suppressed": false
-        },
-        {
-          "name": "IMPALAD_QUERY_MONITORING_STATUS",
-          "summary": "GOOD",
-          "suppressed": false
-        },
-        {
-          "name": "IMPALAD_READY_STATUS",
-          "summary": "GOOD_HEALTH",
-          "suppressed": false
-        },
-        {
-          "name": "IMPALAD_SCM_HEALTH",
-          "summary": "GOOD",
-          "suppressed": false
-        },
-        {
-          "name": "IMPALAD_SCRATCH_DIRECTORIES_FREE_SPACE",
-          "summary": "GOOD",
-          "suppressed": false
-        },
-        {
-          "name": "IMPALAD_SWAP_MEMORY_USAGE",
-          "summary": "GOOD",
-          "suppressed": false
-        },
-        {
-          "name": "IMPALAD_UNEXPECTED_EXITS",
-          "summary": "GOOD",
-          "suppressed": false
-        },
-        {
-          "name": "IMPALAD_WEB_METRIC_COLLECTION",
-          "summary": "GOOD",
-          "suppressed": false
-        }
-      ],
-      "configStalenessStatus": "STALE",
-      "maintenanceMode": false,
-      "maintenanceOwners": [
-      ],
-      "commissionState": "COMMISSIONED",
-      "roleConfigGroupRef": {
-        "roleConfigGroupName": "impala-IMPALAD-BASE"
+        "roleConfigGroupName": "yarn-JOBHISTORY-BASE"
       },
       "entityStatus": "GOOD_HEALTH"
     }

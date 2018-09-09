@@ -4,54 +4,70 @@ import cats.effect._
 import cats.implicits._
 import com.heimdali.clients.HttpClient
 import com.heimdali.config.ClusterConfig
+import org.apache.hadoop.conf.Configuration
+import org.apache.hadoop.yarn.conf.YarnConfiguration
 import org.http4s._
 
-class CDHClusterService[F[_] : Effect](http: HttpClient[F],
-                                       clusterConfig: ClusterConfig)
+class CDHClusterService[F[_]](http: HttpClient[F],
+                              clusterConfig: ClusterConfig,
+                              hadoopConfiguration: Configuration)
+                             (implicit val F: Effect[F])
   extends ClusterService[F] {
+
+  val yarnConfiguration: YarnConfiguration = new YarnConfiguration(hadoopConfiguration)
 
   import com.heimdali.services.CDHResponses._
   import io.circe.generic.auto._
 
-  def clusterDetailsRequest: F[ClusterInfo] =
-    for {
-      response <- http.request[ClusterInfo](Request(Method.GET, Uri.fromString(clusterConfig.clusterUrl).right.get))
-    } yield response
+  def hostListRequest: F[ListContainer[HostInfo]] =
+    http.request[ListContainer[HostInfo]](Request(Method.GET, Uri.fromString(clusterConfig.hostListUrl).right.get))
 
-  def serviceRoleListRequest(service: String): F[ImpalaApp] =
-    for {
-      response <- http.request[ImpalaApp](Request(Method.GET, Uri.fromString(clusterConfig.serviceRoleListUrl(service)).right.get))
-    } yield response
+  def clusterDetailsRequest: F[ClusterInfo] =
+    http.request[ClusterInfo](Request(Method.GET, Uri.fromString(clusterConfig.clusterUrl).right.get))
+
+  def serviceRoleListRequest(service: String): F[ListContainer[AppRole]] =
+    http.request[ListContainer[AppRole]](Request(Method.GET, Uri.fromString(clusterConfig.serviceRoleListUrl(service)).right.get))
 
   def hostRequest(id: String): F[HostInfo] =
-    for {
-      response <- http.request[HostInfo](Request(Method.GET, Uri.fromString(clusterConfig.hostUrl(id)).right.get))
-    } yield response
+    http.request[HostInfo](Request(Method.GET, Uri.fromString(clusterConfig.hostUrl(id)).right.get))
 
   def servicesRequest: F[Services] =
-    for {
-      response <- http.request[Services](Request(Method.GET, Uri.fromString(clusterConfig.serviceListUrl).right.get))
-    } yield response
+    http.request[Services](Request(Method.GET, Uri.fromString(clusterConfig.serviceListUrl).right.get))
 
   val clusterDetails: F[Cluster] =
-    for (
-      details <- clusterDetailsRequest;
-      services <- servicesRequest;
-      impala <- serviceRoleListRequest(services.items.find(_.`type` == CDHClusterService.IMPALA_SERVICE_TYPE).get.name);
-      hive <- serviceRoleListRequest(services.items.find(_.`type` == CDHClusterService.HIVE_SERVICE_TYPE).get.name);
-      impalaHost <- hostRequest(impala.hostname(CDHClusterService.ImpalaDaemonRole).get);
-      hiveHost <- hostRequest(hive.hostname(CDHClusterService.HiveServer2Role).get)
-    ) yield Cluster(
+    for {
+      details <- clusterDetailsRequest
+      services <- servicesRequest
+      hosts <- hostListRequest
+
+      impala = services.items.find(_.`type` == CDHClusterService.IMPALA_SERVICE_TYPE).get
+      impalaDaemonRoles <- serviceRoleListRequest(impala.name).map(_.items.filter(_.`type` == CDHClusterService.ImpalaDaemonRole))
+
+      hive = services.items.find(_.`type` == CDHClusterService.HIVE_SERVICE_TYPE).get
+      hiveServer2Roles <- serviceRoleListRequest(hive.name).map(_.items.filter(_.`type` == CDHClusterService.HiveServer2Role))
+
+      hue = services.items.find(_.`type` == CDHClusterService.HUE_SERVICE_TYPE).get
+      hueLBRole <- serviceRoleListRequest(hue.name).map(_.items.filter(_.`type` == CDHClusterService.HueLoadBalancerRole))
+
+      yarn = services.items.find(_.`type` == CDHClusterService.YARN_SERVICE_TYPE).get
+      yarnRoles <- serviceRoleListRequest(yarn.name)
+
+      nodeManagerRoles = yarnRoles.items.filter(_.`type` == CDHClusterService.NodeManagerRole)
+      resourceManagerRoles = yarnRoles.items.filter(_.`type` == CDHClusterService.ResourceManagerRole)
+    } yield Cluster(
       details.name,
       details.displayName,
-      services.items.map {
-        case ServiceInfo(id, CDHClusterService.IMPALA_SERVICE_TYPE, state, status, display) =>
-          CDHClusterService.IMPALA_SERVICE_TYPE -> HostClusterApp(id, display, status, state, impalaHost.hostname)
-        case ServiceInfo(id, CDHClusterService.HIVE_SERVICE_TYPE, state, status, display) =>
-          CDHClusterService.HiveServer2Role -> HostClusterApp(id, display, status, state, hiveHost.hostname)
-        case ServiceInfo(id, serviceType, state, status, display) =>
-          serviceType -> BasicClusterApp(id, display, status, state)
-      }.toMap,
+      clusterConfig.url,
+      List(
+        ClusterApp("impala", impala, hosts, Map(
+            "beeswax" -> (21000, impalaDaemonRoles),
+            "hiveServer2" -> (21050, impalaDaemonRoles))),
+        ClusterApp("hive", hive, hosts, Map("thrift" -> (10000, hiveServer2Roles))),
+        ClusterApp("hue", hue, hosts, Map("load_balancer" -> (8888, hueLBRole))),
+        ClusterApp("yarn", yarn, hosts, Map(
+          "node_manager" -> (8042, nodeManagerRoles),
+          "resource_manager" -> (8088, resourceManagerRoles))),
+      ),
       CDH(details.fullVersion),
       details.status
     )
@@ -64,8 +80,14 @@ class CDHClusterService[F[_] : Effect](http: HttpClient[F],
 }
 
 object CDHClusterService {
-  val ImpalaDaemonRole: String = "IMPALAD"
   val IMPALA_SERVICE_TYPE = "IMPALA"
-  val HiveServer2Role: String = "HIVESERVER2"
   val HIVE_SERVICE_TYPE = "HIVE"
+  val HUE_SERVICE_TYPE = "HUE"
+  val YARN_SERVICE_TYPE = "YARN"
+
+  val ImpalaDaemonRole: String = "IMPALAD"
+  val HiveServer2Role: String = "HIVESERVER2"
+  val HueLoadBalancerRole: String = "HUE_LOAD_BALANCER"
+  val ResourceManagerRole: String = "RESOURCEMANAGER"
+  val NodeManagerRole: String = "NODEMANAGER"
 }
