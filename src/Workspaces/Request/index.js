@@ -26,44 +26,40 @@ const FieldLabel = ({children}) => (
 )
 
 const OverviewPage = ({ handleChange, handleSubmit, values: {name, summary, description, phi_data, pii_data, pci_data} }) => (
-  <Row type="flex" justify="center">
-    <Col span={12}>
-      <Form
-        layout="vertical"
-        onSubmit={handleSubmit}>
-        <Form.Item
-            label={<FieldLabel>Workspace Name</FieldLabel>}>
-          <Input
-            name="name"
-            placeholder="name"
-            value={name}
-            onChange={handleChange} />
-        </Form.Item>
-        <Form.Item
-            label={<FieldLabel>Summary</FieldLabel>}>
-          <Input
-            name="summary"
-            placeholder="summary"
-            value={summary}
-            onChange={handleChange} />
-        </Form.Item>
-        <Form.Item
-            label={<FieldLabel>Purpose for workspace</FieldLabel>}>
-          <Input.TextArea
-            name="description"
-            placeholder="use this area to fully describe to reviewers and future users why this workspace is needed"
-            rows={5}
-            value={description}
-            onChange={handleChange} />
-        </Form.Item>
-        <Form.Item style={{textAlign: 'center'}}>
-          <Button style={{width: '50%', textTransform: 'uppercase'}} size="large" type="primary" htmlType="submit">
-            Next
-          </Button>
-        </Form.Item>
-      </Form>
-    </Col>
-  </Row>
+  <Form
+    layout="vertical"
+    onSubmit={handleSubmit}>
+    <Form.Item
+        label={<FieldLabel>Workspace Name</FieldLabel>}>
+      <Input
+        name="name"
+        placeholder="Loan Modification Group (LMG)"
+        value={name}
+        onChange={handleChange} />
+    </Form.Item>
+    <Form.Item
+        label={<FieldLabel>Summary</FieldLabel>}>
+      <Input
+        name="summary"
+        placeholder="LMG's place to evaluate modification algorithms"
+        value={summary}
+        onChange={handleChange} />
+    </Form.Item>
+    <Form.Item
+        label={<FieldLabel>Purpose for workspace</FieldLabel>}>
+      <Input.TextArea
+        name="description"
+        placeholder="(Use this area to fully describe to reviewers and future users why this workspace is needed.)"
+        rows={5}
+        value={description}
+        onChange={handleChange} />
+    </Form.Item>
+    <Form.Item style={{textAlign: 'center'}}>
+      <Button style={{width: '50%', textTransform: 'uppercase'}} size="large" type="primary" htmlType="submit">
+        Next
+      </Button>
+    </Form.Item>
+  </Form>
 );
 
 const OverviewPageForm = withFormik({
@@ -78,9 +74,11 @@ const WorkspaceRequest = ({  currentStep = 'overview' }) => (
       <h1>New Workspace Request</h1>
       <Steps style={{width: 350}} current={currentStep} />
     </div>
-    <div style={{margin: 25}}>
-      <OverviewPageForm />
-    </div>
+    <Row style={{margin: 25}} type="flex" justify="center">
+      <Col span={12}>
+        <OverviewPageForm />
+      </Col>
+    </Row>
   </div>
 );
 

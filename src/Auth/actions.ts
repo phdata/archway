@@ -1,21 +1,23 @@
+import { Login } from '../types';
+
 export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
 export const LOGIN_REQUEST = 'LOGIN_REQUEST';
 export const LOGIN_FAILURE = 'LOGIN_FAILURE';
 
-export function login() {
+export function login(payload: Login) {
   return {
     type: LOGIN_REQUEST,
   };
 }
 
-export function loginSuccess(token) {
+export function loginSuccess(token: String) {
   return {
     type: LOGIN_SUCCESS,
     token,
   };
 }
 
-export function loginError(error) {
+export function loginError(error: String) {
   return {
     type: LOGIN_FAILURE,
     error,
@@ -35,7 +37,7 @@ export function requestLogout() {
 export const TOKEN_EXTRACTED = 'TOKEN_EXTRACTED';
 export const TOKEN_NOT_AVAILABLE = 'TOKEN_NOT_AVAILABLE';
 
-export function tokenExtracted(token) {
+export function tokenExtracted(token: String) {
   return {
     type: TOKEN_EXTRACTED,
     token,
@@ -50,19 +52,9 @@ export function tokenNotAvailalbe() {
 
 export const PROFILE_READY = 'PROFILE_READY';
 
-export function profileReady(profile) {
+export function profileReady(profile: any) {
   return {
     type: PROFILE_READY,
     profile,
-  };
-}
-
-
-export const LOGIN_FIELD_CHANGED = 'LOGIN_FIELD_CHANGED';
-
-export function loginFieldChanged(field) {
-  return {
-    type: LOGIN_FIELD_CHANGED,
-    field,
   };
 }
