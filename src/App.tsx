@@ -1,10 +1,11 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-
+import { createStructuredSelector } from 'reselect';
 import Login from './Auth/Login';
-import Main from './Main';
 import Spinner from './Common/Spinner';
-import {StoreState} from './types';
+import Main from './Main';
+import { isLoading, getToken } from './selectors';
+
 
 interface Props {
   loading: Boolean
@@ -20,7 +21,11 @@ const AppContainer = ({ loading, token }: Props) => {
   return <Login />;
 };
 
-const mapStateToProps = (state: StoreState) => state.auth;
+const mapStateToProps = () =>
+  createStructuredSelector({
+    loading: isLoading(),
+    token: getToken(),
+  });
 
 const mapDispatchToProps = {};
 

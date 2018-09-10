@@ -12,7 +12,7 @@ const sagas = [
 
 export const CANCEL_SAGAS_HMR = 'CANCEL_SAGAS_HMR';
 
-function createAbortableSaga(saga) {
+const createAbortableSaga = (saga: any) => {
   if (process.env.NODE_ENV === 'development') {
     return function* main() {
       const sagaTask = yield fork(saga);
@@ -24,16 +24,16 @@ function createAbortableSaga(saga) {
   return saga;
 }
 
-const SagaManager = {
-  startSagas(sagaMiddleware) {
+const SagaManager = ({
+  startSagas: (sagaMiddleware: any) => {
     sagas.map(createAbortableSaga).forEach(saga => sagaMiddleware.run(saga));
   },
 
-  cancelSagas(store) {
+  cancelSagas: (store: any) => {
     store.dispatch({
       type: CANCEL_SAGAS_HMR,
     });
   },
-};
+});
 
 export default SagaManager;

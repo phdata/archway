@@ -1,12 +1,15 @@
-import { applyMiddleware, combineReducers, compose, createStore } from 'redux';
+import { applyMiddleware, compose, createStore, Store, Reducer } from 'redux';
+import { combineReducers } from 'redux-immutable';
 import createSagaMiddleware from 'redux-saga';
 
-import SagaManager from '../SagaManager';
+import SagaManager from './sagas';
 import auth from '../Auth/reducers';
 import cluster from '../Navigation/reducers';
 import workspaces from '../Workspaces/reducers';
+import { StoreState } from '../types';
+import { fromJS } from 'immutable';
 
-const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+const composeEnhancers = (<any>window).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const sagaMiddleware = createSagaMiddleware();
 
 const reducers = combineReducers({
@@ -15,13 +18,13 @@ const reducers = combineReducers({
   workspaces,
 });
 
-const enhancer = compose(
+const enhancer = composeEnhancers(
   applyMiddleware(sagaMiddleware),
 );
 
-const store = createStore(
-  reducers,
-  {auth: {loading: false}},
+const store: Store<StoreState> = createStore<StoreState>(
+  reducers as Reducer<StoreState>,
+  fromJS({}),
   enhancer,
 );
 

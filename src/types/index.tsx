@@ -1,12 +1,12 @@
 export interface Login {
-    email: String
+    username: String
     password: String
 }
 
 export interface Auth {
-    token: String
-    error: String
-    loading?: Boolean
+    token: String | Boolean
+    error: String | Boolean
+    loading: Boolean
     loggingIn: Boolean
 }
 
