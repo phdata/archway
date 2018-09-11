@@ -29,6 +29,8 @@ class WorkspaceRequestRepositoryImpl
 
   override def linkApplication(workspaceId: Long, applicationId: Long): doobie.ConnectionIO[Int] =
     WorkspaceRequestRepositoryImpl.Statements.linkApplication(workspaceId, applicationId).run
+
+  override def findByUsername(username: String): OptionT[doobie.ConnectionIO, WorkspaceRequest] = ???
 }
 
 object WorkspaceRequestRepositoryImpl {

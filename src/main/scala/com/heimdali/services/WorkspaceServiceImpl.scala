@@ -118,5 +118,6 @@ class WorkspaceServiceImpl[F[_]](ldapClient: LDAPClient[F],
     combined.sequence.map(_.combineAll).apply(appConfig).map(_.messages)
   }
 
-  override def findByUsername(username: String): OptionT[F, WorkspaceRequest] = ???
+  override def findByUsername(username: String): OptionT[F, WorkspaceRequest] =
+    OptionT(workspaceRepository.findByUsername(username).value.transact(transactor))
 }

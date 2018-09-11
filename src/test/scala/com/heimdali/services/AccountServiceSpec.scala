@@ -1,6 +1,6 @@
 package com.heimdali.services
 
-import cats.data.OptionT
+import cats.data._
 import cats.effect.IO
 import com.heimdali.clients.{LDAPClient, LDAPUser}
 import com.heimdali.config.{ApprovalConfig, RestConfig, WorkspaceConfig, WorkspaceConfigItem}
@@ -96,6 +96,20 @@ class AccountServiceSpec extends FlatSpec with MockFactory with Matchers {
     maybeWorkspace shouldBe Some(savedWorkspaceRequest)
   }
 
+  it should "save and create a workspace" in new Context {
+    import Generator._
+    val userWorkspace = Generator[UserTemplate].defaults(infraApproverUser).generate().copy(requestDate = clock.instant())
+
+    workspaceService.findByUsername _ expects standardUsername returning OptionT.none
+    workspaceService.create _ expects userWorkspace returning IO.pure(savedWorkspaceRequest)
+    workspaceService.provision _ expects savedWorkspaceRequest returning IO.pure(NonEmptyList.one(""))
+    workspaceService.find _ expects id returning OptionT.some(savedWorkspaceRequest)
+
+    val maybeWorkspace = accountService.createWorkspace(infraApproverUser).value.unsafeRunSync()
+
+    maybeWorkspace shouldBe Some(savedWorkspaceRequest)
+  }
+
   trait Context {
     val (name, wrongUsername, username, actualPassword, wrongPassword) = ("Dude Doe", "user", "username", "password", "passw0rd")
     val approvalConfig = ApprovalConfig("CN=foo,DC=jotunN,dc=io", "cN=bar,dc=JOTUNN,dc=io")
@@ -109,7 +123,7 @@ class AccountServiceSpec extends FlatSpec with MockFactory with Matchers {
     val workspaceService = mock[WorkspaceService[IO]]
     val ldapClient = mock[LDAPClient[IO]]
 
-    lazy val accountService = new AccountServiceImpl[IO](ldapClient, restConfig, approvalConfig, workspaceConfig, workspaceService)
+    lazy val accountService = new AccountServiceImpl[IO](ldapClient, restConfig, approvalConfig, workspaceConfig, workspaceService, clock)
   }
 
 }

@@ -92,6 +92,14 @@ class WorkspaceServiceImplSpec
     foundWorkspace.get.processing should not be empty
   }
 
+  it should "find a user workspace" in new Context {
+    workspaceRepository.findByUsername _ expects standardUsername returning OptionT.some(savedWorkspaceRequest)
+
+    val maybeWorkspace = projectServiceImpl.findByUsername(standardUsername).value.unsafeRunSync()
+
+    maybeWorkspace shouldBe Some(savedWorkspaceRequest)
+  }
+
   it should "approve the workspace" in new Context {
     val instant = Instant.now()
     approvalRepository.create _ expects(id, approval(instant)) returning approval(

@@ -5,6 +5,7 @@ import com.heimdali.models.WorkspaceRequest
 import doobie._
 
 trait WorkspaceRequestRepository {
+  def findByUsername(username: String): OptionT[ConnectionIO, WorkspaceRequest]
 
   def create(workspaceRequest: WorkspaceRequest): ConnectionIO[Long]
 

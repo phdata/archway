@@ -76,5 +76,5 @@ trait ServiceModule[F[_]] {
     new ApplicationServiceImpl[F](reader)
 
   val accountService: AccountService[F] =
-    new AccountServiceImpl[F](ldapClient, appConfig.rest, appConfig.approvers, appConfig.workspaces, workspaceService)
+    new AccountServiceImpl[F](ldapClient, appConfig.rest, appConfig.approvers, appConfig.workspaces, workspaceService, clock)
 }

@@ -1,5 +1,7 @@
 package com.heimdali.services
 
+import java.time.Clock
+
 import cats.data._
 import cats.effect._
 import cats.implicits._
@@ -16,7 +18,8 @@ class AccountServiceImpl[F[_] : Sync](ldapClient: LDAPClient[F],
                                       restConfig: RestConfig,
                                       approvalConfig: ApprovalConfig,
                                       workspaceConfig: WorkspaceConfig,
-                                      workspaceService: WorkspaceService[F])
+                                      workspaceService: WorkspaceService[F],
+                                      clock: Clock)
   extends AccountService[F]
     with LazyLogging {
 
@@ -68,7 +71,7 @@ class AccountServiceImpl[F[_] : Sync](ldapClient: LDAPClient[F],
     OptionT(workspaceService.findByUsername(user.username).value.flatMap {
       case Some(_) => Sync[F].pure(None)
       case None =>
-        val workspace = Generator[UserTemplate].defaults(user).generate()
+        val workspace = Generator[UserTemplate].defaults(user).generate().copy(requestDate = clock.instant())
         for {
           savedWorkspace <- workspaceService.create(workspace)
           _ <- workspaceService.provision(savedWorkspace)
