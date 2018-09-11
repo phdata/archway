@@ -15,17 +15,9 @@ class UserServiceImplSpec extends FlatSpec with Matchers with MockFactory {
 
   behavior of "LDAPAccountService"
 
-  it should "return a user if one is found and password matches" in {
-    val (name, username, password) = ("name", "username", "password")
-
-    val ldapUser = LDAPUser(name, username, Seq.empty)
-    val restConfig = RestConfig(123, "abc123")
-    val approvalConfig = ApprovalConfig("", "")
-
-    val ldapClient = mock[LDAPClient[IO]]
-    ldapClient.validateUser _ expects(username, password) returning OptionT.some(ldapUser)
-    val ldapAccountService = new AccountServiceImpl[IO](ldapClient, restConfig, approvalConfig)
-    val maybeUser = ldapAccountService.login(username, password).value.unsafeRunSync()
+  it should "return a user if one is found and password matches" in new Context {
+    ldapClient.validateUser _ expects(username, actualPassword) returning OptionT.some(ldapUser)
+    val maybeUser = ldapAccountService.login(username, actualPassword).value.unsafeRunSync()
     maybeUser shouldBe defined
   }
 
