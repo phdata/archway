@@ -5,7 +5,7 @@ import { Layout } from 'antd';
 import './less/index.css';
 
 import Home from './Home';
-import Workspaces from './Workspaces';
+import WorkspaceListing from './WorkspaceListing';
 import WorkspaceDetails from './Workspaces/WorkspaceDetails';
 import Request from './Workspaces/Request';
 import Navigation from './Navigation';
@@ -22,7 +22,7 @@ const Main = () => (
         <div style={{ minHeight: '100%' }}>
           <Route exact={true} path="/" component={SendHome} />
           <Route path="/home" component={Home} />
-          <Route exact={true} path="/workspaces" component={Workspaces} />
+          <Route exact={true} path="/workspaces" component={WorkspaceListing} />
           <Route path="/request" component={Request} />
           <Route path="/workspaces/:id" component={WorkspaceDetails} />
         </div>

@@ -1,8 +1,8 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import * as React from 'react';
 import { Card, List, Avatar } from 'antd';
 
 import Color from './Colors';
+import { Workspace } from '../WorkspaceListing/Workspace';
 
 const WorkspaceStatus = () => (
   <div
@@ -17,14 +17,13 @@ const WorkspaceStatus = () => (
   </div>
 );
 
-const detailStyle = {
-  width: '25%',
-  textAlign: 'center',
-  boxShadow: 'none'
-};
+interface DetailProps {
+  label: string
+  value: any
+}
 
-const WorkspaceDetail = ({ label, value }) => (
-  <Card.Grid style={detailStyle}>
+const WorkspaceDetail = ({ label, value }: DetailProps) => (
+  <Card.Grid style={{ width: '25%', textAlign: 'center', boxShadow: 'none' }}>
     <h2 style={{ color: Color.Orange.rgb().string(), fontWeight: 100, textAlign: 'center' }}>
       {value}
     </h2>
@@ -34,18 +33,25 @@ const WorkspaceDetail = ({ label, value }) => (
   </Card.Grid>
 )
 
-const WorkspaceListItem = ({ workspace, onSelected }) => {
+interface Props {
+  workspace: Workspace
+  onSelected: (id: number) => void
+}
+
+const WorkspaceListItem = ({ workspace, onSelected }: Props) => {
   const gridStyle = { width: '33%', textAlign: 'center' };
   const {
     id,
     name,
   } = workspace;
+  const onClick = () => onSelected(id);
   return (
+    // @ts-ignore
     <List.Item>
       <Card
         style={{ textAlign: 'center' }}
-        onClick={() => onSelected(`/workspaces/${id}`)}
-        hoverable>
+        onClick={onClick}
+        hoverable={true}>
         <Avatar icon="user" />
         <h2 style={{ textAlign: 'center' }}>{name}</h2>
         <h4>partially approved</h4>
@@ -56,17 +62,6 @@ const WorkspaceListItem = ({ workspace, onSelected }) => {
       </Card>
     </List.Item>
   );
-};
-
-WorkspaceListItem.propTypes = {
-  item: PropTypes.shape({
-    id: PropTypes.number.isRequired,
-    name: PropTypes.string.isRequired,
-    requester: PropTypes.string.isRequired,
-    requested_date: PropTypes.string.isRequired,
-    single_user: PropTypes.bool.isRequired,
-  }).isRequired,
-  onSelected: PropTypes.func.isRequired,
 };
 
 export default WorkspaceListItem;

@@ -26,7 +26,7 @@ const Navigation = ({ location }) => (
       </Menu.Item>
       <Menu.Item style={{marginTop: 20}} key="/request">
         <NavLink to="/request">
-          <i className="fa fa-flask" /> New Workspace
+          <i className="fa fa-plus" /> New Workspace
         </NavLink>
       </Menu.Item>
     </Menu>
