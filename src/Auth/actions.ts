@@ -1,4 +1,5 @@
 import { Login } from '../types';
+import { Profile } from '../Home/a.d';
 
 export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
 export const LOGIN_REQUEST = 'LOGIN_REQUEST';
@@ -52,7 +53,7 @@ export function tokenNotAvailalbe() {
 
 export const PROFILE_READY = 'PROFILE_READY';
 
-export function profileReady(profile: any) {
+export function profileReady(profile: Profile) {
   return {
     type: PROFILE_READY,
     profile,

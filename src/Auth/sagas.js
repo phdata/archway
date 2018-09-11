@@ -47,7 +47,7 @@ function* tokenReady({ token }) {
 
 function* profileUpdate() {
   while (true) {
-    const token = yield select(s => s.auth.token);
+    const token = yield select(s => s.get('auth').get('token'));
     if (token) {
       const profile = yield call(Api.profile, token);
       yield put(actions.profileReady(profile));

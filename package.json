@@ -42,6 +42,7 @@
   "devDependencies": {
     "@types/antd": "^1.0.0",
     "@types/chart.js": "^2.7.32",
+    "@types/color": "^3.0.0",
     "@types/react": "^16.4.13",
     "@types/react-dom": "^16.0.7",
     "@types/react-redux": "^6.0.7",

@@ -5,4 +5,5 @@ export default {
   Blue: Color('#2E4052'),
   Red: Color('#7B2D26'),
   Orange: Color('#FF6F59'),
+  Gray: Color('#bbb'),
 };

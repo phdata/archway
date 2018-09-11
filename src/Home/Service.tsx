@@ -1,34 +1,27 @@
 import * as React from 'react';
 import {Card, Avatar} from 'antd';
+import {Statusable, Status, ServiceLinks} from './a.d';
 
-export interface ServiceInfo {
-  name: string
-  status: string
-  statusColor: string
-  statusGlowColor: string
-  service: object
+export interface Props {
+  name: String
+  status: Status<Statusable>
+  links: ServiceLinks<Statusable>
   index: number
 }
 
-interface LocalProps {
-  links: JSX.Element[]
-}
-
-const Service = ({ name, status, statusColor, statusGlowColor, links, index }: ServiceInfo & LocalProps) => (
+const ServiceDisplay = ({name, status, links, index}: Props) => (
   <Card
     style={{ flex: 1, marginLeft: index == 0 ? 0 : 25 }}
-    actions={links}>
+    actions={links.links}>
     <Card.Meta
       title={name}
-      description={`${name}'s status is currently ${status}`}
+      description={`${name}'s status is currently ${status.statusText()}`}
       avatar={
         <Avatar
           size="small"
-          alt={`${name}'s status is currently ${status}`}
-          style={{ boxShadow: statusGlowColor, backgroundColor: statusColor }}
-          />
+          style={{ boxShadow: status.glowColorText(), backgroundColor: status.statusColor().string() }} />
       } />
   </Card>
 );
 
-export default Service;
+export default ServiceDisplay;

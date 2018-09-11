@@ -39,7 +39,7 @@ const auth = (state = initialAuthState, action: any) => {
               .set('token', false);
     case PROFILE_READY:
       return state
-              .set('profile', fromJS(action.profile));
+              .set('profile', action.profile);
     default:
       return state;
   }
