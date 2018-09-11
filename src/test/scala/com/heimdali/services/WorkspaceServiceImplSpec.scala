@@ -6,7 +6,7 @@ import cats.data.{EitherT, OptionT}
 import cats.effect.IO
 import cats.syntax.applicative._
 import com.heimdali.clients._
-import com.heimdali.models.{AppContext, WorkspaceMember}
+import com.heimdali.models._
 import com.heimdali.repositories.{MemberRepository, _}
 import com.heimdali.test.fixtures._
 import doobie._
@@ -94,6 +94,11 @@ class WorkspaceServiceImplSpec
 
   it should "find a user workspace" in new Context {
     workspaceRepository.findByUsername _ expects standardUsername returning OptionT.some(savedWorkspaceRequest)
+    hiveDatabaseRepository.findByWorkspace _ expects id returning List(savedHive).pure[ConnectionIO]
+    yarnRepository.findByWorkspaceId _ expects id returning List(savedYarn).pure[ConnectionIO]
+    approvalRepository.findByWorkspaceId _ expects id returning List.empty[Approval].pure[ConnectionIO]
+    topicRepository.findByWorkspaceId _ expects id returning List.empty[KafkaTopic].pure[ConnectionIO]
+    applicationRepository.findByWorkspaceId _ expects id returning List.empty[Application].pure[ConnectionIO]
 
     val maybeWorkspace = projectServiceImpl.findByUsername(standardUsername).value.unsafeRunSync()
 

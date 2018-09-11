@@ -46,16 +46,17 @@ class WorkspaceServiceImpl[F[_]](ldapClient: LDAPClient[F],
     }.toList
 
   override def find(id: Long): OptionT[F, WorkspaceRequest] =
-    OptionT((for {
-      workspace <- workspaceRepository.find(id)
-      datas <- OptionT.liftF(hiveDatabaseRepository.findByWorkspace(id))
-      yarns <- OptionT.liftF(yarnRepository.findByWorkspaceId(id))
-      appr <- OptionT.liftF(approvalRepository.findByWorkspaceId(id))
-      tops <- OptionT.liftF(topicRepository.findByWorkspaceId(id))
-      apps <- OptionT.liftF(applicationRepository.findByWorkspaceId(id))
-    } yield workspace.copy(data = datas, processing = yarns, approvals = appr, kafkaTopics = tops, applications = apps))
-      .value
-      .transact(transactor))
+    OptionT(fill(workspaceRepository.find(id)).value.transact(transactor))
+
+    private def fill(maybeWorkspace: OptionT[ConnectionIO, WorkspaceRequest]) =
+    for {
+      workspace <- maybeWorkspace
+      datas <- OptionT.liftF(hiveDatabaseRepository.findByWorkspace(workspace.id.get))
+      yarns <- OptionT.liftF(yarnRepository.findByWorkspaceId(workspace.id.get))
+      appr <- OptionT.liftF(approvalRepository.findByWorkspaceId(workspace.id.get))
+      tops <- OptionT.liftF(topicRepository.findByWorkspaceId(workspace.id.get))
+      apps <- OptionT.liftF(applicationRepository.findByWorkspaceId(workspace.id.get))
+    } yield workspace.copy(data = datas, processing = yarns, approvals = appr, kafkaTopics = tops, applications = apps)
 
   override def list(username: String): F[List[WorkspaceRequest]] =
     workspaceRepository.list(username).transact(transactor)
@@ -119,5 +120,5 @@ class WorkspaceServiceImpl[F[_]](ldapClient: LDAPClient[F],
   }
 
   override def findByUsername(username: String): OptionT[F, WorkspaceRequest] =
-    OptionT(workspaceRepository.findByUsername(username).value.transact(transactor))
+    OptionT(fill(workspaceRepository.findByUsername(username)).value.transact(transactor))
 }

@@ -30,7 +30,8 @@ class WorkspaceRequestRepositoryImpl
   override def linkApplication(workspaceId: Long, applicationId: Long): doobie.ConnectionIO[Int] =
     WorkspaceRequestRepositoryImpl.Statements.linkApplication(workspaceId, applicationId).run
 
-  override def findByUsername(username: String): OptionT[doobie.ConnectionIO, WorkspaceRequest] = ???
+  override def findByUsername(username: String): OptionT[doobie.ConnectionIO, WorkspaceRequest] =
+    OptionT(WorkspaceRequestRepositoryImpl.Statements.findByUsername(username).option)
 }
 
 object WorkspaceRequestRepositoryImpl {
@@ -116,6 +117,9 @@ object WorkspaceRequestRepositoryImpl {
 
     def find(id: Long): Query0[WorkspaceRequest] =
       (selectFragment ++ whereAnd(fr"wr.id = $id")).query[WorkspaceRequest]
+
+    def findByUsername(username: String): Query0[WorkspaceRequest] =
+      (selectFragment ++ whereAnd(fr"wr.requested_by = $username", fr"wr.single_user = true")).query[WorkspaceRequest]
 
   }
 
