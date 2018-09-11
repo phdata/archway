@@ -57,7 +57,7 @@ class AccountServiceSpec extends FlatSpec with MockFactory with Matchers {
       "username" -> infraApproverUser.username.asJson,
       "permissions" -> Json.obj(
         "risk_management" -> false.asJson,
-        "platform_operations" -> false.asJson
+        "platform_operations" -> true.asJson
       )
     )
 
@@ -68,7 +68,7 @@ class AccountServiceSpec extends FlatSpec with MockFactory with Matchers {
       "username" -> infraApproverUser.username.asJson,
       "permissions" -> Json.obj(
         "risk_management" -> false.asJson,
-        "platform_operations" -> false.asJson
+        "platform_operations" -> true.asJson
       )
     )
   }
@@ -89,9 +89,11 @@ class AccountServiceSpec extends FlatSpec with MockFactory with Matchers {
   }
 
   it should "return a workspace if one exists" in new Context {
-    val user = accountService.convertUser(ldapUser)
+    workspaceService.findByUsername _ expects standardUsername returning OptionT.some(savedWorkspaceRequest)
 
-    user.permissions.platformOperations should be(true)
+    val maybeWorkspace = accountService.getWorkspace(standardUsername).value.unsafeRunSync()
+
+    maybeWorkspace shouldBe Some(savedWorkspaceRequest)
   }
 
   trait Context {
