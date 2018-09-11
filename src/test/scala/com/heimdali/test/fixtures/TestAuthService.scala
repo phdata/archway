@@ -16,7 +16,7 @@ class TestAuthService(riskApprover: Boolean = false, platformApprover: Boolean =
     Kleisli[IO, Request[IO], Either[String, Token]](_ => EitherT.right(IO(Token("abc", "abc"))).value)
 
   val tokenValidator: Kleisli[IO, Request[IO], Either[String, User]] =
-    Kleisli[IO, Request[IO], Either[String, User]](_ => EitherT.right(IO(User("John Doe", standardUsername, UserPermissions(riskApprover, platformApprover)))).value)
+    Kleisli[IO, Request[IO], Either[String, User]](_ => EitherT.right(IO(infraApproverUser)).value)
 
   override def basicAuth: AuthMiddleware[IO, Token] =
     AuthMiddleware(basicValidator, failure)

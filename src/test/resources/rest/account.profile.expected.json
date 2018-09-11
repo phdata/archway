@@ -3,6 +3,6 @@
   "username" : "john.doe",
   "permissions" : {
     "risk_management" : false,
-    "platform_operations" : false
+    "platform_operations" : true
   }
 }
