@@ -1,4 +1,6 @@
-import {fromJS} from 'immutable';
+import { fromJS } from 'immutable';
+
+import { Workspace } from '../WorkspaceListing/Workspace';
 
 import {
   LOGIN_FAILURE,
@@ -14,7 +16,15 @@ const initialAuthState = fromJS({
   error: false,
   loggingIn: false,
   loading: true,
-  profile: Object
+  profile: false,
+  profileLoading: true,
+  workspace: {
+    id: 0,
+    name: "NA",
+    requested_date: new Date(),
+    requestor: "NA",
+    single_user: true
+  } as Workspace,
 });
 
 const auth = (state = initialAuthState, action: any) => {
@@ -23,23 +33,29 @@ const auth = (state = initialAuthState, action: any) => {
       return state.set('loggingIn', true);
     case LOGIN_SUCCESS:
       return state
-              .set('loggingIn', false)
-              .set('token', action.token);
+        .set('loggingIn', false)
+        .set('token', action.token);
     case LOGIN_FAILURE:
       return state
-              .set('loggingIn', false)
-              .set('error', action.error);
+        .set('loggingIn', false)
+        .set('error', action.error);
     case TOKEN_EXTRACTED:
       return state
-              .set('loading', false)
-              .set('token', action.token);
+        .set('loading', false)
+        .set('token', action.token);
     case TOKEN_NOT_AVAILABLE:
       return state
-              .set('loading', false)
-              .set('token', false);
+        .set('loading', false)
+        .set('token', false);
     case PROFILE_READY:
       return state
-              .set('profile', action.profile);
+        .set('profile', action.profile);
+    case 'WORKSPACE_AVAILABLE':
+      return state
+        .set('workspace', fromJS(action.workspace));
+    case 'PROFILE_LOADED':
+      return state
+        .set('profileLoading', action.loading);
     default:
       return state;
   }

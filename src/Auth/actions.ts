@@ -1,5 +1,6 @@
 import { Login } from '../types';
 import { Profile } from '../Home/a.d';
+import { Workspace } from '../WorkspaceListing/Workspace';
 
 export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
 export const LOGIN_REQUEST = 'LOGIN_REQUEST';
@@ -59,3 +60,17 @@ export function profileReady(profile: Profile) {
     profile,
   };
 }
+
+export const workspaceAvailable = (workspace: Workspace) => ({
+  type: 'WORKSPACE_AVAILABLE',
+  workspace: workspace
+});
+
+export const requestWorkspace = () => ({
+  type: 'WORKSPACE_REQUESTED'
+});
+
+export const profileLoading = (loading: boolean) => ({
+  type: 'PROFILE_LOADED',
+  loading
+})

@@ -1,5 +1,5 @@
 import { reset, stopSubmit } from 'redux-form';
-import { all, call, cancel, fork, put, take, select } from 'redux-saga/effects';
+import { all, takeLatest, call, cancel, fork, put, take, select } from 'redux-saga/effects';
 import { delay } from 'redux-saga';
 import * as Api from '../API';
 import * as actions from './actions';
@@ -43,6 +43,15 @@ function* loginFlow() {
 function* tokenReady({ token }) {
   const profile = yield call(Api.profile, token);
   yield put(actions.profileReady(profile));
+
+  try {
+    const workspace = yield call(Api.getPersonalWorkspace, token);
+    yield put(actions.workspaceAvailable(workspace));
+  } catch(exc) {
+
+  } finally {
+    yield put(actions.profileLoading(false));
+  }
 }
 
 function* profileUpdate() {
@@ -56,9 +65,22 @@ function* profileUpdate() {
   }
 }
 
+function* requestWorkspace() {
+  yield put(actions.profileLoading(true));
+  const token = yield select(s => s.get('auth').get('token'));
+  const workspace = yield call(Api.createWorkspace, token);
+  yield put(actions.workspaceAvailable(workspace));
+  yield put(actions.profileLoading(false));
+}
+
+function* workspaceRequested() {
+  yield takeLatest('WORKSPACE_REQUESTED', requestWorkspace);
+}
+
 export default function* root() {
   yield all([
     fork(loginFlow),
     fork(profileUpdate),
+    fork(workspaceRequested),
   ]);
 }

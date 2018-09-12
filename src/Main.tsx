@@ -1,14 +1,13 @@
-import * as React from 'react';
-import { ConnectedRouter } from 'react-router-redux';
-import { Route, Redirect } from 'react-router';
 import { Layout } from 'antd';
-import './less/index.css';
-
+import * as React from 'react';
+import { Redirect, Route } from 'react-router';
 import Home from './Home';
-import WorkspaceListing from './WorkspaceListing';
-import WorkspaceDetails from './Workspaces/WorkspaceDetails';
-import Request from './Workspaces/Request';
+import './less/index.css';
 import Navigation from './Navigation';
+import WorkspaceListing from './WorkspaceListing';
+import Request from './Workspaces/Request';
+import WorkspaceDetails from './Workspaces/WorkspaceDetails';
+
 
 const { Content, Footer } = Layout;
 

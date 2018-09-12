@@ -11,36 +11,53 @@ import Color from '../Common/Colors';
 import { Workspace } from './Workspace';
 import { filterWorkspaces } from './actions';
 import { isFetchingWorkspaces, workspaceList } from './selectors';
+import { CheckboxValueType } from 'antd/lib/checkbox/Group';
 
 interface Props {
   fetching: boolean
   workspaceList: Array<Workspace>
-  updateFilter: (filter: string, behavior: string) => void
+  updateFilter: (filter: string, behavior: string[]) => void
   openWorkspace: (id: number) => void
 }
 
 interface State {
   filter: string
-  behavior: String
+  behavior: string[]
 }
 
 class WorkspaceList extends React.Component<Props, State> {
-  filterUpdated(filter: string) {
+  constructor(props: Props) {
+    super(props);
+
+    this.state = {
+      filter: '',
+      behavior: []
+    };
+
+    this.filterUpdated = this.filterUpdated.bind(this);
+    this.behaviorChanged = this.behaviorChanged.bind(this);
+  }
+
+  filterUpdated(event: React.ChangeEvent<HTMLInputElement>) {
+    const filter = event.target.value;
     this.setState({
       ...this.state,
       filter
     });
+    this.props.updateFilter(filter, this.state.behavior);
   }
 
-  behaviorChanged(behavior: string) {
+  behaviorChanged(checkedValue: CheckboxValueType[]) {
+    const behavior: string[] = checkedValue.map(item => item.toString())
     this.setState({
       ...this.state,
       behavior
     });
+    this.props.updateFilter(this.state.filter, behavior);
   }
 
   componentDidMount() {
-    this.props.updateFilter('', '');
+    this.props.updateFilter('', []);
   }
 
   render() {
@@ -51,12 +68,15 @@ class WorkspaceList extends React.Component<Props, State> {
         <Col span={4}>
           <Card>
             <Input.Search
+              onChange={this.filterUpdated}
               placeholder="find a workspace..."
               size="large"
             />
             <h3>Workspace Behavior</h3>
             <hr />
-            <Checkbox.Group options={['Simple', 'Structured']} />
+            <Checkbox.Group
+              onChange={this.behaviorChanged}
+              options={['Simple', 'Structured']} />
           </Card>
         </Col>
         <Col style={{ marginLeft: 25 }} span={20}>
@@ -82,7 +102,7 @@ const mapStateToProps = () =>
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
   openWorkspace: (id: number) => dispatch(push(`/workspaces/${id}`)),
-  updateFilter: (filter: string, behavior: string) => dispatch(filterWorkspaces(filter, behavior))
+  updateFilter: (filter: string, behavior: string[]) => dispatch(filterWorkspaces(filter, behavior))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(WorkspaceList);

@@ -2,14 +2,20 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { Cluster, HiveService, HiveServiceLinks, HueService, HueServiceLinks, Status, YarnService, YarnServiceLinks } from './a.d';
-import { getClusterInfo } from './selectors';
+import { getPersonalWorkspace, getClusterInfo, isProfileLoading } from './selectors';
 import ServiceDisplay from './Service';
+import { Workspace } from '../WorkspaceListing/Workspace';
+import PersonalWorkspace from './PersonalWorkspace';
+import { requestWorkspace } from '../Auth/actions';
 
 interface Props {
   cluster: Cluster
+  personalWorkspace: Workspace
+  profileLoading: boolean
+  requestWorkspace: () => void
 }
 
-const Home = ({ cluster }: Props) => {
+const Home = ({ cluster, personalWorkspace, profileLoading, requestWorkspace }: Props) => {
   
   if(!cluster) return <div />;
 
@@ -47,6 +53,13 @@ const Home = ({ cluster }: Props) => {
           links={new YarnServiceLinks(cluster.services.yarn)}
           index={2} />
       </div>
+      <div style={{ marginTop: 25 }}>
+        <PersonalWorkspace
+          loading={profileLoading}
+          requestWorkspace={requestWorkspace}
+          workspace={personalWorkspace}
+          services={cluster.services} />
+      </div>
     </div>
   );
 }
@@ -54,8 +67,12 @@ const Home = ({ cluster }: Props) => {
 const mapStateToProps = () =>
   createStructuredSelector({
     cluster: getClusterInfo(),
+    personalWorkspace: getPersonalWorkspace(),
+    profileLoading: isProfileLoading(),
   });
 
-const mapDispatchToProps = {};
+const mapDispatchToProps = (dispatch: any) => ({
+  requestWorkspace: () => dispatch(requestWorkspace())
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home);

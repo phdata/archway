@@ -41,6 +41,12 @@ export const cluster =
 export const profile =
   token => get('/account/profile', token);
 
+  export const getPersonalWorkspace =
+    (token) => get(`/account/workspace`, token);
+
+export const createWorkspace =
+  (token) => withBody(`/account/workspace`, token);
+
 export const requestWorkspace =
   (token, workspace) => withBody('/workspaces', token, workspace);
 
