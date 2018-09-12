@@ -16241,7 +16241,7 @@ tr.ant-table-expanded-row:hover {
   bottom: 1px;
   box-sizing: border-box;
   height: 2px;
-  background-color: #0B7A75;
+  background-color: #333333;
   transform-origin: 0 0;
 }
 .ant-tabs-bar {
@@ -16423,7 +16423,7 @@ tr.ant-table-expanded-row:hover {
   margin-right: 8px;
 }
 .ant-tabs-nav .ant-tabs-tab-active {
-  color: #0B7A75;
+  color: #333333;
   font-weight: 500;
 }
 .ant-tabs-large .ant-tabs-nav-container {

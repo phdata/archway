@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, Form, Input, Col, Row } from 'antd';
+import { Button, Form, Input, Col, Row, Tabs, Tag } from 'antd';
 import { withFormik } from 'formik';
 import { connect } from 'react-redux';
 
@@ -26,40 +26,37 @@ const FieldLabel = ({ children }) => (
 )
 
 const OverviewPage = ({ handleChange, handleSubmit, values: { name, summary, description, phi_data, pii_data, pci_data } }) => (
-  <Form
-    layout="vertical"
-    onSubmit={handleSubmit}>
-    <Form.Item
-      label={<FieldLabel>Workspace Name</FieldLabel>}>
-      <Input
-        name="name"
-        placeholder="Loan Modification Group (LMG)"
-        value={name}
-        onChange={handleChange} />
-    </Form.Item>
-    <Form.Item
-      label={<FieldLabel>Summary</FieldLabel>}>
-      <Input
-        name="summary"
-        placeholder="LMG's place to evaluate modification algorithms"
-        value={summary}
-        onChange={handleChange} />
-    </Form.Item>
-    <Form.Item
-      label={<FieldLabel>Purpose for workspace</FieldLabel>}>
-      <Input.TextArea
-        name="description"
-        placeholder="(Use this area to fully describe to reviewers and future users why this workspace is needed.)"
-        rows={5}
-        value={description}
-        onChange={handleChange} />
-    </Form.Item>
-    <Form.Item style={{ textAlign: 'center' }}>
-      <Button style={{ width: '50%', textTransform: 'uppercase' }} size="large" type="primary" htmlType="submit">
-        Next
-      </Button>
-    </Form.Item>
-  </Form>
+  <Col span={12} offset={6}>
+    <Form
+      layout="vertical"
+      onSubmit={handleSubmit}>
+      <Form.Item
+        label={<FieldLabel>Workspace Name</FieldLabel>}>
+        <Input
+          name="name"
+          placeholder="Loan Modification Group (LMG)"
+          value={name}
+          onChange={handleChange} />
+      </Form.Item>
+      <Form.Item
+        label={<FieldLabel>Summary</FieldLabel>}>
+        <Input
+          name="summary"
+          placeholder="LMG's place to evaluate modification algorithms"
+          value={summary}
+          onChange={handleChange} />
+      </Form.Item>
+      <Form.Item
+        label={<FieldLabel>Purpose for workspace</FieldLabel>}>
+        <Input.TextArea
+          name="description"
+          placeholder="(Use this area to fully describe to reviewers and future users why this workspace is needed.)"
+          rows={5}
+          value={description}
+          onChange={handleChange} />
+      </Form.Item>
+    </Form>
+  </Col>
 );
 
 const OverviewPageForm = withFormik({
@@ -69,16 +66,23 @@ const OverviewPageForm = withFormik({
 })(OverviewPage);
 
 const WorkspaceRequest = ({ currentStep = 'overview' }) => (
-  <div>
-    <div style={{ textAlign: 'center' }}>
-      <h1>New Workspace Request</h1>
-      <Steps style={{ width: 350 }} current={currentStep} />
-    </div>
-    <Row style={{ margin: 25 }} type="flex" justify="center">
-      <Col span={12}>
+  <div style={{ textAlign: 'center', color: 'black' }}>
+    <h1>New Workspace Request</h1>
+
+    <Tabs tabBarStyle={{textAlign: 'center'}}>
+      <Tabs.TabPane tab="Details" key="1">
         <OverviewPageForm />
-      </Col>
-    </Row>
+      </Tabs.TabPane>
+      <Tabs.TabPane tab="Behavior" key="2">
+        <Tag.CheckableTag>
+            <h3>Hello</h3>
+            <p>World</p>
+        </Tag.CheckableTag>
+      </Tabs.TabPane>
+      <Tabs.TabPane tab="Review" key="3">
+        <OverviewPageForm />
+      </Tabs.TabPane>
+    </Tabs>
   </div>
 );
 
