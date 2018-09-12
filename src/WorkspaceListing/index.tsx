@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Button, Checkbox, Row, Col, List, Avatar, Input, Form, Card, Tag } from 'antd';
 import { connect } from 'react-redux';
-import { push } from 'react-router-redux'
+const router = require('connected-react-router/immutable');
 import { createStructuredSelector } from 'reselect';
 import { Dispatch } from 'redux';
 
@@ -101,7 +101,7 @@ const mapStateToProps = () =>
   });
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
-  openWorkspace: (id: number) => dispatch(push(`/workspaces/${id}`)),
+  openWorkspace: (id: number) => dispatch(router.push(`/workspaces/${id}`)),
   updateFilter: (filter: string, behavior: string[]) => dispatch(filterWorkspaces(filter, behavior))
 });
 

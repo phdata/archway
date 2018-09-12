@@ -1,5 +1,5 @@
 import { call, select, all, fork, takeLatest, put } from 'redux-saga/effects';
-import { push } from 'react-router-redux';
+import { push } from 'connected-react-router/immutable';
 import { delay } from 'redux-saga';
 
 import * as Api from '../../API';

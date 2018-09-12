@@ -3,7 +3,7 @@ import * as Fuse from 'fuse.js';
 
 const initialState = fromJS({
   fetching: false,
-  allWorkspaces: new Fuse([], { keys: ['name'] }),
+  allWorkspaces: new Fuse([], {}),
   filter: '',
   behavior: '',
 });

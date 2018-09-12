@@ -1,37 +1,43 @@
-import { applyMiddleware, compose, createStore, Store, Reducer } from 'redux';
+const router = require('connected-react-router/immutable');
+import { History } from 'history';
+import { fromJS } from 'immutable';
+import { applyMiddleware, compose, createStore, Store } from 'redux';
 import { combineReducers } from 'redux-immutable';
 import createSagaMiddleware from 'redux-saga';
-
-import SagaManager from './sagas';
 import auth from '../Auth/reducers';
 import cluster from '../Navigation/reducers';
-import workspaces from '../Workspaces/reducers';
 import workspaceList from '../WorkspaceListing/reducers';
 import { StoreState } from '../types';
-import { fromJS } from 'immutable';
-import {createHashHistory} from 'history';
-import {routerMiddleware} from 'connected-react-router';
+import workspaces from '../Workspaces/reducers';
+import SagaManager from './sagas';
 
-const composeEnhancers = (<any>window).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-const sagaMiddleware = createSagaMiddleware();
+const store: (history: History) => Store<StoreState> = (history) => {
+  const composeEnhancers = (<any>window).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+  const sagaMiddleware = createSagaMiddleware();
 
-const reducers = combineReducers({
-  auth,
-  workspaceList,
-  cluster,
-  workspaces,
-});
+  const reducers = combineReducers({
+    auth,
+    workspaceList,
+    cluster,
+    workspaces,
+  });
 
-const enhancer = composeEnhancers(
-  applyMiddleware(sagaMiddleware),
-);
+  const enhancer = composeEnhancers(
+    applyMiddleware(
+      sagaMiddleware,
+      router.routerMiddleware(history),
+    ),
+  );
 
-const store: Store<StoreState> = createStore<StoreState>(
-  reducers as Reducer<StoreState>,
-  fromJS({}),
-  enhancer,
-);
+  const result = createStore(
+    router.connectRouter(history)(reducers),
+    fromJS({}),
+    enhancer,
+  );
 
-SagaManager.startSagas(sagaMiddleware);
+  SagaManager.startSagas(sagaMiddleware);
+
+  return result;
+}
 
 export default store;

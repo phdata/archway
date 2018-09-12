@@ -1,15 +1,17 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import { createHashHistory } from 'history'
 import { Provider } from 'react-redux';
-import { HashRouter } from 'react-router-dom';
 import App from './App';
 import store from './store';
 
+const history = createHashHistory();
+
+const providerStore = store(history);
+
 ReactDOM.render(
-  <Provider store={store}>
-    <HashRouter>
-      <App />
-    </HashRouter>
+  <Provider store={providerStore}>
+    <App history={history} />
   </Provider>,
   document.getElementById('root') as HTMLElement
 );
