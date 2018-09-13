@@ -15,8 +15,8 @@ const BehaviorPage = ({ selected, onChange }: Props) => (
     <Tooltip title="Heimdali will set up a structure that enables your team to work on a workspace in a certain way. See descriptions below for more information">
       <Icon theme="twoTone" type="question-circle" />
     </Tooltip>
-    <Row type="flex" justify="center">
-      <Col span={6}>
+    <Row type="flex" justify="center" gutter={25} style={{ marginTop: 25, marginBottom: 25 }}>
+      <Col span={6} style={{ display: 'flex' }}>
         <Behavior
           behaviorKey="simple"
           selected={selected === "simple"}
@@ -26,7 +26,7 @@ const BehaviorPage = ({ selected, onChange }: Props) => (
           description="A simple place for multiple users to collaborate on a solution."
           useCases={["brainstorming", "evaluation", "prototypes"]} />
       </Col>
-      <Col span={6}>
+      <Col span={6} style={{ display: 'flex' }}>
         <Behavior
           behaviorKey="structured"
           selected={selected === "structured"}

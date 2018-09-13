@@ -31,6 +31,7 @@ class Behavior extends React.PureComponent<Props> {
       <Card
         onClick={this.select}
         hoverable={true}
+        style={{ flex: 1 }}
         bodyStyle={{ textAlign: 'center', ...this.props.style }}>
         <div style={{ opacity: selected ? 1 : 0, position: 'absolute', top: 25, right: 25, transition: 'opacity 300ms' }}>
           <Icon type="check" style={{ fontSize: 24 }} />

@@ -3,11 +3,13 @@ import { take, fork, cancel } from 'redux-saga/effects';
 import auth from '../Auth/sagas';
 import cluster from '../Navigation/sagas';
 import workspaces from '../Workspaces/sagas';
+import listing from '../WorkspaceListing/sagas';
 
 const sagas = [
   auth,
   cluster,
   workspaces,
+  listing,
 ];
 
 export const CANCEL_SAGAS_HMR = 'CANCEL_SAGAS_HMR';

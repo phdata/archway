@@ -4,21 +4,31 @@ import * as Fuse from 'fuse.js';
 const initialState = fromJS({
   fetching: false,
   allWorkspaces: new Fuse([], {}),
-  filter: '',
-  behavior: '',
+  filters: {
+    filter: '',
+    behaviors: ['simple', 'structured'],
+  }
 });
 
 const listing = (state = initialState, action: any) => {
   switch (action.type) {
-    case 'SET_WORKSPACE_LIST':
+
+    case 'WORKSPACE_LISTING_UPDATED':
       return state
         .set('fetching', false)
-        .set('allWorkspaces', action.workspaceList)
-    case 'LIST_WORKSPACES':
+        .set('allWorkspaces', new Fuse(action.workspaces, {}));
+
+    case 'LIST_ALL_WORKSPACES':
       return state
-        .set('fetching', true)
+        .set('fetching', true);
+
+    case 'FILTER_WORKSPACES':
+      return state
+        .set('filters', fromJS(action.filters));
+
     default:
       return state;
+
   }
 }
 

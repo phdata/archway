@@ -1,4 +1,5 @@
 import { createSelector } from 'reselect';
+import { Workspace } from './Workspace';
 
 export const workspaceListSelector = (state: any) => state.get('workspaceList');
 
@@ -7,21 +8,18 @@ const fuseList = () => createSelector(
   listingState => listingState.get('allWorkspaces')
 )
 
-const filter = () => createSelector(
+export const getListFilters = () => createSelector(
   workspaceListSelector,
-  listingState => listingState.get('filter')
-)
-
-const behavior = () => createSelector(
-  workspaceListSelector,
-  listingState => listingState.get('behavior')
+  listingState => listingState.get('filters').toJS()
 )
 
 export const workspaceList = () => createSelector(
   fuseList(),
-  filter(),
-  behavior(),
-  (fuse, filter: string, behavior: string) => fuse.search(filter) /* .map(i => i.behavior === behavior) */
+  getListFilters(),
+  (fuse, filters: {filter: string, behaviors: string[]}) => {
+    console.log(filters);
+    return fuse.search(filters.filter).filter((workspace: Workspace) => filters.behaviors.indexOf(workspace.behavior))
+  }
 );
 
 export const isFetchingWorkspaces = () => createSelector(

@@ -5,84 +5,80 @@ import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import { createStructuredSelector } from 'reselect';
 import WorkspaceListItem from '../Common/WorkspaceListItem';
-import { filterWorkspaces } from './actions';
-import { isFetchingWorkspaces, workspaceList } from './selectors';
+import { filterWorkspaces, listAllWorkspaces } from './actions';
+import { isFetchingWorkspaces, workspaceList, getListFilters } from './selectors';
 import { Workspace } from './Workspace';
 import Behavior from '../Common/Behavior';
+import { listWorkspaces } from '../Workspaces/WorkspaceList/actions';
 const router = require('connected-react-router/immutable');
 
 interface Props {
   fetching: boolean
   workspaceList: Array<Workspace>
+  filters: {filter: string, behaviors: string[]}
   updateFilter: (filter: string, behavior: string[]) => void
   openWorkspace: (id: number) => void
+  listWorkspaces: () => void
 }
 
-interface State {
-  filter: string
-  behavior: string[]
-}
-
-class WorkspaceList extends React.Component<Props, State> {
+class WorkspaceList extends React.PureComponent<Props> {
   constructor(props: Props) {
     super(props);
-
-    this.state = {
-      filter: '',
-      behavior: []
-    };
 
     this.filterUpdated = this.filterUpdated.bind(this);
     this.behaviorChanged = this.behaviorChanged.bind(this);
   }
 
   filterUpdated(event: React.ChangeEvent<HTMLInputElement>) {
-    const filter = event.target.value;
-    this.setState({
-      ...this.state,
-      filter
-    });
-    this.props.updateFilter(filter, this.state.behavior);
+    this.props.updateFilter(event.target.value, this.props.filters.behaviors);
   }
 
   behaviorChanged(behavior: string, checked: boolean) {
-    // this.setState({
-    //   ...this.state,
-    //   behavior
-    // });
-    // this.props.updateFilter(this.state.filter, behavior);
+    const behaviors = this.props.filters.behaviors
+    if(checked) {
+      behaviors.push(behavior);
+    } else {
+      behaviors.splice(behaviors.indexOf(behavior), 1);
+    }
+
+    this.props.updateFilter(this.props.filters.filter, this.props.filters.behaviors);
   }
 
   componentDidMount() {
-    this.props.updateFilter('', []);
+    this.props.listWorkspaces();
   }
 
   render() {
-    const { fetching, workspaceList, openWorkspace } = this.props;
+    const { fetching, workspaceList, filters: {filter, behaviors}, openWorkspace } = this.props;
     const renderItem = (workspace: Workspace) => <WorkspaceListItem workspace={workspace} onSelected={openWorkspace} />
     return (
       <Row>
-        <Col span={12} lg={8}>
+        <Col span={12} lg={6}>
           <Card>
             <Input.Search
+              value={filter}
               onChange={this.filterUpdated}
               placeholder="find a workspace..."
               size="large"
             />
             <h3 style={{ margin: 25, textAlign: 'center' }}>Behavior</h3>
-          <Behavior
-            behaviorKey="structured"
-            selected={true}
-            onChange={this.behaviorChanged}
-            icon="deployment-unit"
-            title="Structured" />
-          <Behavior
-            style={{ marginTop: 25 }}
-            behaviorKey="simple"
-            selected={true}
-            onChange={this.behaviorChanged}
-            icon="team"
-            title="Simple" />
+            <Row type="flex" justify="center">
+              <Col span={12}>
+                <Behavior
+                  behaviorKey="structured"
+                  selected={behaviors.indexOf('structured') >= 0}
+                  onChange={this.behaviorChanged}
+                  icon="deployment-unit"
+                  title="Structured" />
+                <Behavior
+                  style={{ marginTop: 25 }}
+                  behaviorKey="simple"
+                  selected={behaviors.indexOf('simple') >= 0}
+                  onChange={this.behaviorChanged}
+                  icon="team"
+                  title="Simple" />
+              </Col>
+            </Row>
           </Card>
         </Col>
         <Col span={12} lg={16} offset={2}>
@@ -104,11 +100,13 @@ const mapStateToProps = () =>
   createStructuredSelector({
     fetching: isFetchingWorkspaces(),
     workspaceList: workspaceList(),
+    filters: getListFilters(),
   });
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
   openWorkspace: (id: number) => dispatch(router.push(`/workspaces/${id}`)),
-  updateFilter: (filter: string, behavior: string[]) => dispatch(filterWorkspaces(filter, behavior))
+  updateFilter: (filter: string, behavior: string[]) => dispatch(filterWorkspaces(filter, behavior)),
+  listWorkspaces: () => dispatch(listAllWorkspaces()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(WorkspaceList);
