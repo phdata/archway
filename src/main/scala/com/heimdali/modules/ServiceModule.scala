@@ -26,9 +26,6 @@ trait ServiceModule[F[_]] {
   val environment: String =
     configuration.getString("cluster.environment")
 
-  val accountService: AccountService[F] =
-    new AccountServiceImpl[F](ldapClient, appConfig.rest, appConfig.approvers)
-
   val memberService: MemberService[F] =
     new MemberServiceImpl(
       memberRepository,
@@ -77,4 +74,7 @@ trait ServiceModule[F[_]] {
 
   val applicationService: ApplicationService[F] =
     new ApplicationServiceImpl[F](reader)
+
+  val accountService: AccountService[F] =
+    new AccountServiceImpl[F](ldapClient, appConfig.rest, appConfig.approvers, appConfig.workspaces, workspaceService, clock)
 }

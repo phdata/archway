@@ -1,11 +1,13 @@
 package com.heimdali.services
 
+import java.time.Clock
+
 import cats.data._
 import cats.effect._
 import cats.implicits._
 import com.heimdali.clients.{LDAPClient, LDAPUser}
-import com.heimdali.config.{ApprovalConfig, RestConfig}
-import com.heimdali.models.{Token, User, UserPermissions}
+import com.heimdali.config.{ApprovalConfig, RestConfig, WorkspaceConfig}
+import com.heimdali.models.{Token, User, UserPermissions, WorkspaceRequest}
 import com.typesafe.scalalogging.LazyLogging
 import io.circe.Json
 import io.circe.syntax._
@@ -14,7 +16,10 @@ import pdi.jwt.{JwtAlgorithm, JwtCirce}
 
 class AccountServiceImpl[F[_] : Sync](ldapClient: LDAPClient[F],
                                       restConfig: RestConfig,
-                                      approvalConfig: ApprovalConfig)
+                                      approvalConfig: ApprovalConfig,
+                                      workspaceConfig: WorkspaceConfig,
+                                      workspaceService: WorkspaceService[F],
+                                      clock: Clock)
   extends AccountService[F]
     with LazyLogging {
 
@@ -61,4 +66,20 @@ class AccountServiceImpl[F[_] : Sync](ldapClient: LDAPClient[F],
     } yield convertUser(result)
   }
 
+  override def createWorkspace(user: User): OptionT[F, WorkspaceRequest] = {
+    import Generator._
+    OptionT(workspaceService.findByUsername(user.username).value.flatMap {
+      case Some(_) => Sync[F].pure(None)
+      case None =>
+        val workspace = Generator[UserTemplate].defaults(user).generate().copy(requestDate = clock.instant())
+        for {
+          savedWorkspace <- workspaceService.create(workspace)
+          _ <- workspaceService.provision(savedWorkspace)
+          completed <- workspaceService.find(savedWorkspace.id.get).value
+        } yield completed
+    })
+  }
+
+  override def getWorkspace(username: String): OptionT[F, WorkspaceRequest] =
+    workspaceService.findByUsername(username)
 }

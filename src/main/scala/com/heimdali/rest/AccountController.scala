@@ -23,6 +23,21 @@ class AccountController(authService: AuthService[IO],
       AuthedService[User, IO] {
         case GET -> Root / "profile" as user =>
           Ok(user.asJson)
+
+        case POST -> Root / "workspace" as user =>
+          accountService
+            .createWorkspace(user)
+            .value
+            .flatMap {
+              case Some(workspace) => Created(workspace.asJson)
+              case None => Conflict()
+            }
+
+        case GET -> Root / "workspace" as user =>
+          for {
+            workspace <- accountService.getWorkspace(user.username).value
+            response <- workspace.fold(NotFound("Not found"))(ws => Ok(ws.asJson))
+          } yield response
       }
     }
 
