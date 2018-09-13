@@ -1,17 +1,15 @@
+import { Card, Checkbox, Col, Input, List, Row } from 'antd';
+import { CheckboxValueType } from 'antd/lib/checkbox/Group';
 import * as React from 'react';
-import { Button, Checkbox, Row, Col, List, Avatar, Input, Form, Card, Tag } from 'antd';
 import { connect } from 'react-redux';
-const router = require('connected-react-router/immutable');
-import { createStructuredSelector } from 'reselect';
 import { Dispatch } from 'redux';
-
+import { createStructuredSelector } from 'reselect';
 import WorkspaceListItem from '../Common/WorkspaceListItem';
-
-import Color from '../Common/Colors';
-import { Workspace } from './Workspace';
 import { filterWorkspaces } from './actions';
 import { isFetchingWorkspaces, workspaceList } from './selectors';
-import { CheckboxValueType } from 'antd/lib/checkbox/Group';
+import { Workspace } from './Workspace';
+import Behavior from '../Common/Behavior';
+const router = require('connected-react-router/immutable');
 
 interface Props {
   fetching: boolean
@@ -47,13 +45,12 @@ class WorkspaceList extends React.Component<Props, State> {
     this.props.updateFilter(filter, this.state.behavior);
   }
 
-  behaviorChanged(checkedValue: CheckboxValueType[]) {
-    const behavior: string[] = checkedValue.map(item => item.toString())
-    this.setState({
-      ...this.state,
-      behavior
-    });
-    this.props.updateFilter(this.state.filter, behavior);
+  behaviorChanged(behavior: string, checked: boolean) {
+    // this.setState({
+    //   ...this.state,
+    //   behavior
+    // });
+    // this.props.updateFilter(this.state.filter, behavior);
   }
 
   componentDidMount() {
@@ -65,21 +62,30 @@ class WorkspaceList extends React.Component<Props, State> {
     const renderItem = (workspace: Workspace) => <WorkspaceListItem workspace={workspace} onSelected={openWorkspace} />
     return (
       <Row>
-        <Col span={4}>
+        <Col span={12} lg={8}>
           <Card>
             <Input.Search
               onChange={this.filterUpdated}
               placeholder="find a workspace..."
               size="large"
             />
-            <h3>Workspace Behavior</h3>
-            <hr />
-            <Checkbox.Group
-              onChange={this.behaviorChanged}
-              options={['Simple', 'Structured']} />
+            <h3 style={{ margin: 25, textAlign: 'center' }}>Behavior</h3>
+          <Behavior
+            behaviorKey="structured"
+            selected={true}
+            onChange={this.behaviorChanged}
+            icon="deployment-unit"
+            title="Structured" />
+          <Behavior
+            style={{ marginTop: 25 }}
+            behaviorKey="simple"
+            selected={true}
+            onChange={this.behaviorChanged}
+            icon="team"
+            title="Simple" />
           </Card>
         </Col>
-        <Col style={{ marginLeft: 25 }} span={20}>
+        <Col span={12} lg={16} offset={2}>
           <List
             grid={{ gutter: 16, column: 4 }}
             locale={{ emptyText: 'No workspaces yet. Create one from the link on the left.' }}

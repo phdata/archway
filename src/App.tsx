@@ -3,7 +3,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import Login from './Auth/Login';
-import Spinner from './Common/Spinner';
+import {Icon} from 'antd';
 import Main from './Main';
 import { getToken, isLoading } from './selectors';
 
@@ -18,7 +18,7 @@ interface Props {
 
 const AppContainer = ({ loading, token, history }: Props) => {
   if (loading) {
-    return <Spinner />;
+    return <Icon type="loading" spin={true} style={{ fontSize: 64 }} />;
   } else if (token) {
     return (
       <router.ConnectedRouter history={history}>
