@@ -81,7 +81,7 @@ class WorkspaceList extends React.PureComponent<Props> {
             </Row>
           </Card>
         </Col>
-        <Col span={12} lg={16} offset={2}>
+        <Col span={10} lg={16} offset={2}>
           <List
             grid={{ gutter: 16, column: 4 }}
             locale={{ emptyText: 'No workspaces yet. Create one from the link on the left.' }}

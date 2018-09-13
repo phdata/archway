@@ -1,9 +1,7 @@
-export const SET_REQUEST_TYPE = 'SET_REQUEST_TYPE';
-
-export function setRequestType(type) {
+export function setBehavior(behavior: string) {
   return {
-    type: SET_REQUEST_TYPE,
-    requestType: type,
+    type: 'SET_REQUEST_TYPE',
+    behavior
   };
 }
 
