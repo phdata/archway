@@ -28,7 +28,7 @@ const ClusterInfo = ({ cluster }: Props) => {
   const status = new Status<Cluster>(cluster);
 
   return (
-    <Tooltip placement="right" title={`${name}'s status is currently ${status.statusText()}`}>
+    <Tooltip placement="right" title={`${cluster.name}'s status is currently ${status.statusText()}`}>
       <div style={{ padding: 10, color: 'white', backgroundColor: status.statusColor().string(), textAlign: 'center', ...anchor }}>
         {cluster.name} is {status.statusText()}
       </div>

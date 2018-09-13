@@ -24,14 +24,12 @@ const LoginForm = ({ handleSubmit, handleChange, values }: FullProps) => (
     layout="vertical">
     <Form.Item>
       <Input
-        autosize={false}
         onChange={handleChange}
         prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />}
         placeholder="username" />
     </Form.Item>
     <Form.Item>
       <Input
-        autosize={false}
         onChange={handleChange}
         prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />}
         placeholder="password"
