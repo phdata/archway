@@ -2,9 +2,8 @@ import { Icon, Spin, Tooltip } from 'antd';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import { Cluster, Status } from '../Home/a.d';
+import { Cluster, Status } from '../types/Cluster';
 import { getClusterInfo } from '../Home/selectors';
-import './ClusterInfo.css';
 
 const anchor = {
   width: '100%',

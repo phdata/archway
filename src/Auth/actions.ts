@@ -1,6 +1,6 @@
-import { Login } from '../types';
-import { Profile } from '../Home/a.d';
-import { Workspace } from '../WorkspaceListing/Workspace';
+import { Login } from '../types/Login';
+import { Profile } from '../types/Profile';
+import { Workspace } from '../types/Workspace';
 
 export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
 export const LOGIN_REQUEST = 'LOGIN_REQUEST';

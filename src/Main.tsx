@@ -6,7 +6,7 @@ import './less/index.css';
 import Navigation from './Navigation';
 import WorkspaceListing from './WorkspaceListing';
 import WorkspaceRequest from './WorkspaceRequest';
-import WorkspaceDetails from './Workspaces/WorkspaceDetails';
+import WorkspaceDetails from './WorkspaceDetails';
 
 const { Content, Footer } = Layout;
 

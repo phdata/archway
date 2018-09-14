@@ -1,4 +1,4 @@
-import { Workspace } from "./Workspace";
+import { Workspace } from "../types/Workspace";
 
 export const FILTER_WORKSPACES = 'FILTER_WORKSPACES';
 export const filterWorkspaces = 

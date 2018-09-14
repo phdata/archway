@@ -5,7 +5,6 @@ import { withRouter, NavLink } from 'react-router-dom';
 import logo from '../Common/white_logo_transparent.png';
 import Profile from './Profile';
 import ClusterInfo from './ClusterInfo';
-import './Navigation.css';
 
 const { Sider } = Layout;
 

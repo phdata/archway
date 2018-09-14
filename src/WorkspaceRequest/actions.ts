@@ -1,5 +1,5 @@
-import { Workspace } from '../WorkspaceListing/Workspace';
-import { RequestInput } from './model';
+import { Workspace } from '../types/Workspace';
+import { RequestInput } from '../types/RequestInput';
 
 export const SET_BEHAVIOR = 'SET_BEHAVIOR';
 export function setBehavior(behavior: string) {

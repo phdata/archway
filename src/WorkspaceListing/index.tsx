@@ -7,9 +7,8 @@ import { createStructuredSelector } from 'reselect';
 import WorkspaceListItem from '../Common/WorkspaceListItem';
 import { filterWorkspaces, listAllWorkspaces } from './actions';
 import { isFetchingWorkspaces, workspaceList, getListFilters } from './selectors';
-import { Workspace } from './Workspace';
+import { Workspace } from '../types/Workspace';
 import Behavior from '../Common/Behavior';
-import { listWorkspaces } from '../Workspaces/WorkspaceList/actions';
 const router = require('connected-react-router/immutable');
 
 interface Props {
@@ -94,7 +93,6 @@ class WorkspaceList extends React.PureComponent<Props> {
     );
   }
 }
-
 
 const mapStateToProps = () =>
   createStructuredSelector({

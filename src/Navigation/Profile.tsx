@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import { Dispatch } from 'redux';
 import { createStructuredSelector } from 'reselect';
 import { requestLogout } from "../Auth/actions";
-import { Profile } from '../Home/a.d';
+import { Profile } from '../types/Profile';
 import { getProfile } from '../selectors';
 
 

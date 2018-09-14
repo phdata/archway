@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Card, Icon, Row, Col, List } from 'antd';
-import { Workspace, Database, ResourcePool } from '../WorkspaceListing/Workspace';
+import { Workspace, Database, ResourcePool } from '../types/Workspace';
 
 interface Props {
   workspace?: Workspace

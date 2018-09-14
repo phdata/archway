@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import { Cluster, HiveService, HiveServiceLinks, HueService, HueServiceLinks, Status, YarnService, YarnServiceLinks } from './a.d';
+import { Cluster, HiveService, HiveServiceLinks, HueService, HueServiceLinks, Status, YarnService, YarnServiceLinks } from '../types/Cluster';
 import { getPersonalWorkspace, getClusterInfo, isProfileLoading } from './selectors';
 import ServiceDisplay from './Service';
-import { Workspace } from '../WorkspaceListing/Workspace';
+import { Workspace } from '../types/Workspace';
 import PersonalWorkspace from './PersonalWorkspace';
 import { requestWorkspace } from '../Auth/actions';
 

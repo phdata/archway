@@ -12,7 +12,7 @@ import {
   workspaceGenerated,
   setTemplate,
 } from './actions';
-import { RequestInput } from './model';
+import { RequestInput } from '../types/RequestInput';
 
 function* behaviorChangedHandler({ behavior }: any) {
   yield put(setGenerating(true));

@@ -1,19 +1,19 @@
 import { createSelector } from 'reselect';
-import { getAuth, getCluster } from '../selectors';
-import { Cluster } from './a.d';
-import { Workspace } from '../WorkspaceListing/Workspace';
+import { authSelector, clusterSelector } from '../selectors';
+import { Cluster } from '../types/Cluster';
+import { Workspace } from '../types/Workspace';
 
 export const getClusterInfo = () => createSelector(
-  getCluster(),
+  clusterSelector,
   clusterState => clusterState.get('details').toJS() as Cluster
 );
 
 export const getPersonalWorkspace = () => createSelector(
-  getAuth(),
+  authSelector,
   authState => authState.get('workspace').toJS() as Workspace
 );
 
 export const isProfileLoading = () => createSelector(
-  getAuth(),
+  authSelector,
   authState => authState.get('profileLoading')
 );

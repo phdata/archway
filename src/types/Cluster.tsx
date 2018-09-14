@@ -4,25 +4,16 @@ import {Menu, Dropdown, Icon} from 'antd';
 
 import Colors from '../Common/Colors';
 
-interface Profile {
-  name: string
-  username: string
-  permissions: {
-    risk_management: boolean
-    platform_operations: boolean
-  }
-}
-
-interface WebLocation {
+export interface WebLocation {
   host: string;
   port: number;
 }
 
-interface Statusable {
+export interface Statusable {
   status: string
 }
 
-class Status<T extends Statusable> {
+export class Status<T extends Statusable> {
   statusable: T
 
   constructor(statusable: T) {
@@ -59,20 +50,20 @@ class Status<T extends Statusable> {
     `0 0 5px 2px ${this.statusColor().hsl().string()}`
 }
 
-interface HueService extends Statusable {
+export interface HueService extends Statusable {
   load_balancer: WebLocation[];
 }
 
-interface HiveService extends Statusable {
+export interface HiveService extends Statusable {
 
 }
 
-interface YarnService extends Statusable {
+export interface YarnService extends Statusable {
   resource_manager: WebLocation[];
   node_manager: WebLocation[];
 }
 
-abstract class ServiceLinks<T extends Statusable> {
+export abstract class ServiceLinks<T extends Statusable> {
   service: T;
 
   constructor(service: T) {
@@ -82,18 +73,18 @@ abstract class ServiceLinks<T extends Statusable> {
   links: JSX.Element[]
 }
 
-class HueServiceLinks extends ServiceLinks<HueService> {
+export class HueServiceLinks extends ServiceLinks<HueService> {
   links: JSX.Element[] =
     this.service && this.service.load_balancer.map((location: WebLocation) => (
       <a target="_blank" rel="noreferrer noopener" href={`https://${location.host}:${location.port}`}>Hue UI</a>
     ));
 }
 
-class HiveServiceLinks extends ServiceLinks<HiveService> {
+export class HiveServiceLinks extends ServiceLinks<HiveService> {
   links: JSX.Element[] = [];
 }
 
-class YarnServiceLinks extends ServiceLinks<YarnService> {
+export class YarnServiceLinks extends ServiceLinks<YarnService> {
   resourceManagerLinks: JSX.Element[] =
     this.service && this.service.resource_manager.map(location => (
       <Menu.Item key={location.host}>
@@ -118,7 +109,7 @@ class YarnServiceLinks extends ServiceLinks<YarnService> {
   ]
 }
 
-interface Cluster extends Statusable {
+export interface Cluster extends Statusable {
   name: String
   cm_url: string
   services: {
@@ -126,18 +117,4 @@ interface Cluster extends Statusable {
     hue: HueService
     yarn: YarnService
   }
-}
-
-export {
-  Status,
-  ServiceLinks,
-  Statusable,
-  Cluster,
-  HueService,
-  HueServiceLinks,
-  HiveService,
-  HiveServiceLinks,
-  YarnService,
-  YarnServiceLinks,
-  Profile
 }

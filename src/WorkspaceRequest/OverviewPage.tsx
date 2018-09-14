@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Col, Form, Input, Checkbox } from 'antd';
 import { withFormik, InjectedFormikProps, FormikFormProps, FormikBag } from 'formik';
 import FieldLabel from '../Common/FieldLabel';
-import { RequestInput } from './model';
+import { RequestInput } from '../types/RequestInput';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import * as Yup from 'yup';
 

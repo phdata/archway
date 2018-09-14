@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Card, List, Icon, Tag } from 'antd';
 
 import Color from './Colors';
-import { Workspace } from '../WorkspaceListing/Workspace';
+import { Workspace } from '../types/Workspace';
 
 interface DetailProps {
   label: string

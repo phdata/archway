@@ -1,12 +1,12 @@
 import { createSelector } from 'reselect';
-import { getAuth } from '../selectors';
+import { authSelector } from '../selectors';
 
 export const isLoggingIn = () => createSelector(
-  getAuth(),
+  authSelector,
   authState => authState.get('loading')
 );
 
 export const loginError = () => createSelector(
-  getAuth(),
+  authSelector,
   authState => authState.get('error')
 );

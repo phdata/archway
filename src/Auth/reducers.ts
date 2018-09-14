@@ -1,6 +1,6 @@
 import { fromJS } from 'immutable';
 
-import { Workspace } from '../WorkspaceListing/Workspace';
+import { Workspace } from '../types/Workspace';
 
 import {
   LOGIN_FAILURE,

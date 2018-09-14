@@ -6,7 +6,7 @@ import { createStructuredSelector } from 'reselect';
 
 import logo from './logo_black.png';
 import { login } from './actions';
-import { StoreState, Login } from '../types';
+import { Login } from '../types/Login';
 import { isLoggingIn, loginError } from './selectors';
 
 interface Props {

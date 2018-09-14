@@ -1,7 +1,6 @@
 import { createSelector } from 'reselect';
-import { Workspace } from './Workspace';
-
-export const workspaceListSelector = (state: any) => state.get('workspaceList');
+import { Workspace } from '../types/Workspace';
+import { workspaceListSelector } from '../selectors';
 
 const fuseList = () => createSelector(
   workspaceListSelector,
