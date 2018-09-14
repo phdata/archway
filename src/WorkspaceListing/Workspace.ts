@@ -59,8 +59,10 @@ export interface Database {
 
 export interface Workspace {
   id: number
-  behavior: string
   name: string
+  summary: string
+  description: string
+  behavior: string
   requested_date: Date
   requestor: string
   single_user: boolean

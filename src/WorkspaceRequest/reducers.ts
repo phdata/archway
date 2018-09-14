@@ -30,7 +30,7 @@ const request = (state = initialState, action: any) => {
 
     case SET_WORKSPACE:
       return state
-              .set('workspace', action.workspace);
+              .set('workspace', fromJS(action.workspace));
 
     case SET_PAGE_NUMBER:
       return state

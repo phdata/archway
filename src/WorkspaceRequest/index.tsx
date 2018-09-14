@@ -7,18 +7,21 @@ import * as selectors from './selectors';
 import BehaviorPage from './BehaviorPage';
 import { RequestInput } from './model';
 import OverviewPage from './OverviewPage';
+import SummaryPage from './SummaryPage';
+import { Workspace } from '../WorkspaceListing/Workspace';
 
 interface Props {
   behavior: string
   request: RequestInput
   selectedPage: number
+  workspace: Workspace
 
   setBehavior: (behavior: string) => void
   setRequest: (request: RequestInput) => void
   setPage: (page: number) => void
 }
 
-const WorkspaceRequest = ({ behavior, setBehavior, setRequest, setPage, selectedPage }: Props) => {
+const WorkspaceRequest = ({ behavior, workspace, setBehavior, setRequest, setPage, selectedPage }: Props) => {
   const nextPage = () => setPage(selectedPage + 1);
   const previousPage = () => setPage(selectedPage - 1);
 
@@ -36,7 +39,7 @@ const WorkspaceRequest = ({ behavior, setBehavior, setRequest, setPage, selected
           <OverviewPage setRequest={setRequest} />
         </Tabs.TabPane>
         <Tabs.TabPane tab="Review" key="3">
-          <div />
+          <SummaryPage workspace={workspace} name='Benny Thompson' />
         </Tabs.TabPane>
       </Tabs>
 
@@ -72,7 +75,8 @@ const mapStateToProps = () =>
   createStructuredSelector({
     behavior: selectors.getBehavior(),
     request: selectors.getRequest(),
-    selectedPage: selectors.getSelectedPage()
+    selectedPage: selectors.getSelectedPage(),
+    workspace: selectors.getGeneratedWorkspace(),
   });
 
 const mapDispatchToProps = (dispatch: any) => ({
