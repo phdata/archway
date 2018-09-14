@@ -1,21 +1,8 @@
 import * as React from 'react';
-import { Card, List, Icon } from 'antd';
+import { Card, List, Icon, Tag } from 'antd';
 
 import Color from './Colors';
 import { Workspace } from '../WorkspaceListing/Workspace';
-
-const WorkspaceStatus = () => (
-  <div
-    style={{
-      width: '50%',
-      backgroundColor: 'green',
-      display: 'inline-block',
-      color: 'white',
-      marginTop: 5
-    }}>
-    Approved
-  </div>
-);
 
 interface DetailProps {
   label: string
@@ -44,10 +31,27 @@ const WorkspaceListItem = ({ workspace, onSelected }: Props) => {
     name,
     behavior,
     summary,
+    approvals
   } = workspace;
+
   const onClick = () => onSelected(id);
+
+  const approvalMessage = () => {
+    let message = '';
+    let color = '';
+    
+    if(!approvals) {
+      message = 'all approvals needed';
+      color = 'red';
+    } else if(!approvals.infra || !approvals.risk) {
+      message = 'partially approved';
+      color = 'orange';
+    }
+
+    return message === '' ? false : <Tag color={color}>{message}</Tag>;
+  }
+
   return (
-    // @ts-ignore
     <List.Item>
       <Card
         bordered={true}
@@ -60,7 +64,7 @@ const WorkspaceListItem = ({ workspace, onSelected }: Props) => {
           <div style={{ fontSize: 12, textTransform: 'uppercase' }}>{behavior} workspace</div>
         </div>
         <h3>{summary}</h3>
-        <h4>partially approved</h4>
+        {approvalMessage()}
       </Card>
     </List.Item>
   );

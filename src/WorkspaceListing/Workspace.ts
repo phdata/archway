@@ -57,6 +57,16 @@ export interface Database {
   readonly_group?: DatabaseGrant
 };
 
+export interface ApprovalItem {
+  approver: string
+  approval_time: string
+}
+
+export interface Approvals {
+  infra?: ApprovalItem
+  risk?: ApprovalItem
+}
+
 export interface Workspace {
   id: number
   name: string
@@ -67,6 +77,7 @@ export interface Workspace {
   requestor: string
   single_user: boolean
   compliance: Compliance
+  approvals?: Approvals
   data: Array<Database>
   processing: Array<ResourcePool>
   topics: Array<KafkaTopic>
