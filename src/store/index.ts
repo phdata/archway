@@ -7,6 +7,7 @@ import createSagaMiddleware from 'redux-saga';
 import auth from '../Auth/reducers';
 import cluster from '../Navigation/reducers';
 import workspaceList from '../WorkspaceListing/reducers';
+import request from '../WorkspaceRequest/reducers';
 import { StoreState } from '../types';
 import workspaces from '../Workspaces/reducers';
 import SagaManager from './sagas';
@@ -18,6 +19,7 @@ const store: (history: History) => Store<StoreState> = (history) => {
   const reducers = combineReducers({
     auth,
     workspaceList,
+    request,
     cluster,
     workspaces,
   });

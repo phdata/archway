@@ -5,7 +5,7 @@ import Home from './Home';
 import './less/index.css';
 import Navigation from './Navigation';
 import WorkspaceListing from './WorkspaceListing';
-import Request from './Workspaces/Request';
+import WorkspaceRequest from './WorkspaceRequest';
 import WorkspaceDetails from './Workspaces/WorkspaceDetails';
 
 const { Content, Footer } = Layout;
@@ -22,7 +22,7 @@ const Main = () => (
             <Route exact={true} path="/" component={SendHome} />
             <Route path="/home" component={Home} />
             <Route exact={true} path="/workspaces" component={WorkspaceListing} />
-            <Route path="/request" component={Request} />
+            <Route path="/request" component={WorkspaceRequest} />
             <Route path="/workspaces/:id" component={WorkspaceDetails} />
           </Switch>
         </div>

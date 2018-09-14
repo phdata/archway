@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { Col, Form, Input, Checkbox } from 'antd';
 import { withFormik, InjectedFormikProps, FormikFormProps, FormikBag } from 'formik';
-import FieldLabel from '../../Common/FieldLabel';
-import { Request } from './model';
+import FieldLabel from '../Common/FieldLabel';
+import { RequestInput } from './model';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import * as Yup from 'yup';
 
 interface Props {
-  setRequest: (request: Request) => void
+  setRequest: (request: RequestInput) => void
 }
 
 const RequestSchema = Yup.object().shape({
@@ -16,9 +16,9 @@ const RequestSchema = Yup.object().shape({
   description: Yup.string().required(),
 });
 
-class OverviewPage extends React.PureComponent<InjectedFormikProps<Props, Request>> {
+class OverviewPage extends React.PureComponent<InjectedFormikProps<Props, RequestInput>> {
 
-  constructor(props: InjectedFormikProps<Props, Request>) {
+  constructor(props: InjectedFormikProps<Props, RequestInput>) {
     super(props);
 
     this.updateComplianceItem = this.updateComplianceItem.bind(this);
@@ -98,7 +98,7 @@ class OverviewPage extends React.PureComponent<InjectedFormikProps<Props, Reques
 
 export default withFormik({
   validationSchema: RequestSchema,
-  handleSubmit: (payload: Request, { props }: FormikBag<Props, Request>) => {
+  handleSubmit: (payload: RequestInput, { props }: FormikBag<Props, RequestInput>) => {
     props.setRequest(payload);
   },
   mapPropsToValues: () => ({
