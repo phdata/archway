@@ -72,6 +72,9 @@ package object fixtures {
 
   val savedWorkspaceRequest = WorkspaceRequest(
     name,
+    name,
+    name,
+    "simple",
     standardUsername,
     Instant.now(clock),
     savedCompliance,

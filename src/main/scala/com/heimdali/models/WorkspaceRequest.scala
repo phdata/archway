@@ -12,6 +12,9 @@ import doobie._
 import doobie.implicits._
 
 case class WorkspaceRequest(name: String,
+                            summary: String,
+                            description: String,
+                            behavior: String,
                             requestedBy: String,
                             requestDate: Instant,
                             compliance: Compliance,
@@ -30,16 +33,19 @@ case class WorkspaceRequest(name: String,
 object WorkspaceRequest {
 
   implicit val workspaceRequestComposite: Composite[WorkspaceRequest] =
-    Composite[(String, String, Instant, Boolean, Boolean, Boolean, Option[Long], Boolean, Option[Long])].imap(
-      (t: (String, String, Instant, Boolean, Boolean, Boolean, Option[Long], Boolean, Option[Long])) =>
-        WorkspaceRequest(t._1, t._2, t._3, Compliance(t._4, t._5, t._6, t._7), t._8, t._9))(
-      (w: WorkspaceRequest) => (w.name, w.requestedBy, w.requestDate, w.compliance.phiData, w.compliance.pciData, w.compliance.piiData, w.compliance.id, w.singleUser, w.id)
+    Composite[(String, String, String, String, String, Instant, Boolean, Boolean, Boolean, Option[Long], Boolean, Option[Long])].imap(
+      (t: (String, String, String, String, String, Instant, Boolean, Boolean, Boolean, Option[Long], Boolean, Option[Long])) =>
+        WorkspaceRequest(t._1, t._2, t._3, t._4, t._5, t._6, Compliance(t._7, t._8, t._9, t._10), t._11, t._12))(
+      (w: WorkspaceRequest) => (w.name, w.summary, w.description, w.behavior, w.requestedBy, w.requestDate, w.compliance.phiData, w.compliance.pciData, w.compliance.piiData, w.compliance.id, w.singleUser, w.id)
     )
 
   implicit val encoder: Encoder[WorkspaceRequest] = Encoder.instance { request =>
     request.approvals.foldLeft(
       Json.obj(
         "id" -> request.id.asJson,
+        "summary" -> request.summary.asJson,
+        "description" -> request.description.asJson,
+        "behavior" -> request.description.asJson,
         "name" -> request.name.asJson,
         "compliance" -> request.compliance.asJson,
         "data" -> request.data.asJson,
@@ -56,13 +62,16 @@ object WorkspaceRequest {
   implicit def decoder(user: User, clock: Clock): Decoder[WorkspaceRequest] = Decoder.instance { json =>
     for {
       name <- json.downField("name").as[String]
+      summary <- json.downField("summary").as[String]
+      description <- json.downField("description").as[String]
+      behavior <- json.downField("behavior").as[String]
       compliance <- json.downField("compliance").as[Compliance]
       singleUser <- json.downField("single_user").as[Boolean]
       data <- json.downField("data").as[List[HiveDatabase]]
       processing <- json.downField("processing").as[List[Yarn]]
       applications <- json.downField("applications").as[List[Application]]
       topics <- json.downField("topics").as[List[KafkaTopic]]
-    } yield WorkspaceRequest(name, user.username, Instant.now(clock), compliance, singleUser, data = data, processing = processing, applications = applications, kafkaTopics = topics)
+    } yield WorkspaceRequest(name, summary, description, behavior, user.username, Instant.now(clock), compliance, singleUser, data = data, processing = processing, applications = applications, kafkaTopics = topics)
   }
 
 }
