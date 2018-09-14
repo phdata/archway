@@ -25,6 +25,14 @@ export function setRequest(request: RequestInput) {
   };
 }
 
+export const SET_TEMPLATE = 'SET_TEMPLATE';
+export function setTemplate(template: RequestInput) {
+  return {
+    type: SET_TEMPLATE,
+    template,
+  };
+}
+
 export const SET_GENERATING = 'SET_GENERATING';
 export function setGenerating(generating: boolean) {
   return {

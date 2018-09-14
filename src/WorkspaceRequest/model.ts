@@ -1,10 +1,10 @@
+import { Compliance } from "../WorkspaceListing/Workspace";
+
 interface RequestInput {
   name: string
   summary: string
   description: string
-  phi_data: boolean
-  pii_data: boolean
-  pci_data: boolean
+  compliance: Compliance
 }
 
 export {

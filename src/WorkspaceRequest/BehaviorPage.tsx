@@ -3,7 +3,7 @@ import { Tooltip, Row, Icon, Col } from 'antd';
 import Behavior from '../Common/Behavior';
 
 interface Props {
-  selected: string
+  selected?: string
   onChange: (behavior: string) => void
 }
 

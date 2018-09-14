@@ -20,5 +20,25 @@ export const getSelectedPage = () => createSelector(
 
 export const getGeneratedWorkspace = () => createSelector(
   selectors.getRequest(),
-  requestState => requestState.get('workspace') as Workspace
+  requestState => requestState.get('workspace') && requestState.get('workspace').toJS() as Workspace
+);
+
+export const isReady = () => createSelector(
+  selectors.getRequest(),
+  requestState => {
+    switch(requestState.get('page')) {
+      case 1:
+        return !!requestState.get('behavior');
+      case 2:
+        return !!requestState.get('request');
+      default:
+        return false;
+    }
+  }
+);
+
+export const isCompleteEnabled = () => createSelector(
+  selectors.getRequest(),
+  requestState => 
+    requestState.get('page') === 3 && !!requestState.get('behavior') && !!requestState.get('request')
 );

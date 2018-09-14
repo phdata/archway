@@ -26,7 +26,7 @@ class OverviewPage extends React.PureComponent<InjectedFormikProps<Props, Reques
   }
 
   updateComplianceItem(e: CheckboxChangeEvent) {
-    this.props.setFieldValue(e.target.name!, e.target.checked);
+    this.props.setFieldValue(`compliance.${e.target.name!}`, e.target.checked);
     this.props.submitForm();
   }
 
@@ -44,11 +44,13 @@ class OverviewPage extends React.PureComponent<InjectedFormikProps<Props, Reques
         name,
         summary,
         description,
-        phi_data,
-        pii_data,
-        pci_data
+        compliance: {
+          phi_data,
+          pii_data,
+          pci_data,
+        }
       } } = this.props;
-      console.log(errors);
+      
     return (
       <Col span={12} offset={6}>
         <Form
@@ -105,8 +107,10 @@ export default withFormik({
     name: '',
     summary: '',
     description: '',
-    phi_data: false,
-    pii_data: false,
-    pci_data: false,
+    compliance: {
+      phi_data: false,
+      pii_data: false,
+      pci_data: false,
+    }
   })
 })(OverviewPage);;

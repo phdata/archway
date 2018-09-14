@@ -9,27 +9,31 @@ import {
   WORKSPACE_REQUESTED,
 
   setGenerating,
-  setRequest,
   workspaceGenerated,
+  setTemplate,
 } from './actions';
+import { RequestInput } from './model';
 
 function* behaviorChangedHandler({ behavior }: any) {
   yield put(setGenerating(true));
   const token = yield select((s: any) => s.get('auth').get('token'));
   const templateDefaults = yield call(Api.getTemplate, token, behavior);
-  yield put(setRequest(templateDefaults));
+  yield put(setTemplate(templateDefaults));
 }
 
 function* behaviorChanged() {
   yield takeLatest(SET_BEHAVIOR, behaviorChangedHandler);
 }
 
-function* requestChangedHandler({ request }: any) {
+function* requestChangedHandler({ request }: { type: string, request: RequestInput }) {
+  console.log(request);
   yield put(setGenerating(true));
   yield delay(500);
   const token = yield select((s: any) => s.get('auth').get('token'));
   const requestType = yield select((s: any) => s.get('request').get('behavior'));
-  const workspace = yield call(Api.processTemplate, token, requestType, request);
+  const template = yield select((s: any) => s.get('request').get('template'));
+  const workspaceRequest = Object.assign(template, request);
+  const workspace = yield call(Api.processTemplate, token, requestType, workspaceRequest);
   yield put(workspaceGenerated(workspace));
   yield put(setGenerating(false));
 }
