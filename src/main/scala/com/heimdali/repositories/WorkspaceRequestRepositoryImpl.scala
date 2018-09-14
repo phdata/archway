@@ -65,6 +65,9 @@ object WorkspaceRequestRepositoryImpl {
       fr"""
         select
           wr.name,
+          wr.summary,
+          wr.description,
+          wr.behavior,
           wr.requested_by,
           wr.request_date,
           c.phi_data,
@@ -101,6 +104,9 @@ object WorkspaceRequestRepositoryImpl {
       sql"""
           insert into workspace_request (
             name,
+            summary,
+            description,
+            behavior,
             compliance_id,
             requested_by,
             request_date,
@@ -108,6 +114,9 @@ object WorkspaceRequestRepositoryImpl {
           )
           values (
             ${workspaceRequest.name},
+            ${workspaceRequest.summary},
+            ${workspaceRequest.description},
+            ${workspaceRequest.behavior},
             ${workspaceRequest.compliance.id},
             ${workspaceRequest.requestedBy},
             ${workspaceRequest.requestDate},

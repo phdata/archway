@@ -45,7 +45,7 @@ object WorkspaceRequest {
         "id" -> request.id.asJson,
         "summary" -> request.summary.asJson,
         "description" -> request.description.asJson,
-        "behavior" -> request.description.asJson,
+        "behavior" -> request.behavior.asJson,
         "name" -> request.name.asJson,
         "compliance" -> request.compliance.asJson,
         "data" -> request.data.asJson,
