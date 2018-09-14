@@ -17,8 +17,11 @@ export const workspaceList = () => createSelector(
   fuseList(),
   getListFilters(),
   (fuse, filters: {filter: string, behaviors: string[]}) => {
-    console.log(filters);
-    return fuse.search(filters.filter).filter((workspace: Workspace) => filters.behaviors.indexOf(workspace.behavior))
+    if(filters.filter === '') {
+      return fuse.list;
+    } else {
+      return fuse.search(filters.filter).filter((workspace: Workspace) => filters.behaviors.indexOf(workspace.behavior) >= 0);
+    }
   }
 );
 

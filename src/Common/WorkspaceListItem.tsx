@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Card, List, Avatar } from 'antd';
+import { Card, List, Icon } from 'antd';
 
 import Color from './Colors';
 import { Workspace } from '../WorkspaceListing/Workspace';
@@ -39,26 +39,28 @@ interface Props {
 }
 
 const WorkspaceListItem = ({ workspace, onSelected }: Props) => {
-  const gridStyle = { width: '33%', textAlign: 'center' };
   const {
     id,
     name,
+    behavior,
+    summary,
   } = workspace;
   const onClick = () => onSelected(id);
   return (
     // @ts-ignore
     <List.Item>
       <Card
+        bordered={true}
         style={{ textAlign: 'center' }}
         onClick={onClick}
         hoverable={true}>
-        <Avatar icon="user" />
         <h2 style={{ textAlign: 'center' }}>{name}</h2>
+        <div style={{ marginTop: 10, marginBottom: 10 }}>
+          <Icon style={{ fontSize: 42 }} type={behavior === 'simple' ? 'team' : 'deployment-unit' } />
+          <div style={{ fontSize: 12, textTransform: 'uppercase' }}>{behavior} workspace</div>
+        </div>
+        <h3>{summary}</h3>
         <h4>partially approved</h4>
-        <WorkspaceDetail label="DBs" value={1} />
-        <WorkspaceDetail label="Pools" value={1} />
-        <WorkspaceDetail label="Topics" value={0} />
-        <WorkspaceDetail label="Apps" value={1} />
       </Card>
     </List.Item>
   );

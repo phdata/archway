@@ -1,7 +1,10 @@
 import { call, select, all, fork, takeLatest, put } from 'redux-saga/effects';
 
 import * as Api from '../API';
-import {workspaceListUpdated} from './actions';
+import {
+  LIST_ALL_WORKSPACES,
+  workspaceListUpdated
+} from './actions';
 
 function* workspaceListRequested() {
   const token = yield select((s: any) => s.get('auth').get('token'));
@@ -10,7 +13,7 @@ function* workspaceListRequested() {
 }
 
 function* workspaceListListener() {
-  yield takeLatest('LIST_ALL_WORKSPACES', workspaceListRequested);
+  yield takeLatest(LIST_ALL_WORKSPACES, workspaceListRequested);
 }
 
 export default function* root() {
