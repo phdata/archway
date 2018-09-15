@@ -1,12 +1,12 @@
 import { Layout } from 'antd';
 import * as React from 'react';
-import { Redirect, Switch, Route } from 'react-router';
-import Home from './Home';
-import './less/index.css';
-import Navigation from './Navigation';
-import WorkspaceListing from './WorkspaceListing';
-import WorkspaceRequest from './WorkspaceRequest';
-import WorkspaceDetails from './WorkspaceDetails';
+import { Redirect, Route, Switch } from 'react-router';
+import Navigation from './components/Navigation';
+import './index.less';
+import Home from './pages/Home';
+import WorkspaceDetails from './pages/WorkspaceDetails';
+import WorkspaceListing from './pages/WorkspaceListing';
+import WorkspaceRequest from './pages/WorkspaceRequest';
 
 const { Content, Footer } = Layout;
 

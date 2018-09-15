@@ -1,8 +1,7 @@
-import * as React from 'react';
+import { Dropdown, Icon, Menu } from 'antd';
 import * as Color from 'color';
-import {Menu, Dropdown, Icon} from 'antd';
-
-import Colors from '../Common/Colors';
+import * as React from 'react';
+import Colors from '../components/Colors';
 
 export interface WebLocation {
   host: string;
@@ -46,7 +45,7 @@ export class Status<T extends Statusable> {
     }
   }
 
-  glowColorText = () => 
+  glowColorText = () =>
     `0 0 5px 2px ${this.statusColor().hsl().string()}`
 }
 

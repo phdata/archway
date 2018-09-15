@@ -2,7 +2,7 @@ import { History } from 'history';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import Login from './Auth/Login';
+import Login from './pages/Auth/Login';
 import {Icon} from 'antd';
 import Main from './Main';
 import { getToken, isLoading } from './selectors';

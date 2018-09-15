@@ -1,10 +1,15 @@
 {
   "compilerOptions": {
-    "baseUrl": "src/Main.js",
-    "outDir": "build/dist",
-    "module": "commonjs",
+    "outDir": "./built/",
+    "module": "esnext",
     "target": "es5",
-    "lib": ["es6", "dom"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "es5",
+      "es2015",
+      "es2016"
+    ],
     "sourceMap": true,
     "allowJs": true,
     "jsx": "react",
@@ -13,18 +18,13 @@
     "noImplicitReturns": true,
     "noImplicitThis": true,
     "noImplicitAny": true,
-    "strictNullChecks": true
+    "strictNullChecks": true,
+    "noUnusedLocals": true
   },
-  "exclude": [
-    "node_modules",
-    "build",
-    "scripts",
-    "acceptance-tests",
-    "webpack",
-    "jest",
-    "src/setupTests.ts"
+  "include": [
+      "./src/**/*"
   ],
-  "types": [
-    "typePatches"
+  "exclude": [
+    "node_modules"
   ]
 }

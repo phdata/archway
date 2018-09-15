@@ -1,10 +1,9 @@
-import { take, fork, cancel } from 'redux-saga/effects';
-
-import auth from '../Auth/sagas';
-import cluster from '../Navigation/sagas';
-import workspace from '../WorkspaceDetails/sagas';
-import request from '../WorkspaceRequest/sagas';
-import listing from '../WorkspaceListing/sagas';
+import { cancel, fork, take } from 'redux-saga/effects';
+import cluster from '../components/Navigation/sagas';
+import auth from '../pages/Auth/sagas';
+import workspace from '../pages/WorkspaceDetails/sagas';
+import listing from '../pages/WorkspaceListing/sagas';
+import request from '../pages/WorkspaceRequest/sagas';
 
 const sagas = [
   auth,

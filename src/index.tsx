@@ -5,6 +5,10 @@ import { Provider } from 'react-redux';
 import App from './App';
 import store from './store';
 
+if (module.hot) {
+  module.hot.accept();
+}
+
 const history = createHashHistory();
 
 const providerStore = store(history);

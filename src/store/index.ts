@@ -1,12 +1,11 @@
 const router = require('connected-react-router/immutable');
 import { History } from 'history';
-import { fromJS } from 'immutable';
-import { applyMiddleware, compose, createStore, Store } from 'redux';
+import { applyMiddleware, compose, createStore } from 'redux';
 import createSagaMiddleware from 'redux-saga';
-import SagaManager from './sagas';
 import reducers from './reducers';
+import SagaManager from './sagas';
 
-const store: (history: History) => Store<any> = (history) => {
+const store = (history: History) => {
   const composeEnhancers = (<any>window).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
   const sagaMiddleware = createSagaMiddleware();
 
@@ -19,7 +18,6 @@ const store: (history: History) => Store<any> = (history) => {
 
   const result = createStore(
     router.connectRouter(history)(reducers),
-    fromJS({}),
     enhancer,
   );
 
