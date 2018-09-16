@@ -2,24 +2,33 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { Workspace } from '../../types/Workspace';
-import { requestWorkspace } from '../Auth/actions';
-import { Cluster, HiveService, HiveServiceLinks, HueService, HueServiceLinks, Status, YarnService, YarnServiceLinks } from '../../types/Cluster';
+import * as actions from '../Login/actions';
+import {
+  Cluster,
+  HiveService,
+  HiveServiceLinks,
+  HueService,
+  HueServiceLinks,
+  Status,
+  YarnService,
+  YarnServiceLinks,
+} from '../../types/Cluster';
 import PersonalWorkspace from './PersonalWorkspace';
 import { getClusterInfo, getPersonalWorkspace, isProfileLoading } from './selectors';
 import ServiceDisplay from './Service';
 
 interface Props {
-  cluster: Cluster
-  personalWorkspace: Workspace
-  profileLoading: boolean
-  requestWorkspace: () => void
+  cluster: Cluster;
+  personalWorkspace: Workspace;
+  profileLoading: boolean;
+  requestWorkspace: () => void;
 }
 
 const Home = ({ cluster, personalWorkspace, profileLoading, requestWorkspace }: Props) => {
 
-  if (!cluster) return <div />;
+  if (!cluster) { return <div />; }
 
-  let clusterStatus = new Status<Cluster>(cluster);
+  const clusterStatus = new Status<Cluster>(cluster);
 
   return (
     <div>
@@ -28,7 +37,12 @@ const Home = ({ cluster, personalWorkspace, profileLoading, requestWorkspace }: 
           You are currently connected to {cluster.name}!
         </h1>
         <h3 style={{ fontWeight: 100 }}>
-          The current status of {cluster.name} is <span style={{ fontWeight: 'bold', color: clusterStatus.statusColor().string() }}>{clusterStatus.statusText()}</span>
+          The current status of {cluster.name} is{' '}
+          <span
+            style={{
+                fontWeight: 'bold',
+                color: clusterStatus.statusColor().string(),
+              }}>{clusterStatus.statusText()}</span>
         </h3>
         <h2>
           <a target="_blank" rel="noreferrer noopener" href={cluster.cm_url}>
@@ -62,7 +76,7 @@ const Home = ({ cluster, personalWorkspace, profileLoading, requestWorkspace }: 
       </div>
     </div>
   );
-}
+};
 
 const mapStateToProps = () =>
   createStructuredSelector({
@@ -72,7 +86,7 @@ const mapStateToProps = () =>
   });
 
 const mapDispatchToProps = (dispatch: any) => ({
-  requestWorkspace: () => dispatch(requestWorkspace())
+  requestWorkspace: () => dispatch(actions.requestWorkspace()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home);

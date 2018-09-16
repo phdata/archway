@@ -5,15 +5,15 @@ import { Workspace } from '../../types/Workspace';
 
 export const getClusterInfo = () => createSelector(
   clusterSelector,
-  clusterState => clusterState.get('details').toJS() as Cluster
+  (clusterState) => clusterState.get('details').toJS() as Cluster,
 );
 
 export const getPersonalWorkspace = () => createSelector(
   authSelector,
-  authState => authState.get('workspace').toJS() as Workspace
+  (authState) => authState.get('workspace') && authState.get('workspace').toJS() as Workspace,
 );
 
 export const isProfileLoading = () => createSelector(
   authSelector,
-  authState => authState.get('profileLoading')
+  (authState) => authState.get('profileLoading'),
 );

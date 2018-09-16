@@ -1,27 +1,10 @@
 import { Card, Icon, List, Tag } from 'antd';
 import * as React from 'react';
 import { Workspace } from '../types/Workspace';
-import Color from './Colors';
-
-interface DetailProps {
-  label: string
-  value: any
-}
-
-const WorkspaceDetail = ({ label, value }: DetailProps) => (
-  <Card.Grid style={{ width: '25%', textAlign: 'center', boxShadow: 'none' }}>
-    <h2 style={{ color: Color.Orange.rgb().string(), fontWeight: 100, textAlign: 'center' }}>
-      {value}
-    </h2>
-    <h5 style={{ textAlign: 'center' }}>
-      {label}
-    </h5>
-  </Card.Grid>
-)
 
 interface Props {
-  workspace: Workspace
-  onSelected: (id: number) => void
+  workspace: Workspace;
+  onSelected: (id: number) => void;
 }
 
 const WorkspaceListItem = ({ workspace, onSelected }: Props) => {
@@ -30,7 +13,7 @@ const WorkspaceListItem = ({ workspace, onSelected }: Props) => {
     name,
     behavior,
     summary,
-    approvals
+    approvals,
   } = workspace;
 
   const onClick = () => onSelected(id);
@@ -48,7 +31,7 @@ const WorkspaceListItem = ({ workspace, onSelected }: Props) => {
     }
 
     return message === '' ? false : <Tag color={color}>{message}</Tag>;
-  }
+  };
 
   return (
     <List.Item>

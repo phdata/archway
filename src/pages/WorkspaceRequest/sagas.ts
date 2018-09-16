@@ -2,12 +2,21 @@ import { delay } from 'redux-saga';
 import { all, call, fork, put, select, takeLatest } from 'redux-saga/effects';
 import * as Api from '../../api';
 import { RequestInput } from '../../types/RequestInput';
-import { setGenerating, setTemplate, SET_BEHAVIOR, SET_REQUEST, workspaceGenerated, WORKSPACE_REQUESTED } from './actions';
+import {
+  setGenerating,
+  setTemplate,
+  workspaceGenerated,
+  SET_BEHAVIOR,
+  SET_REQUEST,
+  WORKSPACE_REQUESTED,
+} from './actions';
+
+/* tslint:disable:no-var-requires */
 const router = require('connected-react-router/immutable');
 
 function* behaviorChangedHandler({ behavior }: any) {
   yield put(setGenerating(true));
-  const token = yield select((s: any) => s.get('auth').get('token'));
+  const token = yield select((s: any) => s.get('login').get('token'));
   const templateDefaults = yield call(Api.getTemplate, token, behavior);
   yield put(setTemplate(templateDefaults));
 }
@@ -17,10 +26,9 @@ function* behaviorChanged() {
 }
 
 function* requestChangedHandler({ request }: { type: string, request: RequestInput }) {
-  console.log(request);
   yield put(setGenerating(true));
   yield delay(500);
-  const token = yield select((s: any) => s.get('auth').get('token'));
+  const token = yield select((s: any) => s.get('login').get('token'));
   const requestType = yield select((s: any) => s.get('request').get('behavior'));
   const template = yield select((s: any) => s.get('request').get('template'));
   const workspaceRequest = Object.assign(template, request);
@@ -34,7 +42,7 @@ function* requestChanged() {
 }
 
 function* workspaceRequestedHandler() {
-  const token = yield select((s: any) => s.get('auth').get('token'));
+  const token = yield select((s: any) => s.get('login').get('token'));
   const workspace = yield select((s: any) => s.get('request').get('workspace'));
   const newWorkspace = yield call(Api.requestWorkspace, token, workspace);
   yield put(router.push({ pathname: `/workspaces/${newWorkspace.id}` }));
@@ -48,6 +56,6 @@ export default function* root() {
   yield all([
     fork(behaviorChanged),
     fork(requestChanged),
-    fork(workspaceRequested)
-  ])
+    fork(workspaceRequested),
+  ]);
 }

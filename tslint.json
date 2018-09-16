@@ -7,7 +7,10 @@
   "rules": {
       "ordered-imports": false,
       "object-literal-sort-keys": false,
-      "interface-name": false
+      "interface-name": false,
+      "quotemark": [true, "single", "jsx-double"],
+      "variable-name": [true, "check-format", "allow-pascal-case", "allow-snake-case"],
+      "max-classes-per-file": false
   },
   "rulesDirectory": []
 }

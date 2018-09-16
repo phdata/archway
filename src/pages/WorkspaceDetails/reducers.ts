@@ -16,11 +16,11 @@ const details = (state = initialState, action: any) => {
     case SET_WORKSPACE:
       return state
         .set('fetching', false)
-        .set('details', fromJS(action.workspace))
+        .set('details', fromJS(action.workspace));
 
     default:
       return state;
   }
-}
+};
 
 export default details;

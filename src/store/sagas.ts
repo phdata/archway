@@ -1,12 +1,12 @@
 import { cancel, fork, take } from 'redux-saga/effects';
 import cluster from '../components/Navigation/sagas';
-import auth from '../pages/Auth/sagas';
+import login from '../pages/Login/sagas';
 import workspace from '../pages/WorkspaceDetails/sagas';
 import listing from '../pages/WorkspaceListing/sagas';
 import request from '../pages/WorkspaceRequest/sagas';
 
 const sagas = [
-  auth,
+  login,
   cluster,
   request,
   workspace,
@@ -25,11 +25,11 @@ const createAbortableSaga = (saga: any) => {
     };
   }
   return saga;
-}
+};
 
 const SagaManager = ({
   startSagas: (sagaMiddleware: any) => {
-    sagas.map(createAbortableSaga).forEach(saga => sagaMiddleware.run(saga));
+    sagas.map(createAbortableSaga).forEach((saga) => sagaMiddleware.run(saga));
   },
 
   cancelSagas: (store: any) => {

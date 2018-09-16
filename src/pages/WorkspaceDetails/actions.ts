@@ -1,4 +1,4 @@
-import { Workspace } from "../../types/Workspace";
+import { Workspace } from '../../types/Workspace';
 
 export const GET_WORKSPACE = 'GET_WORKSPACE';
 export function getWorkspace(id: number) {
@@ -12,6 +12,6 @@ export const SET_WORKSPACE = 'SET_WORKSPACE';
 export function setWorkspace(workspace: Workspace) {
   return {
     type: SET_WORKSPACE,
-    workspace
+    workspace,
   };
 }

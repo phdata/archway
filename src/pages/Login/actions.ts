@@ -12,14 +12,14 @@ export function login(payload: Login) {
   };
 }
 
-export function loginSuccess(token: String) {
+export function loginSuccess(token: string) {
   return {
     type: LOGIN_SUCCESS,
     token,
   };
 }
 
-export function loginError(error: String) {
+export function loginError(error: string) {
   return {
     type: LOGIN_FAILURE,
     error,
@@ -39,7 +39,7 @@ export function requestLogout() {
 export const TOKEN_EXTRACTED = 'TOKEN_EXTRACTED';
 export const TOKEN_NOT_AVAILABLE = 'TOKEN_NOT_AVAILABLE';
 
-export function tokenExtracted(token: String) {
+export function tokenExtracted(token: string) {
   return {
     type: TOKEN_EXTRACTED,
     token,
@@ -63,14 +63,14 @@ export function profileReady(profile: Profile) {
 
 export const workspaceAvailable = (workspace: Workspace) => ({
   type: 'WORKSPACE_AVAILABLE',
-  workspace: workspace
+  workspace,
 });
 
 export const requestWorkspace = () => ({
-  type: 'WORKSPACE_REQUESTED'
+  type: 'WORKSPACE_REQUESTED',
 });
 
 export const profileLoading = (loading: boolean) => ({
   type: 'PROFILE_LOADED',
-  loading
-})
+  loading,
+});

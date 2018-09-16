@@ -3,15 +3,15 @@ import * as React from 'react';
 import { Database, ResourcePool, Workspace } from '../../types/Workspace';
 
 interface Props {
-  workspace?: Workspace
-  name: string
+  workspace?: Workspace;
+  name: string;
 }
 
 const ResourceItem = (name: string) => <h4>{name}</h4>;
 
 const SummaryPage = ({ workspace, name }: Props) => {
-  const databaseNames = workspace && workspace.data.map((database: Database) => database.name)
-  const poolNames = workspace && workspace.processing.map((pool: ResourcePool) => pool.pool_name)
+  const databaseNames = workspace && workspace.data.map((database: Database) => database.name);
+  const poolNames = workspace && workspace.processing.map((pool: ResourcePool) => pool.pool_name);
   return (
     <div>
       <h3>
@@ -48,6 +48,6 @@ const SummaryPage = ({ workspace, name }: Props) => {
       </Row>
     </div>
   );
-}
+};
 
 export default SummaryPage;

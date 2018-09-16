@@ -11,20 +11,31 @@ import * as selectors from './selectors';
 import SummaryPage from './SummaryPage';
 
 interface Props {
-  behavior?: string
-  request: RequestInput
-  selectedPage: number
-  workspace?: Workspace
-  ready: boolean
-  completeEnabled: boolean
+  behavior?: string;
+  request: RequestInput;
+  selectedPage: number;
+  workspace?: Workspace;
+  ready: boolean;
+  completeEnabled: boolean;
 
-  setBehavior: (behavior: string) => void
-  setRequest: (request: RequestInput) => void
-  setPage: (page: number) => void
-  requestWorkspace: () => void
+  setBehavior: (behavior: string) => void;
+  setRequest: (request: RequestInput) => void;
+  setPage: (page: number) => void;
+  requestWorkspace: () => void;
 }
 
-const WorkspaceRequest = ({ requestWorkspace, completeEnabled, ready, behavior, workspace, setBehavior, setRequest, setPage, selectedPage }: Props) => {
+const WorkspaceRequest =
+  ({
+    requestWorkspace,
+    completeEnabled,
+    ready,
+    behavior,
+    workspace,
+    setBehavior,
+    setRequest,
+    setPage,
+    selectedPage,
+  }: Props) => {
   const nextPage = () => setPage(selectedPage + 1);
   const previousPage = () => setPage(selectedPage - 1);
 
@@ -43,7 +54,7 @@ const WorkspaceRequest = ({ requestWorkspace, completeEnabled, ready, behavior, 
             setRequest={setRequest} />
         </Tabs.TabPane>
         <Tabs.TabPane tab="Review" key="3">
-          <SummaryPage workspace={workspace} name='Benny Thompson' />
+          <SummaryPage workspace={workspace} name="Benny Thompson" />
         </Tabs.TabPane>
       </Tabs>
 
@@ -86,7 +97,7 @@ const WorkspaceRequest = ({ requestWorkspace, completeEnabled, ready, behavior, 
       </Row>
     </div>
   );
-}
+};
 
 const mapStateToProps = () =>
   createStructuredSelector({
@@ -102,7 +113,7 @@ const mapDispatchToProps = (dispatch: any) => ({
   setBehavior: (behavior: string) => dispatch(actions.setBehavior(behavior)),
   setRequest: (request: RequestInput) => dispatch(actions.setRequest(request)),
   setPage: (page: number) => dispatch(actions.setPage(page)),
-  requestWorkspace: () => dispatch(actions.workspaceRequested())
+  requestWorkspace: () => dispatch(actions.workspaceRequested()),
 });
 
 const mergeProps = (stateProps: any, dispatchProps: any, ownProps: Props) => ({
@@ -110,7 +121,7 @@ const mergeProps = (stateProps: any, dispatchProps: any, ownProps: Props) => ({
   ...stateProps,
   ...dispatchProps,
   setRequest: (request: RequestInput) =>
-    dispatchProps.setRequest(Object.assign(stateProps.request, request))
-})
+    dispatchProps.setRequest(Object.assign(stateProps.request, request)),
+});
 
 export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(WorkspaceRequest);

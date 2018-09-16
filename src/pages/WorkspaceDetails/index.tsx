@@ -1,4 +1,4 @@
-import { Card, Spin } from 'antd';
+import { Card, Col, Icon, Row, Spin } from 'antd';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { RouteComponentProps } from 'react-router';
@@ -10,37 +10,84 @@ import { Workspace } from '../../types/Workspace';
 import * as actions from './actions';
 import * as selectors from './selectors';
 
+/* tslint:disable:no-var-requires */
+const TimeAgo = require('timeago-react').default;
+
 interface DetailsRouteProps {
-  id: number
+  id: number;
 }
 
 interface Props extends RouteComponentProps<DetailsRouteProps> {
-  workspace?: Workspace
-  cluster: Cluster
-  profile: Profile
-  loading: boolean
+  workspace?: Workspace;
+  cluster: Cluster;
+  profile: Profile;
+  loading: boolean;
 
-  getWorkspaceDetails: (id: number) => void
+  getWorkspaceDetails: (id: number) => void;
 }
+
+const Compliance = ({ checked, children }: {checked: boolean, children: string}) => (
+  <div style={{ display: 'flex', flex: 1, flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+    <Icon type={checked ? 'warning' : 'dash'} style={{ marginBottom: 5, fontSize: 28 }} />
+    <div style={{ fontSize: 18, fontWeight: 200, letterSpacing: 1 }}>{children}</div>
+  </div>
+);
+
+const Label = ({ children }: {children: string}) =>
+  <div style={{ marginBottom: 10, fontSize: 14, textTransform: 'uppercase', letterSpacing: 1, fontWeight: 200 }}>
+    {children}
+  </div>;
 
 class WorkspaceDetails extends React.PureComponent<Props> {
 
-  componentDidMount() {
+  public componentDidMount() {
     this.props.getWorkspaceDetails(this.props.match.params.id);
   }
 
-  render() {
-    const { workspace, cluster, profile, loading } = this.props;
+  public render() {
+    const { workspace, loading } = this.props;
 
-    if (loading) return <Spin />;
-
-    console.log(workspace);
+    if (loading || !workspace) { return <Spin />; }
 
     return (
       <div>
-        <Card>
-          <h1>{workspace!.name}</h1>
-        </Card>
+          <div style={{ textAlign: 'center' }}>
+            <h1 style={{ marginBottom: 0 }}>{workspace!.name}</h1>
+            <div>{workspace!.summary}</div>
+            <div
+              style={{
+                  textTransform: 'uppercase',
+                  fontSize: 14,
+                  color: '#aaa',
+                }}><TimeAgo datetime={workspace.requested_date} /></div>
+          </div>
+          <Row gutter={12} style={{  }}>
+            <Col span={8} style={{ textAlign: 'center' }}>
+              <Card>
+                <Label>description</Label>
+                <p style={{ marginBottom: 0 }}>{workspace.description}</p>
+              </Card>
+            </Col>
+            <Col span={8} style={{ textAlign: 'center' }}>
+              <Card>
+                <Label>compliance</Label>
+                <div style={{ display: 'flex', marginTop: 5 }}>
+                  <Compliance checked={workspace.compliance.pci_data}>PCI</Compliance>
+                  <Compliance checked={workspace.compliance.phi_data}>PHI</Compliance>
+                  <Compliance checked={workspace.compliance.pii_data}>PII</Compliance>
+                </div>
+              </Card>
+            </Col>
+            <Col span={8} style={{ textAlign: 'center' }}>
+              <Card>
+                <Label>liason</Label>
+                <div style={{ textAlign: 'center' }}>
+                  <Icon type="crown" style={{ marginBottom: 5, fontSize: 28 }} />
+                  <div style={{ textTransform: 'uppercase' }}>{workspace.requester}</div>
+                </div>
+              </Card>
+            </Col>
+          </Row>
       </div>
     );
   }

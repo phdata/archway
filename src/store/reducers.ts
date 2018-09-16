@@ -1,12 +1,12 @@
 import { combineReducers } from 'redux-immutable';
 import cluster from '../components/Navigation/reducers';
-import auth from '../pages/Auth/reducers';
+import login from '../pages/Login/reducers';
 import details from '../pages/WorkspaceDetails/reducers';
 import listing from '../pages/WorkspaceListing/reducers';
 import request from '../pages/WorkspaceRequest/reducers';
 
 const reducers = combineReducers({
-  auth,
+  login,
   listing,
   request,
   cluster,

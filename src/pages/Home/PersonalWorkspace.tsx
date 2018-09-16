@@ -5,16 +5,19 @@ import { solarizedDark } from 'react-syntax-highlighter/styles/hljs';
 import { Workspace } from '../../types/Workspace';
 
 interface Props {
-  workspace: Workspace
-  services: any
-  loading: boolean
-  requestWorkspace: () => void
+  workspace: Workspace;
+  services: any;
+  loading: boolean;
+  requestWorkspace: () => void;
 }
 
 const PersonalWorkspace = ({ workspace, services, requestWorkspace, loading }: Props) => {
+  const host = services.impala && services.impala.hiveServer2[0].host;
+  const port = services.impala && services.impala.hiveServer2[0].port;
+  const dbName = workspace.data && workspace.data[0].name;
   const code = `
   from impala.dbapi import connect
-  conn = connect(host='${services.impala && services.impala.hiveServer2[0].host}', port=${services.impala && services.impala.hiveServer2[0].port}, database='${workspace.data && workspace.data[0].name}')
+  conn = connect(host='${host}', port=${port}, database='${dbName}')
   cursor = conn.cursor()
   cursor.execute('SELECT * FROM mytable LIMIT 100')
   print cursor.description  # prints the result set's schema
@@ -31,7 +34,16 @@ const PersonalWorkspace = ({ workspace, services, requestWorkspace, loading }: P
   // hue/metastore/tables/flights
   return (
     <div style={{ position: 'relative' }}>
-      <div style={{ position: 'absolute', zIndex: 999, display: workspace.data ? 'none' : 'flex', width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center' }}>
+      <div
+        style={{
+            position: 'absolute',
+            zIndex: 999,
+            display: workspace.data ? 'none' : 'flex',
+            width: '100%',
+            height: '100%',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
         {loading && <Spin />}
         {!loading && (
           <Card bodyStyle={{ textAlign: 'center' }}>
@@ -43,7 +55,12 @@ const PersonalWorkspace = ({ workspace, services, requestWorkspace, loading }: P
       <div style={{ filter: workspace.data ? 'none' : 'blur(.4rem)', transition: '1s ease' }}>
         <Card bodyStyle={{ display: 'flex' }} title="Your Personal Workspace">
           <Card.Grid style={{ flex: 1, boxShadow: 'none' }}>
-            <h3>Connect to Your Database With <a target="_blank" rel="noreferrer noopener" href="https://github.com/cloudera/impyla">impyla</a></h3>
+            <h3>
+              Connect to Your Database With{' '}
+              <a target="_blank" rel="noreferrer noopener" href="https://github.com/cloudera/impyla">
+                impyla
+              </a>
+            </h3>
             <SyntaxHighlighter language="python" style={solarizedDark}>{code}</SyntaxHighlighter>
           </Card.Grid>
           <Card.Grid style={{ flex: 1, boxShadow: 'none' }}>
@@ -54,6 +71,6 @@ const PersonalWorkspace = ({ workspace, services, requestWorkspace, loading }: P
       </div>
     </div>
   );
-}
+};
 
 export default PersonalWorkspace;

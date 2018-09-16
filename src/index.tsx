@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { createHashHistory } from 'history'
+import { createHashHistory } from 'history';
 import { Provider } from 'react-redux';
 import App from './App';
 import store from './store';
@@ -17,5 +17,5 @@ ReactDOM.render(
   <Provider store={providerStore}>
     <App history={history} />
   </Provider>,
-  document.getElementById('root') as HTMLElement
+  document.getElementById('root') as HTMLElement,
 );

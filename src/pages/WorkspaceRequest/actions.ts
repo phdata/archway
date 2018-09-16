@@ -5,7 +5,7 @@ export const SET_BEHAVIOR = 'SET_BEHAVIOR';
 export function setBehavior(behavior: string) {
   return {
     type: 'SET_BEHAVIOR',
-    behavior
+    behavior,
   };
 }
 
@@ -54,4 +54,4 @@ export function setPage(page: number) {
     type: SET_PAGE_NUMBER,
     page,
   };
-};
+}

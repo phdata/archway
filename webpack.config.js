@@ -73,7 +73,7 @@ module.exports = {
         ],
         exclude: [resolve(__dirname, "node_modules")],
       },
-      { enforce: "pre", test: /\.js$/, loader: "source-map-loader" },
+      { enforce: "pre", test: /\.js$/, loader: "source-map-loader", exclude: [ resolve(__dirname, 'node_modules/mutationobserver-shim') ] },
       {
         test: /\.css$/,
         use: [MiniCssExtractPlugin.loader, "css-loader"]

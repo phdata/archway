@@ -1,5 +1,5 @@
 import * as Fuse from 'fuse.js';
-import { fromJS } from "immutable";
+import { fromJS } from 'immutable';
 import { FILTER_WORKSPACES, LIST_ALL_WORKSPACES, WORKSPACE_LISTING_UPDATED } from './actions';
 
 const initialState = fromJS({
@@ -8,7 +8,7 @@ const initialState = fromJS({
   filters: {
     filter: '',
     behaviors: ['simple', 'structured'],
-  }
+  },
 });
 
 const listing = (state = initialState, action: any) => {
@@ -31,6 +31,6 @@ const listing = (state = initialState, action: any) => {
       return state;
 
   }
-}
+};
 
 export default listing;

@@ -1,17 +1,17 @@
 import {fromJS} from 'immutable';
 
-import { CLUSTER_INFO } from "./actions";
+import { CLUSTER_INFO } from './actions';
 
 const initialState = fromJS({
   details: {
-    name: "Unknown",
-    status: "unknown",
+    name: 'Unknown',
+    status: 'unknown',
     services: {
       hue: false,
       hive: false,
       yarn: false,
-    }
-  }
+    },
+  },
 });
 
 function cluster(state = initialState, action: any) {
@@ -19,7 +19,7 @@ function cluster(state = initialState, action: any) {
     case CLUSTER_INFO:
       return state.set('details', fromJS(action.cluster[0]));
     default:
-      return state
+      return state;
   }
 }
 

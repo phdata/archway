@@ -4,13 +4,13 @@ import { Workspace } from '../../types/Workspace';
 
 const fuseList = () => createSelector(
   workspaceListSelector,
-  listingState => listingState.get('allWorkspaces')
-)
+  (listingState) => listingState.get('allWorkspaces'),
+);
 
 export const getListFilters = () => createSelector(
   workspaceListSelector,
-  listingState => listingState.get('filters').toJS()
-)
+  (listingState) => listingState.get('filters').toJS(),
+);
 
 export const workspaceList = () => createSelector(
   fuseList(),
@@ -19,12 +19,14 @@ export const workspaceList = () => createSelector(
     if (filters.filter === '') {
       return fuse.list;
     } else {
-      return fuse.search(filters.filter).filter((workspace: Workspace) => filters.behaviors.indexOf(workspace.behavior) >= 0);
+      return fuse
+              .search(filters.filter)
+              .filter((workspace: Workspace) => filters.behaviors.indexOf(workspace.behavior) >= 0);
     }
-  }
+  },
 );
 
 export const isFetchingWorkspaces = () => createSelector(
   workspaceListSelector,
-  listingState => listingState.get('fetching')
+  (listingState) => listingState.get('fetching'),
 );

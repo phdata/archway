@@ -9,17 +9,17 @@ export interface WebLocation {
 }
 
 export interface Statusable {
-  status: string
+  status: string;
 }
 
 export class Status<T extends Statusable> {
-  statusable: T
+  public statusable: T;
 
   constructor(statusable: T) {
     this.statusable = statusable;
   }
 
-  statusColor = (): Color => {
+  public statusColor = (): Color => {
     switch (this.statusable.status) {
       case 'GOOD_HEALTH':
         return Colors.Green;
@@ -32,20 +32,20 @@ export class Status<T extends Statusable> {
     }
   }
 
-  statusText = () => {
+  public statusText = () => {
     switch (this.statusable.status) {
       case 'GOOD_HEALTH':
-        return '"good"'
+        return '"good"';
       case 'CONCERNING_HEALTH':
-        return '"concerning"'
+        return '"concerning"';
       case 'BAD_HEALTH':
-        return '"bad"'
+        return '"bad"';
       default:
-        return 'unknown'
+        return 'unknown';
     }
   }
 
-  glowColorText = () =>
+  public glowColorText = () =>
     `0 0 5px 2px ${this.statusColor().hsl().string()}`
 }
 
@@ -53,6 +53,7 @@ export interface HueService extends Statusable {
   load_balancer: WebLocation[];
 }
 
+/* tslint:disable:no-empty-interface */
 export interface HiveService extends Statusable {
 
 }
@@ -63,29 +64,29 @@ export interface YarnService extends Statusable {
 }
 
 export abstract class ServiceLinks<T extends Statusable> {
-  service: T;
+  public service: T;
+
+  public links: JSX.Element[];
 
   constructor(service: T) {
     this.service = service;
   }
-
-  links: JSX.Element[]
 }
 
 export class HueServiceLinks extends ServiceLinks<HueService> {
-  links: JSX.Element[] =
+  public links: JSX.Element[] =
     this.service && this.service.load_balancer.map((location: WebLocation) => (
       <a target="_blank" rel="noreferrer noopener" href={`https://${location.host}:${location.port}`}>Hue UI</a>
     ));
 }
 
 export class HiveServiceLinks extends ServiceLinks<HiveService> {
-  links: JSX.Element[] = [];
+  public links: JSX.Element[] = [];
 }
 
 export class YarnServiceLinks extends ServiceLinks<YarnService> {
-  resourceManagerLinks: JSX.Element[] =
-    this.service && this.service.resource_manager.map(location => (
+  public resourceManagerLinks: JSX.Element[] =
+    this.service && this.service.resource_manager.map((location) => (
       <Menu.Item key={location.host}>
         <a target="_blank" rel="noreferrer noopener" href={`https://${location.host}:${location.port}`}>
           {location.host}
@@ -93,8 +94,8 @@ export class YarnServiceLinks extends ServiceLinks<YarnService> {
       </Menu.Item>
     ));
 
-  nodeManagerLinks: JSX.Element[] =
-    this.service && this.service.node_manager.map(location => (
+  public nodeManagerLinks: JSX.Element[] =
+    this.service && this.service.node_manager.map((location) => (
       <Menu.Item key={location.host}>
         <a target="_blank" rel="noreferrer noopener" href={`https://${location.host}:${location.port}`}>
           {location.host}
@@ -102,18 +103,30 @@ export class YarnServiceLinks extends ServiceLinks<YarnService> {
       </Menu.Item>
     ));
 
-  links: JSX.Element[] = [
-    (<Dropdown overlay={<Menu>{this.nodeManagerLinks}</Menu>}><a href="#" className="ant-dropdown-link">Node Manager UI <Icon type="down" /></a></Dropdown>),
-    (<Dropdown overlay={<Menu>{this.resourceManagerLinks}</Menu>}><a href="#" className="ant-dropdown-link">Resource Manager UI <Icon type="down" /></a></Dropdown>),
-  ]
+  public links: JSX.Element[] = [
+    (
+      <Dropdown overlay={<Menu>{this.nodeManagerLinks}</Menu>}>
+        <a href="#" className="ant-dropdown-link">
+          Node Manager UI <Icon type="down" />
+        </a>
+      </Dropdown>
+    ),
+    (
+      <Dropdown overlay={<Menu>{this.resourceManagerLinks}</Menu>}>
+        <a href="#" className="ant-dropdown-link">
+          Resource Manager UI <Icon type="down" />
+        </a>
+      </Dropdown>
+    ),
+  ];
 }
 
 export interface Cluster extends Statusable {
-  name: String
-  cm_url: string
+  name: string;
+  cm_url: string;
   services: {
     hive: HiveService
     hue: HueService
-    yarn: YarnService
-  }
+    yarn: YarnService,
+  };
 }

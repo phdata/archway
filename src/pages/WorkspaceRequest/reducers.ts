@@ -1,5 +1,13 @@
 import { fromJS } from 'immutable';
-import { SET_BEHAVIOR, SET_GENERATING, SET_PAGE_NUMBER, SET_REQUEST, SET_TEMPLATE, SET_WORKSPACE, WORKSPACE_REQUESTED } from './actions';
+import {
+  SET_BEHAVIOR,
+  SET_GENERATING,
+  SET_PAGE_NUMBER,
+  SET_REQUEST,
+  SET_TEMPLATE,
+  SET_WORKSPACE,
+  WORKSPACE_REQUESTED,
+} from './actions';
 
 const initialState = fromJS({
   generating: false,

@@ -2,18 +2,18 @@ import { History } from 'history';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import Login from './pages/Auth/Login';
+import Login from './pages/Login';
 import {Icon} from 'antd';
 import Main from './Main';
 import { getToken, isLoading } from './selectors';
 
+/* tslint:disable:no-var-requires */
 const router = require('connected-react-router/immutable');
 
-
 interface Props {
-  loading: Boolean
-  token?: String
-  history: History
+  loading: boolean;
+  token?: string;
+  history: History;
 }
 
 const AppContainer = ({ loading, token, history }: Props) => {

@@ -1,4 +1,4 @@
-import Color from 'color';
+import * as Color from 'color';
 
 export default {
   Green: Color('#43AA8B'),

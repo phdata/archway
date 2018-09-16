@@ -7,7 +7,7 @@ import FieldLabel from '../../components/FieldLabel';
 import { RequestInput } from '../../types/RequestInput';
 
 interface Props {
-  setRequest: (request: RequestInput) => void
+  setRequest: (request: RequestInput) => void;
 }
 
 const RequestSchema = Yup.object().shape({
@@ -25,17 +25,7 @@ class OverviewPage extends React.PureComponent<InjectedFormikProps<Props, Reques
     this.onChangeWrapper = this.onChangeWrapper.bind(this);
   }
 
-  updateComplianceItem(e: CheckboxChangeEvent) {
-    this.props.setFieldValue(`compliance.${e.target.name!}`, e.target.checked);
-    this.props.submitForm();
-  }
-
-  onChangeWrapper(e: any) {
-    this.props.handleChange(e);
-    this.props.submitForm();
-  }
-
-  render() {
+  public render() {
     const {
       handleSubmit,
       errors,
@@ -48,7 +38,7 @@ class OverviewPage extends React.PureComponent<InjectedFormikProps<Props, Reques
           phi_data,
           pii_data,
           pci_data,
-        }
+        },
       } } = this.props;
 
     return (
@@ -81,6 +71,7 @@ class OverviewPage extends React.PureComponent<InjectedFormikProps<Props, Reques
             label={<FieldLabel>Purpose for workspace</FieldLabel>}>
             <Input.TextArea
               name="description"
+              /* tslint:disable:max-line-length */
               placeholder="(Use this area to fully describe to reviewers and future users why this workspace is needed.)"
               rows={5}
               value={description}
@@ -95,6 +86,16 @@ class OverviewPage extends React.PureComponent<InjectedFormikProps<Props, Reques
         </Form>
       </Col>
     );
+  }
+
+  private updateComplianceItem(e: CheckboxChangeEvent) {
+    this.props.setFieldValue(`compliance.${e.target.name!}`, e.target.checked);
+    this.props.submitForm();
+  }
+
+  private onChangeWrapper(e: any) {
+    this.props.handleChange(e);
+    this.props.submitForm();
   }
 }
 
@@ -111,6 +112,6 @@ export default withFormik({
       phi_data: false,
       pii_data: false,
       pci_data: false,
-    }
-  })
-})(OverviewPage);;
+    },
+  }),
+})(OverviewPage);

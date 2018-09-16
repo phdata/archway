@@ -46,7 +46,7 @@ module.exports = {
       },
       {
         test: /\.less$/,
-        use: [MiniCssExtractPlugin.loader, "css-loader", "less-loader"]
+        use: [MiniCssExtractPlugin.loader, "css-loader", { loader: "less-loader", options: { javascriptEnabled: true } } ]
       },
       { test: /\.png$/, loader: "url-loader?limit=100000" },
       { test: /\.jpg$/, loader: "file-loader" },
@@ -61,7 +61,7 @@ module.exports = {
       filename: "style.css",
       chunkFilename: "[id].css"
     }),
-    new HtmlWebpackPlugin({ template: resolve(__dirname, 'src/index.html') }),
+    new HtmlWebpackPlugin({ template: resolve(__dirname, 'public/index.html') }),
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': '"production"'
     }),

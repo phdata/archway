@@ -6,17 +6,19 @@ import { createStructuredSelector } from 'reselect';
 import Behavior from '../../components/Behavior';
 import WorkspaceListItem from '../../components/WorkspaceListItem';
 import { Workspace } from '../../types/Workspace';
-import { filterWorkspaces, listAllWorkspaces } from './actions';
-import { getListFilters, isFetchingWorkspaces, workspaceList } from './selectors';
+import * as actions from './actions';
+import * as selectors from './selectors';
+
+/* tslint:disable:no-var-requires */
 const router = require('connected-react-router/immutable');
 
 interface Props {
-  fetching: boolean
-  workspaceList: Array<Workspace>
-  filters: { filter: string, behaviors: string[] }
-  updateFilter: (filter: string, behavior: string[]) => void
-  openWorkspace: (id: number) => void
-  listWorkspaces: () => void
+  fetching: boolean;
+  workspaceList: Workspace[];
+  filters: { filter: string, behaviors: string[] };
+  updateFilter: (filter: string, behavior: string[]) => void;
+  openWorkspace: (id: number) => void;
+  listWorkspaces: () => void;
 }
 
 class WorkspaceList extends React.PureComponent<Props> {
@@ -27,12 +29,12 @@ class WorkspaceList extends React.PureComponent<Props> {
     this.behaviorChanged = this.behaviorChanged.bind(this);
   }
 
-  filterUpdated(event: React.ChangeEvent<HTMLInputElement>) {
+  public filterUpdated(event: React.ChangeEvent<HTMLInputElement>) {
     this.props.updateFilter(event.target.value, this.props.filters.behaviors);
   }
 
-  behaviorChanged(behavior: string, checked: boolean) {
-    const behaviors = this.props.filters.behaviors
+  public behaviorChanged(behavior: string, checked: boolean) {
+    const behaviors = this.props.filters.behaviors;
     if (checked) {
       behaviors.push(behavior);
     } else {
@@ -42,13 +44,13 @@ class WorkspaceList extends React.PureComponent<Props> {
     this.props.updateFilter(this.props.filters.filter, this.props.filters.behaviors);
   }
 
-  componentDidMount() {
+  public componentDidMount() {
     this.props.listWorkspaces();
   }
 
-  render() {
+  public render() {
     const { fetching, workspaceList, filters: { filter, behaviors }, openWorkspace } = this.props;
-    const renderItem = (workspace: Workspace) => <WorkspaceListItem workspace={workspace} onSelected={openWorkspace} />
+    const renderItem = (workspace: Workspace) => <WorkspaceListItem workspace={workspace} onSelected={openWorkspace} />;
     return (
       <Row>
         <Col span={12} lg={6}>
@@ -81,7 +83,7 @@ class WorkspaceList extends React.PureComponent<Props> {
         </Col>
         <Col span={11} lg={17} offset={1}>
           <List
-            grid={{ gutter: 16, column: 4 }}
+            grid={{ gutter: 16, lg: 4, column: 1 }}
             locale={{ emptyText: 'No workspaces yet. Create one from the link on the left.' }}
             loading={fetching}
             dataSource={workspaceList}
@@ -95,15 +97,15 @@ class WorkspaceList extends React.PureComponent<Props> {
 
 const mapStateToProps = () =>
   createStructuredSelector({
-    fetching: isFetchingWorkspaces(),
-    workspaceList: workspaceList(),
-    filters: getListFilters(),
+    fetching: selectors.isFetchingWorkspaces(),
+    workspaceList: selectors.workspaceList(),
+    filters: selectors.getListFilters(),
   });
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
   openWorkspace: (id: number) => dispatch(router.push(`/workspaces/${id}`)),
-  updateFilter: (filter: string, behavior: string[]) => dispatch(filterWorkspaces(filter, behavior)),
-  listWorkspaces: () => dispatch(listAllWorkspaces()),
+  updateFilter: (filter: string, behavior: string[]) => dispatch(actions.filterWorkspaces(filter, behavior)),
+  listWorkspaces: () => dispatch(actions.listAllWorkspaces()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(WorkspaceList);

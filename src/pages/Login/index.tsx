@@ -7,14 +7,15 @@ import { Login } from '../../types/Login';
 import { login } from './actions';
 import logo from './logo_black.png';
 import { isLoggingIn, loginError } from './selectors';
+import { Dispatch } from 'redux';
 
 interface Props {
-  onSubmit: (payload: Login) => void
-  loggingIn: Boolean
-  error: String
+  onSubmit: (payload: Login) => void;
+  loggingIn: boolean;
+  error: string;
 }
 
-type FullProps = FormikProps<Login> & Props
+type FullProps = FormikProps<Login> & Props;
 
 const LoginForm = ({ handleSubmit, handleChange, values }: FullProps) => (
   <Form
@@ -46,7 +47,7 @@ const LoginForm = ({ handleSubmit, handleChange, values }: FullProps) => (
 );
 
 const LoginFormRender = withFormik<Props, Login>({
-  handleSubmit: (values, { props }) => props.onSubmit(values)
+  handleSubmit: (values, { props }) => props.onSubmit(values),
 })(LoginForm);
 
 const Login = (props: Props) => (
@@ -75,11 +76,11 @@ const Login = (props: Props) => (
 const mapStateToProps = () =>
   createStructuredSelector({
     loggingIn: isLoggingIn(),
-    error: loginError()
+    error: loginError(),
   });
 
-const mapDispatchToProps = (dispatch: Function) => ({
-  onSubmit: (payload: Login): void => dispatch(login(payload))
+const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
+  onSubmit: (payload: Login) => dispatch(login(payload)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login);
