@@ -45,7 +45,7 @@ const WorkspaceListItem = ({ workspace, onSelected }: Props) => {
           <Icon style={{ fontSize: 42 }} type={behavior === 'simple' ? 'team' : 'deployment-unit'} />
           <div style={{ fontSize: 12, textTransform: 'uppercase' }}>{behavior} workspace</div>
         </div>
-        <h3>{summary}</h3>
+        <p>{summary}</p>
         {approvalMessage()}
       </Card>
     </List.Item>

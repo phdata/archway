@@ -29,7 +29,7 @@ interface Props extends RouteComponentProps<DetailsRouteProps> {
 const Compliance = ({ checked, children }: {checked: boolean, children: string}) => (
   <div style={{ display: 'flex', flex: 1, flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
     <Icon type={checked ? 'warning' : 'dash'} style={{ marginBottom: 5, fontSize: 28 }} />
-    <div style={{ fontSize: 18, fontWeight: 200, letterSpacing: 1 }}>{children}</div>
+    <div style={{ letterSpacing: 1 }}>{children}</div>
   </div>
 );
 
@@ -61,29 +61,45 @@ class WorkspaceDetails extends React.PureComponent<Props> {
                   color: '#aaa',
                 }}><TimeAgo datetime={workspace.requested_date} /></div>
           </div>
-          <Row gutter={12} style={{  }}>
-            <Col span={8} style={{ textAlign: 'center' }}>
-              <Card>
+          <Row gutter={12} style={{ display: 'flex', marginTop: 15 }}>
+            <Col span={8} style={{ textAlign: 'center', display: 'flex' }}>
+              <Card
+                style={{ display: 'flex', flex: 1 }}
+                bodyStyle={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
                 <Label>description</Label>
-                <p style={{ marginBottom: 0 }}>{workspace.description}</p>
+                <p style={{ marginBottom: 0 }}>
+                  {workspace.description}
+                </p>
               </Card>
             </Col>
-            <Col span={8} style={{ textAlign: 'center' }}>
-              <Card>
+            <Col span={8} style={{ textAlign: 'center', display: 'flex' }}>
+              <Card
+                style={{ display: 'flex', flex: 1 }}
+                bodyStyle={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
                 <Label>compliance</Label>
-                <div style={{ display: 'flex', marginTop: 5 }}>
+                <div style={{ display: 'flex', flex: 1, alignItems: 'center' }}>
                   <Compliance checked={workspace.compliance.pci_data}>PCI</Compliance>
                   <Compliance checked={workspace.compliance.phi_data}>PHI</Compliance>
                   <Compliance checked={workspace.compliance.pii_data}>PII</Compliance>
                 </div>
               </Card>
             </Col>
-            <Col span={8} style={{ textAlign: 'center' }}>
-              <Card>
+            <Col span={8} style={{ textAlign: 'center', display: 'flex' }}>
+              <Card
+                style={{ display: 'flex', flex: 1 }}
+                bodyStyle={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
                 <Label>liason</Label>
-                <div style={{ textAlign: 'center' }}>
+                <div
+                  style={{
+                      textAlign: 'center',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      flex: 1,
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}>
                   <Icon type="crown" style={{ marginBottom: 5, fontSize: 28 }} />
-                  <div style={{ textTransform: 'uppercase' }}>{workspace.requester}</div>
+                  <div style={{ letterSpacing: 1, textTransform: 'uppercase' }}>{workspace.requester}</div>
                 </div>
               </Card>
             </Col>
