@@ -26,8 +26,7 @@ function* loginFlow() {
       yield fork(tokenReady, { token: requestToken });
     } else {
       yield put(actions.tokenNotAvailalbe());
-      yield take(actions.LOGIN_REQUEST);
-      const { username, password } = yield select((s: any) => s.login.loginForm);
+      const { login: { username, password } } = yield take(actions.LOGIN_REQUEST);
       task = yield fork(authorize, username, password);
     }
     const action = yield take([actions.LOGOUT_REQUEST, actions.LOGIN_FAILURE]);

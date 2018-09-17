@@ -6,9 +6,10 @@ export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
 export const LOGIN_REQUEST = 'LOGIN_REQUEST';
 export const LOGIN_FAILURE = 'LOGIN_FAILURE';
 
-export function login(payload: Login) {
+export function login(loginForm: Login) {
   return {
     type: LOGIN_REQUEST,
+    login: loginForm,
   };
 }
 

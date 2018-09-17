@@ -1,4 +1,4 @@
-import { Layout, Menu } from 'antd';
+import { Layout, Menu, Icon } from 'antd';
 import * as React from 'react';
 import { NavLink, withRouter } from 'react-router-dom';
 import logo from '../../components/white_logo_transparent.png';
@@ -18,17 +18,17 @@ const Navigation = ({ location }: any) => (
       }} selectedKeys={[location.pathname]} theme="dark" mode="inline">
       <Menu.Item style={{ marginTop: 20 }} key="/home">
         <NavLink to="/">
-          <i className="fa fa-home" /> Overview
+          <Icon type="home" style={{ fontSize: 18 }} /> Overview
         </NavLink>
       </Menu.Item>
       <Menu.Item style={{ marginTop: 20 }} key="/workspaces">
         <NavLink to="/workspaces">
-          <i className="fa fa-flask" /> Your Workspace
+        <Icon type="gift" style={{ fontSize: 18 }} /> Your Workspaces
         </NavLink>
       </Menu.Item>
       <Menu.Item style={{ marginTop: 20 }} key="/request">
         <NavLink to="/request">
-          <i className="fa fa-plus" /> New Workspace
+        <Icon type="plus" style={{ fontSize: 18 }} /> New Workspace
         </NavLink>
       </Menu.Item>
     </Menu>
