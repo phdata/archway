@@ -78,6 +78,7 @@ object Generator {
         request.copy(data = List(HiveDatabase(
           s"user_${input.username}",
           s"${appConfig.workspaces.user.root}/${input.username}/db",
+          0,
           appConfig.workspaces.user.defaultSize,
           LDAPRegistration(s"cn=user_${input.username},${appConfig.ldap.groupPath}", s"user_${input.username}", s"role_user_${input.username}"),
           None
@@ -113,6 +114,7 @@ object Generator {
           s"sw_$generatedName",
           s"${appConfig.workspaces.sharedWorkspace.root}/$generatedName",
           appConfig.workspaces.sharedWorkspace.defaultSize,
+          0,
           LDAPRegistration(
             s"cn=edh_sw_$generatedName,${appConfig.ldap.groupPath}",
             s"edh_sw_$generatedName",
@@ -154,6 +156,7 @@ object Generator {
           s"${dataset}_$generatedName",
           s"${appConfig.workspaces.dataset.root}/$dataset/$generatedName",
           disk,
+          0,
           LDAPRegistration(
             s"cn=edh_${appConfig.cluster.environment}_${dataset}_$generatedName,${appConfig.ldap.groupPath}",
             s"edh_${appConfig.cluster.environment}_${dataset}_$generatedName",

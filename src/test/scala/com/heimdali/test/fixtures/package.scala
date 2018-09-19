@@ -3,7 +3,7 @@ package com.heimdali.test
 import java.time.{Clock, Instant, ZoneId}
 
 import cats.effect.IO
-import com.heimdali.clients.{CMClient, HttpTest}
+import com.heimdali.clients.CMClient
 import org.http4s.HttpService
 import org.http4s.circe._
 import org.http4s.client.Client
@@ -46,7 +46,7 @@ package object fixtures {
   val initialLDAP = savedLDAP.copy(id = None)
   val savedGrant = HiveGrant("sw_sesame", "/shared_workspaces/sw_sesame", savedLDAP, id = Some(id))
   val initialGrant = savedGrant.copy(id = None, ldapRegistration = initialLDAP)
-  val savedHive = HiveDatabase("sw_sesame", "/shared_workspaces/sw_sesame", hdfsRequestedSize, savedGrant, id = Some(id))
+  val savedHive = HiveDatabase("sw_sesame", "/shared_workspaces/sw_sesame", hdfsRequestedSize, 0.5, savedGrant, id = Some(id))
   val initialHive = savedHive.copy(id = None, managingGroup = initialGrant)
   val savedYarn = Yarn(poolName, maxCores, maxMemoryInGB, Some(id))
   val initialYarn = savedYarn.copy(id = None)
@@ -131,6 +131,7 @@ package object fixtures {
        |      "name" : "${savedHive.name}",
        |      "location" : "${savedHive.location}",
        |      "size_in_gb" : ${savedHive.sizeInGB},
+       |      "consumed_in_gb": 0,
        |      "managing_group" : {
        |        "group": {
        |          "common_name" : "${savedLDAP.commonName}",

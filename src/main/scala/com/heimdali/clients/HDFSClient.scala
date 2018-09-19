@@ -21,6 +21,8 @@ trait HDFSClient[F[_]] {
   def setQuota(path: String, maxSizeInGB: Double): F[HDFSAllocation]
 
   def getQuota(path: Path): F[Double]
+
+  def getConsumption(location: String): F[Double]
 }
 
 class HDFSClientImpl[F[_] : Async](fileSystem: () => FileSystem,
@@ -70,5 +72,10 @@ class HDFSClientImpl[F[_] : Async](fileSystem: () => FileSystem,
         .foreach(output.write)
       output.close()
       path
+    }
+
+  override def getConsumption(location: String): F[Double] =
+    loginContextProvider.elevate("hdfs") { () =>
+      ((fileSystem().getContentSummary(new Path(location)).getSpaceConsumed / 1024.0) / 1024.0) / 1024.0
     }
 }

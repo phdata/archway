@@ -1,7 +1,6 @@
 package com.heimdali.services
 
-import com.heimdali.clients.HttpTest
-import com.heimdali.test.fixtures._
+import com.heimdali.test.fixtures.{HttpTest, _}
 import org.apache.hadoop.conf.Configuration
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FlatSpec, Matchers}

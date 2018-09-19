@@ -3,12 +3,11 @@ package com.heimdali.controller
 import java.time.Instant
 
 import cats.effect.IO
-import com.heimdali.clients.HttpTest
 import com.heimdali.models._
 import com.heimdali.repositories.Manager
 import com.heimdali.rest.WorkspaceController
 import com.heimdali.services._
-import com.heimdali.test.fixtures.{id, _}
+import com.heimdali.test.fixtures.{HttpTest, id, _}
 import io.circe.Json
 import io.circe.parser._
 import io.circe.syntax._

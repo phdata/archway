@@ -8,11 +8,9 @@ import org.apache.hadoop.conf.Configuration
 import org.http4s._
 import org.http4s.circe._
 import org.http4s.client.Client
-import io.circe.generic.auto._
-import io.circe.syntax._
 import org.http4s.dsl.io._
 import org.scalamock.scalatest.MockFactory
-import org.scalatest.{Assertion, FlatSpec, Matchers}
+import org.scalatest.{FlatSpec, Matchers}
 
 import scala.collection.immutable.Queue
 import scala.io.Source
@@ -71,18 +69,4 @@ class CDHYarnClientSpec extends FlatSpec with MockFactory with Matchers with Htt
 
 }
 
-trait HttpTest { this: Matchers =>
 
-  def check[A](actual: IO[Response[IO]],
-               expectedStatus: Status,
-               expectedBody: Option[A])(
-                implicit ev: EntityDecoder[IO, A]
-              ): Assertion = {
-    val actualResp = actual.unsafeRunSync
-    actualResp.status should be (expectedStatus)
-    expectedBody.fold[Assertion](
-      actualResp.body.compile.toVector.unsafeRunSync shouldBe empty)(
-      expected => actualResp.as[A].unsafeRunSync shouldBe expected
-    )
-  }
-}

@@ -45,10 +45,19 @@ class WorkspaceServiceImpl[F[_]](ldapClient: LDAPClient[F],
       case _ => None
     }.toList
 
+  def fillHive(dbs: List[HiveDatabase]): F[List[HiveDatabase]] =
+    dbs.map { hive =>
+      appConfig
+        .hdfsClient
+        .getConsumption(hive.location)
+        .map(consumed => hive.copy(consumedInGB = consumed))
+    }.sequence
+
   override def find(id: Long): OptionT[F, WorkspaceRequest] =
     OptionT(fill(workspaceRepository.find(id)).value.transact(transactor))
+      .flatMap(wr => OptionT.liftF(fillHive(wr.data).map(hive => wr.copy(data = hive))))
 
-    private def fill(maybeWorkspace: OptionT[ConnectionIO, WorkspaceRequest]) =
+  private def fill(maybeWorkspace: OptionT[ConnectionIO, WorkspaceRequest]) =
     for {
       workspace <- maybeWorkspace
       datas <- OptionT.liftF(hiveDatabaseRepository.findByWorkspace(workspace.id.get))
@@ -121,4 +130,5 @@ class WorkspaceServiceImpl[F[_]](ldapClient: LDAPClient[F],
 
   override def findByUsername(username: String): OptionT[F, WorkspaceRequest] =
     OptionT(fill(workspaceRepository.findByUsername(username)).value.transact(transactor))
+      .flatMap(wr => OptionT.liftF(fillHive(wr.data).map(hive => wr.copy(data = hive))))
 }

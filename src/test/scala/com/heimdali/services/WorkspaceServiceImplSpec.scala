@@ -11,6 +11,7 @@ import com.heimdali.repositories.{MemberRepository, _}
 import com.heimdali.test.fixtures._
 import doobie._
 import doobie.implicits._
+import doobie.util.transactor.Strategy
 import org.apache.hadoop.fs.Path
 import org.apache.sentry.provider.db.generic.service.thrift.SentryGenericServiceClient
 import org.scalamock.scalatest.MockFactory
@@ -23,8 +24,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 class WorkspaceServiceImplSpec
   extends FlatSpec
     with Matchers
-    with MockFactory
-    with DBTest {
+    with MockFactory {
 
   behavior of "Workspace Service"
 
@@ -84,11 +84,13 @@ class WorkspaceServiceImplSpec
     approvalRepository.findByWorkspaceId _ expects id returning List(approval()).pure[ConnectionIO]
     topicRepository.findByWorkspaceId _ expects id returning List(savedTopic).pure[ConnectionIO]
     applicationRepository.findByWorkspaceId _ expects id returning List(savedApplication).pure[ConnectionIO]
+    hdfsClient.getConsumption _ expects savedHive.location returning IO.pure(.5)
 
     val foundWorkspace = projectServiceImpl.find(id).value.unsafeRunSync()
 
     foundWorkspace shouldBe defined
     foundWorkspace.get.data should not be empty
+    foundWorkspace.get.data.head.consumedInGB shouldBe .5
     foundWorkspace.get.processing should not be empty
   }
 
@@ -99,6 +101,7 @@ class WorkspaceServiceImplSpec
     approvalRepository.findByWorkspaceId _ expects id returning List.empty[Approval].pure[ConnectionIO]
     topicRepository.findByWorkspaceId _ expects id returning List.empty[KafkaTopic].pure[ConnectionIO]
     applicationRepository.findByWorkspaceId _ expects id returning List.empty[Application].pure[ConnectionIO]
+    hdfsClient.getConsumption _ expects savedHive.location returning IO.pure(.5)
 
     val maybeWorkspace = projectServiceImpl.findByUsername(standardUsername).value.unsafeRunSync()
 
@@ -175,6 +178,8 @@ class WorkspaceServiceImplSpec
     val topicRepository: KafkaTopicRepository = mock[KafkaTopicRepository]
     val topicGrantRepository: TopicGrantRepository = mock[TopicGrantRepository]
     val applicationRepository: ApplicationRepository = mock[ApplicationRepository]
+
+    val transactor = Transactor.fromConnection[IO](null).copy(strategy0 = Strategy(FC.unit, FC.unit, FC.unit, FC.unit))
 
     lazy val appConfig: AppContext[IO] = AppContext(
       null,
