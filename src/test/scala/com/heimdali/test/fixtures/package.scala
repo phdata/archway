@@ -72,6 +72,9 @@ package object fixtures {
 
   val savedWorkspaceRequest = WorkspaceRequest(
     name,
+    name,
+    name,
+    "simple",
     standardUsername,
     Instant.now(clock),
     savedCompliance,
@@ -106,6 +109,9 @@ package object fixtures {
        |{
        |  "id" : $id,
        |  "name" : "$name",
+       |  "summary" : "$name",
+       |  "description" : "$name",
+       |  "behavior" : "simple",
        |  "single_user" : ${initialWorkspaceRequest.singleUser},
        |  "compliance" : {
        |    "phi_data" : ${savedCompliance.phiData},

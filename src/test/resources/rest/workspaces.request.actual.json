@@ -1,5 +1,8 @@
 {
   "name": "Sesame",
+  "summary": "Sesame",
+  "description": "Sesame",
+  "behavior": "simple",
   "compliance": {
     "phi_data": false,
     "pci_data": false,
