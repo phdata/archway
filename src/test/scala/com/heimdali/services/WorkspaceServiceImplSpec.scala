@@ -84,7 +84,7 @@ class WorkspaceServiceImplSpec
     approvalRepository.findByWorkspaceId _ expects id returning List(approval()).pure[ConnectionIO]
     topicRepository.findByWorkspaceId _ expects id returning List(savedTopic).pure[ConnectionIO]
     applicationRepository.findByWorkspaceId _ expects id returning List(savedApplication).pure[ConnectionIO]
-    hdfsClient.getConsumption _ expects savedHive.location returning IO.pure(.5)
+    hdfsClient.getConsumption _ expects savedHive.location returning IO.pure(.5F)
 
     val foundWorkspace = projectServiceImpl.find(id).value.unsafeRunSync()
 
@@ -101,7 +101,7 @@ class WorkspaceServiceImplSpec
     approvalRepository.findByWorkspaceId _ expects id returning List.empty[Approval].pure[ConnectionIO]
     topicRepository.findByWorkspaceId _ expects id returning List.empty[KafkaTopic].pure[ConnectionIO]
     applicationRepository.findByWorkspaceId _ expects id returning List.empty[Application].pure[ConnectionIO]
-    hdfsClient.getConsumption _ expects savedHive.location returning IO.pure(.5)
+    hdfsClient.getConsumption _ expects savedHive.location returning IO.pure(.5F)
 
     val maybeWorkspace = projectServiceImpl.findByUsername(standardUsername).value.unsafeRunSync()
 

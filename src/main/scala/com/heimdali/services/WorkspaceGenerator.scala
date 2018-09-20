@@ -78,8 +78,8 @@ object Generator {
         request.copy(data = List(HiveDatabase(
           s"user_${input.username}",
           s"${appConfig.workspaces.user.root}/${input.username}/db",
-          0,
           appConfig.workspaces.user.defaultSize,
+          0,
           LDAPRegistration(s"cn=user_${input.username},${appConfig.ldap.groupPath}", s"user_${input.username}", s"role_user_${input.username}"),
           None
         )))
