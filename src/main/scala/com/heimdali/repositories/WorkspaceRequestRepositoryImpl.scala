@@ -97,7 +97,7 @@ object WorkspaceRequestRepositoryImpl {
       innerQuery ++ whereOr(fr"mrm.username = $username", fr"rrm.username = $username")
 
     def listQuery(username: String): Query0[WorkspaceRequest] =
-      (selectFragment ++ fr"where wr.id in (" ++ innerQueryWith(username) ++ fr")")
+      (selectFragment ++ fr"where wr.id in (" ++ innerQueryWith(username) ++ fr") and wr.single_user = false")
         .query[WorkspaceRequest]
 
     def insert(workspaceRequest: WorkspaceRequest): Update0 =

@@ -115,7 +115,7 @@ envVars in reStart := Map(
   "HEIMDALI_LDAP_HOST" -> "ad1.jotunn.io",
   "HEIMDALI_LDAP_PORT" -> "636",
   "HEIMDALI_LDAP_ADMIN_DN" -> "CN=Administrator,CN=Users,DC=jotunn,DC=io",
-  "HEIMDALI_LDAP_ADMIN_PASS" -> "Jotunn123!",
+  "HEIMDALI_LDAP_ADMIN_PASS" -> "Jotunn321!",
   "HEIMDALI_LDAP_BASE_DN" -> "DC=jotunn,DC=io",
   "HEIMDALI_LDAP_GROUP_PATH" -> "ou=heimdali,DC=jotunn,DC=io",
 

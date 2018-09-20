@@ -52,8 +52,10 @@ class SentryClientImpl[F[_]](transactor: Transactor[F],
 
   implicit val han: LogHandler = LogHandler.jdkLogHandler
 
+  def roles: F[Seq[String]] = sql"""SHOW ROLES""".query[String].to[Seq].transact(transactor)
+
   override def createRole(name: String): F[Unit] =
-    sql"""SHOW ROLES""".query[String].to[Seq].transact(transactor).flatMap {
+    roles.flatMap {
       case roles if !roles.contains(name) =>
         (fr"CREATE ROLE" ++ Fragment.const(name)).update.run.transact(transactor).void
       case _ =>
