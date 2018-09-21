@@ -52,7 +52,7 @@ class HiveDatabaseRepositoryImpl(val clock: Clock)
          h.name,
          h.location,
          h.size_in_gb,
-         0,
+         CAST(0.0 as FLOAT),
 
          h.name,
          h.location,
