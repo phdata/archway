@@ -80,6 +80,11 @@ assemblyJarName in assembly := "heimdali-api.jar"
 
 parallelExecution in Test := false
 
+unmanagedClasspath in Test ++= Seq(
+  baseDirectory.value / "sentry-conf",
+  baseDirectory.value / "hive-conf"
+)
+
 addCompilerPlugin(
   "org.spire-math" % "kind-projector" % "0.9.7" cross CrossVersion.binary
 )

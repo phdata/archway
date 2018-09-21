@@ -10,8 +10,8 @@ class SentryClientSpec extends FlatSpec with Matchers {
 
   behavior of "Sentry Client"
 
-  ignore should "list roles" in {
-    UserGroupInformation.loginUserFromKeytab("benny@JOTUNN.IO", "/Users/benny/heimdali.keytab")
+  it should "list roles" in {
+    UserGroupInformation.loginUserFromKeytab("benny@JOTUNN.IO", getClass.getResource("/heimdali.keytab").getPath)
     val initialHiveTransactor = Transactor.fromDriverManager[IO]("org.apache.hive.jdbc.HiveDriver", "jdbc:hive2://master1.jotunn.io:10000/default;principal=hive/_HOST@JOTUNN.IO", "", "")
     val strategy = Strategy.void.copy(always = FC.close)
     val hiveTransactor = Transactor.strategy.set(initialHiveTransactor, strategy)
