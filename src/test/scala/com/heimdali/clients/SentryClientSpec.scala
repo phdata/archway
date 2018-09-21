@@ -20,3 +20,4 @@ class SentryClientSpec extends FlatSpec with Matchers {
     val result = client.roles.unsafeRunSync()
   }
 
+}
