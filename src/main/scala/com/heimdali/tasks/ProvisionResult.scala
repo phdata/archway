@@ -45,7 +45,7 @@ object Success {
   def apply[A](a: A, message: String)(implicit show: Show[A]): Success =
     apply(NonEmptyList.of(
       s"${show.show(a)} SUCCEEDED",
-      s"${show.show(a)}: message"
+      s"${show.show(a)}: $message"
     ))
 
 

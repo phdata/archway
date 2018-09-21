@@ -4,7 +4,7 @@
 <configuration>
   <property>
     <name>fs.defaultFS</name>
-    <value>hdfs://master1.jotunn.io:8020</value>
+    <value>hdfs://10.138.255.50:8020</value>
   </property>
   <property>
     <name>fs.trash.interval</name>

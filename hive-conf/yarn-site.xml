@@ -12,27 +12,27 @@
   </property>
   <property>
     <name>yarn.resourcemanager.address</name>
-    <value>master1.jotunn.io:8032</value>
+    <value>10.138.255.50:8032</value>
   </property>
   <property>
     <name>yarn.resourcemanager.admin.address</name>
-    <value>master1.jotunn.io:8033</value>
+    <value>10.138.255.50:8033</value>
   </property>
   <property>
     <name>yarn.resourcemanager.scheduler.address</name>
-    <value>master1.jotunn.io:8030</value>
+    <value>10.138.255.50:8030</value>
   </property>
   <property>
     <name>yarn.resourcemanager.resource-tracker.address</name>
-    <value>master1.jotunn.io:8031</value>
+    <value>10.138.255.50:8031</value>
   </property>
   <property>
     <name>yarn.resourcemanager.webapp.address</name>
-    <value>master1.jotunn.io:8088</value>
+    <value>10.138.255.50:8088</value>
   </property>
   <property>
     <name>yarn.resourcemanager.webapp.https.address</name>
-    <value>master1.jotunn.io:8090</value>
+    <value>10.138.255.50:8090</value>
   </property>
   <property>
     <name>yarn.resourcemanager.client.thread-count</name>

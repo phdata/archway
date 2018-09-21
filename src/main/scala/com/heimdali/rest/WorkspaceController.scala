@@ -42,8 +42,8 @@ class WorkspaceController(authService: AuthService[IO],
           if(user.isSuperUser) {
             for {
               workspace <- workspaceService.find(id).value
-              _ <- workspaceService.provision(workspace.get)
-              response <- Created()
+              provisionResult <- workspaceService.provision(workspace.get)
+              response <- Created(provisionResult.asJson)
             } yield response
           }
           else

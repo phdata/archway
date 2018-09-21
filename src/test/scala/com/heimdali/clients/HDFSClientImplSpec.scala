@@ -3,93 +3,87 @@ package com.heimdali.clients
 
 import java.net.URI
 
-import cats.effect.{Async, IO}
-import com.heimdali.services.LoginContextProvider
+import cats.effect.IO
+import com.heimdali.services.UGILoginContextProvider
 import com.sun.xml.internal.messaging.saaj.util.ByteInputStream
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.fs.{FileSystem, Path}
-import org.apache.hadoop.hdfs.MiniDFSCluster
 import org.apache.hadoop.hdfs.client.HdfsAdmin
-import org.mockito.ArgumentMatchers
-import org.mockito.Mockito._
+import org.apache.hadoop.security.UserGroupInformation
+import org.scalatest._
 import org.scalatest.mockito.MockitoSugar
-import org.scalatest.{BeforeAndAfterAll, Matchers, Outcome, fixture}
 
-class HDFSClientImplSpec extends fixture.FlatSpec with Matchers with MockitoSugar with BeforeAndAfterAll {
+import scala.concurrent.ExecutionContext
+import scala.io.Source
 
-  var cluster: MiniDFSCluster = _
-
-  override protected def beforeAll(): Unit = {
-    val configuration = new Configuration()
-    cluster = new MiniDFSCluster.Builder(configuration).build()
-  }
-
-  override protected def afterAll(): Unit = {
-    cluster.shutdown(true)
-  }
+class HDFSClientImplSpec extends FlatSpec with Matchers with MockitoSugar with BeforeAndAfterAll {
 
   behavior of "HDFS Client"
 
-  it should "create a directory on behalf of a user" in { fixture =>
-    val context = new TestLoginContext
+  it should "create a directory on behalf of a user" in new Context {
+    val result = client.createDirectory(userLocation, Some("benny")).unsafeRunSync()
 
-    val client = new HDFSClientImpl[IO](() => fixture.fileSystem, fixture.admin, context)
-    val result = client.createDirectory(fixture.location, Some("jdoe")).unsafeRunSync()
-
-//    verify(context).elevate[IO, Path](ArgumentMatchers.eq("jdoe"))(ArgumentMatchers.any(classOf[() => Path]))(ArgumentMatchers.eq(Async[IO]))
-    result.toUri.getPath should be(fixture.location)
-    fixture.fileSystem.exists(new Path(fixture.location)) should be(true)
-    fixture.fileSystem.delete(new Path(fixture.location), true)
+    result.toUri.getPath shouldBe userLocation
+    elevatedFS.exists(new Path(userLocation)) shouldBe true
+    elevatedFS.delete(new Path(userLocation), true)
   }
 
-  it should "set quota" in { fixture =>
-    val context = new TestLoginContext
+  it should "set quota" in new Context {
+    elevatedFS.mkdirs(new Path(location))
 
-    fixture.fileSystem.mkdirs(new Path(fixture.location))
+    val result = client.setQuota(location, .25).unsafeRunSync()
 
-    val client = new HDFSClientImpl[IO](() => fixture.fileSystem, fixture.admin, context)
-    val result = client.setQuota(fixture.location, .25).unsafeRunSync()
+    elevatedFS.delete(new Path(location), true)
 
-//    verify(context).elevate[IO, Path](ArgumentMatchers.eq("hdfs"))(ArgumentMatchers.any(classOf[() => Path]))(ArgumentMatchers.eq(Async[IO]))
-    result.location should be(fixture.location.toString)
-    result.maxSizeInGB should be(.25)
-    fixture.fileSystem.delete(new Path(fixture.location), true)
+    result.location shouldBe location.toString
+    result.maxSizeInGB shouldBe .25
   }
 
-  it should "upload a file" in { fixture =>
-    val context = new TestLoginContext
+  it should "get consumed space" in new Context {
+    val elevatedAdmin = context.elevate[IO, HdfsAdmin]("hdfs"){ () => admin() }.unsafeRunSync()
+    elevatedFS.mkdirs(new Path(location))
+    elevatedAdmin.setSpaceQuota(new Path(location), 1024*1024*1024)
+
+    val initial = client.getConsumption(location).unsafeRunSync()
+    elevatedFS.copyFromLocalFile(new Path(getClass.getResource("/logo.png").getPath), new Path(location))
+    val after = client.getConsumption(location).unsafeRunSync()
+
+    elevatedFS.delete(new Path(location), true)
+
+    initial shouldBe 0
+    after should be > 0.0
+  }
+
+  ignore should "upload a file" in new Context {
     val data = "test out"
     val dataBytes = data.getBytes
-    val filename = s"${fixture.location}/project_a.keytab"
-    fixture.fileSystem.mkdirs(new Path(fixture.location))
+    val filename = s"$userLocation/project_a.keytab"
 
-    val client = new HDFSClientImpl[IO](() => fixture.fileSystem, fixture.admin, context)
+    client.createDirectory(userLocation, Some("benny")).unsafeRunSync()
     val result = client.uploadFile(new ByteInputStream(dataBytes, dataBytes.length), filename).unsafeRunSync()
-    fixture.fileSystem.exists(result) should be(true)
-    result.toString should be(filename)
-    fixture.fileSystem.delete(new Path(fixture.location), true)
+
+    elevatedFS.delete(new Path(userLocation), true)
+
+    elevatedFS.exists(result) shouldBe true
+    result.toString shouldBe filename
   }
 
-  override def withFixture(test: OneArgTest): Outcome = {
+  override protected def beforeAll(): Unit = {
+    System.setProperty("java.security.krb5.conf", getClass.getResource("/krb5.conf").getPath)
+    UserGroupInformation.loginUserFromKeytab("benny@JOTUNN.IO", getClass().getResource("/heimdali.keytab").getPath)
+  }
+
+  trait Context {
     val configuration = new Configuration()
-    val location = "/data/shared_workspaces/project_a"
-    val baseUri = new URI(s"hdfs://localhost:${cluster.getNameNodePort}/")
-    val fileSystem = FileSystem.get(baseUri, configuration)
-    val admin = () => new HdfsAdmin(baseUri, configuration)
+    private val fileSystem = () => FileSystem.get(configuration)
+    val location = "/test/shared_workspaces/project_a"
+    val userLocation = "/user/benny/db"
+    val hdfsUri = new URI(configuration.get("fs.defaultFS"))
+    val admin = () => new HdfsAdmin(hdfsUri, configuration)
+    val context = new UGILoginContextProvider()(ExecutionContext.global)
+    val elevatedFS = context.elevate[IO, FileSystem]("hdfs"){ () => fileSystem() }.unsafeRunSync()
 
-    val fixture = FixtureParam(cluster, fileSystem, admin, location)
-
-    withFixture(test.toNoArgTest(fixture))
+    val client = new HDFSClientImpl[IO](fileSystem, admin, context)
   }
 
-  case class FixtureParam(cluster: MiniDFSCluster, fileSystem: FileSystem, admin: () => HdfsAdmin, location: String)
-
-}
-
-class TestLoginContext extends LoginContextProvider {
-
-  override def kinit(): IO[Unit] = IO.unit
-
-  override def elevate[F[_] : Async, A](user: String)(block: () => A): F[A] =
-    Async[F].delay(block())
 }

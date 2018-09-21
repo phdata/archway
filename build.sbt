@@ -80,6 +80,11 @@ assemblyJarName in assembly := "heimdali-api.jar"
 
 parallelExecution in Test := false
 
+unmanagedClasspath in Test ++= Seq(
+  baseDirectory.value / "sentry-conf",
+  baseDirectory.value / "hive-conf"
+)
+
 addCompilerPlugin(
   "org.spire-math" % "kind-projector" % "0.9.7" cross CrossVersion.binary
 )
@@ -94,7 +99,7 @@ mainClass in reStart := Some("com.heimdali.Main")
 
 Revolver.enableDebugging(port = 9999, suspend = true)
 
-javaOptions in reStart := Seq(
+javaOptions := Seq(
   "-Dhadoop.home.dir=$PWD",
   s"-Djava.security.krb5.conf=${baseDirectory.value}/krb5.conf"
 )
@@ -115,7 +120,7 @@ envVars in reStart := Map(
   "HEIMDALI_LDAP_HOST" -> "ad1.jotunn.io",
   "HEIMDALI_LDAP_PORT" -> "636",
   "HEIMDALI_LDAP_ADMIN_DN" -> "CN=Administrator,CN=Users,DC=jotunn,DC=io",
-  "HEIMDALI_LDAP_ADMIN_PASS" -> "Jotunn123!",
+  "HEIMDALI_LDAP_ADMIN_PASS" -> "Jotunn321!",
   "HEIMDALI_LDAP_BASE_DN" -> "DC=jotunn,DC=io",
   "HEIMDALI_LDAP_GROUP_PATH" -> "ou=heimdali,DC=jotunn,DC=io",
 
@@ -149,5 +154,6 @@ envVars in reStart := Map(
   "HEIMDALI_YARN_SHARED_PARENTS" -> "root",
   "HEIMDALI_YARN_DATASET_PARENTS" -> "root",
 
-  "ZK_QUORUM" -> "master1.jotunn.io:2181"
+  "ZK_QUORUM" -> "master1.jotunn.io:2181",
+  "HEIMDALI_API_SERVICE_PRINCIPAL" -> "benny@JOTUNN.IO"
 )

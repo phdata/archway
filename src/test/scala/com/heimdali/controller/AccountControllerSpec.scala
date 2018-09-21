@@ -4,10 +4,9 @@ import cats._
 import cats.data._
 import cats.implicits._
 import cats.effect.IO
-import com.heimdali.clients.HttpTest
 import com.heimdali.rest.AccountController
 import com.heimdali.services.{AccountService, UserTemplate}
-import com.heimdali.test.fixtures._
+import com.heimdali.test.fixtures.{HttpTest, _}
 import org.http4s._
 import org.http4s.circe._
 import org.http4s.client.dsl.Http4sClientDsl

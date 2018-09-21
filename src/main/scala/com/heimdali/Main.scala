@@ -23,7 +23,7 @@ object Main extends StreamApp[IO] {
   override def stream(args: List[String], requestShutdown: IO[Unit]): Stream[IO, StreamApp.ExitCode] = {
     implicit val ec: ExecutionContext =  heimdaliApp.executionContext
 
-    heimdaliApp.startup.start().unsafeRunSync()
+    heimdaliApp.loginContextProvider.kinit().unsafeRunSync()
     heimdaliApp.restAPI.build().serve
   }
 }

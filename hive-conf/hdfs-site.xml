@@ -8,11 +8,11 @@
   </property>
   <property>
     <name>dfs.namenode.servicerpc-address</name>
-    <value>master1.jotunn.io:8022</value>
+    <value>10.138.255.50:8022</value>
   </property>
   <property>
     <name>dfs.https.address</name>
-    <value>master1.jotunn.io:50470</value>
+    <value>10.138.255.50:50470</value>
   </property>
   <property>
     <name>dfs.https.port</name>
@@ -20,7 +20,7 @@
   </property>
   <property>
     <name>dfs.namenode.http-address</name>
-    <value>master1.jotunn.io:50070</value>
+    <value>10.138.255.50:50070</value>
   </property>
   <property>
     <name>dfs.replication</name>

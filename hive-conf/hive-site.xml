@@ -4,7 +4,7 @@
 <configuration>
   <property>
     <name>hive.metastore.uris</name>
-    <value>thrift://master1.jotunn.io:9083</value>
+    <value>thrift://10.138.255.50:9083</value>
   </property>
   <property>
     <name>hive.metastore.client.socket.timeout</name>
@@ -184,7 +184,7 @@
   </property>
   <property>
     <name>hive.zookeeper.quorum</name>
-    <value>master1.jotunn.io</value>
+    <value>10.138.255.50</value>
   </property>
   <property>
     <name>hive.zookeeper.client.port</name>
