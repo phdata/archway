@@ -23,10 +23,9 @@ class HDFSClientImplSpec extends FlatSpec with Matchers with MockitoSugar with B
   it should "create a directory on behalf of a user" in new Context {
     val result = client.createDirectory(userLocation, Some("benny")).unsafeRunSync()
 
-    elevatedFS.delete(new Path(userLocation), true)
-
     result.toUri.getPath shouldBe userLocation
     elevatedFS.exists(new Path(userLocation)) shouldBe true
+    elevatedFS.delete(new Path(userLocation), true)
   }
 
   it should "set quota" in new Context {
@@ -70,7 +69,7 @@ class HDFSClientImplSpec extends FlatSpec with Matchers with MockitoSugar with B
   }
 
   override protected def beforeAll(): Unit = {
-    UserGroupInformation.loginUserFromKeytab("benny@JOTUNN.IO", "/Users/benny/heimdali.keytab")
+    UserGroupInformation.loginUserFromKeytab("benny@JOTUNN.IO", getClass().getResource("/heimdali.keytab").getPath)
   }
 
   trait Context {

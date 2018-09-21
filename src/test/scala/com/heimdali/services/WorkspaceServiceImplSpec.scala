@@ -84,7 +84,6 @@ class WorkspaceServiceImplSpec
     approvalRepository.findByWorkspaceId _ expects id returning List(approval()).pure[ConnectionIO]
     topicRepository.findByWorkspaceId _ expects id returning List(savedTopic).pure[ConnectionIO]
     applicationRepository.findByWorkspaceId _ expects id returning List(savedApplication).pure[ConnectionIO]
-    hdfsClient.getConsumption _ expects savedHive.location returning IO.pure(.5F)
 
     val foundWorkspace = projectServiceImpl.find(id).value.unsafeRunSync()
 
@@ -101,11 +100,29 @@ class WorkspaceServiceImplSpec
     approvalRepository.findByWorkspaceId _ expects id returning List.empty[Approval].pure[ConnectionIO]
     topicRepository.findByWorkspaceId _ expects id returning List.empty[KafkaTopic].pure[ConnectionIO]
     applicationRepository.findByWorkspaceId _ expects id returning List.empty[Application].pure[ConnectionIO]
-    hdfsClient.getConsumption _ expects savedHive.location returning IO.pure(.5F)
 
     val maybeWorkspace = projectServiceImpl.findByUsername(standardUsername).value.unsafeRunSync()
 
     maybeWorkspace shouldBe Some(savedWorkspaceRequest)
+  }
+
+  it should "get consumed space if directory has been created" in new Context {
+    val withCreated: HiveDatabase = savedHive.copy(directoryCreated = Some(clock.instant()))
+
+    workspaceRepository.find _ expects id returning OptionT.some(savedWorkspaceRequest)
+    hiveDatabaseRepository.findByWorkspace _ expects id returning List(withCreated).pure[ConnectionIO]
+    yarnRepository.findByWorkspaceId _ expects id returning List(savedYarn).pure[ConnectionIO]
+    approvalRepository.findByWorkspaceId _ expects id returning List(approval()).pure[ConnectionIO]
+    topicRepository.findByWorkspaceId _ expects id returning List(savedTopic).pure[ConnectionIO]
+    applicationRepository.findByWorkspaceId _ expects id returning List(savedApplication).pure[ConnectionIO]
+    hdfsClient.getConsumption _ expects withCreated.location returning IO.pure(1.0)
+
+    val foundWorkspace = projectServiceImpl.find(id).value.unsafeRunSync()
+
+    foundWorkspace shouldBe defined
+    foundWorkspace.get.data should not be empty
+    foundWorkspace.get.data.head.consumedInGB shouldBe 1.0
+    foundWorkspace.get.processing should not be empty
   }
 
   it should "approve the workspace" in new Context {
