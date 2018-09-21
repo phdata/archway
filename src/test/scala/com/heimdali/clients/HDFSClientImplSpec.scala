@@ -69,6 +69,7 @@ class HDFSClientImplSpec extends FlatSpec with Matchers with MockitoSugar with B
   }
 
   override protected def beforeAll(): Unit = {
+    System.setProperty("java.security.krb5.conf", getClass.getResource("/krb5.conf").getPath)
     UserGroupInformation.loginUserFromKeytab("benny@JOTUNN.IO", getClass().getResource("/heimdali.keytab").getPath)
   }
 
