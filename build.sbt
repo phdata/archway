@@ -99,7 +99,7 @@ mainClass in reStart := Some("com.heimdali.Main")
 
 Revolver.enableDebugging(port = 9999, suspend = true)
 
-javaOptions in reStart := Seq(
+javaOptions := Seq(
   "-Dhadoop.home.dir=$PWD",
   s"-Djava.security.krb5.conf=${baseDirectory.value}/krb5.conf"
 )
