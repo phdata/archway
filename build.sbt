@@ -149,5 +149,6 @@ envVars in reStart := Map(
   "HEIMDALI_YARN_SHARED_PARENTS" -> "root",
   "HEIMDALI_YARN_DATASET_PARENTS" -> "root",
 
-  "ZK_QUORUM" -> "master1.jotunn.io:2181"
+  "ZK_QUORUM" -> "master1.jotunn.io:2181",
+  "HEIMDALI_API_SERVICE_PRINCIPAL" -> "benny@JOTUNN.IO"
 )

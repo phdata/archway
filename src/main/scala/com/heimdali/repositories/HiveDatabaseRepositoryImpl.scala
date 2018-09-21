@@ -80,7 +80,8 @@ class HiveDatabaseRepositoryImpl(val clock: Clock)
          rg.location_access,
          rg.database_access,
 
-         h.id
+         h.id,
+         h.directory_created
        from hive_database h
        inner join hive_grant mg on h.manager_group_id = mg.id
        inner join ldap_registration m on mg.ldap_registration_id = m.id

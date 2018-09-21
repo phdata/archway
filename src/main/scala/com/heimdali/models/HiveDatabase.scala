@@ -1,5 +1,7 @@
 package com.heimdali.models
 
+import java.time.Instant
+
 import cats._
 import cats.effect.Effect
 import cats.implicits._
@@ -16,7 +18,8 @@ case class HiveDatabase(name: String,
                         consumedInGB: Double,
                         managingGroup: HiveGrant,
                         readonlyGroup: Option[HiveGrant] = None,
-                        id: Option[Long] = None)
+                        id: Option[Long] = None,
+                        directoryCreated: Option[Instant] = None)
 
 object HiveDatabase {
 

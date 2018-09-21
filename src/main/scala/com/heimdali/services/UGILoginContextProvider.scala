@@ -1,10 +1,11 @@
 package com.heimdali.services
 
-import java.security.PrivilegedAction
+import java.security.{PrivilegedAction, PrivilegedExceptionAction}
 
 import cats.effect.{Async, IO}
 import com.typesafe.scalalogging.LazyLogging
 import org.apache.hadoop.security.UserGroupInformation
+
 import scala.concurrent.ExecutionContext
 
 class UGILoginContextProvider(implicit val executionContext: ExecutionContext)
@@ -14,7 +15,7 @@ class UGILoginContextProvider(implicit val executionContext: ExecutionContext)
     Async[F].async { callback =>
       logger.warn(s"running block on behalf of $user")
       val ugi = UserGroupInformation.createProxyUser(user, UserGroupInformation.getLoginUser)
-      ugi.doAs(new PrivilegedAction[Either[Throwable, A]] {
+      ugi.doAs(new PrivilegedExceptionAction[Either[Throwable, A]] {
         override def run(): Either[Throwable, A] = {
           try {
             val result = block()

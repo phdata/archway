@@ -46,11 +46,13 @@ class WorkspaceServiceImpl[F[_]](ldapClient: LDAPClient[F],
     }.toList
 
   def fillHive(dbs: List[HiveDatabase]): F[List[HiveDatabase]] =
-    dbs.map { hive =>
-      appConfig
-        .hdfsClient
-        .getConsumption(hive.location)
-        .map(consumed => hive.copy(consumedInGB = consumed))
+    dbs.map {
+      case hive if hive.directoryCreated.isDefined =>
+        appConfig
+          .hdfsClient
+          .getConsumption(hive.location)
+          .map(consumed => hive.copy(consumedInGB = consumed))
+      case hive => Effect[F].pure(hive)
     }.sequence
 
   override def find(id: Long): OptionT[F, WorkspaceRequest] =
