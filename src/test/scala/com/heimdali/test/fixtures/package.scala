@@ -10,7 +10,7 @@ import org.http4s.client.Client
 import org.http4s.dsl.io._
 import cats.effect.IO
 import com.heimdali.clients.CMClient
-import com.heimdali.config.{ClusterConfig, CredentialsConfig}
+import com.heimdali.config.{AppConfig, ClusterConfig, CredentialsConfig, LDAPConfig}
 import com.heimdali.models._
 import com.heimdali.services.{CDH, Cluster, ClusterApp}
 import io.circe._
@@ -19,6 +19,7 @@ import org.http4s.HttpService
 import org.http4s.circe._
 import org.http4s.client.Client
 import org.http4s.dsl.io._
+import pureconfig.{CamelCase, ConfigFieldMapping, ProductHint}
 
 import scala.concurrent.duration._
 import scala.io.Source
@@ -69,6 +70,8 @@ package object fixtures {
   def approval(instant: Instant = Instant.now(clock)) = Approval(Risk, standardUsername, instant)
 
   val clusterConfig = ClusterConfig(1 second, "", "cluster", "dev", CredentialsConfig("admin", "admin"))
+  private implicit def hint[T] = ProductHint[T](ConfigFieldMapping(CamelCase, CamelCase))
+  val Right(appConfig) = pureconfig.loadConfig[AppConfig]
 
   val savedWorkspaceRequest = WorkspaceRequest(
     name,

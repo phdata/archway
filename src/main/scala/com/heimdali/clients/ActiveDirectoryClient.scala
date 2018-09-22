@@ -13,7 +13,8 @@ trait ActiveDirectoryClient[F[_]] { this: LDAPClientImpl[F] =>
   override def ldapUser(searchResultEntry: SearchResultEntry) =
     LDAPUser(s"${searchResultEntry.getAttributeValue("cn")}",
       searchResultEntry.getAttributeValue("sAMAccountName"),
-      searchResultEntry.getAttributeValues("memberOf"))
+      searchResultEntry.getAttributeValues("memberOf"),
+      Option(searchResultEntry.getAttributeValue("mail")))
 
   override def groupObjectClass: String =
     "group"

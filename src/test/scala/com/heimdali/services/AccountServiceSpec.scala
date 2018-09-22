@@ -115,7 +115,7 @@ class AccountServiceSpec extends FlatSpec with MockFactory with Matchers {
     val approvalConfig = ApprovalConfig("CN=foo,DC=jotunN,dc=io", "cN=bar,dc=JOTUNN,dc=io")
     val secret = "abc"
     val restConfig = RestConfig(1234, secret)
-    val ldapUser = LDAPUser(personName, standardUsername, Seq("cn=foo,dc=jotunn,dc=io"))
+    val ldapUser = LDAPUser(personName, standardUsername, Seq("cn=foo,dc=jotunn,dc=io"), Some("dude@email.com"))
     val workspaceConfigItem = WorkspaceConfigItem("root.user", 1, 1, 1, "root.user")
     val workspaceConfig = WorkspaceConfig(workspaceConfigItem, workspaceConfigItem, workspaceConfigItem)
     val token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJuYW1lIjoiRHVkZSBEb2UiLCJ1c2VybmFtZSI6InVzZXJuYW1lIiwicGVybWlzc2lvbnMiOnsicmlza19tYW5hZ2VtZW50IjpmYWxzZSwicGxhdGZvcm1fb3BlcmF0aW9ucyI6ZmFsc2V9fQ.ltGXxBh4S7gwmIbcKz22IFWpGI2-zxad2XYOoxuGm734L8GlzfwvLRWIs-ZVKn7T8w3RJy5bKZWZoPj8951Qug"
