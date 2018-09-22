@@ -1,6 +1,9 @@
 package com.heimdali.clients
 
-import cats.effect.IO
+import cats._
+import cats.implicits._
+import cats.effect._
+import com.heimdali.models.YarnApplication
 import com.heimdali.services.{CDHClusterService, ClusterService}
 import com.heimdali.test.fixtures._
 import io.circe.parser._
@@ -19,15 +22,7 @@ class CDHYarnClientSpec extends FlatSpec with MockFactory with Matchers with Htt
 
   behavior of "CDHYarnClientSpec"
 
-  it should "createPool" in {
-    val yarnClient = IO.pure(Client.fromHttpService(HttpService[IO] {
-      case GET -> Root / "api" / "v18" / "clusters" / "cluster" / "services" / yarnApp.id / "config" =>
-        Ok(fromResource("cloudera/config.json"))
-      case PUT -> Root / "api" / "v18" / "clusters" / "cluster" / "services" / yarnApp.id / "config" =>
-        Ok(fromResource("cloudera/config_update.json"))
-      case POST -> Root / "api" / "v18" / "clusters" / "cluster" / "commands" / "poolsRefresh" =>
-        Ok(fromResource("cloudera/commands.poolsRefresh.expected.json"))
-    }))
+  it should "createPool" in new HttpContext {
     val yarnHttpClient = new CMClient[IO](yarnClient, clusterConfig)
 
     val clusterService = new CDHClusterService[IO](httpClient, clusterConfig, new Configuration())
@@ -60,11 +55,28 @@ class CDHYarnClientSpec extends FlatSpec with MockFactory with Matchers with Htt
     result.top shouldBe defined
   }
 
-  it should "generate parent pools" in {
-    val client = new CDHYarnClient(null, clusterConfig, mock[ClusterService[IO]])
-    val result = client.getParents(poolName).unsafeRunSync()
+  it should "list applications" in new HttpContext {
+    val clusterService = new CDHClusterService[IO](httpClient, clusterConfig, new Configuration())
+    val yarnHttpClient = new CMClient[IO](yarnClient, clusterConfig)
+    val client = new CDHYarnClient(yarnHttpClient, clusterConfig, clusterService)
+    val result = client.applications("pool").unsafeRunSync()
 
-    result.toList shouldBe List("root", "workspaces")
+    result shouldBe List(YarnApplication("application_1536850095900_0122", "Spark shell"))
+  }
+
+  trait HttpContext {
+    val yarnClient = IO.pure(Client.fromHttpService(HttpService[IO] {
+      case GET -> Root / "api" / "v18" / "clusters" / "cluster" =>
+        Ok(fromResource("cloudera/clusters.cluster_name.actual.json"))
+      case GET -> Root / "api" / "v18" / "clusters" / "cluster" / "services" / yarnApp.id / "config" =>
+        Ok(fromResource("cloudera/config.json"))
+      case PUT -> Root / "api" / "v18" / "clusters" / "cluster" / "services" / yarnApp.id / "config" =>
+        Ok(fromResource("cloudera/config_update.json"))
+      case POST -> Root / "api" / "v18" / "clusters" / "cluster" / "commands" / "poolsRefresh" =>
+        Ok(fromResource("cloudera/commands.poolsRefresh.expected.json"))
+      case GET -> Root / "api" / "v18" / "clusters" / "cluster" / "services" / yarnApp.id / "yarnApplications" =>
+        Ok(fromResource("cloudera/clusters.cluster.services.yarn.yarnApplications.json"))
+    }))
   }
 
 }

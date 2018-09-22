@@ -1,0 +1,27 @@
+{
+  "applications": [
+    {
+      "applicationId": "application_1536850095900_0122",
+      "name": "Spark shell",
+      "startTime": "2018-09-18T20:17:06.848Z",
+      "user": "bthompson",
+      "pool": "root.users.bthompson",
+      "state": "RUNNING",
+      "progress": 10.0,
+      "attributes": {
+      },
+      "applicationTags": [
+        ""
+      ],
+      "allocatedMemorySeconds": 239958,
+      "allocatedVcoreSeconds": 234,
+      "allocatedMB": 1024,
+      "allocatedVCores": 1,
+      "runningContainers": 1,
+      "mr2AppInformation": {
+      }
+    }
+  ],
+  "warnings": [
+  ]
+}

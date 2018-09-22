@@ -173,6 +173,17 @@ class WorkspaceServiceImplSpec
     projectServiceImpl.provision(savedWorkspaceRequest).unsafeRunSync()
   }
 
+  it should "get all yarn applications" in new Context {
+    yarnRepository.findByWorkspaceId _ expects id returning List(savedYarn).pure[ConnectionIO]
+    private val app = YarnApplication("application123", "MyApp")
+
+    yarnClient.applications _ expects savedYarn.poolName returning List(app).pure[IO]
+
+    val result = projectServiceImpl.yarnInfo(id).unsafeRunSync()
+
+    result.head shouldBe YarnInfo(savedYarn.poolName, List(app))
+  }
+
   trait Context {
     val ldapClient: LDAPClient[IO] = mock[LDAPClient[IO]]
     val hdfsClient: HDFSClient[IO] = mock[HDFSClient[IO]]

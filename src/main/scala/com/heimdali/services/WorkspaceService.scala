@@ -2,10 +2,8 @@ package com.heimdali.services
 
 import cats.data._
 import com.heimdali.models._
-import com.heimdali.repositories._
 
 trait WorkspaceService[F[_]] {
-
   def find(id: Long): OptionT[F, WorkspaceRequest]
 
   def list(username: String): F[List[WorkspaceRequest]]
@@ -17,5 +15,7 @@ trait WorkspaceService[F[_]] {
   def provision(workspace: WorkspaceRequest): F[NonEmptyList[String]]
 
   def findByUsername(username: String): OptionT[F, WorkspaceRequest]
+
+  def yarnInfo(id: Long): F[List[YarnInfo]]
 
 }
