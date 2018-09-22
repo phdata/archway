@@ -37,6 +37,7 @@ trait ServiceModule[F[_]] {
   val reader: AppContext[F] = AppContext[F](
     appConfig,
     sentryClient,
+    hiveClient,
     ldapClient,
     hdfsClient,
     yarnClient,

@@ -3,7 +3,7 @@ package com.heimdali.repositories
 import java.time.{Clock, Instant}
 
 import cats._, cats.data._, cats.implicits._
-import com.heimdali.models.HiveDatabase
+import com.heimdali.models.HiveAllocation
 import doobie._
 import doobie.implicits._
 import doobie.util.fragments.whereAnd
@@ -11,7 +11,7 @@ import doobie.util.fragments.whereAnd
 class HiveDatabaseRepositoryImpl(val clock: Clock)
   extends HiveDatabaseRepository {
 
-  def find(id: Long): OptionT[ConnectionIO, HiveDatabase] = {
+  def find(id: Long): OptionT[ConnectionIO, HiveAllocation] = {
     OptionT {
       Statements
         .find(id)
@@ -19,12 +19,12 @@ class HiveDatabaseRepositoryImpl(val clock: Clock)
     }
   }
 
-  override def create(hiveDatabase: HiveDatabase): ConnectionIO[Long] =
+  override def create(hiveDatabase: HiveAllocation): ConnectionIO[Long] =
     Statements
       .insert(hiveDatabase)
       .withUniqueGeneratedKeys("id")
 
-  override def findByWorkspace(id: Long): ConnectionIO[List[HiveDatabase]] =
+  override def findByWorkspace(id: Long): ConnectionIO[List[HiveAllocation]] =
     Statements
       .list(id)
       .to[List]
@@ -89,17 +89,17 @@ class HiveDatabaseRepositoryImpl(val clock: Clock)
        left join ldap_registration r on rg.ldap_registration_id = r.id
       """
 
-    def insert(hiveDatabase: HiveDatabase): Update0 =
+    def insert(hiveDatabase: HiveAllocation): Update0 =
       sql"""
          insert into hive_database (name, location, size_in_gb, manager_group_id, readonly_group_id)
          values (${hiveDatabase.name}, ${hiveDatabase.location}, ${hiveDatabase.sizeInGB}, ${hiveDatabase.managingGroup.id}, ${hiveDatabase.readonlyGroup.flatMap(_.id)})
          """.update
 
-    def find(id: Long): Query0[HiveDatabase] =
-      (selectQuery ++ whereAnd(fr"h.id = $id")).query[HiveDatabase]
+    def find(id: Long): Query0[HiveAllocation] =
+      (selectQuery ++ whereAnd(fr"h.id = $id")).query[HiveAllocation]
 
-    def list(workspaceId: Long): Query0[HiveDatabase] =
-      (selectQuery ++ fr"inner join workspace_database wd on wd.hive_database_id = h.id" ++ whereAnd(fr"wd.workspace_request_id = $workspaceId")).query[HiveDatabase]
+    def list(workspaceId: Long): Query0[HiveAllocation] =
+      (selectQuery ++ fr"inner join workspace_database wd on wd.hive_database_id = h.id" ++ whereAnd(fr"wd.workspace_request_id = $workspaceId")).query[HiveAllocation]
 
     def directoryCreated(id: Long): Update0 =
       sql"""

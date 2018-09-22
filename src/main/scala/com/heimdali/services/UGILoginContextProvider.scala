@@ -2,7 +2,9 @@ package com.heimdali.services
 
 import java.security.{PrivilegedAction, PrivilegedExceptionAction}
 
-import cats.effect.{Async, IO}
+import cats._
+import cats.effect._
+import cats.implicits._
 import com.typesafe.scalalogging.LazyLogging
 import org.apache.hadoop.security.UserGroupInformation
 
@@ -42,5 +44,15 @@ class UGILoginContextProvider(implicit val executionContext: ExecutionContext)
           logger.error("Couldn't kinit: {}", exc.toString, exc)
           throw exc
       }
+    }
+
+  override def hadoopInteraction[F[_], A](block: F[A])(implicit F: Effect[F]): F[A] =
+    Effect[F].delay{
+      UserGroupInformation.getLoginUser.doAs(new PrivilegedAction[A] {
+        override def run(): A =
+          IO.async[A] { cb =>
+            F.runAsync(block)(r => IO(cb(r))).unsafeRunSync()
+          }.unsafeRunSync()
+      })
     }
 }

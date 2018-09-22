@@ -45,7 +45,7 @@ class WorkspaceServiceImpl[F[_]](ldapClient: LDAPClient[F],
       case _ => None
     }.toList
 
-  def fillHive(dbs: List[HiveDatabase]): F[List[HiveDatabase]] =
+  def fillHive(dbs: List[HiveAllocation]): F[List[HiveAllocation]] =
     dbs.map {
       case hive if hive.directoryCreated.isDefined =>
         appConfig
@@ -78,7 +78,7 @@ class WorkspaceServiceImpl[F[_]](ldapClient: LDAPClient[F],
       updatedWorkspace = workspace.copy(compliance = compliance)
       newWorkspaceId <- workspaceRepository.create(updatedWorkspace)
 
-      insertedHive <- workspace.data.traverse[ConnectionIO, HiveDatabase] {
+      insertedHive <- workspace.data.traverse[ConnectionIO, HiveAllocation] {
         db =>
           for {
             managerLdap <- ldapRepository.create(db.managingGroup.ldapRegistration)
@@ -138,4 +138,10 @@ class WorkspaceServiceImpl[F[_]](ldapClient: LDAPClient[F],
     yarnRepository.findByWorkspaceId(id).transact(transactor).flatMap(_.map { yarn =>
       appConfig.yarnClient.applications(yarn.poolName).map(apps => YarnInfo(yarn.poolName, apps))
     }.sequence)
+
+  override def hiveDetails(id: Long): F[List[HiveDatabase]] =
+    for {
+      datas <- hiveDatabaseRepository.findByWorkspace(id).transact(transactor)
+      result <- datas.map(h => appConfig.hiveClient.describeDatabase(h.name)).sequence
+    } yield result
 }

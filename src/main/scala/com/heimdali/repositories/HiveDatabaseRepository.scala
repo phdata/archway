@@ -1,15 +1,15 @@
 package com.heimdali.repositories
 
 import cats.data.OptionT
-import com.heimdali.models.HiveDatabase
+import com.heimdali.models.HiveAllocation
 import doobie.free.connection.ConnectionIO
 
 trait HiveDatabaseRepository {
-  def create(hiveDatabase: HiveDatabase): ConnectionIO[Long]
+  def create(hiveDatabase: HiveAllocation): ConnectionIO[Long]
 
-  def find(id: Long): OptionT[ConnectionIO, HiveDatabase]
+  def find(id: Long): OptionT[ConnectionIO, HiveAllocation]
 
-  def findByWorkspace(id: Long): ConnectionIO[List[HiveDatabase]]
+  def findByWorkspace(id: Long): ConnectionIO[List[HiveAllocation]]
 
   def directoryCreated(id: Long): ConnectionIO[Int]
 

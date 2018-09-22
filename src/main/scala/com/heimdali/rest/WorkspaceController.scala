@@ -1,6 +1,6 @@
 package com.heimdali.rest
 
-import java.time.{ Clock, Instant }
+import java.time.{Clock, Instant}
 
 import cats.effect._
 import com.heimdali.models._
@@ -26,7 +26,7 @@ class WorkspaceController(authService: AuthService[IO],
     authService.tokenAuth {
       AuthedService[User, IO] {
         case req@POST -> Root / LongVar(id) / "approve" as user =>
-          if(user.canApprove) {
+          if (user.canApprove) {
             implicit val decoder: Decoder[Approval] = Approval.decoder(user, clock)
             implicit val approvalEntityDecoder: EntityDecoder[IO, Approval] = jsonOf[IO, Approval]
             for {
@@ -39,7 +39,7 @@ class WorkspaceController(authService: AuthService[IO],
             Forbidden()
 
         case POST -> Root / LongVar(id) / "provision" as user =>
-          if(user.isSuperUser) {
+          if (user.isSuperUser) {
             for {
               workspace <- workspaceService.find(id).value
               provisionResult <- workspaceService.provision(workspace.get)
@@ -115,6 +115,13 @@ class WorkspaceController(authService: AuthService[IO],
           implicit val yarnInfoDecoder: EntityDecoder[IO, List[YarnInfo]] = jsonOf[IO, List[YarnInfo]]
           for {
             result <- workspaceService.yarnInfo(id)
+            response <- Ok(result.asJson)
+          } yield response
+
+        case GET -> Root / LongVar(id) / "hive" as user =>
+          implicit val hiveDecoder: EntityDecoder[IO, HiveDatabase] = jsonOf[IO, HiveDatabase]
+          for {
+            result <- workspaceService.hiveDetails(id)
             response <- Ok(result.asJson)
           } yield response
 

@@ -21,7 +21,7 @@ case class WorkspaceRequest(name: String,
                             singleUser: Boolean,
                             id: Option[Long] = None,
                             approvals: List[Approval] = List.empty,
-                            data: List[HiveDatabase] = List.empty,
+                            data: List[HiveAllocation] = List.empty,
                             processing: List[Yarn] = List.empty,
                             applications: List[Application] = List.empty,
                             kafkaTopics: List[KafkaTopic] = List.empty) {
@@ -67,7 +67,7 @@ object WorkspaceRequest {
       behavior <- json.downField("behavior").as[String]
       compliance <- json.downField("compliance").as[Compliance]
       singleUser <- json.downField("single_user").as[Boolean]
-      data <- json.downField("data").as[List[HiveDatabase]]
+      data <- json.downField("data").as[List[HiveAllocation]]
       processing <- json.downField("processing").as[List[Yarn]]
       applications <- json.downField("applications").as[List[Application]]
       topics <- json.downField("topics").as[List[KafkaTopic]]

@@ -16,7 +16,7 @@ object GrantGroupAccess {
   implicit def provisioner[F[_]](implicit F: Effect[F]): ProvisionTask[F, GrantGroupAccess] =
     ProvisionTask.instance { grant =>
       Kleisli[F, AppContext[F], ProvisionResult] { config =>
-        F.flatMap(F.attempt(config.hiveClient.grantGroup(grant.groupName, grant.roleName))) {
+        F.flatMap(F.attempt(config.sentryClient.grantGroup(grant.groupName, grant.roleName))) {
           case Left(exception) => F.pure(Error(grant, exception))
           case Right(_) =>
             F.map(config

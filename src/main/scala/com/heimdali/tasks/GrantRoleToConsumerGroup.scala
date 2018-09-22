@@ -22,7 +22,7 @@ object GrantRoleToConsumerGroup {
       Kleisli { config =>
         F.delay {
           config
-            .hiveClient
+            .sentryClient
             .grantPrivilege(
               grant.roleName,
               Kafka,

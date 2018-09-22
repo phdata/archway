@@ -16,7 +16,7 @@ object CreateRole {
   implicit def provisioner[F[_]](implicit F: Effect[F]): ProvisionTask[F, CreateRole] =
     ProvisionTask.instance { create =>
         Kleisli[F, AppContext[F], ProvisionResult] { config =>
-          F.flatMap(F.attempt(config.hiveClient.createRole(create.name))) {
+          F.flatMap(F.attempt(config.sentryClient.createRole(create.name))) {
             case Left(exception) => F.pure(Error(create, exception))
             case Right(_) =>
               F.map(config
