@@ -3,7 +3,7 @@
     "id": "cluster",
     "name": "Odin",
     "status": "GOOD_HEALTH",
-    "cm_url": "http://master1.jotunn.io:7180",
+    "cm_url": "",
     "services": {
       "impala": {
         "state": "STARTED",

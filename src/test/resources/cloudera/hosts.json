@@ -2,7 +2,7 @@
   "items": [
     {
       "hostId": "dcca7d0f-3526-462f-98de-5e7c0d256321",
-      "ipAddress": "10.138.255.50",
+      "ipAddress": "master1.jotunn.io",
       "hostname": "master1.jotunn.io",
       "rackId": "/default",
       "hostUrl": "http://master1.jotunn.io:7180/cmf/hostRedirect/dcca7d0f-3526-462f-98de-5e7c0d256321",
