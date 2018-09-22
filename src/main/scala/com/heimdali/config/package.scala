@@ -27,6 +27,8 @@ package object config {
 
     def serviceConfigUrl(service: String) = s"${serviceUrl(service)}/config"
 
+    def yarnApplications(service: String) = s"${serviceUrl(service)}/yarnApplications"
+
     def serviceRoleListUrl(service: String) = s"${serviceUrl(service)}/roles"
 
     def serviceRoleUrl(service: String, roleId: String) = s"${serviceRoleListUrl(service)}/$roleId"

@@ -1,13 +1,13 @@
 package com.heimdali.clients
 
 import cats.effect._
-import cats.syntax.flatMap._
-import cats.syntax.functor._
+import cats.implicits._
 import com.heimdali.config.ClusterConfig
+import com.heimdali.models.{YarnApplication, YarnApplicationList}
 import com.heimdali.services.ClusterService
 import com.typesafe.scalalogging.LazyLogging
 import io.circe.parser._
-import io.circe.{ACursor, Json}
+import io.circe._
 import org.http4s.Method._
 import org.http4s._
 import org.http4s.circe._
@@ -21,6 +21,8 @@ trait YarnClient[F[_]] {
 
   def createPool(poolName: String, cores: Int, memory: Int): F[Unit]
 
+  def applications(poolName: String): F[List[YarnApplication]]
+
 }
 
 class CDHYarnClient[F[_] : Sync](http: HttpClient[F],
@@ -33,11 +35,17 @@ class CDHYarnClient[F[_] : Sync](http: HttpClient[F],
   type Memory = Int
   type Cores = Int
 
+  lazy val yarnServiceName: F[String] =
+    for {
+      clusterList <- clusterService.list
+      activeCluster = clusterList.find(_.id == clusterConfig.name).get
+      result = activeCluster.services.find(_.name == "yarn").get.id
+    } yield result
+
   lazy val configURL: F[String] =
     for {
-      list <- clusterService.list
-      activeCluster <- Sync[F].delay(list.find(_.id == clusterConfig.name).get)
-      result <- Sync[F].delay(clusterConfig.serviceConfigUrl(activeCluster.services.find(_.name == "yarn").get.id))
+      serviceId <- yarnServiceName
+      result = clusterConfig.serviceConfigUrl(serviceId)
     } yield result
 
   def config(poolName: String, cores: Cores, memory: Memory): Json = Json.obj(
@@ -143,4 +151,12 @@ class CDHYarnClient[F[_] : Sync](http: HttpClient[F],
       _ <- yarnConfigUpdate(preparedJson)
       _ <- yarnConfigRefresh
     } yield ()
+
+  override def applications(poolName: String): F[List[YarnApplication]] =
+    for {
+      serviceId <- yarnServiceName
+      url = clusterConfig.yarnApplications(serviceId)
+      result <- http.request[YarnApplicationList](Request[F](Method.GET, Uri.unsafeFromString(url)))
+    } yield result.applications
+
 }

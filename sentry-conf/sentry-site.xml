@@ -12,7 +12,7 @@
   </property>
   <property>
     <name>sentry.service.client.server.rpc-address</name>
-    <value>10.138.255.50</value>
+    <value>master1.jotunn.io</value>
   </property>
   <property>
     <name>sentry.service.client.server.rpc-port</name>
@@ -20,6 +20,6 @@
   </property>
   <property>
     <name>sentry.service.client.server.rpc-addresses</name>
-    <value>10.138.255.50:8038</value>
+    <value>master1.jotunn.io:8038</value>
   </property>
 </configuration>

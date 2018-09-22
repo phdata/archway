@@ -111,6 +111,13 @@ class WorkspaceController(authService: AuthService[IO],
             response <- Ok(result.asJson)
           } yield response
 
+        case GET -> Root / LongVar(id) / "yarn" as _ =>
+          implicit val yarnInfoDecoder: EntityDecoder[IO, List[YarnInfo]] = jsonOf[IO, List[YarnInfo]]
+          for {
+            result <- workspaceService.yarnInfo(id)
+            response <- Ok(result.asJson)
+          } yield response
+
       }
     }
 

@@ -2,9 +2,9 @@ package com.heimdali.controller
 
 import java.time.Instant
 
-import cats.effect.IO
+import cats.effect._
+import cats.implicits._
 import com.heimdali.models._
-import com.heimdali.repositories.Manager
 import com.heimdali.rest.WorkspaceController
 import com.heimdali.services._
 import com.heimdali.test.fixtures.{HttpTest, id, _}
@@ -70,6 +70,13 @@ class WorkspaceControllerSpec
 
     val response = restApi.route.orNotFound.run(POST(uri("/123/approve"), Json.obj("role" -> "infra".asJson)).unsafeRunSync())
     check(response, Created, Some(Json.obj("risk" -> Json.obj("approver" -> standardUsername.asJson, "approval_time" -> clock.instant.asJson))))
+  }
+
+  it should "list yarn applications" in new Http4sClientDsl[IO] with Context {
+    workspaceService.yarnInfo _ expects id returning List(YarnInfo("pool", List(YarnApplication("application123", "MyApp")))).pure[IO]
+
+    val response = restApi.route.orNotFound.run(GET(uri("/123/yarn")).unsafeRunSync())
+    check(response, Status.Ok, Some(fromResource("rest/workspaces.yarn.expected.json")))
   }
 
   trait Context {

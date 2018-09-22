@@ -56,7 +56,7 @@ package object fixtures {
   val initialApplication = savedApplication.copy(id = None, group = initialLDAP)
   val clock = Clock.fixed(Instant.now(), ZoneId.of("UTC"))
 
-  val yarnApp = ClusterApp("yarn", "Yarn", "GOOD_HExALTH", "STARTED", Map())
+  val yarnApp = ClusterApp("yarn", "yarn", "GOOD_HExALTH", "STARTED", Map())
   val cluster = Cluster("cluster name", "Cluster", "", List(yarnApp), CDH(""), "GOOD_HEALTH")
 
   val personName = "John Doe"
@@ -68,7 +68,7 @@ package object fixtures {
 
   def approval(instant: Instant = Instant.now(clock)) = Approval(Risk, standardUsername, instant)
 
-  val clusterConfig = ClusterConfig(1 second, "http://master1.jotunn.io:7180", "cluster", "dev", CredentialsConfig("admin", "admin"))
+  val clusterConfig = ClusterConfig(1 second, "", "cluster", "dev", CredentialsConfig("admin", "admin"))
 
   val savedWorkspaceRequest = WorkspaceRequest(
     name,
