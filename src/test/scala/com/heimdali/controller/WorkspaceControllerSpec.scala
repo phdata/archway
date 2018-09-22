@@ -4,10 +4,11 @@ import java.time.Instant
 
 import cats.effect._
 import cats.implicits._
+import cats.effect._
 import com.heimdali.models._
 import com.heimdali.rest.WorkspaceController
 import com.heimdali.services._
-import com.heimdali.test.fixtures.{HttpTest, id, _}
+import com.heimdali.test.fixtures._
 import io.circe.Json
 import io.circe.parser._
 import io.circe.syntax._
@@ -77,6 +78,13 @@ class WorkspaceControllerSpec
 
     val response = restApi.route.orNotFound.run(GET(uri("/123/yarn")).unsafeRunSync())
     check(response, Status.Ok, Some(fromResource("rest/workspaces.yarn.expected.json")))
+  }
+
+  it should "list hive information" in new Http4sClientDsl[IO] with Context {
+    workspaceService.hiveDetails _ expects id returning List(HiveDatabase("test", List(HiveTable("table1")))).pure[IO]
+
+    val response = restApi.route.orNotFound.run(GET(uri("/123/hive")).unsafeRunSync())
+    check(response, Ok, Some(fromResource("rest/workspaces.hive.expected.json")))
   }
 
   trait Context {

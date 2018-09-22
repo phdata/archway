@@ -12,29 +12,29 @@ import io.circe._
 
 import scala.concurrent.ExecutionContext
 
-case class HiveDatabase(name: String,
-                        location: String,
-                        sizeInGB: Int,
-                        consumedInGB: Double,
-                        managingGroup: HiveGrant,
-                        readonlyGroup: Option[HiveGrant] = None,
-                        id: Option[Long] = None,
-                        directoryCreated: Option[Instant] = None)
+case class HiveAllocation(name: String,
+                          location: String,
+                          sizeInGB: Int,
+                          consumedInGB: Double,
+                          managingGroup: HiveGrant,
+                          readonlyGroup: Option[HiveGrant] = None,
+                          id: Option[Long] = None,
+                          directoryCreated: Option[Instant] = None)
 
-object HiveDatabase {
+object HiveAllocation {
 
   def apply(name: String,
             location: String,
             sizeInGB: Int,
             consumedInGB: Double,
             managerLDAP: LDAPRegistration,
-            readonlyLDAP: Option[LDAPRegistration]): HiveDatabase =
+            readonlyLDAP: Option[LDAPRegistration]): HiveAllocation =
     apply(name, location, sizeInGB, consumedInGB, HiveGrant(name, location, managerLDAP), readonlyLDAP.map(ldap => HiveGrant(name, location, ldap)))
 
-  implicit val viewer: Show[HiveDatabase] =
+  implicit val viewer: Show[HiveAllocation] =
     Show.show(h => s"creating hive database ${h.name}")
 
-  implicit def provisioner[F[_] : Effect](implicit executionContext: ExecutionContext): ProvisionTask[F, HiveDatabase] =
+  implicit def provisioner[F[_] : Effect](implicit executionContext: ExecutionContext): ProvisionTask[F, HiveAllocation] =
     ProvisionTask.instance { hive =>
       for {
         createDirectory <- CreateDatabaseDirectory(hive.id.get, hive.location, None).provision[F]
@@ -44,11 +44,11 @@ object HiveDatabase {
       } yield createDirectory |+| setDiskQuota |+| createDatabase |+| managers
     }
 
-  implicit val encoder: Encoder[HiveDatabase] =
+  implicit val encoder: Encoder[HiveAllocation] =
     Encoder.forProduct7("id", "name", "location", "size_in_gb", "consumed_in_gb", "managing_group", "readonly_group")(s => (s.id, s.name, s.location, s.sizeInGB, s.consumedInGB, s.managingGroup, s.readonlyGroup))
 
-  implicit final val decoder: Decoder[HiveDatabase] =
+  implicit final val decoder: Decoder[HiveAllocation] =
     Decoder.forProduct5("name", "location", "size_in_gb", "managing_group", "readonly_group")((name: String, location: String, size: Int, managing: HiveGrant, readonly: Option[HiveGrant]) =>
-      HiveDatabase(name, location, size, 0, managing, readonly))
+      HiveAllocation(name, location, size, 0, managing, readonly))
 
 }

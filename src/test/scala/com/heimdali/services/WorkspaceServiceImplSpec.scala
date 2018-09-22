@@ -107,7 +107,7 @@ class WorkspaceServiceImplSpec
   }
 
   it should "get consumed space if directory has been created" in new Context {
-    val withCreated: HiveDatabase = savedHive.copy(directoryCreated = Some(clock.instant()))
+    val withCreated: HiveAllocation = savedHive.copy(directoryCreated = Some(clock.instant()))
 
     workspaceRepository.find _ expects id returning OptionT.some(savedWorkspaceRequest)
     hiveDatabaseRepository.findByWorkspace _ expects id returning List(withCreated).pure[ConnectionIO]
@@ -148,13 +148,13 @@ class WorkspaceServiceImplSpec
       ldapClient.createGroup _ expects(savedLDAP.id.get, savedLDAP.commonName, savedLDAP.distinguishedName) returning EitherT
         .right(IO.unit)
       ldapRepository.groupCreated _ expects id returning 0.pure[ConnectionIO]
-      hiveClient.createRole _ expects savedLDAP.sentryRole returning IO.unit
+      sentryClient.createRole _ expects savedLDAP.sentryRole returning IO.unit
       ldapRepository.roleCreated _ expects id returning 0.pure[ConnectionIO]
-      hiveClient.grantGroup _ expects(savedLDAP.commonName, savedLDAP.sentryRole) returning IO.unit
+      sentryClient.grantGroup _ expects(savedLDAP.commonName, savedLDAP.sentryRole) returning IO.unit
       ldapRepository.groupAssociated _ expects id returning 0.pure[ConnectionIO]
-      hiveClient.enableAccessToDB _ expects(savedHive.name, savedLDAP.sentryRole) returning IO.unit
+      sentryClient.enableAccessToDB _ expects(savedHive.name, savedLDAP.sentryRole) returning IO.unit
       grantRepository.databaseGranted _ expects id returning 0.pure[ConnectionIO]
-      hiveClient.enableAccessToLocation _ expects(savedHive.location, savedLDAP.sentryRole) returning IO.unit
+      sentryClient.enableAccessToLocation _ expects(savedHive.location, savedLDAP.sentryRole) returning IO.unit
       grantRepository.locationGranted _ expects id returning 0.pure[ConnectionIO]
     }
 
@@ -184,13 +184,29 @@ class WorkspaceServiceImplSpec
     result.head shouldBe YarnInfo(savedYarn.poolName, List(app))
   }
 
+  it should "get details for hive" in new Context {
+    val (request1, request2) = (savedHive.copy(name = "name1"), savedHive.copy(name = "name2"))
+    hiveDatabaseRepository.findByWorkspace _ expects id returning List(request1, request2).pure[ConnectionIO]
+
+    hiveClient.describeDatabase _ expects "name1" returning HiveDatabase("name1", List(HiveTable("table1"))).pure[IO]
+    hiveClient.describeDatabase _ expects "name2" returning HiveDatabase("name2", List(HiveTable("table1"))).pure[IO]
+
+    val maybeWorkspace = projectServiceImpl.hiveDetails(id).unsafeRunSync()
+
+    maybeWorkspace shouldBe List(
+      HiveDatabase("name1", List(HiveTable("table1"))),
+      HiveDatabase("name2", List(HiveTable("table1")))
+    )
+  }
+
   trait Context {
     val ldapClient: LDAPClient[IO] = mock[LDAPClient[IO]]
     val hdfsClient: HDFSClient[IO] = mock[HDFSClient[IO]]
-    val hiveClient: SentryClient[IO] = mock[SentryClient[IO]]
+    val sentryClient: SentryClient[IO] = mock[SentryClient[IO]]
+    val hiveClient: HiveClient[IO] = mock[HiveClient[IO]]
     val yarnClient: YarnClient[IO] = mock[YarnClient[IO]]
     val kafkaClient: KafkaClient[IO] = mock[KafkaClient[IO]]
-    val sentryClient: SentryGenericServiceClient = mock[SentryGenericServiceClient]
+    val sentryRawClient: SentryGenericServiceClient = mock[SentryGenericServiceClient]
 
     val workspaceRepository: WorkspaceRequestRepository =
       mock[WorkspaceRequestRepository]
@@ -211,6 +227,7 @@ class WorkspaceServiceImplSpec
 
     lazy val appConfig: AppContext[IO] = AppContext(
       null,
+      sentryClient,
       hiveClient,
       ldapClient,
       hdfsClient,

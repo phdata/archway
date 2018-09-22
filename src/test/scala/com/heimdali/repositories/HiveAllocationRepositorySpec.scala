@@ -6,7 +6,7 @@ import com.heimdali.test.fixtures._
 import doobie.scalatest.IOChecker
 import org.scalatest.{FunSuite, Matchers}
 
-class HiveDatabaseRepositorySpec extends FunSuite with Matchers with DBTest with IOChecker {
+class HiveAllocationRepositorySpec extends FunSuite with Matchers with DBTest with IOChecker {
 
   val repo = new HiveDatabaseRepositoryImpl(Clock.fixed(Instant.now, ZoneId.of("UTC")))
 

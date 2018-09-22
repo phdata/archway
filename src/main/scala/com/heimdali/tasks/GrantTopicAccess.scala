@@ -21,7 +21,7 @@ object GrantTopicAccess {
       Kleisli { context =>
         grant.actions.traverse[F, Either[Throwable, Unit]] { action =>
           context
-            .hiveClient
+            .sentryClient
             .grantPrivilege(grant.sentryRole, Kafka, s"Topic=${grant.name}->action=$action")
             .attempt
         }

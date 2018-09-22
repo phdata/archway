@@ -65,25 +65,10 @@ trait ClientModule[F[_]] {
   private lazy val sentryServiceClient: SentryGenericServiceClient =
     SentryGenericServiceClientFactory.create(hadoopConfiguration)
 
-  val sentryClient: SentryClient[F] = new SentryClientImpl[F](hiveTransactor, sentryServiceClient)
-  //    new SentryClient[F] with LazyLogging {
-  //      override def grantPrivilege(role: String, component: Component, grantString: String): F[Unit] =
-  //        Sync[F].pure(logger.warn("granting {} permissions {} for {}", role, grantString, component))
-  //
-  //      override def createRole(name: String): F[Unit] =
-  //        Sync[F].pure(logger.warn("creating role {}", name))
-  //
-  //      override def createDatabase(name: String, location: String): F[Unit] =
-  //        Sync[F].pure(logger.warn("creating database {} at {}", name, location))
-  //
-  //      override def enableAccessToDB(database: String, role: String): F[Unit] =
-  //        Sync[F].pure(logger.warn("allowing {} access to {}", role, database))
-  //
-  //      override def grantGroup(group: String, role: String): F[Unit] =
-  //        Sync[F].pure(logger.warn("granting group {} access to role {}", group, role))
-  //
-  //      override def enableAccessToLocation(location: String, role: String): F[Unit] =
-  //        Sync[F].pure(logger.warn("allowing {} access to {}", role, location))
-  //    }
+  val sentryClient: SentryClient[F] =
+    new SentryClientImpl[F](hiveTransactor, sentryServiceClient, loginContextProvider)
+
+  val hiveClient: HiveClient[F] =
+    new HiveClientImpl[F](loginContextProvider, hiveTransactor)
 
 }

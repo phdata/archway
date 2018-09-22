@@ -7,7 +7,8 @@ import doobie.util.transactor.Transactor
 import org.apache.sentry.provider.db.generic.service.thrift.SentryGenericServiceClient
 
 case class AppContext[F[_]](appConfig: AppConfig,
-                            hiveClient: SentryClient[F],
+                            sentryClient: SentryClient[F],
+                            hiveClient: HiveClient[F],
                             ldapClient: LDAPClient[F],
                             hdfsClient: HDFSClient[F],
                             yarnClient: YarnClient[F],

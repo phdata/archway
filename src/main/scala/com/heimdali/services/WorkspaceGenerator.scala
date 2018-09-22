@@ -75,7 +75,7 @@ object Generator {
         Compliance(phiData = false, pciData = false, piiData = false),
         singleUser = true)
       val afterDisk = input.disk.fold(request) { _ =>
-        request.copy(data = List(HiveDatabase(
+        request.copy(data = List(HiveAllocation(
           s"user_${input.username}",
           s"${appConfig.workspaces.user.root}/${input.username}/db",
           appConfig.workspaces.user.defaultSize,
@@ -110,7 +110,7 @@ object Generator {
         input.compliance,
         singleUser = false)
       val afterDisk = input.disk.fold(request) { _ =>
-        request.copy(data = List(HiveDatabase(
+        request.copy(data = List(HiveAllocation(
           s"sw_$generatedName",
           s"${appConfig.workspaces.sharedWorkspace.root}/$generatedName",
           appConfig.workspaces.sharedWorkspace.defaultSize,
@@ -152,7 +152,7 @@ object Generator {
         singleUser = false)
 
       def db(disk: Int, dataset: String) =
-        HiveDatabase(
+        HiveAllocation(
           s"${dataset}_$generatedName",
           s"${appConfig.workspaces.dataset.root}/$dataset/$generatedName",
           disk,

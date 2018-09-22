@@ -18,7 +18,7 @@ object GrantDatabaseAccess {
   implicit def provisioner[F[_]](implicit F: Effect[F]): ProvisionTask[F, GrantDatabaseAccess] =
     ProvisionTask.instance { grant =>
       Kleisli[F, AppContext[F], ProvisionResult] { config =>
-        F.flatMap(F.attempt(config.hiveClient.enableAccessToDB(grant.databaseName, grant.roleName))) {
+        F.flatMap(F.attempt(config.sentryClient.enableAccessToDB(grant.databaseName, grant.roleName))) {
           case Left(exception) => F.pure(Error(grant, exception))
           case Right(_) =>
             config

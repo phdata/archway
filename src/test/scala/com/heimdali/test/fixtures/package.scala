@@ -46,7 +46,7 @@ package object fixtures {
   val initialLDAP = savedLDAP.copy(id = None)
   val savedGrant = HiveGrant("sw_sesame", "/shared_workspaces/sw_sesame", savedLDAP, id = Some(id))
   val initialGrant = savedGrant.copy(id = None, ldapRegistration = initialLDAP)
-  val savedHive = HiveDatabase("sw_sesame", "/shared_workspaces/sw_sesame", hdfsRequestedSize, 0.5F, savedGrant, id = Some(id))
+  val savedHive = HiveAllocation("sw_sesame", "/shared_workspaces/sw_sesame", hdfsRequestedSize, 0.5F, savedGrant, id = Some(id))
   val initialHive = savedHive.copy(id = None, managingGroup = initialGrant)
   val savedYarn = Yarn(poolName, maxCores, maxMemoryInGB, Some(id))
   val initialYarn = savedYarn.copy(id = None)
