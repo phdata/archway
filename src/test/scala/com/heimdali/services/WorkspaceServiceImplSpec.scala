@@ -48,7 +48,7 @@ class WorkspaceServiceImplSpec
   it should "get memberships accurately" in new Context {
     val table: TableFor2[LDAPUser, Seq[String]] = Table(
       ("user", "memberships"),
-      (LDAPUser("name", "username", Seq("something_else")), Seq.empty)
+      (LDAPUser("name", "username", Seq("something_else"), None), Seq.empty)
     )
 
     forAll(table) { (user, memberships) =>
@@ -160,7 +160,7 @@ class WorkspaceServiceImplSpec
 
     inSequence {
       ldapClient.addUser _ expects(savedLDAP.distinguishedName, standardUsername) returning OptionT
-        .some(LDAPUser("John Doe", standardUsername, Seq.empty))
+        .some(LDAPUser("John Doe", standardUsername, Seq.empty, None))
       memberRepository.complete _ expects(id, standardUsername) returning 0.pure[ConnectionIO]
     }
 
