@@ -35,8 +35,6 @@ trait LDAPClient[F[_]] {
   def removeUser(groupName: String, username: String): OptionT[F, LDAPUser]
 
   def groupMembers(groupDN: String): F[List[LDAPUser]]
-
-  def findAllUsers(usernames: List[String]): F[List[LDAPUser]]
 }
 
 abstract class LDAPClientImpl[F[_]: Effect](
@@ -218,5 +216,4 @@ abstract class LDAPClientImpl[F[_]: Effect](
     }
   }
 
-  override def findAllUsers(usernames: List[String]): F[List[LDAPUser]] = ???
 }

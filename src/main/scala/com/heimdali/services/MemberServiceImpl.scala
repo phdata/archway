@@ -5,7 +5,7 @@ import cats.effect.Effect
 import cats.implicits._
 import com.heimdali.clients.LDAPClient
 import com.heimdali.models._
-import com.heimdali.repositories.{DatabaseRole, LDAPRepository, MemberRepository, MemberRightsRecord}
+import com.heimdali.repositories.{LDAPRepository, MemberRepository, MemberRightsRecord}
 import com.typesafe.scalalogging.LazyLogging
 import doobie.implicits._
 import doobie.util.transactor.Transactor
@@ -24,22 +24,24 @@ class MemberServiceImpl[F[_]](memberRepository: MemberRepository,
       memberRightsRecord.id,
       memberRightsRecord.role)
 
-  def convertRecord(memberRightsRecord: List[MemberRightsRecord]): List[WorkspaceMemberEntry] =
+  def convertRecord(memberRightsRecord: List[MemberRightsRecord]): F[List[WorkspaceMemberEntry]] =
     memberRightsRecord
       .groupBy(_.username)
       .map { e =>
-        WorkspaceMemberEntry(
-          e._1,
-          e._2.filter(_.resource == "data").map(toRight),
-          e._2.filter(_.resource == "processing").map(toRight),
-          e._2.filter(_.resource == "topics").map(toRight),
-          e._2.filter(_.resource == "applications").map(toRight))
-      }.toList
+        ldapClient.findUser(e._1).map { user =>
+            WorkspaceMemberEntry(
+              e._1,
+              user.name,
+              user.email,
+              e._2.filter(_.resource == "data").map(toRight),
+              e._2.filter(_.resource == "processing").map(toRight),
+              e._2.filter(_.resource == "topics").map(toRight),
+              e._2.filter(_.resource == "applications").map(toRight))
+        }
+      }.toList.traverse(_.value).map(_.flatten)
 
   def members(id: Long): F[List[WorkspaceMemberEntry]] =
-    memberRepository.list(id).transact(transactor).map {
-      convertRecord
-    }
+    memberRepository.list(id).transact(transactor).flatMap(convertRecord)
 
   def addMember(id: Long, memberRequest: MemberRoleRequest): OptionT[F, WorkspaceMemberEntry] =
     for {
@@ -64,7 +66,8 @@ class MemberServiceImpl[F[_]](memberRepository: MemberRepository,
           .mapN((_, member) => member)
           .transact(transactor) // run the complete and get in the same transaction
       )
-    } yield convertRecord(member).head
+      result <- OptionT.liftF(convertRecord(member))
+    } yield result.head
 
   def removeMember(id: Long, memberRequest: MemberRoleRequest): OptionT[F, WorkspaceMemberEntry] =
     for {
@@ -83,6 +86,7 @@ class MemberServiceImpl[F[_]](memberRepository: MemberRepository,
       _ <- OptionT.liftF(
         memberRepository.delete(registration.id.get, memberRequest.username).transact(transactor)
       )
-    } yield convertRecord(member).head
+      result <- OptionT.liftF(convertRecord(member))
+    } yield result.head
 
 }

@@ -46,4 +46,19 @@ class LDAPClientImplSpec
     maybeUser shouldBe defined
   }
 
+  it should "find all users" in {
+    val groupDN = s"cn=edh_sw_sesame,${appConfig.ldap.groupPath}"
+    val client = new LDAPClientImpl[IO](appConfig.ldap, () => ldapConnectionPool.getConnection) with ActiveDirectoryClient[IO]
+
+    client.createGroup(10000, "edh_sw_sesame", groupDN).value.unsafeRunSync()
+    client.addUser(groupDN, "benny").value.unsafeRunSync()
+    client.addUser(groupDN, "johndoe").value.unsafeRunSync()
+
+    val result = client.groupMembers(groupDN).unsafeRunSync()
+
+    ldapConnectionPool.getConnection.delete(s"cn=edh_sw_sesame,${appConfig.ldap.groupPath}")
+
+    result.length shouldBe 2
+  }
+
 }
