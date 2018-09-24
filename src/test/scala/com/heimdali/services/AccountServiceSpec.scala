@@ -123,7 +123,7 @@ class AccountServiceSpec extends FlatSpec with MockFactory with Matchers {
     val workspaceService = mock[WorkspaceService[IO]]
     val ldapClient = mock[LDAPClient[IO]]
 
-    lazy val accountService = new AccountServiceImpl[IO](ldapClient, restConfig, approvalConfig, workspaceConfig, workspaceService, clock)
+    lazy val accountService = new AccountServiceImpl[IO](ldapClient, restConfig, approvalConfig, workspaceConfig, workspaceService)
   }
 
 }

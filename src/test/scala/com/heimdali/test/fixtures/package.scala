@@ -55,7 +55,7 @@ package object fixtures {
   val initialTopic = savedTopic.copy(id = None, managingRole = savedTopic.managingRole.copy(id = None, ldapRegistration = initialLDAP), readonlyRole = savedTopic.readonlyRole.copy(id = None, ldapRegistration = initialLDAP))
   val savedApplication = Application("Tiller", s"${systemName}_cg", savedLDAP, Some(id))
   val initialApplication = savedApplication.copy(id = None, group = initialLDAP)
-  val clock = Clock.fixed(Instant.now(), ZoneId.of("UTC"))
+  implicit val clock = Clock.fixed(Instant.now(), ZoneId.of("UTC"))
 
   val yarnApp = ClusterApp("yarn", "yarn", "GOOD_HExALTH", "STARTED", Map())
   val cluster = Cluster("cluster name", "Cluster", "", List(yarnApp), CDH(""), "GOOD_HEALTH")
@@ -134,7 +134,6 @@ package object fixtures {
        |      "name" : "${savedHive.name}",
        |      "location" : "${savedHive.location}",
        |      "size_in_gb" : ${savedHive.sizeInGB},
-       |      "consumed_in_gb": ${savedHive.consumedInGB},
        |      "managing_group" : {
        |        "group": {
        |          "common_name" : "${savedLDAP.commonName}",

@@ -1,10 +1,11 @@
 package com.heimdali.rest
 
 import cats.effect.IO
-import com.heimdali.test.fixtures.{HttpTest, TestAuthService, fromResource}
-import io.circe.Json
-import io.circe.parser._
+import com.heimdali.test.fixtures._
+import io.circe.{Json, JsonObject}
+import io.circe._
 import io.circe.syntax._
+import io.circe.java8.time._
 import org.http4s._
 import org.http4s.client.dsl.Http4sClientDsl
 import org.http4s.dsl.io._
@@ -23,7 +24,14 @@ class TemplateControllerSpec
     val request = fromResource("rest/templates.simple.post.json")
 
     val response = templateController.route.orNotFound.run(POST(uri("/simple"), request).unsafeRunSync())
-    check(response, Status.Ok, Some(fromResource("rest/templates.simple.post.expected.json")))(jsonDecoder)
+
+    val expected: Json =
+      fromResource("rest/templates.simple.post.expected.json")
+        .asObject
+        .get
+        .add("requested_date", clock.instant().asJson)
+        .asJson
+    check(response, Status.Ok, Some(expected))
   }
 
   trait Context {
@@ -31,4 +39,5 @@ class TemplateControllerSpec
 
     lazy val templateController: TemplateController = new TemplateController(authService)
   }
+
 }

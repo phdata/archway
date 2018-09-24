@@ -89,7 +89,7 @@ class WorkspaceServiceImplSpec
 
     foundWorkspace shouldBe defined
     foundWorkspace.get.data should not be empty
-    foundWorkspace.get.data.head.consumedInGB shouldBe .5
+    foundWorkspace.get.data.head.consumedInGB should not be defined
     foundWorkspace.get.processing should not be empty
   }
 
@@ -121,7 +121,7 @@ class WorkspaceServiceImplSpec
 
     foundWorkspace shouldBe defined
     foundWorkspace.get.data should not be empty
-    foundWorkspace.get.data.head.consumedInGB shouldBe 1.0
+    foundWorkspace.get.data.head.consumedInGB shouldBe Some(1.0)
     foundWorkspace.get.processing should not be empty
   }
 
