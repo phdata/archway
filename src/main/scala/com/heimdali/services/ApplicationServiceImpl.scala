@@ -22,12 +22,11 @@ class ApplicationServiceImpl[F[_]](appContext: AppContext[F])(implicit F: Effect
 
       _ <- F.pure(logger.warn("found {}", workspace))
 
-      name = s"${Generator.generateName(workspace.get.name)}_${Generator.generateName(applicationRrequest.name)}_cg"
       app = Application(
+        username,
+        Generator.generateName(workspace.get.name),
         applicationRrequest.name,
-        name,
-        LDAPRegistration(s"cn=$name,${appContext.appConfig.ldap.groupPath}", name, s"role_$name"),
-        requestor = Some(username)
+        appContext.appConfig.ldap.groupPath
       )
 
       saved <- (for {

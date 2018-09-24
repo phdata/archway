@@ -15,7 +15,7 @@ import scala.concurrent.ExecutionContext
 case class HiveAllocation(name: String,
                           location: String,
                           sizeInGB: Int,
-                          consumedInGB: Double,
+                          consumedInGB: Option[Double],
                           managingGroup: HiveGrant,
                           readonlyGroup: Option[HiveGrant] = None,
                           id: Option[Long] = None,
@@ -26,10 +26,9 @@ object HiveAllocation {
   def apply(name: String,
             location: String,
             sizeInGB: Int,
-            consumedInGB: Double,
             managerLDAP: LDAPRegistration,
             readonlyLDAP: Option[LDAPRegistration]): HiveAllocation =
-    apply(name, location, sizeInGB, consumedInGB, HiveGrant(name, location, managerLDAP), readonlyLDAP.map(ldap => HiveGrant(name, location, ldap)))
+    apply(name, location, sizeInGB, None, HiveGrant(name, location, managerLDAP), readonlyLDAP.map(ldap => HiveGrant(name, location, ldap)))
 
   implicit val viewer: Show[HiveAllocation] =
     Show.show(h => s"creating hive database ${h.name}")
@@ -49,6 +48,6 @@ object HiveAllocation {
 
   implicit final val decoder: Decoder[HiveAllocation] =
     Decoder.forProduct5("name", "location", "size_in_gb", "managing_group", "readonly_group")((name: String, location: String, size: Int, managing: HiveGrant, readonly: Option[HiveGrant]) =>
-      HiveAllocation(name, location, size, 0, managing, readonly))
+      HiveAllocation(name, location, size, None, managing, readonly))
 
 }

@@ -1,0 +1,54 @@
+{
+  "name": "Sesame",
+  "summary": "A brief summary",
+  "description": "A longer description",
+  "behavior": "simple",
+  "compliance": {
+    "phi_data": false,
+    "pci_data": false,
+    "pii_data": false
+  },
+  "data": [
+    {
+      "name": "sw_sesame",
+      "location": "/data/shared_workspaces/sesame",
+      "size_in_gb": 250,
+      "managing_group": {
+        "group": {
+          "distinguished_name": "cn=edh_sw_sesame,ou=heimdali,dc=jotunn,dc=io",
+          "common_name": "edh_sw_sesame",
+          "sentry_role": "role_sw_sesame"
+        }
+      },
+      "readonly_group" : {
+        "group" : {
+          "common_name" : "edh_sw_sesame_ro",
+          "distinguished_name" : "cn=edh_sw_sesame_ro,ou=heimdali,dc=jotunn,dc=io",
+          "sentry_role" : "role_sw_sesame_ro"
+        }
+      }
+    }
+  ],
+  "processing": [
+    {
+      "pool_name": "root.sw_sesame",
+      "max_cores": 4,
+      "max_memory_in_gb": 16
+    }
+  ],
+  "applications": [
+    {
+      "name": "default",
+      "consumer_group": "sesame_default_cg",
+      "group": {
+        "distinguished_name": "cn=sesame_default_cg,ou=heimdali,dc=jotunn,dc=io",
+        "common_name": "sesame_default_cg",
+        "sentry_role": "role_sesame_default_cg"
+      }
+    }
+  ],
+  "topics": [],
+  "single_user": false,
+  "requester" : "john.doe",
+  "requested_date" : "2018-09-24T14:46:07.060Z"
+}

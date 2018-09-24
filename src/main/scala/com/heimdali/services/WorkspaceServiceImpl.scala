@@ -51,7 +51,7 @@ class WorkspaceServiceImpl[F[_]](ldapClient: LDAPClient[F],
         appConfig
           .hdfsClient
           .getConsumption(hive.location)
-          .map(consumed => hive.copy(consumedInGB = consumed))
+          .map(consumed => hive.copy(consumedInGB = Some(consumed)))
       case hive => Effect[F].pure(hive)
     }.sequence
 

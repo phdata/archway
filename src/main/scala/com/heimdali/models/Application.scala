@@ -2,6 +2,7 @@ package com.heimdali.models
 
 import cats.effect.Effect
 import cats.implicits._
+import com.heimdali.services.Generator
 import com.heimdali.tasks.ProvisionTask._
 import com.heimdali.tasks.{AddMember, GrantRoleToConsumerGroup, ProvisionTask}
 import io.circe._
@@ -14,6 +15,16 @@ case class Application(name: String,
                        requestor: Option[String] = None)
 
 object Application {
+
+  def apply(requestor: String, workspaceName: String, name: String, groupDN: String): Application = {
+    val consumerGroup = s"${workspaceName}_${Generator.generateName(name)}_cg"
+    Application(
+      name,
+      consumerGroup,
+      LDAPRegistration(s"cn=$consumerGroup,$groupDN", consumerGroup, s"role_$consumerGroup"),
+      requestor = Some(requestor)
+    )
+  }
 
   import com.heimdali.tasks.ProvisionResult._
 
