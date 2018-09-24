@@ -89,7 +89,7 @@ class WorkspaceServiceImplSpec
 
     foundWorkspace shouldBe defined
     foundWorkspace.get.data should not be empty
-    foundWorkspace.get.data.head.consumedInGB shouldBe .5
+    foundWorkspace.get.data.head.consumedInGB should not be defined
     foundWorkspace.get.processing should not be empty
   }
 
@@ -103,7 +103,7 @@ class WorkspaceServiceImplSpec
 
     val maybeWorkspace = projectServiceImpl.findByUsername(standardUsername).value.unsafeRunSync()
 
-    maybeWorkspace shouldBe Some(savedWorkspaceRequest)
+    maybeWorkspace shouldBe Some(savedWorkspaceRequest.copy(applications = List.empty))
   }
 
   it should "get consumed space if directory has been created" in new Context {
@@ -121,7 +121,7 @@ class WorkspaceServiceImplSpec
 
     foundWorkspace shouldBe defined
     foundWorkspace.get.data should not be empty
-    foundWorkspace.get.data.head.consumedInGB shouldBe 1.0
+    foundWorkspace.get.data.head.consumedInGB shouldBe Some(1.0)
     foundWorkspace.get.processing should not be empty
   }
 
@@ -168,6 +168,21 @@ class WorkspaceServiceImplSpec
     inSequence {
       yarnClient.createPool _ expects(poolName, maxCores, maxMemoryInGB) returning IO.unit
       yarnRepository.complete _ expects id returning 0.pure[ConnectionIO]
+    }
+
+    inSequence {
+      ldapClient.createGroup _ expects(savedLDAP.id.get, savedLDAP.commonName, savedLDAP.distinguishedName) returning EitherT
+        .right(IO.unit)
+      ldapRepository.groupCreated _ expects id returning 0.pure[ConnectionIO]
+      sentryClient.createRole _ expects savedLDAP.sentryRole returning IO.unit
+      ldapRepository.roleCreated _ expects id returning 0.pure[ConnectionIO]
+      sentryClient.grantGroup _ expects(savedLDAP.commonName, savedLDAP.sentryRole) returning IO.unit
+      ldapRepository.groupAssociated _ expects id returning 0.pure[ConnectionIO]
+      ldapClient.addUser _ expects(savedLDAP.distinguishedName, standardUsername) returning OptionT
+        .some(LDAPUser("John Doe", standardUsername, Seq.empty, None))
+      memberRepository.complete _ expects(id, standardUsername) returning 0.pure[ConnectionIO]
+      sentryClient.grantPrivilege _ expects(savedLDAP.sentryRole, Kafka, s"ConsumerGroup=${savedApplication.consumerGroup}->action=ALL") returning IO.unit
+      applicationRepository.consumerGroupAccess _ expects id returning 0.pure[ConnectionIO]
     }
 
     projectServiceImpl.provision(savedWorkspaceRequest).unsafeRunSync()

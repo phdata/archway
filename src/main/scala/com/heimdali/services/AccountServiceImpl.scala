@@ -18,8 +18,8 @@ class AccountServiceImpl[F[_] : Sync](ldapClient: LDAPClient[F],
                                       restConfig: RestConfig,
                                       approvalConfig: ApprovalConfig,
                                       workspaceConfig: WorkspaceConfig,
-                                      workspaceService: WorkspaceService[F],
-                                      clock: Clock)
+                                      workspaceService: WorkspaceService[F])
+                                      (implicit val clock: Clock)
   extends AccountService[F]
     with LazyLogging {
 

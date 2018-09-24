@@ -7,7 +7,7 @@ import java.time.Clock
 
 abstract class AppModule[F[_]](implicit val CF: Effect[F]) {
 
-  val clock: Clock = Clock.systemUTC()
+  implicit val clock: Clock = Clock.systemUTC()
 
   def startup: Startup[F]
 

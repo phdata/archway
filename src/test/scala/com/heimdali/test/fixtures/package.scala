@@ -25,6 +25,14 @@ import scala.concurrent.duration._
 import scala.io.Source
 
 package object fixtures {
+
+  val personName = "John Doe"
+  val standardUsername = "john.doe"
+  val infraApproverToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJuYW1lIjoiRHVkZSBEb2UiLCJ1c2VybmFtZSI6InVzZXJuYW1lIiwicGVybWlzc2lvbnMiOnsicmlza19tYW5hZ2VtZW50IjpmYWxzZSwicGxhdGZvcm1fb3BlcmF0aW9ucyI6dHJ1ZX19.uNJ0uQevSRL8aqYqmfsijVoj3gjlHbk07XBwGSXRuOboA1zkcMHhmHhiKVmFW_AVwDvqVdYAJ-XpNp7qTMHuQg"
+  val infraApproverUser = User(personName, standardUsername, UserPermissions(riskManagement = false, platformOperations = true))
+  val basicUserToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJuYW1lIjoiRHVkZSBEb2UiLCJ1c2VybmFtZSI6InVzZXJuYW1lIiwicGVybWlzc2lvbnMiOnsicmlza19tYW5hZ2VtZW50IjpmYWxzZSwicGxhdGZvcm1fb3BlcmF0aW9ucyI6ZmFsc2V9fQ.ltGXxBh4S7gwmIbcKz22IFWpGI2-zxad2XYOoxuGm734L8GlzfwvLRWIs-ZVKn7T8w3RJy5bKZWZoPj8951Qug"
+  val basicUser = User(personName, standardUsername, UserPermissions(riskManagement = false, platformOperations = false))
+
   val id = 123L
   val name = "Sesame"
   val purpose = "World Peace"
@@ -47,25 +55,18 @@ package object fixtures {
   val initialLDAP = savedLDAP.copy(id = None)
   val savedGrant = HiveGrant("sw_sesame", "/shared_workspaces/sw_sesame", savedLDAP, id = Some(id))
   val initialGrant = savedGrant.copy(id = None, ldapRegistration = initialLDAP)
-  val savedHive = HiveAllocation("sw_sesame", "/shared_workspaces/sw_sesame", hdfsRequestedSize, 0.5F, savedGrant, id = Some(id))
+  val savedHive = HiveAllocation("sw_sesame", "/shared_workspaces/sw_sesame", hdfsRequestedSize, None, savedGrant, id = Some(id))
   val initialHive = savedHive.copy(id = None, managingGroup = initialGrant)
   val savedYarn = Yarn(poolName, maxCores, maxMemoryInGB, Some(id))
   val initialYarn = savedYarn.copy(id = None)
   val savedTopic = KafkaTopic(s"$systemName.incoming", 1, 1, TopicGrant(s"$systemName.incoming", savedLDAP, "all", Some(id)), TopicGrant(s"$systemName.incoming", savedLDAP, "read", Some(id)), Some(id))
   val initialTopic = savedTopic.copy(id = None, managingRole = savedTopic.managingRole.copy(id = None, ldapRegistration = initialLDAP), readonlyRole = savedTopic.readonlyRole.copy(id = None, ldapRegistration = initialLDAP))
-  val savedApplication = Application("Tiller", s"${systemName}_cg", savedLDAP, Some(id))
+  val savedApplication = Application("Tiller", s"${systemName}_cg", savedLDAP, Some(id), Some(standardUsername))
   val initialApplication = savedApplication.copy(id = None, group = initialLDAP)
-  val clock = Clock.fixed(Instant.now(), ZoneId.of("UTC"))
+  implicit val clock = Clock.fixed(Instant.now(), ZoneId.of("UTC"))
 
   val yarnApp = ClusterApp("yarn", "yarn", "GOOD_HExALTH", "STARTED", Map())
   val cluster = Cluster("cluster name", "Cluster", "", List(yarnApp), CDH(""), "GOOD_HEALTH")
-
-  val personName = "John Doe"
-  val standardUsername = "john.doe"
-  val infraApproverToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJuYW1lIjoiRHVkZSBEb2UiLCJ1c2VybmFtZSI6InVzZXJuYW1lIiwicGVybWlzc2lvbnMiOnsicmlza19tYW5hZ2VtZW50IjpmYWxzZSwicGxhdGZvcm1fb3BlcmF0aW9ucyI6dHJ1ZX19.uNJ0uQevSRL8aqYqmfsijVoj3gjlHbk07XBwGSXRuOboA1zkcMHhmHhiKVmFW_AVwDvqVdYAJ-XpNp7qTMHuQg"
-  val infraApproverUser = User(personName, standardUsername, UserPermissions(riskManagement = false, platformOperations = true))
-  val basicUserToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJuYW1lIjoiRHVkZSBEb2UiLCJ1c2VybmFtZSI6InVzZXJuYW1lIiwicGVybWlzc2lvbnMiOnsicmlza19tYW5hZ2VtZW50IjpmYWxzZSwicGxhdGZvcm1fb3BlcmF0aW9ucyI6ZmFsc2V9fQ.ltGXxBh4S7gwmIbcKz22IFWpGI2-zxad2XYOoxuGm734L8GlzfwvLRWIs-ZVKn7T8w3RJy5bKZWZoPj8951Qug"
-  val basicUser = User(personName, standardUsername, UserPermissions(riskManagement = false, platformOperations = false))
 
   def approval(instant: Instant = Instant.now(clock)) = Approval(Risk, standardUsername, instant)
 
@@ -84,7 +85,8 @@ package object fixtures {
     singleUser = false,
     id = Some(id),
     data = List(savedHive),
-    processing = List(savedYarn))
+    processing = List(savedYarn),
+    applications = List(savedApplication))
 
   val initialWorkspaceRequest =
     savedWorkspaceRequest.copy(
@@ -130,11 +132,10 @@ package object fixtures {
        |  ],
        |  "data" : [
        |    {
-       |      "id" : $id,
+       |      "id" : ${savedHive.id.get},
        |      "name" : "${savedHive.name}",
        |      "location" : "${savedHive.location}",
        |      "size_in_gb" : ${savedHive.sizeInGB},
-       |      "consumed_in_gb": ${savedHive.consumedInGB},
        |      "managing_group" : {
        |        "group": {
        |          "common_name" : "${savedLDAP.commonName}",
@@ -144,7 +145,18 @@ package object fixtures {
        |      }
        |    }
        |  ],
-       |  "applications": [],
+       |  "applications": [
+       |    {
+       |      "id": ${savedApplication.id.get},
+       |      "name": "${savedApplication.name}",
+       |      "consumer_group": "${savedApplication.consumerGroup}",
+       |      "group": {
+       |          "common_name" : "${savedLDAP.commonName}",
+       |          "distinguished_name" : "${savedLDAP.distinguishedName}",
+       |          "sentry_role" : "${savedLDAP.sentryRole}"
+       |      }
+       |    }
+       |  ],
        |  "topics": [],
        |  "single_user": false,
        |  "requester": "$standardUsername",

@@ -51,7 +51,7 @@ class WorkspaceServiceImpl[F[_]](ldapClient: LDAPClient[F],
         appConfig
           .hdfsClient
           .getConsumption(hive.location)
-          .map(consumed => hive.copy(consumedInGB = consumed))
+          .map(consumed => hive.copy(consumedInGB = Some(consumed)))
       case hive => Effect[F].pure(hive)
     }.sequence
 
@@ -125,7 +125,8 @@ class WorkspaceServiceImpl[F[_]](ldapClient: LDAPClient[F],
         datas <- workspace.data.map(_.provision)
         members <- workspace.data.map(d => AddMember(d.id.get, d.managingGroup.ldapRegistration.distinguishedName, workspace.requestedBy).provision)
         yarns <- workspace.processing.map(_.provision)
-      } yield (datas, members, yarns).mapN(_ |+| _ |+| _)
+        apps <- workspace.applications.map(_.provision)
+      } yield (datas, members, yarns, apps).mapN(_ |+| _ |+| _ |+| _)
 
     combined.sequence.map(_.combineAll).apply(appConfig).map(_.messages)
   }

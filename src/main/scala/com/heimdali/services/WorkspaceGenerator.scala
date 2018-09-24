@@ -1,6 +1,6 @@
 package com.heimdali.services
 
-import java.time.Instant
+import java.time.{Clock, Instant}
 
 import cats.implicits._
 import com.heimdali.config.AppConfig
@@ -32,7 +32,7 @@ object StructuredTemplate {
 }
 
 trait Generator[T] {
-  def generate(t: T): WorkspaceRequest
+  def generate(t: T)(implicit clock: Clock): WorkspaceRequest
 
   def defaults(user: User): T
 }
@@ -53,7 +53,7 @@ object Generator {
       .toLowerCase
 
   implicit class GeneratorOps[A](a: A) {
-    def generate()(implicit generator: Generator[A]) = {
+    def generate()(implicit generator: Generator[A], clock: Clock) = {
       generator.generate(a)
     }
   }
@@ -64,14 +64,14 @@ object Generator {
     override def defaults(user: User): UserTemplate =
       UserTemplate(user.username, Some(appConfig.workspaces.user.defaultSize), Some(appConfig.workspaces.sharedWorkspace.defaultCores), Some(appConfig.workspaces.sharedWorkspace.defaultMemory))
 
-    override def generate(input: UserTemplate): WorkspaceRequest = {
+    override def generate(input: UserTemplate)(implicit clock: Clock): WorkspaceRequest = {
       val request = WorkspaceRequest(
         input.username,
         input.username,
         input.username,
         "user",
         input.username,
-        Instant.now(),
+        clock.instant(),
         Compliance(phiData = false, pciData = false, piiData = false),
         singleUser = true)
       val afterDisk = input.disk.fold(request) { _ =>
@@ -79,7 +79,6 @@ object Generator {
           s"user_${input.username}",
           s"${appConfig.workspaces.user.root}/${input.username}/db",
           appConfig.workspaces.user.defaultSize,
-          0,
           LDAPRegistration(s"cn=user_${input.username},${appConfig.ldap.groupPath}", s"user_${input.username}", s"role_user_${input.username}"),
           None
         )))
@@ -98,7 +97,7 @@ object Generator {
     override def defaults(user: User): SimpleTemplate =
       SimpleTemplate(s"${user.username}'s Workspace", "A brief summary", "A longer description", user.username, Compliance.empty, Some(appConfig.workspaces.sharedWorkspace.defaultSize), Some(appConfig.workspaces.sharedWorkspace.defaultCores), Some(appConfig.workspaces.sharedWorkspace.defaultMemory))
 
-    override def generate(input: SimpleTemplate): WorkspaceRequest = {
+    override def generate(input: SimpleTemplate)(implicit clock: Clock): WorkspaceRequest = {
       val generatedName = generateName(input.name)
       val request = WorkspaceRequest(
         input.name,
@@ -106,15 +105,20 @@ object Generator {
         input.description,
         "simple",
         input.requester,
-        Instant.now(),
+        clock.instant(),
         input.compliance,
+        applications = List(Application(
+          input.requester,
+          generatedName,
+          "default",
+          appConfig.ldap.groupPath
+        )),
         singleUser = false)
       val afterDisk = input.disk.fold(request) { _ =>
         request.copy(data = List(HiveAllocation(
           s"sw_$generatedName",
           s"${appConfig.workspaces.sharedWorkspace.root}/$generatedName",
           appConfig.workspaces.sharedWorkspace.defaultSize,
-          0,
           LDAPRegistration(
             s"cn=edh_sw_$generatedName,${appConfig.ldap.groupPath}",
             s"edh_sw_$generatedName",
@@ -139,7 +143,7 @@ object Generator {
     override def defaults(user: User): StructuredTemplate =
       StructuredTemplate(s"${user.username}'s Workspace", "A brief summary", "A longer description", user.username, Compliance.empty, includeEnvironment = false, Some(appConfig.workspaces.dataset.defaultSize), Some(appConfig.workspaces.dataset.defaultCores), Some(appConfig.workspaces.dataset.defaultMemory))
 
-    override def generate(input: StructuredTemplate): WorkspaceRequest = {
+    override def generate(input: StructuredTemplate)(implicit clock: Clock): WorkspaceRequest = {
       val generatedName = generateName(input.name)
       val request = WorkspaceRequest(
         input.name,
@@ -147,7 +151,7 @@ object Generator {
         input.description,
         "structured",
         input.requester,
-        Instant.now(),
+        clock.instant(),
         input.compliance,
         singleUser = false)
 
@@ -156,7 +160,6 @@ object Generator {
           s"${dataset}_$generatedName",
           s"${appConfig.workspaces.dataset.root}/$dataset/$generatedName",
           disk,
-          0,
           LDAPRegistration(
             s"cn=edh_${appConfig.cluster.environment}_${dataset}_$generatedName,${appConfig.ldap.groupPath}",
             s"edh_${appConfig.cluster.environment}_${dataset}_$generatedName",

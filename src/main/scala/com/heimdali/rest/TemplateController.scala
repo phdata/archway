@@ -1,5 +1,7 @@
 package com.heimdali.rest
 
+import java.time.Clock
+
 import cats.effect._
 import com.heimdali.models._
 import com.heimdali.services.Generator._
@@ -10,7 +12,8 @@ import org.http4s._
 import org.http4s.circe._
 import org.http4s.dsl.io._
 
-class TemplateController(authService: AuthService[IO]) {
+class TemplateController(authService: AuthService[IO])
+                        (implicit val clock: Clock) {
 
   val route: HttpService[IO] =
     authService.tokenAuth {
@@ -23,7 +26,7 @@ class TemplateController(authService: AuthService[IO]) {
           for {
             userTemplate <- req.req.as[UserTemplate]
             workspaceRequest <- IO.pure(userTemplate.generate())
-            response <- Ok(workspaceRequest.asJson)
+            response <- Ok(workspaceRequest.copy().asJson)
           } yield response
 
         case GET -> Root  / "simple" as user =>

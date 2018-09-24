@@ -1,19 +1,16 @@
-package com.heimdali.controller
+package com.heimdali.rest
 
 import java.time.Instant
 
 import cats.effect._
 import cats.implicits._
-import cats.effect._
 import com.heimdali.models._
-import com.heimdali.rest.WorkspaceController
 import com.heimdali.services._
 import com.heimdali.test.fixtures._
 import io.circe.Json
 import io.circe.parser._
 import io.circe.syntax._
 import org.http4s._
-import org.http4s.circe._
 import org.http4s.client.dsl.Http4sClientDsl
 import org.http4s.dsl.io._
 import org.scalamock.scalatest.MockFactory
@@ -49,17 +46,17 @@ class WorkspaceControllerSpec
     val response = restApi.route.orNotFound.run(GET(uri("/123/members")).unsafeRunSync())
     val Right(json) = parse(
       s"""
-        | [
-        |   {
-        |     "username": "johndoe",
-        |     "name": "John Doe",
-        |     "email": "johndoe@email.com",
-        |     "data": {},
-        |     "processing": {},
-        |     "topics": {},
-        |     "applications": {}
-        |   }
-        | ]
+         | [
+         |   {
+         |     "username": "johndoe",
+         |     "name": "John Doe",
+         |     "email": "johndoe@email.com",
+         |     "data": {},
+         |     "processing": {},
+         |     "topics": {},
+         |     "applications": {}
+         |   }
+         | ]
       """.stripMargin)
     check(response, Status.Ok, Some(json))
   }

@@ -1,4 +1,4 @@
-package com.heimdali.controller
+package com.heimdali.rest
 
 import cats._
 import cats.data._

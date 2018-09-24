@@ -1,9 +1,7 @@
-package com.heimdali.controller
+package com.heimdali.rest
 
 import cats.effect.IO
-import com.heimdali.rest.ClusterController
 import com.heimdali.services._
-import org.http4s.circe._
 import com.heimdali.test.fixtures.{HttpTest, _}
 import org.apache.hadoop.conf.Configuration
 import org.http4s.dsl.io._
