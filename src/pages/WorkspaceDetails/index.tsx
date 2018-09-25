@@ -6,9 +6,12 @@ import { Dispatch } from 'redux';
 import { createStructuredSelector } from 'reselect';
 import { Cluster } from '../../types/Cluster';
 import { Profile } from '../../types/Profile';
-import { Workspace } from '../../types/Workspace';
+import { Workspace, Member, YarnApplication, HiveTable } from '../../types/Workspace';
+import MemberList from './MemberList';
+import HiveDetails from './HiveDetails';
 import * as actions from './actions';
 import * as selectors from './selectors';
+import YarnDetails from './YarnDetails';
 
 /* tslint:disable:no-var-requires */
 const TimeAgo = require('timeago-react').default;
@@ -22,8 +25,13 @@ interface Props extends RouteComponentProps<DetailsRouteProps> {
   cluster: Cluster;
   profile: Profile;
   loading: boolean;
+  members?: Member[];
+  applications?: YarnApplication[];
+  tables?: HiveTable[];
 
   getWorkspaceDetails: (id: number) => void;
+  getTableList: (id: number) => void;
+  getApplicationList: (id: number) => void;
 }
 
 const Compliance = ({ checked, children }: {checked: boolean, children: string}) => (
@@ -33,19 +41,30 @@ const Compliance = ({ checked, children }: {checked: boolean, children: string})
   </div>
 );
 
-const Label = ({ children }: {children: string}) =>
-  <div style={{ marginBottom: 10, fontSize: 14, textTransform: 'uppercase', letterSpacing: 1, fontWeight: 200 }}>
+const Label = ({ style, children }: {style?: React.CSSProperties, children: any}) =>
+  <div
+    style={{
+        marginBottom: 10,
+        fontSize: 14,
+        textTransform: 'uppercase',
+        letterSpacing: 1,
+        fontWeight: 200,
+        display: 'flex',
+        alignItems: 'center',
+        ...style,
+      }}>
     {children}
   </div>;
 
 class WorkspaceDetails extends React.PureComponent<Props> {
 
   public componentDidMount() {
-    this.props.getWorkspaceDetails(this.props.match.params.id);
+    const id = this.props.match.params.id;
+    this.props.getWorkspaceDetails(id);
   }
 
   public render() {
-    const { workspace, loading } = this.props;
+    const { workspace, loading, members, applications, tables } = this.props;
 
     if (loading || !workspace) { return <Spin />; }
 
@@ -105,10 +124,28 @@ class WorkspaceDetails extends React.PureComponent<Props> {
             </Col>
           </Row>
           <Row gutter={12} style={{ display: 'flex', marginTop: 10 }}>
-            <Col span={24}>
+            <Col span={8}>
               <Card>
-                <Label>Members</Label>
-                <MemberList />
+                <Label style={{ lineHeight: '18px' }}>
+                  <Icon type="database" style={{ paddingRight: 5, fontSize: 18 }} />Hive
+                </Label>
+                <HiveDetails namespace={workspace.data[0].name} tables={tables} />
+              </Card>
+            </Col>
+            <Col span={8}>
+              <Card>
+                <Label style={{ lineHeight: '18px' }}>
+                  <Icon type="rocket" style={{ paddingRight: 5, fontSize: 18 }} />Yarn
+                </Label>
+                <YarnDetails poolName={workspace.processing[0].pool_name} applications={applications} />
+              </Card>
+            </Col>
+            <Col span={8}>
+              <Card>
+                <Label style={{ lineHeight: '18px' }}>
+                  <Icon type="sound" style={{ paddingRight: 5, fontSize: 18 }} />Kafka
+                </Label>
+                <MemberList members={members} />
               </Card>
             </Col>
           </Row>
@@ -123,6 +160,9 @@ const mapStateToProps = () =>
     workspace: selectors.getWorkspace(),
     cluster: selectors.getClusterDetails(),
     profile: selectors.getProfile(),
+    members: selectors.getMembers(),
+    tables: selectors.getHiveTables(),
+    applications: selectors.getApplications(),
   });
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({

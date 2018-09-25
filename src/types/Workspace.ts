@@ -1,3 +1,12 @@
+export interface YarnApplication {
+  id: string;
+  name: string;
+}
+
+export interface HiveTable {
+  name: string;
+}
+
 export interface Member {
   username: string;
   name: string;
@@ -54,7 +63,7 @@ export interface DatabaseGrant {
   database_access?: Date;
 }
 
-export interface Database {
+export interface HiveAllocation {
   name: string;
   location: string;
   size_in_gb: number;
@@ -83,7 +92,7 @@ export interface Workspace {
   single_user: boolean;
   compliance: Compliance;
   approvals?: Approvals;
-  data: Database[];
+  data: HiveAllocation[];
   processing: ResourcePool[];
   topics: KafkaTopic[];
   applications: Application[];
