@@ -1,3 +1,8 @@
+export interface Member {
+  username: string;
+  name: string;
+}
+
 export interface Application {
   id: number;
   name: string;

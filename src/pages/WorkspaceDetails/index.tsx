@@ -104,6 +104,14 @@ class WorkspaceDetails extends React.PureComponent<Props> {
               </Card>
             </Col>
           </Row>
+          <Row gutter={12} style={{ display: 'flex', marginTop: 10 }}>
+            <Col span={24}>
+              <Card>
+                <Label>Members</Label>
+                <MemberList />
+              </Card>
+            </Col>
+          </Row>
       </div>
     );
   }
