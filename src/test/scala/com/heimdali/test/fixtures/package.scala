@@ -93,7 +93,8 @@ package object fixtures {
       id = None,
       compliance = initialCompliance,
       data = List(initialHive),
-      processing = List(initialYarn)
+      processing = List(initialYarn),
+      applications = List(initialApplication)
     )
 
   val Right(defaultRequest) = parse(

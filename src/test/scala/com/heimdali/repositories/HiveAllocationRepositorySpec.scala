@@ -8,7 +8,7 @@ import org.scalatest.{FunSuite, Matchers}
 
 class HiveAllocationRepositorySpec extends FunSuite with Matchers with DBTest with IOChecker {
 
-  val repo = new HiveDatabaseRepositoryImpl(Clock.fixed(Instant.now, ZoneId.of("UTC")))
+  val repo = new HiveAllocationRepositoryImpl(Clock.fixed(Instant.now, ZoneId.of("UTC")))
 
   test("insert") { check(repo.Statements.insert(initialHive)) }
   test("find") { check(repo.Statements.find(id)) }

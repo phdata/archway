@@ -29,7 +29,17 @@
       "max_memory_in_gb": 1
     }
   ],
-  "applications": [],
+  "applications": [
+    {
+      "name": "default",
+      "consumer_group": "sesame_default_cg",
+      "group": {
+        "distinguished_name": "cn=sesame_default_cg,ou=heimdali,dc=jotunn,dc=io",
+        "common_name": "sesame_default_cg",
+        "sentry_role": "role_sesame_default_cg"
+      }
+    }
+  ],
   "topics": [],
   "single_user": false
 }

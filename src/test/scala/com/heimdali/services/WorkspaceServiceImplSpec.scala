@@ -68,6 +68,11 @@ class WorkspaceServiceImplSpec
 
       (yarnRepository.create _).expects(initialYarn).returning(id.pure[ConnectionIO])
       (workspaceRepository.linkPool _).expects(id, id).returning(1.pure[ConnectionIO])
+
+      (ldapRepository.create _).expects(initialLDAP).returning(savedLDAP.pure[ConnectionIO])
+      (applicationRepository.create _).expects(initialApplication.copy(group = savedLDAP)).returning(id.pure[ConnectionIO])
+      (workspaceRepository.linkApplication _).expects(id, id).returning(1.pure[ConnectionIO])
+      (memberRepository.create _).expects(standardUsername, id).returning(1L.pure[ConnectionIO])
     }
 
     val newWorkspace =
@@ -200,7 +205,7 @@ class WorkspaceServiceImplSpec
   }
 
   it should "get details for hive" in new Context {
-    val (request1, request2) = (savedHive.copy(name = "name1"), savedHive.copy(name = "name2"))
+    val (request1, request2) = (savedHive.copy(name = "name1", databaseCreated = Some(clock.instant())), savedHive.copy(name = "name2", databaseCreated = Some(clock.instant())))
     hiveDatabaseRepository.findByWorkspace _ expects id returning List(request1, request2).pure[ConnectionIO]
 
     hiveClient.describeDatabase _ expects "name1" returning HiveDatabase("name1", List(HiveTable("table1"))).pure[IO]
@@ -227,8 +232,8 @@ class WorkspaceServiceImplSpec
       mock[WorkspaceRequestRepository]
     val complianceRepository: ComplianceRepository = mock[ComplianceRepository]
     val yarnRepository: YarnRepository = mock[YarnRepository]
-    val hiveDatabaseRepository: HiveDatabaseRepository =
-      mock[HiveDatabaseRepository]
+    val hiveDatabaseRepository: HiveAllocationRepository =
+      mock[HiveAllocationRepository]
     val ldapRepository: LDAPRepository = mock[LDAPRepository]
     val approvalRepository: ApprovalRepository = mock[ApprovalRepository]
     val contextProvider: LoginContextProvider = mock[LoginContextProvider]

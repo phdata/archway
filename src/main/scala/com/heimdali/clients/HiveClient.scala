@@ -34,7 +34,7 @@ class HiveClientImpl[F[_]](loginContextProvider: LoginContextProvider,
 
   override def describeDatabase(name: String): F[HiveDatabase] =
     loginContextProvider.hadoopInteraction[F, HiveDatabase] {
-      sql"""SHOW TABLES in $name""".query[String].to[List].transact(transactor).map { tables =>
+      (sql"""SHOW TABLES in """ ++ Fragment.const(name)).query[String].to[List].transact(transactor).map { tables =>
         HiveDatabase(name, tables.map(HiveTable.apply))
       }
     }
