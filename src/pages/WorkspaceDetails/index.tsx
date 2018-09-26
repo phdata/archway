@@ -1,4 +1,4 @@
-import { Card, Col, Icon, Row, Spin } from 'antd';
+import { Col, Row, Spin } from 'antd';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { RouteComponentProps } from 'react-router';
@@ -6,12 +6,16 @@ import { Dispatch } from 'redux';
 import { createStructuredSelector } from 'reselect';
 import { Cluster } from '../../types/Cluster';
 import { Profile } from '../../types/Profile';
-import { Workspace, Member, YarnApplication, HiveTable } from '../../types/Workspace';
-import MemberList from './MemberList';
-import HiveDetails from './HiveDetails';
+import { NamespaceInfo, Workspace, YarnApplication, PoolInfo } from '../../types/Workspace';
 import * as actions from './actions';
+import ComplianceDetails from './Components/ComplianceDetails';
+import DescriptionDetails from './Components/DescriptionDisplay';
+import HiveDetails from './Components/HiveDetails';
+import KafkaDetails from './Components/KafkaDetails';
+import Liason from './Components/Liason';
+import MemberList from './Components/MemberList';
+import YarnDetails from './Components/YarnDetails';
 import * as selectors from './selectors';
-import YarnDetails from './YarnDetails';
 
 /* tslint:disable:no-var-requires */
 const TimeAgo = require('timeago-react').default;
@@ -25,36 +29,13 @@ interface Props extends RouteComponentProps<DetailsRouteProps> {
   cluster: Cluster;
   profile: Profile;
   loading: boolean;
-  members?: Member[];
-  applications?: YarnApplication[];
-  tables?: HiveTable[];
+  pools?: PoolInfo[];
+  infos?: NamespaceInfo[];
 
   getWorkspaceDetails: (id: number) => void;
   getTableList: (id: number) => void;
   getApplicationList: (id: number) => void;
 }
-
-const Compliance = ({ checked, children }: {checked: boolean, children: string}) => (
-  <div style={{ display: 'flex', flex: 1, flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-    <Icon type={checked ? 'warning' : 'dash'} style={{ marginBottom: 5, fontSize: 28 }} />
-    <div style={{ letterSpacing: 1 }}>{children}</div>
-  </div>
-);
-
-const Label = ({ style, children }: {style?: React.CSSProperties, children: any}) =>
-  <div
-    style={{
-        marginBottom: 10,
-        fontSize: 14,
-        textTransform: 'uppercase',
-        letterSpacing: 1,
-        fontWeight: 200,
-        display: 'flex',
-        alignItems: 'center',
-        ...style,
-      }}>
-    {children}
-  </div>;
 
 class WorkspaceDetails extends React.PureComponent<Props> {
 
@@ -64,7 +45,7 @@ class WorkspaceDetails extends React.PureComponent<Props> {
   }
 
   public render() {
-    const { workspace, loading, members, applications, tables } = this.props;
+    const { workspace, cluster, loading, pools, infos } = this.props;
 
     if (loading || !workspace) { return <Spin />; }
 
@@ -78,75 +59,47 @@ class WorkspaceDetails extends React.PureComponent<Props> {
                   textTransform: 'uppercase',
                   fontSize: 14,
                   color: '#aaa',
-                }}><TimeAgo datetime={workspace.requested_date} /></div>
+                }}
+                ><TimeAgo datetime={workspace.requested_date} />
+            </div>
           </div>
-          <Row gutter={12} style={{ display: 'flex', marginTop: 15 }}>
-            <Col span={8} style={{ textAlign: 'center', display: 'flex' }}>
-              <Card
-                style={{ display: 'flex', flex: 1 }}
-                bodyStyle={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
-                <Label>description</Label>
-                <p style={{ marginBottom: 0 }}>
-                  {workspace.description}
-                </p>
-              </Card>
+          <Row gutter={12} type="flex">
+            <Col span={12} lg={6} style={{ marginTop: 10, display: 'flex' }}>
+              <DescriptionDetails
+                description={workspace.description} />
             </Col>
-            <Col span={8} style={{ textAlign: 'center', display: 'flex' }}>
-              <Card
-                style={{ display: 'flex', flex: 1 }}
-                bodyStyle={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
-                <Label>compliance</Label>
-                <div style={{ display: 'flex', flex: 1, alignItems: 'center' }}>
-                  <Compliance checked={workspace.compliance.pci_data}>PCI</Compliance>
-                  <Compliance checked={workspace.compliance.phi_data}>PHI</Compliance>
-                  <Compliance checked={workspace.compliance.pii_data}>PII</Compliance>
-                </div>
-              </Card>
+            <Col span={12} lg={6} style={{ marginTop: 10, display: 'flex' }}>
+              <ComplianceDetails
+                pii={workspace.compliance.pii_data}
+                pci={workspace.compliance.pci_data}
+                phi={workspace.compliance.phi_data} />
             </Col>
-            <Col span={8} style={{ textAlign: 'center', display: 'flex' }}>
-              <Card
-                style={{ display: 'flex', flex: 1 }}
-                bodyStyle={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
-                <Label>liason</Label>
-                <div
-                  style={{
-                      textAlign: 'center',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      flex: 1,
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                    }}>
-                  <Icon type="crown" style={{ marginBottom: 5, fontSize: 28 }} />
-                  <div style={{ letterSpacing: 1, textTransform: 'uppercase' }}>{workspace.requester}</div>
-                </div>
-              </Card>
+            <Col span={12} lg={6} style={{ marginTop: 10, display: 'flex' }}>
+              <Liason liason={workspace.requester} />
+            </Col>
+            <Col span={12} lg={6} style={{ marginTop: 10, display: 'flex' }}>
+              <Liason liason={workspace.requester} />
             </Col>
           </Row>
-          <Row gutter={12} style={{ display: 'flex', marginTop: 10 }}>
-            <Col span={8}>
-              <Card>
-                <Label style={{ lineHeight: '18px' }}>
-                  <Icon type="database" style={{ paddingRight: 5, fontSize: 18 }} />Hive
-                </Label>
-                <HiveDetails namespace={workspace.data[0].name} tables={tables} />
-              </Card>
+          <Row gutter={12} type="flex" style={{ flexDirection: 'row' }}>
+            <Col span={24} lg={12} style={{ marginTop: 10 }}>
+              <HiveDetails
+                hue={cluster.services && cluster.services.hue}
+                namespace={workspace.data[0].name}
+                info={infos} />
             </Col>
-            <Col span={8}>
-              <Card>
-                <Label style={{ lineHeight: '18px' }}>
-                  <Icon type="rocket" style={{ paddingRight: 5, fontSize: 18 }} />Yarn
-                </Label>
-                <YarnDetails poolName={workspace.processing[0].pool_name} applications={applications} />
-              </Card>
+            <Col span={24} lg={12} style={{ marginTop: 10 }}>
+              <YarnDetails
+                poolName={workspace.processing[0].pool_name}
+                pools={pools} />
             </Col>
-            <Col span={8}>
-              <Card>
-                <Label style={{ lineHeight: '18px' }}>
-                  <Icon type="sound" style={{ paddingRight: 5, fontSize: 18 }} />Kafka
-                </Label>
-                <MemberList members={members} />
-              </Card>
+            <Col span={24} lg={12} style={{ marginTop: 10 }}>
+              <KafkaDetails
+                consumerGroup={workspace.applications[0] && workspace.applications[0].consumer_group}
+                topics={workspace.topics} />
+            </Col>
+            <Col span={24} lg={12} style={{ marginTop: 10 }}>
+              <MemberList />
             </Col>
           </Row>
       </div>
@@ -160,9 +113,8 @@ const mapStateToProps = () =>
     workspace: selectors.getWorkspace(),
     cluster: selectors.getClusterDetails(),
     profile: selectors.getProfile(),
-    members: selectors.getMembers(),
-    tables: selectors.getHiveTables(),
-    applications: selectors.getApplications(),
+    infos: selectors.getNamespaceInfo(),
+    pools: selectors.getPoolInfo(),
   });
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({

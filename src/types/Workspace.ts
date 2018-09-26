@@ -3,6 +3,16 @@ export interface YarnApplication {
   name: string;
 }
 
+export interface PoolInfo {
+  name: string;
+  applications: YarnApplication[];
+}
+
+export interface NamespaceInfo {
+  name: string;
+  tables: HiveTable[];
+}
+
 export interface HiveTable {
   name: string;
 }

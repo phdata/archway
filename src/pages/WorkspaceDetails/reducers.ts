@@ -1,5 +1,11 @@
 import { fromJS } from 'immutable';
-import { GET_WORKSPACE, SET_WORKSPACE, SET_MEMBERS } from './actions';
+import {
+  GET_WORKSPACE,
+  SET_WORKSPACE,
+  SET_MEMBERS,
+  SET_NAMESPACE_INFO,
+  SET_RESOURCE_POOLS,
+} from './actions';
 
 const initialState = fromJS({
   fetching: false,
@@ -21,6 +27,14 @@ const details = (state = initialState, action: any) => {
     case SET_MEMBERS:
       return state
         .set('members', fromJS(action.members));
+
+    case SET_NAMESPACE_INFO:
+      return state
+        .set('namespaceInfo', fromJS(action.infos));
+
+    case SET_RESOURCE_POOLS:
+      return state
+        .set('resourcePools', fromJS(action.resourcePools));
 
     default:
       return state;

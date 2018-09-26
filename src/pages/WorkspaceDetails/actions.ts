@@ -1,4 +1,9 @@
-import { Workspace, Member, YarnApplication, HiveTable } from '../../types/Workspace';
+import {
+  Workspace,
+  Member,
+  NamespaceInfo,
+  PoolInfo,
+} from '../../types/Workspace';
 
 export const GET_WORKSPACE = 'GET_WORKSPACE';
 export const getWorkspace = (id: number) => ({
@@ -29,10 +34,10 @@ export const getApplications = (id: number) => ({
   type: GET_APPLICATIONS,
 });
 
-export const SET_APPLICATIONS = 'SET_APPLICATIONS';
-export const setApplications = (applications: YarnApplication[]) => ({
-  type: SET_APPLICATIONS,
-  applications,
+export const SET_RESOURCE_POOLS = 'SET_RESOURCE_POOLS';
+export const setResourcePools = (resourcePools: PoolInfo[]) => ({
+  type: SET_RESOURCE_POOLS,
+  resourcePools,
 });
 
 export const GET_TABLES = 'GET_TABLES';
@@ -40,8 +45,8 @@ export const getTables = (id: number) => ({
   type: GET_TABLES,
 });
 
-export const SET_TABLES = 'SET_TABLES';
-export const setTables = (tables: HiveTable[]) => ({
-  type: SET_TABLES,
-  tables,
+export const SET_NAMESPACE_INFO = 'SET_NAMESPACE_INFO';
+export const setNamespaceInfo = (infos: NamespaceInfo[]) => ({
+  type: SET_NAMESPACE_INFO,
+  infos,
 });

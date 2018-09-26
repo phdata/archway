@@ -1,6 +1,6 @@
 import { createSelector } from 'reselect';
 import { authSelector, clusterSelector, workspaceSelector } from '../../selectors';
-import { Workspace, Member, HiveTable, YarnApplication } from '../../types/Workspace';
+import { Workspace, Member, YarnApplication, NamespaceInfo, PoolInfo } from '../../types/Workspace';
 
 export const getWorkspace = () => createSelector(
   workspaceSelector,
@@ -22,12 +22,12 @@ export const getMembers = () => createSelector(
   (workspaceState) => workspaceState.get('members') && workspaceState.get('members').toJS() as Member[],
 );
 
-export const getHiveTables = () => createSelector(
+export const getNamespaceInfo = () => createSelector(
   workspaceSelector,
-  (workspaceState) => workspaceState.get('hiveTables') && workspaceState.get('hiveTables').toJS() as HiveTable[],
+  (workspaceState) => workspaceState.get('namespaceInfo') && workspaceState.get('namespaceInfo').toJS() as  NamespaceInfo[]
 );
 
-export const getApplications = () => createSelector(
+export const getPoolInfo = () => createSelector(
   workspaceSelector,
-  (workspaceState) => workspaceState.get('applications') && workspaceState.get('applications').toJS() as YarnApplication[],
+  (workspaceState) => workspaceState.get('resourcePools') && workspaceState.get('resourcePools').toJS() as PoolInfo[],
 );
