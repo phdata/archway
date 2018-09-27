@@ -5,12 +5,6 @@ import { createStructuredSelector } from 'reselect';
 import { getClusterInfo } from '../../pages/Home/selectors';
 import { Cluster, Status } from '../../types/Cluster';
 
-const anchor = {
-  width: '100%',
-  position: 'absolute' as 'absolute', // https://github.com/Microsoft/TypeScript/issues/11465
-  bottom: 0,
-};
-
 interface Props {
   cluster: Cluster;
 }
@@ -19,7 +13,7 @@ const ClusterInfo = ({ cluster }: Props) => {
   if (cluster.name === 'Unknown') {
     return (
       <Spin
-        style={{ color: 'white', ...anchor }}
+        style={{ color: 'white' }}
         tip="fetching cluster"
         indicator={<Icon type="loading" spin={true} style={{ color: 'white' }} />} />
     );
@@ -34,7 +28,6 @@ const ClusterInfo = ({ cluster }: Props) => {
           color: 'white',
           backgroundColor: status.statusColor().string(),
           textAlign: 'center',
-          ...anchor,
         }}>
         {cluster.name} is {status.statusText()}
       </div>

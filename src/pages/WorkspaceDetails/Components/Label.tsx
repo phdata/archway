@@ -9,7 +9,7 @@ const Label = ({ style, children }: Props) => (
   <div
     style={{
         marginBottom: 10,
-        fontSize: 14,
+        fontSize: 16,
         textTransform: 'uppercase',
         letterSpacing: 1,
         fontWeight: 200,

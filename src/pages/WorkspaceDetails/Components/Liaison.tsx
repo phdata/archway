@@ -3,14 +3,14 @@ import { Card, Icon } from 'antd';
 import Label from './Label';
 
 interface Props {
-  liason: string;
+  liaison: string;
 }
 
-const Liason = ({liason}: Props) => (
+const Liason = ({liaison}: Props) => (
   <Card
     style={{ display: 'flex', flex: 1 }}
-    bodyStyle={{ display: 'flex' flexDirection: 'column', flex: 1 }}>
-    <Label>liason</Label>
+    bodyStyle={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
+    <Label>liaison</Label>
     <div
       style={{
           textAlign: 'center',
@@ -21,7 +21,7 @@ const Liason = ({liason}: Props) => (
           justifyContent: 'center',
         }}>
       <Icon type="crown" theme="twoTone" twoToneColor="#D7C9AA" style={{ marginBottom: 5, fontSize: 28 }} />
-      <div style={{ letterSpacing: 1, textTransform: 'uppercase' }}>{liason}</div>
+      <div style={{ letterSpacing: 1, textTransform: 'uppercase' }}>{liaison}</div>
     </div>
   </Card>
 );

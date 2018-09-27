@@ -25,12 +25,12 @@ const Profile = ({ profile, doLogout }: Props) => {
         padding: 15,
         color: 'white',
         textAlign: 'center',
-        borderTop: '1px solid #C6CACF',
-        borderBottom: '1px solid #C6CACF',
         backgroundColor: '#415161',
+        position: 'absolute' as 'absolute', // https://github.com/Microsoft/TypeScript/issues/11465
+        bottom: 0,
       }}>
       <Avatar shape="circle" size="large" icon="user" style={{ backgroundColor: 'transparent', color: 'white' }} />
-      <h3 style={{ color: 'white' }}>
+      <h3 style={{ color: 'white', textTransform: 'uppercase' }}>
         hey, {name}!
       </h3>
       <h6>

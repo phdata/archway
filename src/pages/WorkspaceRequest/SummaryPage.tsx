@@ -1,6 +1,7 @@
 import { Card, Col, Icon, List, Row } from 'antd';
 import * as React from 'react';
-import { Database, ResourcePool, Workspace } from '../../types/Workspace';
+import { Database, ResourcePool, Workspace, Application } from '../../types/Workspace';
+import Label from '../WorkspaceDetails/Components/Label';
 
 interface Props {
   workspace?: Workspace;
@@ -12,6 +13,7 @@ const ResourceItem = (name: string) => <h4>{name}</h4>;
 const SummaryPage = ({ workspace, name }: Props) => {
   const databaseNames = workspace && workspace.data.map((database: Database) => database.name);
   const poolNames = workspace && workspace.processing.map((pool: ResourcePool) => pool.pool_name);
+  const applicationNames = workspace && workspace.applications.map((application: Application) => application.name);
   return (
     <div>
       <h3>
@@ -21,28 +23,37 @@ const SummaryPage = ({ workspace, name }: Props) => {
         <Col span={8}>
           <Card>
             <Icon type="crown" style={{ fontSize: 42 }} />
-            <h3>You will be the liason for this project</h3>
+            <Label>You will be the liason for this project</Label>
             <h4>{name}</h4>
           </Card>
         </Col>
       </Row>
       <Row type="flex" justify="center" gutter={25} style={{ marginTop: 25, marginBottom: 25 }}>
-        <Col span={8}>
-          <Card>
+        <Col span={6} style={{ display: 'flex', flex: 1 }}>
+          <Card style={{ justifyContent: 'center', display: 'flex', flex: 1 }}>
             <Icon type="database" style={{ fontSize: 42 }} />
-            <h3>The following <b>hive databases</b> will be created for you</h3>
+            <Label>The following hive databases will be created for you</Label>
             <List
               renderItem={ResourceItem}
               dataSource={databaseNames} />
           </Card>
         </Col>
-        <Col span={8}>
-          <Card>
-            <Icon type="thunderbolt" style={{ fontSize: 42 }} />
-            <h3>The following <b>resource pools</b> will be created for you</h3>
+        <Col span={6} style={{ display: 'flex', flex: 1 }}>
+          <Card style={{ justifyContent: 'center', display: 'flex', flex: 1 }}>
+            <Icon type="rocket" style={{ fontSize: 42 }} />
+            <Label>The following resource pools will be created for you</Label>
             <List
               renderItem={ResourceItem}
               dataSource={poolNames} />
+          </Card>
+        </Col>
+        <Col span={6} style={{ display: 'flex', flex: 1 }}>
+          <Card style={{ justifyContent: 'center', display: 'flex', flex: 1 }}>
+            <Icon type="thunderbolt" style={{ fontSize: 42 }} />
+            <Label>The following applications (with their own consumer group) will be created for you</Label>
+            <List
+              renderItem={ResourceItem}
+              dataSource={applicationNames} />
           </Card>
         </Col>
       </Row>

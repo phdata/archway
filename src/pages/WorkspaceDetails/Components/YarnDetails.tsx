@@ -2,6 +2,7 @@ import { Card, Icon, List } from 'antd';
 import * as React from 'react';
 import { YarnApplication, PoolInfo } from '../../../types/Workspace';
 import Label from './Label';
+import Colors from '../../../components/Colors';
 
 interface Props {
   poolName: string;
@@ -20,9 +21,9 @@ const YarnDetails = ({ poolName, pools }: Props) => (
       <a href="#">Open Resource Manger</a>,
     ]}>
     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-      <Label style={{ lineHeight: '18px' }}>
-        <Icon type="rocket" style={{ paddingRight: 5, fontSize: 18 }} />Yarn
-    </Label>
+      <Label style={{ lineHeight: '22px' }}>
+        <Icon theme="twoTone" twoToneColor={Colors.Green.string()} type="rocket" style={{ paddingRight: 5, fontSize: 22 }} />Yarn
+      </Label>
       <Label style={{ lineHeight: '18px' }}>
         <small>{poolName}</small>
       </Label>

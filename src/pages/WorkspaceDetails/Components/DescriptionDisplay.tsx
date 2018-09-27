@@ -11,7 +11,7 @@ const DescriptionDetails = ({description}: Props) => (
     style={{ display: 'flex', flex: 1 }}
     bodyStyle={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
     <Label>description</Label>
-    <p style={{ marginBottom: 0 }}>
+    <p style={{ textAlign: 'center', marginBottom: 0 }}>
       {description}
     </p>
   </Card>
