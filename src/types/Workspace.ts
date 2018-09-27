@@ -77,6 +77,7 @@ export interface HiveAllocation {
   name: string;
   location: string;
   size_in_gb: number;
+  consumed_in_gb: number;
   managing_group: DatabaseGrant;
   readonly_group?: DatabaseGrant;
 }

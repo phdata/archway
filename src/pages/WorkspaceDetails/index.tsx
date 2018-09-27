@@ -1,4 +1,4 @@
-import { Col, Row, Spin } from 'antd';
+import { Col, Row, Spin, Modal } from 'antd';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { RouteComponentProps } from 'react-router';
@@ -16,6 +16,8 @@ import KafkaDetails from './Components/KafkaDetails';
 import Liaison from './Components/Liaison';
 import MemberList from './Components/MemberList';
 import YarnDetails from './Components/YarnDetails';
+import SetupHelp from './Components/SetupHelp';
+import Allocations from './Components/Allocations';
 import * as selectors from './selectors';
 
 /* tslint:disable:no-var-requires */
@@ -77,20 +79,26 @@ class WorkspaceDetails extends React.PureComponent<Props> {
             </div>
           </div>
           <Row gutter={12} type="flex">
-            <Col span={12} lg={6} style={{ marginTop: 10, display: 'flex' }}>
+            <Col span={24} lg={8} style={{ marginTop: 10, display: 'flex' }}>
               <DescriptionDetails
                 description={workspace.description} />
             </Col>
-            <Col span={12} lg={6} style={{ marginTop: 10, display: 'flex' }}>
+            <Col span={12} lg={4} style={{ marginTop: 10, display: 'flex' }}>
               <ComplianceDetails
                 pii={workspace.compliance.pii_data}
                 pci={workspace.compliance.pci_data}
                 phi={workspace.compliance.phi_data} />
             </Col>
-            <Col span={12} lg={6} style={{ marginTop: 10, display: 'flex' }}>
+            <Col span={12} lg={4} style={{ marginTop: 10, display: 'flex' }}>
               <Liaison liaison={workspace.requester} />
             </Col>
-            <Col span={12} lg={6} style={{ marginTop: 10, display: 'flex' }}>
+            <Col span={12} lg={4} style={{ marginTop: 10, display: 'flex' }}>
+              <Allocations
+                location={workspace.data[0] && workspace.data[0].location}
+                allocated={workspace.data[0] && workspace.data[0].size_in_gb}
+                consumed={workspace.data[0] && workspace.data[0].consumed_in_gb} />
+            </Col>
+            <Col span={12} lg={4} style={{ marginTop: 10, display: 'flex' }}>
               <ApprovalDetails />
             </Col>
           </Row>
@@ -113,6 +121,11 @@ class WorkspaceDetails extends React.PureComponent<Props> {
             </Col>
             <Col span={24} lg={12} style={{ marginTop: 10 }}>
               <MemberList />
+            </Col>
+          </Row>
+          <Row>
+            <Col span={24} style={{ marginTop: 10 }}>
+                <SetupHelp />
             </Col>
           </Row>
       </div>

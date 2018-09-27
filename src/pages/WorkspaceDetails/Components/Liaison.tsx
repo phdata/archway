@@ -20,7 +20,7 @@ const Liason = ({liaison}: Props) => (
           alignItems: 'center',
           justifyContent: 'center',
         }}>
-      <Icon type="crown" theme="twoTone" twoToneColor="#D7C9AA" style={{ marginBottom: 5, fontSize: 28 }} />
+      <Icon type="crown" theme="twoTone" twoToneColor="#D7C9AA" style={{ marginBottom: 5, fontSize: 42 }} />
       <div style={{ letterSpacing: 1, textTransform: 'uppercase' }}>{liaison}</div>
     </div>
   </Card>

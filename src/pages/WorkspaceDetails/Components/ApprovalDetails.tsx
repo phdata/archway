@@ -31,7 +31,7 @@ const ApprovalDetails = ({infra, risk}: Props) => (
     <Label>approvals</Label>
     <div style={{ display: 'flex', flex: 1, alignItems: 'center' }}>
       <Approval approvalDate={risk && risk.approval_time} icon="safety-certificate">risk</Approval>
-      <Approval approvalDate={infra && infra.approval_time} icon="dashboard">operations</Approval>
+      <Approval approvalDate={infra && infra.approval_time} icon="dashboard">ops</Approval>
     </div>
   </Card>
 );
