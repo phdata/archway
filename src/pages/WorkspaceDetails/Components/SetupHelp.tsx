@@ -17,7 +17,7 @@ const SetupHelp = ({}: Props) => (
       <Col span={24} lg={12}>
         <h3>Write your application...</h3>
         <SyntaxHighlighter language="python" style={tomorrowNightEighties}>
-        {`
+        {```
           from impala.dbapi
           import connect
           conn = connect(
@@ -32,7 +32,7 @@ const SetupHelp = ({}: Props) => (
           cursor.execute(‘SELECT * FROM mytable LIMIT 100’)
           print cursor.description # prints the result set’ s schema
           results = cursor.fetchall()
-        `}
+        ```}
         </SyntaxHighlighter>
       </Col>
       <Col span={24} lg={12}>

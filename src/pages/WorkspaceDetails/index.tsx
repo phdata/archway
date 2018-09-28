@@ -35,6 +35,7 @@ interface Props extends RouteComponentProps<DetailsRouteProps> {
   pools?: PoolInfo[];
   infos?: NamespaceInfo[];
   approved: boolean;
+  activeModal?: string;
 
   getWorkspaceDetails: (id: number) => void;
   getTableList: (id: number) => void;
@@ -49,7 +50,7 @@ class WorkspaceDetails extends React.PureComponent<Props> {
   }
 
   public render() {
-    const { workspace, cluster, loading, pools, infos, approved } = this.props;
+    const { workspace, cluster, loading, pools, infos, approved, activeModal } = this.props;
 
     if (loading || !workspace) { return <Spin />; }
 
@@ -74,8 +75,8 @@ class WorkspaceDetails extends React.PureComponent<Props> {
                   textTransform: 'uppercase',
                   fontSize: 12,
                   color: '#aaa',
-                }}
-                >created <TimeAgo datetime={workspace.requested_date} />
+                }}>
+              created <TimeAgo datetime={workspace.requested_date} />
             </div>
           </div>
           <Row gutter={12} type="flex">
@@ -118,6 +119,7 @@ class WorkspaceDetails extends React.PureComponent<Props> {
               <KafkaDetails
                 consumerGroup={workspace.applications[0] && workspace.applications[0].consumer_group}
                 topics={workspace.topics} />
+                <Modal visible={activeModal === 'liason'} />
             </Col>
             <Col span={24} lg={12} style={{ marginTop: 10 }}>
               <MemberList />
@@ -142,6 +144,7 @@ const mapStateToProps = () =>
     infos: selectors.getNamespaceInfo(),
     pools: selectors.getPoolInfo(),
     approved: selectors.getApproved(),
+    activeModal: selectors.getActiveModal(),
   });
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({

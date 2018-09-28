@@ -5,11 +5,13 @@ import {
   SET_MEMBERS,
   SET_NAMESPACE_INFO,
   SET_RESOURCE_POOLS,
+  SET_ACTIVE_MODAL,
 } from './actions';
 
 const initialState = fromJS({
   fetching: false,
   details: false,
+  activeModal: false,
 });
 
 const details = (state = initialState, action: any) => {
@@ -35,6 +37,10 @@ const details = (state = initialState, action: any) => {
     case SET_RESOURCE_POOLS:
       return state
         .set('resourcePools', fromJS(action.resourcePools));
+
+    case SET_ACTIVE_MODAL:
+        return state
+          .set('activeModal', action.activeModal);
 
     default:
       return state;

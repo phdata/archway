@@ -51,3 +51,9 @@ export const getApproved = () => createSelector(
     (workspaceState.get('details') as Workspace).approvals!.infra &&
     (workspaceState.get('details') as Workspace).approvals!.risk,
 );
+
+export const getActiveModal = () => createSelector(
+  workspaceSelector,
+  (workspaceState) =>
+    workspaceState.get('activeModal'),
+);

@@ -50,3 +50,9 @@ export const setNamespaceInfo = (infos: NamespaceInfo[]) => ({
   type: SET_NAMESPACE_INFO,
   infos,
 });
+
+export const SET_ACTIVE_MODAL = 'SET_ACTIVE_MODAL';
+export const setActiveModal = (activeModal: string | boolean) => ({
+  type: SET_ACTIVE_MODAL,
+  activeModal,
+});
