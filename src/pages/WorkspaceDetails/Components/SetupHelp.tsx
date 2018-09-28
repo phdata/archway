@@ -17,36 +17,32 @@ const SetupHelp = ({}: Props) => (
       <Col span={24} lg={12}>
         <h3>Write your application...</h3>
         <SyntaxHighlighter language="python" style={tomorrowNightEighties}>
-        {```
-          from impala.dbapi
-          import connect
-          conn = connect(
-            host = ‘\$ {
-              host
-            }’, port = \$ {
-              port
-            }, database = ‘\$ {
-              dbName
-            }’)
-          cursor = conn.cursor()
-          cursor.execute(‘SELECT * FROM mytable LIMIT 100’)
-          print cursor.description # prints the result set’ s schema
-          results = cursor.fetchall()
-        ```}
+        {`from impala.dbapi
+import connect
+conn = connect(
+  host = ‘\$ {
+    host
+  }’, port = \$ {
+    port
+  }, database = ‘\$ {
+    dbName
+  }’)
+cursor = conn.cursor()
+cursor.execute(‘SELECT * FROM mytable LIMIT 100’)
+print cursor.description # prints the result set’ s schema
+results = cursor.fetchall()`}
         </SyntaxHighlighter>
       </Col>
       <Col span={24} lg={12}>
         <h3>Then just run it!</h3>
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           <SyntaxHighlighter language="shell" style={tomorrowNightEighties}>
-          {`
-            $ spark-submit --class org.apache.spark.examples.SparkPi \\
-            --master yarn \\
-            --deploy-mode cluster \\
-            --queue poolName \\
-            examples/jars/spark-examples*.jar \\
-            10
-          `.replace('           ', '')}
+          {`$ spark-submit --class org.apache.spark.examples.SparkPi \\
+    --master yarn \\
+    --deploy-mode cluster \\
+    --queue poolName \\
+    examples/jars/spark-examples*.jar \\
+    10`}
           </SyntaxHighlighter>
           <h3>...then refresh the page to see your new application above!</h3>
         </div>

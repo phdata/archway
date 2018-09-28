@@ -7,16 +7,18 @@ import Colors from '../../../components/Colors';
 interface Props {
   consumerGroup: string;
   topics: KafkaTopic[];
+
+  showModal: () => void;
 }
 
 const renderTopic = (topic: KafkaTopic) => (
   <div>topic.name</div>
 );
 
-const KafkaDetails = ({consumerGroup, topics}: Props) => (
+const KafkaDetails = ({consumerGroup, topics, showModal}: Props) => (
   <Card
     actions={[
-      <a href="#">Add a topic</a>,
+      <a href="#" onClick={showModal}>Add a topic</a>,
     ]}>
     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
       <Label style={{ lineHeight: '20px' }}>

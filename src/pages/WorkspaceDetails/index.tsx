@@ -40,6 +40,8 @@ interface Props extends RouteComponentProps<DetailsRouteProps> {
   getWorkspaceDetails: (id: number) => void;
   getTableList: (id: number) => void;
   getApplicationList: (id: number) => void;
+  showTopicDialog: () => void;
+  clearModal: () => void;
 }
 
 class WorkspaceDetails extends React.PureComponent<Props> {
@@ -50,7 +52,17 @@ class WorkspaceDetails extends React.PureComponent<Props> {
   }
 
   public render() {
-    const { workspace, cluster, loading, pools, infos, approved, activeModal } = this.props;
+    const {
+      workspace,
+      cluster,
+      loading,
+      pools,
+      infos,
+      approved,
+      activeModal,
+      showTopicDialog,
+      clearModal,
+    } = this.props;
 
     if (loading || !workspace) { return <Spin />; }
 
@@ -118,8 +130,11 @@ class WorkspaceDetails extends React.PureComponent<Props> {
             <Col span={24} lg={12} style={{ marginTop: 10 }}>
               <KafkaDetails
                 consumerGroup={workspace.applications[0] && workspace.applications[0].consumer_group}
-                topics={workspace.topics} />
-                <Modal visible={activeModal === 'liason'} />
+                topics={workspace.topics}
+                showModal={showTopicDialog} />
+              <Modal
+                visible={activeModal === 'kafka'}
+                onCancel={clearModal} />
             </Col>
             <Col span={24} lg={12} style={{ marginTop: 10 }}>
               <MemberList />
@@ -149,6 +164,11 @@ const mapStateToProps = () =>
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
   getWorkspaceDetails: (id: number) => dispatch(actions.getWorkspace(id)),
+  showTopicDialog: (e: any) => {
+    e.preventDefault();
+    return dispatch(actions.setActiveModal('kafka'));
+  },
+  clearModal: () => dispatch(actions.setActiveModal(false)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(WorkspaceDetails);
