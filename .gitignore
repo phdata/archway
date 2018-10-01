@@ -12,6 +12,8 @@ src/main/resources/*-site.xml
 
 # production
 /build
+/built
+/dist
 
 # misc
 .DS_Store
