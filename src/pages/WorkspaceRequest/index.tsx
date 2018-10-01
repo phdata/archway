@@ -54,7 +54,9 @@ const WorkspaceRequest =
             setRequest={setRequest} />
         </Tabs.TabPane>
         <Tabs.TabPane tab="Review" key="3">
-          <SummaryPage workspace={workspace} name="Benny Thompson" />
+          <SummaryPage
+            workspace={workspace}
+            name="Benny Thompson" />
         </Tabs.TabPane>
       </Tabs>
 
@@ -107,6 +109,7 @@ const mapStateToProps = () =>
     workspace: selectors.getGeneratedWorkspace(),
     ready: selectors.isReady(),
     completeEnabled: selectors.isCompleteEnabled(),
+    profile: selectors.getProfile(),
   });
 
 const mapDispatchToProps = (dispatch: any) => ({

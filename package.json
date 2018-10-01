@@ -14,6 +14,7 @@
     "prepare": "tsc && webpack --progress --config webpack.prod.config.js"
   },
   "dependencies": {
+    "@types/redux-form": "^7.4.8",
     "antd": "^3.9.2",
     "chart.js": "^2.7.2",
     "color": "^3.0.0",
@@ -28,7 +29,7 @@
     "react-chartjs": "^1.2.0",
     "react-chartjs-2": "^2.7.4",
     "react-dom": "16.2.0",
-    "react-redux": "^5.0.6",
+    "react-redux": "^5.0.7",
     "react-router": "4.2.0",
     "react-router-dom": "4.2.2",
     "react-scripts": "1.1.0",
@@ -37,6 +38,7 @@
     "redbox-react": "latest",
     "redux": "^3.7.2",
     "redux-form": "^7.2.1",
+    "redux-form-antd": "^3.0.3",
     "redux-immutable": "^4.0.0",
     "redux-saga": "^0.16.0",
     "reselect": "^3.0.1",

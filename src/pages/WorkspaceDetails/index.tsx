@@ -19,6 +19,7 @@ import YarnDetails from './Components/YarnDetails';
 import SetupHelp from './Components/SetupHelp';
 import Allocations from './Components/Allocations';
 import * as selectors from './selectors';
+import KafkaTopicRequest from './Components/KafkaTopicRequest';
 
 /* tslint:disable:no-var-requires */
 const TimeAgo = require('timeago-react').default;
@@ -134,7 +135,9 @@ class WorkspaceDetails extends React.PureComponent<Props> {
                 showModal={showTopicDialog} />
               <Modal
                 visible={activeModal === 'kafka'}
-                onCancel={clearModal} />
+                onCancel={clearModal}>
+                <KafkaTopicRequest />
+              </Modal>
             </Col>
             <Col span={24} lg={12} style={{ marginTop: 10 }}>
               <MemberList />

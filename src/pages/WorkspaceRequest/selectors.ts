@@ -2,6 +2,7 @@ import { createSelector } from 'reselect';
 import * as selectors from '../../selectors';
 import { RequestInput } from '../../types/RequestInput';
 import { Workspace } from '../../types/Workspace';
+import { Profile } from '../../types/Profile';
 
 export const getBehavior = () => createSelector(
   selectors.requestSelector,
@@ -41,4 +42,10 @@ export const isCompleteEnabled = () => createSelector(
   selectors.requestSelector,
   (requestState) =>
     requestState.get('page') === 3 && !!requestState.get('behavior') && !!requestState.get('request'),
+);
+
+export const getProfile = () => createSelector(
+  selectors.authSelector,
+  (authState) =>
+    authState.get('profile') as Profile,
 );
