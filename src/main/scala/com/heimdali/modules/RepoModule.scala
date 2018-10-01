@@ -10,7 +10,7 @@ trait RepoModule {
 
   val ldapRepository: LDAPRepository = new LDAPRepositoryImpl(clock)
 
-  val hiveDatabaseRepository: HiveDatabaseRepository = new HiveDatabaseRepositoryImpl(clock)
+  val hiveDatabaseRepository: HiveAllocationRepository = new HiveAllocationRepositoryImpl(clock)
 
   val yarnRepository: YarnRepository = new YarnRepositoryImpl(clock)
 

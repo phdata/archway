@@ -8,8 +8,8 @@ import doobie._
 import doobie.implicits._
 import doobie.util.fragments.whereAnd
 
-class HiveDatabaseRepositoryImpl(val clock: Clock)
-  extends HiveDatabaseRepository {
+class HiveAllocationRepositoryImpl(val clock: Clock)
+  extends HiveAllocationRepository {
 
   def find(id: Long): OptionT[ConnectionIO, HiveAllocation] = {
     OptionT {
@@ -81,7 +81,8 @@ class HiveDatabaseRepositoryImpl(val clock: Clock)
          rg.database_access,
 
          h.id,
-         h.directory_created
+         h.directory_created,
+         h.database_created
        from hive_database h
        inner join hive_grant mg on h.manager_group_id = mg.id
        inner join ldap_registration m on mg.ldap_registration_id = m.id

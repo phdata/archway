@@ -18,7 +18,7 @@ import scala.concurrent.ExecutionContext
 
 class WorkspaceServiceImpl[F[_]](ldapClient: LDAPClient[F],
                                  yarnRepository: YarnRepository,
-                                 hiveDatabaseRepository: HiveDatabaseRepository,
+                                 hiveDatabaseRepository: HiveAllocationRepository,
                                  ldapRepository: LDAPRepository,
                                  workspaceRepository: WorkspaceRequestRepository,
                                  complianceRepository: ComplianceRepository,
@@ -107,7 +107,16 @@ class WorkspaceServiceImpl[F[_]](ldapClient: LDAPClient[F],
             _ <- workspaceRepository.linkPool(newWorkspaceId, newYarnId)
           } yield yarn.copy(id = Some(newYarnId))
       }
-    } yield updatedWorkspace.copy(id = Some(newWorkspaceId), data = insertedHive, processing = insertedYarn))
+
+      insertedApplications <- workspace.applications.traverse[ConnectionIO, Application] { app =>
+        for {
+          appLdap <- ldapRepository.create(app.group)
+          newApplicationId <- applicationRepository.create(app.copy(group = appLdap))
+          _ <- workspaceRepository.linkApplication(newWorkspaceId, newApplicationId)
+          _ <- memberRepository.create(workspace.requestedBy, appLdap.id.get)
+        } yield app.copy(id = Some(newApplicationId))
+      }
+    } yield updatedWorkspace.copy(id = Some(newWorkspaceId), data = insertedHive, processing = insertedYarn, applications = insertedApplications))
       .transact(transactor)
 
   override def approve(id: Long, approval: Approval): F[Approval] =
@@ -143,6 +152,9 @@ class WorkspaceServiceImpl[F[_]](ldapClient: LDAPClient[F],
   override def hiveDetails(id: Long): F[List[HiveDatabase]] =
     for {
       datas <- hiveDatabaseRepository.findByWorkspace(id).transact(transactor)
-      result <- datas.map(h => appConfig.hiveClient.describeDatabase(h.name)).sequence
+      result <- datas.map {
+        case h if h.databaseCreated.isDefined => OptionT.liftF(appConfig.hiveClient.describeDatabase(h.name))
+        case _ => OptionT.none[F, HiveDatabase]
+      }.traverse(_.value).map(_.flatten)
     } yield result
 }

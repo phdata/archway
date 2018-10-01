@@ -4,7 +4,7 @@ import cats.data.OptionT
 import com.heimdali.models.HiveAllocation
 import doobie.free.connection.ConnectionIO
 
-trait HiveDatabaseRepository {
+trait HiveAllocationRepository {
   def create(hiveDatabase: HiveAllocation): ConnectionIO[Long]
 
   def find(id: Long): OptionT[ConnectionIO, HiveAllocation]

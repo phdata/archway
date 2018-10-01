@@ -19,7 +19,8 @@ case class HiveAllocation(name: String,
                           managingGroup: HiveGrant,
                           readonlyGroup: Option[HiveGrant] = None,
                           id: Option[Long] = None,
-                          directoryCreated: Option[Instant] = None)
+                          directoryCreated: Option[Instant] = None,
+                          databaseCreated: Option[Instant] = None)
 
 object HiveAllocation {
 
