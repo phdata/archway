@@ -22,7 +22,11 @@ const MemberList = ({ members }: Props) => (
     ]}>
     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
       <Label style={{ lineHeight: '20px', justifyContent: 'start' }}>
-        <Icon theme="twoTone" twoToneColor={Colors.Green.string()} type="lock" style={{ paddingRight: 5, fontSize: 20 }} />Members
+        <Icon
+          theme="twoTone"
+          twoToneColor={Colors.Green.string()}
+          type="lock"
+          style={{ paddingRight: 5, fontSize: 20 }} />Members
       </Label>
       <Label style={{ lineHeight: '18px' }}>
         <small>{members ? members.length : 0} members</small>

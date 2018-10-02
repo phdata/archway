@@ -7,7 +7,7 @@ function* fetchWorkspace({ id }: { type: string, id: number }) {
   const workspace = yield call(Api.getWorkspace, token, id);
   yield put(setWorkspace(workspace));
 
-  const {members, resourcePools, infos} = yield all({
+  const { members, resourcePools, infos } = yield all({
     members: call(Api.getMembers, token, id),
     resourcePools: call(Api.getYarnApplications, token, id),
     infos: call(Api.getHiveTables, token, id),

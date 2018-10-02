@@ -1,7 +1,7 @@
 import { Col, Row, Spin, Modal } from 'antd';
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { RouteComponentProps } from 'react-router';
+import { RouteComponentProps, withRouter } from 'react-router';
 import { Dispatch } from 'redux';
 import { createStructuredSelector } from 'reselect';
 import { Cluster } from '../../types/Cluster';
@@ -29,34 +29,30 @@ interface DetailsRouteProps {
 }
 
 interface Props extends RouteComponentProps<DetailsRouteProps> {
-  workspace?: Workspace;
-  cluster: Cluster;
-  profile: Profile;
-  loading: boolean;
-  pools?: PoolInfo[];
-  infos?: NamespaceInfo[];
-  approved: boolean;
-  activeModal?: string;
+    workspace?: Workspace;
+    cluster: Cluster;
+    profile: Profile;
+    pools?: PoolInfo[];
+    infos?: NamespaceInfo[];
+    approved?: boolean;
+    activeModal?: string;
 
-  getWorkspaceDetails: (id: number) => void;
-  getTableList: (id: number) => void;
-  getApplicationList: (id: number) => void;
-  showTopicDialog: () => void;
-  clearModal: () => void;
+    getWorkspaceDetails: (id: number) => void;
+    showTopicDialog: (e: React.MouseEvent) => void;
+    clearModal: () => void;
 }
 
 class WorkspaceDetails extends React.PureComponent<Props> {
 
-  public componentDidMount() {
+    public componentDidMount() {
     const { match: { params: { id } } } = this.props;
     this.props.getWorkspaceDetails(id);
   }
 
-  public render() {
+    public render() {
     const {
       workspace,
       cluster,
-      loading,
       pools,
       infos,
       approved,
@@ -65,7 +61,7 @@ class WorkspaceDetails extends React.PureComponent<Props> {
       clearModal,
     } = this.props;
 
-    if (loading || !workspace) { return <Spin />; }
+    if (!workspace) { return <Spin />; }
 
     return (
       <div>
@@ -74,21 +70,21 @@ class WorkspaceDetails extends React.PureComponent<Props> {
               {workspace!.name}
               <span
                 style={{
-                    verticalAlign: 'super',
-                    fontSize: 10,
-                    color: approved ? 'green' : 'red',
-                    textTransform: 'uppercase',
-                  }}>
+                  verticalAlign: 'super',
+                  fontSize: 10,
+                  color: approved ? 'green' : 'red',
+                  textTransform: 'uppercase',
+                }}>
                 {approved ? 'approved' : 'pending'}
               </span>
             </h1>
             <div>{workspace!.summary}</div>
             <div
               style={{
-                  textTransform: 'uppercase',
-                  fontSize: 12,
-                  color: '#aaa',
-                }}>
+                textTransform: 'uppercase',
+                fontSize: 12,
+                color: '#aaa',
+              }}>
               created <TimeAgo datetime={workspace.requested_date} />
             </div>
           </div>
@@ -117,18 +113,18 @@ class WorkspaceDetails extends React.PureComponent<Props> {
             </Col>
           </Row>
           <Row gutter={12} type="flex" style={{ flexDirection: 'row' }}>
-            <Col span={24} lg={12} style={{ marginTop: 10 }}>
+            <Col span={24} lg={6} style={{ marginTop: 10 }}>
               <HiveDetails
                 hue={cluster.services && cluster.services.hue}
                 namespace={workspace.data[0].name}
                 info={infos} />
             </Col>
-            <Col span={24} lg={12} style={{ marginTop: 10 }}>
+            <Col span={24} lg={6} style={{ marginTop: 10 }}>
               <YarnDetails
                 poolName={workspace.processing[0].pool_name}
                 pools={pools} />
             </Col>
-            <Col span={24} lg={12} style={{ marginTop: 10 }}>
+            <Col span={24} lg={6} style={{ marginTop: 10 }}>
               <KafkaDetails
                 consumerGroup={workspace.applications[0] && workspace.applications[0].consumer_group}
                 topics={workspace.topics}
@@ -139,7 +135,7 @@ class WorkspaceDetails extends React.PureComponent<Props> {
                 <KafkaTopicRequest />
               </Modal>
             </Col>
-            <Col span={24} lg={12} style={{ marginTop: 10 }}>
+            <Col span={24} lg={6} style={{ marginTop: 10 }}>
               <MemberList />
             </Col>
           </Row>
@@ -167,11 +163,11 @@ const mapStateToProps = () =>
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
   getWorkspaceDetails: (id: number) => dispatch(actions.getWorkspace(id)),
-  showTopicDialog: (e: any) => {
+  showTopicDialog: (e: React.MouseEvent) => {
     e.preventDefault();
     return dispatch(actions.setActiveModal('kafka'));
   },
   clearModal: () => dispatch(actions.setActiveModal(false)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(WorkspaceDetails);
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(WorkspaceDetails));

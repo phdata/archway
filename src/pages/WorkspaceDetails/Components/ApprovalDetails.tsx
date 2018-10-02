@@ -4,9 +4,9 @@ import Label from './Label';
 import { ApprovalItem } from '../../../types/Workspace';
 
 interface ItemProps {
-  approvalDate?: string;
-  icon: string;
-  children: any;
+    approvalDate?: string;
+    icon: string;
+    children: any;
 }
 
 const Approval = ({ approvalDate, icon, children }: ItemProps) => (
@@ -20,11 +20,11 @@ const Approval = ({ approvalDate, icon, children }: ItemProps) => (
 );
 
 interface Props {
-  infra?: ApprovalItem;
-  risk?: ApprovalItem;
+    infra?: ApprovalItem;
+    risk?: ApprovalItem;
 }
 
-const ApprovalDetails = ({infra, risk}: Props) => (
+const ApprovalDetails = ({ infra, risk }: Props) => (
   <Card
     style={{ display: 'flex', flex: 1 }}
     bodyStyle={{ display: 'flex', flexDirection: 'column', flex: 1 }}>

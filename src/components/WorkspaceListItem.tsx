@@ -3,8 +3,8 @@ import * as React from 'react';
 import { Workspace } from '../types/Workspace';
 
 interface Props {
-  workspace: Workspace;
-  onSelected: (id: number) => void;
+    workspace: Workspace;
+    onSelected: (id: number) => void;
 }
 
 const WorkspaceListItem = ({ workspace, onSelected }: Props) => {

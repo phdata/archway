@@ -1,23 +1,23 @@
-import { Button, Col, Form, Icon, Input, Row, Card } from 'antd';
-import { FormikProps, withFormik, InjectedFormikProps } from 'formik';
+import { Button, Card, Col, Form, Icon, Input, Row } from 'antd';
+import { InjectedFormikProps, withFormik } from 'formik';
 import * as React from 'react';
 import { connect } from 'react-redux';
+import { Dispatch } from 'redux';
 import { createStructuredSelector } from 'reselect';
+import Colors from '../../components/Colors';
 import { Login } from '../../types/Login';
 import { login } from './actions';
 import logo from './logo_black.png';
 import { isLoggingIn, loginError } from './selectors';
-import { Dispatch } from 'redux';
-import Colors from '../../components/Colors';
 
 interface Props {
-  onSubmit: (payload: Login) => void;
-  loggingIn: boolean;
-  error: string;
+    onSubmit: (payload: Login) => void;
+    loggingIn: boolean;
+    error: string;
 }
 
 class LoginForm extends React.PureComponent<InjectedFormikProps<Props, Login>> {
-  public render() {
+    public render() {
     const { handleSubmit, handleChange, values: { username, password } } = this.props;
     return (
       <Form
@@ -61,7 +61,7 @@ const LoginFormRender = withFormik<Props, Login>({
 })(LoginForm);
 
 class LoginPage extends React.PureComponent<Props> {
-  public render() {
+    public render() {
     return (
   <Row
     type="flex"
@@ -85,7 +85,7 @@ class LoginPage extends React.PureComponent<Props> {
       </Row>
     </Col>
   </Row>
-);
+    );
   }
 }
 

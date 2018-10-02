@@ -8,8 +8,8 @@ import { getProfile } from '../../selectors';
 import { Profile } from '../../types/Profile';
 
 interface Props {
-  profile: Profile;
-  doLogout: () => void;
+    profile: Profile;
+    doLogout: () => void;
 }
 
 const Profile = ({ profile, doLogout }: Props) => {

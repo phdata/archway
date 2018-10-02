@@ -5,10 +5,10 @@ import { solarizedDark } from 'react-syntax-highlighter/styles/hljs';
 import { Workspace } from '../../types/Workspace';
 
 interface Props {
-  workspace: Workspace;
-  services: any;
-  loading: boolean;
-  requestWorkspace: () => void;
+    workspace: Workspace;
+    services: any;
+    loading: boolean;
+    requestWorkspace: () => void;
 }
 
 const PersonalWorkspace = ({ workspace, services, requestWorkspace, loading }: Props) => {
@@ -36,14 +36,14 @@ const PersonalWorkspace = ({ workspace, services, requestWorkspace, loading }: P
     <div style={{ position: 'relative' }}>
       <div
         style={{
-            position: 'absolute',
-            zIndex: 999,
-            display: workspace.data ? 'none' : 'flex',
-            width: '100%',
-            height: '100%',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}>
+          position: 'absolute',
+          zIndex: 999,
+          display: workspace.data ? 'none' : 'flex',
+          width: '100%',
+          height: '100%',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}>
         {loading && <Spin />}
         {!loading && (
           <Card bodyStyle={{ textAlign: 'center' }}>

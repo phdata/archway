@@ -12,10 +12,10 @@ const Navigation = ({ location }: any) => (
     <img src={logo} style={{ padding: 25, width: '100%' }} alt="Heimdali Logo" />
     <ClusterInfo />
     <Menu style={{
-        marginTop: 25,
-        letterSpacing: 1,
-        textTransform: 'uppercase',
-      }} selectedKeys={[location.pathname]} theme="dark" mode="inline">
+      marginTop: 25,
+      letterSpacing: 1,
+      textTransform: 'uppercase',
+    }} selectedKeys={[location.pathname]} theme="dark" mode="inline">
       <Menu.Item style={{ marginTop: 20 }} key="/home">
         <NavLink to="/">
           <Icon type="home" style={{ fontSize: 18 }} /> Overview

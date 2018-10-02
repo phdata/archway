@@ -3,10 +3,10 @@ import * as React from 'react';
 import { ServiceLinks, Status, Statusable } from '../../types/Cluster';
 
 export interface Props {
-  name: string;
-  status: Status<Statusable>;
-  links: ServiceLinks<Statusable>;
-  index: number;
+    name: string;
+    status: Status<Statusable>;
+    links: ServiceLinks<Statusable>;
+    index: number;
 }
 
 const ServiceDisplay = ({ name, status, links, index }: Props) => (

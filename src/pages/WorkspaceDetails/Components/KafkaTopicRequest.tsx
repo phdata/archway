@@ -6,16 +6,12 @@ import { reduxForm } from 'redux-form/immutable';
 /* tslint:disable:no-var-requires */
 const { TextField } = require('redux-form-antd');
 
-interface Props {
-  handleSubmit: () => void;
-}
-
 interface KafkaForm {
   name: string;
 }
 
-const KafkaTopicRequest = ({ handleSubmit }: InjectedFormProps<KafkaForm>) => (
-  <Form layout="vertical" onSubmit={handleSubmit}>
+const KafkaTopicRequest = ({ handleSubmit }: InjectedFormProps<KafkaForm, {}>) => (
+  <Form style={{  }} onSubmit={handleSubmit}>
     <Field name="name" component={TextField} />
   </Form>
 );

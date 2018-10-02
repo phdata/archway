@@ -11,17 +11,17 @@ import * as selectors from './selectors';
 import SummaryPage from './SummaryPage';
 
 interface Props {
-  behavior?: string;
-  request: RequestInput;
-  selectedPage: number;
-  workspace?: Workspace;
-  ready: boolean;
-  completeEnabled: boolean;
+    behavior?: string;
+    request: RequestInput;
+    selectedPage: number;
+    workspace?: Workspace;
+    ready: boolean;
+    completeEnabled: boolean;
 
-  setBehavior: (behavior: string) => void;
-  setRequest: (request: RequestInput) => void;
-  setPage: (page: number) => void;
-  requestWorkspace: () => void;
+    setBehavior: (behavior: string) => void;
+    setRequest: (request: RequestInput) => void;
+    setPage: (page: number) => void;
+    requestWorkspace: () => void;
 }
 
 const WorkspaceRequest =
@@ -36,10 +36,10 @@ const WorkspaceRequest =
     setPage,
     selectedPage,
   }: Props) => {
-  const nextPage = () => setPage(selectedPage + 1);
-  const previousPage = () => setPage(selectedPage - 1);
+    const nextPage = () => setPage(selectedPage + 1);
+    const previousPage = () => setPage(selectedPage - 1);
 
-  return (
+    return (
     <div style={{ textAlign: 'center', color: 'black' }}>
       <h1>New Workspace Request and so much</h1>
 
@@ -99,7 +99,7 @@ const WorkspaceRequest =
       </Row>
     </div>
   );
-};
+  };
 
 const mapStateToProps = () =>
   createStructuredSelector({

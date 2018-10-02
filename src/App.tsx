@@ -3,7 +3,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import Login from './pages/Login';
-import {Icon} from 'antd';
+import { Icon } from 'antd';
 import Main from './Main';
 import { getToken, isLoading } from './selectors';
 

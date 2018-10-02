@@ -18,14 +18,14 @@ const RequestSchema = Yup.object().shape({
 
 class OverviewPage extends React.PureComponent<InjectedFormikProps<Props, RequestInput>> {
 
-  constructor(props: InjectedFormikProps<Props, RequestInput>) {
+    constructor(props: InjectedFormikProps<Props, RequestInput>) {
     super(props);
 
     this.updateComplianceItem = this.updateComplianceItem.bind(this);
     this.onChangeWrapper = this.onChangeWrapper.bind(this);
   }
 
-  public render() {
+    public render() {
     const {
       handleSubmit,
       errors,
@@ -88,12 +88,12 @@ class OverviewPage extends React.PureComponent<InjectedFormikProps<Props, Reques
     );
   }
 
-  private updateComplianceItem(e: CheckboxChangeEvent) {
+    private updateComplianceItem(e: CheckboxChangeEvent) {
     this.props.setFieldValue(`compliance.${e.target.name!}`, e.target.checked);
     this.props.submitForm();
   }
 
-  private onChangeWrapper(e: any) {
+    private onChangeWrapper(e: any) {
     this.props.handleChange(e);
     this.props.submitForm();
   }
