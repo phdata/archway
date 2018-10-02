@@ -2,30 +2,30 @@ import { Card, Icon, List } from 'antd';
 import * as React from 'react';
 
 interface Props {
-  behaviorKey: string;
-  icon: string;
-  title: string;
-  description?: string;
-  useCases?: string[];
-  selected?: boolean;
-  style?: React.CSSProperties;
-  onChange: (behavior: string, selected: boolean) => void;
+    behaviorKey: string;
+    icon: string;
+    title: string;
+    description?: string;
+    useCases?: string[];
+    selected?: boolean;
+    style?: React.CSSProperties;
+    onChange: (behavior: string, selected: boolean) => void;
 }
 
 const UseCase = (item: string) => <div>{item}</div>;
 
 class Behavior extends React.PureComponent<Props> {
 
-  constructor(props: Props) {
+    constructor(props: Props) {
     super(props);
 
     this.select = this.select.bind(this);
   }
-  public select() {
+    public select() {
     this.props.onChange(this.props.behaviorKey, !this.props.selected);
   }
 
-  public render() {
+    public render() {
     const { icon, title, description, useCases, selected } = this.props;
     return (
       <Card

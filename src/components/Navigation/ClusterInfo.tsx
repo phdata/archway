@@ -24,11 +24,11 @@ const ClusterInfo = ({ cluster }: Props) => {
   return (
     <Tooltip placement="right" title={`${cluster.name}'s status is currently ${status.statusText()}`}>
       <div style={{
-          padding: 10,
-          color: 'white',
-          backgroundColor: status.statusColor().string(),
-          textAlign: 'center',
-        }}>
+        padding: 10,
+        color: 'white',
+        backgroundColor: status.statusColor().string(),
+        textAlign: 'center',
+      }}>
         {cluster.name} is {status.statusText()}
       </div>
     </Tooltip>

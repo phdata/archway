@@ -1,17 +1,17 @@
 import { Card, Col, Icon, List, Row } from 'antd';
 import * as React from 'react';
-import { Database, ResourcePool, Workspace, Application } from '../../types/Workspace';
+import { ResourcePool, Workspace, Application, HiveAllocation } from '../../types/Workspace';
 import Label from '../WorkspaceDetails/Components/Label';
 
 interface Props {
-  workspace?: Workspace;
-  name: string;
+    workspace?: Workspace;
+    name: string;
 }
 
 const ResourceItem = (name: string) => <h4>{name}</h4>;
 
 const SummaryPage = ({ workspace, name }: Props) => {
-  const databaseNames = workspace && workspace.data.map((database: Database) => database.name);
+  const databaseNames = workspace && workspace.data.map((database: HiveAllocation) => database.name);
   const poolNames = workspace && workspace.processing.map((pool: ResourcePool) => pool.pool_name);
   const applicationNames = workspace && workspace.applications.map((application: Application) => application.name);
   return (

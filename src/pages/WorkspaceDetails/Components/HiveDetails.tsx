@@ -6,26 +6,32 @@ import { HueService } from '../../../types/Cluster';
 import Colors from '../../../components/Colors';
 
 interface Props {
-  hue?: HueService;
-  namespace: string;
-  info?: NamespaceInfo[];
+    hue?: HueService;
+    namespace: string;
+    info?: NamespaceInfo[];
 }
 
 const renderTable = (hiveTable: HiveTable) => (
-  <div>{hiveTable.name}</div>
+  <div style={{ margin: 10, textAlign: 'center' }}>{hiveTable.name}</div>
 );
 
 const HiveDetails = ({ hue, namespace, info }: Props) => (
   <Card
     actions={[
-      <a href={hue && `http://${hue.load_balancer[0].host}:${hue.load_balancer[0].port}/hue/metastore/tables/`}>See in Hue</a>
+      <a href={hue && `http://${hue.load_balancer[0].host}:${hue.load_balancer[0].port}/hue/metastore/tables/`}>
+        See in Hue
+      </a>,
     ]}>
     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
       <Label style={{ lineHeight: '20px' }}>
-        <Icon theme="twoTone" twoToneColor={Colors.Green.string()} type="database" style={{ paddingRight: 5, fontSize: 20 }} />Hive
+        <Icon
+          theme="twoTone"
+          twoToneColor={Colors.Green.string()}
+          type="database"
+          style={{ paddingRight: 5, fontSize: 20 }} />Hive
         </Label>
-      <Label style={{ lineHeight: '18px' }}>
-        <small>{namespace}</small>
+      <Label style={{ lineHeight: '18px', fontSize: 10 }}>
+        {namespace}
       </Label>
     </div>
     <List

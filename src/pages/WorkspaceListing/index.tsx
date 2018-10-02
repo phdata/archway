@@ -13,27 +13,27 @@ import * as selectors from './selectors';
 const router = require('connected-react-router/immutable');
 
 interface Props {
-  fetching: boolean;
-  workspaceList: Workspace[];
-  filters: { filter: string, behaviors: string[] };
-  updateFilter: (filter: string, behavior: string[]) => void;
-  openWorkspace: (id: number) => void;
-  listWorkspaces: () => void;
+    fetching: boolean;
+    workspaceList: Workspace[];
+    filters: { filter: string, behaviors: string[] };
+    updateFilter: (filter: string, behavior: string[]) => void;
+    openWorkspace: (id: number) => void;
+    listWorkspaces: () => void;
 }
 
 class WorkspaceList extends React.PureComponent<Props> {
-  constructor(props: Props) {
+    constructor(props: Props) {
     super(props);
 
     this.filterUpdated = this.filterUpdated.bind(this);
     this.behaviorChanged = this.behaviorChanged.bind(this);
   }
 
-  public filterUpdated(event: React.ChangeEvent<HTMLInputElement>) {
+    public filterUpdated(event: React.ChangeEvent<HTMLInputElement>) {
     this.props.updateFilter(event.target.value, this.props.filters.behaviors);
   }
 
-  public behaviorChanged(behavior: string, checked: boolean) {
+    public behaviorChanged(behavior: string, checked: boolean) {
     const behaviors = this.props.filters.behaviors;
     if (checked) {
       behaviors.push(behavior);
@@ -44,11 +44,11 @@ class WorkspaceList extends React.PureComponent<Props> {
     this.props.updateFilter(this.props.filters.filter, this.props.filters.behaviors);
   }
 
-  public componentDidMount() {
+    public componentDidMount() {
     this.props.listWorkspaces();
   }
 
-  public render() {
+    public render() {
     const { fetching, workspaceList, filters: { filter, behaviors }, openWorkspace } = this.props;
     const renderItem = (workspace: Workspace) => <WorkspaceListItem workspace={workspace} onSelected={openWorkspace} />;
     return (

@@ -3,8 +3,8 @@ import * as React from 'react';
 import Behavior from '../../components/Behavior';
 
 interface Props {
-  selected?: string;
-  onChange: (behavior: string) => void;
+    selected?: string;
+    onChange: (behavior: string) => void;
 }
 
 const BehaviorPage = ({ selected, onChange }: Props) => (

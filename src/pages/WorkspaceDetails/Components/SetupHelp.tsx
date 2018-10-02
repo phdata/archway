@@ -4,11 +4,7 @@ import Label from './Label';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { tomorrowNightEighties } from 'react-syntax-highlighter/styles/hljs';
 
-interface Props {
-  liaison: string;
-}
-
-const SetupHelp = ({}: Props) => (
+const SetupHelp = ({}: {}) => (
   <Card
     style={{ display: 'flex', flex: 1 }}
     bodyStyle={{ display: 'flex', flexDirection: 'column', flex: 1 }}>

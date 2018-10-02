@@ -23,10 +23,10 @@ export const getProfile = () => createSelector(
 
 const liasionFilter = (state: any) => (member: Member) =>
   member.username !== (state.get('details').toJS() as Workspace).requester;
-  
+
 export const getMembers = () => createSelector(
   workspaceSelector,
-  (workspaceState) => 
+  (workspaceState) =>
     (workspaceState.get('members') && workspaceState.get('details') &&
       workspaceState.get('members').toJS().filter(liasionFilter(workspaceState)) as Member[]),
 );
@@ -46,10 +46,10 @@ export const getPoolInfo = () => createSelector(
 export const getApproved = () => createSelector(
   workspaceSelector,
   (workspaceState) =>
-    workspaceState.get('details') &&
-    (workspaceState.get('details') as Workspace).approvals &&
-    (workspaceState.get('details') as Workspace).approvals!.infra &&
-    (workspaceState.get('details') as Workspace).approvals!.risk,
+    !!workspaceState.get('details') &&
+    !!(workspaceState.get('details') as Workspace).approvals &&
+    !!(workspaceState.get('details') as Workspace).approvals!.infra &&
+    !!(workspaceState.get('details') as Workspace).approvals!.risk,
 );
 
 export const getActiveModal = () => createSelector(

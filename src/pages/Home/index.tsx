@@ -18,10 +18,10 @@ import { getClusterInfo, getPersonalWorkspace, isProfileLoading } from './select
 import ServiceDisplay from './Service';
 
 interface Props {
-  cluster: Cluster;
-  personalWorkspace: Workspace;
-  profileLoading: boolean;
-  requestWorkspace: () => void;
+    cluster: Cluster;
+    personalWorkspace: Workspace;
+    profileLoading: boolean;
+    requestWorkspace: () => void;
 }
 
 const Home = ({ cluster, personalWorkspace, profileLoading, requestWorkspace }: Props) => {
@@ -40,9 +40,9 @@ const Home = ({ cluster, personalWorkspace, profileLoading, requestWorkspace }: 
           The current status of {cluster.name} is{' '}
           <span
             style={{
-                fontWeight: 'bold',
-                color: clusterStatus.statusColor().string(),
-              }}>{clusterStatus.statusText()}</span>
+              fontWeight: 'bold',
+              color: clusterStatus.statusColor().string(),
+            }}>{clusterStatus.statusText()}</span>
         </h3>
         <h2>
           <a target="_blank" rel="noreferrer noopener" href={cluster.cm_url}>

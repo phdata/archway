@@ -39,7 +39,7 @@ const details = (state = initialState, action: any) => {
         .set('resourcePools', fromJS(action.resourcePools));
 
     case SET_ACTIVE_MODAL:
-        return state
+      return state
           .set('activeModal', action.activeModal);
 
     default:

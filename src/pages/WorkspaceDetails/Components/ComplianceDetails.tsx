@@ -3,9 +3,9 @@ import { Icon, Card } from 'antd';
 import Label from './Label';
 
 interface ItemProps {
-  checked: boolean;
-  children: string;
-  icon: string;
+    checked: boolean;
+    children: string;
+    icon: string;
 }
 
 const ComplianceItem = ({ checked, children, icon }: ItemProps) => (
@@ -20,12 +20,12 @@ const ComplianceItem = ({ checked, children, icon }: ItemProps) => (
 );
 
 interface Props {
-  pci: boolean;
-  phi: boolean;
-  pii: boolean;
+    pci: boolean;
+    phi: boolean;
+    pii: boolean;
 }
 
-const ComplianceDetails = ({pci, phi, pii}: Props) => (
+const ComplianceDetails = ({ pci, phi, pii }: Props) => (
   <Card
     style={{ display: 'flex', flex: 1 }}
     bodyStyle={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
