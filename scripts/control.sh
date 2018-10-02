@@ -20,7 +20,7 @@ case ${COMPONENT} in
     (api)
         case ${CMD} in
             (start)
-                exec java -Djavax.security.auth.useSubjectCredsOnly=false \
+                exec $JAVA_HOME/bin/java -Djavax.security.auth.useSubjectCredsOnly=false \
                           -Djava.security.auth.login.config=${CONF_DIR}/jaas.conf \
                           -cp ${CONF_DIR}:/usr/share/java/mysql-connector-java.jar:/usr/share/cmf/common_jars/postgres*.jar:/opt/cloudera/parcels/CDH/jars/bcprov-jdk15-1.45.jar:/opt/cloudera/parcels/CDH/lib/hive/lib/hive-jdbc-standalone.jar:`hadoop classpath`:$HEIMDALI_API_HOME/heimdali-api.jar \
                           com.heimdali.Main
