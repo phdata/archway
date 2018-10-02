@@ -22,7 +22,7 @@ case ${COMPONENT} in
             (start)
                 exec $JAVA_HOME/bin/java -Djavax.security.auth.useSubjectCredsOnly=false \
                           -Djava.security.auth.login.config=${CONF_DIR}/jaas.conf \
-                          -cp ${CONF_DIR}:/usr/share/java/mysql-connector-java.jar:/usr/share/cmf/common_jars/postgres*.jar:/opt/cloudera/parcels/CDH/jars/bcprov-jdk15-1.45.jar:/opt/cloudera/parcels/CDH/lib/hive/lib/hive-jdbc-standalone.jar:`hadoop classpath`:$HEIMDALI_API_HOME/heimdali-api.jar \
+                          -cp ${CONF_DIR}:/usr/share/java/mysql-connector-java.jar:/usr/share/cmf/common_jars/postgres*.jar:/opt/cloudera/parcels/CDH/jars/bcprov-jdk15-1.45.jar:/opt/cloudera/parcels/CDH/lib/hive/lib/hive-jdbc-standalone.jar:/opt/cloudera/parcels/CDH/lib/sentry/lib/sentry-provider*:`hadoop classpath`:$HEIMDALI_API_HOME/heimdali-api.jar \
                           com.heimdali.Main
                 ;;
             (*)
