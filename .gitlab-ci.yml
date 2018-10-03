@@ -49,7 +49,7 @@ publish:
     - mkdir -p ready/usr/lib/heimdali-api
     - mv heimdali-api.jar ready/usr/lib/heimdali-api/heimdali-api.jar
     - tar xvf heimdali-ui.tar
-    - mv build ready/usr/lib/heimdali-ui
+    - mv dist ready/usr/lib/heimdali-ui
     - chown -R 10000:10000 ready
     - mv ready HEIMDALI-${CI_COMMIT_TAG}
     - tar cvf HEIMDALI-${CI_COMMIT_TAG}-el7.parcel HEIMDALI-${CI_COMMIT_TAG}
