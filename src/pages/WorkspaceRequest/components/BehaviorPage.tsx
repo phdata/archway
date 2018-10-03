@@ -1,6 +1,6 @@
 import { Col, Icon, Row, Tooltip } from 'antd';
 import * as React from 'react';
-import Behavior from '../../components/Behavior';
+import Behavior from '../../../components/Behavior';
 
 interface Props {
     selected?: string;

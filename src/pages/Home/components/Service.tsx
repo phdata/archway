@@ -1,6 +1,6 @@
 import { Avatar, Card } from 'antd';
 import * as React from 'react';
-import { ServiceLinks, Status, Statusable } from '../../types/Cluster';
+import { ServiceLinks, Status, Statusable } from '../../../types/Cluster';
 
 export interface Props {
     name: string;

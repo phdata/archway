@@ -13,9 +13,8 @@ import {
   YarnService,
   YarnServiceLinks,
 } from '../../types/Cluster';
-import PersonalWorkspace from './PersonalWorkspace';
+import { PersonalWorkspace, Service as ServiceDisplay } from './components';
 import { getClusterInfo, getPersonalWorkspace, isProfileLoading } from './selectors';
-import ServiceDisplay from './Service';
 
 interface Props {
     cluster: Cluster;
