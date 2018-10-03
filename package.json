@@ -4,10 +4,11 @@
   "private": true,
   "main": "index.js",
   "scripts": {
-    "start": "react-scripts-ts start",
-    "build": "react-scripts-ts build",
-    "test": "react-scripts-ts test --env=jsdom",
-    "eject": "react-scripts-ts eject"
+    "start": "webpack-dev-server",
+    "test": "jest",
+    "build": "tsc && webpack --progress",
+    "clean": "rd /s/q built",
+    "prepare": "tsc && webpack --progress --config webpack.prod.config.js"
   },
   "dependencies": {
     "@types/redux-form": "^7.4.8",

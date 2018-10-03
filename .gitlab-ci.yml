@@ -28,7 +28,7 @@ publish:
       - heimdali-ui.tar
     expire_in: 1 week
   script:
-    - tar cvf heimdali-ui.tar build
+    - tar cvf heimdali-ui.tar dist
 
 successful_build:
   stage: notify
