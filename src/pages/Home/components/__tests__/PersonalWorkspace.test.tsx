@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 
-import PersonalWorkspace from './PersonalWorkspace';
-import { Workspace } from '../../../types/Workspace';
+import PersonalWorkspace from '../PersonalWorkspace';
+import { Workspace } from '../../../../types/Workspace';
 
 describe('PersonalWorkspace', () => {
   it('renders correctly', () => {

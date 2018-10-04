@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 
-import Service from './Service';
-import { HiveServiceLinks, Status, Statusable } from '../../../types/Cluster';
+import Service from '../Service';
+import { HiveServiceLinks, Status, Statusable } from '../../../../types/Cluster';
 
 describe('Service', () => {
   it('renders correctly', () => {
