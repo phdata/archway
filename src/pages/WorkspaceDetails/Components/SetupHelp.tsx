@@ -4,11 +4,15 @@ import Label from './Label';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { tomorrowNightEighties } from 'react-syntax-highlighter/styles/hljs';
 
-const SetupHelp = ({}: {}) => (
+interface Props {
+  approved: boolean;
+}
+
+const SetupHelp = ({ approved }: Props) => (
   <Card
     style={{ display: 'flex', flex: 1 }}
     bodyStyle={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
-    <Label>getting started</Label>
+    <Label>{approved ? 'getting started' : 'get ready'}</Label>
     <Row gutter={10}>
       <Col span={24} lg={12}>
         <h3>Write your application...</h3>
@@ -30,7 +34,7 @@ results = cursor.fetchall()`}
         </SyntaxHighlighter>
       </Col>
       <Col span={24} lg={12}>
-        <h3>Then just run it!</h3>
+        <h3>Then {!approved && 'when your workspace is approved, '} just run it!</h3>
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           <SyntaxHighlighter language="shell" style={tomorrowNightEighties}>
           {`$ spark-submit --class org.apache.spark.examples.SparkPi \\

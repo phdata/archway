@@ -34,12 +34,14 @@ interface Props extends RouteComponentProps<DetailsRouteProps> {
     profile: Profile;
     pools?: PoolInfo[];
     infos?: NamespaceInfo[];
-    approved?: boolean;
+    approved: boolean;
     activeModal?: string;
 
     getWorkspaceDetails: (id: number) => void;
     showTopicDialog: (e: React.MouseEvent) => void;
     clearModal: () => void;
+    approveRisk: (e: React.MouseEvent) => void;
+    approveOperations: (e: React.MouseEvent) => void;
 }
 
 class WorkspaceDetails extends React.PureComponent<Props> {
@@ -59,6 +61,8 @@ class WorkspaceDetails extends React.PureComponent<Props> {
       activeModal,
       showTopicDialog,
       clearModal,
+      approveRisk,
+      approveOperations,
     } = this.props;
 
     if (!workspace) { return <Spin />; }
@@ -109,39 +113,45 @@ class WorkspaceDetails extends React.PureComponent<Props> {
                 consumed={workspace.data[0] && workspace.data[0].consumed_in_gb} />
             </Col>
             <Col span={12} lg={4} style={{ marginTop: 10, display: 'flex' }}>
-              <ApprovalDetails />
+              <ApprovalDetails
+                risk={workspace.approvals && workspace.approvals.risk}
+                infra={workspace.approvals && workspace.approvals.infra}
+                approveOperations={approveOperations}
+                approveRisk={approveRisk} />
             </Col>
           </Row>
-          <Row gutter={12} type="flex" style={{ flexDirection: 'row' }}>
-            <Col span={24} lg={6} style={{ marginTop: 10 }}>
-              <HiveDetails
-                hue={cluster.services && cluster.services.hue}
-                namespace={workspace.data[0].name}
-                info={infos} />
-            </Col>
-            <Col span={24} lg={6} style={{ marginTop: 10 }}>
-              <YarnDetails
-                poolName={workspace.processing[0].pool_name}
-                pools={pools} />
-            </Col>
-            <Col span={24} lg={6} style={{ marginTop: 10 }}>
-              <KafkaDetails
-                consumerGroup={workspace.applications[0] && workspace.applications[0].consumer_group}
-                topics={workspace.topics}
-                showModal={showTopicDialog} />
-              <Modal
-                visible={activeModal === 'kafka'}
-                onCancel={clearModal}>
-                <KafkaTopicRequest />
-              </Modal>
-            </Col>
-            <Col span={24} lg={6} style={{ marginTop: 10 }}>
-              <MemberList />
-            </Col>
-          </Row>
+          {approved && (
+            <Row gutter={12} type="flex" style={{ flexDirection: 'row' }}>
+              <Col span={24} lg={6} style={{ marginTop: 10 }}>
+                <HiveDetails
+                  hue={cluster.services && cluster.services.hue}
+                  namespace={workspace.data[0].name}
+                  info={infos} />
+              </Col>
+              <Col span={24} lg={6} style={{ marginTop: 10 }}>
+                <YarnDetails
+                  poolName={workspace.processing[0].pool_name}
+                  pools={pools} />
+              </Col>
+              <Col span={24} lg={6} style={{ marginTop: 10 }}>
+                <KafkaDetails
+                  consumerGroup={workspace.applications[0] && workspace.applications[0].consumer_group}
+                  topics={workspace.topics}
+                  showModal={showTopicDialog} />
+                <Modal
+                  visible={activeModal === 'kafka'}
+                  onCancel={clearModal}>
+                  <KafkaTopicRequest />
+                </Modal>
+              </Col>
+              <Col span={24} lg={6} style={{ marginTop: 10 }}>
+                <MemberList />
+              </Col>
+            </Row>
+          )}
           <Row>
             <Col span={24} style={{ marginTop: 10 }}>
-                <SetupHelp />
+                <SetupHelp approved={approved} />
             </Col>
           </Row>
       </div>
@@ -166,6 +176,14 @@ const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
   showTopicDialog: (e: React.MouseEvent) => {
     e.preventDefault();
     return dispatch(actions.setActiveModal('kafka'));
+  },
+  approveRisk: (e: React.MouseEvent) => {
+    e.preventDefault();
+    return dispatch(actions.requestApproval('risk'));
+  },
+  approveOperations: (e: React.MouseEvent) => {
+    e.preventDefault();
+    return dispatch(actions.requestApproval('infra'));
   },
   clearModal: () => dispatch(actions.setActiveModal(false)),
 });

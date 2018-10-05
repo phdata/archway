@@ -65,7 +65,7 @@ class WorkspaceList extends React.PureComponent<Props> {
                       display: 'flex',
                       flex: 1,
                       flexDirection: 'column',
-                      justifyContent: 'space-between'
+                      justifyContent: 'space-between',
                     }}>
                   <div>
                     <FieldLabel>FILTER</FieldLabel>

@@ -3,6 +3,7 @@ import {
   Member,
   NamespaceInfo,
   PoolInfo,
+  ApprovalItem,
 } from '../../types/Workspace';
 
 export const GET_WORKSPACE = 'GET_WORKSPACE';
@@ -55,4 +56,27 @@ export const SET_ACTIVE_MODAL = 'SET_ACTIVE_MODAL';
 export const setActiveModal = (activeModal: string | boolean) => ({
   type: SET_ACTIVE_MODAL,
   activeModal,
+});
+
+export const REQUEST_APPROVAL = 'REQUEST_APPROVAL';
+type ApprovalType = 'infra' | 'risk';
+export interface ApprovalRequestAction {
+  type: typeof REQUEST_APPROVAL;
+  approvalType: ApprovalType;
+}
+export const requestApproval = (approvalType: ApprovalType) => ({
+  type: REQUEST_APPROVAL,
+  approvalType,
+});
+
+export const APPROVAL_SUCCESS = 'APPROVAL_SUCCESS';
+export interface ApprovalSuccessAction {
+  type: typeof APPROVAL_SUCCESS;
+  approvalType: ApprovalType;
+  approval: ApprovalItem;
+}
+export const approvalSuccess = (approvalType: ApprovalType, approval: ApprovalItem) => ({
+  type: APPROVAL_SUCCESS,
+  approvalType,
+  approval,
 });
