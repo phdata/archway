@@ -31,7 +31,7 @@ class Behavior extends React.PureComponent<Props> {
       <Card
         onClick={this.select}
         hoverable={true}
-        style={{ flex: 1 }}
+        style={{ flex: 1, borderRadius: 3 }}
         bodyStyle={{ textAlign: 'center', ...this.props.style }}>
         <div
           style={{
@@ -44,7 +44,9 @@ class Behavior extends React.PureComponent<Props> {
           <Icon type="check" style={{ fontSize: 24 }} />
         </div>
         <Icon type={icon} style={{ fontSize: 42 }} />
-        <h2>{title}</h2>
+        <div style={{ fontSize: 14, textTransform: 'uppercase' }}>
+          {title}
+        </div>
         {description && <p>{description}</p>}
         {useCases && (
           <div>

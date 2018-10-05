@@ -5,7 +5,13 @@ interface Props {
 }
 
 const FieldLabel = ({ children }: Props) => (
-  <div style={{ color: 'rgba(0, 0, 0, .5)', textAlign: 'center', textTransform: 'uppercase', fontSize: 10 }}>
+  <div
+    style={{
+        color: 'rgba(0, 0, 0, .5)',
+        textAlign: 'center',
+        textTransform: 'uppercase',
+        fontSize: 10,
+      }}>
     {children}
   </div>
 );
