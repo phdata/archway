@@ -21,6 +21,7 @@ const listing = (state = initialState, action: any) => {
 
     case LIST_ALL_WORKSPACES:
       return state
+        .set('allWorkspaces', new Fuse([], {}))
         .set('fetching', true);
 
     case FILTER_WORKSPACES:

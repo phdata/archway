@@ -20,6 +20,7 @@ const BehaviorPage = ({ selected, onChange }: Props) => (
     <Row type="flex" justify="center" gutter={25} style={{ marginTop: 25, marginBottom: 25 }}>
       <Col span={12} lg={6} style={{ display: 'flex' }}>
         <Behavior
+          style={{ flex: 1 }}
           behaviorKey="simple"
           selected={selected === 'simple'}
           onChange={onChange}
@@ -30,6 +31,7 @@ const BehaviorPage = ({ selected, onChange }: Props) => (
       </Col>
       <Col span={12} lg={6} style={{ display: 'flex' }}>
         <Behavior
+          style={{ flex: 1 }}
           behaviorKey="structured"
           selected={selected === 'structured'}
           onChange={onChange}
