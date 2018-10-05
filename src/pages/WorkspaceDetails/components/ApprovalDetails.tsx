@@ -7,7 +7,7 @@ interface ItemProps {
   approvalDate?: string;
   children: any;
 
-  approve: (e: React.MouseEvent) => void;
+  approve: ((e: React.MouseEvent) => void) | false;
 }
 
 const Approval = ({ approvalDate, children, approve }: ItemProps) => (
@@ -17,7 +17,7 @@ const Approval = ({ approvalDate, children, approve }: ItemProps) => (
       theme={approvalDate ? 'twoTone' : 'outlined'}
       style={{ marginBottom: 5, fontSize: 28 }} />
     <div style={{ textTransform: 'uppercase', letterSpacing: 1 }}>{children}</div>
-    {!approvalDate && (<a onClick={approve}>APPROVE</a>)}
+    {!approvalDate && approve && (<a onClick={approve}>APPROVE</a>)}
   </div>
 );
 
@@ -25,8 +25,8 @@ interface Props {
   infra?: ApprovalItem;
   risk?: ApprovalItem;
 
-  approveRisk: (e: React.MouseEvent) => void;
-  approveOperations: (e: React.MouseEvent) => void;
+  approveRisk: ((e: React.MouseEvent) => void) | false;
+  approveOperations: ((e: React.MouseEvent) => void) | false;
 }
 
 const ApprovalDetails = ({ infra, risk, approveOperations, approveRisk }: Props) => (

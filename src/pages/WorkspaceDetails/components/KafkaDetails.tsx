@@ -1,8 +1,7 @@
-import { Card, Icon, List } from 'antd';
+import { Card, Row } from 'antd';
 import * as React from 'react';
 import { KafkaTopic } from '../../../types/Workspace';
-import Label from './Label';
-import { Colors } from '../../../components';
+import CardHeader from './CardHeader';
 
 interface Props {
     consumerGroup: string;
@@ -20,22 +19,18 @@ const KafkaDetails = ({ consumerGroup, topics, showModal }: Props) => (
     actions={[
       <a href="#" onClick={showModal}>Add a topic</a>,
     ]}>
-    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-      <Label style={{ lineHeight: '20px' }}>
-        <Icon
-          theme="twoTone"
-          twoToneColor={Colors.Green.string()}
-          type="sound"
-          style={{ paddingRight: 5, fontSize: 20 }} />Kafka
-      </Label>
-      <Label style={{ lineHeight: '18px', fontSize: 10 }}>
-        {consumerGroup}
-      </Label>
-    </div>
-    <List
-      dataSource={topics}
-      renderItem={renderTopic}
-      locale={{ emptyText: 'No topics yet' }} />
+    <CardHeader
+      icon="sound"
+      heading="Kafka Topics"
+      subheading={consumerGroup} />
+    <Row gutter={12} type="flex" justify="center" style={{ marginTop: 18 }}>
+      {topics && topics.length > 0 && topics.map(renderTopic)}
+      {(!topics || topics.length <= 0) && (
+        <div style={{ color: 'rgba(0, 0, 0, .65)' }}>
+          No topics yet.
+        </div>
+      )}
+    </Row>
   </Card>
 );
 

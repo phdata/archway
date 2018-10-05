@@ -9,6 +9,8 @@ import {
   setResourcePools,
   ApprovalRequestAction,
   approvalSuccess,
+  REQUEST_TOPIC,
+  topicRequestSuccess,
 } from './actions';
 
 function* fetchWorkspace({ id }: { type: string, id: number }) {
@@ -44,9 +46,22 @@ function* approvalRequestedListener() {
   yield takeLatest(REQUEST_APPROVAL, approvalRequested);
 }
 
+function* topicRequested() {
+  const token = yield select((s: any) => s.get('login').get('token'));
+  const { id } = yield select((s: any) => s.get('details').get('details').toJS());
+  const { name } = yield select((s: any) => s.getIn(['form', 'topicRequest', 'values']).toJS());
+  yield call(Api.requestTopic, token, id, name, 1, 1);
+  yield put(topicRequestSuccess());
+}
+
+function* topicRequestedListener() {
+  yield takeLatest(REQUEST_TOPIC, topicRequested);
+}
+
 export default function* root() {
   yield all([
     fork(workspaceRequest),
     fork(approvalRequestedListener),
+    fork(topicRequestedListener),
   ]);
 }

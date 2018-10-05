@@ -1,6 +1,7 @@
 export interface YarnApplication {
   id: string;
   name: string;
+  start_time?: Date;
 }
 
 export interface PoolInfo {

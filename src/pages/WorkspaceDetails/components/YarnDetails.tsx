@@ -1,43 +1,50 @@
-import { Card, Icon, List } from 'antd';
+import { Card, Row } from 'antd';
 import * as React from 'react';
-import { YarnApplication, PoolInfo } from '../../../types/Workspace';
-import Label from './Label';
-import { Colors } from '../../../components';
+import { YarnService } from '../../../types/Cluster';
+import { PoolInfo, YarnApplication } from '../../../types/Workspace';
+import CardHeader from './CardHeader';
 
 interface Props {
-    poolName: string;
-    pools?: PoolInfo[];
+  yarn?: YarnService;
+  poolName: string;
+  pools?: PoolInfo[];
 }
 
-const renderApplication = (yarnApplication: YarnApplication) => (
-  <div style={{ margin: 10, textAlign: 'center' }}>
-    {yarnApplication.name}
+const renderApplication = (yarnUrl?: string) => (yarnApplication: YarnApplication) => (
+  <div style={{ textAlign: 'center' }}>
+    <div>
+      {`${yarnApplication.name}`}
+    </div>
+    <a
+      style={{ fontSize: 12 }}
+      target="_blank"
+      href={`${yarnUrl}/cluster/app/${yarnApplication.id}/`}>
+      DETAILS
+    </a>
   </div>
 );
 
-const YarnDetails = ({ poolName, pools }: Props) => (
-  <Card
-    actions={[
-      <a href="#">Open Resource Manger</a>,
-    ]}>
-    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-      <Label style={{ lineHeight: '22px' }}>
-        <Icon
-          theme="twoTone"
-          twoToneColor={Colors.Green.string()}
-          type="rocket"
-          style={{ paddingRight: 5, fontSize: 22 }} />Yarn
-      </Label>
-      <Label style={{ lineHeight: '18px', fontSize: 10 }}>
-        {poolName}
-      </Label>
-    </div>
-    <List
-      grid={{ column: 3, gutter: 12 }}
-      dataSource={pools && pools[0].applications}
-      renderItem={renderApplication}
-      locale={{ emptyText: 'No running applications' }} />
-  </Card>
-);
+const YarnDetails = ({ yarn, poolName, pools }: Props) => {
+  const rmURL = yarn && `${yarn.resource_manager[0].host}:${yarn.resource_manager[0].port}`;
+  return (
+    <Card
+      actions={[
+        <a
+          target="_blank"
+          href={yarn ? `//${rmURL}` : undefined}>
+          Open Resource Manager
+        </a>,
+      ]}>
+      <CardHeader
+        icon="rocket"
+        heading="Yarn Applications"
+        subheading={poolName} />
+      <Row gutter={12} type="flex" justify="center" style={{ marginTop: 18 }}>
+        {pools && pools[0].applications.length > 0 && pools[0].applications.map(renderApplication(rmURL))}
+        {!pools }
+      </Row>
+    </Card>
+  );
+};
 
 export default YarnDetails;
