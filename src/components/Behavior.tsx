@@ -31,8 +31,8 @@ class Behavior extends React.PureComponent<Props> {
       <Card
         onClick={this.select}
         hoverable={true}
-        style={{ flex: 1, borderRadius: 3 }}
-        bodyStyle={{ textAlign: 'center', ...this.props.style }}>
+        style={{ borderRadius: 3, ...this.props.style }}
+        bodyStyle={{ textAlign: 'center' }}>
         <div
           style={{
             opacity: selected ? 1 : 0,
@@ -41,7 +41,7 @@ class Behavior extends React.PureComponent<Props> {
             right: 25,
             transition: 'opacity 300ms',
           }}>
-          <Icon type="check" style={{ fontSize: 24 }} />
+          <Icon type="check" style={{ fontSize: 14 }} />
         </div>
         <Icon type={icon} style={{ fontSize: 42 }} />
         <div style={{ fontSize: 14, textTransform: 'uppercase' }}>

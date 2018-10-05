@@ -1,6 +1,8 @@
 import { createSelector } from 'reselect';
-import { workspaceListSelector } from '../../selectors';
+import { workspaceListSelector, authSelector, clusterSelector } from '../../selectors';
 import { Workspace } from '../../types/Workspace';
+import { Profile } from '../../types/Profile';
+import { Cluster } from '../../types/Cluster';
 
 const fuseList = () => createSelector(
   workspaceListSelector,
@@ -29,4 +31,14 @@ export const workspaceList = () => createSelector(
 export const isFetchingWorkspaces = () => createSelector(
   workspaceListSelector,
   (listingState) => listingState.get('fetching'),
+);
+
+export const getProfile = () => createSelector(
+  authSelector,
+  (authState) => authState.get('profile') as Profile,
+);
+
+export const getCluster = () => createSelector(
+  clusterSelector,
+  (clusterState) => clusterState.get('details').toJS() as Cluster,
 );

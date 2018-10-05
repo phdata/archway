@@ -48,7 +48,7 @@ const WorkspaceListItem = ({ workspace, onSelected }: Props) => {
   };
 
   return (
-    <List.Item>
+    <List.Item style={{ paddingLeft: 12, paddingRight: 12 }}>
       <Card
         bordered={true}
         onClick={onClick}
