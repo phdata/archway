@@ -46,10 +46,8 @@ export const getPoolInfo = () => createSelector(
 export const getApproved = () => createSelector(
   workspaceSelector,
   (workspaceState) =>
-    !!workspaceState.get('details') &&
-    !!(workspaceState.get('details') as Workspace).approvals &&
-    !!(workspaceState.get('details') as Workspace).approvals!.infra &&
-    !!(workspaceState.get('details') as Workspace).approvals!.risk,
+    workspaceState.hasIn(['details', 'approvals', 'infra']) &&
+    workspaceState.hasIn(['details', 'approvals', 'risk']),
 );
 
 export const getActiveModal = () => createSelector(

@@ -6,6 +6,7 @@ import {
   SET_NAMESPACE_INFO,
   SET_RESOURCE_POOLS,
   SET_ACTIVE_MODAL,
+  APPROVAL_SUCCESS,
 } from './actions';
 
 const initialState = fromJS({
@@ -41,6 +42,14 @@ const details = (state = initialState, action: any) => {
     case SET_ACTIVE_MODAL:
       return state
           .set('activeModal', action.activeModal);
+
+    case APPROVAL_SUCCESS:
+      return state
+          .set(
+            'details',
+            state
+              .get('details')
+              .setIn(['approvals', action.approvalType], action.approval[action.approvalType]));
 
     default:
       return state;

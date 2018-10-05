@@ -4,34 +4,47 @@ import Label from './Label';
 import { ApprovalItem } from '../../../types/Workspace';
 
 interface ItemProps {
-    approvalDate?: string;
-    icon: string;
-    children: any;
+  approvalDate?: string;
+  children: any;
+
+  approve: (e: React.MouseEvent) => void;
 }
 
-const Approval = ({ approvalDate, icon, children }: ItemProps) => (
+const Approval = ({ approvalDate, children, approve }: ItemProps) => (
   <div style={{ display: 'flex', flex: 1, flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
     <Icon
-      type={approvalDate ? icon : 'dash'}
+      type={approvalDate ? 'safety-certificate' : 'dash'}
       theme={approvalDate ? 'twoTone' : 'outlined'}
       style={{ marginBottom: 5, fontSize: 28 }} />
     <div style={{ textTransform: 'uppercase', letterSpacing: 1 }}>{children}</div>
+    {!approvalDate && (<a onClick={approve}>APPROVE</a>)}
   </div>
 );
 
 interface Props {
-    infra?: ApprovalItem;
-    risk?: ApprovalItem;
+  infra?: ApprovalItem;
+  risk?: ApprovalItem;
+
+  approveRisk: (e: React.MouseEvent) => void;
+  approveOperations: (e: React.MouseEvent) => void;
 }
 
-const ApprovalDetails = ({ infra, risk }: Props) => (
+const ApprovalDetails = ({ infra, risk, approveOperations, approveRisk }: Props) => (
   <Card
     style={{ display: 'flex', flex: 1 }}
     bodyStyle={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
     <Label>approvals</Label>
     <div style={{ display: 'flex', flex: 1, alignItems: 'center' }}>
-      <Approval approvalDate={risk && risk.approval_time} icon="safety-certificate">risk</Approval>
-      <Approval approvalDate={infra && infra.approval_time} icon="dashboard">ops</Approval>
+      <Approval
+        approvalDate={risk && risk.approval_time}
+        approve={approveRisk}>
+        risk
+      </Approval>
+      <Approval
+        approvalDate={infra && infra.approval_time}
+        approve={approveOperations}>
+        ops
+      </Approval>
     </div>
   </Card>
 );
