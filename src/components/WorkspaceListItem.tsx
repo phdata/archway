@@ -1,6 +1,7 @@
-import { Card, Icon, List, Tag } from 'antd';
+import { Card, Col, Icon, List, Row } from 'antd';
 import * as React from 'react';
 import { Workspace } from '../types/Workspace';
+import Colors from './Colors';
 
 interface Props {
     workspace: Workspace;
@@ -18,35 +19,52 @@ const WorkspaceListItem = ({ workspace, onSelected }: Props) => {
 
   const onClick = () => onSelected(id);
 
-  const approvalMessage = () => {
-    let message = '';
-    let color = '';
+  const ApprovalMessage = () => {
+    let message = 'approved';
+    let color = Colors.Green.string();
 
     if (!approvals) {
-      message = 'all approvals needed';
+      message = 'pending';
       color = 'red';
     } else if (!approvals.infra || !approvals.risk) {
-      message = 'partially approved';
+      message = 'pending';
       color = 'orange';
     }
 
-    return message === '' ? false : <Tag color={color}>{message}</Tag>;
+    return (
+      <div
+        style={{
+            textTransform: 'uppercase',
+            position: 'absolute',
+            top: 20,
+            left: 20,
+            fontSize: 14,
+            fontWeight: 100,
+            color,
+          }}>
+        {message}
+      </div>
+    );
   };
 
   return (
     <List.Item>
       <Card
         bordered={true}
-        style={{ textAlign: 'center' }}
         onClick={onClick}
-        hoverable={true}>
-        <h2 style={{ textAlign: 'center' }}>{name}</h2>
-        <div style={{ marginTop: 10, marginBottom: 10 }}>
-          <Icon style={{ fontSize: 42 }} type={behavior === 'simple' ? 'team' : 'deployment-unit'} />
-          <div style={{ fontSize: 12, textTransform: 'uppercase' }}>{behavior} workspace</div>
-        </div>
-        <p>{summary}</p>
-        {approvalMessage()}
+        hoverable={true}
+        bodyStyle={{ paddingTop: 50, paddingBottom: 50, textAlign: 'center' }}>
+        <ApprovalMessage />
+        <Row type="flex">
+          <Col span={24}>
+            <div style={{ fontSize: 26 }}>{name}</div>
+            <div style={{ marginTop: 10, marginBottom: 10, textAlign: 'center' }}>
+              <Icon style={{ fontSize: 20 }} type={behavior === 'simple' ? 'team' : 'deployment-unit'} />
+              <div style={{ fontSize: 12, textTransform: 'uppercase' }}>{behavior} workspace</div>
+            </div>
+            <p>{summary}</p>
+          </Col>
+        </Row>
       </Card>
     </List.Item>
   );
