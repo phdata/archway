@@ -1,26 +1,24 @@
 package com.heimdali.startup
 
-import cats.{Applicative, Monad}
-import cats.data.OptionT
+import cats._
+import cats.effect._
 import com.heimdali.config.{ClusterConfig, DatabaseConfig}
+import fs2.async
+
+import scala.concurrent.ExecutionContext
 
 trait Startup[F[_]] {
   def start()(implicit monadEvidence: Monad[F]): F[Unit]
 }
 
-class HeimdaliStartup[F[_]](databaseConfig: DatabaseConfig,
-                            clusterConfig: ClusterConfig,
-                            dbMigration: DBMigration[F],
-                            maintainer: SessionMaintainer)
+class HeimdaliStartup[F[_] : Effect](databaseConfig: DatabaseConfig,
+                                     clusterConfig: ClusterConfig,
+                                     dbMigration: DBMigration[F],
+                                     maintainer: SessionMaintainer[F])
+                                    (implicit executionContext: ExecutionContext)
   extends Startup[F] {
 
   def start()(implicit monadEvidence: Monad[F]): F[Unit] =
-    (for {
-      _ <- OptionT.fromOption(for {
-        user <- databaseConfig.meta.username
-        pass <- databaseConfig.meta.password
-      } yield dbMigration.migrate(databaseConfig.meta.url, user, pass))
-      _ <- OptionT.some(maintainer.setup)
-    } yield ()).getOrElse(())
+    async.fork(maintainer.setup)
 
 }

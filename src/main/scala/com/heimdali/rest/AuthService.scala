@@ -46,7 +46,7 @@ class AuthServiceImpl[F[_] : Sync](accountService: AccountService[F])
     }
 
   def basicAuth: AuthMiddleware[F, Token] =
-    AuthMiddleware.withFallThrough(authStore)
+    AuthMiddleware(authStore)
 
   def validate(auth: User => Boolean = _ => true): Kleisli[OptionT[F, ?], Request[F], User] =
     Kleisli[OptionT[F, ?], Request[F], User] { request =>

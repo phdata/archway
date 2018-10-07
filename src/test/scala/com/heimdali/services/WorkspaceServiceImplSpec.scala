@@ -183,11 +183,14 @@ class WorkspaceServiceImplSpec
       ldapRepository.roleCreated _ expects id returning 0.pure[ConnectionIO]
       sentryClient.grantGroup _ expects(savedLDAP.commonName, savedLDAP.sentryRole) returning IO.unit
       ldapRepository.groupAssociated _ expects id returning 0.pure[ConnectionIO]
+      sentryClient.grantPrivilege _ expects(savedLDAP.sentryRole, Kafka, s"ConsumerGroup=${savedApplication.consumerGroup}->action=ALL") returning IO.unit
+      applicationRepository.consumerGroupAccess _ expects id returning 0.pure[ConnectionIO]
+    }
+
+    inSequence {
       ldapClient.addUser _ expects(savedLDAP.distinguishedName, standardUsername) returning OptionT
         .some(LDAPUser("John Doe", standardUsername, Seq.empty, None))
       memberRepository.complete _ expects(id, standardUsername) returning 0.pure[ConnectionIO]
-      sentryClient.grantPrivilege _ expects(savedLDAP.sentryRole, Kafka, s"ConsumerGroup=${savedApplication.consumerGroup}->action=ALL") returning IO.unit
-      applicationRepository.consumerGroupAccess _ expects id returning 0.pure[ConnectionIO]
     }
 
     projectServiceImpl.provision(savedWorkspaceRequest).unsafeRunSync()

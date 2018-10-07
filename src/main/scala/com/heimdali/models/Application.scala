@@ -32,9 +32,8 @@ object Application {
     ProvisionTask.instance { app =>
       for {
         group <- app.group.provision
-        manager <- AddMember(app.group.id.get, app.group.distinguishedName, app.requestor.get).provision
         grant <- GrantRoleToConsumerGroup(app.id.get, app.consumerGroup, app.group.sentryRole).provision
-      } yield group |+| manager |+| grant
+      } yield group |+| grant
     }
 
   implicit val encoder: Encoder[Application] = Encoder.instance { application =>
