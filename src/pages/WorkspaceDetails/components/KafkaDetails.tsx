@@ -2,7 +2,7 @@ import { Card, Icon, List } from 'antd';
 import * as React from 'react';
 import { KafkaTopic } from '../../../types/Workspace';
 import Label from './Label';
-import Colors from '../../../components/Colors';
+import { Colors } from '../../../components';
 
 interface Props {
     consumerGroup: string;

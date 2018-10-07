@@ -4,11 +4,11 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { Login } from '../../types/Login';
 import { login } from './actions';
-import logo from './logo_black.png';
+import { Colors } from '../../components';
 import { isLoggingIn, loginError } from './selectors';
 import { Dispatch } from 'redux';
-import Colors from '../../components/Colors';
 import { LoginForm } from './components';
+import logo from '../../images/logo_black.png';
 
 interface Props {
     onSubmit: (payload: Login) => void;

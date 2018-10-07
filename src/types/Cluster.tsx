@@ -1,7 +1,7 @@
 import { Dropdown, Icon, Menu } from 'antd';
 import * as Color from 'color';
 import * as React from 'react';
-import Colors from '../components/Colors';
+import { Colors } from '../components';
 
 export interface WebLocation {
     host: string;

@@ -1,9 +1,9 @@
 import { Layout, Menu, Icon } from 'antd';
 import * as React from 'react';
 import { NavLink, withRouter } from 'react-router-dom';
-import logo from '../../components/white_logo_transparent.png';
 import ClusterInfo from './ClusterInfo';
 import Profile from './Profile';
+import logo from '../../images/white_logo_transparent.png';
 
 const { Sider } = Layout;
 
