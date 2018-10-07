@@ -4,7 +4,8 @@ import com.heimdali.startup._
 import org.flywaydb.core.Flyway
 
 trait StartupModule[F[_]] {
-  this: ExecutionContextModule
+  this: AppModule[F]
+    with ExecutionContextModule
     with ConfigurationModule
     with ContextModule[F] =>
 
@@ -13,7 +14,8 @@ trait StartupModule[F[_]] {
   val dbMigration: DBMigration[F] =
     new FlywayMigration(flyway)
 
-  val sessionMaintainer: SessionMaintainer = new SessionMaintainerImpl(appConfig.cluster, loginContextProvider)
+  val sessionMaintainer: SessionMaintainer[F] =
+    new SessionMaintainerImpl[F](appConfig.cluster, loginContextProvider)
 
   val startup: Startup[F] =
     new HeimdaliStartup[F](appConfig.db, appConfig.cluster, dbMigration, sessionMaintainer)

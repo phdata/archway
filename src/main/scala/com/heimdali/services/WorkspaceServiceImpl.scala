@@ -132,10 +132,11 @@ class WorkspaceServiceImpl[F[_]](ldapClient: LDAPClient[F],
     val combined: List[ReaderT[F, AppContext[F], ProvisionResult]] =
       for {
         datas <- workspace.data.map(_.provision)
-        members <- workspace.data.map(d => AddMember(d.id.get, d.managingGroup.ldapRegistration.distinguishedName, workspace.requestedBy).provision)
+        dbLiasion <- workspace.data.map(d => AddMember(d.id.get, d.managingGroup.ldapRegistration.distinguishedName, workspace.requestedBy).provision)
         yarns <- workspace.processing.map(_.provision)
         apps <- workspace.applications.map(_.provision)
-      } yield (datas, members, yarns, apps).mapN(_ |+| _ |+| _ |+| _)
+        appLiasion <- workspace.applications.map(d => AddMember(d.id.get, d.group.distinguishedName, workspace.requestedBy).provision)
+      } yield (datas, dbLiasion, yarns, apps, appLiasion).mapN(_ |+| _ |+| _ |+| _ |+| _)
 
     combined.sequence.map(_.combineAll).apply(appConfig).map(_.messages)
   }
