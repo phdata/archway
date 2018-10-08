@@ -52,7 +52,7 @@ class HiveAllocationRepositoryImpl(val clock: Clock)
          h.name,
          h.location,
          h.size_in_gb,
-         CAST(0.0 as NUMBERIC),
+         CAST(0.0 as NUMERIC),
 
          h.name,
          h.location,
