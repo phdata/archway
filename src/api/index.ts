@@ -12,6 +12,7 @@ export function login(username: string, password: string) {
 
 export function logout() {
   window.localStorage.clear();
+  window.location.href = '/';
 }
 
 const headers = (token?: string): RequestInit => {
@@ -31,7 +32,17 @@ const headers = (token?: string): RequestInit => {
 
 const get = (path: string, token?: string) =>
   fetch(`${BASE_URL}${path}`, headers(token))
-    .then((response: Response) => response.json());
+    .then((response: Response) => {
+      const json = response.json();
+      if (response.status >= 200 && response.status < 300) {
+        return json;
+      } else {
+        if (response.status === 401) {
+          logout();
+        }
+        return json.then(Promise.reject.bind(Promise));
+      }
+    });
 
 const withBody = (path: string, token: string, data?: any, method = 'POST') =>
   fetch(`${BASE_URL}${path}`, {
@@ -39,7 +50,17 @@ const withBody = (path: string, token: string, data?: any, method = 'POST') =>
     method,
     body: JSON.stringify(data),
   })
-    .then((response) => response.json());
+    .then((response) => {
+      const json = response.json();
+      if (response.status >= 200 && response.status < 300) {
+        return json;
+      } else {
+        if (response.status === 401) {
+          logout();
+        }
+        return json.then(Promise.reject.bind(Promise));
+      }
+    });
 
 export const cluster =
   () =>
