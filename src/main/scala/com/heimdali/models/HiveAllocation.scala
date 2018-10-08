@@ -15,7 +15,7 @@ import scala.concurrent.ExecutionContext
 case class HiveAllocation(name: String,
                           location: String,
                           sizeInGB: Int,
-                          consumedInGB: Option[Double],
+                          consumedInGB: Option[BigDecimal],
                           managingGroup: HiveGrant,
                           readonlyGroup: Option[HiveGrant] = None,
                           id: Option[Long] = None,
