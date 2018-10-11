@@ -2,7 +2,7 @@ import { Button, Card, Spin } from 'antd';
 import * as React from 'react';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { solarizedDark } from 'react-syntax-highlighter/styles/hljs';
-import { Workspace } from '../../types/Workspace';
+import { Workspace } from '../../../types/Workspace';
 
 interface Props {
     workspace: Workspace;

@@ -3,8 +3,8 @@ import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import { FormikBag, InjectedFormikProps, withFormik } from 'formik';
 import * as React from 'react';
 import * as Yup from 'yup';
-import FieldLabel from '../../components/FieldLabel';
-import { RequestInput } from '../../types/RequestInput';
+import { FieldLabel } from '../../../components';
+import { RequestInput } from '../../../types/RequestInput';
 
 interface Props {
   setRequest: (request: RequestInput) => void;

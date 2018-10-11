@@ -3,7 +3,7 @@ import * as React from 'react';
 import { HiveTable, NamespaceInfo } from '../../../types/Workspace';
 import Label from './Label';
 import { HueService } from '../../../types/Cluster';
-import Colors from '../../../components/Colors';
+import { Colors } from '../../../components';
 
 interface Props {
     hue?: HueService;

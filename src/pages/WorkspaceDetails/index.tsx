@@ -1,5 +1,5 @@
-import { Col, Row, Spin, Modal } from 'antd';
 import * as React from 'react';
+import { Col, Row, Spin, Modal } from 'antd';
 import { connect } from 'react-redux';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { Dispatch } from 'redux';
@@ -8,18 +8,20 @@ import { Cluster } from '../../types/Cluster';
 import { Profile } from '../../types/Profile';
 import { NamespaceInfo, PoolInfo, Workspace } from '../../types/Workspace';
 import * as actions from './actions';
-import ApprovalDetails from './Components/ApprovalDetails';
-import ComplianceDetails from './Components/ComplianceDetails';
-import DescriptionDetails from './Components/DescriptionDisplay';
-import HiveDetails from './Components/HiveDetails';
-import KafkaDetails from './Components/KafkaDetails';
-import Liaison from './Components/Liaison';
-import MemberList from './Components/MemberList';
-import YarnDetails from './Components/YarnDetails';
-import SetupHelp from './Components/SetupHelp';
-import Allocations from './Components/Allocations';
+import {
+  ApprovalDetails,
+  ComplianceDetails,
+  DescriptionDisplay as DescriptionDetails,
+  HiveDetails,
+  KafkaDetails,
+  Liaison,
+  MemberList,
+  YarnDetails,
+  SetupHelp,
+  Allocations,
+  KafkaTopicRequest,
+ } from './components';
 import * as selectors from './selectors';
-import KafkaTopicRequest from './Components/KafkaTopicRequest';
 
 /* tslint:disable:no-var-requires */
 const TimeAgo = require('timeago-react').default;

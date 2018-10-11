@@ -1,0 +1,437 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`HiveDetails renders correctly 1`] = `
+ShallowWrapper {
+  Symbol(enzyme.__root__): [Circular],
+  Symbol(enzyme.__unrendered__): <HiveDetails
+    namespace=""
+  />,
+  Symbol(enzyme.__renderer__): Object {
+    "batchedUpdates": [Function],
+    "getNode": [Function],
+    "render": [Function],
+    "simulateError": [Function],
+    "simulateEvent": [Function],
+    "unmount": [Function],
+  },
+  Symbol(enzyme.__node__): Object {
+    "instance": null,
+    "key": undefined,
+    "nodeType": "class",
+    "props": Object {
+      "actions": Array [
+        <a>
+          See in Hue
+        </a>,
+      ],
+      "children": Array [
+        <div
+          style={
+            Object {
+              "display": "flex",
+              "justifyContent": "space-between",
+            }
+          }
+        >
+          <Label
+            style={
+              Object {
+                "lineHeight": "20px",
+              }
+            }
+          >
+            <Icon
+              style={
+                Object {
+                  "fontSize": 20,
+                  "paddingRight": 5,
+                }
+              }
+              theme="twoTone"
+              twoToneColor="rgb(67, 170, 139)"
+              type="database"
+            />
+            Hive
+          </Label>
+          <Label
+            style={
+              Object {
+                "fontSize": 10,
+                "lineHeight": "18px",
+              }
+            }
+          >
+            
+          </Label>
+        </div>,
+        <List
+          bordered={false}
+          dataSource={Array []}
+          loading={false}
+          locale={
+            Object {
+              "emptyText": "No tables yet",
+            }
+          }
+          pagination={false}
+          prefixCls="ant-list"
+          renderItem={[Function]}
+          split={true}
+        />,
+      ],
+    },
+    "ref": null,
+    "rendered": Array [
+      Object {
+        "instance": null,
+        "key": undefined,
+        "nodeType": "host",
+        "props": Object {
+          "children": Array [
+            <Label
+              style={
+                Object {
+                  "lineHeight": "20px",
+                }
+              }
+            >
+              <Icon
+                style={
+                  Object {
+                    "fontSize": 20,
+                    "paddingRight": 5,
+                  }
+                }
+                theme="twoTone"
+                twoToneColor="rgb(67, 170, 139)"
+                type="database"
+              />
+              Hive
+            </Label>,
+            <Label
+              style={
+                Object {
+                  "fontSize": 10,
+                  "lineHeight": "18px",
+                }
+              }
+            >
+              
+            </Label>,
+          ],
+          "style": Object {
+            "display": "flex",
+            "justifyContent": "space-between",
+          },
+        },
+        "ref": null,
+        "rendered": Array [
+          Object {
+            "instance": null,
+            "key": undefined,
+            "nodeType": "function",
+            "props": Object {
+              "children": Array [
+                <Icon
+                  style={
+                    Object {
+                      "fontSize": 20,
+                      "paddingRight": 5,
+                    }
+                  }
+                  theme="twoTone"
+                  twoToneColor="rgb(67, 170, 139)"
+                  type="database"
+                />,
+                "Hive",
+              ],
+              "style": Object {
+                "lineHeight": "20px",
+              },
+            },
+            "ref": null,
+            "rendered": Array [
+              Object {
+                "instance": null,
+                "key": undefined,
+                "nodeType": "function",
+                "props": Object {
+                  "style": Object {
+                    "fontSize": 20,
+                    "paddingRight": 5,
+                  },
+                  "theme": "twoTone",
+                  "twoToneColor": "rgb(67, 170, 139)",
+                  "type": "database",
+                },
+                "ref": null,
+                "rendered": null,
+                "type": [Function],
+              },
+              "Hive",
+            ],
+            "type": [Function],
+          },
+          Object {
+            "instance": null,
+            "key": undefined,
+            "nodeType": "function",
+            "props": Object {
+              "children": "",
+              "style": Object {
+                "fontSize": 10,
+                "lineHeight": "18px",
+              },
+            },
+            "ref": null,
+            "rendered": "",
+            "type": [Function],
+          },
+        ],
+        "type": "div",
+      },
+      Object {
+        "instance": null,
+        "key": undefined,
+        "nodeType": "class",
+        "props": Object {
+          "bordered": false,
+          "dataSource": Array [],
+          "loading": false,
+          "locale": Object {
+            "emptyText": "No tables yet",
+          },
+          "pagination": false,
+          "prefixCls": "ant-list",
+          "renderItem": [Function],
+          "split": true,
+        },
+        "ref": null,
+        "rendered": null,
+        "type": [Function],
+      },
+    ],
+    "type": [Function],
+  },
+  Symbol(enzyme.__nodes__): Array [
+    Object {
+      "instance": null,
+      "key": undefined,
+      "nodeType": "class",
+      "props": Object {
+        "actions": Array [
+          <a>
+            See in Hue
+          </a>,
+        ],
+        "children": Array [
+          <div
+            style={
+              Object {
+                "display": "flex",
+                "justifyContent": "space-between",
+              }
+            }
+          >
+            <Label
+              style={
+                Object {
+                  "lineHeight": "20px",
+                }
+              }
+            >
+              <Icon
+                style={
+                  Object {
+                    "fontSize": 20,
+                    "paddingRight": 5,
+                  }
+                }
+                theme="twoTone"
+                twoToneColor="rgb(67, 170, 139)"
+                type="database"
+              />
+              Hive
+            </Label>
+            <Label
+              style={
+                Object {
+                  "fontSize": 10,
+                  "lineHeight": "18px",
+                }
+              }
+            >
+              
+            </Label>
+          </div>,
+          <List
+            bordered={false}
+            dataSource={Array []}
+            loading={false}
+            locale={
+              Object {
+                "emptyText": "No tables yet",
+              }
+            }
+            pagination={false}
+            prefixCls="ant-list"
+            renderItem={[Function]}
+            split={true}
+          />,
+        ],
+      },
+      "ref": null,
+      "rendered": Array [
+        Object {
+          "instance": null,
+          "key": undefined,
+          "nodeType": "host",
+          "props": Object {
+            "children": Array [
+              <Label
+                style={
+                  Object {
+                    "lineHeight": "20px",
+                  }
+                }
+              >
+                <Icon
+                  style={
+                    Object {
+                      "fontSize": 20,
+                      "paddingRight": 5,
+                    }
+                  }
+                  theme="twoTone"
+                  twoToneColor="rgb(67, 170, 139)"
+                  type="database"
+                />
+                Hive
+              </Label>,
+              <Label
+                style={
+                  Object {
+                    "fontSize": 10,
+                    "lineHeight": "18px",
+                  }
+                }
+              >
+                
+              </Label>,
+            ],
+            "style": Object {
+              "display": "flex",
+              "justifyContent": "space-between",
+            },
+          },
+          "ref": null,
+          "rendered": Array [
+            Object {
+              "instance": null,
+              "key": undefined,
+              "nodeType": "function",
+              "props": Object {
+                "children": Array [
+                  <Icon
+                    style={
+                      Object {
+                        "fontSize": 20,
+                        "paddingRight": 5,
+                      }
+                    }
+                    theme="twoTone"
+                    twoToneColor="rgb(67, 170, 139)"
+                    type="database"
+                  />,
+                  "Hive",
+                ],
+                "style": Object {
+                  "lineHeight": "20px",
+                },
+              },
+              "ref": null,
+              "rendered": Array [
+                Object {
+                  "instance": null,
+                  "key": undefined,
+                  "nodeType": "function",
+                  "props": Object {
+                    "style": Object {
+                      "fontSize": 20,
+                      "paddingRight": 5,
+                    },
+                    "theme": "twoTone",
+                    "twoToneColor": "rgb(67, 170, 139)",
+                    "type": "database",
+                  },
+                  "ref": null,
+                  "rendered": null,
+                  "type": [Function],
+                },
+                "Hive",
+              ],
+              "type": [Function],
+            },
+            Object {
+              "instance": null,
+              "key": undefined,
+              "nodeType": "function",
+              "props": Object {
+                "children": "",
+                "style": Object {
+                  "fontSize": 10,
+                  "lineHeight": "18px",
+                },
+              },
+              "ref": null,
+              "rendered": "",
+              "type": [Function],
+            },
+          ],
+          "type": "div",
+        },
+        Object {
+          "instance": null,
+          "key": undefined,
+          "nodeType": "class",
+          "props": Object {
+            "bordered": false,
+            "dataSource": Array [],
+            "loading": false,
+            "locale": Object {
+              "emptyText": "No tables yet",
+            },
+            "pagination": false,
+            "prefixCls": "ant-list",
+            "renderItem": [Function],
+            "split": true,
+          },
+          "ref": null,
+          "rendered": null,
+          "type": [Function],
+        },
+      ],
+      "type": [Function],
+    },
+  ],
+  Symbol(enzyme.__options__): Object {
+    "adapter": ReactSixteenAdapter {
+      "options": Object {
+        "enableComponentDidUpdateOnSetState": true,
+        "lifecycles": Object {
+          "componentDidUpdate": Object {
+            "onSetState": true,
+          },
+          "getDerivedStateFromProps": true,
+          "getSnapshotBeforeUpdate": true,
+          "setState": Object {
+            "skipsComponentDidUpdateOnNullish": true,
+          },
+        },
+      },
+    },
+    "attachTo": undefined,
+    "hydrateIn": undefined,
+  },
+}
+`;

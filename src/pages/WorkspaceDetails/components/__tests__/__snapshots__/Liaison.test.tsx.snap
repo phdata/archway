@@ -1,0 +1,327 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Liaison renders correctly 1`] = `
+ShallowWrapper {
+  Symbol(enzyme.__root__): [Circular],
+  Symbol(enzyme.__unrendered__): <Liason
+    liaison=""
+  />,
+  Symbol(enzyme.__renderer__): Object {
+    "batchedUpdates": [Function],
+    "getNode": [Function],
+    "render": [Function],
+    "simulateError": [Function],
+    "simulateEvent": [Function],
+    "unmount": [Function],
+  },
+  Symbol(enzyme.__node__): Object {
+    "instance": null,
+    "key": undefined,
+    "nodeType": "class",
+    "props": Object {
+      "bodyStyle": Object {
+        "display": "flex",
+        "flex": 1,
+        "flexDirection": "column",
+      },
+      "children": Array [
+        <Label>
+          liaison
+        </Label>,
+        <div
+          style={
+            Object {
+              "alignItems": "center",
+              "display": "flex",
+              "flex": 1,
+              "flexDirection": "column",
+              "justifyContent": "center",
+              "textAlign": "center",
+            }
+          }
+        >
+          <Icon
+            style={
+              Object {
+                "fontSize": 42,
+                "marginBottom": 5,
+              }
+            }
+            theme="twoTone"
+            twoToneColor="#D7C9AA"
+            type="crown"
+          />
+          <div
+            style={
+              Object {
+                "letterSpacing": 1,
+                "textTransform": "uppercase",
+              }
+            }
+          >
+            
+          </div>
+        </div>,
+      ],
+      "style": Object {
+        "display": "flex",
+        "flex": 1,
+      },
+    },
+    "ref": null,
+    "rendered": Array [
+      Object {
+        "instance": null,
+        "key": undefined,
+        "nodeType": "function",
+        "props": Object {
+          "children": "liaison",
+        },
+        "ref": null,
+        "rendered": "liaison",
+        "type": [Function],
+      },
+      Object {
+        "instance": null,
+        "key": undefined,
+        "nodeType": "host",
+        "props": Object {
+          "children": Array [
+            <Icon
+              style={
+                Object {
+                  "fontSize": 42,
+                  "marginBottom": 5,
+                }
+              }
+              theme="twoTone"
+              twoToneColor="#D7C9AA"
+              type="crown"
+            />,
+            <div
+              style={
+                Object {
+                  "letterSpacing": 1,
+                  "textTransform": "uppercase",
+                }
+              }
+            >
+              
+            </div>,
+          ],
+          "style": Object {
+            "alignItems": "center",
+            "display": "flex",
+            "flex": 1,
+            "flexDirection": "column",
+            "justifyContent": "center",
+            "textAlign": "center",
+          },
+        },
+        "ref": null,
+        "rendered": Array [
+          Object {
+            "instance": null,
+            "key": undefined,
+            "nodeType": "function",
+            "props": Object {
+              "style": Object {
+                "fontSize": 42,
+                "marginBottom": 5,
+              },
+              "theme": "twoTone",
+              "twoToneColor": "#D7C9AA",
+              "type": "crown",
+            },
+            "ref": null,
+            "rendered": null,
+            "type": [Function],
+          },
+          Object {
+            "instance": null,
+            "key": undefined,
+            "nodeType": "host",
+            "props": Object {
+              "children": "",
+              "style": Object {
+                "letterSpacing": 1,
+                "textTransform": "uppercase",
+              },
+            },
+            "ref": null,
+            "rendered": "",
+            "type": "div",
+          },
+        ],
+        "type": "div",
+      },
+    ],
+    "type": [Function],
+  },
+  Symbol(enzyme.__nodes__): Array [
+    Object {
+      "instance": null,
+      "key": undefined,
+      "nodeType": "class",
+      "props": Object {
+        "bodyStyle": Object {
+          "display": "flex",
+          "flex": 1,
+          "flexDirection": "column",
+        },
+        "children": Array [
+          <Label>
+            liaison
+          </Label>,
+          <div
+            style={
+              Object {
+                "alignItems": "center",
+                "display": "flex",
+                "flex": 1,
+                "flexDirection": "column",
+                "justifyContent": "center",
+                "textAlign": "center",
+              }
+            }
+          >
+            <Icon
+              style={
+                Object {
+                  "fontSize": 42,
+                  "marginBottom": 5,
+                }
+              }
+              theme="twoTone"
+              twoToneColor="#D7C9AA"
+              type="crown"
+            />
+            <div
+              style={
+                Object {
+                  "letterSpacing": 1,
+                  "textTransform": "uppercase",
+                }
+              }
+            >
+              
+            </div>
+          </div>,
+        ],
+        "style": Object {
+          "display": "flex",
+          "flex": 1,
+        },
+      },
+      "ref": null,
+      "rendered": Array [
+        Object {
+          "instance": null,
+          "key": undefined,
+          "nodeType": "function",
+          "props": Object {
+            "children": "liaison",
+          },
+          "ref": null,
+          "rendered": "liaison",
+          "type": [Function],
+        },
+        Object {
+          "instance": null,
+          "key": undefined,
+          "nodeType": "host",
+          "props": Object {
+            "children": Array [
+              <Icon
+                style={
+                  Object {
+                    "fontSize": 42,
+                    "marginBottom": 5,
+                  }
+                }
+                theme="twoTone"
+                twoToneColor="#D7C9AA"
+                type="crown"
+              />,
+              <div
+                style={
+                  Object {
+                    "letterSpacing": 1,
+                    "textTransform": "uppercase",
+                  }
+                }
+              >
+                
+              </div>,
+            ],
+            "style": Object {
+              "alignItems": "center",
+              "display": "flex",
+              "flex": 1,
+              "flexDirection": "column",
+              "justifyContent": "center",
+              "textAlign": "center",
+            },
+          },
+          "ref": null,
+          "rendered": Array [
+            Object {
+              "instance": null,
+              "key": undefined,
+              "nodeType": "function",
+              "props": Object {
+                "style": Object {
+                  "fontSize": 42,
+                  "marginBottom": 5,
+                },
+                "theme": "twoTone",
+                "twoToneColor": "#D7C9AA",
+                "type": "crown",
+              },
+              "ref": null,
+              "rendered": null,
+              "type": [Function],
+            },
+            Object {
+              "instance": null,
+              "key": undefined,
+              "nodeType": "host",
+              "props": Object {
+                "children": "",
+                "style": Object {
+                  "letterSpacing": 1,
+                  "textTransform": "uppercase",
+                },
+              },
+              "ref": null,
+              "rendered": "",
+              "type": "div",
+            },
+          ],
+          "type": "div",
+        },
+      ],
+      "type": [Function],
+    },
+  ],
+  Symbol(enzyme.__options__): Object {
+    "adapter": ReactSixteenAdapter {
+      "options": Object {
+        "enableComponentDidUpdateOnSetState": true,
+        "lifecycles": Object {
+          "componentDidUpdate": Object {
+            "onSetState": true,
+          },
+          "getDerivedStateFromProps": true,
+          "getSnapshotBeforeUpdate": true,
+          "setState": Object {
+            "skipsComponentDidUpdateOnNullish": true,
+          },
+        },
+      },
+    },
+    "attachTo": undefined,
+    "hydrateIn": undefined,
+  },
+}
+`;

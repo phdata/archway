@@ -1,14 +1,16 @@
-import { Button, Col, Icon, Row, Tabs } from 'antd';
 import * as React from 'react';
+import { Button, Col, Icon, Row, Tabs } from 'antd';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { RequestInput } from '../../types/RequestInput';
 import { Workspace } from '../../types/Workspace';
 import * as actions from './actions';
-import BehaviorPage from './BehaviorPage';
-import OverviewPage from './OverviewPage';
+import {
+  BehaviorPage,
+  OverviewPage,
+  SummaryPage,
+ } from './components';
 import * as selectors from './selectors';
-import SummaryPage from './SummaryPage';
 
 interface Props {
     behavior?: string;

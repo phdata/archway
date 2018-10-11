@@ -5,7 +5,7 @@ import { createStructuredSelector } from 'reselect';
 import { Member } from '../../../types/Workspace';
 import * as selectors from '../selectors';
 import Label from './Label';
-import Colors from '../../../components/Colors';
+import { Colors } from '../../../components';
 
 interface Props {
   members?: Member[];
