@@ -96,3 +96,19 @@ export interface TopicRequestSuccessAction {
 export const topicRequestSuccess = () => ({
   type: TOPIC_REQUEST_SUCCESS,
 });
+
+export const SIMPLE_MEMBER_REQUEST = 'SIMPLE_MEMBER_REQUEST';
+export interface SimpleMemberRequestAction {
+  type: typeof SIMPLE_MEMBER_REQUEST;
+}
+export const simpleMemberRequest = () => ({
+  type: SIMPLE_MEMBER_REQUEST,
+});
+
+export const SIMPLE_MEMBER_REQUEST_COMPLETE = 'SIMPLE_MEMBER_REQUEST_COMPLETE';
+export interface SimpleMemberRequestCompleteAction {
+  type: typeof SIMPLE_MEMBER_REQUEST_COMPLETE;
+}
+export const simpleMemberRequestComplete = () => ({
+  type: SIMPLE_MEMBER_REQUEST_COMPLETE,
+});

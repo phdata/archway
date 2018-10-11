@@ -41,7 +41,11 @@ const YarnDetails = ({ yarn, poolName, pools }: Props) => {
         subheading={poolName} />
       <Row gutter={12} type="flex" justify="center" style={{ marginTop: 18 }}>
         {pools && pools[0].applications.length > 0 && pools[0].applications.map(renderApplication(rmURL))}
-        {!pools }
+        {(!pools || pools.length <= 0 || pools[0].applications.length <= 0) && (
+          <div style={{ color: 'rgba(0, 0, 0, .65)' }}>
+            No running YARN applications.
+          </div>
+        )}
       </Row>
     </Card>
   );

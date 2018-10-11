@@ -75,6 +75,7 @@ export interface DatabaseGrant {
 }
 
 export interface HiveAllocation {
+  id: number;
   name: string;
   location: string;
   size_in_gb: number;

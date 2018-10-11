@@ -41,10 +41,12 @@ interface Props extends RouteComponentProps<DetailsRouteProps> {
 
     getWorkspaceDetails: (id: number) => void;
     showTopicDialog: (e: React.MouseEvent) => void;
+    showSimpleMemberDialog: (e: React.MouseEvent) => void;
     clearModal: () => void;
     approveRisk: (e: React.MouseEvent) => void;
     approveOperations: (e: React.MouseEvent) => void;
     requestTopic: () => void;
+    simpleMemberRequest: () => void;
 }
 
 class WorkspaceDetails extends React.PureComponent<Props> {
@@ -63,11 +65,13 @@ class WorkspaceDetails extends React.PureComponent<Props> {
       approved,
       activeModal,
       showTopicDialog,
+      showSimpleMemberDialog,
       clearModal,
       approveRisk,
       approveOperations,
       profile,
       requestTopic,
+      simpleMemberRequest,
     } = this.props;
 
     if (!workspace) { return <Spin />; }
@@ -153,13 +157,33 @@ class WorkspaceDetails extends React.PureComponent<Props> {
                 </Modal>
               </Col>
               <Col span={24} lg={12} xxl={6} style={{ marginTop: 10 }}>
-                <MemberList />
+                <MemberList
+                  showModal={showSimpleMemberDialog} />
+                <Modal
+                  visible={activeModal === 'simpleMember'}
+                  title="Add A Member"
+                  onCancel={clearModal}
+                  onOk={simpleMemberRequest}>
+                  <SimpleMemberRequest />
+                </Modal>
               </Col>
             </Row>
           )}
-          <Row>
-            <Col span={24} style={{ marginTop: 10 }}>
-                <SetupHelp approved={approved} />
+          <Row gutter={12}>
+            <Col span={24} xxl={8} style={{ marginTop: 10 }}>
+              <PrepareHelp
+                location={workspace.data[0].location}
+                namespace={workspace.data[0].name} />
+            </Col>
+            <Col span={24} xxl={8} style={{ marginTop: 10 }}>
+              <CreateHelp
+                host={cluster.services.hive.thrift[0].host}
+                port={cluster.services.hive.thrift[0].port}
+                namespace={workspace.data[0].name} />
+            </Col>
+            <Col span={24} xxl={8} style={{ marginTop: 10 }}>
+              <RunHelp
+                queue={workspace.processing[0].pool_name} />
             </Col>
           </Row>
       </div>
@@ -181,10 +205,16 @@ const mapStateToProps = () =>
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
   getWorkspaceDetails: (id: number) => dispatch(actions.getWorkspace(id)),
+
   showTopicDialog: (e: React.MouseEvent) => {
     e.preventDefault();
     return dispatch(actions.setActiveModal('kafka'));
   },
+  showSimpleMemberDialog: (e: React.MouseEvent) => {
+    e.preventDefault();
+    return dispatch(actions.setActiveModal('simpleMember'));
+  },
+
   approveRisk: (e: React.MouseEvent) => {
     e.preventDefault();
     return dispatch(actions.requestApproval('risk'));
@@ -193,8 +223,10 @@ const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
     e.preventDefault();
     return dispatch(actions.requestApproval('infra'));
   },
+
   clearModal: () => dispatch(actions.setActiveModal(false)),
   requestTopic: () => dispatch(actions.requestTopic()),
+  simpleMemberRequest: () => dispatch(actions.simpleMemberRequest()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(withRouter(WorkspaceDetails));

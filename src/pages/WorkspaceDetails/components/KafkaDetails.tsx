@@ -11,7 +11,7 @@ interface Props {
 }
 
 const renderTopic = (topic: KafkaTopic) => (
-  <div>topic.name</div>
+  <div style={{ textAlign: 'center' }}>{topic.name}</div>
 );
 
 const KafkaDetails = ({ consumerGroup, topics, showModal }: Props) => (
@@ -23,7 +23,7 @@ const KafkaDetails = ({ consumerGroup, topics, showModal }: Props) => (
       icon="sound"
       heading="Kafka Topics"
       subheading={consumerGroup} />
-    <Row gutter={12} type="flex" justify="center" style={{ marginTop: 18 }}>
+    <Row gutter={12} type="flex" justify="center" style={{ flexDirection: 'column', marginTop: 18 }}>
       {topics && topics.length > 0 && topics.map(renderTopic)}
       {(!topics || topics.length <= 0) && (
         <div style={{ color: 'rgba(0, 0, 0, .65)' }}>
