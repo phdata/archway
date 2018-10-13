@@ -6,6 +6,7 @@ export { default as HiveDetails } from './HiveDetails';
 export { default as KafkaDetails } from './KafkaDetails';
 export { default as KafkaTopicRequest } from './KafkaTopicRequest';
 export { default as Label } from './Label';
+export { default as CardHeader } from './CardHeader';
 export { default as Liaison } from './Liaison';
 export { default as MemberList } from './MemberList';
 export { default as CreateHelp } from './CreateHelp';

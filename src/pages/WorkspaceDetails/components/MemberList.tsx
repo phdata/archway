@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { Member } from '../../../types/Workspace';
 import * as selectors from '../selectors';
-import CardHeader from './CardHeader';
+import { CardHeader } from '.';
 
 interface Props {
   members?: Member[];

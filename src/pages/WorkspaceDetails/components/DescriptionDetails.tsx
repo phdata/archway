@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Card } from 'antd';
-import Label from './Label';
+import { Label } from '.';
 
 interface Props {
   description: string;

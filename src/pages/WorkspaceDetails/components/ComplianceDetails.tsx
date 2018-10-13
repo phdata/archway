@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Icon, Card } from 'antd';
-import Label from './Label';
+import { Label } from '.';
 
 interface ItemProps {
     checked: boolean;

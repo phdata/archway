@@ -1,7 +1,7 @@
 import { Card, Row } from 'antd';
 import * as React from 'react';
 import { KafkaTopic } from '../../../types/Workspace';
-import CardHeader from './CardHeader';
+import { CardHeader } from '.';
 
 interface Props {
     consumerGroup: string;
