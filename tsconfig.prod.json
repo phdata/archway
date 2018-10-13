@@ -13,7 +13,6 @@
     "sourceMap": true,
     "allowJs": true,
     "jsx": "react",
-    "moduleResolution": "node",
     "rootDir": "src",
     "noImplicitReturns": true,
     "noImplicitThis": true,
