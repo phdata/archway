@@ -11,15 +11,18 @@ import * as actions from './actions';
 import {
   ApprovalDetails,
   ComplianceDetails,
-  DescriptionDisplay as DescriptionDetails,
+  DescriptionDetails,
   HiveDetails,
   KafkaDetails,
   Liaison,
   MemberList,
   YarnDetails,
-  SetupHelp,
   Allocations,
   KafkaTopicRequest,
+  PrepareHelp,
+  RunHelp,
+  CreateHelp,
+  SimpleMemberRequest,
  } from './components';
 import * as selectors from './selectors';
 

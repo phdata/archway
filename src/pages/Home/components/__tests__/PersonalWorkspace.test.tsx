@@ -21,6 +21,7 @@ describe('PersonalWorkspace', () => {
         pii_data: false,
       },
       data: [{
+        id: 1,
         name: '',
         location: '',
         size_in_gb: 0,

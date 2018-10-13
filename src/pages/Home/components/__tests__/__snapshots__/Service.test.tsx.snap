@@ -10,6 +10,7 @@ ShallowWrapper {
         "links": Array [],
         "service": Object {
           "status": "",
+          "thrift": Array [],
         },
       }
     }

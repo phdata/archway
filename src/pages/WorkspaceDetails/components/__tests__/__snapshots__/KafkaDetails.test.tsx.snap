@@ -30,59 +30,32 @@ ShallowWrapper {
         </a>,
       ],
       "children": Array [
-        <div
+        <CardHeader
+          heading="Kafka Topics"
+          icon="sound"
+          subheading=""
+        />,
+        <Row
+          gutter={12}
+          justify="center"
           style={
             Object {
-              "display": "flex",
-              "justifyContent": "space-between",
+              "flexDirection": "column",
+              "marginTop": 18,
             }
           }
+          type="flex"
         >
-          <Label
+          <div
             style={
               Object {
-                "lineHeight": "20px",
+                "color": "rgba(0, 0, 0, .65)",
               }
             }
           >
-            <Icon
-              style={
-                Object {
-                  "fontSize": 20,
-                  "paddingRight": 5,
-                }
-              }
-              theme="twoTone"
-              twoToneColor="rgb(67, 170, 139)"
-              type="sound"
-            />
-            Kafka
-          </Label>
-          <Label
-            style={
-              Object {
-                "fontSize": 10,
-                "lineHeight": "18px",
-              }
-            }
-          >
-            
-          </Label>
-        </div>,
-        <List
-          bordered={false}
-          dataSource={Array []}
-          loading={false}
-          locale={
-            Object {
-              "emptyText": "No topics yet",
-            }
-          }
-          pagination={false}
-          prefixCls="ant-list"
-          renderItem={[Function]}
-          split={true}
-        />,
+            No topics yet.
+          </div>
+        </Row>,
       ],
     },
     "ref": null,
@@ -90,129 +63,59 @@ ShallowWrapper {
       Object {
         "instance": null,
         "key": undefined,
-        "nodeType": "host",
+        "nodeType": "function",
         "props": Object {
-          "children": Array [
-            <Label
-              style={
-                Object {
-                  "lineHeight": "20px",
-                }
-              }
-            >
-              <Icon
-                style={
-                  Object {
-                    "fontSize": 20,
-                    "paddingRight": 5,
-                  }
-                }
-                theme="twoTone"
-                twoToneColor="rgb(67, 170, 139)"
-                type="sound"
-              />
-              Kafka
-            </Label>,
-            <Label
-              style={
-                Object {
-                  "fontSize": 10,
-                  "lineHeight": "18px",
-                }
-              }
-            >
-              
-            </Label>,
-          ],
-          "style": Object {
-            "display": "flex",
-            "justifyContent": "space-between",
-          },
+          "heading": "Kafka Topics",
+          "icon": "sound",
+          "subheading": "",
         },
         "ref": null,
-        "rendered": Array [
-          Object {
-            "instance": null,
-            "key": undefined,
-            "nodeType": "function",
-            "props": Object {
-              "children": Array [
-                <Icon
-                  style={
-                    Object {
-                      "fontSize": 20,
-                      "paddingRight": 5,
-                    }
-                  }
-                  theme="twoTone"
-                  twoToneColor="rgb(67, 170, 139)"
-                  type="sound"
-                />,
-                "Kafka",
-              ],
-              "style": Object {
-                "lineHeight": "20px",
-              },
-            },
-            "ref": null,
-            "rendered": Array [
-              Object {
-                "instance": null,
-                "key": undefined,
-                "nodeType": "function",
-                "props": Object {
-                  "style": Object {
-                    "fontSize": 20,
-                    "paddingRight": 5,
-                  },
-                  "theme": "twoTone",
-                  "twoToneColor": "rgb(67, 170, 139)",
-                  "type": "sound",
-                },
-                "ref": null,
-                "rendered": null,
-                "type": [Function],
-              },
-              "Kafka",
-            ],
-            "type": [Function],
-          },
-          Object {
-            "instance": null,
-            "key": undefined,
-            "nodeType": "function",
-            "props": Object {
-              "children": "",
-              "style": Object {
-                "fontSize": 10,
-                "lineHeight": "18px",
-              },
-            },
-            "ref": null,
-            "rendered": "",
-            "type": [Function],
-          },
-        ],
-        "type": "div",
+        "rendered": null,
+        "type": [Function],
       },
       Object {
         "instance": null,
         "key": undefined,
         "nodeType": "class",
         "props": Object {
-          "bordered": false,
-          "dataSource": Array [],
-          "loading": false,
-          "locale": Object {
-            "emptyText": "No topics yet",
+          "children": Array [
+            false,
+            <div
+              style={
+                Object {
+                  "color": "rgba(0, 0, 0, .65)",
+                }
+              }
+            >
+              No topics yet.
+            </div>,
+          ],
+          "gutter": 12,
+          "justify": "center",
+          "style": Object {
+            "flexDirection": "column",
+            "marginTop": 18,
           },
-          "pagination": false,
-          "prefixCls": "ant-list",
-          "renderItem": [Function],
-          "split": true,
+          "type": "flex",
         },
         "ref": null,
-        "rendered": null,
+        "rendered": Array [
+          false,
+          Object {
+            "instance": null,
+            "key": undefined,
+            "nodeType": "host",
+            "props": Object {
+              "children": "No topics yet.",
+              "style": Object {
+                "color": "rgba(0, 0, 0, .65)",
+              },
+            },
+            "ref": null,
+            "rendered": "No topics yet.",
+            "type": "div",
+          },
+        ],
         "type": [Function],
       },
     ],
@@ -233,59 +136,32 @@ ShallowWrapper {
           </a>,
         ],
         "children": Array [
-          <div
+          <CardHeader
+            heading="Kafka Topics"
+            icon="sound"
+            subheading=""
+          />,
+          <Row
+            gutter={12}
+            justify="center"
             style={
               Object {
-                "display": "flex",
-                "justifyContent": "space-between",
+                "flexDirection": "column",
+                "marginTop": 18,
               }
             }
+            type="flex"
           >
-            <Label
+            <div
               style={
                 Object {
-                  "lineHeight": "20px",
+                  "color": "rgba(0, 0, 0, .65)",
                 }
               }
             >
-              <Icon
-                style={
-                  Object {
-                    "fontSize": 20,
-                    "paddingRight": 5,
-                  }
-                }
-                theme="twoTone"
-                twoToneColor="rgb(67, 170, 139)"
-                type="sound"
-              />
-              Kafka
-            </Label>
-            <Label
-              style={
-                Object {
-                  "fontSize": 10,
-                  "lineHeight": "18px",
-                }
-              }
-            >
-              
-            </Label>
-          </div>,
-          <List
-            bordered={false}
-            dataSource={Array []}
-            loading={false}
-            locale={
-              Object {
-                "emptyText": "No topics yet",
-              }
-            }
-            pagination={false}
-            prefixCls="ant-list"
-            renderItem={[Function]}
-            split={true}
-          />,
+              No topics yet.
+            </div>
+          </Row>,
         ],
       },
       "ref": null,
@@ -293,129 +169,59 @@ ShallowWrapper {
         Object {
           "instance": null,
           "key": undefined,
-          "nodeType": "host",
+          "nodeType": "function",
           "props": Object {
-            "children": Array [
-              <Label
-                style={
-                  Object {
-                    "lineHeight": "20px",
-                  }
-                }
-              >
-                <Icon
-                  style={
-                    Object {
-                      "fontSize": 20,
-                      "paddingRight": 5,
-                    }
-                  }
-                  theme="twoTone"
-                  twoToneColor="rgb(67, 170, 139)"
-                  type="sound"
-                />
-                Kafka
-              </Label>,
-              <Label
-                style={
-                  Object {
-                    "fontSize": 10,
-                    "lineHeight": "18px",
-                  }
-                }
-              >
-                
-              </Label>,
-            ],
-            "style": Object {
-              "display": "flex",
-              "justifyContent": "space-between",
-            },
+            "heading": "Kafka Topics",
+            "icon": "sound",
+            "subheading": "",
           },
           "ref": null,
-          "rendered": Array [
-            Object {
-              "instance": null,
-              "key": undefined,
-              "nodeType": "function",
-              "props": Object {
-                "children": Array [
-                  <Icon
-                    style={
-                      Object {
-                        "fontSize": 20,
-                        "paddingRight": 5,
-                      }
-                    }
-                    theme="twoTone"
-                    twoToneColor="rgb(67, 170, 139)"
-                    type="sound"
-                  />,
-                  "Kafka",
-                ],
-                "style": Object {
-                  "lineHeight": "20px",
-                },
-              },
-              "ref": null,
-              "rendered": Array [
-                Object {
-                  "instance": null,
-                  "key": undefined,
-                  "nodeType": "function",
-                  "props": Object {
-                    "style": Object {
-                      "fontSize": 20,
-                      "paddingRight": 5,
-                    },
-                    "theme": "twoTone",
-                    "twoToneColor": "rgb(67, 170, 139)",
-                    "type": "sound",
-                  },
-                  "ref": null,
-                  "rendered": null,
-                  "type": [Function],
-                },
-                "Kafka",
-              ],
-              "type": [Function],
-            },
-            Object {
-              "instance": null,
-              "key": undefined,
-              "nodeType": "function",
-              "props": Object {
-                "children": "",
-                "style": Object {
-                  "fontSize": 10,
-                  "lineHeight": "18px",
-                },
-              },
-              "ref": null,
-              "rendered": "",
-              "type": [Function],
-            },
-          ],
-          "type": "div",
+          "rendered": null,
+          "type": [Function],
         },
         Object {
           "instance": null,
           "key": undefined,
           "nodeType": "class",
           "props": Object {
-            "bordered": false,
-            "dataSource": Array [],
-            "loading": false,
-            "locale": Object {
-              "emptyText": "No topics yet",
+            "children": Array [
+              false,
+              <div
+                style={
+                  Object {
+                    "color": "rgba(0, 0, 0, .65)",
+                  }
+                }
+              >
+                No topics yet.
+              </div>,
+            ],
+            "gutter": 12,
+            "justify": "center",
+            "style": Object {
+              "flexDirection": "column",
+              "marginTop": 18,
             },
-            "pagination": false,
-            "prefixCls": "ant-list",
-            "renderItem": [Function],
-            "split": true,
+            "type": "flex",
           },
           "ref": null,
-          "rendered": null,
+          "rendered": Array [
+            false,
+            Object {
+              "instance": null,
+              "key": undefined,
+              "nodeType": "host",
+              "props": Object {
+                "children": "No topics yet.",
+                "style": Object {
+                  "color": "rgba(0, 0, 0, .65)",
+                },
+              },
+              "ref": null,
+              "rendered": "No topics yet.",
+              "type": "div",
+            },
+          ],
           "type": [Function],
         },
       ],
