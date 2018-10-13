@@ -94,6 +94,9 @@
     "webpack-dev-server": "^3.1.8"
   },
   "jest": {
+    "roots": [
+      "<rootDir>/src"
+    ],
     "setupFiles": [
       "<rootDir>/test-shim.js",
       "<rootDir>/test-setup.js"

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Icon, Card } from 'antd';
-import { Label } from '.';
+import Label from './Label';
 import { ApprovalItem } from '../../../types/Workspace';
 
 interface ItemProps {

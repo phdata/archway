@@ -2,7 +2,7 @@ import { Card, Row } from 'antd';
 import * as React from 'react';
 import { YarnService } from '../../../types/Cluster';
 import { PoolInfo, YarnApplication } from '../../../types/Workspace';
-import { CardHeader } from '.';
+import CardHeader from './CardHeader';
 
 interface Props {
   yarn?: YarnService;

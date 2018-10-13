@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Card } from 'antd';
-import { Label } from '.';
+import Label from './Label';
 import { Doughnut } from 'react-chartjs-2';
 import { Colors } from '../../../components';
 

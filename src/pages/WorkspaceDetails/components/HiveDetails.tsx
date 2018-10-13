@@ -2,7 +2,7 @@ import { Card, Row } from 'antd';
 import * as React from 'react';
 import { HueService } from '../../../types/Cluster';
 import { HiveTable, NamespaceInfo } from '../../../types/Workspace';
-import { CardHeader } from '.';
+import CardHeader from './CardHeader';
 
 interface Props {
     hue?: HueService;

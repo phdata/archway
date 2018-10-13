@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Card, Icon } from 'antd';
-import { Label } from '.';
+import Label from './Label';
 
 interface Props {
   liaison: string;

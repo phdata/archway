@@ -2,7 +2,7 @@ import { Card } from 'antd';
 import * as React from 'react';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { tomorrowNightEighties } from 'react-syntax-highlighter/styles/hljs';
-import { Label } from '.';
+import Label from './Label';
 
 interface Props {
   queue: string;
