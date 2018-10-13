@@ -13,6 +13,7 @@ build:
     paths:
       - node_modules
   script:
+    - npm i -g typescript
     - npm i
     - npm run-script build
 
