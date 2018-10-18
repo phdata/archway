@@ -28,6 +28,8 @@ case class WorkspaceRequest(name: String,
 
   val approved: Boolean = approvals.lengthCompare(2) == 0
 
+  val status: String = if(approved) "Approved" else "Pending"
+
 }
 
 object WorkspaceRequest {
@@ -54,7 +56,8 @@ object WorkspaceRequest {
         "topics" -> request.kafkaTopics.asJson,
         "single_user" -> request.singleUser.asJson,
         "requester" -> request.requestedBy.asJson,
-        "requested_date" -> request.requestDate.asJson
+        "requested_date" -> request.requestDate.asJson,
+        "status" -> request.status.asJson
       )
     )((initial, approvals) => initial deepMerge Json.obj("approvals" -> approvals.asJson))
   }
