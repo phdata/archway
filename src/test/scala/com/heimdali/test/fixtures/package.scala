@@ -119,6 +119,7 @@ package object fixtures {
        |  "description" : "$name",
        |  "behavior" : "simple",
        |  "single_user" : ${initialWorkspaceRequest.singleUser},
+       |  "status": "Pending",
        |  "compliance" : {
        |    "phi_data" : ${savedCompliance.phiData},
        |    "pci_data" : ${savedCompliance.pciData},

@@ -3,6 +3,7 @@
   "summary": "A brief summary",
   "description": "A longer description",
   "behavior": "simple",
+  "status": "Pending",
   "compliance": {
     "phi_data": false,
     "pci_data": false,
