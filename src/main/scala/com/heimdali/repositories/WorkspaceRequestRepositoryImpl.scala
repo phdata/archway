@@ -10,7 +10,9 @@ class WorkspaceRequestRepositoryImpl
   extends WorkspaceRequestRepository {
 
   override def list(username: String): ConnectionIO[List[WorkspaceRequest]] =
-    WorkspaceRequestRepositoryImpl.Statements.listQuery(username).to[List]
+    WorkspaceRequestRepositoryImpl.Statements.listQuery(username).to[List].map(_.groupBy(_._1).map {
+      case (req, groups) => req.copy(approvals = groups.flatMap(_._2))
+    }.toList)
 
   override def find(id: Long): OptionT[ConnectionIO, WorkspaceRequest] =
     OptionT(WorkspaceRequestRepositoryImpl.Statements.find(id).option)
@@ -80,6 +82,30 @@ object WorkspaceRequestRepositoryImpl {
         inner join compliance c on wr.compliance_id = c.id
         """
 
+    val listFragment: Fragment =
+      fr"""
+        select
+          wr.name,
+          wr.summary,
+          wr.description,
+          wr.behavior,
+          wr.requested_by,
+          wr.request_date,
+          c.phi_data,
+          c.pci_data,
+          c.pii_data,
+          c.id,
+          wr.single_user,
+          wr.id,
+          a.role,
+          a.approver,
+          a.approval_time,
+          a.id
+        from workspace_request wr
+        inner join compliance c on wr.compliance_id = c.id
+        left join approval a on a.workspace_request_id = wr.id
+        """
+
     val innerQuery: Fragment =
       fr"""
         select wd.workspace_request_id
@@ -96,9 +122,9 @@ object WorkspaceRequestRepositoryImpl {
     def innerQueryWith(username: String): Fragment =
       innerQuery ++ whereOr(fr"mrm.username = $username", fr"rrm.username = $username")
 
-    def listQuery(username: String): Query0[WorkspaceRequest] =
-      (selectFragment ++ fr"where wr.id in (" ++ innerQueryWith(username) ++ fr") and wr.single_user = false")
-        .query[WorkspaceRequest]
+    def listQuery(username: String): Query0[(WorkspaceRequest, Option[Approval])] =
+      (listFragment ++ fr"where wr.id in (" ++ innerQueryWith(username) ++ fr") and wr.single_user = false")
+        .query[(WorkspaceRequest, Option[Approval])]
 
     def insert(workspaceRequest: WorkspaceRequest): Update0 =
       sql"""
