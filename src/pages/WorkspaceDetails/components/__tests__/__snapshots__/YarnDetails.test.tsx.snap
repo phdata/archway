@@ -21,71 +21,37 @@ ShallowWrapper {
     "props": Object {
       "actions": Array [
         <a
-          href="#"
+          target="_blank"
         >
-          Open Resource Manger
+          Open Resource Manager
         </a>,
       ],
       "children": Array [
-        <div
+        <CardHeader
+          heading="Yarn Applications"
+          icon="rocket"
+          subheading=""
+        />,
+        <Row
+          gutter={12}
+          justify="center"
           style={
             Object {
-              "display": "flex",
-              "justifyContent": "space-between",
+              "marginTop": 18,
             }
           }
+          type="flex"
         >
-          <Label
+          <div
             style={
               Object {
-                "lineHeight": "22px",
+                "color": "rgba(0, 0, 0, .65)",
               }
             }
           >
-            <Icon
-              style={
-                Object {
-                  "fontSize": 22,
-                  "paddingRight": 5,
-                }
-              }
-              theme="twoTone"
-              twoToneColor="rgb(67, 170, 139)"
-              type="rocket"
-            />
-            Yarn
-          </Label>
-          <Label
-            style={
-              Object {
-                "fontSize": 10,
-                "lineHeight": "18px",
-              }
-            }
-          >
-            
-          </Label>
-        </div>,
-        <List
-          bordered={false}
-          dataSource={Array []}
-          grid={
-            Object {
-              "column": 3,
-              "gutter": 12,
-            }
-          }
-          loading={false}
-          locale={
-            Object {
-              "emptyText": "No running applications",
-            }
-          }
-          pagination={false}
-          prefixCls="ant-list"
-          renderItem={[Function]}
-          split={true}
-        />,
+            No running YARN applications.
+          </div>
+        </Row>,
       ],
     },
     "ref": null,
@@ -93,133 +59,58 @@ ShallowWrapper {
       Object {
         "instance": null,
         "key": undefined,
-        "nodeType": "host",
+        "nodeType": "function",
         "props": Object {
-          "children": Array [
-            <Label
-              style={
-                Object {
-                  "lineHeight": "22px",
-                }
-              }
-            >
-              <Icon
-                style={
-                  Object {
-                    "fontSize": 22,
-                    "paddingRight": 5,
-                  }
-                }
-                theme="twoTone"
-                twoToneColor="rgb(67, 170, 139)"
-                type="rocket"
-              />
-              Yarn
-            </Label>,
-            <Label
-              style={
-                Object {
-                  "fontSize": 10,
-                  "lineHeight": "18px",
-                }
-              }
-            >
-              
-            </Label>,
-          ],
-          "style": Object {
-            "display": "flex",
-            "justifyContent": "space-between",
-          },
+          "heading": "Yarn Applications",
+          "icon": "rocket",
+          "subheading": "",
         },
         "ref": null,
-        "rendered": Array [
-          Object {
-            "instance": null,
-            "key": undefined,
-            "nodeType": "function",
-            "props": Object {
-              "children": Array [
-                <Icon
-                  style={
-                    Object {
-                      "fontSize": 22,
-                      "paddingRight": 5,
-                    }
-                  }
-                  theme="twoTone"
-                  twoToneColor="rgb(67, 170, 139)"
-                  type="rocket"
-                />,
-                "Yarn",
-              ],
-              "style": Object {
-                "lineHeight": "22px",
-              },
-            },
-            "ref": null,
-            "rendered": Array [
-              Object {
-                "instance": null,
-                "key": undefined,
-                "nodeType": "function",
-                "props": Object {
-                  "style": Object {
-                    "fontSize": 22,
-                    "paddingRight": 5,
-                  },
-                  "theme": "twoTone",
-                  "twoToneColor": "rgb(67, 170, 139)",
-                  "type": "rocket",
-                },
-                "ref": null,
-                "rendered": null,
-                "type": [Function],
-              },
-              "Yarn",
-            ],
-            "type": [Function],
-          },
-          Object {
-            "instance": null,
-            "key": undefined,
-            "nodeType": "function",
-            "props": Object {
-              "children": "",
-              "style": Object {
-                "fontSize": 10,
-                "lineHeight": "18px",
-              },
-            },
-            "ref": null,
-            "rendered": "",
-            "type": [Function],
-          },
-        ],
-        "type": "div",
+        "rendered": null,
+        "type": [Function],
       },
       Object {
         "instance": null,
         "key": undefined,
         "nodeType": "class",
         "props": Object {
-          "bordered": false,
-          "dataSource": Array [],
-          "grid": Object {
-            "column": 3,
-            "gutter": 12,
+          "children": Array [
+            undefined,
+            <div
+              style={
+                Object {
+                  "color": "rgba(0, 0, 0, .65)",
+                }
+              }
+            >
+              No running YARN applications.
+            </div>,
+          ],
+          "gutter": 12,
+          "justify": "center",
+          "style": Object {
+            "marginTop": 18,
           },
-          "loading": false,
-          "locale": Object {
-            "emptyText": "No running applications",
-          },
-          "pagination": false,
-          "prefixCls": "ant-list",
-          "renderItem": [Function],
-          "split": true,
+          "type": "flex",
         },
         "ref": null,
-        "rendered": null,
+        "rendered": Array [
+          undefined,
+          Object {
+            "instance": null,
+            "key": undefined,
+            "nodeType": "host",
+            "props": Object {
+              "children": "No running YARN applications.",
+              "style": Object {
+                "color": "rgba(0, 0, 0, .65)",
+              },
+            },
+            "ref": null,
+            "rendered": "No running YARN applications.",
+            "type": "div",
+          },
+        ],
         "type": [Function],
       },
     ],
@@ -233,71 +124,37 @@ ShallowWrapper {
       "props": Object {
         "actions": Array [
           <a
-            href="#"
+            target="_blank"
           >
-            Open Resource Manger
+            Open Resource Manager
           </a>,
         ],
         "children": Array [
-          <div
+          <CardHeader
+            heading="Yarn Applications"
+            icon="rocket"
+            subheading=""
+          />,
+          <Row
+            gutter={12}
+            justify="center"
             style={
               Object {
-                "display": "flex",
-                "justifyContent": "space-between",
+                "marginTop": 18,
               }
             }
+            type="flex"
           >
-            <Label
+            <div
               style={
                 Object {
-                  "lineHeight": "22px",
+                  "color": "rgba(0, 0, 0, .65)",
                 }
               }
             >
-              <Icon
-                style={
-                  Object {
-                    "fontSize": 22,
-                    "paddingRight": 5,
-                  }
-                }
-                theme="twoTone"
-                twoToneColor="rgb(67, 170, 139)"
-                type="rocket"
-              />
-              Yarn
-            </Label>
-            <Label
-              style={
-                Object {
-                  "fontSize": 10,
-                  "lineHeight": "18px",
-                }
-              }
-            >
-              
-            </Label>
-          </div>,
-          <List
-            bordered={false}
-            dataSource={Array []}
-            grid={
-              Object {
-                "column": 3,
-                "gutter": 12,
-              }
-            }
-            loading={false}
-            locale={
-              Object {
-                "emptyText": "No running applications",
-              }
-            }
-            pagination={false}
-            prefixCls="ant-list"
-            renderItem={[Function]}
-            split={true}
-          />,
+              No running YARN applications.
+            </div>
+          </Row>,
         ],
       },
       "ref": null,
@@ -305,133 +162,58 @@ ShallowWrapper {
         Object {
           "instance": null,
           "key": undefined,
-          "nodeType": "host",
+          "nodeType": "function",
           "props": Object {
-            "children": Array [
-              <Label
-                style={
-                  Object {
-                    "lineHeight": "22px",
-                  }
-                }
-              >
-                <Icon
-                  style={
-                    Object {
-                      "fontSize": 22,
-                      "paddingRight": 5,
-                    }
-                  }
-                  theme="twoTone"
-                  twoToneColor="rgb(67, 170, 139)"
-                  type="rocket"
-                />
-                Yarn
-              </Label>,
-              <Label
-                style={
-                  Object {
-                    "fontSize": 10,
-                    "lineHeight": "18px",
-                  }
-                }
-              >
-                
-              </Label>,
-            ],
-            "style": Object {
-              "display": "flex",
-              "justifyContent": "space-between",
-            },
+            "heading": "Yarn Applications",
+            "icon": "rocket",
+            "subheading": "",
           },
           "ref": null,
-          "rendered": Array [
-            Object {
-              "instance": null,
-              "key": undefined,
-              "nodeType": "function",
-              "props": Object {
-                "children": Array [
-                  <Icon
-                    style={
-                      Object {
-                        "fontSize": 22,
-                        "paddingRight": 5,
-                      }
-                    }
-                    theme="twoTone"
-                    twoToneColor="rgb(67, 170, 139)"
-                    type="rocket"
-                  />,
-                  "Yarn",
-                ],
-                "style": Object {
-                  "lineHeight": "22px",
-                },
-              },
-              "ref": null,
-              "rendered": Array [
-                Object {
-                  "instance": null,
-                  "key": undefined,
-                  "nodeType": "function",
-                  "props": Object {
-                    "style": Object {
-                      "fontSize": 22,
-                      "paddingRight": 5,
-                    },
-                    "theme": "twoTone",
-                    "twoToneColor": "rgb(67, 170, 139)",
-                    "type": "rocket",
-                  },
-                  "ref": null,
-                  "rendered": null,
-                  "type": [Function],
-                },
-                "Yarn",
-              ],
-              "type": [Function],
-            },
-            Object {
-              "instance": null,
-              "key": undefined,
-              "nodeType": "function",
-              "props": Object {
-                "children": "",
-                "style": Object {
-                  "fontSize": 10,
-                  "lineHeight": "18px",
-                },
-              },
-              "ref": null,
-              "rendered": "",
-              "type": [Function],
-            },
-          ],
-          "type": "div",
+          "rendered": null,
+          "type": [Function],
         },
         Object {
           "instance": null,
           "key": undefined,
           "nodeType": "class",
           "props": Object {
-            "bordered": false,
-            "dataSource": Array [],
-            "grid": Object {
-              "column": 3,
-              "gutter": 12,
+            "children": Array [
+              undefined,
+              <div
+                style={
+                  Object {
+                    "color": "rgba(0, 0, 0, .65)",
+                  }
+                }
+              >
+                No running YARN applications.
+              </div>,
+            ],
+            "gutter": 12,
+            "justify": "center",
+            "style": Object {
+              "marginTop": 18,
             },
-            "loading": false,
-            "locale": Object {
-              "emptyText": "No running applications",
-            },
-            "pagination": false,
-            "prefixCls": "ant-list",
-            "renderItem": [Function],
-            "split": true,
+            "type": "flex",
           },
           "ref": null,
-          "rendered": null,
+          "rendered": Array [
+            undefined,
+            Object {
+              "instance": null,
+              "key": undefined,
+              "nodeType": "host",
+              "props": Object {
+                "children": "No running YARN applications.",
+                "style": Object {
+                  "color": "rgba(0, 0, 0, .65)",
+                },
+              },
+              "ref": null,
+              "rendered": "No running YARN applications.",
+              "type": "div",
+            },
+          ],
           "type": [Function],
         },
       ],

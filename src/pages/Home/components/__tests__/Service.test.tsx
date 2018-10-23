@@ -11,6 +11,7 @@ describe('Service', () => {
     });
     const links = new HiveServiceLinks({
       status: '',
+      thrift: [],
     });
     const wrapper = shallow(
       <Service

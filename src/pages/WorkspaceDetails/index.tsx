@@ -11,15 +11,18 @@ import * as actions from './actions';
 import {
   ApprovalDetails,
   ComplianceDetails,
-  DescriptionDisplay as DescriptionDetails,
+  DescriptionDetails,
   HiveDetails,
   KafkaDetails,
   Liaison,
   MemberList,
   YarnDetails,
-  SetupHelp,
   Allocations,
   KafkaTopicRequest,
+  PrepareHelp,
+  RunHelp,
+  CreateHelp,
+  SimpleMemberRequest,
  } from './components';
 import * as selectors from './selectors';
 
@@ -41,9 +44,12 @@ interface Props extends RouteComponentProps<DetailsRouteProps> {
 
     getWorkspaceDetails: (id: number) => void;
     showTopicDialog: (e: React.MouseEvent) => void;
+    showSimpleMemberDialog: (e: React.MouseEvent) => void;
     clearModal: () => void;
     approveRisk: (e: React.MouseEvent) => void;
     approveOperations: (e: React.MouseEvent) => void;
+    requestTopic: () => void;
+    simpleMemberRequest: () => void;
 }
 
 class WorkspaceDetails extends React.PureComponent<Props> {
@@ -62,9 +68,13 @@ class WorkspaceDetails extends React.PureComponent<Props> {
       approved,
       activeModal,
       showTopicDialog,
+      showSimpleMemberDialog,
       clearModal,
       approveRisk,
       approveOperations,
+      profile,
+      requestTopic,
+      simpleMemberRequest,
     } = this.props;
 
     if (!workspace) { return <Spin />; }
@@ -95,65 +105,88 @@ class WorkspaceDetails extends React.PureComponent<Props> {
             </div>
           </div>
           <Row gutter={12} type="flex">
-            <Col span={24} lg={8} style={{ marginTop: 10, display: 'flex' }}>
+            <Col span={24} xxl={8} style={{ marginTop: 10, display: 'flex' }}>
               <DescriptionDetails
                 description={workspace.description} />
             </Col>
-            <Col span={12} lg={4} style={{ marginTop: 10, display: 'flex' }}>
+            <Col span={12} xxl={4} style={{ marginTop: 10, display: 'flex' }}>
               <ComplianceDetails
                 pii={workspace.compliance.pii_data}
                 pci={workspace.compliance.pci_data}
                 phi={workspace.compliance.phi_data} />
             </Col>
-            <Col span={12} lg={4} style={{ marginTop: 10, display: 'flex' }}>
+            <Col span={12} xxl={4} style={{ marginTop: 10, display: 'flex' }}>
               <Liaison liaison={workspace.requester} />
             </Col>
-            <Col span={12} lg={4} style={{ marginTop: 10, display: 'flex' }}>
+            <Col span={12} xxl={4} style={{ marginTop: 10, display: 'flex' }}>
               <Allocations
                 location={workspace.data[0] && workspace.data[0].location}
                 allocated={workspace.data[0] && workspace.data[0].size_in_gb}
                 consumed={workspace.data[0] && workspace.data[0].consumed_in_gb} />
             </Col>
-            <Col span={12} lg={4} style={{ marginTop: 10, display: 'flex' }}>
+            <Col span={12} xxl={4} style={{ marginTop: 10, display: 'flex' }}>
               <ApprovalDetails
                 risk={workspace.approvals && workspace.approvals.risk}
                 infra={workspace.approvals && workspace.approvals.infra}
-                approveOperations={approveOperations}
-                approveRisk={approveRisk} />
+                approveOperations={profile.permissions && profile.permissions.platform_operations && approveOperations}
+                approveRisk={profile.permissions && profile.permissions.risk_management && approveRisk} />
             </Col>
           </Row>
           {approved && (
-            <Row gutter={12} type="flex" style={{ flexDirection: 'row' }}>
-              <Col span={24} lg={6} style={{ marginTop: 10 }}>
+            <Row gutter={12} type="flex" style={{ alignItems: 'stretch' }}>
+              <Col span={24} lg={12} xxl={6} style={{ marginTop: 10 }}>
                 <HiveDetails
                   hue={cluster.services && cluster.services.hue}
                   namespace={workspace.data[0].name}
                   info={infos} />
               </Col>
-              <Col span={24} lg={6} style={{ marginTop: 10 }}>
+              <Col span={24} lg={12} xxl={6} style={{ marginTop: 10 }}>
                 <YarnDetails
+                  yarn={cluster.services && cluster.services.yarn}
                   poolName={workspace.processing[0].pool_name}
                   pools={pools} />
               </Col>
-              <Col span={24} lg={6} style={{ marginTop: 10 }}>
+              <Col span={24} lg={12} xxl={6} style={{ marginTop: 10 }}>
                 <KafkaDetails
                   consumerGroup={workspace.applications[0] && workspace.applications[0].consumer_group}
                   topics={workspace.topics}
                   showModal={showTopicDialog} />
                 <Modal
                   visible={activeModal === 'kafka'}
-                  onCancel={clearModal}>
+                  title="New Topic"
+                  onCancel={clearModal}
+                  onOk={requestTopic}>
                   <KafkaTopicRequest />
                 </Modal>
               </Col>
-              <Col span={24} lg={6} style={{ marginTop: 10 }}>
-                <MemberList />
+              <Col span={24} lg={12} xxl={6} style={{ marginTop: 10 }}>
+                <MemberList
+                  showModal={showSimpleMemberDialog} />
+                <Modal
+                  visible={activeModal === 'simpleMember'}
+                  title="Add A Member"
+                  onCancel={clearModal}
+                  onOk={simpleMemberRequest}>
+                  <SimpleMemberRequest />
+                </Modal>
               </Col>
             </Row>
           )}
-          <Row>
-            <Col span={24} style={{ marginTop: 10 }}>
-                <SetupHelp approved={approved} />
+          <Row gutter={12}>
+            <Col span={24} xxl={8} style={{ marginTop: 10 }}>
+              <PrepareHelp
+                location={workspace.data[0].location}
+                namespace={workspace.data[0].name} />
+            </Col>
+            <Col span={24} xxl={8} style={{ marginTop: 10 }}>
+              <CreateHelp
+                host={cluster.services.hive.thrift[0].host}
+                port={cluster.services.hive.thrift[0].port}
+                namespace={workspace.data[0].name} />
+            </Col>
+            <Col span={24} xxl={8} style={{ marginTop: 10 }}>
+              <RunHelp
+                queue={workspace.processing[0].pool_name} />
             </Col>
           </Row>
       </div>
@@ -175,10 +208,16 @@ const mapStateToProps = () =>
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
   getWorkspaceDetails: (id: number) => dispatch(actions.getWorkspace(id)),
+
   showTopicDialog: (e: React.MouseEvent) => {
     e.preventDefault();
     return dispatch(actions.setActiveModal('kafka'));
   },
+  showSimpleMemberDialog: (e: React.MouseEvent) => {
+    e.preventDefault();
+    return dispatch(actions.setActiveModal('simpleMember'));
+  },
+
   approveRisk: (e: React.MouseEvent) => {
     e.preventDefault();
     return dispatch(actions.requestApproval('risk'));
@@ -187,7 +226,10 @@ const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
     e.preventDefault();
     return dispatch(actions.requestApproval('infra'));
   },
+
   clearModal: () => dispatch(actions.setActiveModal(false)),
+  requestTopic: () => dispatch(actions.requestTopic()),
+  simpleMemberRequest: () => dispatch(actions.simpleMemberRequest()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(withRouter(WorkspaceDetails));

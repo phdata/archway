@@ -2,6 +2,7 @@ import { createSelector } from 'reselect';
 import { authSelector, clusterSelector, workspaceSelector } from '../../selectors';
 import { Member, NamespaceInfo, PoolInfo, Workspace } from '../../types/Workspace';
 import { Cluster } from '../../types/Cluster';
+import { Profile } from '../../types/Profile';
 
 export const getWorkspace = () => createSelector(
   workspaceSelector,
@@ -17,8 +18,8 @@ export const getClusterDetails = () => createSelector(
 
 export const getProfile = () => createSelector(
   authSelector,
-  (workspaceState) =>
-    workspaceState.get('details'),
+  (authState) =>
+    authState.get('profile') as Profile,
 );
 
 const liasionFilter = (state: any) => (member: Member) =>

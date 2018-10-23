@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 
-import SetupHelp from '../SetupHelp';
+import PrepareHelp from '../PrepareHelp';
 
-describe('SetupHelp', () => {
+describe('PrepareHelp', () => {
   it('renders correctly', () => {
-    const wrapper = shallow(<SetupHelp approved={false} />);
+    const wrapper = shallow(<PrepareHelp location="" namespace="" />);
     expect(wrapper).toMatchSnapshot();
   });
 });

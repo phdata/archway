@@ -55,7 +55,7 @@ export interface HueService extends Statusable {
 
 /* tslint:disable:no-empty-interface */
 export interface HiveService extends Statusable {
-
+  thrift: WebLocation[];
 }
 
 export interface YarnService extends Statusable {

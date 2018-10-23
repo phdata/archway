@@ -1,40 +1,38 @@
-import { Card, Icon, List } from 'antd';
+import { Card, Row } from 'antd';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { Member } from '../../../types/Workspace';
 import * as selectors from '../selectors';
-import Label from './Label';
-import { Colors } from '../../../components';
+import CardHeader from './CardHeader';
 
 interface Props {
   members?: Member[];
+
+  showModal: (e: React.MouseEvent) => void;
 }
 
 const renderMember = (member: Member) => (
-  <div>{member.name}</div>
+  <div style={{ textAlign: 'center' }}>{member.name}</div>
 );
 
-const MemberList = ({ members }: Props) => (
+const MemberList = ({ members, showModal }: Props) => (
   <Card
     actions={[
-      <a href="#">Add a member</a>,
+      <a href="#" onClick={showModal}>Add a member</a>,
     ]}>
-    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-      <Label style={{ lineHeight: '20px', justifyContent: 'start' }}>
-        <Icon
-          theme="twoTone"
-          twoToneColor={Colors.Green.string()}
-          type="lock"
-          style={{ paddingRight: 5, fontSize: 20 }} />Members
-      </Label>
-      <Label style={{ lineHeight: '18px' }}>
-        <small>{members ? members.length : 0} members</small>
-      </Label>
-    </div>
-    <List
-      dataSource={members}
-      renderItem={renderMember} />
+    <CardHeader
+      icon="lock"
+      heading="Membership"
+      subheading={`${members ? members!.length : 0} members`} />
+    <Row gutter={12} type="flex" justify="center" style={{ marginTop: 18, flexDirection: 'column' }}>
+      {members && members.length > 0 && members.map(renderMember)}
+      {(!members || members.length <= 0) && (
+        <div style={{ color: 'rgba(0, 0, 0, .65)' }}>
+          No additional members yet.
+        </div>
+      )}
+    </Row>
   </Card>
 );
 

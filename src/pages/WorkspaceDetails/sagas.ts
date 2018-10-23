@@ -9,7 +9,13 @@ import {
   setResourcePools,
   ApprovalRequestAction,
   approvalSuccess,
+  REQUEST_TOPIC,
+  topicRequestSuccess,
+  SIMPLE_MEMBER_REQUEST,
+  simpleMemberRequestComplete,
+  getWorkspace,
 } from './actions';
+import { Workspace } from '../../types/Workspace';
 
 function* fetchWorkspace({ id }: { type: string, id: number }) {
   const token = yield select((s: any) => s.get('login').get('token'));
@@ -44,9 +50,48 @@ function* approvalRequestedListener() {
   yield takeLatest(REQUEST_APPROVAL, approvalRequested);
 }
 
+function* topicRequested() {
+  const token = yield select((s: any) => s.get('login').get('token'));
+  const { id } = yield select((s: any) => s.get('details').get('details').toJS());
+  const { name } = yield select((s: any) => s.getIn(['form', 'topicRequest', 'values']).toJS());
+  yield call(Api.requestTopic, token, id, name, 1, 1);
+  yield put(topicRequestSuccess());
+  yield put(getWorkspace(id));
+}
+
+function* topicRequestedListener() {
+  yield takeLatest(REQUEST_TOPIC, topicRequested);
+}
+
+function* simpleMemberRequested() {
+  const token = yield select((s: any) => s.get('login').get('token'));
+  const workspace: Workspace = yield select<Workspace>((s: any) => s.get('details').get('details').toJS() as Workspace);
+  const { username } = yield select((s: any) => s.getIn(['form', 'simpleMemberRequest', 'values']).toJS());
+  const { applications, data, topics } = {
+    applications: workspace.applications.map(({ id }) => ({ type: 'applications', id })),
+    data: workspace.data.map(({ id }) => ({ type: 'data', id })),
+    topics: workspace.topics.map(({ id }) => ({ type: 'topics', id })),
+  };
+  const allResources = applications.concat(data).concat(topics);
+  yield all(
+    allResources.map(({ type, id }) => (
+      call(Api.newWorkspaceMember, token, workspace.id, type, id, 'manager', username)
+    )),
+  );
+  yield put(simpleMemberRequestComplete());
+  const members = yield call(Api.getMembers, token, workspace.id);
+  yield put(setMembers(members));
+}
+
+function* simpleMemberRequestedListener() {
+  yield takeLatest(SIMPLE_MEMBER_REQUEST, simpleMemberRequested);
+}
+
 export default function* root() {
   yield all([
     fork(workspaceRequest),
     fork(approvalRequestedListener),
+    fork(topicRequestedListener),
+    fork(simpleMemberRequestedListener),
   ]);
 }

@@ -94,12 +94,15 @@
     "webpack-dev-server": "^3.1.8"
   },
   "jest": {
+    "roots": [
+      "<rootDir>/src"
+    ],
     "setupFiles": [
       "<rootDir>/test-shim.js",
       "<rootDir>/test-setup.js"
     ],
     "transform": {
-      ".(ts|tsx)": "<rootDir>/node_modules/ts-jest/preprocessor.js"
+      ".(ts|tsx)": "ts-jest"
     },
     "testRegex": "(/tests/.*|\\.(test|spec))\\.(ts|tsx|js)$",
     "moduleFileExtensions": [

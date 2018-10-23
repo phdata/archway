@@ -7,6 +7,8 @@ import {
   SET_RESOURCE_POOLS,
   SET_ACTIVE_MODAL,
   APPROVAL_SUCCESS,
+  TOPIC_REQUEST_SUCCESS,
+  SIMPLE_MEMBER_REQUEST_COMPLETE,
 } from './actions';
 
 const initialState = fromJS({
@@ -50,6 +52,14 @@ const details = (state = initialState, action: any) => {
             state
               .get('details')
               .setIn(['approvals', action.approvalType], action.approval[action.approvalType]));
+
+    case TOPIC_REQUEST_SUCCESS:
+      return state
+              .set('activeModal', false);
+
+    case SIMPLE_MEMBER_REQUEST_COMPLETE:
+      return state
+              .set('activeModal', false);
 
     default:
       return state;

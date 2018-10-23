@@ -53,7 +53,7 @@ const Home = ({ cluster, personalWorkspace, profileLoading, requestWorkspace }: 
         <ServiceDisplay
           name="Hive"
           status={new Status<HiveService>(cluster.services.hive)}
-          links={new HiveServiceLinks(cluster.services.hue)}
+          links={new HiveServiceLinks(cluster.services.hive)}
           index={0} />
         <ServiceDisplay
           name="Hue"

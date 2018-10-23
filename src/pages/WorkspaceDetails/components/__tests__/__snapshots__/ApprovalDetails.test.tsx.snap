@@ -4,8 +4,8 @@ exports[`ApprovalDetails renders correctly 1`] = `
 ShallowWrapper {
   Symbol(enzyme.__root__): [Circular],
   Symbol(enzyme.__unrendered__): <ApprovalDetails
-    approveOperations={[Function]}
-    approveRisk={[Function]}
+    approveOperations={false}
+    approveRisk={false}
   />,
   Symbol(enzyme.__renderer__): Object {
     "batchedUpdates": [Function],
@@ -39,12 +39,12 @@ ShallowWrapper {
           }
         >
           <Approval
-            approve={[Function]}
+            approve={false}
           >
             risk
           </Approval>
           <Approval
-            approve={[Function]}
+            approve={false}
           >
             ops
           </Approval>
@@ -75,12 +75,12 @@ ShallowWrapper {
         "props": Object {
           "children": Array [
             <Approval
-              approve={[Function]}
+              approve={false}
             >
               risk
             </Approval>,
             <Approval
-              approve={[Function]}
+              approve={false}
             >
               ops
             </Approval>,
@@ -99,7 +99,7 @@ ShallowWrapper {
             "nodeType": "function",
             "props": Object {
               "approvalDate": undefined,
-              "approve": [Function],
+              "approve": false,
               "children": "risk",
             },
             "ref": null,
@@ -112,7 +112,7 @@ ShallowWrapper {
             "nodeType": "function",
             "props": Object {
               "approvalDate": undefined,
-              "approve": [Function],
+              "approve": false,
               "children": "ops",
             },
             "ref": null,
@@ -150,12 +150,12 @@ ShallowWrapper {
             }
           >
             <Approval
-              approve={[Function]}
+              approve={false}
             >
               risk
             </Approval>
             <Approval
-              approve={[Function]}
+              approve={false}
             >
               ops
             </Approval>
@@ -186,12 +186,12 @@ ShallowWrapper {
           "props": Object {
             "children": Array [
               <Approval
-                approve={[Function]}
+                approve={false}
               >
                 risk
               </Approval>,
               <Approval
-                approve={[Function]}
+                approve={false}
               >
                 ops
               </Approval>,
@@ -210,7 +210,7 @@ ShallowWrapper {
               "nodeType": "function",
               "props": Object {
                 "approvalDate": undefined,
-                "approve": [Function],
+                "approve": false,
                 "children": "risk",
               },
               "ref": null,
@@ -223,7 +223,7 @@ ShallowWrapper {
               "nodeType": "function",
               "props": Object {
                 "approvalDate": undefined,
-                "approve": [Function],
+                "approve": false,
                 "children": "ops",
               },
               "ref": null,

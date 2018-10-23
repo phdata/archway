@@ -7,17 +7,17 @@ import FieldLabel from '../../../components/FieldLabel';
 /* tslint:disable:no-var-requires */
 const { TextField } = require('redux-form-antd');
 
-interface KafkaForm {
-  name: string;
+interface SimpleMemberForm {
+  username: string;
 }
 
-const KafkaTopicRequest = ({ handleSubmit }: InjectedFormProps<KafkaForm, {}>) => (
+const SimpleMemberRequest = ({ handleSubmit }: InjectedFormProps<SimpleMemberForm, {}>) => (
   <form style={{  }} onSubmit={handleSubmit}>
-    <FieldLabel>Topic Name</FieldLabel>
-    <Field name="name" component={TextField} style={{ marginBottom: 0 }} />
+    <FieldLabel>Username</FieldLabel>
+    <Field name="username" component={TextField} style={{ marginBottom: 0 }} />
   </form>
 );
 
-export default reduxForm<KafkaForm, {}>({
-  form: 'topicRequest',
-})(KafkaTopicRequest);
+export default reduxForm<SimpleMemberForm, {}>({
+  form: 'simpleMemberRequest',
+})(SimpleMemberRequest);

@@ -64,7 +64,7 @@ export interface ApprovalRequestAction {
   type: typeof REQUEST_APPROVAL;
   approvalType: ApprovalType;
 }
-export const requestApproval = (approvalType: ApprovalType) => ({
+export const requestApproval = (approvalType: ApprovalType): ApprovalRequestAction => ({
   type: REQUEST_APPROVAL,
   approvalType,
 });
@@ -75,8 +75,40 @@ export interface ApprovalSuccessAction {
   approvalType: ApprovalType;
   approval: ApprovalItem;
 }
-export const approvalSuccess = (approvalType: ApprovalType, approval: ApprovalItem) => ({
+export const approvalSuccess = (approvalType: ApprovalType, approval: ApprovalItem): ApprovalSuccessAction => ({
   type: APPROVAL_SUCCESS,
   approvalType,
   approval,
+});
+
+export const REQUEST_TOPIC = 'REQUEST_TOPIC';
+export interface RequestTopicAction {
+  type: typeof REQUEST_TOPIC;
+}
+export const requestTopic = (): RequestTopicAction => ({
+  type: REQUEST_TOPIC,
+});
+
+export const TOPIC_REQUEST_SUCCESS = 'TOPIC_REQUEST_SUCCESS';
+export interface TopicRequestSuccessAction {
+  type: typeof TOPIC_REQUEST_SUCCESS;
+}
+export const topicRequestSuccess = () => ({
+  type: TOPIC_REQUEST_SUCCESS,
+});
+
+export const SIMPLE_MEMBER_REQUEST = 'SIMPLE_MEMBER_REQUEST';
+export interface SimpleMemberRequestAction {
+  type: typeof SIMPLE_MEMBER_REQUEST;
+}
+export const simpleMemberRequest = () => ({
+  type: SIMPLE_MEMBER_REQUEST,
+});
+
+export const SIMPLE_MEMBER_REQUEST_COMPLETE = 'SIMPLE_MEMBER_REQUEST_COMPLETE';
+export interface SimpleMemberRequestCompleteAction {
+  type: typeof SIMPLE_MEMBER_REQUEST_COMPLETE;
+}
+export const simpleMemberRequestComplete = () => ({
+  type: SIMPLE_MEMBER_REQUEST_COMPLETE,
 });

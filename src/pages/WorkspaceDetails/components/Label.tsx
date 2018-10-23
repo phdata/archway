@@ -8,7 +8,6 @@ interface Props {
 const Label = ({ style, children }: Props) => (
   <div
     style={{
-      marginBottom: 10,
       fontSize: 16,
       textTransform: 'uppercase',
       letterSpacing: 1,

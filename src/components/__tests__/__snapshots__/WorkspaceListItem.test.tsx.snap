@@ -17,6 +17,7 @@ ShallowWrapper {
         "data": Array [
           Object {
             "consumed_in_gb": 0,
+            "id": 1,
             "location": "",
             "managing_group": Object {
               "group": Object {
