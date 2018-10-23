@@ -84,9 +84,16 @@ export interface HiveAllocation {
   readonly_group?: DatabaseGrant;
 }
 
+export interface ApprovalStatus {
+  loading?: boolean;
+  success?: boolean;
+  error?: string;
+}
+
 export interface ApprovalItem {
-  approver: string;
-  approval_time: string;
+  approver?: string;
+  approval_time?: string;
+  status?: ApprovalStatus;
 }
 
 export interface Approvals {
