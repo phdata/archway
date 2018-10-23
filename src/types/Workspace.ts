@@ -101,6 +101,7 @@ export interface Workspace {
   requested_date: Date;
   requester: string;
   single_user: boolean;
+  status?: string;
   compliance: Compliance;
   approvals?: Approvals;
   data: HiveAllocation[];

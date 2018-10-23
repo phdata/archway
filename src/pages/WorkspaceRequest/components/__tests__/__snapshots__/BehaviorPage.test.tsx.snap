@@ -71,6 +71,11 @@ ShallowWrapper {
               icon="team"
               onChange={[Function]}
               selected={false}
+              style={
+                Object {
+                  "flex": 1,
+                }
+              }
               title="Simple"
               useCases={
                 Array [
@@ -96,6 +101,11 @@ ShallowWrapper {
               icon="deployment-unit"
               onChange={[Function]}
               selected={false}
+              style={
+                Object {
+                  "flex": 1,
+                }
+              }
               title="Structured"
               useCases={
                 Array [
@@ -180,6 +190,11 @@ ShallowWrapper {
                 icon="team"
                 onChange={[Function]}
                 selected={false}
+                style={
+                  Object {
+                    "flex": 1,
+                  }
+                }
                 title="Simple"
                 useCases={
                   Array [
@@ -205,6 +220,11 @@ ShallowWrapper {
                 icon="deployment-unit"
                 onChange={[Function]}
                 selected={false}
+                style={
+                  Object {
+                    "flex": 1,
+                  }
+                }
                 title="Structured"
                 useCases={
                   Array [
@@ -237,6 +257,11 @@ ShallowWrapper {
                 icon="team"
                 onChange={[Function]}
                 selected={false}
+                style={
+                  Object {
+                    "flex": 1,
+                  }
+                }
                 title="Simple"
                 useCases={
                   Array [
@@ -263,6 +288,9 @@ ShallowWrapper {
                 "icon": "team",
                 "onChange": [Function],
                 "selected": false,
+                "style": Object {
+                  "flex": 1,
+                },
                 "title": "Simple",
                 "useCases": Array [
                   "brainstorming",
@@ -287,6 +315,11 @@ ShallowWrapper {
                 icon="deployment-unit"
                 onChange={[Function]}
                 selected={false}
+                style={
+                  Object {
+                    "flex": 1,
+                  }
+                }
                 title="Structured"
                 useCases={
                   Array [
@@ -313,6 +346,9 @@ ShallowWrapper {
                 "icon": "deployment-unit",
                 "onChange": [Function],
                 "selected": false,
+                "style": Object {
+                  "flex": 1,
+                },
                 "title": "Structured",
                 "useCases": Array [
                   "publishings",
@@ -390,6 +426,11 @@ ShallowWrapper {
                 icon="team"
                 onChange={[Function]}
                 selected={false}
+                style={
+                  Object {
+                    "flex": 1,
+                  }
+                }
                 title="Simple"
                 useCases={
                   Array [
@@ -415,6 +456,11 @@ ShallowWrapper {
                 icon="deployment-unit"
                 onChange={[Function]}
                 selected={false}
+                style={
+                  Object {
+                    "flex": 1,
+                  }
+                }
                 title="Structured"
                 useCases={
                   Array [
@@ -499,6 +545,11 @@ ShallowWrapper {
                   icon="team"
                   onChange={[Function]}
                   selected={false}
+                  style={
+                    Object {
+                      "flex": 1,
+                    }
+                  }
                   title="Simple"
                   useCases={
                     Array [
@@ -524,6 +575,11 @@ ShallowWrapper {
                   icon="deployment-unit"
                   onChange={[Function]}
                   selected={false}
+                  style={
+                    Object {
+                      "flex": 1,
+                    }
+                  }
                   title="Structured"
                   useCases={
                     Array [
@@ -556,6 +612,11 @@ ShallowWrapper {
                   icon="team"
                   onChange={[Function]}
                   selected={false}
+                  style={
+                    Object {
+                      "flex": 1,
+                    }
+                  }
                   title="Simple"
                   useCases={
                     Array [
@@ -582,6 +643,9 @@ ShallowWrapper {
                   "icon": "team",
                   "onChange": [Function],
                   "selected": false,
+                  "style": Object {
+                    "flex": 1,
+                  },
                   "title": "Simple",
                   "useCases": Array [
                     "brainstorming",
@@ -606,6 +670,11 @@ ShallowWrapper {
                   icon="deployment-unit"
                   onChange={[Function]}
                   selected={false}
+                  style={
+                    Object {
+                      "flex": 1,
+                    }
+                  }
                   title="Structured"
                   useCases={
                     Array [
@@ -632,6 +701,9 @@ ShallowWrapper {
                   "icon": "deployment-unit",
                   "onChange": [Function],
                   "selected": false,
+                  "style": Object {
+                    "flex": 1,
+                  },
                   "title": "Structured",
                   "useCases": Array [
                     "publishings",

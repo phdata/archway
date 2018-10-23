@@ -127,7 +127,7 @@ class WorkspaceList extends React.PureComponent<Props> {
           <Row type="flex" style={{ marginTop: 12, fontSize: 12 }} justify="center">
             <Col>
               <CSVLink data={workspaceList} filename={`${cluster.name} - Workspaces.csv`}>
-                <Icon 
+                <Icon
                   style={{ fontSize: 16 }}
                   type="file-excel"
                   theme="twoTone"
