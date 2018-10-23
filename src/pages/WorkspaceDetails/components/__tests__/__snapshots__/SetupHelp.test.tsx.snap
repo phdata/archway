@@ -3,7 +3,9 @@
 exports[`SetupHelp renders correctly 1`] = `
 ShallowWrapper {
   Symbol(enzyme.__root__): [Circular],
-  Symbol(enzyme.__unrendered__): <SetupHelp />,
+  Symbol(enzyme.__unrendered__): <SetupHelp
+    approved={false}
+  />,
   Symbol(enzyme.__renderer__): Object {
     "batchedUpdates": [Function],
     "getNode": [Function],
@@ -24,7 +26,7 @@ ShallowWrapper {
       },
       "children": Array [
         <Label>
-          getting started
+          get ready
         </Label>,
         <Row
           gutter={10}
@@ -158,7 +160,9 @@ results = cursor.fetchall()
             span={24}
           >
             <h3>
-              Then just run it!
+              Then 
+              when your workspace is approved, 
+               just run it!
             </h3>
             <div
               style={
@@ -295,10 +299,10 @@ results = cursor.fetchall()
         "key": undefined,
         "nodeType": "function",
         "props": Object {
-          "children": "getting started",
+          "children": "get ready",
         },
         "ref": null,
-        "rendered": "getting started",
+        "rendered": "get ready",
         "type": [Function],
       },
       Object {
@@ -436,7 +440,9 @@ results = cursor.fetchall()
               span={24}
             >
               <h3>
-                Then just run it!
+                Then 
+                when your workspace is approved, 
+                 just run it!
               </h3>
               <div
                 style={
@@ -850,7 +856,9 @@ results = cursor.fetchall()",
             "props": Object {
               "children": Array [
                 <h3>
-                  Then just run it!
+                  Then 
+                  when your workspace is approved, 
+                   just run it!
                 </h3>,
                 <div
                   style={
@@ -983,10 +991,18 @@ results = cursor.fetchall()",
                 "key": undefined,
                 "nodeType": "host",
                 "props": Object {
-                  "children": "Then just run it!",
+                  "children": Array [
+                    "Then ",
+                    "when your workspace is approved, ",
+                    " just run it!",
+                  ],
                 },
                 "ref": null,
-                "rendered": "Then just run it!",
+                "rendered": Array [
+                  "Then ",
+                  "when your workspace is approved, ",
+                  " just run it!",
+                ],
                 "type": "h3",
               },
               Object {
@@ -1268,7 +1284,7 @@ results = cursor.fetchall()",
         },
         "children": Array [
           <Label>
-            getting started
+            get ready
           </Label>,
           <Row
             gutter={10}
@@ -1402,7 +1418,9 @@ results = cursor.fetchall()
               span={24}
             >
               <h3>
-                Then just run it!
+                Then 
+                when your workspace is approved, 
+                 just run it!
               </h3>
               <div
                 style={
@@ -1539,10 +1557,10 @@ results = cursor.fetchall()
           "key": undefined,
           "nodeType": "function",
           "props": Object {
-            "children": "getting started",
+            "children": "get ready",
           },
           "ref": null,
-          "rendered": "getting started",
+          "rendered": "get ready",
           "type": [Function],
         },
         Object {
@@ -1680,7 +1698,9 @@ results = cursor.fetchall()
                 span={24}
               >
                 <h3>
-                  Then just run it!
+                  Then 
+                  when your workspace is approved, 
+                   just run it!
                 </h3>
                 <div
                   style={
@@ -2094,7 +2114,9 @@ results = cursor.fetchall()",
               "props": Object {
                 "children": Array [
                   <h3>
-                    Then just run it!
+                    Then 
+                    when your workspace is approved, 
+                     just run it!
                   </h3>,
                   <div
                     style={
@@ -2227,10 +2249,18 @@ results = cursor.fetchall()",
                   "key": undefined,
                   "nodeType": "host",
                   "props": Object {
-                    "children": "Then just run it!",
+                    "children": Array [
+                      "Then ",
+                      "when your workspace is approved, ",
+                      " just run it!",
+                    ],
                   },
                   "ref": null,
-                  "rendered": "Then just run it!",
+                  "rendered": Array [
+                    "Then ",
+                    "when your workspace is approved, ",
+                    " just run it!",
+                  ],
                   "type": "h3",
                 },
                 Object {

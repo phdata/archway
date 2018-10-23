@@ -62,337 +62,47 @@ ShallowWrapper {
     "nodeType": "class",
     "props": Object {
       "children": <Card
-        bordered={true}
-        hoverable={true}
-        onClick={[Function]}
-        style={
+        bodyStyle={
           Object {
+            "paddingBottom": 50,
+            "paddingTop": 50,
             "textAlign": "center",
           }
         }
+        bordered={true}
+        hoverable={true}
+        onClick={[Function]}
       >
-        <h2
-          style={
-            Object {
-              "textAlign": "center",
-            }
-          }
+        <ApprovalMessage />
+        <Row
+          gutter={0}
+          type="flex"
         >
-          
-        </h2>
-        <div
-          style={
-            Object {
-              "marginBottom": 10,
-              "marginTop": 10,
-            }
-          }
-        >
-          <Icon
-            style={
-              Object {
-                "fontSize": 42,
-              }
-            }
-            type="deployment-unit"
-          />
-          <div
-            style={
-              Object {
-                "fontSize": 12,
-                "textTransform": "uppercase",
-              }
-            }
+          <Col
+            span={24}
           >
-            
-             workspace
-          </div>
-        </div>
-        <p>
-          
-        </p>
-        <Tag
-          closable={false}
-          color="red"
-          prefixCls="ant-tag"
-        >
-          all approvals needed
-        </Tag>
-      </Card>,
-    },
-    "ref": null,
-    "rendered": Object {
-      "instance": null,
-      "key": undefined,
-      "nodeType": "class",
-      "props": Object {
-        "bordered": true,
-        "children": Array [
-          <h2
-            style={
-              Object {
-                "textAlign": "center",
-              }
-            }
-          >
-            
-          </h2>,
-          <div
-            style={
-              Object {
-                "marginBottom": 10,
-                "marginTop": 10,
-              }
-            }
-          >
-            <Icon
-              style={
-                Object {
-                  "fontSize": 42,
-                }
-              }
-              type="deployment-unit"
-            />
             <div
               style={
                 Object {
-                  "fontSize": 12,
-                  "textTransform": "uppercase",
+                  "fontSize": 26,
                 }
               }
             >
               
-               workspace
             </div>
-          </div>,
-          <p>
-            
-          </p>,
-          <Tag
-            closable={false}
-            color="red"
-            prefixCls="ant-tag"
-          >
-            all approvals needed
-          </Tag>,
-        ],
-        "hoverable": true,
-        "onClick": [Function],
-        "style": Object {
-          "textAlign": "center",
-        },
-      },
-      "ref": null,
-      "rendered": Array [
-        Object {
-          "instance": null,
-          "key": undefined,
-          "nodeType": "host",
-          "props": Object {
-            "children": "",
-            "style": Object {
-              "textAlign": "center",
-            },
-          },
-          "ref": null,
-          "rendered": "",
-          "type": "h2",
-        },
-        Object {
-          "instance": null,
-          "key": undefined,
-          "nodeType": "host",
-          "props": Object {
-            "children": Array [
-              <Icon
-                style={
-                  Object {
-                    "fontSize": 42,
-                  }
-                }
-                type="deployment-unit"
-              />,
-              <div
-                style={
-                  Object {
-                    "fontSize": 12,
-                    "textTransform": "uppercase",
-                  }
-                }
-              >
-                
-                 workspace
-              </div>,
-            ],
-            "style": Object {
-              "marginBottom": 10,
-              "marginTop": 10,
-            },
-          },
-          "ref": null,
-          "rendered": Array [
-            Object {
-              "instance": null,
-              "key": undefined,
-              "nodeType": "function",
-              "props": Object {
-                "style": Object {
-                  "fontSize": 42,
-                },
-                "type": "deployment-unit",
-              },
-              "ref": null,
-              "rendered": null,
-              "type": [Function],
-            },
-            Object {
-              "instance": null,
-              "key": undefined,
-              "nodeType": "host",
-              "props": Object {
-                "children": Array [
-                  "",
-                  " workspace",
-                ],
-                "style": Object {
-                  "fontSize": 12,
-                  "textTransform": "uppercase",
-                },
-              },
-              "ref": null,
-              "rendered": Array [
-                "",
-                " workspace",
-              ],
-              "type": "div",
-            },
-          ],
-          "type": "div",
-        },
-        Object {
-          "instance": null,
-          "key": undefined,
-          "nodeType": "host",
-          "props": Object {
-            "children": "",
-          },
-          "ref": null,
-          "rendered": "",
-          "type": "p",
-        },
-        Object {
-          "instance": null,
-          "key": undefined,
-          "nodeType": "class",
-          "props": Object {
-            "children": "all approvals needed",
-            "closable": false,
-            "color": "red",
-            "prefixCls": "ant-tag",
-          },
-          "ref": null,
-          "rendered": "all approvals needed",
-          "type": [Function],
-        },
-      ],
-      "type": [Function],
-    },
-    "type": [Function],
-  },
-  Symbol(enzyme.__nodes__): Array [
-    Object {
-      "instance": null,
-      "key": undefined,
-      "nodeType": "class",
-      "props": Object {
-        "children": <Card
-          bordered={true}
-          hoverable={true}
-          onClick={[Function]}
-          style={
-            Object {
-              "textAlign": "center",
-            }
-          }
-        >
-          <h2
-            style={
-              Object {
-                "textAlign": "center",
-              }
-            }
-          >
-            
-          </h2>
-          <div
-            style={
-              Object {
-                "marginBottom": 10,
-                "marginTop": 10,
-              }
-            }
-          >
-            <Icon
-              style={
-                Object {
-                  "fontSize": 42,
-                }
-              }
-              type="deployment-unit"
-            />
-            <div
-              style={
-                Object {
-                  "fontSize": 12,
-                  "textTransform": "uppercase",
-                }
-              }
-            >
-              
-               workspace
-            </div>
-          </div>
-          <p>
-            
-          </p>
-          <Tag
-            closable={false}
-            color="red"
-            prefixCls="ant-tag"
-          >
-            all approvals needed
-          </Tag>
-        </Card>,
-      },
-      "ref": null,
-      "rendered": Object {
-        "instance": null,
-        "key": undefined,
-        "nodeType": "class",
-        "props": Object {
-          "bordered": true,
-          "children": Array [
-            <h2
-              style={
-                Object {
-                  "textAlign": "center",
-                }
-              }
-            >
-              
-            </h2>,
             <div
               style={
                 Object {
                   "marginBottom": 10,
                   "marginTop": 10,
+                  "textAlign": "center",
                 }
               }
             >
               <Icon
                 style={
                   Object {
-                    "fontSize": 42,
+                    "fontSize": 20,
                   }
                 }
                 type="deployment-unit"
@@ -408,54 +118,65 @@ ShallowWrapper {
                 
                  workspace
               </div>
-            </div>,
+            </div>
             <p>
               
-            </p>,
-            <Tag
-              closable={false}
-              color="red"
-              prefixCls="ant-tag"
-            >
-              all approvals needed
-            </Tag>,
-          ],
-          "hoverable": true,
-          "onClick": [Function],
-          "style": Object {
-            "textAlign": "center",
-          },
+            </p>
+          </Col>
+        </Row>
+      </Card>,
+      "style": Object {
+        "paddingLeft": 12,
+        "paddingRight": 12,
+      },
+    },
+    "ref": null,
+    "rendered": Object {
+      "instance": null,
+      "key": undefined,
+      "nodeType": "class",
+      "props": Object {
+        "bodyStyle": Object {
+          "paddingBottom": 50,
+          "paddingTop": 50,
+          "textAlign": "center",
         },
-        "ref": null,
-        "rendered": Array [
-          Object {
-            "instance": null,
-            "key": undefined,
-            "nodeType": "host",
-            "props": Object {
-              "children": "",
-              "style": Object {
-                "textAlign": "center",
-              },
-            },
-            "ref": null,
-            "rendered": "",
-            "type": "h2",
-          },
-          Object {
-            "instance": null,
-            "key": undefined,
-            "nodeType": "host",
-            "props": Object {
-              "children": Array [
+        "bordered": true,
+        "children": Array [
+          <ApprovalMessage />,
+          <Row
+            gutter={0}
+            type="flex"
+          >
+            <Col
+              span={24}
+            >
+              <div
+                style={
+                  Object {
+                    "fontSize": 26,
+                  }
+                }
+              >
+                
+              </div>
+              <div
+                style={
+                  Object {
+                    "marginBottom": 10,
+                    "marginTop": 10,
+                    "textAlign": "center",
+                  }
+                }
+              >
                 <Icon
                   style={
                     Object {
-                      "fontSize": 42,
+                      "fontSize": 20,
                     }
                   }
                   type="deployment-unit"
-                />,
+                />
                 <div
                   style={
                     Object {
@@ -466,28 +187,147 @@ ShallowWrapper {
                 >
                   
                    workspace
+                </div>
+              </div>
+              <p>
+                
+              </p>
+            </Col>
+          </Row>,
+        ],
+        "hoverable": true,
+        "onClick": [Function],
+      },
+      "ref": null,
+      "rendered": Array [
+        Object {
+          "instance": null,
+          "key": undefined,
+          "nodeType": "function",
+          "props": Object {},
+          "ref": null,
+          "rendered": null,
+          "type": [Function],
+        },
+        Object {
+          "instance": null,
+          "key": undefined,
+          "nodeType": "class",
+          "props": Object {
+            "children": <Col
+              span={24}
+            >
+              <div
+                style={
+                  Object {
+                    "fontSize": 26,
+                  }
+                }
+              >
+                
+              </div>
+              <div
+                style={
+                  Object {
+                    "marginBottom": 10,
+                    "marginTop": 10,
+                    "textAlign": "center",
+                  }
+                }
+              >
+                <Icon
+                  style={
+                    Object {
+                      "fontSize": 20,
+                    }
+                  }
+                  type="deployment-unit"
+                />
+                <div
+                  style={
+                    Object {
+                      "fontSize": 12,
+                      "textTransform": "uppercase",
+                    }
+                  }
+                >
+                  
+                   workspace
+                </div>
+              </div>
+              <p>
+                
+              </p>
+            </Col>,
+            "gutter": 0,
+            "type": "flex",
+          },
+          "ref": null,
+          "rendered": Object {
+            "instance": null,
+            "key": undefined,
+            "nodeType": "class",
+            "props": Object {
+              "children": Array [
+                <div
+                  style={
+                    Object {
+                      "fontSize": 26,
+                    }
+                  }
+                >
+                  
                 </div>,
+                <div
+                  style={
+                    Object {
+                      "marginBottom": 10,
+                      "marginTop": 10,
+                      "textAlign": "center",
+                    }
+                  }
+                >
+                  <Icon
+                    style={
+                      Object {
+                        "fontSize": 20,
+                      }
+                    }
+                    type="deployment-unit"
+                  />
+                  <div
+                    style={
+                      Object {
+                        "fontSize": 12,
+                        "textTransform": "uppercase",
+                      }
+                    }
+                  >
+                    
+                     workspace
+                  </div>
+                </div>,
+                <p>
+                  
+                </p>,
               ],
-              "style": Object {
-                "marginBottom": 10,
-                "marginTop": 10,
-              },
+              "span": 24,
             },
             "ref": null,
             "rendered": Array [
               Object {
                 "instance": null,
                 "key": undefined,
-                "nodeType": "function",
+                "nodeType": "host",
                 "props": Object {
+                  "children": "",
                   "style": Object {
-                    "fontSize": 42,
+                    "fontSize": 26,
                   },
-                  "type": "deployment-unit",
                 },
                 "ref": null,
-                "rendered": null,
-                "type": [Function],
+                "rendered": "",
+                "type": "div",
               },
               Object {
                 "instance": null,
@@ -495,47 +335,453 @@ ShallowWrapper {
                 "nodeType": "host",
                 "props": Object {
                   "children": Array [
-                    "",
-                    " workspace",
+                    <Icon
+                      style={
+                        Object {
+                          "fontSize": 20,
+                        }
+                      }
+                      type="deployment-unit"
+                    />,
+                    <div
+                      style={
+                        Object {
+                          "fontSize": 12,
+                          "textTransform": "uppercase",
+                        }
+                      }
+                    >
+                      
+                       workspace
+                    </div>,
                   ],
                   "style": Object {
-                    "fontSize": 12,
-                    "textTransform": "uppercase",
+                    "marginBottom": 10,
+                    "marginTop": 10,
+                    "textAlign": "center",
                   },
                 },
                 "ref": null,
                 "rendered": Array [
-                  "",
-                  " workspace",
+                  Object {
+                    "instance": null,
+                    "key": undefined,
+                    "nodeType": "function",
+                    "props": Object {
+                      "style": Object {
+                        "fontSize": 20,
+                      },
+                      "type": "deployment-unit",
+                    },
+                    "ref": null,
+                    "rendered": null,
+                    "type": [Function],
+                  },
+                  Object {
+                    "instance": null,
+                    "key": undefined,
+                    "nodeType": "host",
+                    "props": Object {
+                      "children": Array [
+                        "",
+                        " workspace",
+                      ],
+                      "style": Object {
+                        "fontSize": 12,
+                        "textTransform": "uppercase",
+                      },
+                    },
+                    "ref": null,
+                    "rendered": Array [
+                      "",
+                      " workspace",
+                    ],
+                    "type": "div",
+                  },
                 ],
                 "type": "div",
               },
+              Object {
+                "instance": null,
+                "key": undefined,
+                "nodeType": "host",
+                "props": Object {
+                  "children": "",
+                },
+                "ref": null,
+                "rendered": "",
+                "type": "p",
+              },
             ],
-            "type": "div",
+            "type": [Function],
           },
+          "type": [Function],
+        },
+      ],
+      "type": [Function],
+    },
+    "type": [Function],
+  },
+  Symbol(enzyme.__nodes__): Array [
+    Object {
+      "instance": null,
+      "key": undefined,
+      "nodeType": "class",
+      "props": Object {
+        "children": <Card
+          bodyStyle={
+            Object {
+              "paddingBottom": 50,
+              "paddingTop": 50,
+              "textAlign": "center",
+            }
+          }
+          bordered={true}
+          hoverable={true}
+          onClick={[Function]}
+        >
+          <ApprovalMessage />
+          <Row
+            gutter={0}
+            type="flex"
+          >
+            <Col
+              span={24}
+            >
+              <div
+                style={
+                  Object {
+                    "fontSize": 26,
+                  }
+                }
+              >
+                
+              </div>
+              <div
+                style={
+                  Object {
+                    "marginBottom": 10,
+                    "marginTop": 10,
+                    "textAlign": "center",
+                  }
+                }
+              >
+                <Icon
+                  style={
+                    Object {
+                      "fontSize": 20,
+                    }
+                  }
+                  type="deployment-unit"
+                />
+                <div
+                  style={
+                    Object {
+                      "fontSize": 12,
+                      "textTransform": "uppercase",
+                    }
+                  }
+                >
+                  
+                   workspace
+                </div>
+              </div>
+              <p>
+                
+              </p>
+            </Col>
+          </Row>
+        </Card>,
+        "style": Object {
+          "paddingLeft": 12,
+          "paddingRight": 12,
+        },
+      },
+      "ref": null,
+      "rendered": Object {
+        "instance": null,
+        "key": undefined,
+        "nodeType": "class",
+        "props": Object {
+          "bodyStyle": Object {
+            "paddingBottom": 50,
+            "paddingTop": 50,
+            "textAlign": "center",
+          },
+          "bordered": true,
+          "children": Array [
+            <ApprovalMessage />,
+            <Row
+              gutter={0}
+              type="flex"
+            >
+              <Col
+                span={24}
+              >
+                <div
+                  style={
+                    Object {
+                      "fontSize": 26,
+                    }
+                  }
+                >
+                  
+                </div>
+                <div
+                  style={
+                    Object {
+                      "marginBottom": 10,
+                      "marginTop": 10,
+                      "textAlign": "center",
+                    }
+                  }
+                >
+                  <Icon
+                    style={
+                      Object {
+                        "fontSize": 20,
+                      }
+                    }
+                    type="deployment-unit"
+                  />
+                  <div
+                    style={
+                      Object {
+                        "fontSize": 12,
+                        "textTransform": "uppercase",
+                      }
+                    }
+                  >
+                    
+                     workspace
+                  </div>
+                </div>
+                <p>
+                  
+                </p>
+              </Col>
+            </Row>,
+          ],
+          "hoverable": true,
+          "onClick": [Function],
+        },
+        "ref": null,
+        "rendered": Array [
           Object {
             "instance": null,
             "key": undefined,
-            "nodeType": "host",
-            "props": Object {
-              "children": "",
-            },
+            "nodeType": "function",
+            "props": Object {},
             "ref": null,
-            "rendered": "",
-            "type": "p",
+            "rendered": null,
+            "type": [Function],
           },
           Object {
             "instance": null,
             "key": undefined,
             "nodeType": "class",
             "props": Object {
-              "children": "all approvals needed",
-              "closable": false,
-              "color": "red",
-              "prefixCls": "ant-tag",
+              "children": <Col
+                span={24}
+              >
+                <div
+                  style={
+                    Object {
+                      "fontSize": 26,
+                    }
+                  }
+                >
+                  
+                </div>
+                <div
+                  style={
+                    Object {
+                      "marginBottom": 10,
+                      "marginTop": 10,
+                      "textAlign": "center",
+                    }
+                  }
+                >
+                  <Icon
+                    style={
+                      Object {
+                        "fontSize": 20,
+                      }
+                    }
+                    type="deployment-unit"
+                  />
+                  <div
+                    style={
+                      Object {
+                        "fontSize": 12,
+                        "textTransform": "uppercase",
+                      }
+                    }
+                  >
+                    
+                     workspace
+                  </div>
+                </div>
+                <p>
+                  
+                </p>
+              </Col>,
+              "gutter": 0,
+              "type": "flex",
             },
             "ref": null,
-            "rendered": "all approvals needed",
+            "rendered": Object {
+              "instance": null,
+              "key": undefined,
+              "nodeType": "class",
+              "props": Object {
+                "children": Array [
+                  <div
+                    style={
+                      Object {
+                        "fontSize": 26,
+                      }
+                    }
+                  >
+                    
+                  </div>,
+                  <div
+                    style={
+                      Object {
+                        "marginBottom": 10,
+                        "marginTop": 10,
+                        "textAlign": "center",
+                      }
+                    }
+                  >
+                    <Icon
+                      style={
+                        Object {
+                          "fontSize": 20,
+                        }
+                      }
+                      type="deployment-unit"
+                    />
+                    <div
+                      style={
+                        Object {
+                          "fontSize": 12,
+                          "textTransform": "uppercase",
+                        }
+                      }
+                    >
+                      
+                       workspace
+                    </div>
+                  </div>,
+                  <p>
+                    
+                  </p>,
+                ],
+                "span": 24,
+              },
+              "ref": null,
+              "rendered": Array [
+                Object {
+                  "instance": null,
+                  "key": undefined,
+                  "nodeType": "host",
+                  "props": Object {
+                    "children": "",
+                    "style": Object {
+                      "fontSize": 26,
+                    },
+                  },
+                  "ref": null,
+                  "rendered": "",
+                  "type": "div",
+                },
+                Object {
+                  "instance": null,
+                  "key": undefined,
+                  "nodeType": "host",
+                  "props": Object {
+                    "children": Array [
+                      <Icon
+                        style={
+                          Object {
+                            "fontSize": 20,
+                          }
+                        }
+                        type="deployment-unit"
+                      />,
+                      <div
+                        style={
+                          Object {
+                            "fontSize": 12,
+                            "textTransform": "uppercase",
+                          }
+                        }
+                      >
+                        
+                         workspace
+                      </div>,
+                    ],
+                    "style": Object {
+                      "marginBottom": 10,
+                      "marginTop": 10,
+                      "textAlign": "center",
+                    },
+                  },
+                  "ref": null,
+                  "rendered": Array [
+                    Object {
+                      "instance": null,
+                      "key": undefined,
+                      "nodeType": "function",
+                      "props": Object {
+                        "style": Object {
+                          "fontSize": 20,
+                        },
+                        "type": "deployment-unit",
+                      },
+                      "ref": null,
+                      "rendered": null,
+                      "type": [Function],
+                    },
+                    Object {
+                      "instance": null,
+                      "key": undefined,
+                      "nodeType": "host",
+                      "props": Object {
+                        "children": Array [
+                          "",
+                          " workspace",
+                        ],
+                        "style": Object {
+                          "fontSize": 12,
+                          "textTransform": "uppercase",
+                        },
+                      },
+                      "ref": null,
+                      "rendered": Array [
+                        "",
+                        " workspace",
+                      ],
+                      "type": "div",
+                    },
+                  ],
+                  "type": "div",
+                },
+                Object {
+                  "instance": null,
+                  "key": undefined,
+                  "nodeType": "host",
+                  "props": Object {
+                    "children": "",
+                  },
+                  "ref": null,
+                  "rendered": "",
+                  "type": "p",
+                },
+              ],
+              "type": [Function],
+            },
             "type": [Function],
           },
         ],

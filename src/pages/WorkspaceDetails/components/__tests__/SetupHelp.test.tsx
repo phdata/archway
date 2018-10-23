@@ -5,7 +5,7 @@ import SetupHelp from '../SetupHelp';
 
 describe('SetupHelp', () => {
   it('renders correctly', () => {
-    const wrapper = shallow(<SetupHelp />);
+    const wrapper = shallow(<SetupHelp approved={false} />);
     expect(wrapper).toMatchSnapshot();
   });
 });

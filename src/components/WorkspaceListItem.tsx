@@ -1,7 +1,6 @@
 import { Card, Col, Icon, List, Row } from 'antd';
 import * as React from 'react';
 import { Workspace } from '../types/Workspace';
-import Colors from './Colors';
 
 interface Props {
     workspace: Workspace;
@@ -14,21 +13,24 @@ const WorkspaceListItem = ({ workspace, onSelected }: Props) => {
     name,
     behavior,
     summary,
-    approvals,
+    status = '',
   } = workspace;
 
   const onClick = () => onSelected(id);
 
   const ApprovalMessage = () => {
-    let message = 'approved';
-    let color = Colors.Green.string();
-
-    if (!approvals) {
-      message = 'pending';
-      color = 'red';
-    } else if (!approvals.infra || !approvals.risk) {
-      message = 'pending';
-      color = 'orange';
+    let color = '';
+    switch (status.toLowerCase()) {
+      case 'pending':
+        color = '#CFB2B0';
+        break;
+      case 'rejected':
+        color = '#7B2D26';
+        break;
+      case 'approved':
+        color = '#0B7A75';
+        break;
+      default:
     }
 
     return (
@@ -42,7 +44,7 @@ const WorkspaceListItem = ({ workspace, onSelected }: Props) => {
             fontWeight: 100,
             color,
           }}>
-        {message}
+        {status}
       </div>
     );
   };

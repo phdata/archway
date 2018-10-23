@@ -5,7 +5,7 @@ import ApprovalDetails from '../ApprovalDetails';
 
 describe('ApprovalDetails', () => {
   it('renders correctly', () => {
-    const wrapper = shallow(<ApprovalDetails />);
+    const wrapper = shallow(<ApprovalDetails approveOperations={() => false} approveRisk={() => false} />);
     expect(wrapper).toMatchSnapshot();
   });
 });

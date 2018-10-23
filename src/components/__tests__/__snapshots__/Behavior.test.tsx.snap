@@ -40,7 +40,7 @@ ShallowWrapper {
           <Icon
             style={
               Object {
-                "fontSize": 24,
+                "fontSize": 14,
               }
             }
             type="check"
@@ -54,16 +54,23 @@ ShallowWrapper {
           }
           type=""
         />,
-        <h2>
+        <div
+          style={
+            Object {
+              "fontSize": 14,
+              "textTransform": "uppercase",
+            }
+          }
+        >
           
-        </h2>,
+        </div>,
         undefined,
         undefined,
       ],
       "hoverable": true,
       "onClick": [Function],
       "style": Object {
-        "flex": 1,
+        "borderRadius": 3,
       },
     },
     "ref": null,
@@ -76,7 +83,7 @@ ShallowWrapper {
           "children": <Icon
             style={
               Object {
-                "fontSize": 24,
+                "fontSize": 14,
               }
             }
             type="check"
@@ -96,7 +103,7 @@ ShallowWrapper {
           "nodeType": "function",
           "props": Object {
             "style": Object {
-              "fontSize": 24,
+              "fontSize": 14,
             },
             "type": "check",
           },
@@ -126,10 +133,14 @@ ShallowWrapper {
         "nodeType": "host",
         "props": Object {
           "children": "",
+          "style": Object {
+            "fontSize": 14,
+            "textTransform": "uppercase",
+          },
         },
         "ref": null,
         "rendered": "",
-        "type": "h2",
+        "type": "div",
       },
       undefined,
       undefined,
@@ -160,7 +171,7 @@ ShallowWrapper {
             <Icon
               style={
                 Object {
-                  "fontSize": 24,
+                  "fontSize": 14,
                 }
               }
               type="check"
@@ -174,16 +185,23 @@ ShallowWrapper {
             }
             type=""
           />,
-          <h2>
+          <div
+            style={
+              Object {
+                "fontSize": 14,
+                "textTransform": "uppercase",
+              }
+            }
+          >
             
-          </h2>,
+          </div>,
           undefined,
           undefined,
         ],
         "hoverable": true,
         "onClick": [Function],
         "style": Object {
-          "flex": 1,
+          "borderRadius": 3,
         },
       },
       "ref": null,
@@ -196,7 +214,7 @@ ShallowWrapper {
             "children": <Icon
               style={
                 Object {
-                  "fontSize": 24,
+                  "fontSize": 14,
                 }
               }
               type="check"
@@ -216,7 +234,7 @@ ShallowWrapper {
             "nodeType": "function",
             "props": Object {
               "style": Object {
-                "fontSize": 24,
+                "fontSize": 14,
               },
               "type": "check",
             },
@@ -246,10 +264,14 @@ ShallowWrapper {
           "nodeType": "host",
           "props": Object {
             "children": "",
+            "style": Object {
+              "fontSize": 14,
+              "textTransform": "uppercase",
+            },
           },
           "ref": null,
           "rendered": "",
-          "type": "h2",
+          "type": "div",
         },
         undefined,
         undefined,
