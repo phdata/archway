@@ -5,7 +5,7 @@ import Colors from '../../../components/Colors';
 interface Props {
   icon: string;
   heading: string;
-  subheading: string;
+  subheading: any;
 }
 
 const CardHeader = ({ icon, heading, subheading }: Props) => (

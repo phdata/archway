@@ -5,7 +5,7 @@ import HiveDetails from '../HiveDetails';
 
 describe('HiveDetails', () => {
   it('renders correctly', () => {
-    const wrapper = shallow(<HiveDetails namespace="" />);
+    const wrapper = shallow(<HiveDetails allocations={[]} onChangeAllocation={() => null} />);
     expect(wrapper).toMatchSnapshot();
   });
 });

@@ -6,7 +6,7 @@ import { Dispatch } from 'redux';
 import { createStructuredSelector } from 'reselect';
 import { Cluster } from '../../types/Cluster';
 import { Profile } from '../../types/Profile';
-import { NamespaceInfo, PoolInfo, Workspace } from '../../types/Workspace';
+import { NamespaceInfo, PoolInfo, Workspace, HiveAllocation } from '../../types/Workspace';
 import * as actions from './actions';
 import {
   ApprovalDetails,
@@ -41,6 +41,7 @@ interface Props extends RouteComponentProps<DetailsRouteProps> {
     infos?: NamespaceInfo[];
     approved: boolean;
     activeModal?: string;
+    selectedAllocation?: HiveAllocation;
 
     getWorkspaceDetails: (id: number) => void;
     showTopicDialog: (e: React.MouseEvent) => void;
@@ -50,6 +51,7 @@ interface Props extends RouteComponentProps<DetailsRouteProps> {
     approveOperations: (e: React.MouseEvent) => void;
     requestTopic: () => void;
     simpleMemberRequest: () => void;
+    updateSelectedAllocation: (allocation: HiveAllocation) => void;
 }
 
 class WorkspaceDetails extends React.PureComponent<Props> {
@@ -112,6 +114,8 @@ class WorkspaceDetails extends React.PureComponent<Props> {
       profile,
       requestTopic,
       simpleMemberRequest,
+      selectedAllocation,
+      updateSelectedAllocation,
     } = this.props;
 
     if (!workspace) { return <Spin />; }
@@ -156,10 +160,13 @@ class WorkspaceDetails extends React.PureComponent<Props> {
               <Liaison liaison={workspace.requester} />
             </Col>
             <Col span={12} xxl={4} style={{ marginTop: 10, display: 'flex' }}>
-              <Allocations
-                location={workspace.data[0] && workspace.data[0].location}
-                allocated={workspace.data[0] && workspace.data[0].size_in_gb}
-                consumed={workspace.data[0] && workspace.data[0].consumed_in_gb} />
+              {selectedAllocation && (
+                <Allocations
+                  location={selectedAllocation.location}
+                  allocated={selectedAllocation.size_in_gb}
+                  consumed={selectedAllocation.consumed_in_gb}
+                />
+              )}
             </Col>
             <Col span={12} xxl={4} style={{ marginTop: 10, display: 'flex' }}>
               <ApprovalDetails
@@ -174,8 +181,10 @@ class WorkspaceDetails extends React.PureComponent<Props> {
               <Col span={24} lg={12} xxl={6} style={{ marginTop: 10 }}>
                 <HiveDetails
                   hue={cluster.services && cluster.services.hue}
-                  namespace={workspace.data[0].name}
-                  info={infos} />
+                  allocations={workspace.data}
+                  info={infos}
+                  selectedAllocation={selectedAllocation}
+                  onChangeAllocation={updateSelectedAllocation} />
               </Col>
               <Col span={24} lg={12} xxl={6} style={{ marginTop: 10 }}>
                 <YarnDetails
@@ -209,23 +218,25 @@ class WorkspaceDetails extends React.PureComponent<Props> {
               </Col>
             </Row>
           )}
-          <Row gutter={12}>
-            <Col span={24} xxl={8} style={{ marginTop: 10 }}>
-              <PrepareHelp
-                location={workspace.data[0].location}
-                namespace={workspace.data[0].name} />
-            </Col>
-            <Col span={24} xxl={8} style={{ marginTop: 10 }}>
-              <CreateHelp
-                host={cluster.services.hive.thrift[0].host}
-                port={cluster.services.hive.thrift[0].port}
-                namespace={workspace.data[0].name} />
-            </Col>
-            <Col span={24} xxl={8} style={{ marginTop: 10 }}>
-              <RunHelp
-                queue={workspace.processing[0].pool_name} />
-            </Col>
-          </Row>
+          {selectedAllocation && (
+            <Row gutter={12}>
+              <Col span={24} xxl={8} style={{ marginTop: 10 }}>
+                <PrepareHelp
+                  location={selectedAllocation.location}
+                  namespace={selectedAllocation.name} />
+              </Col>
+              <Col span={24} xxl={8} style={{ marginTop: 10 }}>
+                <CreateHelp
+                  host={cluster.services.hive.thrift[0].host}
+                  port={cluster.services.hive.thrift[0].port}
+                  namespace={selectedAllocation.name} />
+              </Col>
+              <Col span={24} xxl={8} style={{ marginTop: 10 }}>
+                <RunHelp
+                  queue={workspace.processing[0].pool_name} />
+              </Col>
+            </Row>
+          )}
       </div>
     );
   }
@@ -236,6 +247,7 @@ const mapStateToProps = () =>
   createStructuredSelector({
     workspace: selectors.getWorkspace(),
     cluster: selectors.getClusterDetails(),
+    selectedAllocation: selectors.getSelectedAllocation(),
     profile: selectors.getProfile(),
     infos: selectors.getNamespaceInfo(),
     pools: selectors.getPoolInfo(),
@@ -245,6 +257,8 @@ const mapStateToProps = () =>
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
   getWorkspaceDetails: (id: number) => dispatch(actions.getWorkspace(id)),
+
+  updateSelectedAllocation: (allocation: HiveAllocation) => dispatch(actions.updateSelectedAllocation(allocation)),
 
   showTopicDialog: (e: React.MouseEvent) => {
     e.preventDefault();
