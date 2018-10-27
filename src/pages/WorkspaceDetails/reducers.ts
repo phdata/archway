@@ -11,7 +11,11 @@ import {
   TOPIC_REQUEST_SUCCESS,
   SIMPLE_MEMBER_REQUEST_COMPLETE,
   APPROVAL_FAILURE,
+  REQUEST_REMOVE_MEMBER,
+  REMOVE_MEMBER_SUCCESS,
+  REMOVE_MEMBER_FAILURE,
 } from './actions';
+import { Member } from '../../types/Workspace';
 
 const initialState = fromJS({
   fetching: false,
@@ -88,6 +92,43 @@ const details = (state = initialState, action: any) => {
     case SIMPLE_MEMBER_REQUEST_COMPLETE:
       return state
               .set('activeModal', false);
+
+    case REQUEST_REMOVE_MEMBER:
+      return state
+          .set(
+            'members',
+            state
+              .get('members')
+              .map((m: any) => (m.toJS() as Member).username === action.username ?
+                m.set('removeStatus', {
+                  loading: true,
+                }) : m,
+              ));
+
+    case REMOVE_MEMBER_SUCCESS:
+      return state
+          .set(
+            'members',
+            state
+              .get('members')
+              .map((m: any) => (m.toJS() as Member).username === action.username ?
+                m.set('removeStatus', {
+                  success: true,
+                }) : m,
+              ));
+
+    case REMOVE_MEMBER_FAILURE:
+      return state
+          .set(
+            'members',
+            state
+              .get('members')
+              .map((m: any) => (m.toJS() as Member).username === action.username ?
+                m.set('removeStatus', {
+                  success: false,
+                  error: action.error,
+                }) : m,
+              ));
 
     default:
       return state;
