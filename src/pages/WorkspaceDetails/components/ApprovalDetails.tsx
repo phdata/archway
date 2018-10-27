@@ -4,20 +4,29 @@ import Label from './Label';
 import { ApprovalItem } from '../../../types/Workspace';
 
 interface ItemProps {
+  loading?: boolean;
   approvalDate?: string;
   children: any;
 
-  approve: ((e: React.MouseEvent) => void) | false;
+  approve?: React.MouseEventHandler<HTMLAnchorElement>;
 }
 
-const Approval = ({ approvalDate, children, approve }: ItemProps) => (
+const Approval = ({ loading, approvalDate, children, approve }: ItemProps) => (
   <div style={{ display: 'flex', flex: 1, flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
     <Icon
       type={approvalDate ? 'safety-certificate' : 'dash'}
       theme={approvalDate ? 'twoTone' : 'outlined'}
       style={{ marginBottom: 5, fontSize: 28 }} />
     <div style={{ textTransform: 'uppercase', letterSpacing: 1 }}>{children}</div>
-    {!approvalDate && approve && (<a onClick={approve}>APPROVE</a>)}
+    {loading ? (
+      <Icon
+        theme="outlined"
+        type="loading"
+        style={{ fontSize: 16 }}
+      />
+    ) : (
+      !approvalDate && (<a onClick={approve}>APPROVE</a>)
+    )}
   </div>
 );
 
@@ -25,8 +34,8 @@ interface Props {
   infra?: ApprovalItem;
   risk?: ApprovalItem;
 
-  approveRisk: ((e: React.MouseEvent) => void) | false;
-  approveOperations: ((e: React.MouseEvent) => void) | false;
+  approveRisk?: React.MouseEventHandler<HTMLAnchorElement>;
+  approveOperations?: React.MouseEventHandler<HTMLAnchorElement>;
 }
 
 const ApprovalDetails = ({ infra, risk, approveOperations, approveRisk }: Props) => (
@@ -36,11 +45,13 @@ const ApprovalDetails = ({ infra, risk, approveOperations, approveRisk }: Props)
     <Label>approvals</Label>
     <div style={{ display: 'flex', flex: 1, alignItems: 'center' }}>
       <Approval
+        loading={risk && risk.status && risk.status.loading}
         approvalDate={risk && risk.approval_time}
         approve={approveRisk}>
         risk
       </Approval>
       <Approval
+        loading={infra && infra.status && infra.status.loading}
         approvalDate={infra && infra.approval_time}
         approve={approveOperations}>
         ops

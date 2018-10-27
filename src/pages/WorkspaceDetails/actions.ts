@@ -112,3 +112,10 @@ export interface SimpleMemberRequestCompleteAction {
 export const simpleMemberRequestComplete = () => ({
   type: SIMPLE_MEMBER_REQUEST_COMPLETE,
 });
+
+export const APPROVAL_FAILURE = 'APPROVAL_FAILURE';
+export const approvalFailure = (approvalType: ApprovalType, error: string) => ({
+  type: APPROVAL_FAILURE,
+  approvalType,
+  error,
+});

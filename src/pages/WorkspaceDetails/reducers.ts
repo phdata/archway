@@ -6,9 +6,11 @@ import {
   SET_NAMESPACE_INFO,
   SET_RESOURCE_POOLS,
   SET_ACTIVE_MODAL,
+  REQUEST_APPROVAL,
   APPROVAL_SUCCESS,
   TOPIC_REQUEST_SUCCESS,
   SIMPLE_MEMBER_REQUEST_COMPLETE,
+  APPROVAL_FAILURE,
 } from './actions';
 
 const initialState = fromJS({
@@ -45,13 +47,39 @@ const details = (state = initialState, action: any) => {
       return state
           .set('activeModal', action.activeModal);
 
+    case REQUEST_APPROVAL:
+      return state
+        .set(
+          'details',
+          state
+            .get('details')
+            .setIn(['approvals', action.approvalType, 'status'], {
+              loading: true,
+            }));
+
     case APPROVAL_SUCCESS:
       return state
           .set(
             'details',
             state
               .get('details')
-              .setIn(['approvals', action.approvalType], action.approval[action.approvalType]));
+              .setIn(['approvals', action.approvalType], {
+                ...action.approval[action.approvalType],
+                status: {
+                  success: true,
+                },
+              }));
+
+    case APPROVAL_FAILURE:
+      return state
+          .set(
+            'details',
+            state
+              .get('details')
+              .setIn(['approvals', action.approvalType, 'status'], {
+                success: false,
+                error: action.error,
+              }));
 
     case TOPIC_REQUEST_SUCCESS:
       return state

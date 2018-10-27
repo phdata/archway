@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Col, Row, Spin, Modal } from 'antd';
+import { Col, Row, Spin, Modal, notification } from 'antd';
 import { connect } from 'react-redux';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { Dispatch } from 'redux';
@@ -54,12 +54,49 @@ interface Props extends RouteComponentProps<DetailsRouteProps> {
 
 class WorkspaceDetails extends React.PureComponent<Props> {
 
-    public componentDidMount() {
+  public componentDidMount() {
     const { match: { params: { id } } } = this.props;
     this.props.getWorkspaceDetails(id);
   }
 
-    public render() {
+  public componentWillReceiveProps(nextProps: Props) {
+    const { workspace } = this.props;
+    const { workspace: newWorkspace } = nextProps;
+    const riskStatus = workspace && workspace.approvals
+      && workspace.approvals.risk && workspace.approvals.risk.status;
+    const infraStatus = workspace && workspace.approvals
+      && workspace.approvals.infra && workspace.approvals.infra.status;
+    const newRiskStatus = newWorkspace && newWorkspace.approvals
+      && newWorkspace.approvals.risk && newWorkspace.approvals.risk.status;
+    const newInfraStatus = newWorkspace && newWorkspace.approvals
+      && newWorkspace.approvals.infra && newWorkspace.approvals.infra.status;
+    if (riskStatus && riskStatus.loading) {
+      if (newRiskStatus && (newRiskStatus.success === true || newRiskStatus.success === false)) {
+        this.showApprovalNotification('Risk', newRiskStatus.error);
+      }
+    }
+    if (infraStatus && infraStatus.loading) {
+      if (newInfraStatus && (newInfraStatus.success === true || newInfraStatus.success === false)) {
+        this.showApprovalNotification('Infra', newInfraStatus.error);
+      }
+    }
+  }
+
+  public showApprovalNotification(type: string, error: string | undefined) {
+    if (!error) {
+      notification.open({
+        message: `${type} Successfully Approved`,
+        description: `Your ${type.toLowerCase()} approval was successful`,
+      });
+    } else {
+      notification.open({
+        message: `${type} NOT Approved`,
+        description: `Your ${type.toLowerCase()} approval failed due to the following error: ${error}`,
+      });
+    }
+  }
+
+  public render() {
     const {
       workspace,
       cluster,
@@ -128,8 +165,8 @@ class WorkspaceDetails extends React.PureComponent<Props> {
               <ApprovalDetails
                 risk={workspace.approvals && workspace.approvals.risk}
                 infra={workspace.approvals && workspace.approvals.infra}
-                approveOperations={profile.permissions && profile.permissions.platform_operations && approveOperations}
-                approveRisk={profile.permissions && profile.permissions.risk_management && approveRisk} />
+                approveOperations={(profile.permissions && profile.permissions.platform_operations) ? approveOperations : undefined}
+                approveRisk={(profile.permissions && profile.permissions.risk_management) ? approveRisk : undefined} />
             </Col>
           </Row>
           {approved && (

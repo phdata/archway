@@ -14,6 +14,7 @@ import {
   SIMPLE_MEMBER_REQUEST,
   simpleMemberRequestComplete,
   getWorkspace,
+  approvalFailure,
 } from './actions';
 import { Workspace } from '../../types/Workspace';
 
@@ -42,8 +43,12 @@ function* workspaceRequest() {
 function* approvalRequested({ approvalType }: ApprovalRequestAction) {
   const token = yield select((s: any) => s.get('login').get('token'));
   const { id } = yield select((s: any) => s.get('details').get('details').toJS());
-  const approval = yield call(Api.approveWorkspace, token, id, approvalType);
-  yield put(approvalSuccess(approvalType, approval));
+  try {
+    const approval = yield call(Api.approveWorkspace, token, id, approvalType);
+    yield put(approvalSuccess(approvalType, approval));
+  } catch (e) {
+    yield put(approvalFailure(approvalType, e.toString()));
+  }
 }
 
 function* approvalRequestedListener() {
