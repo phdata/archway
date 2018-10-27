@@ -117,5 +117,31 @@ export const APPROVAL_FAILURE = 'APPROVAL_FAILURE';
 export const approvalFailure = (approvalType: ApprovalType, error: string) => ({
   type: APPROVAL_FAILURE,
   approvalType,
+});
+
+export const REQUEST_REMOVE_MEMBER = 'REQUEST_REMOVE_MEMBER';
+export interface RemoveMemberRequestAction {
+  type: typeof REQUEST_REMOVE_MEMBER;
+  username: string;
+}
+export const requestRemoveMember = (username: string) => ({
+  type: REQUEST_REMOVE_MEMBER,
+  username,
+});
+
+export const REMOVE_MEMBER_SUCCESS = 'REMOVE_MEMBER_SUCCESS';
+export interface RemoveMemberSuccessAction {
+  type: typeof REMOVE_MEMBER_SUCCESS;
+  username: string;
+}
+export const removeMemberSuccess = (username: string) => ({
+  type: REMOVE_MEMBER_SUCCESS,
+  username,
+});
+
+export const REMOVE_MEMBER_FAILURE = 'REMOVE_MEMBER_FAILURE';
+export const removeMemberFailure = (username: string, error: string) => ({
+  type: REMOVE_MEMBER_FAILURE,
+  username,
   error,
 });

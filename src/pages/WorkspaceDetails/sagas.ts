@@ -1,7 +1,8 @@
-import { all, call, fork, put, select, takeLatest } from 'redux-saga/effects';
+import { all, call, fork, put, select, takeLatest, takeEvery } from 'redux-saga/effects';
 import * as Api from '../../api';
 import {
   REQUEST_APPROVAL,
+  REQUEST_REMOVE_MEMBER,
   GET_WORKSPACE,
   setWorkspace,
   setMembers,
@@ -15,6 +16,9 @@ import {
   simpleMemberRequestComplete,
   getWorkspace,
   approvalFailure,
+  RemoveMemberRequestAction,
+  removeMemberSuccess,
+  removeMemberFailure,
 } from './actions';
 import { Workspace } from '../../types/Workspace';
 
@@ -92,11 +96,37 @@ function* simpleMemberRequestedListener() {
   yield takeLatest(SIMPLE_MEMBER_REQUEST, simpleMemberRequested);
 }
 
+function* removeMemberRequested({ username }: RemoveMemberRequestAction) {
+  const token = yield select((s: any) => s.get('login').get('token'));
+  const workspace: Workspace = yield select<Workspace>((s: any) => s.get('details').get('details').toJS() as Workspace);
+  const { applications, data, topics } = {
+    applications: workspace.applications.map(({ id }) => ({ type: 'applications', id })),
+    data: workspace.data.map(({ id }) => ({ type: 'data', id })),
+    topics: workspace.topics.map(({ id }) => ({ type: 'topics', id })),
+  };
+  const allResources = applications.concat(data).concat(topics);
+  try {
+    yield all(
+      allResources.map(({ type, id }) => (
+        call(Api.removeWorkspaceMember, token, workspace.id, type, id, 'manager', username)
+      )),
+    );
+    yield put(removeMemberSuccess(username));
+  } catch (e) {
+    yield put(removeMemberFailure(username, e.toString()));
+  }
+}
+
+function* removeMemberRequestedListener() {
+  yield takeEvery(REQUEST_REMOVE_MEMBER, removeMemberRequested);
+}
+
 export default function* root() {
   yield all([
     fork(workspaceRequest),
     fork(approvalRequestedListener),
     fork(topicRequestedListener),
     fork(simpleMemberRequestedListener),
+    fork(removeMemberRequestedListener),
   ]);
 }

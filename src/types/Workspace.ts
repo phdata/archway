@@ -18,9 +18,16 @@ export interface HiveTable {
   name: string;
 }
 
+export interface MemberRemoveStatus {
+  loading?: boolean;
+  success?: boolean;
+  error?: boolean;
+}
+
 export interface Member {
   username: string;
   name: string;
+  removeStatus?: MemberRemoveStatus;
 }
 
 export interface Application {
