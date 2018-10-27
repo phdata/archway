@@ -1,6 +1,7 @@
+import { fromJS } from 'immutable';
 import { createSelector } from 'reselect';
 import { authSelector, clusterSelector, workspaceSelector } from '../../selectors';
-import { Member, NamespaceInfo, PoolInfo, Workspace } from '../../types/Workspace';
+import { Member, NamespaceInfo, PoolInfo, Workspace, HiveAllocation } from '../../types/Workspace';
 import { Cluster } from '../../types/Cluster';
 import { Profile } from '../../types/Profile';
 
@@ -14,6 +15,13 @@ export const getClusterDetails = () => createSelector(
   clusterSelector,
   (clusterState) =>
     clusterState.get('details').toJS() as Cluster,
+);
+
+export const getSelectedAllocation = () => createSelector(
+  workspaceSelector,
+  (workspaceState) =>
+    (workspaceState.get('selectedAllocation') && workspaceState.get('selectedAllocation').toJS() as HiveAllocation)
+    || workspaceState.getIn(['details', 'data', 0], fromJS({})).toJS() as HiveAllocation,
 );
 
 export const getProfile = () => createSelector(

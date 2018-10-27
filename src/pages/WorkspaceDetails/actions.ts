@@ -1,5 +1,6 @@
 import {
   Workspace,
+  HiveAllocation,
   Member,
   NamespaceInfo,
   PoolInfo,
@@ -16,6 +17,12 @@ export const SET_WORKSPACE = 'SET_WORKSPACE';
 export const setWorkspace = (workspace: Workspace) => ({
   type: SET_WORKSPACE,
   workspace,
+});
+
+export const UPDATE_SELECTED_ALLOCATION = 'UPDATE_SELECTED_ALLOCATION';
+export const updateSelectedAllocation = (allocation: HiveAllocation) => ({
+  type: UPDATE_SELECTED_ALLOCATION,
+  allocation,
 });
 
 export const GET_MEMBERS = 'GET_MEMBERS';
