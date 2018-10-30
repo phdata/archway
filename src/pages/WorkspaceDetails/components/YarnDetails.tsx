@@ -1,13 +1,14 @@
-import { Card, Row } from 'antd';
+import { Card, Row, Icon } from 'antd';
 import * as React from 'react';
 import { YarnService } from '../../../types/Cluster';
-import { PoolInfo, YarnApplication } from '../../../types/Workspace';
+import { ResourcePoolsInfo, YarnApplication } from '../../../types/Workspace';
 import CardHeader from './CardHeader';
 
 interface Props {
   yarn?: YarnService;
   poolName: string;
-  pools?: PoolInfo[];
+  pools?: ResourcePoolsInfo;
+  onRefreshPools?: () => void;
 }
 
 const renderApplication = (yarnUrl?: string) => (yarnApplication: YarnApplication) => (
@@ -24,7 +25,7 @@ const renderApplication = (yarnUrl?: string) => (yarnApplication: YarnApplicatio
   </div>
 );
 
-const YarnDetails = ({ yarn, poolName, pools }: Props) => {
+const YarnDetails = ({ yarn, poolName, pools, onRefreshPools }: Props) => {
   const rmURL = yarn && `${yarn.resource_manager[0].host}:${yarn.resource_manager[0].port}`;
   return (
     <Card
@@ -38,10 +39,25 @@ const YarnDetails = ({ yarn, poolName, pools }: Props) => {
       <CardHeader
         icon="rocket"
         heading="Yarn Applications"
-        subheading={poolName} />
+        subheading={poolName}
+        rightAction={(
+          <Icon
+            style={{ cursor: 'pointer', alignSelf: 'flex-start' }}
+            type="sync"
+            spin={pools && pools.loading}
+            onClick={() => {
+              if ((!pools || !pools.loading) && onRefreshPools) {
+                onRefreshPools();
+              }
+            }}
+          />
+        )}
+      />
       <Row gutter={12} type="flex" justify="center" style={{ marginTop: 18 }}>
-        {pools && pools[0].applications.length > 0 && pools[0].applications.map(renderApplication(rmURL))}
-        {(!pools || pools.length <= 0 || pools[0].applications.length <= 0) && (
+        {pools && pools.data && pools.data[0].applications.length > 0
+          && pools.data[0].applications.map(renderApplication(rmURL))}
+        {(!pools || !pools.data || pools.data.length <= 0
+          || pools.data[0].applications.length <= 0) && (
           <div style={{ color: 'rgba(0, 0, 0, .65)' }}>
             No running YARN applications.
           </div>

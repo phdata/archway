@@ -1,7 +1,7 @@
 import { fromJS } from 'immutable';
 import { createSelector } from 'reselect';
 import { authSelector, clusterSelector, workspaceSelector } from '../../selectors';
-import { Member, NamespaceInfo, PoolInfo, Workspace, HiveAllocation } from '../../types/Workspace';
+import { Member, NamespaceInfo, ResourcePoolsInfo, Workspace, HiveAllocation } from '../../types/Workspace';
 import { Cluster } from '../../types/Cluster';
 import { Profile } from '../../types/Profile';
 
@@ -44,13 +44,13 @@ export const getMembers = () => createSelector(
 export const getNamespaceInfo = () => createSelector(
   workspaceSelector,
   (workspaceState) =>
-    workspaceState.get('namespaceInfo') && workspaceState.get('namespaceInfo').toJS() as  NamespaceInfo[],
+    workspaceState.get('namespaceInfo') && workspaceState.get('namespaceInfo').toJS() as NamespaceInfo[],
 );
 
 export const getPoolInfo = () => createSelector(
   workspaceSelector,
   (workspaceState) =>
-    workspaceState.get('resourcePools') && workspaceState.get('resourcePools').toJS() as PoolInfo[],
+    workspaceState.get('resourcePools') && workspaceState.get('resourcePools').toJS() as ResourcePoolsInfo,
 );
 
 export const getApproved = () => createSelector(

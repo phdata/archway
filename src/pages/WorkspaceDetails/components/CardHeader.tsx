@@ -6,16 +6,17 @@ interface Props {
   icon: string;
   heading: string;
   subheading: any;
+  rightAction?: any;
 }
 
-const CardHeader = ({ icon, heading, subheading }: Props) => (
+const CardHeader = ({ icon, heading, subheading, rightAction }: Props) => (
   <div style={{ display: 'flex', alignItems: 'center' }}>
     <Icon
         theme="twoTone"
         twoToneColor={Colors.Green.string()}
         type={icon}
         style={{ paddingRight: 5, fontSize: 32 }} />
-    <div>
+    <div style={{ flex: 1 }}>
       <div style={{
             textTransform: 'uppercase',
             letterSpacing: 1,
@@ -32,6 +33,7 @@ const CardHeader = ({ icon, heading, subheading }: Props) => (
         {subheading}
       </div>
     </div>
+    {rightAction}
   </div>
 );
 
