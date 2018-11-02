@@ -131,3 +131,14 @@ export interface Workspace {
   topics: KafkaTopic[];
   applications: Application[];
 }
+
+export interface UserSuggestion {
+  display: string;
+  common_name: string;
+}
+
+export interface UserSuggestions {
+  filter: string;
+  users: UserSuggestion[];
+  groups: UserSuggestion[];
+}

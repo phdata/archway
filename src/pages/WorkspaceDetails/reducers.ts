@@ -2,6 +2,7 @@ import { fromJS } from 'immutable';
 import {
   GET_WORKSPACE,
   SET_WORKSPACE,
+  SET_USER_SUGGESTIONS,
   UPDATE_SELECTED_ALLOCATION,
   SET_MEMBERS,
   SET_NAMESPACE_INFO,
@@ -38,6 +39,13 @@ const details = (state = initialState, action: any) => {
       return state
         .set('fetching', false)
         .set('details', fromJS(action.workspace));
+
+    case SET_USER_SUGGESTIONS:
+      return state
+        .set('userSuggestions', fromJS({
+          filter: action.filter,
+          ...action.suggestions,
+        }));
 
     case UPDATE_SELECTED_ALLOCATION:
       return state

@@ -19,6 +19,19 @@ export const setWorkspace = (workspace: Workspace) => ({
   workspace,
 });
 
+export const GET_USER_SUGGESTIONS = 'GET_USER_SUGGESTIONS';
+export const getUserSuggestions = (filter: string) => ({
+  type: GET_USER_SUGGESTIONS,
+  filter,
+});
+
+export const SET_USER_SUGGESTIONS = 'SET_USER_SUGGESTIONS';
+export const setUserSuggestions = (filter: string, suggestions: any) => ({
+  type: SET_USER_SUGGESTIONS,
+  filter,
+  suggestions,
+});
+
 export const UPDATE_SELECTED_ALLOCATION = 'UPDATE_SELECTED_ALLOCATION';
 export const updateSelectedAllocation = (allocation: HiveAllocation) => ({
   type: UPDATE_SELECTED_ALLOCATION,

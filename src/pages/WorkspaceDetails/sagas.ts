@@ -5,6 +5,8 @@ import {
   REQUEST_REMOVE_MEMBER,
   GET_WORKSPACE,
   setWorkspace,
+  GET_USER_SUGGESTIONS,
+  setUserSuggestions,
   setMembers,
   setNamespaceInfo,
   setResourcePools,
@@ -24,6 +26,20 @@ import {
   refreshYarnAppsFailure,
 } from './actions';
 import { Workspace } from '../../types/Workspace';
+
+function* fetchUserSuggestions({ filter }: { type: string, filter: string }) {
+  const token = yield select((s: any) => s.get('login').get('token'));
+  try {
+    const suggestions = yield call(Api.getUserSuggestions, token, filter);
+    yield put(setUserSuggestions(filter, suggestions));
+  } catch (e) {
+    //
+  }
+}
+
+function* userSuggestionsRequest() {
+  yield takeLatest(GET_USER_SUGGESTIONS, fetchUserSuggestions);
+}
 
 function* fetchWorkspace({ id }: { type: string, id: number }) {
   const token = yield select((s: any) => s.get('login').get('token'));
@@ -142,6 +158,7 @@ function* refreshYarnAppsRequestedListener() {
 export default function* root() {
   yield all([
     fork(workspaceRequest),
+    fork(userSuggestionsRequest),
     fork(approvalRequestedListener),
     fork(topicRequestedListener),
     fork(simpleMemberRequestedListener),
