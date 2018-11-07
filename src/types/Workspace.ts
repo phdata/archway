@@ -4,6 +4,12 @@ export interface YarnApplication {
   start_time?: Date;
 }
 
+export interface ResourcePoolsInfo {
+  loading: boolean;
+  error?: string;
+  data: PoolInfo[];
+}
+
 export interface PoolInfo {
   name: string;
   applications: YarnApplication[];

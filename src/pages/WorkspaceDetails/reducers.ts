@@ -15,6 +15,9 @@ import {
   REQUEST_REMOVE_MEMBER,
   REMOVE_MEMBER_SUCCESS,
   REMOVE_MEMBER_FAILURE,
+  REQUEST_REFRESH_YARN_APPS,
+  REFRESH_YARN_APPS_SUCCESS,
+  REFRESH_YARN_APPS_FAILURE,
 } from './actions';
 import { Member } from '../../types/Workspace';
 
@@ -50,7 +53,10 @@ const details = (state = initialState, action: any) => {
 
     case SET_RESOURCE_POOLS:
       return state
-        .set('resourcePools', fromJS(action.resourcePools));
+        .set('resourcePools', fromJS({
+          loading: false,
+          data: action.resourcePools,
+        }));
 
     case SET_ACTIVE_MODAL:
       return state
@@ -134,6 +140,32 @@ const details = (state = initialState, action: any) => {
                   error: action.error,
                 }) : m,
               ));
+
+    case REQUEST_REFRESH_YARN_APPS:
+      return state
+        .set(
+          'resourcePools',
+          state
+            .get('resourcePools')
+            .setIn(['loading'], true)
+            .setIn(['error'], ''));
+
+    case REFRESH_YARN_APPS_SUCCESS:
+      return state
+        .set(
+          'resourcePools', fromJS({
+            loading: false,
+            data: action.apps,
+          }));
+
+    case REFRESH_YARN_APPS_FAILURE:
+      return state
+        .set(
+          'resourcePools',
+          state
+            .get('resourcePools')
+            .setIn(['loading'], false)
+            .setIn(['error'], action.error));
 
     default:
       return state;

@@ -6,7 +6,7 @@ import { Dispatch } from 'redux';
 import { createStructuredSelector } from 'reselect';
 import { Cluster } from '../../types/Cluster';
 import { Profile } from '../../types/Profile';
-import { NamespaceInfo, PoolInfo, Workspace, HiveAllocation } from '../../types/Workspace';
+import { NamespaceInfo, ResourcePoolsInfo, Workspace, HiveAllocation } from '../../types/Workspace';
 import * as actions from './actions';
 import {
   ApprovalDetails,
@@ -37,7 +37,7 @@ interface Props extends RouteComponentProps<DetailsRouteProps> {
     workspace?: Workspace;
     cluster: Cluster;
     profile: Profile;
-    pools?: PoolInfo[];
+    pools?: ResourcePoolsInfo;
     infos?: NamespaceInfo[];
     approved: boolean;
     activeModal?: string;
@@ -52,6 +52,7 @@ interface Props extends RouteComponentProps<DetailsRouteProps> {
     requestTopic: () => void;
     simpleMemberRequest: () => void;
     updateSelectedAllocation: (allocation: HiveAllocation) => void;
+    requestRefreshYarnApps: () => void;
 }
 
 class WorkspaceDetails extends React.PureComponent<Props> {
@@ -116,6 +117,7 @@ class WorkspaceDetails extends React.PureComponent<Props> {
       simpleMemberRequest,
       selectedAllocation,
       updateSelectedAllocation,
+      requestRefreshYarnApps,
     } = this.props;
 
     if (!workspace) { return <Spin />; }
@@ -172,8 +174,13 @@ class WorkspaceDetails extends React.PureComponent<Props> {
               <ApprovalDetails
                 risk={workspace.approvals && workspace.approvals.risk}
                 infra={workspace.approvals && workspace.approvals.infra}
-                approveOperations={(profile.permissions && profile.permissions.platform_operations) ? approveOperations : undefined}
-                approveRisk={(profile.permissions && profile.permissions.risk_management) ? approveRisk : undefined} />
+                approveOperations={
+                  (profile.permissions && profile.permissions.platform_operations) ? approveOperations : undefined
+                }
+                approveRisk={
+                  (profile.permissions && profile.permissions.risk_management) ? approveRisk : undefined
+                }
+            />
             </Col>
           </Row>
           {approved && (
@@ -190,7 +197,9 @@ class WorkspaceDetails extends React.PureComponent<Props> {
                 <YarnDetails
                   yarn={cluster.services && cluster.services.yarn}
                   poolName={workspace.processing[0].pool_name}
-                  pools={pools} />
+                  pools={pools}
+                  onRefreshPools={requestRefreshYarnApps}
+                />
               </Col>
               <Col span={24} lg={12} xxl={6} style={{ marginTop: 10 }}>
                 <KafkaDetails
@@ -281,6 +290,7 @@ const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
   clearModal: () => dispatch(actions.setActiveModal(false)),
   requestTopic: () => dispatch(actions.requestTopic()),
   simpleMemberRequest: () => dispatch(actions.simpleMemberRequest()),
+  requestRefreshYarnApps: () => dispatch(actions.requestRefreshYarnApps()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(withRouter(WorkspaceDetails));

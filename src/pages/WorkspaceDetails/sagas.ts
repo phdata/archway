@@ -19,6 +19,9 @@ import {
   RemoveMemberRequestAction,
   removeMemberSuccess,
   removeMemberFailure,
+  REQUEST_REFRESH_YARN_APPS,
+  refreshYarnAppsSuccess,
+  refreshYarnAppsFailure,
 } from './actions';
 import { Workspace } from '../../types/Workspace';
 
@@ -121,6 +124,21 @@ function* removeMemberRequestedListener() {
   yield takeEvery(REQUEST_REMOVE_MEMBER, removeMemberRequested);
 }
 
+function* refreshYarnAppsRequested() {
+  const token = yield select((s: any) => s.get('login').get('token'));
+  const { id } = yield select((s: any) => s.get('details').get('details').toJS());
+  try {
+    const apps = yield call(Api.getYarnApplications, token, id);
+    yield put(refreshYarnAppsSuccess(apps));
+  } catch (e) {
+    yield put(refreshYarnAppsFailure(e.toString()));
+  }
+}
+
+function* refreshYarnAppsRequestedListener() {
+  yield takeLatest(REQUEST_REFRESH_YARN_APPS, refreshYarnAppsRequested);
+}
+
 export default function* root() {
   yield all([
     fork(workspaceRequest),
@@ -128,5 +146,6 @@ export default function* root() {
     fork(topicRequestedListener),
     fork(simpleMemberRequestedListener),
     fork(removeMemberRequestedListener),
+    fork(refreshYarnAppsRequestedListener),
   ]);
 }

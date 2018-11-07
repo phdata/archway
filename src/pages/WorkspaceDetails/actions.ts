@@ -152,3 +152,20 @@ export const removeMemberFailure = (username: string, error: string) => ({
   username,
   error,
 });
+
+export const REQUEST_REFRESH_YARN_APPS = 'REQUEST_REFRESH_YARN_APPS';
+export const requestRefreshYarnApps = () => ({
+  type: REQUEST_REFRESH_YARN_APPS,
+});
+
+export const REFRESH_YARN_APPS_SUCCESS = 'REFRESH_YARN_APPS_SUCCESS';
+export const refreshYarnAppsSuccess = (apps: PoolInfo[]) => ({
+  type: REFRESH_YARN_APPS_SUCCESS,
+  apps,
+});
+
+export const REFRESH_YARN_APPS_FAILURE = 'REFRESH_YARN_APPS_FAILURE';
+export const refreshYarnAppsFailure = (error: string) => ({
+  type: REFRESH_YARN_APPS_FAILURE,
+  error,
+});
