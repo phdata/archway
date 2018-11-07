@@ -8,6 +8,7 @@ const initialState = fromJS({
   filters: {
     filter: '',
     behaviors: ['simple', 'structured'],
+    statuses: ['Approved', 'Pending', 'Rejected'],
   },
 });
 

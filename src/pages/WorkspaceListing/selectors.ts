@@ -17,14 +17,10 @@ export const getListFilters = () => createSelector(
 export const workspaceList = () => createSelector(
   fuseList(),
   getListFilters(),
-  (fuse, filters: { filter: string, behaviors: string[] }) => {
-    if (filters.filter === '') {
-      return fuse.list;
-    } else {
-      return fuse
-              .search(filters.filter)
-              .filter((workspace: Workspace) => filters.behaviors.indexOf(workspace.behavior) >= 0);
-    }
+  (fuse, filters: { filter: string, behaviors: string[], statuses: string[] }) => {
+    return (filters.filter ? fuse.search(filters.filter) : fuse.list)
+      .filter((workspace: Workspace) => filters.behaviors.indexOf(workspace.behavior) >= 0)
+      .filter((workspace: Workspace) => filters.statuses.indexOf(workspace.status || '') >= 0);
   },
 );
 

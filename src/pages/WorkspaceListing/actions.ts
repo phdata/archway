@@ -1,11 +1,12 @@
 import { Workspace } from '../../types/Workspace';
 
 export const FILTER_WORKSPACES = 'FILTER_WORKSPACES';
-export const filterWorkspaces = (filter: string, behaviors: string[]) => ({
+export const filterWorkspaces = (filter: string, behaviors: string[], statuses: string[]) => ({
   type: FILTER_WORKSPACES,
   filters: {
     filter,
     behaviors,
+    statuses,
   },
 });
 

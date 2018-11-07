@@ -17,6 +17,7 @@ export interface ListingState {
     filters: {
       filter: string
       behaviors: string[],
+      statuses: string[],
   };
 }
 

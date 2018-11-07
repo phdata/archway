@@ -20,10 +20,10 @@ const router = require('connected-react-router/immutable');
 interface Props {
   fetching: boolean;
   workspaceList: Workspace[];
-  filters: { filter: string, behaviors: string[] };
+  filters: { filter: string, behaviors: string[], statuses: string[] };
   profile: Profile;
   cluster: Cluster;
-  updateFilter: (filter: string, behavior: string[]) => void;
+  updateFilter: (filter: string, behavior: string[], statuses: string[]) => void;
   openWorkspace: (id: number) => void;
   listWorkspaces: () => void;
 }
@@ -37,7 +37,11 @@ class WorkspaceList extends React.PureComponent<Props> {
   }
 
   public filterUpdated(event: React.ChangeEvent<HTMLInputElement>) {
-    this.props.updateFilter(event.target.value, this.props.filters.behaviors);
+    this.props.updateFilter(
+      event.target.value,
+      this.props.filters.behaviors,
+      this.props.filters.statuses,
+    );
   }
 
   public behaviorChanged(behavior: string, checked: boolean) {
@@ -48,7 +52,26 @@ class WorkspaceList extends React.PureComponent<Props> {
       behaviors.splice(behaviors.indexOf(behavior), 1);
     }
 
-    this.props.updateFilter(this.props.filters.filter, this.props.filters.behaviors);
+    this.props.updateFilter(
+      this.props.filters.filter,
+      this.props.filters.behaviors,
+      this.props.filters.statuses,
+    );
+  }
+
+  public statusChanged(status: string, checked: boolean) {
+    const statuses = this.props.filters.statuses;
+    if (checked) {
+      statuses.push(status);
+    } else {
+      statuses.splice(statuses.indexOf(status), 1);
+    }
+
+    this.props.updateFilter(
+      this.props.filters.filter,
+      this.props.filters.behaviors,
+      this.props.filters.statuses,
+    );
   }
 
   public componentDidMount() {
@@ -59,11 +82,15 @@ class WorkspaceList extends React.PureComponent<Props> {
     const {
       fetching,
       workspaceList,
-      filters: { filter, behaviors },
+      filters: { filter, behaviors, statuses },
       openWorkspace,
       profile,
       cluster,
     } = this.props;
+    const allStatuses: string[] = ['Approved', 'Pending', 'Rejected'];
+    const emptyText = (!filter && behaviors.length === 2 && statuses.length === 3)
+      ? 'No workspaces yet. Create one from the link on the left.'
+      : 'No workspaces found';
     const renderItem = (workspace: Workspace) => <WorkspaceListItem workspace={workspace} onSelected={openWorkspace} />;
     return (
       <div>
@@ -92,9 +119,18 @@ class WorkspaceList extends React.PureComponent<Props> {
                   <div>
                     <FieldLabel>STATUS</FieldLabel>
                     <div style={{ display: 'flex', justifyContent: 'space-around' }}>
-                      <Checkbox style={{ fontSize: 12 }} defaultChecked={true} name="approved">APPROVED</Checkbox>
-                      <Checkbox style={{ fontSize: 12 }} defaultChecked={true} name="pending">PENDING</Checkbox>
-                      <Checkbox style={{ fontSize: 12 }} defaultChecked={true} name="rejected">REJECTED</Checkbox>
+                      {allStatuses.map((status: string) => (
+                        <Checkbox
+                          key={status}
+                          style={{ fontSize: 12 }}
+                          defaultChecked
+                          name={status.toLowerCase()}
+                          checked={statuses.includes(status)}
+                          onChange={(e: any) => this.statusChanged(status, e.target.checked)}
+                        >
+                          {status.toUpperCase()}
+                        </Checkbox>
+                      ))}
                     </div>
                   </div>
                 </Col>
@@ -141,7 +177,7 @@ class WorkspaceList extends React.PureComponent<Props> {
           <Col span={24}>
             <List
               grid={{ gutter: 12, column: 2 }}
-              locale={{ emptyText: 'No workspaces yet. Create one from the link on the left.' }}
+              locale={{ emptyText }}
               loading={fetching}
               dataSource={workspaceList}
               renderItem={renderItem}
@@ -164,7 +200,11 @@ const mapStateToProps = () =>
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
   openWorkspace: (id: number) => dispatch(router.push(`/workspaces/${id}`)),
-  updateFilter: (filter: string, behavior: string[]) => dispatch(actions.filterWorkspaces(filter, behavior)),
+  updateFilter: (
+    filter: string,
+    behavior: string[],
+    statuses: string[],
+  ) => dispatch(actions.filterWorkspaces(filter, behavior, statuses)),
   listWorkspaces: () => dispatch(actions.listAllWorkspaces()),
 });
 
