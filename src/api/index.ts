@@ -76,7 +76,7 @@ export const getPersonalWorkspace =
 
 export const getUserSuggestions =
   (token: string, filter: string) =>
-    get(`/users/${filter}`, token);
+    get(`/members/${filter}`, token);
 
 export const createWorkspace =
   (token: string) =>
