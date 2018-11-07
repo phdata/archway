@@ -103,7 +103,6 @@ class MemberList extends React.Component<Props> {
         actions={[
           <a href="#" onClick={showModal}>Add a member</a>,
         ]}>
-      ]}>
       <CardHeader
         icon="lock"
         heading="Membership"
