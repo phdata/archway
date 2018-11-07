@@ -9,14 +9,14 @@ import doobie.util.fragments.whereAnd
 class MemberRepositoryImpl extends MemberRepository {
   implicit val han = LogHandler.jdkLogHandler
 
-  override def create(username: String, ldapRegistrationId: Long): ConnectionIO[Long] =
+  override def create(distinguishedName: String, ldapRegistrationId: Long): ConnectionIO[Long] =
     Statements
-      .create(username, ldapRegistrationId)
+      .create(distinguishedName, ldapRegistrationId)
       .withUniqueGeneratedKeys("id")
 
-  override def complete(id: Long, username: String): ConnectionIO[Int] =
+  override def complete(id: Long, distinguishedName: String): ConnectionIO[Int] =
     Statements
-      .complete(id, username)
+      .complete(id, distinguishedName)
       .run
 
   override def get(id: Long): ConnectionIO[List[MemberRightsRecord]] =
@@ -24,9 +24,9 @@ class MemberRepositoryImpl extends MemberRepository {
       .get(id)
       .to[List]
 
-  override def delete(ldapRegistrationId: Long, username: String): doobie.ConnectionIO[Int] =
+  override def delete(ldapRegistrationId: Long, distinguishedName: String): doobie.ConnectionIO[Int] =
     Statements
-      .remove(ldapRegistrationId, username)
+      .remove(ldapRegistrationId, distinguishedName)
       .run
 
   override def list(workspaceId: Long): doobie.ConnectionIO[List[MemberRightsRecord]] =
@@ -34,9 +34,9 @@ class MemberRepositoryImpl extends MemberRepository {
       .list(workspaceId)
       .to[List]
 
-  override def find(workspaceRequestId: Long, username: String): doobie.ConnectionIO[List[MemberRightsRecord]] =
+  override def find(workspaceRequestId: Long, distinguishedName: String): doobie.ConnectionIO[List[MemberRightsRecord]] =
     Statements
-      .find(workspaceRequestId, username)
+      .find(workspaceRequestId, distinguishedName)
       .to[List]
 
   object Statements {
@@ -45,7 +45,7 @@ class MemberRepositoryImpl extends MemberRepository {
       sql"""
         select
             area,
-            username,
+            distinguished_name,
             name,
             resourceId,
             role
@@ -54,7 +54,7 @@ class MemberRepositoryImpl extends MemberRepository {
           m.id as memberId,
           wd.workspace_request_id,
           'data' as area,
-            m.username,
+            m.distinguished_name,
             h.name,
             h.id as resourceId,
             'manager' as role
@@ -69,7 +69,7 @@ class MemberRepositoryImpl extends MemberRepository {
           m.id as memberId,
           wd.workspace_request_id,
           'data' as area,
-            m.username,
+            m.distinguished_name,
             h.name,
             h.id as resourceId,
             'readonly' as role
@@ -84,7 +84,7 @@ class MemberRepositoryImpl extends MemberRepository {
           m.id as memberId,
           wt.workspace_request_id,
           'topics' as area,
-            m.username,
+            m.distinguished_name,
             t.name,
             t.id as resourceId,
             'manager' as role
@@ -99,7 +99,7 @@ class MemberRepositoryImpl extends MemberRepository {
           m.id as memberId,
           wt.workspace_request_id,
           'topics' as area,
-            m.username,
+            m.distinguished_name,
             t.name,
             t.id as resourceId,
             'readonly' as role
@@ -114,7 +114,7 @@ class MemberRepositoryImpl extends MemberRepository {
           m.id as memberId,
           wa.workspace_request_id,
           'applications' as area,
-            m.username,
+            m.distinguished_name,
             a.name,
             a.id as resourceId,
             'manager' as role
@@ -127,23 +127,23 @@ class MemberRepositoryImpl extends MemberRepository {
     def list(workspaceRequestId: Long): Query0[MemberRightsRecord] =
       (listSelect ++ whereAnd(fr"workspace_request_id = $workspaceRequestId")).query[MemberRightsRecord]
 
-    def create(username: String, ldapRegistrationId: Long): Update0 =
+    def create(distinguishedName: String, ldapRegistrationId: Long): Update0 =
       sql"""
-          insert into member (username, ldap_registration_id)
-          values ($username, $ldapRegistrationId)
+          insert into member (distinguished_name, ldap_registration_id)
+          values ($distinguishedName, $ldapRegistrationId)
        """.update
 
-    def complete(ldapRegistrationId: Long, username: String): Update0 =
-      sql"update member set created = ${Instant.now()} where username = $username and ldap_registration_id = $ldapRegistrationId".update
+    def complete(ldapRegistrationId: Long, distinguishedName: String): Update0 =
+      sql"update member set created = ${Instant.now()} where distinguished_name = $distinguishedName and ldap_registration_id = $ldapRegistrationId".update
 
-    def remove(ldapRegistrationId: Long, username: String): Update0 =
-      sql"delete from member where ldap_registration_id = $ldapRegistrationId and username = $username".update
+    def remove(ldapRegistrationId: Long, distinguishedName: String): Update0 =
+      sql"delete from member where ldap_registration_id = $ldapRegistrationId and distinguished_name = $distinguishedName".update
 
     def get(id: Long): Query0[MemberRightsRecord] =
       (listSelect ++ whereAnd(fr"memberId = $id")).query
 
-    def find(workspaceRequestId: Long, username: String): Query0[MemberRightsRecord] =
-      (listSelect ++ whereAnd(fr"workspace_request_id = $workspaceRequestId", fr"username = $username")).query
+    def find(workspaceRequestId: Long, distinguished_name: String): Query0[MemberRightsRecord] =
+      (listSelect ++ whereAnd(fr"workspace_request_id = $workspaceRequestId", fr"distinguished_name = $distinguished_name")).query
 
   }
 

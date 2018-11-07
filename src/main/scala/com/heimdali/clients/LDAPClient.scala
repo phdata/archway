@@ -17,7 +17,7 @@ case object GroupAlreadyExists extends GroupCreationError
 
 case class GeneralError(throwable: Throwable) extends GroupCreationError
 
-case class LDAPUser(name: String, username: String, memberships: Seq[String], email: Option[String])
+case class LDAPUser(name: String, username: String, distinguishedName: String, memberships: Seq[String], email: Option[String])
 
 trait LDAPClient[F[_]] {
   def findUser(username: String): OptionT[F, LDAPUser]
@@ -35,6 +35,8 @@ trait LDAPClient[F[_]] {
   def removeUser(groupName: String, username: String): OptionT[F, LDAPUser]
 
   def groupMembers(groupDN: String): F[List[LDAPUser]]
+
+  def search(filter: String): F[List[SearchResultEntry]]
 }
 
 abstract class LDAPClientImpl[F[_]: Effect](
@@ -216,4 +218,8 @@ abstract class LDAPClientImpl[F[_]: Effect](
     }
   }
 
+  override def search(filter: String): F[List[SearchResultEntry]] =
+    Effect[F].delay(connectionFactory()
+      .search(ldapConfig.baseDN, SearchScope.SUB, s"(&(cn=$filter*)(|(objectClass=user)(objectClass=group)))")
+      .getSearchEntries.asScala.toList)
 }

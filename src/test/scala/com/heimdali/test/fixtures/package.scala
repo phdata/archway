@@ -28,10 +28,11 @@ package object fixtures {
 
   val personName = "John Doe"
   val standardUsername = "john.doe"
-  val infraApproverToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJuYW1lIjoiRHVkZSBEb2UiLCJ1c2VybmFtZSI6InVzZXJuYW1lIiwicGVybWlzc2lvbnMiOnsicmlza19tYW5hZ2VtZW50IjpmYWxzZSwicGxhdGZvcm1fb3BlcmF0aW9ucyI6dHJ1ZX19.uNJ0uQevSRL8aqYqmfsijVoj3gjlHbk07XBwGSXRuOboA1zkcMHhmHhiKVmFW_AVwDvqVdYAJ-XpNp7qTMHuQg"
-  val infraApproverUser = User(personName, standardUsername, UserPermissions(riskManagement = false, platformOperations = true))
+  val standardUserDN = s"cn=$standardUsername,ou=hadoop,dc=example,dc=com"
+  val infraApproverToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJuYW1lIjoiRHVkZSBEb2UiLCJ1c2VybmFtZSI6InVzZXJuYW1lIiwiZGlzdGluZ3Vpc2hlZF9uYW1lIjoiY249am9obi5kb2Usb3U9aGFkb29wLGRjPWV4YW1wbGUsZGM9Y29tIiwicGVybWlzc2lvbnMiOnsicmlza19tYW5hZ2VtZW50IjpmYWxzZSwicGxhdGZvcm1fb3BlcmF0aW9ucyI6dHJ1ZX19.RSYFux7Ra7-qA9oICXn9L10UMZzrBxXxMr6oQck_oRtO8W3ev2u8vj57b-Kqpw-c0f_K7MTnLqpbfa45IDUg6Q"
+  val infraApproverUser = User(personName, standardUsername, standardUserDN, UserPermissions(riskManagement = false, platformOperations = true))
   val basicUserToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJuYW1lIjoiRHVkZSBEb2UiLCJ1c2VybmFtZSI6InVzZXJuYW1lIiwicGVybWlzc2lvbnMiOnsicmlza19tYW5hZ2VtZW50IjpmYWxzZSwicGxhdGZvcm1fb3BlcmF0aW9ucyI6ZmFsc2V9fQ.ltGXxBh4S7gwmIbcKz22IFWpGI2-zxad2XYOoxuGm734L8GlzfwvLRWIs-ZVKn7T8w3RJy5bKZWZoPj8951Qug"
-  val basicUser = User(personName, standardUsername, UserPermissions(riskManagement = false, platformOperations = false))
+  val basicUser = User(personName, standardUsername, standardUserDN, UserPermissions(riskManagement = false, platformOperations = false))
 
   val id = 123L
   val name = "Sesame"

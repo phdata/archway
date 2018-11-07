@@ -10,7 +10,8 @@ import scala.concurrent.duration._
 class RestAPI(accountController: AccountController,
               clusterController: ClusterController,
               workspaceController: WorkspaceController,
-              templateController: TemplateController)
+              templateController: TemplateController,
+              memberController: MemberController)
   extends LazyLogging {
 
   def build(): BlazeBuilder[IO] =
@@ -23,7 +24,8 @@ class RestAPI(accountController: AccountController,
       "/account" -> accountController.tokenizedRoutes,
       "/templates" -> templateController.route,
       "/clusters" -> clusterController.route,
-      "/workspaces" -> workspaceController.route
+      "/workspaces" -> workspaceController.route,
+      "/members" -> memberController.route
   )
 
 }

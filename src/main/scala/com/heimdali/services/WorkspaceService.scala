@@ -6,7 +6,7 @@ import com.heimdali.models._
 trait WorkspaceService[F[_]] {
   def find(id: Long): OptionT[F, WorkspaceRequest]
 
-  def list(username: String): F[List[WorkspaceRequest]]
+  def list(distinguishedName: String): F[List[WorkspaceRequest]]
 
   def create(workspace: WorkspaceRequest): F[WorkspaceRequest]
 

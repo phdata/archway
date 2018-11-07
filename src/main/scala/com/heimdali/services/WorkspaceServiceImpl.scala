@@ -69,8 +69,8 @@ class WorkspaceServiceImpl[F[_]](ldapClient: LDAPClient[F],
       apps <- OptionT.liftF(applicationRepository.findByWorkspaceId(workspace.id.get))
     } yield workspace.copy(data = datas, processing = yarns, approvals = appr, kafkaTopics = tops, applications = apps)
 
-  override def list(username: String): F[List[WorkspaceRequest]] =
-    workspaceRepository.list(username).transact(transactor)
+  override def list(distinguishedName: String): F[List[WorkspaceRequest]] =
+    workspaceRepository.list(distinguishedName).transact(transactor)
 
   def create(workspace: WorkspaceRequest): F[WorkspaceRequest] =
     (for {

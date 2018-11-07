@@ -13,6 +13,7 @@ trait ActiveDirectoryClient[F[_]] { this: LDAPClientImpl[F] =>
   override def ldapUser(searchResultEntry: SearchResultEntry) =
     LDAPUser(s"${searchResultEntry.getAttributeValue("cn")}",
       searchResultEntry.getAttributeValue("sAMAccountName"),
+      searchResultEntry.getDN,
       searchResultEntry.getAttributeValues("memberOf"),
       Option(searchResultEntry.getAttributeValue("mail")))
 

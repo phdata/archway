@@ -14,6 +14,7 @@ trait OpenLDAPClient[F[_]] {
   override def ldapUser(searchResultEntry: SearchResultEntry) =
     LDAPUser(s"${searchResultEntry.getAttributeValue("givenname")} ${searchResultEntry.getAttributeValue("sn")}",
       searchResultEntry.getAttributeValue("cn"),
+      searchResultEntry.getDN,
       searchResultEntry.getAttributeValues("memberOf"),
       Option(searchResultEntry.getAttributeValue("mail")))
 

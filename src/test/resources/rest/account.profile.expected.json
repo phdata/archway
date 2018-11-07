@@ -1,6 +1,7 @@
 {
   "name" : "John Doe",
   "username" : "john.doe",
+  "distinguished_name" : "cn=john.doe,ou=hadoop,dc=example,dc=com",
   "permissions" : {
     "risk_management" : false,
     "platform_operations" : true

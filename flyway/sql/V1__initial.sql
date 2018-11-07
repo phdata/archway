@@ -163,7 +163,7 @@ CREATE SEQUENCE member_seq;
 
 CREATE TABLE IF NOT EXISTS member (
   id BIGINT NOT NULL DEFAULT NEXTVAL ('member_seq'),
-  username VARCHAR(255) NOT NULL,
+  distinguished_name VARCHAR(255) NOT NULL,
   ldap_registration_id BIGINT NOT NULL,
   created TIMESTAMP NULL,
   PRIMARY KEY (id)
