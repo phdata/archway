@@ -1,0 +1,14 @@
+{
+  "users": [
+    {
+      "display": "John Doe",
+      "distinguished_name": "cn=johndoe,dc=example,dc=io"
+    }
+  ],
+  "groups": [
+    {
+      "display": "John's Group",
+      "distinguished_name": "cn=johngroup,dc=example,dc=io"
+    }
+  ]
+}

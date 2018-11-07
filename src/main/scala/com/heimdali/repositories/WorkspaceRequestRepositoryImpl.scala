@@ -32,8 +32,8 @@ class WorkspaceRequestRepositoryImpl
   override def linkApplication(workspaceId: Long, applicationId: Long): doobie.ConnectionIO[Int] =
     WorkspaceRequestRepositoryImpl.Statements.linkApplication(workspaceId, applicationId).run
 
-  override def findByUsername(username: String): OptionT[doobie.ConnectionIO, WorkspaceRequest] =
-    OptionT(WorkspaceRequestRepositoryImpl.Statements.findByUsername(username).option)
+  override def findByUsername(distinguishedName: String): OptionT[doobie.ConnectionIO, WorkspaceRequest] =
+    OptionT(WorkspaceRequestRepositoryImpl.Statements.findByUsername(distinguishedName).option)
 }
 
 object WorkspaceRequestRepositoryImpl {
@@ -119,11 +119,11 @@ object WorkspaceRequestRepositoryImpl {
         left join member rrm on rrm.ldap_registration_id = mr.id
         """
 
-    def innerQueryWith(username: String): Fragment =
-      innerQuery ++ whereOr(fr"mrm.username = $username", fr"rrm.username = $username")
+    def innerQueryWith(distinguishedName: String): Fragment =
+      innerQuery ++ whereOr(fr"mrm.distinguished_name = $distinguishedName", fr"rrm.distinguished_name = $distinguishedName")
 
-    def listQuery(username: String): Query0[(WorkspaceRequest, Option[Approval])] =
-      (listFragment ++ fr"where wr.id in (" ++ innerQueryWith(username) ++ fr") and wr.single_user = false")
+    def listQuery(distinguishedName: String): Query0[(WorkspaceRequest, Option[Approval])] =
+      (listFragment ++ fr"where wr.id in (" ++ innerQueryWith(distinguishedName) ++ fr") and wr.single_user = false")
         .query[(WorkspaceRequest, Option[Approval])]
 
     def insert(workspaceRequest: WorkspaceRequest): Update0 =

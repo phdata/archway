@@ -27,10 +27,13 @@ trait RestModule {
     )
   val templateController = new TemplateController(authService)
 
+  val memberController: MemberController = new MemberController(authService, memberService)
+
   val restAPI: RestAPI = new RestAPI(
     accountController,
     clusterController,
     workspaceController,
-    templateController
+    templateController,
+    memberController
   )
 }

@@ -28,6 +28,7 @@ class AccountServiceImpl[F[_] : Sync](ldapClient: LDAPClient[F],
   implicit def convertUser(ldapUser: LDAPUser): User = {
     User(ldapUser.name,
       ldapUser.username,
+      ldapUser.distinguishedName,
          UserPermissions(riskManagement =
                            ldapUser
                              .memberships
