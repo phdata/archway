@@ -4,6 +4,7 @@ import { InjectedFormProps } from 'redux-form';
 import { Field } from 'redux-form/immutable';
 import { reduxForm } from 'redux-form/immutable';
 import FieldLabel from '../../../components/FieldLabel';
+import { UserSuggestion } from './../../../types/Workspace';
 
 /* tslint:disable:no-var-requires */
 const { createComponent, customMap } = require('redux-form-antd');
@@ -18,7 +19,7 @@ interface SimpleMemberForm {
 }
 
 interface SimpleMemberRequestProps {
-  suggestions?: string[];
+  suggestions?: UserSuggestion[];
   onSearch?: (v: string) => void;
 }
 
@@ -31,7 +32,11 @@ const SimpleMemberRequest = ({
     <FieldLabel>Username</FieldLabel>
     <Field
       name="username"
-      dataSource={suggestions || []}
+      dataSource={suggestions ?
+        suggestions.map((v) => ({
+          value: v.distinguished_name,
+          text: v.display,
+        })) : []}
       onSearch={onSearch}
       component={ReduxAutoComplete}
       style={{ marginBottom: 0 }}

@@ -134,7 +134,7 @@ export interface Workspace {
 
 export interface UserSuggestion {
   display: string;
-  common_name?: string;
+  distinguished_name: string;
 }
 
 export interface UserSuggestions {
