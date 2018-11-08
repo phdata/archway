@@ -247,7 +247,7 @@ class WorkspaceDetails extends React.PureComponent<Props> {
                     suggestions={userSuggestions ? [
                       ...userSuggestions.users || [],
                       ...userSuggestions.groups || [],
-                    ].map(({ common_name }: UserSuggestion) => common_name) : []}
+                    ].map(({ display }: UserSuggestion) => display) : []}
                     onSearch={this.handleMemberSearch}
                   />
                 </Modal>
