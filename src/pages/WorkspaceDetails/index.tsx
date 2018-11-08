@@ -11,7 +11,6 @@ import {
   NamespaceInfo,
   ResourcePoolsInfo,
   Workspace,
-  UserSuggestion,
   UserSuggestions,
   HiveAllocation,
 } from '../../types/Workspace';
