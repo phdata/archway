@@ -44,7 +44,7 @@ export const getProfile = () => createSelector(
 );
 
 const liasionFilter = (state: any) => (member: Member) =>
-  member.username !== (state.get('details').toJS() as Workspace).requester &&
+  member.distinguished_name !== (state.get('details').toJS() as Workspace).requester &&
   !(member.removeStatus || {}).success;
 
 export const getMembers = () => createSelector(

@@ -31,7 +31,7 @@ export interface MemberRemoveStatus {
 }
 
 export interface Member {
-  username: string;
+  distinguished_name: string;
   name: string;
   removeStatus?: MemberRemoveStatus;
 }

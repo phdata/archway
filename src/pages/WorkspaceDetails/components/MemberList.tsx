@@ -12,7 +12,7 @@ import CardHeader from './CardHeader';
 interface Props {
   members?: Member[];
 
-  removeMember: (username: string) => void;
+  removeMember: (distinguished_name: string) => void;
   showModal: (e: React.MouseEvent) => void;
 }
 
@@ -25,16 +25,16 @@ class MemberList extends React.Component<Props> {
         const newMembersDict: any = {};
         oldMembers.forEach((member: Member) => {
           if (member.removeStatus && member.removeStatus.loading) {
-            oldMembersDict[member.username] = member;
+            oldMembersDict[member.distinguished_name] = member;
           }
         });
         newMembers.forEach((member: Member) => {
           if (member.removeStatus) {
-            newMembersDict[member.username] = member;
+            newMembersDict[member.distinguished_name] = member;
           }
         });
-        Object.keys(oldMembersDict).forEach((username: string) => {
-          const newMember: Member = newMembersDict[username];
+        Object.keys(oldMembersDict).forEach((distinguished_name: string) => {
+          const newMember: Member = newMembersDict[distinguished_name];
           const { removeStatus = null } = newMember || {};
           if (!removeStatus) {
             notification.open({
@@ -53,10 +53,13 @@ class MemberList extends React.Component<Props> {
 
   public renderMember = (member: Member) => {
     const { removeMember } = this.props;
-    const { username, removeStatus = {} } = member;
+    const { distinguished_name, removeStatus = {} } = member;
 
     return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+      <div
+        key={distinguished_name}
+        style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+      >
         <span
           style={{
             color: 'rgba(0, 0, 0, 0.65)',
@@ -64,7 +67,7 @@ class MemberList extends React.Component<Props> {
             fontWeight: 600,
             marginRight: '16px',
           }}
-        >{username}</span>
+        >{distinguished_name}</span>
         <div
           style={{
             display: 'flex',
@@ -87,7 +90,7 @@ class MemberList extends React.Component<Props> {
                 fontSize: '10px',
                 cursor: 'pointer',
               }}
-              onClick={() => removeMember(username)}
+              onClick={() => removeMember(distinguished_name)}
             >REMOVE</span>
           )}
         </div>
@@ -127,7 +130,7 @@ const mapStateToProps = () =>
   });
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
-  removeMember: (username: string) => dispatch(requestRemoveMember(username)),
+  removeMember: (distinguished_name: string) => dispatch(requestRemoveMember(distinguished_name)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(MemberList);

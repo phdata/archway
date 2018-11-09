@@ -115,7 +115,7 @@ function* simpleMemberRequestedListener() {
   yield takeLatest(SIMPLE_MEMBER_REQUEST, simpleMemberRequested);
 }
 
-function* removeMemberRequested({ username }: RemoveMemberRequestAction) {
+function* removeMemberRequested({ distinguished_name }: RemoveMemberRequestAction) {
   const token = yield select((s: any) => s.get('login').get('token'));
   const workspace: Workspace = yield select<Workspace>((s: any) => s.get('details').get('details').toJS() as Workspace);
   const { applications, data, topics } = {
@@ -127,12 +127,12 @@ function* removeMemberRequested({ username }: RemoveMemberRequestAction) {
   try {
     yield all(
       allResources.map(({ type, id }) => (
-        call(Api.removeWorkspaceMember, token, workspace.id, type, id, 'manager', username)
+        call(Api.removeWorkspaceMember, token, workspace.id, type, id, 'manager', distinguished_name)
       )),
     );
-    yield put(removeMemberSuccess(username));
+    yield put(removeMemberSuccess(distinguished_name));
   } catch (e) {
-    yield put(removeMemberFailure(username, e.toString()));
+    yield put(removeMemberFailure(distinguished_name, e.toString()));
   }
 }
 

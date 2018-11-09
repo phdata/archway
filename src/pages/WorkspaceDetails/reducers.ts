@@ -118,7 +118,7 @@ const details = (state = initialState, action: any) => {
             'members',
             state
               .get('members')
-              .map((m: any) => (m.toJS() as Member).username === action.username ?
+              .map((m: any) => (m.toJS() as Member).distinguished_name === action.distinguished_name ?
                 m.set('removeStatus', {
                   loading: true,
                 }) : m,
@@ -130,7 +130,7 @@ const details = (state = initialState, action: any) => {
             'members',
             state
               .get('members')
-              .map((m: any) => (m.toJS() as Member).username === action.username ?
+              .map((m: any) => (m.toJS() as Member).distinguished_name === action.distinguished_name ?
                 m.set('removeStatus', {
                   success: true,
                 }) : m,
@@ -142,7 +142,7 @@ const details = (state = initialState, action: any) => {
             'members',
             state
               .get('members')
-              .map((m: any) => (m.toJS() as Member).username === action.username ?
+              .map((m: any) => (m.toJS() as Member).distinguished_name === action.distinguished_name ?
                 m.set('removeStatus', {
                   success: false,
                   error: action.error,
