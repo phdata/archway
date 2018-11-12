@@ -194,18 +194,18 @@ class WorkspaceDetails extends React.PureComponent<Props> {
                   onChangeAllocation={updateSelectedAllocation} />
               </Col>
               <Col span={24} lg={12} xxl={6} style={{ marginTop: 10 }}>
-                <YarnDetails
+                {workspace.processing && <YarnDetails
                   yarn={cluster.services && cluster.services.yarn}
                   poolName={workspace.processing[0].pool_name}
                   pools={pools}
                   onRefreshPools={requestRefreshYarnApps}
-                />
+                />}
               </Col>
               <Col span={24} lg={12} xxl={6} style={{ marginTop: 10 }}>
-                <KafkaDetails
+                {workspace.applications && <KafkaDetails
                   consumerGroup={workspace.applications[0] && workspace.applications[0].consumer_group}
                   topics={workspace.topics}
-                  showModal={showTopicDialog} />
+                  showModal={showTopicDialog} />}
                 <Modal
                   visible={activeModal === 'kafka'}
                   title="New Topic"
@@ -235,14 +235,14 @@ class WorkspaceDetails extends React.PureComponent<Props> {
                   namespace={selectedAllocation.name} />
               </Col>
               <Col span={24} xxl={8} style={{ marginTop: 10 }}>
-                <CreateHelp
+                {cluster.services.hive.thrift && <CreateHelp
                   host={cluster.services.hive.thrift[0].host}
                   port={cluster.services.hive.thrift[0].port}
-                  namespace={selectedAllocation.name} />
+                  namespace={selectedAllocation.name} />}
               </Col>
               <Col span={24} xxl={8} style={{ marginTop: 10 }}>
-                <RunHelp
-                  queue={workspace.processing[0].pool_name} />
+                {workspace.processing && <RunHelp
+                  queue={workspace.processing[0].pool_name} />}
               </Col>
             </Row>
           )}
