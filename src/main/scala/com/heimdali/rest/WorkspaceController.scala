@@ -62,7 +62,7 @@ class WorkspaceController(authService: AuthService[IO],
 
         case GET -> Root as user =>
           for {
-            workspaces <- workspaceService.list(user.username)
+            workspaces <- workspaceService.list(user.distinguishedName)
             response <- Ok(workspaces.asJson)
           } yield response
 
