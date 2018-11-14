@@ -243,10 +243,7 @@ class WorkspaceDetails extends React.PureComponent<Props> {
                   onCancel={clearModal}
                   onOk={simpleMemberRequest}>
                   <SimpleMemberRequest
-                    suggestions={userSuggestions ? [
-                      ...userSuggestions.users || [],
-                      ...userSuggestions.groups || [],
-                    ] : []}
+                    suggestions={userSuggestions}
                     onSearch={this.handleMemberSearch}
                   />
                 </Modal>
