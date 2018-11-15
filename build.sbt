@@ -93,11 +93,9 @@ addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.2.4")
 
 scalacOptions ++= Seq("-Ypartial-unification", "-language:higherKinds")
 
-scalaVersion in ThisBuild := "2.12.5"
-
 mainClass in reStart := Some("com.heimdali.Main")
 
-Revolver.enableDebugging(port = 9999, suspend = true)
+Revolver.enableDebugging(port = 5050, suspend = true)
 
 javaOptions in reStart := Seq(
   "-Dhadoop.home.dir=$PWD",

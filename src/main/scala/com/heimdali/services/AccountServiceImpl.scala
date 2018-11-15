@@ -63,7 +63,7 @@ class AccountServiceImpl[F[_] : Sync](ldapClient: LDAPClient[F],
     for {
       maybeToken <- EitherT.fromEither[F](decode(token, restConfig.secret, algo))
       user <- EitherT.fromEither[F](maybeToken.as[User])
-      result <- EitherT.fromOptionF(ldapClient.findUser(user.username).value, new Throwable())
+      result <- EitherT.fromOptionF(ldapClient.findUser(user.distinguishedName).value, new Throwable())
     } yield convertUser(result)
   }
 

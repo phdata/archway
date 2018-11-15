@@ -164,8 +164,7 @@ class WorkspaceServiceImplSpec
     }
 
     inSequence {
-      ldapClient.addUser _ expects(savedLDAP.distinguishedName, standardUsername) returning OptionT
-        .some(LDAPUser("John Doe", standardUsername, standardUserDN, Seq.empty, None))
+      ldapClient.addUser _ expects(savedLDAP.distinguishedName, standardUsername) returning OptionT.some(standardUserDN)
       memberRepository.complete _ expects(id, standardUsername) returning 0.pure[ConnectionIO]
     }
 
@@ -188,8 +187,7 @@ class WorkspaceServiceImplSpec
     }
 
     inSequence {
-      ldapClient.addUser _ expects(savedLDAP.distinguishedName, standardUsername) returning OptionT
-        .some(LDAPUser("John Doe", standardUsername, standardUserDN, Seq.empty, None))
+      ldapClient.addUser _ expects(savedLDAP.distinguishedName, standardUsername) returning OptionT.some(standardUserDN)
       memberRepository.complete _ expects(id, standardUsername) returning 0.pure[ConnectionIO]
     }
 
