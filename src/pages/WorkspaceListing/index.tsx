@@ -3,6 +3,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import { createStructuredSelector } from 'reselect';
+import * as moment from 'moment';
 import { Behavior, WorkspaceListItem } from '../../components';
 import { Workspace } from '../../types/Workspace';
 import * as actions from './actions';
@@ -13,7 +14,7 @@ import { Cluster } from '../../types/Cluster';
 import Colors from '../../components/Colors';
 
 /* tslint:disable:no-var-requires */
-const {CSVLink} = require('react-csv');
+const { CSVLink } = require('react-csv');
 /* tslint:disable:no-var-requires */
 const router = require('connected-react-router/immutable');
 
@@ -78,6 +79,43 @@ class WorkspaceList extends React.PureComponent<Props> {
     this.props.listWorkspaces();
   }
 
+  public generateCSV(workspaceList: Workspace[]) {
+    return workspaceList.map((workspace) => {
+      let fullApprovalDate = '';
+      let diskAllocated = '';
+      let maxCores = '';
+      let maxMemory = '';
+
+      const { approvals, data, processing } = workspace;
+      if (approvals && approvals.infra && approvals.infra.approval_time) {
+        fullApprovalDate = moment(approvals.infra.approval_time).format('YYYY-MM-DD');
+      }
+      if (approvals && approvals.risk && approvals.risk.approval_time) {
+        const approvalDate = moment(approvals.risk.approval_time).format('YYYY-MM-DD');
+        if (!fullApprovalDate || fullApprovalDate < approvalDate) {
+          fullApprovalDate = approvalDate;
+        }
+      }
+      if (data && data.length > 0) {
+        diskAllocated = `${data[0].size_in_gb}`;
+      }
+      if (processing && processing.length > 0) {
+        maxCores = `${processing[0].max_cores}`;
+        maxMemory = `${processing[0].max_memory_in_gb}`;
+      }
+
+      return {
+        'Name': workspace.name,
+        'Status': workspace.status,
+        'Date Requested': moment(workspace.requested_date).format('YYYY-MM-DD'),
+        'Date Fully Approved': fullApprovalDate,
+        'Disk Allocated': diskAllocated,
+        'Max Cores': maxCores,
+        'Max Memory': maxMemory,
+      };
+    });
+  }
+
   public render() {
     const {
       fetching,
@@ -92,6 +130,7 @@ class WorkspaceList extends React.PureComponent<Props> {
       ? 'No workspaces yet. Create one from the link on the left.'
       : 'No workspaces found';
     const renderItem = (workspace: Workspace) => <WorkspaceListItem workspace={workspace} onSelected={openWorkspace} />;
+
     return (
       <div>
         <h1 style={{ textAlign: 'center' }}>Workspaces</h1>
@@ -159,10 +198,11 @@ class WorkspaceList extends React.PureComponent<Props> {
             </Card>
           </Col>
         </Row>
-        {profile.permissions && profile.permissions.platform_operations && (
+        {workspaceList && workspaceList.length > 0 &&
+          profile.permissions && profile.permissions.platform_operations && (
           <Row type="flex" style={{ marginTop: 12, fontSize: 12 }} justify="center">
             <Col>
-              <CSVLink data={workspaceList} filename={`${cluster.name} - Workspaces.csv`}>
+              <CSVLink data={this.generateCSV(workspaceList)} filename={`${cluster.name} - Workspaces.csv`}>
                 <Icon
                   style={{ fontSize: 16 }}
                   type="file-excel"
