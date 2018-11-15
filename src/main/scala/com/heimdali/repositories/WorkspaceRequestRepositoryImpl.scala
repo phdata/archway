@@ -9,6 +9,8 @@ import doobie.util.fragments.{whereAnd, whereOr}
 class WorkspaceRequestRepositoryImpl
   extends WorkspaceRequestRepository {
 
+  implicit val han = LogHandler.jdkLogHandler
+
   override def list(username: String): ConnectionIO[List[WorkspaceRequest]] =
     WorkspaceRequestRepositoryImpl.Statements.listQuery(username).to[List].map(_.groupBy(_._1).map {
       case (req, groups) => req.copy(approvals = groups.flatMap(_._2))
@@ -124,7 +126,7 @@ object WorkspaceRequestRepositoryImpl {
 
     def listQuery(distinguishedName: String): Query0[(WorkspaceRequest, Option[Approval])] =
       (listFragment ++ fr"where wr.id in (" ++ innerQueryWith(distinguishedName) ++ fr") and wr.single_user = false")
-        .query[(WorkspaceRequest, Option[Approval])]
+        .queryWithLogHandler[(WorkspaceRequest, Option[Approval])](LogHandler.jdkLogHandler)
 
     def insert(workspaceRequest: WorkspaceRequest): Update0 =
       sql"""

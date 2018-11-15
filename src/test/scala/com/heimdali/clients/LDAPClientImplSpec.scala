@@ -35,24 +35,26 @@ class LDAPClientImplSpec
     val client = new LDAPClientImpl[IO](appConfig.ldap, () => ldapConnectionPool.getConnection) with ActiveDirectoryClient[IO]
 
     client.createGroup(10000, "edh_sw_sesame", groupDN).value.unsafeRunSync()
-    client.addUser(groupDN, existingUser).value.unsafeRunSync()
+    client.addUser(groupDN, userDN).value.unsafeRunSync()
 
     ldapConnectionPool.getConnection.delete(s"cn=edh_sw_sesame,${appConfig.ldap.groupPath}")
   }
 
   it should "find a user" in {
+    val userDN = s"cn=$existingUser,${appConfig.ldap.userPath.get}"
     val client = new LDAPClientImpl[IO](appConfig.ldap, () => ldapConnectionPool.getConnection) with ActiveDirectoryClient[IO]
-    val maybeUser = client.findUser(existingUser).value.unsafeRunSync()
+    val maybeUser = client.findUser(userDN).value.unsafeRunSync()
     maybeUser shouldBe defined
   }
 
   it should "find all users" in {
     val groupDN = s"cn=edh_sw_sesame,${appConfig.ldap.groupPath}"
+    def userDN(username: String) = s"cn=$username,${appConfig.ldap.userPath.get}"
     val client = new LDAPClientImpl[IO](appConfig.ldap, () => ldapConnectionPool.getConnection) with ActiveDirectoryClient[IO]
 
     client.createGroup(10000, "edh_sw_sesame", groupDN).value.unsafeRunSync()
-    client.addUser(groupDN, "benny").value.unsafeRunSync()
-    client.addUser(groupDN, "johndoe").value.unsafeRunSync()
+    client.addUser(groupDN, userDN("benny")).value.unsafeRunSync()
+    client.addUser(groupDN, userDN("johndoe")).value.unsafeRunSync()
 
     val result = client.groupMembers(groupDN).unsafeRunSync()
 
