@@ -53,7 +53,7 @@ class MemberList extends React.Component<Props> {
 
   public renderMember = (member: Member) => {
     const { removeMember } = this.props;
-    const { distinguished_name, removeStatus = {} } = member;
+    const { name, distinguished_name, removeStatus = {} } = member;
 
     return (
       <div
@@ -67,7 +67,7 @@ class MemberList extends React.Component<Props> {
             fontWeight: 600,
             marginRight: '16px',
           }}
-        >{distinguished_name}</span>
+        >{name}</span>
         <div
           style={{
             display: 'flex',

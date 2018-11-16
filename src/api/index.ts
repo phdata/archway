@@ -44,7 +44,7 @@ const get = (path: string, token?: string) =>
       }
     });
 
-const withBody = (path: string, token: string, data?: any, method = 'POST') =>
+const withBody = (path: string, token: string, data?: any, method = 'POST', allow404 = false) =>
   fetch(`${BASE_URL}${path}`, {
     ...headers(token),
     method,
@@ -53,6 +53,8 @@ const withBody = (path: string, token: string, data?: any, method = 'POST') =>
     .then((response) => {
       const json = response.json();
       if (response.status >= 200 && response.status < 300) {
+        return json;
+      } else if (response.status === 404 && allow404) {
         return json;
       } else {
         if (response.status === 401) {
@@ -88,11 +90,11 @@ export const requestWorkspace =
 
 export const newWorkspaceMember =
   (token: string, id: number, resource: string, resource_id: number, role: string, username: string) =>
-    withBody(`/workspaces/${id}/members`, token, { username, resource, resource_id, role });
+    withBody(`/workspaces/${id}/members`, token, { username, resource, resource_id, role }, 'POST', true);
 
 export const removeWorkspaceMember =
   (token: string, id: number, resource: string, resource_id: number, role: string, username: string) =>
-    withBody(`/workspaces/${id}/members`, token, { username, resource, resource_id, role }, 'DELETE');
+    withBody(`/workspaces/${id}/members`, token, { username, resource, resource_id, role }, 'DELETE', true);
 
 export const getTemplate =
   (token: string, type: string) =>
