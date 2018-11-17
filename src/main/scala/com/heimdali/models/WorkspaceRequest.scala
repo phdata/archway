@@ -74,7 +74,7 @@ object WorkspaceRequest {
       processing <- json.downField("processing").as[List[Yarn]]
       applications <- json.downField("applications").as[List[Application]]
       topics <- json.downField("topics").as[List[KafkaTopic]]
-    } yield WorkspaceRequest(name, summary, description, behavior, user.username, Instant.now(clock), compliance, singleUser, data = data, processing = processing, applications = applications, kafkaTopics = topics)
+    } yield WorkspaceRequest(name, summary, description, behavior, user.distinguishedName, Instant.now(clock), compliance, singleUser, data = data, processing = processing, applications = applications, kafkaTopics = topics)
   }
 
 }

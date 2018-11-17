@@ -61,11 +61,20 @@ abstract class LDAPClientImpl[F[_]: Effect](
       searchResult.getSearchEntries.asScala.headOption
     })
 
-  def getGroupEntry(dn: String): OptionT[F, SearchResultEntry] =
-    OptionT(Sync[F].delay(Try(connectionFactory().getEntry(dn)).toOption))
+  def getEntry(dn: String): OptionT[F, SearchResultEntry] =
+    OptionT(Sync[F].delay(
+      try {
+        logger.info(s"getting info for $dn")
+        Option(connectionFactory().getEntry(dn))
+      } catch {
+        case exc: Throwable =>
+          exc.printStackTrace()
+          None
+      }
+    ))
 
   override def findUser(distinguishedName: String): OptionT[F, LDAPUser] =
-    OptionT(Sync[F].delay(Try(Option(connectionFactory().getEntry(distinguishedName))).toOption.flatMap(_.map(ldapUser))))
+    getEntry(distinguishedName).map(ldapUser)
 
   override def validateUser(
       username: String,
@@ -167,7 +176,7 @@ abstract class LDAPClientImpl[F[_]: Effect](
   ): OptionT[F, String] =
     for {
       _ <- OptionT.liftF(Sync[F].pure(logger.info("getting group {}", groupDN)))
-      groupEntry <- getGroupEntry(groupDN)
+      groupEntry <- getEntry(groupDN)
       _ <- OptionT.liftF(Sync[F].pure(logger.info("found group {}", groupEntry)))
       _ <- createMemberAttribute(groupEntry, distinguishedName)
       _ <- OptionT.liftF(Sync[F].pure(logger.info("added {} to {}", distinguishedName, groupDN)))
@@ -189,13 +198,12 @@ abstract class LDAPClientImpl[F[_]: Effect](
       groupDN: String,
       memberDN: String
   ): OptionT[F, String] =
-    getGroupEntry(groupDN).flatMap {
-      case group if group.hasAttribute("member") && group.getAttributeValues("member").contains(memberDN) =>
+    OptionT(getEntry(groupDN).value.map {
+      case Some(group) if group.hasAttribute("member") && group.getAttributeValues("member").contains(memberDN) =>
         connectionFactory().modify(groupDN, new Modification(ModificationType.DELETE, "member", memberDN))
-        OptionT.some(memberDN)
-      case _ =>
-        OptionT.none
-    }
+        Some(memberDN)
+      case _ => Some(memberDN) //no-op
+    })
 
   override def search(filter: String): F[List[SearchResultEntry]] =
     Effect[F].delay(connectionFactory()

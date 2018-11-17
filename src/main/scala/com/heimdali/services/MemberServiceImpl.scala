@@ -72,21 +72,35 @@ class MemberServiceImpl[F[_]](memberRepository: MemberRepository,
 
   def removeMember(id: Long, memberRequest: MemberRoleRequest): OptionT[F, WorkspaceMemberEntry] =
     for {
+      _ <- OptionT.some[F](logger.info(s"[REMOVING MEMBER] removing ${memberRequest.distinguishedName} from ${memberRequest.resource} in workspace ${memberRequest.resourceId}"))
+
       registration <- OptionT(
         ldapRepository
           .find(memberRequest.resource, memberRequest.resourceId, memberRequest.role.show)
           .value
           .transact(transactor)
       )
+
+      _ <- OptionT.some[F](logger.info(s"[REMOVING MEMBER] found ldap registration ${registration.commonName} in db"))
+
       member <- OptionT.liftF(
         memberRepository
           .find(id, memberRequest.distinguishedName)
           .transact(transactor)
       )
+
+      _ <- OptionT.some[F](logger.info(s"[REMOVING MEMBER] found the following members: ${member.map(_.distinguishedName).mkString(", ")}"))
+
       _ <- ldapClient.removeUser(registration.distinguishedName, memberRequest.distinguishedName)
+
+      _ <- OptionT.some[F](logger.info(s"[REMOVING MEMBER] removed ${memberRequest.distinguishedName} from ${registration.commonName}"))
+
       _ <- OptionT.liftF(
         memberRepository.delete(registration.id.get, memberRequest.distinguishedName).transact(transactor)
       )
+
+      _ <- OptionT.some[F](logger.info(s"[REMOVING MEMBER] deleted ${memberRequest.distinguishedName} record"))
+
       result <- OptionT.liftF(convertRecord(member))
     } yield result.head
 
