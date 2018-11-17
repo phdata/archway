@@ -111,7 +111,7 @@ class MemberList extends React.Component<Props> {
         icon="lock"
         heading="Membership"
         subheading={`${members ? members!.length : 0} members`} />
-        <Row gutter={12} type="flex" justify="center" style={{ marginTop: 18, flexDirection: 'column' }}>
+        <Row gutter={12} type="flex" justify="center" style={{ marginTop: 18 }}>
           {members && members.length > 0 && members.map(this.renderMember)}
           {(!members || members.length <= 0) && (
             <div style={{ color: 'rgba(0, 0, 0, .65)' }}>
