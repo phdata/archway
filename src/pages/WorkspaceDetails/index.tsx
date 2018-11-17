@@ -13,6 +13,7 @@ import {
   Workspace,
   UserSuggestions,
   HiveAllocation,
+  Member,
 } from '../../types/Workspace';
 import * as actions from './actions';
 import {
@@ -50,6 +51,7 @@ interface Props extends RouteComponentProps<DetailsRouteProps> {
     activeModal?: string;
     selectedAllocation?: HiveAllocation;
     userSuggestions?: UserSuggestions;
+    liasion?: Member
 
     getWorkspaceDetails: (id: number) => void;
     showTopicDialog: (e: React.MouseEvent) => void;
@@ -138,6 +140,7 @@ class WorkspaceDetails extends React.PureComponent<Props> {
       updateSelectedAllocation,
       requestRefreshYarnApps,
       userSuggestions,
+      liasion,
     } = this.props;
 
     if (!workspace) { return <Spin />; }
@@ -179,7 +182,7 @@ class WorkspaceDetails extends React.PureComponent<Props> {
                 phi={workspace.compliance.phi_data} />
             </Col>
             <Col span={12} xxl={4} style={{ marginTop: 10, display: 'flex' }}>
-              <Liaison liaison={workspace.requester} />
+              <Liaison liaison={liasion} />
             </Col>
             <Col span={12} xxl={4} style={{ marginTop: 10, display: 'flex' }}>
               {selectedAllocation && (
@@ -286,6 +289,7 @@ const mapStateToProps = () =>
     approved: selectors.getApproved(),
     activeModal: selectors.getActiveModal(),
     userSuggestions: selectors.getUserSuggestions(),
+    liasion: selectors.getLiaison(),
   });
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({

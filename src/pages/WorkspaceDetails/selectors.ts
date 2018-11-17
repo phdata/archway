@@ -78,3 +78,14 @@ export const getActiveModal = () => createSelector(
   (workspaceState) =>
     workspaceState.get('activeModal'),
 );
+
+const liasionFinder = (state: any) => (member: Member) =>
+  member.distinguished_name === (state.get('details').toJS() as Workspace).requester;
+
+export const getLiaison = () => createSelector(
+  workspaceSelector,
+  (workspaceState) =>
+    (workspaceState.get('members') &&
+      workspaceState.get('details') &&
+      workspaceState.get('members').toJS().find(liasionFinder(workspaceState)) as Member[]),
+);
