@@ -5,6 +5,8 @@ import {
   REQUEST_REMOVE_MEMBER,
   GET_WORKSPACE,
   setWorkspace,
+  GET_USER_SUGGESTIONS,
+  setUserSuggestions,
   setMembers,
   setNamespaceInfo,
   setResourcePools,
@@ -24,6 +26,20 @@ import {
   refreshYarnAppsFailure,
 } from './actions';
 import { Workspace } from '../../types/Workspace';
+
+function* fetchUserSuggestions({ filter }: { type: string, filter: string }) {
+  const token = yield select((s: any) => s.get('login').get('token'));
+  try {
+    const suggestions = yield call(Api.getUserSuggestions, token, filter);
+    yield put(setUserSuggestions(filter, suggestions));
+  } catch (e) {
+    //
+  }
+}
+
+function* userSuggestionsRequest() {
+  yield takeLatest(GET_USER_SUGGESTIONS, fetchUserSuggestions);
+}
 
 function* fetchWorkspace({ id }: { type: string, id: number }) {
   const token = yield select((s: any) => s.get('login').get('token'));
@@ -99,7 +115,7 @@ function* simpleMemberRequestedListener() {
   yield takeLatest(SIMPLE_MEMBER_REQUEST, simpleMemberRequested);
 }
 
-function* removeMemberRequested({ username }: RemoveMemberRequestAction) {
+function* removeMemberRequested({ distinguished_name }: RemoveMemberRequestAction) {
   const token = yield select((s: any) => s.get('login').get('token'));
   const workspace: Workspace = yield select<Workspace>((s: any) => s.get('details').get('details').toJS() as Workspace);
   const { applications, data, topics } = {
@@ -111,12 +127,12 @@ function* removeMemberRequested({ username }: RemoveMemberRequestAction) {
   try {
     yield all(
       allResources.map(({ type, id }) => (
-        call(Api.removeWorkspaceMember, token, workspace.id, type, id, 'manager', username)
+        call(Api.removeWorkspaceMember, token, workspace.id, type, id, 'manager', distinguished_name)
       )),
     );
-    yield put(removeMemberSuccess(username));
+    yield put(removeMemberSuccess(distinguished_name));
   } catch (e) {
-    yield put(removeMemberFailure(username, e.toString()));
+    yield put(removeMemberFailure(distinguished_name, e.toString()));
   }
 }
 
@@ -142,6 +158,7 @@ function* refreshYarnAppsRequestedListener() {
 export default function* root() {
   yield all([
     fork(workspaceRequest),
+    fork(userSuggestionsRequest),
     fork(approvalRequestedListener),
     fork(topicRequestedListener),
     fork(simpleMemberRequestedListener),

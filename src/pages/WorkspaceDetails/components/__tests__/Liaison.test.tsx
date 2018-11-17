@@ -5,7 +5,7 @@ import Liaison from '../Liaison';
 
 describe('Liaison', () => {
   it('renders correctly', () => {
-    const wrapper = shallow(<Liaison liaison="" />);
+    const wrapper = shallow(<Liaison liaison={undefined} />);
     expect(wrapper).toMatchSnapshot();
   });
 });

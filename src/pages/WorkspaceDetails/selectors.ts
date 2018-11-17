@@ -1,7 +1,14 @@
 import { fromJS } from 'immutable';
 import { createSelector } from 'reselect';
 import { authSelector, clusterSelector, workspaceSelector } from '../../selectors';
-import { Member, NamespaceInfo, ResourcePoolsInfo, Workspace, HiveAllocation } from '../../types/Workspace';
+import {
+  Member,
+  NamespaceInfo,
+  ResourcePoolsInfo,
+  Workspace,
+  UserSuggestions,
+  HiveAllocation,
+} from '../../types/Workspace';
 import { Cluster } from '../../types/Cluster';
 import { Profile } from '../../types/Profile';
 
@@ -9,6 +16,12 @@ export const getWorkspace = () => createSelector(
   workspaceSelector,
   (workspaceState) =>
     workspaceState.get('details') && workspaceState.get('details').toJS() as Workspace,
+);
+
+export const getUserSuggestions = () => createSelector(
+  workspaceSelector,
+  (workspaceState) =>
+    workspaceState.get('userSuggestions') && workspaceState.get('userSuggestions').toJS() as UserSuggestions,
 );
 
 export const getClusterDetails = () => createSelector(
@@ -31,7 +44,7 @@ export const getProfile = () => createSelector(
 );
 
 const liasionFilter = (state: any) => (member: Member) =>
-  member.username !== (state.get('details').toJS() as Workspace).requester &&
+  member.distinguished_name !== (state.get('details').toJS() as Workspace).requester &&
   !(member.removeStatus || {}).success;
 
 export const getMembers = () => createSelector(
@@ -64,4 +77,15 @@ export const getActiveModal = () => createSelector(
   workspaceSelector,
   (workspaceState) =>
     workspaceState.get('activeModal'),
+);
+
+const liasionFinder = (state: any) => (member: Member) =>
+  member.distinguished_name === (state.get('details').toJS() as Workspace).requester;
+
+export const getLiaison = () => createSelector(
+  workspaceSelector,
+  (workspaceState) =>
+    (workspaceState.get('members') &&
+      workspaceState.get('details') &&
+      workspaceState.get('members').toJS().find(liasionFinder(workspaceState)) as Member),
 );

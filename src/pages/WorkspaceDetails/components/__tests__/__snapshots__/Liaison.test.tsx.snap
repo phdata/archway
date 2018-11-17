@@ -3,9 +3,7 @@
 exports[`Liaison renders correctly 1`] = `
 ShallowWrapper {
   Symbol(enzyme.__root__): [Circular],
-  Symbol(enzyme.__unrendered__): <Liason
-    liaison=""
-  />,
+  Symbol(enzyme.__unrendered__): <Liason />,
   Symbol(enzyme.__renderer__): Object {
     "batchedUpdates": [Function],
     "getNode": [Function],
@@ -58,9 +56,7 @@ ShallowWrapper {
                 "textTransform": "uppercase",
               }
             }
-          >
-            
-          </div>
+          />
         </div>,
       ],
       "style": Object {
@@ -105,9 +101,7 @@ ShallowWrapper {
                   "textTransform": "uppercase",
                 }
               }
-            >
-              
-            </div>,
+            />,
           ],
           "style": Object {
             "alignItems": "center",
@@ -142,14 +136,14 @@ ShallowWrapper {
             "key": undefined,
             "nodeType": "host",
             "props": Object {
-              "children": "",
+              "children": undefined,
               "style": Object {
                 "letterSpacing": 1,
                 "textTransform": "uppercase",
               },
             },
             "ref": null,
-            "rendered": "",
+            "rendered": null,
             "type": "div",
           },
         ],
@@ -203,9 +197,7 @@ ShallowWrapper {
                   "textTransform": "uppercase",
                 }
               }
-            >
-              
-            </div>
+            />
           </div>,
         ],
         "style": Object {
@@ -250,9 +242,7 @@ ShallowWrapper {
                     "textTransform": "uppercase",
                   }
                 }
-              >
-                
-              </div>,
+              />,
             ],
             "style": Object {
               "alignItems": "center",
@@ -287,14 +277,14 @@ ShallowWrapper {
               "key": undefined,
               "nodeType": "host",
               "props": Object {
-                "children": "",
+                "children": undefined,
                 "style": Object {
                   "letterSpacing": 1,
                   "textTransform": "uppercase",
                 },
               },
               "ref": null,
-              "rendered": "",
+              "rendered": null,
               "type": "div",
             },
           ],

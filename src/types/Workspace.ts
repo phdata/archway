@@ -31,7 +31,7 @@ export interface MemberRemoveStatus {
 }
 
 export interface Member {
-  username: string;
+  distinguished_name: string;
   name: string;
   removeStatus?: MemberRemoveStatus;
 }
@@ -130,4 +130,15 @@ export interface Workspace {
   processing: ResourcePool[];
   topics: KafkaTopic[];
   applications: Application[];
+}
+
+export interface UserSuggestion {
+  display: string;
+  distinguished_name: string;
+}
+
+export interface UserSuggestions {
+  filter: string;
+  users: UserSuggestion[];
+  groups: UserSuggestion[];
 }

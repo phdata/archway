@@ -4,9 +4,17 @@ import { connect } from 'react-redux';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { Dispatch } from 'redux';
 import { createStructuredSelector } from 'reselect';
+import { throttle } from 'lodash';
 import { Cluster } from '../../types/Cluster';
 import { Profile } from '../../types/Profile';
-import { NamespaceInfo, ResourcePoolsInfo, Workspace, HiveAllocation } from '../../types/Workspace';
+import {
+  NamespaceInfo,
+  ResourcePoolsInfo,
+  Workspace,
+  UserSuggestions,
+  HiveAllocation,
+  Member,
+} from '../../types/Workspace';
 import * as actions from './actions';
 import {
   ApprovalDetails,
@@ -42,6 +50,8 @@ interface Props extends RouteComponentProps<DetailsRouteProps> {
     approved: boolean;
     activeModal?: string;
     selectedAllocation?: HiveAllocation;
+    userSuggestions?: UserSuggestions;
+    liasion?: Member;
 
     getWorkspaceDetails: (id: number) => void;
     showTopicDialog: (e: React.MouseEvent) => void;
@@ -53,9 +63,14 @@ interface Props extends RouteComponentProps<DetailsRouteProps> {
     simpleMemberRequest: () => void;
     updateSelectedAllocation: (allocation: HiveAllocation) => void;
     requestRefreshYarnApps: () => void;
+    getUserSuggestions: (filter: string) => void;
 }
 
 class WorkspaceDetails extends React.PureComponent<Props> {
+
+  public delayedFetchUsers = throttle((v: string) => {
+    this.props.getUserSuggestions(v);
+  }, 2000);
 
   public componentDidMount() {
     const { match: { params: { id } } } = this.props;
@@ -99,6 +114,12 @@ class WorkspaceDetails extends React.PureComponent<Props> {
     }
   }
 
+  public handleMemberSearch = (v: string) => {
+    if (v.length >= 3) {
+      this.delayedFetchUsers(v);
+    }
+  }
+
   public render() {
     const {
       workspace,
@@ -118,6 +139,8 @@ class WorkspaceDetails extends React.PureComponent<Props> {
       selectedAllocation,
       updateSelectedAllocation,
       requestRefreshYarnApps,
+      userSuggestions,
+      liasion,
     } = this.props;
 
     if (!workspace) { return <Spin />; }
@@ -159,7 +182,7 @@ class WorkspaceDetails extends React.PureComponent<Props> {
                 phi={workspace.compliance.phi_data} />
             </Col>
             <Col span={12} xxl={4} style={{ marginTop: 10, display: 'flex' }}>
-              <Liaison liaison={workspace.requester} />
+              <Liaison liaison={liasion} />
             </Col>
             <Col span={12} xxl={4} style={{ marginTop: 10, display: 'flex' }}>
               {selectedAllocation && (
@@ -222,7 +245,10 @@ class WorkspaceDetails extends React.PureComponent<Props> {
                   title="Add A Member"
                   onCancel={clearModal}
                   onOk={simpleMemberRequest}>
-                  <SimpleMemberRequest />
+                  <SimpleMemberRequest
+                    suggestions={userSuggestions}
+                    onSearch={this.handleMemberSearch}
+                  />
                 </Modal>
               </Col>
             </Row>
@@ -262,6 +288,8 @@ const mapStateToProps = () =>
     pools: selectors.getPoolInfo(),
     approved: selectors.getApproved(),
     activeModal: selectors.getActiveModal(),
+    userSuggestions: selectors.getUserSuggestions(),
+    liasion: selectors.getLiaison(),
   });
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
@@ -291,6 +319,7 @@ const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
   requestTopic: () => dispatch(actions.requestTopic()),
   simpleMemberRequest: () => dispatch(actions.simpleMemberRequest()),
   requestRefreshYarnApps: () => dispatch(actions.requestRefreshYarnApps()),
+  getUserSuggestions: (filter: string) => dispatch(actions.getUserSuggestions(filter)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(withRouter(WorkspaceDetails));

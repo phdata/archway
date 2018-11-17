@@ -19,6 +19,19 @@ export const setWorkspace = (workspace: Workspace) => ({
   workspace,
 });
 
+export const GET_USER_SUGGESTIONS = 'GET_USER_SUGGESTIONS';
+export const getUserSuggestions = (filter: string) => ({
+  type: GET_USER_SUGGESTIONS,
+  filter,
+});
+
+export const SET_USER_SUGGESTIONS = 'SET_USER_SUGGESTIONS';
+export const setUserSuggestions = (filter: string, suggestions: any) => ({
+  type: SET_USER_SUGGESTIONS,
+  filter,
+  suggestions,
+});
+
 export const UPDATE_SELECTED_ALLOCATION = 'UPDATE_SELECTED_ALLOCATION';
 export const updateSelectedAllocation = (allocation: HiveAllocation) => ({
   type: UPDATE_SELECTED_ALLOCATION,
@@ -129,27 +142,27 @@ export const approvalFailure = (approvalType: ApprovalType, error: string) => ({
 export const REQUEST_REMOVE_MEMBER = 'REQUEST_REMOVE_MEMBER';
 export interface RemoveMemberRequestAction {
   type: typeof REQUEST_REMOVE_MEMBER;
-  username: string;
+  distinguished_name: string;
 }
-export const requestRemoveMember = (username: string) => ({
+export const requestRemoveMember = (distinguished_name: string) => ({
   type: REQUEST_REMOVE_MEMBER,
-  username,
+  distinguished_name,
 });
 
 export const REMOVE_MEMBER_SUCCESS = 'REMOVE_MEMBER_SUCCESS';
 export interface RemoveMemberSuccessAction {
   type: typeof REMOVE_MEMBER_SUCCESS;
-  username: string;
+  distinguished_name: string;
 }
-export const removeMemberSuccess = (username: string) => ({
+export const removeMemberSuccess = (distinguished_name: string) => ({
   type: REMOVE_MEMBER_SUCCESS,
-  username,
+  distinguished_name,
 });
 
 export const REMOVE_MEMBER_FAILURE = 'REMOVE_MEMBER_FAILURE';
-export const removeMemberFailure = (username: string, error: string) => ({
+export const removeMemberFailure = (distinguished_name: string, error: string) => ({
   type: REMOVE_MEMBER_FAILURE,
-  username,
+  distinguished_name,
   error,
 });
 

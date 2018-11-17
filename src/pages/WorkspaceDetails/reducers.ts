@@ -2,6 +2,7 @@ import { fromJS } from 'immutable';
 import {
   GET_WORKSPACE,
   SET_WORKSPACE,
+  SET_USER_SUGGESTIONS,
   UPDATE_SELECTED_ALLOCATION,
   SET_MEMBERS,
   SET_NAMESPACE_INFO,
@@ -38,6 +39,13 @@ const details = (state = initialState, action: any) => {
       return state
         .set('fetching', false)
         .set('details', fromJS(action.workspace));
+
+    case SET_USER_SUGGESTIONS:
+      return state
+        .set('userSuggestions', fromJS({
+          filter: action.filter,
+          ...action.suggestions,
+        }));
 
     case UPDATE_SELECTED_ALLOCATION:
       return state
@@ -110,7 +118,7 @@ const details = (state = initialState, action: any) => {
             'members',
             state
               .get('members')
-              .map((m: any) => (m.toJS() as Member).username === action.username ?
+              .map((m: any) => (m.toJS() as Member).distinguished_name === action.distinguished_name ?
                 m.set('removeStatus', {
                   loading: true,
                 }) : m,
@@ -122,7 +130,7 @@ const details = (state = initialState, action: any) => {
             'members',
             state
               .get('members')
-              .map((m: any) => (m.toJS() as Member).username === action.username ?
+              .map((m: any) => (m.toJS() as Member).distinguished_name === action.distinguished_name ?
                 m.set('removeStatus', {
                   success: true,
                 }) : m,
@@ -134,7 +142,7 @@ const details = (state = initialState, action: any) => {
             'members',
             state
               .get('members')
-              .map((m: any) => (m.toJS() as Member).username === action.username ?
+              .map((m: any) => (m.toJS() as Member).distinguished_name === action.distinguished_name ?
                 m.set('removeStatus', {
                   success: false,
                   error: action.error,

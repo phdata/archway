@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { Card, Icon } from 'antd';
 import Label from './Label';
+import { Member } from '../../../types/Workspace';
 
 interface Props {
-  liaison: string;
+  liaison?: Member;
 }
 
 const Liason = ({ liaison }: Props) => (
@@ -21,7 +22,7 @@ const Liason = ({ liaison }: Props) => (
         justifyContent: 'center',
       }}>
       <Icon type="crown" theme="twoTone" twoToneColor="#D7C9AA" style={{ marginBottom: 5, fontSize: 42 }} />
-      <div style={{ letterSpacing: 1, textTransform: 'uppercase' }}>{liaison}</div>
+      <div style={{ letterSpacing: 1, textTransform: 'uppercase' }}>{liaison && liaison.name}</div>
     </div>
   </Card>
 );
