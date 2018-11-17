@@ -40,7 +40,6 @@ ShallowWrapper {
           justify="center"
           style={
             Object {
-              "flexDirection": "column",
               "marginTop": 18,
             }
           }
@@ -93,7 +92,6 @@ ShallowWrapper {
           "gutter": 12,
           "justify": "center",
           "style": Object {
-            "flexDirection": "column",
             "marginTop": 18,
           },
           "type": "flex",
@@ -146,7 +144,6 @@ ShallowWrapper {
             justify="center"
             style={
               Object {
-                "flexDirection": "column",
                 "marginTop": 18,
               }
             }
@@ -199,7 +196,6 @@ ShallowWrapper {
             "gutter": 12,
             "justify": "center",
             "style": Object {
-              "flexDirection": "column",
               "marginTop": 18,
             },
             "type": "flex",

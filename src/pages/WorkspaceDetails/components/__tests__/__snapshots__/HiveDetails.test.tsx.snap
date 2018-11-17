@@ -4,7 +4,8 @@ exports[`HiveDetails renders correctly 1`] = `
 ShallowWrapper {
   Symbol(enzyme.__root__): [Circular],
   Symbol(enzyme.__unrendered__): <HiveDetails
-    namespace=""
+    allocations={Array []}
+    onChangeAllocation={[Function]}
   />,
   Symbol(enzyme.__renderer__): Object {
     "batchedUpdates": [Function],
@@ -30,7 +31,38 @@ ShallowWrapper {
         <CardHeader
           heading="Hive Tables"
           icon="database"
-          subheading=""
+          subheading={
+            <Dropdown
+              mouseEnterDelay={0.15}
+              mouseLeaveDelay={0.1}
+              overlay={
+                <Menu
+                  className=""
+                  focusable={false}
+                  onClick={[Function]}
+                  prefixCls="ant-menu"
+                  theme="light"
+                />
+              }
+              placement="bottomLeft"
+              prefixCls="ant-dropdown"
+              trigger={
+                Array [
+                  "click",
+                ]
+              }
+            >
+              <a
+                className="ant-dropdown-link"
+                href="#"
+              >
+                No Database Found
+                <Icon
+                  type="down"
+                />
+              </a>
+            </Dropdown>
+          }
         />,
         <Row
           gutter={12}
@@ -63,7 +95,36 @@ ShallowWrapper {
         "props": Object {
           "heading": "Hive Tables",
           "icon": "database",
-          "subheading": "",
+          "subheading": <Dropdown
+            mouseEnterDelay={0.15}
+            mouseLeaveDelay={0.1}
+            overlay={
+              <Menu
+                className=""
+                focusable={false}
+                onClick={[Function]}
+                prefixCls="ant-menu"
+                theme="light"
+              />
+            }
+            placement="bottomLeft"
+            prefixCls="ant-dropdown"
+            trigger={
+              Array [
+                "click",
+              ]
+            }
+          >
+            <a
+              className="ant-dropdown-link"
+              href="#"
+            >
+              No Database Found
+              <Icon
+                type="down"
+              />
+            </a>
+          </Dropdown>,
         },
         "ref": null,
         "rendered": null,
@@ -133,7 +194,38 @@ ShallowWrapper {
           <CardHeader
             heading="Hive Tables"
             icon="database"
-            subheading=""
+            subheading={
+              <Dropdown
+                mouseEnterDelay={0.15}
+                mouseLeaveDelay={0.1}
+                overlay={
+                  <Menu
+                    className=""
+                    focusable={false}
+                    onClick={[Function]}
+                    prefixCls="ant-menu"
+                    theme="light"
+                  />
+                }
+                placement="bottomLeft"
+                prefixCls="ant-dropdown"
+                trigger={
+                  Array [
+                    "click",
+                  ]
+                }
+              >
+                <a
+                  className="ant-dropdown-link"
+                  href="#"
+                >
+                  No Database Found
+                  <Icon
+                    type="down"
+                  />
+                </a>
+              </Dropdown>
+            }
           />,
           <Row
             gutter={12}
@@ -166,7 +258,36 @@ ShallowWrapper {
           "props": Object {
             "heading": "Hive Tables",
             "icon": "database",
-            "subheading": "",
+            "subheading": <Dropdown
+              mouseEnterDelay={0.15}
+              mouseLeaveDelay={0.1}
+              overlay={
+                <Menu
+                  className=""
+                  focusable={false}
+                  onClick={[Function]}
+                  prefixCls="ant-menu"
+                  theme="light"
+                />
+              }
+              placement="bottomLeft"
+              prefixCls="ant-dropdown"
+              trigger={
+                Array [
+                  "click",
+                ]
+              }
+            >
+              <a
+                className="ant-dropdown-link"
+                href="#"
+              >
+                No Database Found
+                <Icon
+                  type="down"
+                />
+              </a>
+            </Dropdown>,
           },
           "ref": null,
           "rendered": null,

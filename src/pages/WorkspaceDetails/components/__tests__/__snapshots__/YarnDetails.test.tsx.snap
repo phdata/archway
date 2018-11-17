@@ -30,6 +30,18 @@ ShallowWrapper {
         <CardHeader
           heading="Yarn Applications"
           icon="rocket"
+          rightAction={
+            <Icon
+              onClick={[Function]}
+              style={
+                Object {
+                  "alignSelf": "flex-start",
+                  "cursor": "pointer",
+                }
+              }
+              type="sync"
+            />
+          }
           subheading=""
         />,
         <Row
@@ -63,6 +75,16 @@ ShallowWrapper {
         "props": Object {
           "heading": "Yarn Applications",
           "icon": "rocket",
+          "rightAction": <Icon
+            onClick={[Function]}
+            style={
+              Object {
+                "alignSelf": "flex-start",
+                "cursor": "pointer",
+              }
+            }
+            type="sync"
+          />,
           "subheading": "",
         },
         "ref": null,
@@ -133,6 +155,18 @@ ShallowWrapper {
           <CardHeader
             heading="Yarn Applications"
             icon="rocket"
+            rightAction={
+              <Icon
+                onClick={[Function]}
+                style={
+                  Object {
+                    "alignSelf": "flex-start",
+                    "cursor": "pointer",
+                  }
+                }
+                type="sync"
+              />
+            }
             subheading=""
           />,
           <Row
@@ -166,6 +200,16 @@ ShallowWrapper {
           "props": Object {
             "heading": "Yarn Applications",
             "icon": "rocket",
+            "rightAction": <Icon
+              onClick={[Function]}
+              style={
+                Object {
+                  "alignSelf": "flex-start",
+                  "cursor": "pointer",
+                }
+              }
+              type="sync"
+            />,
             "subheading": "",
           },
           "ref": null,
