@@ -35,7 +35,7 @@ class AccountController(authService: AuthService[IO],
 
         case GET -> Root / "workspace" as user =>
           for {
-            workspace <- accountService.getWorkspace(user.username).value
+            workspace <- accountService.getWorkspace(user.distinguishedName).value
             response <- workspace.fold(NotFound("Not found"))(ws => Ok(ws.asJson))
           } yield response
       }

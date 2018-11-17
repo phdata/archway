@@ -12,5 +12,5 @@ trait AccountService[F[_]] {
 
   def createWorkspace(user: User): OptionT[F, WorkspaceRequest]
 
-  def getWorkspace(username: String): OptionT[F, WorkspaceRequest]
+  def getWorkspace(distinguishedName: String): OptionT[F, WorkspaceRequest]
 }

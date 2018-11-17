@@ -141,8 +141,8 @@ class WorkspaceServiceImpl[F[_]](ldapClient: LDAPClient[F],
     combined.sequence.map(_.combineAll).apply(appConfig).map(_.messages)
   }
 
-  override def findByUsername(username: String): OptionT[F, WorkspaceRequest] =
-    OptionT(fill(workspaceRepository.findByUsername(username)).value.transact(transactor))
+  override def findByUsername(distinguishedName: String): OptionT[F, WorkspaceRequest] =
+    OptionT(fill(workspaceRepository.findByUsername(distinguishedName)).value.transact(transactor))
       .flatMap(wr => OptionT.liftF(fillHive(wr.data).map(hive => wr.copy(data = hive))))
 
   override def yarnInfo(id: Long): F[List[YarnInfo]] =
