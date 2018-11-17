@@ -33,14 +33,14 @@ class AccountControllerSpec
   }
 
   it should "return not found if a personal workspace hasn't been created yet" in new Context {
-    accountService.getWorkspace _ expects standardUsername returning OptionT.none
+    accountService.getWorkspace _ expects standardUserDN returning OptionT.none
 
     val response: IO[Response[IO]] = accountController.tokenizedRoutes.orNotFound.run(Request(uri = Uri.uri("/workspace")))
     check(response, Status.NotFound, Some("Not found"))
   }
 
   it should "return the workspace if one exists" in new Context {
-    accountService.getWorkspace _ expects standardUsername returning OptionT.some(savedWorkspaceRequest)
+    accountService.getWorkspace _ expects standardUserDN returning OptionT.some(savedWorkspaceRequest)
 
     val response = accountController.tokenizedRoutes.orNotFound.run(Request(uri = uri("/workspace")))
     check(response, Status.Ok, Some(defaultResponse))

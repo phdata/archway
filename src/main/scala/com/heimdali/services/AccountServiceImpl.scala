@@ -81,6 +81,6 @@ class AccountServiceImpl[F[_] : Sync](ldapClient: LDAPClient[F],
     })
   }
 
-  override def getWorkspace(username: String): OptionT[F, WorkspaceRequest] =
-    workspaceService.findByUsername(username)
+  override def getWorkspace(distinguishedName: String): OptionT[F, WorkspaceRequest] =
+    workspaceService.findByUsername(distinguishedName)
 }

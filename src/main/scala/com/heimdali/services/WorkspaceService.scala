@@ -14,7 +14,7 @@ trait WorkspaceService[F[_]] {
 
   def provision(workspace: WorkspaceRequest): F[NonEmptyList[String]]
 
-  def findByUsername(username: String): OptionT[F, WorkspaceRequest]
+  def findByUsername(distinguishedName: String): OptionT[F, WorkspaceRequest]
 
   def yarnInfo(id: Long): F[List[YarnInfo]]
 
