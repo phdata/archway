@@ -51,7 +51,7 @@ interface Props extends RouteComponentProps<DetailsRouteProps> {
     activeModal?: string;
     selectedAllocation?: HiveAllocation;
     userSuggestions?: UserSuggestions;
-    liasion?: Member
+    liasion?: Member;
 
     getWorkspaceDetails: (id: number) => void;
     showTopicDialog: (e: React.MouseEvent) => void;

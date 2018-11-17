@@ -87,5 +87,5 @@ export const getLiaison = () => createSelector(
   (workspaceState) =>
     (workspaceState.get('members') &&
       workspaceState.get('details') &&
-      workspaceState.get('members').toJS().find(liasionFinder(workspaceState)) as Member[]),
+      workspaceState.get('members').toJS().find(liasionFinder(workspaceState)) as Member),
 );
