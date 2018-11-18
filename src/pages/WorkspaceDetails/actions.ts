@@ -7,6 +7,11 @@ import {
   ApprovalItem,
 } from '../../types/Workspace';
 
+export const CLEAR_DETAILS = 'CLEAR_DETAILS';
+export const clearDetails = () => ({
+  type: CLEAR_DETAILS,
+});
+
 export const GET_WORKSPACE = 'GET_WORKSPACE';
 export const getWorkspace = (id: number) => ({
   type: GET_WORKSPACE,

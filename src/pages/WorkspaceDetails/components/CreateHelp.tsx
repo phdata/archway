@@ -1,4 +1,3 @@
-import { Card } from 'antd';
 import * as React from 'react';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { tomorrowNightEighties } from 'react-syntax-highlighter/styles/hljs';
@@ -11,10 +10,13 @@ interface Props {
 }
 
 const SetupHelp = ({host, port, namespace}: Props) => (
-  <Card
-    style={{ display: 'flex', flex: 1 }}
-    bodyStyle={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
+  <div style={{ padding: '4px' }}>
     <Label>step 2. create</Label>
+    <p style={{
+      marginBottom: '0.5em',
+      fontSize: '12px',
+      textAlign: 'center',
+    }}>create an app that interacts with your workspace</p>
     <SyntaxHighlighter language="python" style={tomorrowNightEighties}>
         {`from impala.dbapi
 import connect
@@ -28,7 +30,7 @@ cursor.execute('SELECT * FROM mytable LIMIT 100')
 print cursor.description # prints the result set’ s schema
 results = cursor.fetchall()`}
     </SyntaxHighlighter>
-  </Card>
+  </div>
 );
 
 export default SetupHelp;

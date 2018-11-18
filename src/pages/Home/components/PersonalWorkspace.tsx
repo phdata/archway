@@ -1,39 +1,21 @@
-import { Button, Card, Spin } from 'antd';
 import * as React from 'react';
-import SyntaxHighlighter from 'react-syntax-highlighter';
-import { solarizedDark } from 'react-syntax-highlighter/styles/hljs';
+import { Button, Card, Spin, Row, Col } from 'antd';
+import { PrepareHelp, RunHelp, CreateHelp, Label } from '../../WorkspaceDetails/components';
 import { Workspace } from '../../../types/Workspace';
+import { Cluster } from '../../../types/Cluster';
 
 interface Props {
     workspace: Workspace;
     services: any;
     loading: boolean;
+    cluster?: Cluster;
     requestWorkspace: () => void;
 }
 
 const PersonalWorkspace = ({ workspace, services, requestWorkspace, loading }: Props) => {
-  const host = services.impala && services.impala.hiveServer2[0].host;
-  const port = services.impala && services.impala.hiveServer2[0].port;
-  const dbName = workspace.data && workspace.data[0].name;
-  const code = `
-  from impala.dbapi import connect
-  conn = connect(host='${host}', port=${port}, database='${dbName}')
-  cursor = conn.cursor()
-  cursor.execute('SELECT * FROM mytable LIMIT 100')
-  print cursor.description  # prints the result set's schema
-  results = cursor.fetchall()
-  `;
-  const sparkSubmit = `
-  $ spark-submit --class org.apache.spark.examples.SparkPi \\
-              --master yarn \\
-              --deploy-mode cluster \\
-              --queue ${workspace.processing && workspace.processing[0].pool_name} \\
-              examples/jars/spark-examples*.jar \\
-              10
-  `;
   // hue/metastore/tables/flights
   return (
-    <div style={{ position: 'relative' }}>
+    <div style={{ position: 'relative', flex: 1 }}>
       <div
         style={{
           position: 'absolute',
@@ -53,20 +35,49 @@ const PersonalWorkspace = ({ workspace, services, requestWorkspace, loading }: P
         )}
       </div>
       <div style={{ filter: workspace.data ? 'none' : 'blur(.4rem)', transition: '1s ease' }}>
-        <Card bodyStyle={{ display: 'flex' }} title="Your Personal Workspace">
-          <Card.Grid style={{ flex: 1, boxShadow: 'none' }}>
-            <h3>
-              Connect to Your Database With{' '}
-              <a target="_blank" rel="noreferrer noopener" href="https://github.com/cloudera/impyla">
-                impyla
-              </a>
-            </h3>
-            <SyntaxHighlighter language="python" style={solarizedDark}>{code}</SyntaxHighlighter>
-          </Card.Grid>
-          <Card.Grid style={{ flex: 1, boxShadow: 'none' }}>
-            <h3>Submit SparkPi to your personal queue on YARN</h3>
-            <SyntaxHighlighter language="shell" style={solarizedDark}>{sparkSubmit}</SyntaxHighlighter>
-          </Card.Grid>
+        <Card bodyStyle={{ display: 'flex', flexDirection: 'column' }}>
+          <Label>Your Personal Workspace</Label>
+          {workspace && (
+            <div>
+              <div style={{
+                display: 'flex',
+                justifyContent: 'center',
+                textAlign: 'center',
+                fontWeight: 'bold',
+                fontSize: '12px',
+              }}>
+                <div style={{ padding: '10px' }}>
+                  <div>HDFS LOCATION</div>
+                  <div style={{ fontWeight: 200 }}>{workspace.data[0].location}</div>
+                </div>
+                <div style={{ padding: '10px' }}>
+                  <div>HIVE NAMESPACE</div>
+                  <div style={{ fontWeight: 200 }}>{workspace.data[0].name}</div>
+                </div>
+                <div style={{ padding: '10px' }}>
+                  <div>RESOURCE POOL</div>
+                  <div style={{ fontWeight: 200 }}>{workspace.processing[0].pool_name}</div>
+                </div>
+              </div>
+              <Row gutter={12}>
+                <Col span={24} xl={8} style={{ marginTop: 10 }}>
+                  <PrepareHelp
+                    location={workspace.data[0].location}
+                    namespace={workspace.data[0].name} />
+                </Col>
+                <Col span={24} xl={8} style={{ marginTop: 10 }}>
+                  <CreateHelp
+                    host={services.hive.thrift[0].host}
+                    port={services.hive.thrift[0].port}
+                    namespace={workspace.data[0].name} />
+                </Col>
+                <Col span={24} xl={8} style={{ marginTop: 10 }}>
+                  <RunHelp
+                    queue={workspace.processing[0].pool_name} />
+                </Col>
+              </Row>
+            </div>
+          )}
         </Card>
       </div>
     </div>

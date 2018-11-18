@@ -53,6 +53,7 @@ interface Props extends RouteComponentProps<DetailsRouteProps> {
     userSuggestions?: UserSuggestions;
     liasion?: Member;
 
+    clearDetails: () => void;
     getWorkspaceDetails: (id: number) => void;
     showTopicDialog: (e: React.MouseEvent) => void;
     showSimpleMemberDialog: (e: React.MouseEvent) => void;
@@ -73,6 +74,9 @@ class WorkspaceDetails extends React.PureComponent<Props> {
   }, 2000);
 
   public componentDidMount() {
+    // clear previous details data
+    this.props.clearDetails();
+
     const { match: { params: { id } } } = this.props;
     this.props.getWorkspaceDetails(id);
   }
@@ -98,6 +102,9 @@ class WorkspaceDetails extends React.PureComponent<Props> {
         this.showApprovalNotification('Infra', newInfraStatus.error);
       }
     }
+    if (!this.props.workspace && nextProps.workspace) {
+      this.updateRecentWorkspaces(nextProps.workspace);
+    }
   }
 
   public showApprovalNotification(type: string, error: string | undefined) {
@@ -112,6 +119,23 @@ class WorkspaceDetails extends React.PureComponent<Props> {
         description: `Your ${type.toLowerCase()} approval failed due to the following error: ${error}`,
       });
     }
+  }
+
+  public updateRecentWorkspaces(workspace: Workspace) {
+    const recentWorkspacesKey = 'recentWorkspaces';
+    let recentWorkspaces = [];
+    try {
+      const recentWorkspacesJson = localStorage.getItem(recentWorkspacesKey) || '[]';
+      recentWorkspaces = JSON.parse(recentWorkspacesJson);
+    } catch (e) {
+      //
+    }
+
+    recentWorkspaces = [
+      workspace,
+      ...recentWorkspaces.filter((w: Workspace) => w.id !== workspace.id),
+    ].slice(0, 2);
+    localStorage.setItem(recentWorkspacesKey, JSON.stringify(recentWorkspaces));
   }
 
   public handleMemberSearch = (v: string) => {
@@ -293,6 +317,7 @@ const mapStateToProps = () =>
   });
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
+  clearDetails: () => dispatch(actions.clearDetails()),
   getWorkspaceDetails: (id: number) => dispatch(actions.getWorkspace(id)),
 
   updateSelectedAllocation: (allocation: HiveAllocation) => dispatch(actions.updateSelectedAllocation(allocation)),
