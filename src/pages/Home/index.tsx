@@ -13,17 +13,22 @@ import {
   YarnService,
   YarnServiceLinks,
 } from '../../types/Cluster';
-import { PersonalWorkspace, Service as ServiceDisplay } from './components';
+
+import { PersonalWorkspace, RecentWorkspaces, Service as ServiceDisplay } from './components';
 import { getClusterInfo, getPersonalWorkspace, isProfileLoading } from './selectors';
+
+/* tslint:disable:no-var-requires */
+const router = require('connected-react-router/immutable');
 
 interface Props {
     cluster: Cluster;
     personalWorkspace: Workspace;
     profileLoading: boolean;
     requestWorkspace: () => void;
+    openWorkspace: (id: number) => void;
 }
 
-const Home = ({ cluster, personalWorkspace, profileLoading, requestWorkspace }: Props) => {
+const Home = ({ cluster, personalWorkspace, profileLoading, requestWorkspace, openWorkspace }: Props) => {
 
   if (!cluster) { return <div />; }
 
@@ -66,13 +71,15 @@ const Home = ({ cluster, personalWorkspace, profileLoading, requestWorkspace }: 
           links={new YarnServiceLinks(cluster.services.yarn)}
           index={2} />
       </div>
-      <div style={{ marginTop: 25 }}>
-        <PersonalWorkspace
-          loading={profileLoading}
-          requestWorkspace={requestWorkspace}
-          workspace={personalWorkspace}
-          services={cluster.services} />
-      </div>
+      <PersonalWorkspace
+        loading={profileLoading}
+        requestWorkspace={requestWorkspace}
+        workspace={personalWorkspace}
+        services={cluster.services}
+      />
+      <RecentWorkspaces
+        onSelectWorkspace={openWorkspace}
+      />
     </div>
   );
 };
@@ -86,6 +93,7 @@ const mapStateToProps = () =>
 
 const mapDispatchToProps = (dispatch: any) => ({
   requestWorkspace: () => dispatch(actions.requestWorkspace()),
+  openWorkspace: (id: number) => dispatch(router.push(`/workspaces/${id}`)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home);

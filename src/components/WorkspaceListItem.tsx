@@ -1,5 +1,7 @@
-import { Card, Col, Icon, List, Row } from 'antd';
 import * as React from 'react';
+import { Card, Icon, List } from 'antd';
+import { Doughnut } from 'react-chartjs-2';
+import Colors from './Colors';
 import { Workspace } from '../types/Workspace';
 
 interface Props {
@@ -13,6 +15,7 @@ const WorkspaceListItem = ({ workspace, onSelected }: Props) => {
     name,
     behavior,
     summary,
+    data = [],
     status = '',
   } = workspace;
 
@@ -37,11 +40,8 @@ const WorkspaceListItem = ({ workspace, onSelected }: Props) => {
       <div
         style={{
             textTransform: 'uppercase',
-            position: 'absolute',
-            top: 20,
-            left: 20,
-            fontSize: 14,
-            fontWeight: 100,
+            fontSize: 10,
+            fontWeight: 300,
             color,
           }}>
         {status}
@@ -49,24 +49,65 @@ const WorkspaceListItem = ({ workspace, onSelected }: Props) => {
     );
   };
 
+  const allocated = data.length > 0 ? data[0].size_in_gb : 1;
+  const consumed = data.length > 0 ? data[0].consumed_in_gb : 0;
+  const sizeData = {
+    labels: ['Available (GB)', 'Consumed (GB)'],
+    datasets: [
+      {
+        label: false,
+        data: [allocated - consumed, consumed],
+        backgroundColor: [
+          data.length > 0 ? Colors.Green.string() : Colors.LightGray.string(),
+          Colors.Green.lighten(.5).string(),
+        ],
+      },
+    ],
+  };
+
   return (
-    <List.Item style={{ paddingLeft: 12, paddingRight: 12 }}>
+    <List.Item>
       <Card
         bordered={true}
         onClick={onClick}
         hoverable={true}
-        bodyStyle={{ paddingTop: 50, paddingBottom: 50, textAlign: 'center' }}>
+        bodyStyle={{ padding: '20px' }}
+      >
         <ApprovalMessage />
-        <Row type="flex">
-          <Col span={24}>
-            <div style={{ fontSize: 26 }}>{name}</div>
-            <div style={{ marginTop: 10, marginBottom: 10, textAlign: 'center' }}>
-              <Icon style={{ fontSize: 20 }} type={behavior === 'simple' ? 'team' : 'deployment-unit'} />
-              <div style={{ fontSize: 12, textTransform: 'uppercase' }}>{behavior} workspace</div>
+        <div style={{ display: 'flex', alignItems: 'center', padding: '28px 0 40px' }}>
+          <div style={{ fontSize: '12px', color: 'rgba(0, 0, 0, 0.65)', flex: 7 }}>
+            <div style={{ fontSize: '22px', lineHeight: '30px', textTransform: 'uppercase' }}>
+              {name}
             </div>
-            <p>{summary}</p>
-          </Col>
-        </Row>
+            <div>{summary}</div>
+            <Icon type={behavior === 'simple' ? 'team' : 'deployment-unit'} />&nbsp;
+            <div style={{ textTransform: 'uppercase', display: 'inline-block' }}>{behavior} dataset</div>
+            <div style={{ color: '#0B7A75', lineHeight: '24px' }}>DETAILS ></div>
+          </div>
+          <div style={{ flex: 3 }}>
+            <div style={{
+              textAlign: 'center',
+              display: 'flex',
+              flexDirection: 'column',
+              flex: 1,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+              <Doughnut
+                height={52}
+                width={52}
+                // @ts-ignore
+                data={sizeData}
+                redraw={false}
+                // @ts-ignore
+                options={{ legend: false, title: false, maintainAspectRatio: false }}
+              />
+            </div>
+            <div style={{ letterSpacing: 1, textAlign: 'center' }}>
+              {`${(allocated - consumed).toFixed(1)}/${allocated.toFixed(1)} GB`}
+            </div>
+          </div>
+        </div>
       </Card>
     </List.Item>
   );

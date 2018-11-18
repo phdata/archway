@@ -1,4 +1,3 @@
-import { Card } from 'antd';
 import * as React from 'react';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { tomorrowNightEighties } from 'react-syntax-highlighter/styles/hljs';
@@ -10,15 +9,18 @@ interface Props {
 }
 
 const SetupHelp = ({ location, namespace }: Props) => (
-  <Card
-    style={{ display: 'flex', flex: 1 }}
-    bodyStyle={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
+  <div style={{ padding: '4px' }}>
     <Label>step 1: prepare</Label>
+    <p style={{
+      marginBottom: '0.5em',
+      fontSize: '12px',
+      textAlign: 'center',
+    }}>set up a table for your work in your namespace</p>
     <SyntaxHighlighter language="sql" style={{ overflow: 'auto', ...tomorrowNightEighties }}>
         {`CREATE TABLE ${namespace}.new_data_landing
 LOCATION '${location}/new_data/landing'`}
     </SyntaxHighlighter>
-  </Card>
+  </div>
 );
 
 export default SetupHelp;

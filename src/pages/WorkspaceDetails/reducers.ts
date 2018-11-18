@@ -1,5 +1,6 @@
 import { fromJS } from 'immutable';
 import {
+  CLEAR_DETAILS,
   GET_WORKSPACE,
   SET_WORKSPACE,
   SET_USER_SUGGESTIONS,
@@ -30,6 +31,9 @@ const initialState = fromJS({
 
 const details = (state = initialState, action: any) => {
   switch (action.type) {
+
+    case CLEAR_DETAILS:
+      return initialState;
 
     case GET_WORKSPACE:
       return state
