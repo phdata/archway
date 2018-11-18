@@ -1,37 +1,15 @@
-import { all, takeLatest, call, cancel, fork, put, take, select } from 'redux-saga/effects';
+import { all, takeLatest, call, fork, put, select } from 'redux-saga/effects';
 import { delay } from 'redux-saga';
 import * as Api from '../../api';
 import * as actions from './actions';
 
-function* authorize(username: string, password: string) {
-  try {
-    const response = yield call(Api.login, username, password);
-    const { access_token, refresh_token } = response;
-    localStorage.setItem('requestToken', access_token);
-    localStorage.setItem('refreshToken', refresh_token);
-    yield fork(tokenReady, { token: access_token });
-    yield put(actions.tokenExtracted(access_token));
-    yield put(actions.loginSuccess(access_token));
-  } catch (error) {
-    yield put(actions.loginError('Invalid credentials, please try again.'));
-  }
-}
-
-function* loginFlow() {
-  let task;
-  while (true) {
-    const requestToken = localStorage.getItem('requestToken');
-    if (requestToken) {
-      yield put(actions.tokenExtracted(requestToken));
-      yield fork(tokenReady, { token: requestToken });
-    } else {
-      yield put(actions.tokenNotAvailalbe());
-      const { login: { username, password } } = yield take(actions.LOGIN_REQUEST);
-      task = yield fork(authorize, username, password);
-    }
-    const action = yield take([actions.LOGOUT_REQUEST, actions.LOGIN_FAILURE]);
-    if (action.type === actions.LOGOUT_REQUEST && task) { yield cancel(task); }
-    yield call(Api.logout);
+function* checkLogin() {
+  const requestToken = localStorage.getItem('requestToken');
+  if (requestToken) {
+    yield put(actions.tokenExtracted(requestToken));
+    yield fork(tokenReady, { token: requestToken });
+  } else {
+    yield put(actions.tokenNotAvailalbe());
   }
 }
 
@@ -47,6 +25,33 @@ function* tokenReady({ token }: {type: string, token: string}) {
   } finally {
     yield put(actions.profileLoading(false));
   }
+}
+
+function* requestLogin({ login }: any) {
+  const { username, password } = login;
+  try {
+    const response = yield call(Api.login, username, password);
+    const { access_token, refresh_token } = response;
+    localStorage.setItem('requestToken', access_token);
+    localStorage.setItem('refreshToken', refresh_token);
+    yield fork(tokenReady, { token: access_token });
+    yield put(actions.tokenExtracted(access_token));
+    yield put(actions.loginSuccess(access_token));
+  } catch (error) {
+    yield put(actions.loginError('Invalid credentials, please try again.'));
+  }
+}
+
+function* loginRequested() {
+  yield takeLatest(actions.LOGIN_REQUEST, requestLogin);
+}
+
+function* requestLogout() {
+  yield call(Api.logout);
+}
+
+function* logoutRequested() {
+  yield takeLatest(actions.LOGOUT_REQUEST, requestLogout);
 }
 
 function* profileUpdate() {
@@ -74,7 +79,9 @@ function* workspaceRequested() {
 
 export default function* root() {
   yield all([
-    fork(loginFlow),
+    fork(checkLogin),
+    fork(loginRequested),
+    fork(logoutRequested),
     fork(profileUpdate),
     fork(workspaceRequested),
   ]);

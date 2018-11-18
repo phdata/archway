@@ -21,7 +21,9 @@ const initialAuthState = fromJS({
 const login = (state = initialAuthState, action: any) => {
   switch (action.type) {
     case LOGIN_REQUEST:
-      return state.set('loggingIn', true);
+      return state
+        .set('loggingIn', true)
+        .set('error', false);
     case LOGIN_SUCCESS:
       return state
         .set('loggingIn', false)
