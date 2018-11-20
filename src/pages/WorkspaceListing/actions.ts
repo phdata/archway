@@ -10,6 +10,12 @@ export const filterWorkspaces = (filter: string, behaviors: string[], statuses: 
   },
 });
 
+export const SET_LISTING_MODE = 'SET_LISTING_MODE';
+export const setListingMode = (mode: string) => ({
+  type: SET_LISTING_MODE,
+  mode,
+});
+
 export const LIST_ALL_WORKSPACES = 'LIST_ALL_WORKSPACES';
 export const listAllWorkspaces = () => ({
   type: LIST_ALL_WORKSPACES,

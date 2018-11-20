@@ -1,10 +1,10 @@
-import { Card, Col, Input, List, Row, Checkbox, Icon } from 'antd';
+import { Card, Col, Input, List, Row, Checkbox, Icon, Table } from 'antd';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import { createStructuredSelector } from 'reselect';
 import * as moment from 'moment';
-import { Behavior, WorkspaceListItem } from '../../components';
+import { Behavior, ListCardToggle, WorkspaceListItem } from '../../components';
 import { WorkspaceSearchResult } from '../../types/Workspace';
 import * as actions from './actions';
 import * as selectors from './selectors';
@@ -20,6 +20,7 @@ const router = require('connected-react-router/immutable');
 
 interface Props {
   fetching: boolean;
+  listingMode: string;
   workspaceList: WorkspaceSearchResult[];
   filters: { filter: string, behaviors: string[], statuses: string[] };
   profile: Profile;
@@ -27,7 +28,33 @@ interface Props {
   updateFilter: (filter: string, behavior: string[], statuses: string[]) => void;
   openWorkspace: (id: number) => void;
   listWorkspaces: () => void;
+  setListingMode: (mode: string) => void;
 }
+
+const workspaceColumns = [{
+  title: 'Name',
+  dataIndex: 'name',
+  key: 'name',
+  width: 160,
+}, {
+  title: 'Summary',
+  dataIndex: 'summary',
+  key: 'summary',
+}, {
+  title: 'Behavior',
+  dataIndex: 'behavior',
+  key: 'behavior',
+  width: 100,
+}, {
+  title: 'Status',
+  dataIndex: 'status',
+  key: 'status',
+  width: 100,
+}, {
+  title: 'Description',
+  dataIndex: 'description',
+  key: 'description',
+}];
 
 class WorkspaceList extends React.PureComponent<Props> {
   constructor(props: Props) {
@@ -94,13 +121,15 @@ class WorkspaceList extends React.PureComponent<Props> {
   public render() {
     const {
       fetching,
+      listingMode,
       workspaceList,
       filters: { filter, behaviors, statuses },
       openWorkspace,
+      setListingMode,
       profile,
       cluster,
     } = this.props;
-    const allStatuses: string[] = ['approved', 'pending', 'rejected'];
+    const allStatuses: string[] = ['Approved', 'Pending', 'Rejected'];
     const emptyText = (!filter && behaviors.length === 2 && statuses.length === 3)
       ? 'No workspaces yet. Create one from the link on the left.'
       : 'No workspaces found';
@@ -189,17 +218,33 @@ class WorkspaceList extends React.PureComponent<Props> {
             </Col>
           </Row>
         )}
-        <Row style={{ marginTop: 12 }}>
-          <Col span={24}>
-            <List
-              grid={{ gutter: 12, column: 2 }}
-              locale={{ emptyText }}
-              loading={fetching}
-              dataSource={workspaceList}
-              renderItem={renderItem}
-            />
-          </Col>
-        </Row>
+        <ListCardToggle
+          style={{ margin: '12px 0' }}
+          selectedMode={listingMode}
+          onSelect={(mode) => setListingMode(mode)}
+        />
+        {listingMode === 'cards' && (
+          <Row>
+            <Col span={24}>
+              <List
+                grid={{ gutter: 12, column: 2 }}
+                locale={{ emptyText }}
+                loading={fetching}
+                dataSource={workspaceList}
+                renderItem={renderItem}
+              />
+            </Col>
+          </Row>
+        )}
+        {listingMode === 'list' && (
+          <Table
+            columns={workspaceColumns}
+            dataSource={workspaceList}
+            onRow={(record) => ({
+              onClick: () => openWorkspace(record.id),
+            })}
+          />
+        )}
       </div>
     );
   }
@@ -208,6 +253,7 @@ class WorkspaceList extends React.PureComponent<Props> {
 const mapStateToProps = () =>
   createStructuredSelector({
     fetching: selectors.isFetchingWorkspaces(),
+    listingMode: selectors.getListingMode(),
     workspaceList: selectors.workspaceList(),
     filters: selectors.getListFilters(),
     profile: selectors.getProfile(),
@@ -222,6 +268,7 @@ const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
     statuses: string[],
   ) => dispatch(actions.filterWorkspaces(filter, behavior, statuses)),
   listWorkspaces: () => dispatch(actions.listAllWorkspaces()),
+  setListingMode: (mode: string) => dispatch(actions.setListingMode(mode)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(WorkspaceList);
