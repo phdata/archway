@@ -19,17 +19,23 @@ ShallowWrapper {
   Symbol(enzyme.__node__): Object {
     "instance": null,
     "key": undefined,
-    "nodeType": "class",
+    "nodeType": "host",
     "props": Object {
-      "bodyStyle": Object {
-        "display": "flex",
-        "flex": 1,
-        "flexDirection": "column",
-      },
       "children": Array [
         <Label>
           step 2. create
         </Label>,
+        <p
+          style={
+            Object {
+              "fontSize": "12px",
+              "marginBottom": "0.5em",
+              "textAlign": "center",
+            }
+          }
+        >
+          create an app that interacts with your workspace
+        </p>,
         <SyntaxHighlighter
           language="python"
           style={
@@ -145,8 +151,7 @@ results = cursor.fetchall()
         </SyntaxHighlighter>,
       ],
       "style": Object {
-        "display": "flex",
-        "flex": 1,
+        "padding": "4px",
       },
     },
     "ref": null,
@@ -161,6 +166,22 @@ results = cursor.fetchall()
         "ref": null,
         "rendered": "step 2. create",
         "type": [Function],
+      },
+      Object {
+        "instance": null,
+        "key": undefined,
+        "nodeType": "host",
+        "props": Object {
+          "children": "create an app that interacts with your workspace",
+          "style": Object {
+            "fontSize": "12px",
+            "marginBottom": "0.5em",
+            "textAlign": "center",
+          },
+        },
+        "ref": null,
+        "rendered": "create an app that interacts with your workspace",
+        "type": "p",
       },
       Object {
         "instance": null,
@@ -291,23 +312,29 @@ results = cursor.fetchall()",
         "type": [Function],
       },
     ],
-    "type": [Function],
+    "type": "div",
   },
   Symbol(enzyme.__nodes__): Array [
     Object {
       "instance": null,
       "key": undefined,
-      "nodeType": "class",
+      "nodeType": "host",
       "props": Object {
-        "bodyStyle": Object {
-          "display": "flex",
-          "flex": 1,
-          "flexDirection": "column",
-        },
         "children": Array [
           <Label>
             step 2. create
           </Label>,
+          <p
+            style={
+              Object {
+                "fontSize": "12px",
+                "marginBottom": "0.5em",
+                "textAlign": "center",
+              }
+            }
+          >
+            create an app that interacts with your workspace
+          </p>,
           <SyntaxHighlighter
             language="python"
             style={
@@ -423,8 +450,7 @@ results = cursor.fetchall()
           </SyntaxHighlighter>,
         ],
         "style": Object {
-          "display": "flex",
-          "flex": 1,
+          "padding": "4px",
         },
       },
       "ref": null,
@@ -439,6 +465,22 @@ results = cursor.fetchall()
           "ref": null,
           "rendered": "step 2. create",
           "type": [Function],
+        },
+        Object {
+          "instance": null,
+          "key": undefined,
+          "nodeType": "host",
+          "props": Object {
+            "children": "create an app that interacts with your workspace",
+            "style": Object {
+              "fontSize": "12px",
+              "marginBottom": "0.5em",
+              "textAlign": "center",
+            },
+          },
+          "ref": null,
+          "rendered": "create an app that interacts with your workspace",
+          "type": "p",
         },
         Object {
           "instance": null,
@@ -569,7 +611,7 @@ results = cursor.fetchall()",
           "type": [Function],
         },
       ],
-      "type": [Function],
+      "type": "div",
     },
   ],
   Symbol(enzyme.__options__): Object {

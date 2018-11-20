@@ -17,17 +17,23 @@ ShallowWrapper {
   Symbol(enzyme.__node__): Object {
     "instance": null,
     "key": undefined,
-    "nodeType": "class",
+    "nodeType": "host",
     "props": Object {
-      "bodyStyle": Object {
-        "display": "flex",
-        "flex": 1,
-        "flexDirection": "column",
-      },
       "children": Array [
         <Label>
           step 3. run
         </Label>,
+        <p
+          style={
+            Object {
+              "fontSize": "12px",
+              "marginBottom": "0.5em",
+              "textAlign": "center",
+            }
+          }
+        >
+          run your application using your own resource pool
+        </p>,
         <SyntaxHighlighter
           language="shell"
           style={
@@ -138,8 +144,7 @@ ShallowWrapper {
         </SyntaxHighlighter>,
       ],
       "style": Object {
-        "display": "flex",
-        "flex": 1,
+        "padding": "4px",
       },
     },
     "ref": null,
@@ -154,6 +159,22 @@ ShallowWrapper {
         "ref": null,
         "rendered": "step 3. run",
         "type": [Function],
+      },
+      Object {
+        "instance": null,
+        "key": undefined,
+        "nodeType": "host",
+        "props": Object {
+          "children": "run your application using your own resource pool",
+          "style": Object {
+            "fontSize": "12px",
+            "marginBottom": "0.5em",
+            "textAlign": "center",
+          },
+        },
+        "ref": null,
+        "rendered": "run your application using your own resource pool",
+        "type": "p",
       },
       Object {
         "instance": null,
@@ -274,23 +295,29 @@ ShallowWrapper {
         "type": [Function],
       },
     ],
-    "type": [Function],
+    "type": "div",
   },
   Symbol(enzyme.__nodes__): Array [
     Object {
       "instance": null,
       "key": undefined,
-      "nodeType": "class",
+      "nodeType": "host",
       "props": Object {
-        "bodyStyle": Object {
-          "display": "flex",
-          "flex": 1,
-          "flexDirection": "column",
-        },
         "children": Array [
           <Label>
             step 3. run
           </Label>,
+          <p
+            style={
+              Object {
+                "fontSize": "12px",
+                "marginBottom": "0.5em",
+                "textAlign": "center",
+              }
+            }
+          >
+            run your application using your own resource pool
+          </p>,
           <SyntaxHighlighter
             language="shell"
             style={
@@ -401,8 +428,7 @@ ShallowWrapper {
           </SyntaxHighlighter>,
         ],
         "style": Object {
-          "display": "flex",
-          "flex": 1,
+          "padding": "4px",
         },
       },
       "ref": null,
@@ -417,6 +443,22 @@ ShallowWrapper {
           "ref": null,
           "rendered": "step 3. run",
           "type": [Function],
+        },
+        Object {
+          "instance": null,
+          "key": undefined,
+          "nodeType": "host",
+          "props": Object {
+            "children": "run your application using your own resource pool",
+            "style": Object {
+              "fontSize": "12px",
+              "marginBottom": "0.5em",
+              "textAlign": "center",
+            },
+          },
+          "ref": null,
+          "rendered": "run your application using your own resource pool",
+          "type": "p",
         },
         Object {
           "instance": null,
@@ -537,7 +579,7 @@ ShallowWrapper {
           "type": [Function],
         },
       ],
-      "type": [Function],
+      "type": "div",
     },
   ],
   Symbol(enzyme.__options__): Object {

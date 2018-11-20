@@ -152,7 +152,7 @@ export interface WorkspaceSearchResult {
   date_requested: Date;
   date_fully_approved: Date;
   total_disk_allocated_in_gb: number;
-  total_disk_consumed_in_gb: number;
+  total_disk_consumed_in_gb?: number;
   total_max_cores: number;
   total_max_memory_in_gb: number;
 }

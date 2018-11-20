@@ -2,7 +2,7 @@ import * as React from 'react';
 import { List } from 'antd';
 
 import WorkspaceListItem from '../../../components/WorkspaceListItem';
-import { Workspace } from '../../../types/Workspace';
+import { WorkspaceSearchResult } from '../../../types/Workspace';
 
 interface Props {
   onSelectWorkspace: (id: number) => void;
@@ -17,7 +17,7 @@ const RecentWorkspaces = ({ onSelectWorkspace }: Props) => {
   } catch (e) {
     //
   }
-  const renderItem = (workspace: Workspace) => (
+  const renderItem = (workspace: WorkspaceSearchResult) => (
     <WorkspaceListItem
       workspace={workspace}
       onSelected={() => onSelectWorkspace(workspace.id)}
