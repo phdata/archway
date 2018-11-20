@@ -34,10 +34,10 @@ class WorkspaceControllerSpec
   }
 
   it should "list all workspaces" in new Http4sClientDsl[IO] with Context {
-    workspaceService.list _ expects * returning IO(List(savedWorkspaceRequest))
+    workspaceService.list _ expects * returning IO(List(searchResult))
 
     val response = restApi.route.orNotFound.run(GET(uri("/")).unsafeRunSync())
-    check(response, Status.Ok, Some(Json.arr(defaultResponse)))
+    check(response, Status.Ok, Some(Json.arr(searchResultResponse)))
   }
 
   it should "list all members" in new Http4sClientDsl[IO] with Context {

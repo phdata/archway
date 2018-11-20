@@ -10,6 +10,6 @@ trait DBTest extends BeforeAndAfterEach { this: Suite =>
     "com.mysql.jdbc.Driver",
     "jdbc:postgresql://postgres:5432/heimdali",
     "postgres",
-    "postgres"
+    "Jotunn123!"
   )
 }

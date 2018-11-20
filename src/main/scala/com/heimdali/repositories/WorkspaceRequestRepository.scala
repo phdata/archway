@@ -1,7 +1,7 @@
 package com.heimdali.repositories
 
 import cats.data.OptionT
-import com.heimdali.models.WorkspaceRequest
+import com.heimdali.models.{WorkspaceRequest, WorkspaceSearchResult}
 import doobie._
 
 trait WorkspaceRequestRepository {
@@ -9,7 +9,7 @@ trait WorkspaceRequestRepository {
 
   def create(workspaceRequest: WorkspaceRequest): ConnectionIO[Long]
 
-  def list(username: String): ConnectionIO[List[WorkspaceRequest]]
+  def list(username: String): ConnectionIO[List[WorkspaceSearchResult]]
 
   def find(id: Long): OptionT[ConnectionIO, WorkspaceRequest]
 

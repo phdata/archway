@@ -11,10 +11,8 @@ class WorkspaceRequestRepositoryImpl
 
   implicit val han = LogHandler.jdkLogHandler
 
-  override def list(username: String): ConnectionIO[List[WorkspaceRequest]] =
-    WorkspaceRequestRepositoryImpl.Statements.listQuery(username).to[List].map(_.groupBy(_._1).map {
-      case (req, groups) => req.copy(approvals = groups.flatMap(_._2))
-    }.toList)
+  override def list(username: String): ConnectionIO[List[WorkspaceSearchResult]] =
+    WorkspaceRequestRepositoryImpl.Statements.listQuery(username).to[List]
 
   override def find(id: Long): OptionT[ConnectionIO, WorkspaceRequest] =
     OptionT(WorkspaceRequestRepositoryImpl.Statements.find(id).option)
@@ -87,25 +85,26 @@ object WorkspaceRequestRepositoryImpl {
     val listFragment: Fragment =
       fr"""
         select
+          wr.id,
           wr.name,
           wr.summary,
-          wr.description,
           wr.behavior,
-          wr.requested_by,
-          wr.request_date,
-          c.phi_data,
-          c.pci_data,
-          c.pii_data,
-          c.id,
-          wr.single_user,
-          wr.id,
-          a.role,
-          a.approver,
-          a.approval_time,
-          a.id
+          case
+            when s.approvals = 2 then 'approved'
+            else 'pending'
+          end as status,
+          wr.request_date as requested,
+          case
+            when s.approvals = 2 then s.latestApproval
+            else null
+          end as fullyApproved,
+          COALESCE(db.size, 0.0) as allocatedInGB,
+          res.cores as maxCores,
+          COALESCE(res.mem, 0.0) as maxMemoryInGB
         from workspace_request wr
-        inner join compliance c on wr.compliance_id = c.id
-        left join approval a on a.workspace_request_id = wr.id
+        left join (select workspace_request_id, count(*) as approvals, max(approval_time) as latestApproval from approval group by workspace_request_id) as s on s.workspace_request_id = wr.id
+        left join (select wd.workspace_request_id, sum(size_in_gb) as size from workspace_database as wd inner join hive_database as hd on wd.hive_database_id = hd.id group by wd.workspace_request_id) as db on db.workspace_request_id = wr.id
+        left join (select wp.workspace_request_id, sum(max_cores) as cores, sum(max_memory_in_gb) as mem from workspace_pool wp inner join resource_pool rp on wp.resource_pool_id = rp.id group by wp.workspace_request_id) as res on res.workspace_request_id = wr.id
         """
 
     val innerQuery: Fragment =
@@ -124,9 +123,9 @@ object WorkspaceRequestRepositoryImpl {
     def innerQueryWith(distinguishedName: String): Fragment =
       innerQuery ++ whereOr(fr"mrm.distinguished_name = $distinguishedName", fr"rrm.distinguished_name = $distinguishedName")
 
-    def listQuery(distinguishedName: String): Query0[(WorkspaceRequest, Option[Approval])] =
+    def listQuery(distinguishedName: String): Query0[(WorkspaceSearchResult)] =
       (listFragment ++ fr"where wr.id in (" ++ innerQueryWith(distinguishedName) ++ fr") and wr.single_user = false")
-        .queryWithLogHandler[(WorkspaceRequest, Option[Approval])](LogHandler.jdkLogHandler)
+        .queryWithLogHandler[WorkspaceSearchResult](LogHandler.jdkLogHandler)
 
     def insert(workspaceRequest: WorkspaceRequest): Update0 =
       sql"""
