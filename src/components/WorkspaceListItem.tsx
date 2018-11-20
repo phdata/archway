@@ -2,10 +2,10 @@ import * as React from 'react';
 import { Card, Icon, List } from 'antd';
 import { Doughnut } from 'react-chartjs-2';
 import Colors from './Colors';
-import { Workspace } from '../types/Workspace';
+import { WorkspaceSearchResult } from '../types/Workspace';
 
 interface Props {
-    workspace: Workspace;
+    workspace: WorkspaceSearchResult;
     onSelected: (id: number) => void;
 }
 
@@ -13,17 +13,18 @@ const WorkspaceListItem = ({ workspace, onSelected }: Props) => {
   const {
     id,
     name,
+    status,
     behavior,
     summary,
-    data = [],
-    status = '',
+    total_disk_allocated_in_gb,
+    total_disk_consumed_in_gb,
   } = workspace;
 
   const onClick = () => onSelected(id);
 
   const ApprovalMessage = () => {
     let color = '';
-    switch (status.toLowerCase()) {
+    switch (status) {
       case 'pending':
         color = '#CFB2B0';
         break;
@@ -49,17 +50,16 @@ const WorkspaceListItem = ({ workspace, onSelected }: Props) => {
     );
   };
 
-  const allocated = data.length > 0 ? data[0].size_in_gb : 1;
-  const consumed = data.length > 0 ? data[0].consumed_in_gb : 0;
+  const consumed = total_disk_consumed_in_gb || 0;
   const sizeData = {
     labels: ['Available (GB)', 'Consumed (GB)'],
     datasets: [
       {
         label: false,
-        data: [allocated - consumed, consumed],
+        data: [total_disk_allocated_in_gb - consumed, consumed],
         backgroundColor: [
-          data.length > 0 ? Colors.Green.string() : Colors.LightGray.string(),
-          Colors.Green.lighten(.5).string(),
+          total_disk_consumed_in_gb ? Colors.Green.string() : Colors.LightGray.string(),
+          total_disk_consumed_in_gb ? Colors.Green.lighten(.5).string() : Colors.LightGray.lighten(.5).string(),
         ],
       },
     ],
@@ -104,7 +104,7 @@ const WorkspaceListItem = ({ workspace, onSelected }: Props) => {
               />
             </div>
             <div style={{ letterSpacing: 1, textAlign: 'center' }}>
-              {`${(allocated - consumed).toFixed(1)}/${allocated.toFixed(1)} GB`}
+              {`${(total_disk_allocated_in_gb - consumed).toFixed(1)}/${total_disk_allocated_in_gb.toFixed(1)} GB`}
             </div>
           </div>
         </div>

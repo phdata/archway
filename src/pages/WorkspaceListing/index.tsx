@@ -5,7 +5,7 @@ import { Dispatch } from 'redux';
 import { createStructuredSelector } from 'reselect';
 import * as moment from 'moment';
 import { Behavior, WorkspaceListItem } from '../../components';
-import { Workspace } from '../../types/Workspace';
+import { WorkspaceSearchResult } from '../../types/Workspace';
 import * as actions from './actions';
 import * as selectors from './selectors';
 import FieldLabel from '../../components/FieldLabel';
@@ -20,7 +20,7 @@ const router = require('connected-react-router/immutable');
 
 interface Props {
   fetching: boolean;
-  workspaceList: Workspace[];
+  workspaceList: WorkspaceSearchResult[];
   filters: { filter: string, behaviors: string[], statuses: string[] };
   profile: Profile;
   cluster: Cluster;
@@ -79,41 +79,16 @@ class WorkspaceList extends React.PureComponent<Props> {
     this.props.listWorkspaces();
   }
 
-  public generateCSV(workspaceList: Workspace[]) {
-    return workspaceList.map((workspace) => {
-      let fullApprovalDate = '';
-      let diskAllocated = '';
-      let maxCores = '';
-      let maxMemory = '';
-
-      const { approvals, data, processing } = workspace;
-      if (approvals && approvals.infra && approvals.infra.approval_time) {
-        fullApprovalDate = moment(approvals.infra.approval_time).format('YYYY-MM-DD');
-      }
-      if (approvals && approvals.risk && approvals.risk.approval_time) {
-        const approvalDate = moment(approvals.risk.approval_time).format('YYYY-MM-DD');
-        if (!fullApprovalDate || fullApprovalDate < approvalDate) {
-          fullApprovalDate = approvalDate;
-        }
-      }
-      if (data && data.length > 0) {
-        diskAllocated = `${data[0].size_in_gb}`;
-      }
-      if (processing && processing.length > 0) {
-        maxCores = `${processing[0].max_cores}`;
-        maxMemory = `${processing[0].max_memory_in_gb}`;
-      }
-
-      return {
+  public generateCSV(workspaceList: WorkspaceSearchResult[]) {
+    return workspaceList.map((workspace) => ({
         'Name': workspace.name,
         'Status': workspace.status,
-        'Date Requested': moment(workspace.requested_date).format('YYYY-MM-DD'),
-        'Date Fully Approved': fullApprovalDate,
-        'Disk Allocated': diskAllocated,
-        'Max Cores': maxCores,
-        'Max Memory': maxMemory,
-      };
-    });
+        'Date Requested': moment(workspace.date_requested).format('YYYY-MM-DD'),
+        'Date Fully Approved': moment(workspace.date_fully_approved).format('YYYY-MM-DD'),
+        'Disk Allocated': workspace.total_disk_allocated_in_gb,
+        'Max Cores': workspace.total_max_cores,
+        'Max Memory': workspace.total_max_memory_in_gb,
+      }));
   }
 
   public render() {
@@ -125,11 +100,12 @@ class WorkspaceList extends React.PureComponent<Props> {
       profile,
       cluster,
     } = this.props;
-    const allStatuses: string[] = ['Approved', 'Pending', 'Rejected'];
+    const allStatuses: string[] = ['approved', 'pending', 'rejected'];
     const emptyText = (!filter && behaviors.length === 2 && statuses.length === 3)
       ? 'No workspaces yet. Create one from the link on the left.'
       : 'No workspaces found';
-    const renderItem = (workspace: Workspace) => <WorkspaceListItem workspace={workspace} onSelected={openWorkspace} />;
+    const renderItem = (workspace: WorkspaceSearchResult) =>
+      <WorkspaceListItem workspace={workspace} onSelected={openWorkspace} />;
 
     return (
       <div>
@@ -161,13 +137,13 @@ class WorkspaceList extends React.PureComponent<Props> {
                       {allStatuses.map((status: string) => (
                         <Checkbox
                           key={status}
-                          style={{ fontSize: 12 }}
+                          style={{ fontSize: 12, textTransform: 'uppercase' }}
                           defaultChecked
-                          name={status.toLowerCase()}
+                          name={status}
                           checked={statuses.includes(status)}
                           onChange={(e: any) => this.statusChanged(status, e.target.checked)}
                         >
-                          {status.toUpperCase()}
+                          {status}
                         </Checkbox>
                       ))}
                     </div>
