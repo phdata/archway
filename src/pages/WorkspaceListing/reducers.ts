@@ -8,7 +8,7 @@ const initialState = fromJS({
   filters: {
     filter: '',
     behaviors: ['simple', 'structured'],
-    statuses: ['Approved', 'Pending', 'Rejected'],
+    statuses: ['approved', 'pending', 'rejected'],
   },
 });
 
@@ -18,7 +18,7 @@ const listing = (state = initialState, action: any) => {
     case WORKSPACE_LISTING_UPDATED:
       return state
         .set('fetching', false)
-        .set('allWorkspaces', new Fuse(action.workspaces, { keys: ['name', 'summary', 'description'] }));
+        .set('allWorkspaces', new Fuse(action.workspaces, { keys: ['name', 'summary'] }));
 
     case LIST_ALL_WORKSPACES:
       return state

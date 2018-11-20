@@ -1,6 +1,6 @@
 import { createSelector } from 'reselect';
 import { workspaceListSelector, authSelector, clusterSelector } from '../../selectors';
-import { Workspace } from '../../types/Workspace';
+import { WorkspaceSearchResult } from '../../types/Workspace';
 import { Profile } from '../../types/Profile';
 import { Cluster } from '../../types/Cluster';
 
@@ -19,8 +19,8 @@ export const workspaceList = () => createSelector(
   getListFilters(),
   (fuse, filters: { filter: string, behaviors: string[], statuses: string[] }) => {
     return (filters.filter ? fuse.search(filters.filter) : fuse.list)
-      .filter((workspace: Workspace) => filters.behaviors.indexOf(workspace.behavior) >= 0)
-      .filter((workspace: Workspace) => filters.statuses.indexOf(workspace.status || '') >= 0);
+      .filter((workspace: WorkspaceSearchResult) => filters.behaviors.indexOf(workspace.behavior) >= 0)
+      .filter((workspace: WorkspaceSearchResult) => filters.statuses.indexOf(workspace.status || '') >= 0);
   },
 );
 

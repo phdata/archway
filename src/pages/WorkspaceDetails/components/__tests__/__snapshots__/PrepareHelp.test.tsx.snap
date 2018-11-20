@@ -18,17 +18,23 @@ ShallowWrapper {
   Symbol(enzyme.__node__): Object {
     "instance": null,
     "key": undefined,
-    "nodeType": "class",
+    "nodeType": "host",
     "props": Object {
-      "bodyStyle": Object {
-        "display": "flex",
-        "flex": 1,
-        "flexDirection": "column",
-      },
       "children": Array [
         <Label>
           step 1: prepare
         </Label>,
+        <p
+          style={
+            Object {
+              "fontSize": "12px",
+              "marginBottom": "0.5em",
+              "textAlign": "center",
+            }
+          }
+        >
+          set up a table for your work in your namespace
+        </p>,
         <SyntaxHighlighter
           language="sql"
           style={
@@ -136,8 +142,7 @@ LOCATION '/new_data/landing'
         </SyntaxHighlighter>,
       ],
       "style": Object {
-        "display": "flex",
-        "flex": 1,
+        "padding": "4px",
       },
     },
     "ref": null,
@@ -152,6 +157,22 @@ LOCATION '/new_data/landing'
         "ref": null,
         "rendered": "step 1: prepare",
         "type": [Function],
+      },
+      Object {
+        "instance": null,
+        "key": undefined,
+        "nodeType": "host",
+        "props": Object {
+          "children": "set up a table for your work in your namespace",
+          "style": Object {
+            "fontSize": "12px",
+            "marginBottom": "0.5em",
+            "textAlign": "center",
+          },
+        },
+        "ref": null,
+        "rendered": "set up a table for your work in your namespace",
+        "type": "p",
       },
       Object {
         "instance": null,
@@ -265,23 +286,29 @@ LOCATION '/new_data/landing'",
         "type": [Function],
       },
     ],
-    "type": [Function],
+    "type": "div",
   },
   Symbol(enzyme.__nodes__): Array [
     Object {
       "instance": null,
       "key": undefined,
-      "nodeType": "class",
+      "nodeType": "host",
       "props": Object {
-        "bodyStyle": Object {
-          "display": "flex",
-          "flex": 1,
-          "flexDirection": "column",
-        },
         "children": Array [
           <Label>
             step 1: prepare
           </Label>,
+          <p
+            style={
+              Object {
+                "fontSize": "12px",
+                "marginBottom": "0.5em",
+                "textAlign": "center",
+              }
+            }
+          >
+            set up a table for your work in your namespace
+          </p>,
           <SyntaxHighlighter
             language="sql"
             style={
@@ -389,8 +416,7 @@ LOCATION '/new_data/landing'
           </SyntaxHighlighter>,
         ],
         "style": Object {
-          "display": "flex",
-          "flex": 1,
+          "padding": "4px",
         },
       },
       "ref": null,
@@ -405,6 +431,22 @@ LOCATION '/new_data/landing'
           "ref": null,
           "rendered": "step 1: prepare",
           "type": [Function],
+        },
+        Object {
+          "instance": null,
+          "key": undefined,
+          "nodeType": "host",
+          "props": Object {
+            "children": "set up a table for your work in your namespace",
+            "style": Object {
+              "fontSize": "12px",
+              "marginBottom": "0.5em",
+              "textAlign": "center",
+            },
+          },
+          "ref": null,
+          "rendered": "set up a table for your work in your namespace",
+          "type": "p",
         },
         Object {
           "instance": null,
@@ -518,7 +560,7 @@ LOCATION '/new_data/landing'",
           "type": [Function],
         },
       ],
-      "type": [Function],
+      "type": "div",
     },
   ],
   Symbol(enzyme.__options__): Object {

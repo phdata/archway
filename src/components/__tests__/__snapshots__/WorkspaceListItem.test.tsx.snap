@@ -7,45 +7,16 @@ ShallowWrapper {
     onSelected={[Function]}
     workspace={
       Object {
-        "applications": Array [],
-        "behavior": "",
-        "compliance": Object {
-          "pci_data": false,
-          "phi_data": false,
-          "pii_data": false,
-        },
-        "data": Array [
-          Object {
-            "consumed_in_gb": 0,
-            "id": 1,
-            "location": "",
-            "managing_group": Object {
-              "group": Object {
-                "common_name": "",
-                "distinguished_name": "",
-                "sentry_role": "",
-              },
-            },
-            "name": "",
-            "size_in_gb": 0,
-          },
-        ],
-        "description": "",
+        "behavior": "simple",
+        "date_fully_approved": 1970-01-01T00:00:00.000Z,
+        "date_requested": 1970-01-01T00:00:00.000Z,
         "id": 0,
         "name": "",
-        "processing": Array [
-          Object {
-            "id": 0,
-            "max_cores": 0,
-            "max_memory_in_gb": 0,
-            "pool_name": "",
-          },
-        ],
-        "requested_date": 1970-01-01T00:00:00.000Z,
-        "requester": "",
-        "single_user": false,
+        "status": "Approved",
         "summary": "",
-        "topics": Array [],
+        "total_disk_allocated_in_gb": 0,
+        "total_max_cores": 0,
+        "total_max_memory_in_gb": 0,
       }
     }
   />,
@@ -65,9 +36,7 @@ ShallowWrapper {
       "children": <Card
         bodyStyle={
           Object {
-            "paddingBottom": 50,
-            "paddingTop": 50,
-            "textAlign": "center",
+            "padding": "20px",
           }
         }
         bordered={true}
@@ -75,61 +44,130 @@ ShallowWrapper {
         onClick={[Function]}
       >
         <ApprovalMessage />
-        <Row
-          gutter={0}
-          type="flex"
+        <div
+          style={
+            Object {
+              "alignItems": "center",
+              "display": "flex",
+              "padding": "28px 0 40px",
+            }
+          }
         >
-          <Col
-            span={24}
+          <div
+            style={
+              Object {
+                "color": "rgba(0, 0, 0, 0.65)",
+                "flex": 7,
+                "fontSize": "12px",
+              }
+            }
           >
             <div
               style={
                 Object {
-                  "fontSize": 26,
+                  "fontSize": "22px",
+                  "lineHeight": "30px",
+                  "textTransform": "uppercase",
                 }
               }
             >
               
+            </div>
+            <div>
+              
+            </div>
+            <Icon
+              type="team"
+            />
+             
+            <div
+              style={
+                Object {
+                  "display": "inline-block",
+                  "textTransform": "uppercase",
+                }
+              }
+            >
+              simple
+               dataset
             </div>
             <div
               style={
                 Object {
-                  "marginBottom": 10,
-                  "marginTop": 10,
+                  "color": "#0B7A75",
+                  "lineHeight": "24px",
+                }
+              }
+            >
+              DETAILS &gt;
+            </div>
+          </div>
+          <div
+            style={
+              Object {
+                "flex": 3,
+              }
+            }
+          >
+            <div
+              style={
+                Object {
+                  "alignItems": "center",
+                  "display": "flex",
+                  "flex": 1,
+                  "flexDirection": "column",
+                  "justifyContent": "center",
                   "textAlign": "center",
                 }
               }
             >
-              <Icon
-                style={
+              <Doughnut
+                data={
                   Object {
-                    "fontSize": 20,
+                    "datasets": Array [
+                      Object {
+                        "backgroundColor": Array [
+                          "rgb(240, 243, 245)",
+                          "hsl(204, 20%, 100%)",
+                        ],
+                        "data": Array [
+                          0,
+                          0,
+                        ],
+                        "label": false,
+                      },
+                    ],
+                    "labels": Array [
+                      "Available (GB)",
+                      "Consumed (GB)",
+                    ],
                   }
                 }
-                type="deployment-unit"
+                height={52}
+                options={
+                  Object {
+                    "legend": false,
+                    "maintainAspectRatio": false,
+                    "title": false,
+                  }
+                }
+                redraw={false}
+                width={52}
               />
-              <div
-                style={
-                  Object {
-                    "fontSize": 12,
-                    "textTransform": "uppercase",
-                  }
-                }
-              >
-                
-                 workspace
-              </div>
             </div>
-            <p>
-              
-            </p>
-          </Col>
-        </Row>
+            <div
+              style={
+                Object {
+                  "letterSpacing": 1,
+                  "textAlign": "center",
+                }
+              }
+            >
+              0.0/0.0 GB
+            </div>
+          </div>
+        </div>
       </Card>,
-      "style": Object {
-        "paddingLeft": 12,
-        "paddingRight": 12,
-      },
     },
     "ref": null,
     "rendered": Object {
@@ -138,63 +176,134 @@ ShallowWrapper {
       "nodeType": "class",
       "props": Object {
         "bodyStyle": Object {
-          "paddingBottom": 50,
-          "paddingTop": 50,
-          "textAlign": "center",
+          "padding": "20px",
         },
         "bordered": true,
         "children": Array [
           <ApprovalMessage />,
-          <Row
-            gutter={0}
-            type="flex"
+          <div
+            style={
+              Object {
+                "alignItems": "center",
+                "display": "flex",
+                "padding": "28px 0 40px",
+              }
+            }
           >
-            <Col
-              span={24}
+            <div
+              style={
+                Object {
+                  "color": "rgba(0, 0, 0, 0.65)",
+                  "flex": 7,
+                  "fontSize": "12px",
+                }
+              }
             >
               <div
                 style={
                   Object {
-                    "fontSize": 26,
+                    "fontSize": "22px",
+                    "lineHeight": "30px",
+                    "textTransform": "uppercase",
                   }
                 }
               >
                 
+              </div>
+              <div>
+                
+              </div>
+              <Icon
+                type="team"
+              />
+               
+              <div
+                style={
+                  Object {
+                    "display": "inline-block",
+                    "textTransform": "uppercase",
+                  }
+                }
+              >
+                simple
+                 dataset
               </div>
               <div
                 style={
                   Object {
-                    "marginBottom": 10,
-                    "marginTop": 10,
+                    "color": "#0B7A75",
+                    "lineHeight": "24px",
+                  }
+                }
+              >
+                DETAILS &gt;
+              </div>
+            </div>
+            <div
+              style={
+                Object {
+                  "flex": 3,
+                }
+              }
+            >
+              <div
+                style={
+                  Object {
+                    "alignItems": "center",
+                    "display": "flex",
+                    "flex": 1,
+                    "flexDirection": "column",
+                    "justifyContent": "center",
                     "textAlign": "center",
                   }
                 }
               >
-                <Icon
-                  style={
+                <Doughnut
+                  data={
                     Object {
-                      "fontSize": 20,
+                      "datasets": Array [
+                        Object {
+                          "backgroundColor": Array [
+                            "rgb(240, 243, 245)",
+                            "hsl(204, 20%, 100%)",
+                          ],
+                          "data": Array [
+                            0,
+                            0,
+                          ],
+                          "label": false,
+                        },
+                      ],
+                      "labels": Array [
+                        "Available (GB)",
+                        "Consumed (GB)",
+                      ],
                     }
                   }
-                  type="deployment-unit"
+                  height={52}
+                  options={
+                    Object {
+                      "legend": false,
+                      "maintainAspectRatio": false,
+                      "title": false,
+                    }
+                  }
+                  redraw={false}
+                  width={52}
                 />
-                <div
-                  style={
-                    Object {
-                      "fontSize": 12,
-                      "textTransform": "uppercase",
-                    }
-                  }
-                >
-                  
-                   workspace
-                </div>
               </div>
-              <p>
-                
-              </p>
-            </Col>
-          </Row>,
+              <div
+                style={
+                  Object {
+                    "letterSpacing": 1,
+                    "textAlign": "center",
+                  }
+                }
+              >
+                0.0/0.0 GB
+              </div>
+            </div>
+          </div>,
         ],
         "hoverable": true,
         "onClick": [Function],
@@ -213,210 +322,439 @@ ShallowWrapper {
         Object {
           "instance": null,
           "key": undefined,
-          "nodeType": "class",
+          "nodeType": "host",
           "props": Object {
-            "children": <Col
-              span={24}
-            >
+            "children": Array [
               <div
                 style={
                   Object {
-                    "fontSize": 26,
+                    "color": "rgba(0, 0, 0, 0.65)",
+                    "flex": 7,
+                    "fontSize": "12px",
                   }
                 }
               >
-                
-              </div>
-              <div
-                style={
-                  Object {
-                    "marginBottom": 10,
-                    "marginTop": 10,
-                    "textAlign": "center",
-                  }
-                }
-              >
-                <Icon
-                  style={
-                    Object {
-                      "fontSize": 20,
-                    }
-                  }
-                  type="deployment-unit"
-                />
                 <div
                   style={
                     Object {
-                      "fontSize": 12,
+                      "fontSize": "22px",
+                      "lineHeight": "30px",
                       "textTransform": "uppercase",
                     }
                   }
                 >
                   
-                   workspace
                 </div>
-              </div>
-              <p>
-                
-              </p>
-            </Col>,
-            "gutter": 0,
-            "type": "flex",
-          },
-          "ref": null,
-          "rendered": Object {
-            "instance": null,
-            "key": undefined,
-            "nodeType": "class",
-            "props": Object {
-              "children": Array [
+                <div>
+                  
+                </div>
+                <Icon
+                  type="team"
+                />
+                 
                 <div
                   style={
                     Object {
-                      "fontSize": 26,
+                      "display": "inline-block",
+                      "textTransform": "uppercase",
                     }
                   }
                 >
-                  
-                </div>,
+                  simple
+                   dataset
+                </div>
                 <div
                   style={
                     Object {
-                      "marginBottom": 10,
-                      "marginTop": 10,
+                      "color": "#0B7A75",
+                      "lineHeight": "24px",
+                    }
+                  }
+                >
+                  DETAILS &gt;
+                </div>
+              </div>,
+              <div
+                style={
+                  Object {
+                    "flex": 3,
+                  }
+                }
+              >
+                <div
+                  style={
+                    Object {
+                      "alignItems": "center",
+                      "display": "flex",
+                      "flex": 1,
+                      "flexDirection": "column",
+                      "justifyContent": "center",
                       "textAlign": "center",
                     }
                   }
                 >
-                  <Icon
-                    style={
+                  <Doughnut
+                    data={
                       Object {
-                        "fontSize": 20,
+                        "datasets": Array [
+                          Object {
+                            "backgroundColor": Array [
+                              "rgb(240, 243, 245)",
+                              "hsl(204, 20%, 100%)",
+                            ],
+                            "data": Array [
+                              0,
+                              0,
+                            ],
+                            "label": false,
+                          },
+                        ],
+                        "labels": Array [
+                          "Available (GB)",
+                          "Consumed (GB)",
+                        ],
                       }
                     }
-                    type="deployment-unit"
+                    height={52}
+                    options={
+                      Object {
+                        "legend": false,
+                        "maintainAspectRatio": false,
+                        "title": false,
+                      }
+                    }
+                    redraw={false}
+                    width={52}
                   />
+                </div>
+                <div
+                  style={
+                    Object {
+                      "letterSpacing": 1,
+                      "textAlign": "center",
+                    }
+                  }
+                >
+                  0.0/0.0 GB
+                </div>
+              </div>,
+            ],
+            "style": Object {
+              "alignItems": "center",
+              "display": "flex",
+              "padding": "28px 0 40px",
+            },
+          },
+          "ref": null,
+          "rendered": Array [
+            Object {
+              "instance": null,
+              "key": undefined,
+              "nodeType": "host",
+              "props": Object {
+                "children": Array [
                   <div
                     style={
                       Object {
-                        "fontSize": 12,
+                        "fontSize": "22px",
+                        "lineHeight": "30px",
                         "textTransform": "uppercase",
                       }
                     }
                   >
                     
-                     workspace
-                  </div>
-                </div>,
-                <p>
-                  
-                </p>,
-              ],
-              "span": 24,
-            },
-            "ref": null,
-            "rendered": Array [
-              Object {
-                "instance": null,
-                "key": undefined,
-                "nodeType": "host",
-                "props": Object {
-                  "children": "",
-                  "style": Object {
-                    "fontSize": 26,
-                  },
+                  </div>,
+                  <div>
+                    
+                  </div>,
+                  <Icon
+                    type="team"
+                  />,
+                  " ",
+                  <div
+                    style={
+                      Object {
+                        "display": "inline-block",
+                        "textTransform": "uppercase",
+                      }
+                    }
+                  >
+                    simple
+                     dataset
+                  </div>,
+                  <div
+                    style={
+                      Object {
+                        "color": "#0B7A75",
+                        "lineHeight": "24px",
+                      }
+                    }
+                  >
+                    DETAILS &gt;
+                  </div>,
+                ],
+                "style": Object {
+                  "color": "rgba(0, 0, 0, 0.65)",
+                  "flex": 7,
+                  "fontSize": "12px",
                 },
-                "ref": null,
-                "rendered": "",
-                "type": "div",
               },
-              Object {
-                "instance": null,
-                "key": undefined,
-                "nodeType": "host",
-                "props": Object {
-                  "children": Array [
-                    <Icon
-                      style={
-                        Object {
-                          "fontSize": 20,
-                        }
-                      }
-                      type="deployment-unit"
-                    />,
-                    <div
-                      style={
-                        Object {
-                          "fontSize": 12,
-                          "textTransform": "uppercase",
-                        }
-                      }
-                    >
-                      
-                       workspace
-                    </div>,
-                  ],
-                  "style": Object {
-                    "marginBottom": 10,
-                    "marginTop": 10,
-                    "textAlign": "center",
+              "ref": null,
+              "rendered": Array [
+                Object {
+                  "instance": null,
+                  "key": undefined,
+                  "nodeType": "host",
+                  "props": Object {
+                    "children": "",
+                    "style": Object {
+                      "fontSize": "22px",
+                      "lineHeight": "30px",
+                      "textTransform": "uppercase",
+                    },
                   },
+                  "ref": null,
+                  "rendered": "",
+                  "type": "div",
                 },
-                "ref": null,
-                "rendered": Array [
-                  Object {
+                Object {
+                  "instance": null,
+                  "key": undefined,
+                  "nodeType": "host",
+                  "props": Object {
+                    "children": "",
+                  },
+                  "ref": null,
+                  "rendered": "",
+                  "type": "div",
+                },
+                Object {
+                  "instance": null,
+                  "key": undefined,
+                  "nodeType": "function",
+                  "props": Object {
+                    "type": "team",
+                  },
+                  "ref": null,
+                  "rendered": null,
+                  "type": [Function],
+                },
+                " ",
+                Object {
+                  "instance": null,
+                  "key": undefined,
+                  "nodeType": "host",
+                  "props": Object {
+                    "children": Array [
+                      "simple",
+                      " dataset",
+                    ],
+                    "style": Object {
+                      "display": "inline-block",
+                      "textTransform": "uppercase",
+                    },
+                  },
+                  "ref": null,
+                  "rendered": Array [
+                    "simple",
+                    " dataset",
+                  ],
+                  "type": "div",
+                },
+                Object {
+                  "instance": null,
+                  "key": undefined,
+                  "nodeType": "host",
+                  "props": Object {
+                    "children": "DETAILS >",
+                    "style": Object {
+                      "color": "#0B7A75",
+                      "lineHeight": "24px",
+                    },
+                  },
+                  "ref": null,
+                  "rendered": "DETAILS >",
+                  "type": "div",
+                },
+              ],
+              "type": "div",
+            },
+            Object {
+              "instance": null,
+              "key": undefined,
+              "nodeType": "host",
+              "props": Object {
+                "children": Array [
+                  <div
+                    style={
+                      Object {
+                        "alignItems": "center",
+                        "display": "flex",
+                        "flex": 1,
+                        "flexDirection": "column",
+                        "justifyContent": "center",
+                        "textAlign": "center",
+                      }
+                    }
+                  >
+                    <Doughnut
+                      data={
+                        Object {
+                          "datasets": Array [
+                            Object {
+                              "backgroundColor": Array [
+                                "rgb(240, 243, 245)",
+                                "hsl(204, 20%, 100%)",
+                              ],
+                              "data": Array [
+                                0,
+                                0,
+                              ],
+                              "label": false,
+                            },
+                          ],
+                          "labels": Array [
+                            "Available (GB)",
+                            "Consumed (GB)",
+                          ],
+                        }
+                      }
+                      height={52}
+                      options={
+                        Object {
+                          "legend": false,
+                          "maintainAspectRatio": false,
+                          "title": false,
+                        }
+                      }
+                      redraw={false}
+                      width={52}
+                    />
+                  </div>,
+                  <div
+                    style={
+                      Object {
+                        "letterSpacing": 1,
+                        "textAlign": "center",
+                      }
+                    }
+                  >
+                    0.0/0.0 GB
+                  </div>,
+                ],
+                "style": Object {
+                  "flex": 3,
+                },
+              },
+              "ref": null,
+              "rendered": Array [
+                Object {
+                  "instance": null,
+                  "key": undefined,
+                  "nodeType": "host",
+                  "props": Object {
+                    "children": <Doughnut
+                      data={
+                        Object {
+                          "datasets": Array [
+                            Object {
+                              "backgroundColor": Array [
+                                "rgb(240, 243, 245)",
+                                "hsl(204, 20%, 100%)",
+                              ],
+                              "data": Array [
+                                0,
+                                0,
+                              ],
+                              "label": false,
+                            },
+                          ],
+                          "labels": Array [
+                            "Available (GB)",
+                            "Consumed (GB)",
+                          ],
+                        }
+                      }
+                      height={52}
+                      options={
+                        Object {
+                          "legend": false,
+                          "maintainAspectRatio": false,
+                          "title": false,
+                        }
+                      }
+                      redraw={false}
+                      width={52}
+                    />,
+                    "style": Object {
+                      "alignItems": "center",
+                      "display": "flex",
+                      "flex": 1,
+                      "flexDirection": "column",
+                      "justifyContent": "center",
+                      "textAlign": "center",
+                    },
+                  },
+                  "ref": null,
+                  "rendered": Object {
                     "instance": null,
                     "key": undefined,
-                    "nodeType": "function",
+                    "nodeType": "class",
                     "props": Object {
-                      "style": Object {
-                        "fontSize": 20,
+                      "data": Object {
+                        "datasets": Array [
+                          Object {
+                            "backgroundColor": Array [
+                              "rgb(240, 243, 245)",
+                              "hsl(204, 20%, 100%)",
+                            ],
+                            "data": Array [
+                              0,
+                              0,
+                            ],
+                            "label": false,
+                          },
+                        ],
+                        "labels": Array [
+                          "Available (GB)",
+                          "Consumed (GB)",
+                        ],
                       },
-                      "type": "deployment-unit",
+                      "height": 52,
+                      "options": Object {
+                        "legend": false,
+                        "maintainAspectRatio": false,
+                        "title": false,
+                      },
+                      "redraw": false,
+                      "width": 52,
                     },
                     "ref": null,
                     "rendered": null,
                     "type": [Function],
                   },
-                  Object {
-                    "instance": null,
-                    "key": undefined,
-                    "nodeType": "host",
-                    "props": Object {
-                      "children": Array [
-                        "",
-                        " workspace",
-                      ],
-                      "style": Object {
-                        "fontSize": 12,
-                        "textTransform": "uppercase",
-                      },
-                    },
-                    "ref": null,
-                    "rendered": Array [
-                      "",
-                      " workspace",
-                    ],
-                    "type": "div",
-                  },
-                ],
-                "type": "div",
-              },
-              Object {
-                "instance": null,
-                "key": undefined,
-                "nodeType": "host",
-                "props": Object {
-                  "children": "",
+                  "type": "div",
                 },
-                "ref": null,
-                "rendered": "",
-                "type": "p",
-              },
-            ],
-            "type": [Function],
-          },
-          "type": [Function],
+                Object {
+                  "instance": null,
+                  "key": undefined,
+                  "nodeType": "host",
+                  "props": Object {
+                    "children": "0.0/0.0 GB",
+                    "style": Object {
+                      "letterSpacing": 1,
+                      "textAlign": "center",
+                    },
+                  },
+                  "ref": null,
+                  "rendered": "0.0/0.0 GB",
+                  "type": "div",
+                },
+              ],
+              "type": "div",
+            },
+          ],
+          "type": "div",
         },
       ],
       "type": [Function],
@@ -432,9 +770,7 @@ ShallowWrapper {
         "children": <Card
           bodyStyle={
             Object {
-              "paddingBottom": 50,
-              "paddingTop": 50,
-              "textAlign": "center",
+              "padding": "20px",
             }
           }
           bordered={true}
@@ -442,61 +778,130 @@ ShallowWrapper {
           onClick={[Function]}
         >
           <ApprovalMessage />
-          <Row
-            gutter={0}
-            type="flex"
+          <div
+            style={
+              Object {
+                "alignItems": "center",
+                "display": "flex",
+                "padding": "28px 0 40px",
+              }
+            }
           >
-            <Col
-              span={24}
+            <div
+              style={
+                Object {
+                  "color": "rgba(0, 0, 0, 0.65)",
+                  "flex": 7,
+                  "fontSize": "12px",
+                }
+              }
             >
               <div
                 style={
                   Object {
-                    "fontSize": 26,
+                    "fontSize": "22px",
+                    "lineHeight": "30px",
+                    "textTransform": "uppercase",
                   }
                 }
               >
                 
+              </div>
+              <div>
+                
+              </div>
+              <Icon
+                type="team"
+              />
+               
+              <div
+                style={
+                  Object {
+                    "display": "inline-block",
+                    "textTransform": "uppercase",
+                  }
+                }
+              >
+                simple
+                 dataset
               </div>
               <div
                 style={
                   Object {
-                    "marginBottom": 10,
-                    "marginTop": 10,
+                    "color": "#0B7A75",
+                    "lineHeight": "24px",
+                  }
+                }
+              >
+                DETAILS &gt;
+              </div>
+            </div>
+            <div
+              style={
+                Object {
+                  "flex": 3,
+                }
+              }
+            >
+              <div
+                style={
+                  Object {
+                    "alignItems": "center",
+                    "display": "flex",
+                    "flex": 1,
+                    "flexDirection": "column",
+                    "justifyContent": "center",
                     "textAlign": "center",
                   }
                 }
               >
-                <Icon
-                  style={
+                <Doughnut
+                  data={
                     Object {
-                      "fontSize": 20,
+                      "datasets": Array [
+                        Object {
+                          "backgroundColor": Array [
+                            "rgb(240, 243, 245)",
+                            "hsl(204, 20%, 100%)",
+                          ],
+                          "data": Array [
+                            0,
+                            0,
+                          ],
+                          "label": false,
+                        },
+                      ],
+                      "labels": Array [
+                        "Available (GB)",
+                        "Consumed (GB)",
+                      ],
                     }
                   }
-                  type="deployment-unit"
+                  height={52}
+                  options={
+                    Object {
+                      "legend": false,
+                      "maintainAspectRatio": false,
+                      "title": false,
+                    }
+                  }
+                  redraw={false}
+                  width={52}
                 />
-                <div
-                  style={
-                    Object {
-                      "fontSize": 12,
-                      "textTransform": "uppercase",
-                    }
-                  }
-                >
-                  
-                   workspace
-                </div>
               </div>
-              <p>
-                
-              </p>
-            </Col>
-          </Row>
+              <div
+                style={
+                  Object {
+                    "letterSpacing": 1,
+                    "textAlign": "center",
+                  }
+                }
+              >
+                0.0/0.0 GB
+              </div>
+            </div>
+          </div>
         </Card>,
-        "style": Object {
-          "paddingLeft": 12,
-          "paddingRight": 12,
-        },
       },
       "ref": null,
       "rendered": Object {
@@ -505,63 +910,134 @@ ShallowWrapper {
         "nodeType": "class",
         "props": Object {
           "bodyStyle": Object {
-            "paddingBottom": 50,
-            "paddingTop": 50,
-            "textAlign": "center",
+            "padding": "20px",
           },
           "bordered": true,
           "children": Array [
             <ApprovalMessage />,
-            <Row
-              gutter={0}
-              type="flex"
+            <div
+              style={
+                Object {
+                  "alignItems": "center",
+                  "display": "flex",
+                  "padding": "28px 0 40px",
+                }
+              }
             >
-              <Col
-                span={24}
+              <div
+                style={
+                  Object {
+                    "color": "rgba(0, 0, 0, 0.65)",
+                    "flex": 7,
+                    "fontSize": "12px",
+                  }
+                }
               >
                 <div
                   style={
                     Object {
-                      "fontSize": 26,
+                      "fontSize": "22px",
+                      "lineHeight": "30px",
+                      "textTransform": "uppercase",
                     }
                   }
                 >
                   
+                </div>
+                <div>
+                  
+                </div>
+                <Icon
+                  type="team"
+                />
+                 
+                <div
+                  style={
+                    Object {
+                      "display": "inline-block",
+                      "textTransform": "uppercase",
+                    }
+                  }
+                >
+                  simple
+                   dataset
                 </div>
                 <div
                   style={
                     Object {
-                      "marginBottom": 10,
-                      "marginTop": 10,
+                      "color": "#0B7A75",
+                      "lineHeight": "24px",
+                    }
+                  }
+                >
+                  DETAILS &gt;
+                </div>
+              </div>
+              <div
+                style={
+                  Object {
+                    "flex": 3,
+                  }
+                }
+              >
+                <div
+                  style={
+                    Object {
+                      "alignItems": "center",
+                      "display": "flex",
+                      "flex": 1,
+                      "flexDirection": "column",
+                      "justifyContent": "center",
                       "textAlign": "center",
                     }
                   }
                 >
-                  <Icon
-                    style={
+                  <Doughnut
+                    data={
                       Object {
-                        "fontSize": 20,
+                        "datasets": Array [
+                          Object {
+                            "backgroundColor": Array [
+                              "rgb(240, 243, 245)",
+                              "hsl(204, 20%, 100%)",
+                            ],
+                            "data": Array [
+                              0,
+                              0,
+                            ],
+                            "label": false,
+                          },
+                        ],
+                        "labels": Array [
+                          "Available (GB)",
+                          "Consumed (GB)",
+                        ],
                       }
                     }
-                    type="deployment-unit"
+                    height={52}
+                    options={
+                      Object {
+                        "legend": false,
+                        "maintainAspectRatio": false,
+                        "title": false,
+                      }
+                    }
+                    redraw={false}
+                    width={52}
                   />
-                  <div
-                    style={
-                      Object {
-                        "fontSize": 12,
-                        "textTransform": "uppercase",
-                      }
-                    }
-                  >
-                    
-                     workspace
-                  </div>
                 </div>
-                <p>
-                  
-                </p>
-              </Col>
-            </Row>,
+                <div
+                  style={
+                    Object {
+                      "letterSpacing": 1,
+                      "textAlign": "center",
+                    }
+                  }
+                >
+                  0.0/0.0 GB
+                </div>
+              </div>
+            </div>,
           ],
           "hoverable": true,
           "onClick": [Function],
@@ -580,210 +1056,439 @@ ShallowWrapper {
           Object {
             "instance": null,
             "key": undefined,
-            "nodeType": "class",
+            "nodeType": "host",
             "props": Object {
-              "children": <Col
-                span={24}
-              >
+              "children": Array [
                 <div
                   style={
                     Object {
-                      "fontSize": 26,
+                      "color": "rgba(0, 0, 0, 0.65)",
+                      "flex": 7,
+                      "fontSize": "12px",
                     }
                   }
                 >
-                  
-                </div>
-                <div
-                  style={
-                    Object {
-                      "marginBottom": 10,
-                      "marginTop": 10,
-                      "textAlign": "center",
-                    }
-                  }
-                >
-                  <Icon
-                    style={
-                      Object {
-                        "fontSize": 20,
-                      }
-                    }
-                    type="deployment-unit"
-                  />
                   <div
                     style={
                       Object {
-                        "fontSize": 12,
+                        "fontSize": "22px",
+                        "lineHeight": "30px",
                         "textTransform": "uppercase",
                       }
                     }
                   >
                     
-                     workspace
                   </div>
-                </div>
-                <p>
-                  
-                </p>
-              </Col>,
-              "gutter": 0,
-              "type": "flex",
-            },
-            "ref": null,
-            "rendered": Object {
-              "instance": null,
-              "key": undefined,
-              "nodeType": "class",
-              "props": Object {
-                "children": Array [
+                  <div>
+                    
+                  </div>
+                  <Icon
+                    type="team"
+                  />
+                   
                   <div
                     style={
                       Object {
-                        "fontSize": 26,
+                        "display": "inline-block",
+                        "textTransform": "uppercase",
                       }
                     }
                   >
-                    
-                  </div>,
+                    simple
+                     dataset
+                  </div>
                   <div
                     style={
                       Object {
-                        "marginBottom": 10,
-                        "marginTop": 10,
+                        "color": "#0B7A75",
+                        "lineHeight": "24px",
+                      }
+                    }
+                  >
+                    DETAILS &gt;
+                  </div>
+                </div>,
+                <div
+                  style={
+                    Object {
+                      "flex": 3,
+                    }
+                  }
+                >
+                  <div
+                    style={
+                      Object {
+                        "alignItems": "center",
+                        "display": "flex",
+                        "flex": 1,
+                        "flexDirection": "column",
+                        "justifyContent": "center",
                         "textAlign": "center",
                       }
                     }
                   >
-                    <Icon
-                      style={
+                    <Doughnut
+                      data={
                         Object {
-                          "fontSize": 20,
+                          "datasets": Array [
+                            Object {
+                              "backgroundColor": Array [
+                                "rgb(240, 243, 245)",
+                                "hsl(204, 20%, 100%)",
+                              ],
+                              "data": Array [
+                                0,
+                                0,
+                              ],
+                              "label": false,
+                            },
+                          ],
+                          "labels": Array [
+                            "Available (GB)",
+                            "Consumed (GB)",
+                          ],
                         }
                       }
-                      type="deployment-unit"
+                      height={52}
+                      options={
+                        Object {
+                          "legend": false,
+                          "maintainAspectRatio": false,
+                          "title": false,
+                        }
+                      }
+                      redraw={false}
+                      width={52}
                     />
+                  </div>
+                  <div
+                    style={
+                      Object {
+                        "letterSpacing": 1,
+                        "textAlign": "center",
+                      }
+                    }
+                  >
+                    0.0/0.0 GB
+                  </div>
+                </div>,
+              ],
+              "style": Object {
+                "alignItems": "center",
+                "display": "flex",
+                "padding": "28px 0 40px",
+              },
+            },
+            "ref": null,
+            "rendered": Array [
+              Object {
+                "instance": null,
+                "key": undefined,
+                "nodeType": "host",
+                "props": Object {
+                  "children": Array [
                     <div
                       style={
                         Object {
-                          "fontSize": 12,
+                          "fontSize": "22px",
+                          "lineHeight": "30px",
                           "textTransform": "uppercase",
                         }
                       }
                     >
                       
-                       workspace
-                    </div>
-                  </div>,
-                  <p>
-                    
-                  </p>,
-                ],
-                "span": 24,
-              },
-              "ref": null,
-              "rendered": Array [
-                Object {
-                  "instance": null,
-                  "key": undefined,
-                  "nodeType": "host",
-                  "props": Object {
-                    "children": "",
-                    "style": Object {
-                      "fontSize": 26,
-                    },
+                    </div>,
+                    <div>
+                      
+                    </div>,
+                    <Icon
+                      type="team"
+                    />,
+                    " ",
+                    <div
+                      style={
+                        Object {
+                          "display": "inline-block",
+                          "textTransform": "uppercase",
+                        }
+                      }
+                    >
+                      simple
+                       dataset
+                    </div>,
+                    <div
+                      style={
+                        Object {
+                          "color": "#0B7A75",
+                          "lineHeight": "24px",
+                        }
+                      }
+                    >
+                      DETAILS &gt;
+                    </div>,
+                  ],
+                  "style": Object {
+                    "color": "rgba(0, 0, 0, 0.65)",
+                    "flex": 7,
+                    "fontSize": "12px",
                   },
-                  "ref": null,
-                  "rendered": "",
-                  "type": "div",
                 },
-                Object {
-                  "instance": null,
-                  "key": undefined,
-                  "nodeType": "host",
-                  "props": Object {
-                    "children": Array [
-                      <Icon
-                        style={
-                          Object {
-                            "fontSize": 20,
-                          }
-                        }
-                        type="deployment-unit"
-                      />,
-                      <div
-                        style={
-                          Object {
-                            "fontSize": 12,
-                            "textTransform": "uppercase",
-                          }
-                        }
-                      >
-                        
-                         workspace
-                      </div>,
-                    ],
-                    "style": Object {
-                      "marginBottom": 10,
-                      "marginTop": 10,
-                      "textAlign": "center",
+                "ref": null,
+                "rendered": Array [
+                  Object {
+                    "instance": null,
+                    "key": undefined,
+                    "nodeType": "host",
+                    "props": Object {
+                      "children": "",
+                      "style": Object {
+                        "fontSize": "22px",
+                        "lineHeight": "30px",
+                        "textTransform": "uppercase",
+                      },
                     },
+                    "ref": null,
+                    "rendered": "",
+                    "type": "div",
                   },
-                  "ref": null,
-                  "rendered": Array [
-                    Object {
+                  Object {
+                    "instance": null,
+                    "key": undefined,
+                    "nodeType": "host",
+                    "props": Object {
+                      "children": "",
+                    },
+                    "ref": null,
+                    "rendered": "",
+                    "type": "div",
+                  },
+                  Object {
+                    "instance": null,
+                    "key": undefined,
+                    "nodeType": "function",
+                    "props": Object {
+                      "type": "team",
+                    },
+                    "ref": null,
+                    "rendered": null,
+                    "type": [Function],
+                  },
+                  " ",
+                  Object {
+                    "instance": null,
+                    "key": undefined,
+                    "nodeType": "host",
+                    "props": Object {
+                      "children": Array [
+                        "simple",
+                        " dataset",
+                      ],
+                      "style": Object {
+                        "display": "inline-block",
+                        "textTransform": "uppercase",
+                      },
+                    },
+                    "ref": null,
+                    "rendered": Array [
+                      "simple",
+                      " dataset",
+                    ],
+                    "type": "div",
+                  },
+                  Object {
+                    "instance": null,
+                    "key": undefined,
+                    "nodeType": "host",
+                    "props": Object {
+                      "children": "DETAILS >",
+                      "style": Object {
+                        "color": "#0B7A75",
+                        "lineHeight": "24px",
+                      },
+                    },
+                    "ref": null,
+                    "rendered": "DETAILS >",
+                    "type": "div",
+                  },
+                ],
+                "type": "div",
+              },
+              Object {
+                "instance": null,
+                "key": undefined,
+                "nodeType": "host",
+                "props": Object {
+                  "children": Array [
+                    <div
+                      style={
+                        Object {
+                          "alignItems": "center",
+                          "display": "flex",
+                          "flex": 1,
+                          "flexDirection": "column",
+                          "justifyContent": "center",
+                          "textAlign": "center",
+                        }
+                      }
+                    >
+                      <Doughnut
+                        data={
+                          Object {
+                            "datasets": Array [
+                              Object {
+                                "backgroundColor": Array [
+                                  "rgb(240, 243, 245)",
+                                  "hsl(204, 20%, 100%)",
+                                ],
+                                "data": Array [
+                                  0,
+                                  0,
+                                ],
+                                "label": false,
+                              },
+                            ],
+                            "labels": Array [
+                              "Available (GB)",
+                              "Consumed (GB)",
+                            ],
+                          }
+                        }
+                        height={52}
+                        options={
+                          Object {
+                            "legend": false,
+                            "maintainAspectRatio": false,
+                            "title": false,
+                          }
+                        }
+                        redraw={false}
+                        width={52}
+                      />
+                    </div>,
+                    <div
+                      style={
+                        Object {
+                          "letterSpacing": 1,
+                          "textAlign": "center",
+                        }
+                      }
+                    >
+                      0.0/0.0 GB
+                    </div>,
+                  ],
+                  "style": Object {
+                    "flex": 3,
+                  },
+                },
+                "ref": null,
+                "rendered": Array [
+                  Object {
+                    "instance": null,
+                    "key": undefined,
+                    "nodeType": "host",
+                    "props": Object {
+                      "children": <Doughnut
+                        data={
+                          Object {
+                            "datasets": Array [
+                              Object {
+                                "backgroundColor": Array [
+                                  "rgb(240, 243, 245)",
+                                  "hsl(204, 20%, 100%)",
+                                ],
+                                "data": Array [
+                                  0,
+                                  0,
+                                ],
+                                "label": false,
+                              },
+                            ],
+                            "labels": Array [
+                              "Available (GB)",
+                              "Consumed (GB)",
+                            ],
+                          }
+                        }
+                        height={52}
+                        options={
+                          Object {
+                            "legend": false,
+                            "maintainAspectRatio": false,
+                            "title": false,
+                          }
+                        }
+                        redraw={false}
+                        width={52}
+                      />,
+                      "style": Object {
+                        "alignItems": "center",
+                        "display": "flex",
+                        "flex": 1,
+                        "flexDirection": "column",
+                        "justifyContent": "center",
+                        "textAlign": "center",
+                      },
+                    },
+                    "ref": null,
+                    "rendered": Object {
                       "instance": null,
                       "key": undefined,
-                      "nodeType": "function",
+                      "nodeType": "class",
                       "props": Object {
-                        "style": Object {
-                          "fontSize": 20,
+                        "data": Object {
+                          "datasets": Array [
+                            Object {
+                              "backgroundColor": Array [
+                                "rgb(240, 243, 245)",
+                                "hsl(204, 20%, 100%)",
+                              ],
+                              "data": Array [
+                                0,
+                                0,
+                              ],
+                              "label": false,
+                            },
+                          ],
+                          "labels": Array [
+                            "Available (GB)",
+                            "Consumed (GB)",
+                          ],
                         },
-                        "type": "deployment-unit",
+                        "height": 52,
+                        "options": Object {
+                          "legend": false,
+                          "maintainAspectRatio": false,
+                          "title": false,
+                        },
+                        "redraw": false,
+                        "width": 52,
                       },
                       "ref": null,
                       "rendered": null,
                       "type": [Function],
                     },
-                    Object {
-                      "instance": null,
-                      "key": undefined,
-                      "nodeType": "host",
-                      "props": Object {
-                        "children": Array [
-                          "",
-                          " workspace",
-                        ],
-                        "style": Object {
-                          "fontSize": 12,
-                          "textTransform": "uppercase",
-                        },
-                      },
-                      "ref": null,
-                      "rendered": Array [
-                        "",
-                        " workspace",
-                      ],
-                      "type": "div",
-                    },
-                  ],
-                  "type": "div",
-                },
-                Object {
-                  "instance": null,
-                  "key": undefined,
-                  "nodeType": "host",
-                  "props": Object {
-                    "children": "",
+                    "type": "div",
                   },
-                  "ref": null,
-                  "rendered": "",
-                  "type": "p",
-                },
-              ],
-              "type": [Function],
-            },
-            "type": [Function],
+                  Object {
+                    "instance": null,
+                    "key": undefined,
+                    "nodeType": "host",
+                    "props": Object {
+                      "children": "0.0/0.0 GB",
+                      "style": Object {
+                        "letterSpacing": 1,
+                        "textAlign": "center",
+                      },
+                    },
+                    "ref": null,
+                    "rendered": "0.0/0.0 GB",
+                    "type": "div",
+                  },
+                ],
+                "type": "div",
+              },
+            ],
+            "type": "div",
           },
         ],
         "type": [Function],

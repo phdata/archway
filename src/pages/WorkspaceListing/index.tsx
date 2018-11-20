@@ -3,8 +3,9 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import { createStructuredSelector } from 'reselect';
+import * as moment from 'moment';
 import { Behavior, WorkspaceListItem } from '../../components';
-import { Workspace } from '../../types/Workspace';
+import { WorkspaceSearchResult } from '../../types/Workspace';
 import * as actions from './actions';
 import * as selectors from './selectors';
 import FieldLabel from '../../components/FieldLabel';
@@ -13,13 +14,13 @@ import { Cluster } from '../../types/Cluster';
 import Colors from '../../components/Colors';
 
 /* tslint:disable:no-var-requires */
-const {CSVLink} = require('react-csv');
+const { CSVLink } = require('react-csv');
 /* tslint:disable:no-var-requires */
 const router = require('connected-react-router/immutable');
 
 interface Props {
   fetching: boolean;
-  workspaceList: Workspace[];
+  workspaceList: WorkspaceSearchResult[];
   filters: { filter: string, behaviors: string[], statuses: string[] };
   profile: Profile;
   cluster: Cluster;
@@ -78,6 +79,18 @@ class WorkspaceList extends React.PureComponent<Props> {
     this.props.listWorkspaces();
   }
 
+  public generateCSV(workspaceList: WorkspaceSearchResult[]) {
+    return workspaceList.map((workspace) => ({
+        'Name': workspace.name,
+        'Status': workspace.status,
+        'Date Requested': moment(workspace.date_requested).format('YYYY-MM-DD'),
+        'Date Fully Approved': moment(workspace.date_fully_approved).format('YYYY-MM-DD'),
+        'Disk Allocated': workspace.total_disk_allocated_in_gb,
+        'Max Cores': workspace.total_max_cores,
+        'Max Memory': workspace.total_max_memory_in_gb,
+      }));
+  }
+
   public render() {
     const {
       fetching,
@@ -87,11 +100,13 @@ class WorkspaceList extends React.PureComponent<Props> {
       profile,
       cluster,
     } = this.props;
-    const allStatuses: string[] = ['Approved', 'Pending', 'Rejected'];
+    const allStatuses: string[] = ['approved', 'pending', 'rejected'];
     const emptyText = (!filter && behaviors.length === 2 && statuses.length === 3)
       ? 'No workspaces yet. Create one from the link on the left.'
       : 'No workspaces found';
-    const renderItem = (workspace: Workspace) => <WorkspaceListItem workspace={workspace} onSelected={openWorkspace} />;
+    const renderItem = (workspace: WorkspaceSearchResult) =>
+      <WorkspaceListItem workspace={workspace} onSelected={openWorkspace} />;
+
     return (
       <div>
         <h1 style={{ textAlign: 'center' }}>Workspaces</h1>
@@ -122,13 +137,13 @@ class WorkspaceList extends React.PureComponent<Props> {
                       {allStatuses.map((status: string) => (
                         <Checkbox
                           key={status}
-                          style={{ fontSize: 12 }}
+                          style={{ fontSize: 12, textTransform: 'uppercase' }}
                           defaultChecked
-                          name={status.toLowerCase()}
+                          name={status}
                           checked={statuses.includes(status)}
                           onChange={(e: any) => this.statusChanged(status, e.target.checked)}
                         >
-                          {status.toUpperCase()}
+                          {status}
                         </Checkbox>
                       ))}
                     </div>
@@ -159,10 +174,11 @@ class WorkspaceList extends React.PureComponent<Props> {
             </Card>
           </Col>
         </Row>
-        {profile.permissions && profile.permissions.platform_operations && (
+        {workspaceList && workspaceList.length > 0 &&
+          profile.permissions && profile.permissions.platform_operations && (
           <Row type="flex" style={{ marginTop: 12, fontSize: 12 }} justify="center">
             <Col>
-              <CSVLink data={workspaceList} filename={`${cluster.name} - Workspaces.csv`}>
+              <CSVLink data={this.generateCSV(workspaceList)} filename={`${cluster.name} - Workspaces.csv`}>
                 <Icon
                   style={{ fontSize: 16 }}
                   type="file-excel"

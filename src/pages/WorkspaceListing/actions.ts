@@ -1,4 +1,4 @@
-import { Workspace } from '../../types/Workspace';
+import { WorkspaceSearchResult } from '../../types/Workspace';
 
 export const FILTER_WORKSPACES = 'FILTER_WORKSPACES';
 export const filterWorkspaces = (filter: string, behaviors: string[], statuses: string[]) => ({
@@ -16,7 +16,7 @@ export const listAllWorkspaces = () => ({
 });
 
 export const WORKSPACE_LISTING_UPDATED = 'WORKSPACE_LISTING_UPDATED';
-export const workspaceListUpdated = (workspaces: Workspace[]) => ({
+export const workspaceListUpdated = (workspaces: WorkspaceSearchResult[]) => ({
   type: WORKSPACE_LISTING_UPDATED,
   workspaces,
 });
