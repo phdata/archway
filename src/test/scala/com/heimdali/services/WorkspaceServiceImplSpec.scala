@@ -36,13 +36,11 @@ class WorkspaceServiceImplSpec
       validWorkspace
     )
 
-    workspaceRepository.list _ expects standardUsername returning List(
-      savedWorkspaceRequest
-    ).pure[ConnectionIO]
+    workspaceRepository.list _ expects standardUsername returning List(searchResult).pure[ConnectionIO]
 
     val projects = projectServiceImpl.list(standardUsername).unsafeRunSync()
     projects.length should be(1)
-    projects.head should be(savedWorkspaceRequest)
+    projects.head should be(searchResult)
   }
 
   it should "get memberships accurately" in new Context {

@@ -65,6 +65,7 @@ package object fixtures {
   val savedApplication = Application("Tiller", s"${systemName}_cg", savedLDAP, Some(id), Some(standardUsername))
   val initialApplication = savedApplication.copy(id = None, group = initialLDAP)
   implicit val clock = Clock.fixed(Instant.now(), ZoneId.of("UTC"))
+  val searchResult = WorkspaceSearchResult(id, name, name, "simple", "Approved", clock.instant(), Some(clock.instant()), 0, 0, 0)
 
   val yarnApp = ClusterApp("yarn", "yarn", "GOOD_HExALTH", "STARTED", Map())
   val cluster = Cluster("cluster name", "Cluster", "", List(yarnApp), CDH(""), "GOOD_HEALTH")
@@ -110,6 +111,23 @@ package object fixtures {
        |   }
        | }
       """.stripMargin)
+
+  val Right(searchResultResponse) = parse(
+    s"""
+       |  {
+       |    "id" : $id,
+       |    "name" : "$name",
+       |    "summary" : "$name",
+       |    "behavior" : "simple",
+       |    "status" : "Approved",
+       |    "date_requested" : "${clock.instant().toString}",
+       |    "date_fully_approved" : "${clock.instant().toString}",
+       |    "total_disk_allocated_in_gb" : 0,
+       |    "total_max_cores" : 0,
+       |    "total_max_memory_in_gb" : 0
+       |  }
+     """.stripMargin
+  )
 
   val Right(defaultResponse) = parse(
     s"""
