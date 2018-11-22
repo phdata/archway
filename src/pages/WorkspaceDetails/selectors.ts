@@ -3,7 +3,7 @@ import { createSelector } from 'reselect';
 import { authSelector, clusterSelector, workspaceSelector } from '../../selectors';
 import {
   Member,
-  NamespaceInfo,
+  NamespaceInfoList,
   ResourcePoolsInfo,
   Workspace,
   UserSuggestions,
@@ -57,7 +57,7 @@ export const getMembers = () => createSelector(
 export const getNamespaceInfo = () => createSelector(
   workspaceSelector,
   (workspaceState) =>
-    workspaceState.get('namespaceInfo') && workspaceState.get('namespaceInfo').toJS() as NamespaceInfo[],
+    workspaceState.get('namespaceInfo') && workspaceState.get('namespaceInfo').toJS() as NamespaceInfoList,
 );
 
 export const getPoolInfo = () => createSelector(

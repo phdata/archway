@@ -1,15 +1,16 @@
 import { Card, Row, Menu, Dropdown, Icon } from 'antd';
 import * as React from 'react';
 import { HueService } from '../../../types/Cluster';
-import { HiveTable, NamespaceInfo, HiveAllocation } from '../../../types/Workspace';
+import { HiveTable, HiveAllocation, NamespaceInfoList } from '../../../types/Workspace';
 import CardHeader from './CardHeader';
 
 interface Props {
     hue?: HueService;
-    info?: NamespaceInfo[];
+    info?: NamespaceInfoList;
     allocations: HiveAllocation[];
     selectedAllocation?: HiveAllocation;
     onChangeAllocation: (allocation: HiveAllocation) => void;
+    onRefreshHiveTables?: () => void;
 }
 
 const renderTable = (hiveTable: HiveTable) => (
@@ -22,6 +23,7 @@ const HiveDetails = ({
   info,
   selectedAllocation,
   onChangeAllocation,
+  onRefreshHiveTables,
 }: Props) => {
   const hueHost = hue && `${hue.load_balancer[0].host}:${hue.load_balancer[0].port}`;
   return (
@@ -54,14 +56,27 @@ const HiveDetails = ({
               <Icon type="down" />
             </a>
           </Dropdown>
-        )} />
-      <Row gutter={12} type="flex" justify="center" style={{ marginTop: 18 }}>
-        {info && info.length > 0 && info[0].tables.length > 0 && info[0].tables.map(renderTable)}
-        {(!info || info.length <= 0 || info[0].tables.length <= 0) && (
-          <div style={{ color: 'rgba(0, 0, 0, .65)' }}>
-            No tables yet.
-          </div>
         )}
+        rightAction={(
+          <Icon
+            style={{ cursor: 'pointer', alignSelf: 'flex-start' }}
+            type="sync"
+            spin={info && info.loading}
+            onClick={() => {
+              if ((!info || !info.loading) && onRefreshHiveTables) {
+                onRefreshHiveTables();
+              }
+            }}
+          />
+        )}
+      />
+      <Row gutter={12} type="flex" justify="center" style={{ marginTop: 18 }}>
+        {(info && info.data && info.data.length > 0 && info.data[0].tables.length > 0) ?
+          info.data[0].tables.map(renderTable) : (
+            <div style={{ color: 'rgba(0, 0, 0, .65)' }}>
+              No tables yet.
+            </div>
+          )}
       </Row>
     </Card>
   );

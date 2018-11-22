@@ -20,6 +20,9 @@ import {
   REQUEST_REFRESH_YARN_APPS,
   REFRESH_YARN_APPS_SUCCESS,
   REFRESH_YARN_APPS_FAILURE,
+  REQUEST_REFRESH_HIVE_TABLES,
+  REFRESH_HIVE_TABLES_SUCCESS,
+  REFRESH_HIVE_TABLES_FAILURE,
 } from './actions';
 import { Member } from '../../types/Workspace';
 
@@ -61,7 +64,10 @@ const details = (state = initialState, action: any) => {
 
     case SET_NAMESPACE_INFO:
       return state
-        .set('namespaceInfo', fromJS(action.infos));
+        .set('namespaceInfo', fromJS({
+          loading: false,
+          data: action.infos,
+        }));
 
     case SET_RESOURCE_POOLS:
       return state
@@ -176,6 +182,32 @@ const details = (state = initialState, action: any) => {
           'resourcePools',
           state
             .get('resourcePools')
+            .setIn(['loading'], false)
+            .setIn(['error'], action.error));
+
+    case REQUEST_REFRESH_HIVE_TABLES:
+      return state
+        .set(
+          'namespaceInfo',
+          state
+            .get('namespaceInfo')
+            .setIn(['loading'], true)
+            .setIn(['error'], ''));
+
+    case REFRESH_HIVE_TABLES_SUCCESS:
+      return state
+        .set(
+          'namespaceInfo', fromJS({
+            loading: false,
+            data: action.tables,
+          }));
+
+    case REFRESH_HIVE_TABLES_FAILURE:
+      return state
+        .set(
+          'namespaceInfo',
+          state
+            .get('namespaceInfo')
             .setIn(['loading'], false)
             .setIn(['error'], action.error));
 

@@ -8,7 +8,7 @@ import { throttle } from 'lodash';
 import { Cluster } from '../../types/Cluster';
 import { Profile } from '../../types/Profile';
 import {
-  NamespaceInfo,
+  NamespaceInfoList,
   ResourcePoolsInfo,
   Workspace,
   UserSuggestions,
@@ -46,7 +46,7 @@ interface Props extends RouteComponentProps<DetailsRouteProps> {
     cluster: Cluster;
     profile: Profile;
     pools?: ResourcePoolsInfo;
-    infos?: NamespaceInfo[];
+    infos?: NamespaceInfoList;
     approved: boolean;
     activeModal?: string;
     selectedAllocation?: HiveAllocation;
@@ -64,6 +64,7 @@ interface Props extends RouteComponentProps<DetailsRouteProps> {
     simpleMemberRequest: () => void;
     updateSelectedAllocation: (allocation: HiveAllocation) => void;
     requestRefreshYarnApps: () => void;
+    requestRefreshHiveTables: () => void;
     getUserSuggestions: (filter: string) => void;
 }
 
@@ -163,6 +164,7 @@ class WorkspaceDetails extends React.PureComponent<Props> {
       selectedAllocation,
       updateSelectedAllocation,
       requestRefreshYarnApps,
+      requestRefreshHiveTables,
       userSuggestions,
       liasion,
     } = this.props;
@@ -238,7 +240,9 @@ class WorkspaceDetails extends React.PureComponent<Props> {
                   allocations={workspace.data}
                   info={infos}
                   selectedAllocation={selectedAllocation}
-                  onChangeAllocation={updateSelectedAllocation} />
+                  onChangeAllocation={updateSelectedAllocation}
+                  onRefreshHiveTables={requestRefreshHiveTables}
+                />
               </Col>
               <Col span={24} lg={12} xxl={6} style={{ marginTop: 10 }}>
                 {workspace.processing && <YarnDetails
@@ -344,6 +348,7 @@ const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
   requestTopic: () => dispatch(actions.requestTopic()),
   simpleMemberRequest: () => dispatch(actions.simpleMemberRequest()),
   requestRefreshYarnApps: () => dispatch(actions.requestRefreshYarnApps()),
+  requestRefreshHiveTables: () => dispatch(actions.requestRefreshHiveTables()),
   getUserSuggestions: (filter: string) => dispatch(actions.getUserSuggestions(filter)),
 });
 

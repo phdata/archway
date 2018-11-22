@@ -187,3 +187,20 @@ export const refreshYarnAppsFailure = (error: string) => ({
   type: REFRESH_YARN_APPS_FAILURE,
   error,
 });
+
+export const REQUEST_REFRESH_HIVE_TABLES = 'REQUEST_REFRESH_HIVE_TABLES';
+export const requestRefreshHiveTables = () => ({
+  type: REQUEST_REFRESH_HIVE_TABLES,
+});
+
+export const REFRESH_HIVE_TABLES_SUCCESS = 'REFRESH_HIVE_TABLES_SUCCESS';
+export const refreshHiveTablesSuccess = (tables: NamespaceInfo[]) => ({
+  type: REFRESH_HIVE_TABLES_SUCCESS,
+  tables,
+});
+
+export const REFRESH_HIVE_TABLES_FAILURE = 'REFRESH_HIVE_TABLES_FAILURE';
+export const refreshHiveTablesFailure = (error: string) => ({
+  type: REFRESH_HIVE_TABLES_FAILURE,
+  error,
+});

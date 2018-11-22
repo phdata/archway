@@ -24,6 +24,9 @@ import {
   REQUEST_REFRESH_YARN_APPS,
   refreshYarnAppsSuccess,
   refreshYarnAppsFailure,
+  REQUEST_REFRESH_HIVE_TABLES,
+  refreshHiveTablesSuccess,
+  refreshHiveTablesFailure,
 } from './actions';
 import { Workspace } from '../../types/Workspace';
 
@@ -155,6 +158,21 @@ function* refreshYarnAppsRequestedListener() {
   yield takeLatest(REQUEST_REFRESH_YARN_APPS, refreshYarnAppsRequested);
 }
 
+function* refreshHiveTablesRequested() {
+  const token = yield select((s: any) => s.get('login').get('token'));
+  const { id } = yield select((s: any) => s.get('details').get('details').toJS());
+  try {
+    const apps = yield call(Api.getHiveTables, token, id);
+    yield put(refreshHiveTablesSuccess(apps));
+  } catch (e) {
+    yield put(refreshHiveTablesFailure(e.toString()));
+  }
+}
+
+function* refreshHiveTablesRequestedListener() {
+  yield takeLatest(REQUEST_REFRESH_HIVE_TABLES, refreshHiveTablesRequested);
+}
+
 export default function* root() {
   yield all([
     fork(workspaceRequest),
@@ -164,5 +182,6 @@ export default function* root() {
     fork(simpleMemberRequestedListener),
     fork(removeMemberRequestedListener),
     fork(refreshYarnAppsRequestedListener),
+    fork(refreshHiveTablesRequestedListener),
   ]);
 }
