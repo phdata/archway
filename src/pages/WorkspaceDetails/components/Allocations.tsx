@@ -10,7 +10,7 @@ interface Props {
     location: string;
 }
 
-const Allocations = ({ location, allocated, consumed = 0 }: Props) => {
+const Allocations = ({ location, allocated = 1, consumed = 0 }: Props) => {
   const data = {
     labels: ['Available (GB)', 'Consumed (GB)'],
     datasets: [
