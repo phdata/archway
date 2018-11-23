@@ -50,13 +50,14 @@ const WorkspaceListItem = ({ workspace, onSelected }: Props) => {
     );
   };
 
+  const allocated = total_disk_allocated_in_gb || 1;
   const consumed = total_disk_consumed_in_gb || 0;
   const sizeData = {
     labels: ['Available (GB)', 'Consumed (GB)'],
     datasets: [
       {
         label: false,
-        data: [total_disk_allocated_in_gb - consumed, consumed],
+        data: [allocated - consumed, consumed],
         backgroundColor: [
           total_disk_consumed_in_gb ? Colors.Green.string() : Colors.LightGray.string(),
           total_disk_consumed_in_gb ? Colors.Green.lighten(.5).string() : Colors.LightGray.lighten(.5).string(),
@@ -104,7 +105,7 @@ const WorkspaceListItem = ({ workspace, onSelected }: Props) => {
               />
             </div>
             <div style={{ letterSpacing: 1, textAlign: 'center' }}>
-              {`${(total_disk_allocated_in_gb - consumed).toFixed(1)}/${total_disk_allocated_in_gb.toFixed(1)} GB`}
+              {`${(allocated - consumed).toFixed(1)}/${allocated} GB`}
             </div>
           </div>
         </div>
