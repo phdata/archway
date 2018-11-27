@@ -9,6 +9,11 @@ const fuseList = () => createSelector(
   (listingState) => listingState.get('allWorkspaces'),
 );
 
+export const getListingMode = () => createSelector(
+  workspaceListSelector,
+  (listingState) => listingState.get('listingMode'),
+);
+
 export const getListFilters = () => createSelector(
   workspaceListSelector,
   (listingState) => listingState.get('filters').toJS(),

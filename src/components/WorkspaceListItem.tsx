@@ -16,8 +16,8 @@ const WorkspaceListItem = ({ workspace, onSelected }: Props) => {
     status,
     behavior,
     summary,
-    total_disk_allocated_in_gb,
-    total_disk_consumed_in_gb,
+    total_disk_allocated_in_gb = 1,
+    total_disk_consumed_in_gb = 0,
   } = workspace;
 
   const onClick = () => onSelected(id);
@@ -25,13 +25,13 @@ const WorkspaceListItem = ({ workspace, onSelected }: Props) => {
   const ApprovalMessage = () => {
     let color = '';
     switch (status) {
-      case 'pending':
+      case 'Pending':
         color = '#CFB2B0';
         break;
-      case 'rejected':
+      case 'Rejected':
         color = '#7B2D26';
         break;
-      case 'approved':
+      case 'Approved':
         color = '#0B7A75';
         break;
       default:
