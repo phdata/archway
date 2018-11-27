@@ -10,7 +10,7 @@ interface Props {
     location: string;
 }
 
-const Allocations = ({ location, allocated, consumed = 0 }: Props) => {
+const Allocations = ({ location, allocated = 1, consumed = 0 }: Props) => {
   const data = {
     labels: ['Available (GB)', 'Consumed (GB)'],
     datasets: [
@@ -46,7 +46,7 @@ const Allocations = ({ location, allocated, consumed = 0 }: Props) => {
             options={{ legend: false, title: false, maintainAspectRatio: false }} />
       </div>
       <div style={{ letterSpacing: 1, textAlign: 'center' }}>
-        {`${(allocated - consumed).toFixed(1)}/${allocated.toFixed(1)} GB`}
+        {`${(allocated - consumed)}/${allocated} GB`}
       </div>
     </Card>
   );
