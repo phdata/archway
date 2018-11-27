@@ -20,6 +20,12 @@ export interface NamespaceInfo {
   tables: HiveTable[];
 }
 
+export interface NamespaceInfoList {
+  loading: boolean;
+  error?: string;
+  data: NamespaceInfo[];
+}
+
 export interface HiveTable {
   name: string;
 }
