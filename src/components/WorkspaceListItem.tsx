@@ -105,7 +105,7 @@ const WorkspaceListItem = ({ workspace, onSelected }: Props) => {
               />
             </div>
             <div style={{ letterSpacing: 1, textAlign: 'center' }}>
-              {`${(allocated - consumed).toFixed(1)}/${allocated} GB`}
+              {`${(allocated - consumed)}/${allocated} GB`}
             </div>
           </div>
         </div>

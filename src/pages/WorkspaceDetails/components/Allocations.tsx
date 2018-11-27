@@ -46,7 +46,7 @@ const Allocations = ({ location, allocated = 1, consumed = 0 }: Props) => {
             options={{ legend: false, title: false, maintainAspectRatio: false }} />
       </div>
       <div style={{ letterSpacing: 1, textAlign: 'center' }}>
-        {`${(allocated - consumed).toFixed(1)}/${allocated} GB`}
+        {`${(allocated - consumed)}/${allocated} GB`}
       </div>
     </Card>
   );
