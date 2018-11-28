@@ -211,13 +211,11 @@ class WorkspaceDetails extends React.PureComponent<Props> {
               <Liaison liaison={liasion} />
             </Col>
             <Col span={12} xxl={4} style={{ marginTop: 10, display: 'flex' }}>
-              {selectedAllocation && (
-                <Allocations
-                  location={selectedAllocation.location}
-                  allocated={selectedAllocation.size_in_gb}
-                  consumed={selectedAllocation.consumed_in_gb}
-                />
-              )}
+              {selectedAllocation && <Allocations
+                allocations={workspace.data}
+                selectedAllocation={selectedAllocation}
+                onChangeAllocation={updateSelectedAllocation}
+              />}
             </Col>
             <Col span={12} xxl={4} style={{ marginTop: 10, display: 'flex' }}>
               <ApprovalDetails
