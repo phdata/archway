@@ -44,10 +44,10 @@ publish:
     - mkdir ready
     - cp -R meta ready/
     - sed -i "s/0.1.5/${CI_COMMIT_TAG}/g" ready/meta/parcel.json
-    - 'curl --header "PRIVATE-TOKEN: $API_TOKEN" -L -o ui-artifacts.tar "https://gitlab.com/api/v4/projects/6757312/jobs/artifacts/master/download?job=publish"'
-    - tar xvf ui-artifacts.tar
-    - 'curl --header "PRIVATE-TOKEN: $API_TOKEN" -L -o api-artifacts.tar "https://gitlab.com/api/v4/projects/6757317/jobs/artifacts/master/download?job=publish"'
-    - tar xvf api-artifacts.tar
+    - curl --header "PRIVATE-TOKEN: ${API_TOKEN}" -L -o ui-artifacts.zip "https://gitlab.com/api/v4/projects/6757312/jobs/artifacts/master/download?job=publish"
+    - unzip ui-artifacts.zip
+    - curl --header "PRIVATE-TOKEN: ${API_TOKEN}" -L -o api-artifacts.zip "https://gitlab.com/api/v4/projects/6757317/jobs/artifacts/master/download?job=publish"
+    - unzip api-artifacts.zip
     - mkdir -p ready/usr/lib/heimdali-api
     - mv target/scala-2.12/heimdali-api.jar ready/usr/lib/heimdali-api/heimdali-api.jar
     - tar xvf heimdali-ui.tar
