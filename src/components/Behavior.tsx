@@ -1,5 +1,5 @@
-import { Card, Icon, List } from 'antd';
 import * as React from 'react';
+import { Card, Icon, List } from 'antd';
 
 interface Props {
     behaviorKey: string;

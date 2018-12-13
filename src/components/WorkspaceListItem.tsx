@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Card, Icon, List } from 'antd';
 import { Doughnut } from 'react-chartjs-2';
 import Colors from './Colors';
-import { WorkspaceSearchResult } from '../types/Workspace';
+import { WorkspaceSearchResult } from '../models/Workspace';
 
 interface Props {
     workspace: WorkspaceSearchResult;
