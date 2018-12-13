@@ -4,7 +4,7 @@ import cats.effect.IO
 import com.heimdali.repositories._
 
 trait RepoModule {
-  self: AppModule[IO] =>
+  self: ConfigurationModule =>
 
   val complianceRepository: ComplianceRepository = new ComplianceRepositoryImpl
 

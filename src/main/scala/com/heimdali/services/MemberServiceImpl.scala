@@ -15,7 +15,8 @@ import doobie.util.transactor.Transactor
 class MemberServiceImpl[F[_]](memberRepository: MemberRepository,
                               transactor: Transactor[F],
                               ldapRepository: LDAPRepository,
-                              ldapClient: LDAPClient[F])(implicit val F: Effect[F])
+                              ldapClient: LDAPClient[F],
+                             )(implicit val F: Effect[F])
   extends MemberService[F]
     with LazyLogging {
 
@@ -60,14 +61,20 @@ class MemberServiceImpl[F[_]](memberRepository: MemberRepository,
       )
 
       _ <- OptionT.some[F](logger.info(s"adding ${memberRequest.distinguishedName} to ${registration.commonName} in ldap"))
+
       _ <- ldapClient.addUser(registration.distinguishedName, memberRequest.distinguishedName)
+
       _ <- OptionT.some[F](logger.info(s"completing ${memberRequest.distinguishedName}"))
+
       member <- OptionT.liftF(
         (memberRepository.complete(registration.id.get, memberRequest.distinguishedName), memberRepository.get(memberId))
           .mapN((_, member) => member)
           .transact(transactor) // run the complete and get in the same transaction
       )
+
       result <- OptionT.liftF(convertRecord(member))
+
+      _ <- OptionT.some[F](logger.info(result.toString()))
     } yield result.head
 
   def removeMember(id: Long, memberRequest: MemberRoleRequest): OptionT[F, WorkspaceMemberEntry] =

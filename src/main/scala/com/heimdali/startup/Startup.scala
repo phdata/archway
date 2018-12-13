@@ -3,7 +3,6 @@ package com.heimdali.startup
 import cats._
 import cats.effect._
 import com.heimdali.config.{ClusterConfig, DatabaseConfig}
-import fs2.async
 
 import scala.concurrent.ExecutionContext
 
@@ -19,6 +18,6 @@ class HeimdaliStartup[F[_] : Effect](databaseConfig: DatabaseConfig,
   extends Startup[F] {
 
   def start()(implicit monadEvidence: Monad[F]): F[Unit] =
-    async.fork(maintainer.setup)
+    maintainer.setup
 
 }

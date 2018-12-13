@@ -1,7 +1,7 @@
 package com.heimdali.models
 
 import cats.Show
-import doobie.util.meta.Meta
+import doobie.util.Read
 
 sealed trait ApproverRole
 
@@ -18,9 +18,6 @@ object ApproverRole {
       case "infra" => Infra
       case "risk" => Risk
     }
-
-  implicit val approverComposite: Meta[ApproverRole] =
-    Meta[String].xmap(parseRole, _.toString.toLowerCase)
 
   implicit def approverShow[A <: ApproverRole]: Show[A] = Show.show(_.getClass.getSimpleName.toLowerCase)
 

@@ -4,7 +4,7 @@ import java.time.{Clock, Instant}
 
 import cats.Show
 import cats.implicits._
-import doobie.util.composite.Composite
+import doobie.util.{Get, Read}
 import io.circe._
 import io.circe.syntax._
 import io.circe.java8.time._
@@ -13,11 +13,12 @@ case class Approval(role: ApproverRole, approver: String, approvalTime: Instant,
 
 object Approval {
 
-  implicit val Point2DComposite: Composite[Approval] =
-    Composite[(ApproverRole, String, Instant, Option[Long])].imap(
-      (t: (ApproverRole, String, Instant, Option[Long])) => Approval(t._1, t._2, t._3, t._4))(
-      (p: Approval) => (p.role, p.approver, p.approvalTime, p.id)
-    )
+  implicit val roleGet: Get[ApproverRole] = Get[String].tmap(ApproverRole.parseRole)
+
+  implicit val reader: Read[Approval] =
+    Read[(ApproverRole, String, Instant, Option[Long])].map {
+      case (role, approver, approvalTime, id) => Approval(role, approver, approvalTime, id)
+    }
 
   implicit def decoder(user: User, clock: Clock): Decoder[Approval] = Decoder.instance( cursor =>
     for {

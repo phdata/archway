@@ -38,8 +38,8 @@ class AuthServiceImpl[F[_] : Sync](accountService: AccountService[F])
   def authStore: Kleisli[OptionT[F, ?], Request[F], Token] =
     Kleisli[OptionT[F, ?], Request[F], Token] { request =>
       request.headers.get(Authorization) match {
-        case Some(Authorization(BasicCredentials(creds))) =>
-          accountService.login(creds.username, creds.password)
+        case Some(Authorization(BasicCredentials(username, password))) =>
+          accountService.login(username, password)
         case _ =>
          OptionT.none
       }

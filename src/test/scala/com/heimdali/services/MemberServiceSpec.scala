@@ -1,17 +1,17 @@
 package com.heimdali.services
 
 import cats.data.OptionT
-import cats.implicits._
 import cats.effect.IO
+import cats.implicits._
 import com.heimdali.clients.{LDAPClient, LDAPUser}
-import com.heimdali.repositories.{LDAPRepository, Manager, MemberRepository, MemberRightsRecord}
-import doobie.implicits._
+import com.heimdali.models._
+import com.heimdali.repositories._
+import com.heimdali.test.fixtures._
+import com.unboundid.ldap.sdk.{Attribute, SearchResultEntry}
 import doobie._
-import com.heimdali.models.{MemberRights, WorkspaceMember, WorkspaceMemberEntry}
+import doobie.implicits._
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FlatSpec, Matchers}
-import com.heimdali.test.fixtures._
-import com.unboundid.ldap.sdk.{Attribute, Control, SearchResultEntry}
 
 class MemberServiceSpec extends FlatSpec with Matchers with DBTest with MockFactory {
 
@@ -37,11 +37,25 @@ class MemberServiceSpec extends FlatSpec with Matchers with DBTest with MockFact
     members shouldBe MemberSearchResult(List(MemberSearchResultItem("John", "cn=John,dc=example,dc=io")), List.empty)
   }
 
+  it should "add a member" in new Context {
+    val newMember = s"cn=username,${appConfig.ldap.userPath.get}"
+    ldapRepository.find _ expects("data", id, "manager") returning OptionT[ConnectionIO, LDAPRegistration](Option(savedLDAP).pure[ConnectionIO])
+    memberRepository.create _ expects(newMember, id) returning id.pure[ConnectionIO]
+    ldapClient.addUser _ expects(savedLDAP.distinguishedName, newMember) returning OptionT.some(newMember)
+    memberRepository.complete _ expects(id, newMember) returning id.toInt.pure[ConnectionIO]
+    memberRepository.get _ expects id returning List(MemberRightsRecord("data", newMember, savedHive.name, id, Manager)).pure[ConnectionIO]
+    ldapClient.findUser _ expects newMember returning OptionT.some(LDAPUser(personName, "username", newMember, Seq.empty, Some("username@phdata.io")))
+
+    memberService.addMember(123, MemberRoleRequest(newMember, "data", 123, Manager)).value.unsafeRunSync()
+  }
+
   trait Context {
 
     val memberRepository = mock[MemberRepository]
     val ldapRepository = mock[LDAPRepository]
     val ldapClient = mock[LDAPClient[IO]]
+    val emailService = mock[EmailService[IO]]
+    val workspaceRepository = mock[WorkspaceRequestRepository]
 
     val memberService =
       new MemberServiceImpl[IO](

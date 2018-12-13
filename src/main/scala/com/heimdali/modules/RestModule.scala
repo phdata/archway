@@ -6,15 +6,18 @@ import java.time.Clock
 import com.heimdali.services.KafkaService
 
 trait RestModule {
-  this: AppModule[IO]
-    with ServiceModule[IO]
+  this: ServiceModule[IO]
     with HttpModule[IO]
+    with ExecutionContextModule[IO]
     with ConfigurationModule
     with ClusterModule[IO] =>
 
-  val authService: AuthServiceImpl[IO] = new AuthServiceImpl[IO](accountService)
-  val accountController = new AccountController(authService, accountService)
-  val clusterController = new ClusterController(clusterService)
+  val authService: AuthServiceImpl[IO] =
+    new AuthServiceImpl[IO](accountService)
+  val accountController =
+    new AccountController(authService, accountService)
+  val clusterController =
+    new ClusterController(clusterService)
 
   val workspaceController =
     new WorkspaceController(
@@ -23,6 +26,7 @@ trait RestModule {
       memberService,
       kafkaService,
       applicationService,
+      emailService,
       clock
     )
   val templateController = new TemplateController(authService)

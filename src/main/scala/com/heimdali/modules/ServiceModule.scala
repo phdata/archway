@@ -1,24 +1,26 @@
 package com.heimdali.modules
 
+import cats.effect.Effect
 import com.heimdali.models.AppContext
 import com.heimdali.services._
 import doobie.util.transactor.Transactor
 
 trait ServiceModule[F[_]] {
-  this: AppModule[F]
-    with ContextModule[F]
-    with ExecutionContextModule
+  this: ContextModule[F]
+    with ExecutionContextModule[F]
     with ClientModule[F]
     with RepoModule
     with ConfigurationModule
     with HttpModule[F] =>
+
+  implicit def effect: Effect[F]
 
   private val metaTransactor = Transactor.fromDriverManager[F](
     appConfig.db.meta.driver,
     appConfig.db.meta.url,
     appConfig.db.meta.username.get,
     appConfig.db.meta.password.get
-  )
+  )(effect, contextShift)
 
   val keytabService: KeytabService[F] =
     new KeytabServiceImpl[F]()
@@ -31,7 +33,7 @@ trait ServiceModule[F[_]] {
       memberRepository,
       metaTransactor,
       ldapRepository,
-      ldapClient
+      ldapClient,
     )
 
   val reader: AppContext[F] = AppContext[F](
@@ -69,6 +71,9 @@ trait ServiceModule[F[_]] {
       applicationRepository,
       reader
     )
+
+  val emailService: EmailService[F] =
+    new EmailServiceImpl[F](emailClient, appConfig, workspaceService, ldapClient)
 
   val kafkaService: KafkaService[F] =
     new KafkaServiceImpl[F](reader)

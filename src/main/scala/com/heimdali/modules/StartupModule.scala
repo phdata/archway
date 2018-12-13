@@ -1,13 +1,15 @@
 package com.heimdali.modules
 
+import cats.effect.Effect
 import com.heimdali.startup._
 import org.flywaydb.core.Flyway
 
 trait StartupModule[F[_]] {
-  this: AppModule[F]
-    with ExecutionContextModule
+  this: ExecutionContextModule[F]
     with ConfigurationModule
     with ContextModule[F] =>
+
+  implicit def effect: Effect[F]
 
   val flyway: Flyway = new Flyway()
 

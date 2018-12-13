@@ -8,18 +8,22 @@ import com.heimdali.services.LoginContextProvider
 import scala.concurrent.ExecutionContext
 
 trait SessionMaintainer[F[_]] {
+
   def setup: F[Unit]
+
 }
 
-class SessionMaintainerImpl[F[_] : Effect](clusterConfig: ClusterConfig,
+class SessionMaintainerImpl[F[_] : Sync](clusterConfig: ClusterConfig,
                             loginContextProvider: LoginContextProvider)
-                           (implicit executionContext: ExecutionContext)
+                           (implicit timer: Timer[F])
   extends SessionMaintainer[F] {
 
-  def keepAlive: IO[Unit] =
-    loginContextProvider.kinit() >> Timer[IO].sleep(clusterConfig.sessionRefresh) >> keepAlive
-
   override def setup: F[Unit] =
-    Async[F].liftIO(keepAlive)
+    loginContextProvider.kinit().flatMap { _ =>
+      fs2.Stream.awakeEvery[F](clusterConfig.sessionRefresh)
+        .evalMap(_ => loginContextProvider.kinit())
+        .compile
+        .drain
+    }
 
 }

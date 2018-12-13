@@ -108,7 +108,7 @@ class CDHYarnClient[F[_] : Sync](http: HttpClient[F],
     for {
       url <- configURL
       _ <- Sync[F].pure(logger.debug("updating yarn at {}", url))
-      request <- PUT(Uri.fromString(url).right.get, updatedJson)
+      request <- PUT(updatedJson, Uri.fromString(url).right.get)
       response <- http.request[Json](request)
     } yield response
 

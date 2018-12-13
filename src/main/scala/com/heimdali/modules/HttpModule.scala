@@ -1,17 +1,18 @@
 package com.heimdali.modules
 
+import cats.effect.{Async, ConcurrentEffect, Resource}
 import com.heimdali.clients.{CMClient, HttpClient}
 import org.http4s.client.Client
-import org.http4s.client.blaze.{BlazeClientConfig, Http1Client}
-import scala.concurrent.duration._
+import org.http4s.client.blaze.BlazeClientBuilder
 
 trait HttpModule[F[_]] {
-  this: AppModule[F] with ConfigurationModule =>
+  this: ConfigurationModule
+    with ExecutionContextModule[F] =>
 
-  private val client: F[Client[F]] = Http1Client[F](
-    BlazeClientConfig.defaultConfig
-      .copy(responseHeaderTimeout = 60 seconds)
-  )
+  implicit def effect: ConcurrentEffect[F]
+
+  private val client: Resource[F, Client[F]] =
+    BlazeClientBuilder[F](executionContext).resource
 
   val http: HttpClient[F] = new CMClient[F](client, appConfig.cluster)
 

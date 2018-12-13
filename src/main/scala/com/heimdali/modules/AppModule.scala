@@ -1,15 +1,15 @@
 package com.heimdali.modules
 
-import cats.effect.Effect
+import cats.effect._
 import com.heimdali.rest.RestAPI
 import com.heimdali.startup.Startup
-import java.time.Clock
 
-abstract class AppModule[F[_]](implicit val CF: Effect[F]) {
+abstract class IOAppModule[F[_]](implicit val contextShift: ContextShift[IO],
+                           val timer: Timer[IO],
+                           val effect: ConcurrentEffect[F])
+  extends ExecutionContextModule[IO] {
 
-  implicit val clock: Clock = Clock.systemUTC()
-
-  def startup: Startup[F]
+  def startup: Startup[IO]
 
   def restAPI: RestAPI
 

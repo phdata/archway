@@ -2,13 +2,13 @@ package com.heimdali.rest
 
 import cats.effect.IO
 import com.heimdali.test.fixtures._
-import io.circe.{Json, JsonObject}
-import io.circe._
-import io.circe.syntax._
+import io.circe.Json
 import io.circe.java8.time._
+import io.circe.syntax._
 import org.http4s._
 import org.http4s.client.dsl.Http4sClientDsl
 import org.http4s.dsl.io._
+import org.http4s.implicits._
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FlatSpec, Matchers}
 
@@ -23,7 +23,7 @@ class TemplateControllerSpec
   it should "generate a simple workspace" in new Http4sClientDsl[IO] with Context {
     val request = fromResource("rest/templates.simple.post.json")
 
-    val response = templateController.route.orNotFound.run(POST(uri("/simple"), request).unsafeRunSync())
+    val response = templateController.route.orNotFound.run(POST(request, Uri.uri("/simple")).unsafeRunSync())
 
     val expected: Json =
       fromResource("rest/templates.simple.post.expected.json")

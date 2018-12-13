@@ -1,16 +1,13 @@
 package com.heimdali.rest
 
-import cats._
 import cats.data._
-import cats.implicits._
 import cats.effect.IO
-import com.heimdali.rest.AccountController
-import com.heimdali.services.{AccountService, UserTemplate}
+import com.heimdali.services.AccountService
 import com.heimdali.test.fixtures.{HttpTest, _}
 import org.http4s._
-import org.http4s.circe._
 import org.http4s.client.dsl.Http4sClientDsl
 import org.http4s.dsl.io._
+import org.http4s.implicits._
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FlatSpec, Matchers}
 
@@ -42,14 +39,14 @@ class AccountControllerSpec
   it should "return the workspace if one exists" in new Context {
     accountService.getWorkspace _ expects standardUserDN returning OptionT.some(savedWorkspaceRequest)
 
-    val response = accountController.tokenizedRoutes.orNotFound.run(Request(uri = uri("/workspace")))
+    val response = accountController.tokenizedRoutes.orNotFound.run(Request(uri = Uri.uri("/workspace")))
     check(response, Status.Ok, Some(defaultResponse))
   }
 
   it should "create a new workspace" in new Http4sClientDsl[IO] with Context {
     accountService.createWorkspace _ expects infraApproverUser returning OptionT.some(savedWorkspaceRequest)
 
-    val response = accountController.tokenizedRoutes.orNotFound.run(POST(uri("/workspace")).unsafeRunSync())
+    val response = accountController.tokenizedRoutes.orNotFound.run(POST(Uri.uri("/workspace")).unsafeRunSync())
     check(response, Status.Created, Some(defaultResponse))
   }
 

@@ -2,9 +2,11 @@ package com.heimdali.rest
 
 import java.time.Instant
 
+import cats.data.OptionT
 import cats.effect._
 import cats.implicits._
 import com.heimdali.models._
+import com.heimdali.repositories.Manager
 import com.heimdali.services._
 import com.heimdali.test.fixtures._
 import io.circe.Json
@@ -13,6 +15,8 @@ import io.circe.syntax._
 import org.http4s._
 import org.http4s.client.dsl.Http4sClientDsl
 import org.http4s.dsl.io._
+import org.http4s.syntax._
+import org.http4s.implicits._
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach, FlatSpec, Matchers}
 
@@ -29,21 +33,21 @@ class WorkspaceControllerSpec
   it should "create a workspace" in new Http4sClientDsl[IO] with Context {
     workspaceService.create _ expects * returning IO(savedWorkspaceRequest)
 
-    val response = restApi.route.orNotFound.run(POST(uri("/"), fromResource("rest/workspaces.request.actual.json")).unsafeRunSync())
+    val response = restApi.route.orNotFound.run(POST(fromResource("rest/workspaces.request.actual.json"), Uri.uri("/")).unsafeRunSync())
     check(response, Status.Created, Some(defaultResponse))
   }
 
   it should "list all workspaces" in new Http4sClientDsl[IO] with Context {
     workspaceService.list _ expects * returning IO(List(searchResult))
 
-    val response = restApi.route.orNotFound.run(GET(uri("/")).unsafeRunSync())
+    val response = restApi.route.orNotFound.run(GET(Uri.uri("/")).unsafeRunSync())
     check(response, Status.Ok, Some(Json.arr(searchResultResponse)))
   }
 
   it should "list all members" in new Http4sClientDsl[IO] with Context {
     memberService.members _ expects id returning IO.pure(List(WorkspaceMemberEntry(standardUserDN, "John Doe", Some("johndoe@email.com"), List.empty, List.empty, List.empty, List.empty)))
 
-    val response = restApi.route.orNotFound.run(GET(uri("/123/members")).unsafeRunSync())
+    val response = restApi.route.orNotFound.run(GET(Uri.uri("/123/members")).unsafeRunSync())
     val Right(json) = parse(
       s"""
          | [
@@ -68,22 +72,41 @@ class WorkspaceControllerSpec
       .expects(id, Approval(Infra, standardUsername, Instant.now(clock)))
       .returning(IO.pure(approval(clock.instant).copy(id = Some(id))))
 
-    val response = restApi.route.orNotFound.run(POST(uri("/123/approve"), Json.obj("role" -> "infra".asJson)).unsafeRunSync())
+    val response = restApi.route.orNotFound.run(POST(Json.obj("role" -> "infra".asJson), Uri.uri("/123/approve")).unsafeRunSync())
     check(response, Created, Some(Json.obj("risk" -> Json.obj("approver" -> standardUsername.asJson, "approval_time" -> clock.instant.asJson))))
   }
 
   it should "list yarn applications" in new Http4sClientDsl[IO] with Context {
     workspaceService.yarnInfo _ expects id returning List(YarnInfo("pool", List(YarnApplication("application123", "MyApp")))).pure[IO]
 
-    val response = restApi.route.orNotFound.run(GET(uri("/123/yarn")).unsafeRunSync())
+    val response = restApi.route.orNotFound.run(GET(Uri.uri("/123/yarn")).unsafeRunSync())
     check(response, Status.Ok, Some(fromResource("rest/workspaces.yarn.expected.json")))
   }
 
   it should "list hive information" in new Http4sClientDsl[IO] with Context {
     workspaceService.hiveDetails _ expects id returning List(HiveDatabase("test", List(HiveTable("table1")))).pure[IO]
 
-    val response = restApi.route.orNotFound.run(GET(uri("/123/hive")).unsafeRunSync())
+    val response = restApi.route.orNotFound.run(GET(Uri.uri("/123/hive")).unsafeRunSync())
     check(response, Ok, Some(fromResource("rest/workspaces.hive.expected.json")))
+  }
+
+  it should "add a user" in new Http4sClientDsl[IO] with Context {
+    val memberRequest = MemberRoleRequest(standardUserDN, "data", id, Manager)
+    (memberService.addMember _)
+      .expects(id, memberRequest)
+      .returning(OptionT.some(
+        WorkspaceMemberEntry(standardUserDN, name, Some("johndoe@phdata.io"), List.empty, List.empty, List.empty, List.empty)
+      ))
+    (emailService.newMemberEmail _).expects(id, memberRequest).returning(OptionT.some(IO.unit))
+
+    val request = Json.obj(
+      "distinguished_name" -> standardUserDN.asJson,
+      "resource" -> "data".asJson,
+      "resource_id" -> id.asJson,
+      "role" -> "manager".asJson
+    )
+
+    restApi.route.orNotFound.run(POST(request, Uri.uri("/123/members")).unsafeRunSync()).unsafeRunSync()
   }
 
   trait Context {
@@ -92,7 +115,8 @@ class WorkspaceControllerSpec
     val kafkaService: KafkaService[IO] = mock[KafkaService[IO]]
     val workspaceService: WorkspaceService[IO] = mock[WorkspaceService[IO]]
     val applicationService: ApplicationService[IO] = mock[ApplicationService[IO]]
+    val emailService: EmailService[IO] = mock[EmailService[IO]]
 
-    def restApi: WorkspaceController = new WorkspaceController(authService, workspaceService, memberService, kafkaService, applicationService, clock)
+    def restApi: WorkspaceController = new WorkspaceController(authService, workspaceService, memberService, kafkaService, applicationService, emailService, clock)
   }
 }

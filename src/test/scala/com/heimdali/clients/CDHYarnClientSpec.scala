@@ -12,6 +12,8 @@ import org.http4s._
 import org.http4s.circe._
 import org.http4s.client.Client
 import org.http4s.dsl.io._
+import org.http4s.implicits._
+import org.http4s.syntax._
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FlatSpec, Matchers}
 
@@ -65,7 +67,7 @@ class CDHYarnClientSpec extends FlatSpec with MockFactory with Matchers with Htt
   }
 
   trait HttpContext {
-    val yarnClient = IO.pure(Client.fromHttpService(HttpService[IO] {
+    val yarnClient = Resource.make(IO.pure(Client.fromHttpApp(HttpRoutes.of[IO] {
       case GET -> Root / "api" / "v18" / "clusters" / "cluster" =>
         Ok(fromResource("cloudera/clusters.cluster_name.actual.json"))
       case GET -> Root / "api" / "v18" / "clusters" / "cluster" / "services" / yarnApp.id / "config" =>
@@ -76,7 +78,7 @@ class CDHYarnClientSpec extends FlatSpec with MockFactory with Matchers with Htt
         Ok(fromResource("cloudera/commands.poolsRefresh.expected.json"))
       case GET -> Root / "api" / "v18" / "clusters" / "cluster" / "services" / yarnApp.id / "yarnApplications" =>
         Ok(fromResource("cloudera/clusters.cluster.services.yarn.yarnApplications.json"))
-    }))
+    }.orNotFound)))(_ => IO.unit)
   }
 
 }

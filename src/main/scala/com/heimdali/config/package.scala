@@ -38,6 +38,10 @@ package object config {
 
   case class RestConfig(port: Int, secret: String)
 
+  case class UIConfig(url: String)
+
+  case class SMTPConfig(host: String, port: Int, auth: Boolean, user: Option[String], pass: Option[String], ssl: Boolean)
+
   case class ApprovalConfig(infrastructure: String, risk: String)
 
   case class WorkspaceConfigItem(root: String, defaultSize: Int, defaultCores: Int, defaultMemory: Int, poolParents: String)
@@ -60,6 +64,8 @@ package object config {
   case class KafkaConfig(zookeeperConnect: String)
 
   case class AppConfig(rest: RestConfig,
+                       ui: UIConfig,
+                       smtp: SMTPConfig,
                        cluster: ClusterConfig,
                        approvers: ApprovalConfig,
                        ldap: LDAPConfig,

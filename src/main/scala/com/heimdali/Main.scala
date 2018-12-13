@@ -1,14 +1,16 @@
 package com.heimdali
 
-import cats.effect.IO
+import java.util.concurrent.{Executor, Executors}
+
+import cats.effect.{ContextShift, ExitCode, IO, IOApp}
 import com.heimdali.modules._
-import fs2.{Stream, StreamApp}
 
 import scala.concurrent.ExecutionContext
 
-object Main extends StreamApp[IO] {
-  val heimdaliApp = new AppModule[IO]
-    with ExecutionContextModule
+object Main extends IOApp {
+
+  val heimdaliApp = new IOAppModule[IO]
+    with ExecutionContextModule[IO]
     with ConfigurationModule
     with ContextModule[IO]
     with FileSystemModule[IO]
@@ -20,10 +22,15 @@ object Main extends StreamApp[IO] {
     with ServiceModule[IO]
     with RestModule
 
-  override def stream(args: List[String], requestShutdown: IO[Unit]): Stream[IO, StreamApp.ExitCode] = {
-    implicit val ec: ExecutionContext =  heimdaliApp.executionContext
+  override def run(args: List[String]): IO[ExitCode] = {
+    import heimdaliApp._
 
-    heimdaliApp.startup.start().unsafeRunSync()
-    heimdaliApp.restAPI.build().serve
+    val startupContext = ExecutionContext.fromExecutor(Executors.newSingleThreadExecutor())
+    val startupShift = IO.contextShift(startupContext)
+
+    for {
+      _ <- heimdaliApp.startup.start().start(startupShift)
+      result <- heimdaliApp.restAPI.build()
+    } yield result
   }
 }

@@ -19,6 +19,7 @@ import org.scalatest.prop.TableDrivenPropertyChecks._
 import org.scalatest.prop.TableFor2
 import org.scalatest.{FlatSpec, Matchers}
 
+import scala.concurrent.ExecutionContext
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class WorkspaceServiceImplSpec
@@ -60,7 +61,7 @@ class WorkspaceServiceImplSpec
       (workspaceRepository.create _).expects(initialWorkspaceRequest.copy(compliance = savedCompliance)).returning(id.pure[ConnectionIO])
       (ldapRepository.create _).expects(initialLDAP).returning(savedLDAP.pure[ConnectionIO])
       (grantRepository.create _).expects(id).returning(id.pure[ConnectionIO])
-      (memberRepository.create _).expects(standardUsername, id).returning(id.pure[ConnectionIO])
+      (memberRepository.create _).expects(standardUserDN, id).returning(id.pure[ConnectionIO])
       (hiveDatabaseRepository.create _).expects(initialHive.copy(managingGroup = initialGrant.copy(id = Some(id), ldapRegistration = savedLDAP))).returning(id.pure[ConnectionIO])
       (workspaceRepository.linkHive _).expects(id, id).returning(1.pure[ConnectionIO])
 
@@ -70,7 +71,7 @@ class WorkspaceServiceImplSpec
       (ldapRepository.create _).expects(initialLDAP).returning(savedLDAP.pure[ConnectionIO])
       (applicationRepository.create _).expects(initialApplication.copy(group = savedLDAP)).returning(id.pure[ConnectionIO])
       (workspaceRepository.linkApplication _).expects(id, id).returning(1.pure[ConnectionIO])
-      (memberRepository.create _).expects(standardUsername, id).returning(1L.pure[ConnectionIO])
+      (memberRepository.create _).expects(standardUserDN, id).returning(1L.pure[ConnectionIO])
     }
 
     val newWorkspace =
@@ -162,10 +163,9 @@ class WorkspaceServiceImplSpec
     }
 
     inSequence {
-      ldapClient.addUser _ expects(savedLDAP.distinguishedName, standardUsername) returning OptionT.some(standardUserDN)
-      memberRepository.complete _ expects(id, standardUsername) returning 0.pure[ConnectionIO]
+      ldapClient.addUser _ expects(savedLDAP.distinguishedName, standardUserDN) returning OptionT.some(standardUserDN)
+      memberRepository.complete _ expects(id, standardUserDN) returning 0.pure[ConnectionIO]
     }
-
 
     inSequence {
       yarnClient.createPool _ expects(poolName, maxCores, maxMemoryInGB) returning IO.unit
@@ -185,8 +185,8 @@ class WorkspaceServiceImplSpec
     }
 
     inSequence {
-      ldapClient.addUser _ expects(savedLDAP.distinguishedName, standardUsername) returning OptionT.some(standardUserDN)
-      memberRepository.complete _ expects(id, standardUsername) returning 0.pure[ConnectionIO]
+      ldapClient.addUser _ expects(savedLDAP.distinguishedName, standardUserDN) returning OptionT.some(standardUserDN)
+      memberRepository.complete _ expects(id, standardUserDN) returning 0.pure[ConnectionIO]
     }
 
     projectServiceImpl.provision(savedWorkspaceRequest).unsafeRunSync()
@@ -219,6 +219,8 @@ class WorkspaceServiceImplSpec
   }
 
   trait Context {
+    implicit val contextShift = IO.contextShift(ExecutionContext.global)
+
     val ldapClient: LDAPClient[IO] = mock[LDAPClient[IO]]
     val hdfsClient: HDFSClient[IO] = mock[HDFSClient[IO]]
     val sentryClient: SentryClient[IO] = mock[SentryClient[IO]]
@@ -242,7 +244,7 @@ class WorkspaceServiceImplSpec
     val topicGrantRepository: TopicGrantRepository = mock[TopicGrantRepository]
     val applicationRepository: ApplicationRepository = mock[ApplicationRepository]
 
-    val transactor = Transactor.fromConnection[IO](null).copy(strategy0 = Strategy(FC.unit, FC.unit, FC.unit, FC.unit))
+    val transactor = Transactor.fromConnection[IO](null, ExecutionContext.global).copy(strategy0 = Strategy(FC.unit, FC.unit, FC.unit, FC.unit))
 
     lazy val appConfig: AppContext[IO] = AppContext(
       null,

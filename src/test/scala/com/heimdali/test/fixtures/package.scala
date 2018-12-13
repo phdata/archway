@@ -2,10 +2,8 @@ package com.heimdali.test
 
 import java.time.{Clock, Instant, ZoneId}
 
-import cats.effect.IO
-import com.heimdali.clients.CMClient
-import org.http4s.HttpService
-import org.http4s.circe._
+import cats.effect.{IO, Resource}
+import org.http4s.{HttpRoutes, HttpService}
 import org.http4s.client.Client
 import org.http4s.dsl.io._
 import cats.effect.IO
@@ -18,9 +16,13 @@ import io.circe.parser._
 import org.http4s.HttpService
 import org.http4s.circe._
 import org.http4s.client.Client
+import org.http4s.client.blaze.BlazeClientBuilder
 import org.http4s.dsl.io._
+import org.http4s.implicits._
+import org.http4s.syntax._
 import pureconfig.{CamelCase, ConfigFieldMapping, ProductHint}
 
+import scala.concurrent.ExecutionContext
 import scala.concurrent.duration._
 import scala.io.Source
 
@@ -81,7 +83,7 @@ package object fixtures {
     name,
     name,
     "simple",
-    standardUsername,
+    standardUserDN,
     Instant.now(clock),
     savedCompliance,
     singleUser = false,
@@ -180,7 +182,7 @@ package object fixtures {
        |  ],
        |  "topics": [],
        |  "single_user": false,
-       |  "requester": "$standardUsername",
+       |  "requester": "$standardUserDN",
        |  "requested_date": "${Instant.now(clock)}"
        |}
        """.stripMargin)
@@ -191,7 +193,7 @@ package object fixtures {
     parsedJson
   }
 
-  val testClient = IO.pure(Client.fromHttpService(HttpService[IO] {
+  val testClient = Resource.make(IO.pure(Client.fromHttpApp(HttpRoutes.of[IO] {
     case GET -> Root / "api" / "v18" / "clusters" / "cluster" =>
       Ok(fromResource("cloudera/clusters.cluster_name.actual.json"))
 
@@ -203,7 +205,8 @@ package object fixtures {
 
     case GET -> Root / "api" / "v18" / "clusters" / "cluster" / "services" =>
       Ok(fromResource("cloudera/services.json"))
-  }))
+  }.orNotFound)))(pool => IO.unit)
+
 
   val httpClient = new CMClient[IO](testClient, clusterConfig)
 

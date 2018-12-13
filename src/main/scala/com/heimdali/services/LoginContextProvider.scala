@@ -3,7 +3,7 @@ package com.heimdali.services
 import cats.effect.{Async, Effect, IO, Sync}
 
 trait LoginContextProvider {
-  def kinit(): IO[Unit]
+  def kinit[F[_] : Sync](): F[Unit]
 
   def elevate[F[_] : Async, A](user: String)(block: () => A): F[A]
 

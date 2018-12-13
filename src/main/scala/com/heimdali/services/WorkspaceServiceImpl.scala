@@ -5,6 +5,7 @@ import java.util.concurrent.Executors
 import cats.data._
 import cats.effect._
 import cats.implicits._
+import cats.effect.implicits._
 import com.heimdali.clients._
 import com.heimdali.models._
 import com.heimdali.repositories.{MemberRepository, _}
@@ -27,13 +28,14 @@ class WorkspaceServiceImpl[F[_]](ldapClient: LDAPClient[F],
                                  memberRepository: MemberRepository,
                                  topicRepository: KafkaTopicRepository,
                                  applicationRepository: ApplicationRepository,
-                                 appConfig: AppContext[F]
-                                )(implicit val F: Effect[F], val executionContext: ExecutionContext)
+                                 appConfig: AppContext[F],
+                                )(implicit val F: ConcurrentEffect[F], val executionContext: ExecutionContext)
   extends WorkspaceService[F]
     with LazyLogging {
 
   private val provisionContext =
     ExecutionContext.fromExecutor(Executors.newFixedThreadPool(10))
+  private val provisionContextShift = IO.contextShift(provisionContext)
 
   private val GroupExtractor = "CN=edh_sw_([A-z0-9_]+),OU=.*".r
 
@@ -120,11 +122,12 @@ class WorkspaceServiceImpl[F[_]](ldapClient: LDAPClient[F],
       .transact(transactor)
 
   override def approve(id: Long, approval: Approval): F[Approval] =
-    for {
-      approval <- OptionT.liftF(approvalRepository.create(id, approval).transact(transactor)).value
-      workspace <- find(id).value
-      _ <- if (workspace.get.approvals.lengthCompare(2) == 0) OptionT.liftF(fs2.async.fork(provision(workspace.get))).value else OptionT.none(F).value
-    } yield approval.get
+    approvalRepository.create(id, approval).transact(transactor).flatMap { approval =>
+      find(id).value.flatMap {
+        case Some(workspace) if workspace.approvals.lengthCompare(2) == 0 =>
+          ConcurrentEffect[F].liftIO(IO(provision(workspace)).start(provisionContextShift))
+      }.map(_ => approval)
+    }
 
   def provision(workspace: WorkspaceRequest): F[NonEmptyList[String]] = {
     import com.heimdali.tasks.ProvisionTask._

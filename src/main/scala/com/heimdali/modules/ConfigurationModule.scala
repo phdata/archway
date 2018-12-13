@@ -1,6 +1,7 @@
 package com.heimdali.modules
 
 import java.io.File
+import java.time.Clock
 
 import com.heimdali.config.AppConfig
 import com.typesafe.config.{Config, ConfigFactory}
@@ -12,6 +13,8 @@ import org.apache.hadoop.fs.Path
 import pureconfig.{CamelCase, ConfigFieldMapping, ProductHint}
 
 trait ConfigurationModule {
+
+  implicit val clock: Clock = Clock.systemUTC()
 
   val configuration: Config = ConfigFactory.load()
 

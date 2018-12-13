@@ -18,11 +18,12 @@ class WorkspaceController(authService: AuthService[IO],
                           memberService: MemberService[IO],
                           kafkaService: KafkaService[IO],
                           applicationService: ApplicationService[IO],
+                          emailService: EmailService[IO],
                           clock: Clock) {
 
   implicit val memberRequestEntityDecoder: EntityDecoder[IO, MemberRequest] = jsonOf[IO, MemberRequest]
 
-  val route: HttpService[IO] =
+  val route: HttpRoutes[IO] =
     authService.tokenAuth {
       AuthedService[User, IO] {
         case req@POST -> Root / LongVar(id) / "approve" as user =>
@@ -83,6 +84,7 @@ class WorkspaceController(authService: AuthService[IO],
           for {
             memberRequest <- req.req.as[MemberRoleRequest]
             newMember <- memberService.addMember(id, memberRequest).value
+            _ <- emailService.newMemberEmail(id, memberRequest).value
             response <- newMember.fold(NotFound())(member => Created(member.asJson))
           } yield response
 

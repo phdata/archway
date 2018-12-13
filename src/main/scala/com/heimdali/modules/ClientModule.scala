@@ -1,11 +1,13 @@
 package com.heimdali.modules
 
 import java.net.URI
-import javax.net.ssl.SSLSocketFactory
 
+import cats.effect.Effect
 import com.heimdali.clients._
+import com.heimdali.config.SMTPConfig
 import com.unboundid.ldap.sdk.{LDAPConnection, LDAPConnectionPool}
 import com.unboundid.util.ssl.{SSLUtil, TrustAllTrustManager}
+import courier.Mailer
 import doobie.FC
 import doobie.util.transactor.{Strategy, Transactor}
 import org.apache.hadoop.fs.FileSystem
@@ -13,12 +15,14 @@ import org.apache.hadoop.hdfs.client.HdfsAdmin
 import org.apache.sentry.provider.db.generic.service.thrift.{SentryGenericServiceClient, SentryGenericServiceClientFactory}
 
 trait ClientModule[F[_]] {
-  this: AppModule[F]
-    with ConfigurationModule
+  this: ConfigurationModule
+    with ExecutionContextModule[F]
     with HttpModule[F]
     with ContextModule[F]
     with FileSystemModule[F]
     with ClusterModule[F] =>
+
+  implicit def effect: Effect[F]
 
   val ldapConnectionPool: LDAPConnectionPool = {
     val sslUtil = new SSLUtil(new TrustAllTrustManager)
@@ -58,7 +62,7 @@ trait ClientModule[F[_]] {
   Class.forName("org.apache.hive.jdbc.HiveDriver")
   // Turn the transactor into no
   private val initialHiveTransactor =
-    Transactor.fromDriverManager[F](hiveConfig.driver, hiveConfig.url, "", "")
+    Transactor.fromDriverManager[F](hiveConfig.driver, hiveConfig.url, "", "")(effect, contextShift)
   val strategy = Strategy.void.copy(always = FC.close)
   val hiveTransactor = Transactor.strategy.set(initialHiveTransactor, strategy)
 
@@ -70,5 +74,22 @@ trait ClientModule[F[_]] {
 
   val hiveClient: HiveClient[F] =
     new HiveClientImpl[F](loginContextProvider, hiveTransactor)
+
+  private val mailer: Mailer = appConfig.smtp match {
+    case SMTPConfig(host, port, true, Some(user), Some(pass), ssl) =>
+      logger.info(s"username: $user")
+      logger.info(s"password: $pass")
+      Mailer(host, port)
+        .auth(true)
+        .as(user, pass)
+        .startTls(ssl)()
+
+    case SMTPConfig(host, port, _, _, _, ssl) =>
+      Mailer(host, port)
+        .startTls(ssl)()
+  }
+
+  val emailClient: EmailClient[F] =
+    new EmailClientImpl[F](mailer)(effect, executionContext)
 
 }

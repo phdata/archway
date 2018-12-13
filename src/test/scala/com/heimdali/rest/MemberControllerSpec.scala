@@ -6,6 +6,7 @@ import com.heimdali.test.fixtures._
 import org.http4s._
 import org.http4s.client.dsl.Http4sClientDsl
 import org.http4s.dsl.io._
+import org.http4s.implicits._
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FlatSpec, Matchers}
 
@@ -23,7 +24,7 @@ class MemberControllerSpec
       List(MemberSearchResultItem("John's Group", "cn=johngroup,dc=example,dc=io"))
     )))
 
-    val response = memberController.route.orNotFound.run(GET(uri("/jo")).unsafeRunSync())
+    val response = memberController.route.orNotFound.run(GET(Uri.uri("/jo")).unsafeRunSync())
 
     check(response, Status.Ok, Some(fromResource("rest/members.jo.json")))
   }

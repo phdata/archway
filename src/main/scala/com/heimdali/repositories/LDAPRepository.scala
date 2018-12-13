@@ -5,8 +5,7 @@ import cats.implicits._
 import cats.data.OptionT
 import com.heimdali.models.LDAPRegistration
 import doobie.free.connection.ConnectionIO
-import doobie.util.composite.Composite
-import doobie.util.meta.Meta
+import doobie.util.Read
 
 trait LDAPRepository {
 
@@ -41,7 +40,9 @@ object DatabaseRole {
       case _ => None
     }
 
-  implicit val composite: Meta[DatabaseRole] = Meta[String].xmap(unapply(_).get, _.show)
+  implicit val reader: Read[DatabaseRole] =
+    Read[String].map(unapply(_).get)
+
 }
 
 case object Manager extends DatabaseRole

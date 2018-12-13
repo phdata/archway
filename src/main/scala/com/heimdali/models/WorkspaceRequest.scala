@@ -34,12 +34,11 @@ case class WorkspaceRequest(name: String,
 
 object WorkspaceRequest {
 
-  implicit val workspaceRequestComposite: Composite[WorkspaceRequest] =
-    Composite[(String, String, String, String, String, Instant, Boolean, Boolean, Boolean, Option[Long], Boolean, Option[Long])].imap(
-      (t: (String, String, String, String, String, Instant, Boolean, Boolean, Boolean, Option[Long], Boolean, Option[Long])) =>
-        WorkspaceRequest(t._1, t._2, t._3, t._4, t._5, t._6, Compliance(t._7, t._8, t._9, t._10), t._11, t._12))(
-      (w: WorkspaceRequest) => (w.name, w.summary, w.description, w.behavior, w.requestedBy, w.requestDate, w.compliance.phiData, w.compliance.pciData, w.compliance.piiData, w.compliance.id, w.singleUser, w.id)
-    )
+  implicit val reader: Read[WorkspaceRequest] =
+    Read[(String, String, String, String, String, Instant, Boolean, Boolean, Boolean, Option[Long], Boolean, Option[Long])].map {
+      case (name, summary, description, behavior, requestedBy, requestDate, phiData, pciData, piiData, copmlianceId, singleUser, id) =>
+        WorkspaceRequest(name, summary, description, behavior, requestedBy, requestDate, Compliance(phiData, pciData, piiData, copmlianceId), singleUser, id)
+    }
 
   implicit val encoder: Encoder[WorkspaceRequest] = Encoder.instance { request =>
     request.approvals.foldLeft(
