@@ -2,7 +2,7 @@ import * as React from 'react';
 import { shallow } from 'enzyme';
 
 import WorkspaceListItem from '../WorkspaceListItem';
-import { WorkspaceSearchResult } from '../../types/Workspace';
+import { WorkspaceSearchResult } from '../../models/Workspace';
 
 describe('WorkspaceListItem', () => {
   it('renders correctly', () => {

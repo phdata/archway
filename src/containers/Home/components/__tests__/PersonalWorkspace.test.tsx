@@ -2,7 +2,7 @@ import * as React from 'react';
 import { shallow } from 'enzyme';
 
 import PersonalWorkspace from '../PersonalWorkspace';
-import { Workspace } from '../../../../types/Workspace';
+import { Workspace } from '../../../../models/Workspace';
 
 describe('PersonalWorkspace', () => {
   it('renders correctly', () => {
