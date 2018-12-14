@@ -6,7 +6,21 @@ ShallowWrapper {
   Symbol(enzyme.__unrendered__): <PersonalWorkspace
     loading={false}
     requestWorkspace={[Function]}
-    services={Array []}
+    services={
+      Object {
+        "hive": Object {
+          "thrift": Array [
+            Object {
+              "host": "",
+              "port": "",
+            },
+          ],
+        },
+        "hue": Object {},
+        "impala": Object {},
+        "yarn": Object {},
+      }
+    }
     workspace={
       Object {
         "applications": Array [],
@@ -112,302 +126,138 @@ ShallowWrapper {
             bodyStyle={
               Object {
                 "display": "flex",
+                "flexDirection": "column",
               }
             }
-            title="Your Personal Workspace"
           >
-            <Unknown
-              style={
-                Object {
-                  "boxShadow": "none",
-                  "flex": 1,
+            <Label>
+              Your Personal Workspace
+            </Label>
+            <div>
+              <div
+                style={
+                  Object {
+                    "display": "flex",
+                    "fontSize": "12px",
+                    "fontWeight": "bold",
+                    "justifyContent": "center",
+                    "textAlign": "center",
+                  }
                 }
-              }
-            >
-              <h3>
-                Connect to Your Database With
-                 
-                <a
-                  href="https://github.com/cloudera/impyla"
-                  rel="noreferrer noopener"
-                  target="_blank"
+              >
+                <div
+                  style={
+                    Object {
+                      "padding": "10px",
+                    }
+                  }
                 >
-                  impyla
-                </a>
-              </h3>
-              <SyntaxHighlighter
-                language="python"
-                style={
-                  Object {
-                    "hljs": Object {
-                      "background": "#002b36",
-                      "color": "#839496",
-                      "display": "block",
-                      "overflowX": "auto",
-                      "padding": "0.5em",
-                    },
-                    "hljs-addition": Object {
-                      "color": "#859900",
-                    },
-                    "hljs-attr": Object {
-                      "color": "#b58900",
-                    },
-                    "hljs-attribute": Object {
-                      "color": "#b58900",
-                    },
-                    "hljs-built_in": Object {
-                      "color": "#dc322f",
-                    },
-                    "hljs-bullet": Object {
-                      "color": "#cb4b16",
-                    },
-                    "hljs-class .hljs-title": Object {
-                      "color": "#b58900",
-                    },
-                    "hljs-comment": Object {
-                      "color": "#586e75",
-                    },
-                    "hljs-deletion": Object {
-                      "color": "#dc322f",
-                    },
-                    "hljs-doctag": Object {
-                      "color": "#2aa198",
-                    },
-                    "hljs-emphasis": Object {
-                      "fontStyle": "italic",
-                    },
-                    "hljs-formula": Object {
-                      "background": "#073642",
-                    },
-                    "hljs-keyword": Object {
-                      "color": "#859900",
-                    },
-                    "hljs-link": Object {
-                      "color": "#cb4b16",
-                    },
-                    "hljs-literal": Object {
-                      "color": "#2aa198",
-                    },
-                    "hljs-meta": Object {
-                      "color": "#cb4b16",
-                    },
-                    "hljs-meta .hljs-keyword": Object {
-                      "color": "#cb4b16",
-                    },
-                    "hljs-meta .hljs-meta-string": Object {
-                      "color": "#2aa198",
-                    },
-                    "hljs-name": Object {
-                      "color": "#268bd2",
-                    },
-                    "hljs-number": Object {
-                      "color": "#2aa198",
-                    },
-                    "hljs-quote": Object {
-                      "color": "#586e75",
-                    },
-                    "hljs-regexp": Object {
-                      "color": "#2aa198",
-                    },
-                    "hljs-section": Object {
-                      "color": "#268bd2",
-                    },
-                    "hljs-selector-attr": Object {
-                      "color": "#cb4b16",
-                    },
-                    "hljs-selector-class": Object {
-                      "color": "#268bd2",
-                    },
-                    "hljs-selector-id": Object {
-                      "color": "#268bd2",
-                    },
-                    "hljs-selector-pseudo": Object {
-                      "color": "#cb4b16",
-                    },
-                    "hljs-selector-tag": Object {
-                      "color": "#859900",
-                    },
-                    "hljs-string": Object {
-                      "color": "#2aa198",
-                    },
-                    "hljs-strong": Object {
-                      "fontWeight": "bold",
-                    },
-                    "hljs-subst": Object {
-                      "color": "#cb4b16",
-                    },
-                    "hljs-symbol": Object {
-                      "color": "#cb4b16",
-                    },
-                    "hljs-template-variable": Object {
-                      "color": "#b58900",
-                    },
-                    "hljs-title": Object {
-                      "color": "#268bd2",
-                    },
-                    "hljs-type": Object {
-                      "color": "#b58900",
-                    },
-                    "hljs-variable": Object {
-                      "color": "#b58900",
-                    },
+                  <div>
+                    HDFS LOCATION
+                  </div>
+                  <div
+                    style={
+                      Object {
+                        "fontWeight": 200,
+                      }
+                    }
+                  >
+                    
+                  </div>
+                </div>
+                <div
+                  style={
+                    Object {
+                      "padding": "10px",
+                    }
                   }
-                }
-              >
-                
-  from impala.dbapi import connect
-  conn = connect(host='undefined', port=undefined, database='')
-  cursor = conn.cursor()
-  cursor.execute('SELECT * FROM mytable LIMIT 100')
-  print cursor.description  # prints the result set's schema
-  results = cursor.fetchall()
-  
-              </SyntaxHighlighter>
-            </Unknown>
-            <Unknown
-              style={
-                Object {
-                  "boxShadow": "none",
-                  "flex": 1,
-                }
-              }
-            >
-              <h3>
-                Submit SparkPi to your personal queue on YARN
-              </h3>
-              <SyntaxHighlighter
-                language="shell"
-                style={
-                  Object {
-                    "hljs": Object {
-                      "background": "#002b36",
-                      "color": "#839496",
-                      "display": "block",
-                      "overflowX": "auto",
-                      "padding": "0.5em",
-                    },
-                    "hljs-addition": Object {
-                      "color": "#859900",
-                    },
-                    "hljs-attr": Object {
-                      "color": "#b58900",
-                    },
-                    "hljs-attribute": Object {
-                      "color": "#b58900",
-                    },
-                    "hljs-built_in": Object {
-                      "color": "#dc322f",
-                    },
-                    "hljs-bullet": Object {
-                      "color": "#cb4b16",
-                    },
-                    "hljs-class .hljs-title": Object {
-                      "color": "#b58900",
-                    },
-                    "hljs-comment": Object {
-                      "color": "#586e75",
-                    },
-                    "hljs-deletion": Object {
-                      "color": "#dc322f",
-                    },
-                    "hljs-doctag": Object {
-                      "color": "#2aa198",
-                    },
-                    "hljs-emphasis": Object {
-                      "fontStyle": "italic",
-                    },
-                    "hljs-formula": Object {
-                      "background": "#073642",
-                    },
-                    "hljs-keyword": Object {
-                      "color": "#859900",
-                    },
-                    "hljs-link": Object {
-                      "color": "#cb4b16",
-                    },
-                    "hljs-literal": Object {
-                      "color": "#2aa198",
-                    },
-                    "hljs-meta": Object {
-                      "color": "#cb4b16",
-                    },
-                    "hljs-meta .hljs-keyword": Object {
-                      "color": "#cb4b16",
-                    },
-                    "hljs-meta .hljs-meta-string": Object {
-                      "color": "#2aa198",
-                    },
-                    "hljs-name": Object {
-                      "color": "#268bd2",
-                    },
-                    "hljs-number": Object {
-                      "color": "#2aa198",
-                    },
-                    "hljs-quote": Object {
-                      "color": "#586e75",
-                    },
-                    "hljs-regexp": Object {
-                      "color": "#2aa198",
-                    },
-                    "hljs-section": Object {
-                      "color": "#268bd2",
-                    },
-                    "hljs-selector-attr": Object {
-                      "color": "#cb4b16",
-                    },
-                    "hljs-selector-class": Object {
-                      "color": "#268bd2",
-                    },
-                    "hljs-selector-id": Object {
-                      "color": "#268bd2",
-                    },
-                    "hljs-selector-pseudo": Object {
-                      "color": "#cb4b16",
-                    },
-                    "hljs-selector-tag": Object {
-                      "color": "#859900",
-                    },
-                    "hljs-string": Object {
-                      "color": "#2aa198",
-                    },
-                    "hljs-strong": Object {
-                      "fontWeight": "bold",
-                    },
-                    "hljs-subst": Object {
-                      "color": "#cb4b16",
-                    },
-                    "hljs-symbol": Object {
-                      "color": "#cb4b16",
-                    },
-                    "hljs-template-variable": Object {
-                      "color": "#b58900",
-                    },
-                    "hljs-title": Object {
-                      "color": "#268bd2",
-                    },
-                    "hljs-type": Object {
-                      "color": "#b58900",
-                    },
-                    "hljs-variable": Object {
-                      "color": "#b58900",
-                    },
+                >
+                  <div>
+                    HIVE NAMESPACE
+                  </div>
+                  <div
+                    style={
+                      Object {
+                        "fontWeight": 200,
+                      }
+                    }
+                  >
+                    
+                  </div>
+                </div>
+                <div
+                  style={
+                    Object {
+                      "padding": "10px",
+                    }
                   }
-                }
+                >
+                  <div>
+                    RESOURCE POOL
+                  </div>
+                  <div
+                    style={
+                      Object {
+                        "fontWeight": 200,
+                      }
+                    }
+                  >
+                    
+                  </div>
+                </div>
+              </div>
+              <Row
+                gutter={12}
               >
-                
-  $ spark-submit --class org.apache.spark.examples.SparkPi \\
-              --master yarn \\
-              --deploy-mode cluster \\
-              --queue  \\
-              examples/jars/spark-examples*.jar \\
-              10
-  
-              </SyntaxHighlighter>
-            </Unknown>
+                <Col
+                  span={24}
+                  style={
+                    Object {
+                      "marginTop": 10,
+                    }
+                  }
+                  xl={8}
+                >
+                  <SetupHelp
+                    location=""
+                    namespace=""
+                  />
+                </Col>
+                <Col
+                  span={24}
+                  style={
+                    Object {
+                      "marginTop": 10,
+                    }
+                  }
+                  xl={8}
+                >
+                  <SetupHelp
+                    host=""
+                    namespace=""
+                    port=""
+                  />
+                </Col>
+                <Col
+                  span={24}
+                  style={
+                    Object {
+                      "marginTop": 10,
+                    }
+                  }
+                  xl={8}
+                >
+                  <RunHelp
+                    queue=""
+                  />
+                </Col>
+              </Row>
+            </div>
           </Card>
         </div>,
       ],
       "style": Object {
+        "flex": 1,
         "position": "relative",
       },
     },
@@ -524,298 +374,133 @@ ShallowWrapper {
             bodyStyle={
               Object {
                 "display": "flex",
+                "flexDirection": "column",
               }
             }
-            title="Your Personal Workspace"
           >
-            <Unknown
-              style={
-                Object {
-                  "boxShadow": "none",
-                  "flex": 1,
+            <Label>
+              Your Personal Workspace
+            </Label>
+            <div>
+              <div
+                style={
+                  Object {
+                    "display": "flex",
+                    "fontSize": "12px",
+                    "fontWeight": "bold",
+                    "justifyContent": "center",
+                    "textAlign": "center",
+                  }
                 }
-              }
-            >
-              <h3>
-                Connect to Your Database With
-                 
-                <a
-                  href="https://github.com/cloudera/impyla"
-                  rel="noreferrer noopener"
-                  target="_blank"
+              >
+                <div
+                  style={
+                    Object {
+                      "padding": "10px",
+                    }
+                  }
                 >
-                  impyla
-                </a>
-              </h3>
-              <SyntaxHighlighter
-                language="python"
-                style={
-                  Object {
-                    "hljs": Object {
-                      "background": "#002b36",
-                      "color": "#839496",
-                      "display": "block",
-                      "overflowX": "auto",
-                      "padding": "0.5em",
-                    },
-                    "hljs-addition": Object {
-                      "color": "#859900",
-                    },
-                    "hljs-attr": Object {
-                      "color": "#b58900",
-                    },
-                    "hljs-attribute": Object {
-                      "color": "#b58900",
-                    },
-                    "hljs-built_in": Object {
-                      "color": "#dc322f",
-                    },
-                    "hljs-bullet": Object {
-                      "color": "#cb4b16",
-                    },
-                    "hljs-class .hljs-title": Object {
-                      "color": "#b58900",
-                    },
-                    "hljs-comment": Object {
-                      "color": "#586e75",
-                    },
-                    "hljs-deletion": Object {
-                      "color": "#dc322f",
-                    },
-                    "hljs-doctag": Object {
-                      "color": "#2aa198",
-                    },
-                    "hljs-emphasis": Object {
-                      "fontStyle": "italic",
-                    },
-                    "hljs-formula": Object {
-                      "background": "#073642",
-                    },
-                    "hljs-keyword": Object {
-                      "color": "#859900",
-                    },
-                    "hljs-link": Object {
-                      "color": "#cb4b16",
-                    },
-                    "hljs-literal": Object {
-                      "color": "#2aa198",
-                    },
-                    "hljs-meta": Object {
-                      "color": "#cb4b16",
-                    },
-                    "hljs-meta .hljs-keyword": Object {
-                      "color": "#cb4b16",
-                    },
-                    "hljs-meta .hljs-meta-string": Object {
-                      "color": "#2aa198",
-                    },
-                    "hljs-name": Object {
-                      "color": "#268bd2",
-                    },
-                    "hljs-number": Object {
-                      "color": "#2aa198",
-                    },
-                    "hljs-quote": Object {
-                      "color": "#586e75",
-                    },
-                    "hljs-regexp": Object {
-                      "color": "#2aa198",
-                    },
-                    "hljs-section": Object {
-                      "color": "#268bd2",
-                    },
-                    "hljs-selector-attr": Object {
-                      "color": "#cb4b16",
-                    },
-                    "hljs-selector-class": Object {
-                      "color": "#268bd2",
-                    },
-                    "hljs-selector-id": Object {
-                      "color": "#268bd2",
-                    },
-                    "hljs-selector-pseudo": Object {
-                      "color": "#cb4b16",
-                    },
-                    "hljs-selector-tag": Object {
-                      "color": "#859900",
-                    },
-                    "hljs-string": Object {
-                      "color": "#2aa198",
-                    },
-                    "hljs-strong": Object {
-                      "fontWeight": "bold",
-                    },
-                    "hljs-subst": Object {
-                      "color": "#cb4b16",
-                    },
-                    "hljs-symbol": Object {
-                      "color": "#cb4b16",
-                    },
-                    "hljs-template-variable": Object {
-                      "color": "#b58900",
-                    },
-                    "hljs-title": Object {
-                      "color": "#268bd2",
-                    },
-                    "hljs-type": Object {
-                      "color": "#b58900",
-                    },
-                    "hljs-variable": Object {
-                      "color": "#b58900",
-                    },
+                  <div>
+                    HDFS LOCATION
+                  </div>
+                  <div
+                    style={
+                      Object {
+                        "fontWeight": 200,
+                      }
+                    }
+                  >
+                    
+                  </div>
+                </div>
+                <div
+                  style={
+                    Object {
+                      "padding": "10px",
+                    }
                   }
-                }
-              >
-                
-  from impala.dbapi import connect
-  conn = connect(host='undefined', port=undefined, database='')
-  cursor = conn.cursor()
-  cursor.execute('SELECT * FROM mytable LIMIT 100')
-  print cursor.description  # prints the result set's schema
-  results = cursor.fetchall()
-  
-              </SyntaxHighlighter>
-            </Unknown>
-            <Unknown
-              style={
-                Object {
-                  "boxShadow": "none",
-                  "flex": 1,
-                }
-              }
-            >
-              <h3>
-                Submit SparkPi to your personal queue on YARN
-              </h3>
-              <SyntaxHighlighter
-                language="shell"
-                style={
-                  Object {
-                    "hljs": Object {
-                      "background": "#002b36",
-                      "color": "#839496",
-                      "display": "block",
-                      "overflowX": "auto",
-                      "padding": "0.5em",
-                    },
-                    "hljs-addition": Object {
-                      "color": "#859900",
-                    },
-                    "hljs-attr": Object {
-                      "color": "#b58900",
-                    },
-                    "hljs-attribute": Object {
-                      "color": "#b58900",
-                    },
-                    "hljs-built_in": Object {
-                      "color": "#dc322f",
-                    },
-                    "hljs-bullet": Object {
-                      "color": "#cb4b16",
-                    },
-                    "hljs-class .hljs-title": Object {
-                      "color": "#b58900",
-                    },
-                    "hljs-comment": Object {
-                      "color": "#586e75",
-                    },
-                    "hljs-deletion": Object {
-                      "color": "#dc322f",
-                    },
-                    "hljs-doctag": Object {
-                      "color": "#2aa198",
-                    },
-                    "hljs-emphasis": Object {
-                      "fontStyle": "italic",
-                    },
-                    "hljs-formula": Object {
-                      "background": "#073642",
-                    },
-                    "hljs-keyword": Object {
-                      "color": "#859900",
-                    },
-                    "hljs-link": Object {
-                      "color": "#cb4b16",
-                    },
-                    "hljs-literal": Object {
-                      "color": "#2aa198",
-                    },
-                    "hljs-meta": Object {
-                      "color": "#cb4b16",
-                    },
-                    "hljs-meta .hljs-keyword": Object {
-                      "color": "#cb4b16",
-                    },
-                    "hljs-meta .hljs-meta-string": Object {
-                      "color": "#2aa198",
-                    },
-                    "hljs-name": Object {
-                      "color": "#268bd2",
-                    },
-                    "hljs-number": Object {
-                      "color": "#2aa198",
-                    },
-                    "hljs-quote": Object {
-                      "color": "#586e75",
-                    },
-                    "hljs-regexp": Object {
-                      "color": "#2aa198",
-                    },
-                    "hljs-section": Object {
-                      "color": "#268bd2",
-                    },
-                    "hljs-selector-attr": Object {
-                      "color": "#cb4b16",
-                    },
-                    "hljs-selector-class": Object {
-                      "color": "#268bd2",
-                    },
-                    "hljs-selector-id": Object {
-                      "color": "#268bd2",
-                    },
-                    "hljs-selector-pseudo": Object {
-                      "color": "#cb4b16",
-                    },
-                    "hljs-selector-tag": Object {
-                      "color": "#859900",
-                    },
-                    "hljs-string": Object {
-                      "color": "#2aa198",
-                    },
-                    "hljs-strong": Object {
-                      "fontWeight": "bold",
-                    },
-                    "hljs-subst": Object {
-                      "color": "#cb4b16",
-                    },
-                    "hljs-symbol": Object {
-                      "color": "#cb4b16",
-                    },
-                    "hljs-template-variable": Object {
-                      "color": "#b58900",
-                    },
-                    "hljs-title": Object {
-                      "color": "#268bd2",
-                    },
-                    "hljs-type": Object {
-                      "color": "#b58900",
-                    },
-                    "hljs-variable": Object {
-                      "color": "#b58900",
-                    },
+                >
+                  <div>
+                    HIVE NAMESPACE
+                  </div>
+                  <div
+                    style={
+                      Object {
+                        "fontWeight": 200,
+                      }
+                    }
+                  >
+                    
+                  </div>
+                </div>
+                <div
+                  style={
+                    Object {
+                      "padding": "10px",
+                    }
                   }
-                }
+                >
+                  <div>
+                    RESOURCE POOL
+                  </div>
+                  <div
+                    style={
+                      Object {
+                        "fontWeight": 200,
+                      }
+                    }
+                  >
+                    
+                  </div>
+                </div>
+              </div>
+              <Row
+                gutter={12}
               >
-                
-  $ spark-submit --class org.apache.spark.examples.SparkPi \\
-              --master yarn \\
-              --deploy-mode cluster \\
-              --queue  \\
-              examples/jars/spark-examples*.jar \\
-              10
-  
-              </SyntaxHighlighter>
-            </Unknown>
+                <Col
+                  span={24}
+                  style={
+                    Object {
+                      "marginTop": 10,
+                    }
+                  }
+                  xl={8}
+                >
+                  <SetupHelp
+                    location=""
+                    namespace=""
+                  />
+                </Col>
+                <Col
+                  span={24}
+                  style={
+                    Object {
+                      "marginTop": 10,
+                    }
+                  }
+                  xl={8}
+                >
+                  <SetupHelp
+                    host=""
+                    namespace=""
+                    port=""
+                  />
+                </Col>
+                <Col
+                  span={24}
+                  style={
+                    Object {
+                      "marginTop": 10,
+                    }
+                  }
+                  xl={8}
+                >
+                  <RunHelp
+                    queue=""
+                  />
+                </Col>
+              </Row>
+            </div>
           </Card>,
           "style": Object {
             "filter": "none",
@@ -830,298 +515,133 @@ ShallowWrapper {
           "props": Object {
             "bodyStyle": Object {
               "display": "flex",
+              "flexDirection": "column",
             },
             "children": Array [
-              <Unknown
-                style={
-                  Object {
-                    "boxShadow": "none",
-                    "flex": 1,
+              <Label>
+                Your Personal Workspace
+              </Label>,
+              <div>
+                <div
+                  style={
+                    Object {
+                      "display": "flex",
+                      "fontSize": "12px",
+                      "fontWeight": "bold",
+                      "justifyContent": "center",
+                      "textAlign": "center",
+                    }
                   }
-                }
-              >
-                <h3>
-                  Connect to Your Database With
-                   
-                  <a
-                    href="https://github.com/cloudera/impyla"
-                    rel="noreferrer noopener"
-                    target="_blank"
+                >
+                  <div
+                    style={
+                      Object {
+                        "padding": "10px",
+                      }
+                    }
                   >
-                    impyla
-                  </a>
-                </h3>
-                <SyntaxHighlighter
-                  language="python"
-                  style={
-                    Object {
-                      "hljs": Object {
-                        "background": "#002b36",
-                        "color": "#839496",
-                        "display": "block",
-                        "overflowX": "auto",
-                        "padding": "0.5em",
-                      },
-                      "hljs-addition": Object {
-                        "color": "#859900",
-                      },
-                      "hljs-attr": Object {
-                        "color": "#b58900",
-                      },
-                      "hljs-attribute": Object {
-                        "color": "#b58900",
-                      },
-                      "hljs-built_in": Object {
-                        "color": "#dc322f",
-                      },
-                      "hljs-bullet": Object {
-                        "color": "#cb4b16",
-                      },
-                      "hljs-class .hljs-title": Object {
-                        "color": "#b58900",
-                      },
-                      "hljs-comment": Object {
-                        "color": "#586e75",
-                      },
-                      "hljs-deletion": Object {
-                        "color": "#dc322f",
-                      },
-                      "hljs-doctag": Object {
-                        "color": "#2aa198",
-                      },
-                      "hljs-emphasis": Object {
-                        "fontStyle": "italic",
-                      },
-                      "hljs-formula": Object {
-                        "background": "#073642",
-                      },
-                      "hljs-keyword": Object {
-                        "color": "#859900",
-                      },
-                      "hljs-link": Object {
-                        "color": "#cb4b16",
-                      },
-                      "hljs-literal": Object {
-                        "color": "#2aa198",
-                      },
-                      "hljs-meta": Object {
-                        "color": "#cb4b16",
-                      },
-                      "hljs-meta .hljs-keyword": Object {
-                        "color": "#cb4b16",
-                      },
-                      "hljs-meta .hljs-meta-string": Object {
-                        "color": "#2aa198",
-                      },
-                      "hljs-name": Object {
-                        "color": "#268bd2",
-                      },
-                      "hljs-number": Object {
-                        "color": "#2aa198",
-                      },
-                      "hljs-quote": Object {
-                        "color": "#586e75",
-                      },
-                      "hljs-regexp": Object {
-                        "color": "#2aa198",
-                      },
-                      "hljs-section": Object {
-                        "color": "#268bd2",
-                      },
-                      "hljs-selector-attr": Object {
-                        "color": "#cb4b16",
-                      },
-                      "hljs-selector-class": Object {
-                        "color": "#268bd2",
-                      },
-                      "hljs-selector-id": Object {
-                        "color": "#268bd2",
-                      },
-                      "hljs-selector-pseudo": Object {
-                        "color": "#cb4b16",
-                      },
-                      "hljs-selector-tag": Object {
-                        "color": "#859900",
-                      },
-                      "hljs-string": Object {
-                        "color": "#2aa198",
-                      },
-                      "hljs-strong": Object {
-                        "fontWeight": "bold",
-                      },
-                      "hljs-subst": Object {
-                        "color": "#cb4b16",
-                      },
-                      "hljs-symbol": Object {
-                        "color": "#cb4b16",
-                      },
-                      "hljs-template-variable": Object {
-                        "color": "#b58900",
-                      },
-                      "hljs-title": Object {
-                        "color": "#268bd2",
-                      },
-                      "hljs-type": Object {
-                        "color": "#b58900",
-                      },
-                      "hljs-variable": Object {
-                        "color": "#b58900",
-                      },
+                    <div>
+                      HDFS LOCATION
+                    </div>
+                    <div
+                      style={
+                        Object {
+                          "fontWeight": 200,
+                        }
+                      }
+                    >
+                      
+                    </div>
+                  </div>
+                  <div
+                    style={
+                      Object {
+                        "padding": "10px",
+                      }
                     }
-                  }
-                >
-                  
-  from impala.dbapi import connect
-  conn = connect(host='undefined', port=undefined, database='')
-  cursor = conn.cursor()
-  cursor.execute('SELECT * FROM mytable LIMIT 100')
-  print cursor.description  # prints the result set's schema
-  results = cursor.fetchall()
-  
-                </SyntaxHighlighter>
-              </Unknown>,
-              <Unknown
-                style={
-                  Object {
-                    "boxShadow": "none",
-                    "flex": 1,
-                  }
-                }
-              >
-                <h3>
-                  Submit SparkPi to your personal queue on YARN
-                </h3>
-                <SyntaxHighlighter
-                  language="shell"
-                  style={
-                    Object {
-                      "hljs": Object {
-                        "background": "#002b36",
-                        "color": "#839496",
-                        "display": "block",
-                        "overflowX": "auto",
-                        "padding": "0.5em",
-                      },
-                      "hljs-addition": Object {
-                        "color": "#859900",
-                      },
-                      "hljs-attr": Object {
-                        "color": "#b58900",
-                      },
-                      "hljs-attribute": Object {
-                        "color": "#b58900",
-                      },
-                      "hljs-built_in": Object {
-                        "color": "#dc322f",
-                      },
-                      "hljs-bullet": Object {
-                        "color": "#cb4b16",
-                      },
-                      "hljs-class .hljs-title": Object {
-                        "color": "#b58900",
-                      },
-                      "hljs-comment": Object {
-                        "color": "#586e75",
-                      },
-                      "hljs-deletion": Object {
-                        "color": "#dc322f",
-                      },
-                      "hljs-doctag": Object {
-                        "color": "#2aa198",
-                      },
-                      "hljs-emphasis": Object {
-                        "fontStyle": "italic",
-                      },
-                      "hljs-formula": Object {
-                        "background": "#073642",
-                      },
-                      "hljs-keyword": Object {
-                        "color": "#859900",
-                      },
-                      "hljs-link": Object {
-                        "color": "#cb4b16",
-                      },
-                      "hljs-literal": Object {
-                        "color": "#2aa198",
-                      },
-                      "hljs-meta": Object {
-                        "color": "#cb4b16",
-                      },
-                      "hljs-meta .hljs-keyword": Object {
-                        "color": "#cb4b16",
-                      },
-                      "hljs-meta .hljs-meta-string": Object {
-                        "color": "#2aa198",
-                      },
-                      "hljs-name": Object {
-                        "color": "#268bd2",
-                      },
-                      "hljs-number": Object {
-                        "color": "#2aa198",
-                      },
-                      "hljs-quote": Object {
-                        "color": "#586e75",
-                      },
-                      "hljs-regexp": Object {
-                        "color": "#2aa198",
-                      },
-                      "hljs-section": Object {
-                        "color": "#268bd2",
-                      },
-                      "hljs-selector-attr": Object {
-                        "color": "#cb4b16",
-                      },
-                      "hljs-selector-class": Object {
-                        "color": "#268bd2",
-                      },
-                      "hljs-selector-id": Object {
-                        "color": "#268bd2",
-                      },
-                      "hljs-selector-pseudo": Object {
-                        "color": "#cb4b16",
-                      },
-                      "hljs-selector-tag": Object {
-                        "color": "#859900",
-                      },
-                      "hljs-string": Object {
-                        "color": "#2aa198",
-                      },
-                      "hljs-strong": Object {
-                        "fontWeight": "bold",
-                      },
-                      "hljs-subst": Object {
-                        "color": "#cb4b16",
-                      },
-                      "hljs-symbol": Object {
-                        "color": "#cb4b16",
-                      },
-                      "hljs-template-variable": Object {
-                        "color": "#b58900",
-                      },
-                      "hljs-title": Object {
-                        "color": "#268bd2",
-                      },
-                      "hljs-type": Object {
-                        "color": "#b58900",
-                      },
-                      "hljs-variable": Object {
-                        "color": "#b58900",
-                      },
+                  >
+                    <div>
+                      HIVE NAMESPACE
+                    </div>
+                    <div
+                      style={
+                        Object {
+                          "fontWeight": 200,
+                        }
+                      }
+                    >
+                      
+                    </div>
+                  </div>
+                  <div
+                    style={
+                      Object {
+                        "padding": "10px",
+                      }
                     }
-                  }
+                  >
+                    <div>
+                      RESOURCE POOL
+                    </div>
+                    <div
+                      style={
+                        Object {
+                          "fontWeight": 200,
+                        }
+                      }
+                    >
+                      
+                    </div>
+                  </div>
+                </div>
+                <Row
+                  gutter={12}
                 >
-                  
-  $ spark-submit --class org.apache.spark.examples.SparkPi \\
-              --master yarn \\
-              --deploy-mode cluster \\
-              --queue  \\
-              examples/jars/spark-examples*.jar \\
-              10
-  
-                </SyntaxHighlighter>
-              </Unknown>,
+                  <Col
+                    span={24}
+                    style={
+                      Object {
+                        "marginTop": 10,
+                      }
+                    }
+                    xl={8}
+                  >
+                    <SetupHelp
+                      location=""
+                      namespace=""
+                    />
+                  </Col>
+                  <Col
+                    span={24}
+                    style={
+                      Object {
+                        "marginTop": 10,
+                      }
+                    }
+                    xl={8}
+                  >
+                    <SetupHelp
+                      host=""
+                      namespace=""
+                      port=""
+                    />
+                  </Col>
+                  <Col
+                    span={24}
+                    style={
+                      Object {
+                        "marginTop": 10,
+                      }
+                    }
+                    xl={8}
+                  >
+                    <RunHelp
+                      queue=""
+                    />
+                  </Col>
+                </Row>
+              </div>,
             ],
-            "title": "Your Personal Workspace",
           },
           "ref": null,
           "rendered": Array [
@@ -1130,151 +650,137 @@ ShallowWrapper {
               "key": undefined,
               "nodeType": "function",
               "props": Object {
+                "children": "Your Personal Workspace",
+              },
+              "ref": null,
+              "rendered": "Your Personal Workspace",
+              "type": [Function],
+            },
+            Object {
+              "instance": null,
+              "key": undefined,
+              "nodeType": "host",
+              "props": Object {
                 "children": Array [
-                  <h3>
-                    Connect to Your Database With
-                     
-                    <a
-                      href="https://github.com/cloudera/impyla"
-                      rel="noreferrer noopener"
-                      target="_blank"
-                    >
-                      impyla
-                    </a>
-                  </h3>,
-                  <SyntaxHighlighter
-                    language="python"
+                  <div
                     style={
                       Object {
-                        "hljs": Object {
-                          "background": "#002b36",
-                          "color": "#839496",
-                          "display": "block",
-                          "overflowX": "auto",
-                          "padding": "0.5em",
-                        },
-                        "hljs-addition": Object {
-                          "color": "#859900",
-                        },
-                        "hljs-attr": Object {
-                          "color": "#b58900",
-                        },
-                        "hljs-attribute": Object {
-                          "color": "#b58900",
-                        },
-                        "hljs-built_in": Object {
-                          "color": "#dc322f",
-                        },
-                        "hljs-bullet": Object {
-                          "color": "#cb4b16",
-                        },
-                        "hljs-class .hljs-title": Object {
-                          "color": "#b58900",
-                        },
-                        "hljs-comment": Object {
-                          "color": "#586e75",
-                        },
-                        "hljs-deletion": Object {
-                          "color": "#dc322f",
-                        },
-                        "hljs-doctag": Object {
-                          "color": "#2aa198",
-                        },
-                        "hljs-emphasis": Object {
-                          "fontStyle": "italic",
-                        },
-                        "hljs-formula": Object {
-                          "background": "#073642",
-                        },
-                        "hljs-keyword": Object {
-                          "color": "#859900",
-                        },
-                        "hljs-link": Object {
-                          "color": "#cb4b16",
-                        },
-                        "hljs-literal": Object {
-                          "color": "#2aa198",
-                        },
-                        "hljs-meta": Object {
-                          "color": "#cb4b16",
-                        },
-                        "hljs-meta .hljs-keyword": Object {
-                          "color": "#cb4b16",
-                        },
-                        "hljs-meta .hljs-meta-string": Object {
-                          "color": "#2aa198",
-                        },
-                        "hljs-name": Object {
-                          "color": "#268bd2",
-                        },
-                        "hljs-number": Object {
-                          "color": "#2aa198",
-                        },
-                        "hljs-quote": Object {
-                          "color": "#586e75",
-                        },
-                        "hljs-regexp": Object {
-                          "color": "#2aa198",
-                        },
-                        "hljs-section": Object {
-                          "color": "#268bd2",
-                        },
-                        "hljs-selector-attr": Object {
-                          "color": "#cb4b16",
-                        },
-                        "hljs-selector-class": Object {
-                          "color": "#268bd2",
-                        },
-                        "hljs-selector-id": Object {
-                          "color": "#268bd2",
-                        },
-                        "hljs-selector-pseudo": Object {
-                          "color": "#cb4b16",
-                        },
-                        "hljs-selector-tag": Object {
-                          "color": "#859900",
-                        },
-                        "hljs-string": Object {
-                          "color": "#2aa198",
-                        },
-                        "hljs-strong": Object {
-                          "fontWeight": "bold",
-                        },
-                        "hljs-subst": Object {
-                          "color": "#cb4b16",
-                        },
-                        "hljs-symbol": Object {
-                          "color": "#cb4b16",
-                        },
-                        "hljs-template-variable": Object {
-                          "color": "#b58900",
-                        },
-                        "hljs-title": Object {
-                          "color": "#268bd2",
-                        },
-                        "hljs-type": Object {
-                          "color": "#b58900",
-                        },
-                        "hljs-variable": Object {
-                          "color": "#b58900",
-                        },
+                        "display": "flex",
+                        "fontSize": "12px",
+                        "fontWeight": "bold",
+                        "justifyContent": "center",
+                        "textAlign": "center",
                       }
                     }
                   >
-                    
-  from impala.dbapi import connect
-  conn = connect(host='undefined', port=undefined, database='')
-  cursor = conn.cursor()
-  cursor.execute('SELECT * FROM mytable LIMIT 100')
-  print cursor.description  # prints the result set's schema
-  results = cursor.fetchall()
-  
-                  </SyntaxHighlighter>,
+                    <div
+                      style={
+                        Object {
+                          "padding": "10px",
+                        }
+                      }
+                    >
+                      <div>
+                        HDFS LOCATION
+                      </div>
+                      <div
+                        style={
+                          Object {
+                            "fontWeight": 200,
+                          }
+                        }
+                      >
+                        
+                      </div>
+                    </div>
+                    <div
+                      style={
+                        Object {
+                          "padding": "10px",
+                        }
+                      }
+                    >
+                      <div>
+                        HIVE NAMESPACE
+                      </div>
+                      <div
+                        style={
+                          Object {
+                            "fontWeight": 200,
+                          }
+                        }
+                      >
+                        
+                      </div>
+                    </div>
+                    <div
+                      style={
+                        Object {
+                          "padding": "10px",
+                        }
+                      }
+                    >
+                      <div>
+                        RESOURCE POOL
+                      </div>
+                      <div
+                        style={
+                          Object {
+                            "fontWeight": 200,
+                          }
+                        }
+                      >
+                        
+                      </div>
+                    </div>
+                  </div>,
+                  <Row
+                    gutter={12}
+                  >
+                    <Col
+                      span={24}
+                      style={
+                        Object {
+                          "marginTop": 10,
+                        }
+                      }
+                      xl={8}
+                    >
+                      <SetupHelp
+                        location=""
+                        namespace=""
+                      />
+                    </Col>
+                    <Col
+                      span={24}
+                      style={
+                        Object {
+                          "marginTop": 10,
+                        }
+                      }
+                      xl={8}
+                    >
+                      <SetupHelp
+                        host=""
+                        namespace=""
+                        port=""
+                      />
+                    </Col>
+                    <Col
+                      span={24}
+                      style={
+                        Object {
+                          "marginTop": 10,
+                        }
+                      }
+                      xl={8}
+                    >
+                      <RunHelp
+                        queue=""
+                      />
+                    </Col>
+                  </Row>,
                 ],
-                "style": Object {
-                  "boxShadow": "none",
-                  "flex": 1,
-                },
               },
               "ref": null,
               "rendered": Array [
@@ -1284,479 +790,387 @@ ShallowWrapper {
                   "nodeType": "host",
                   "props": Object {
                     "children": Array [
-                      "Connect to Your Database With",
-                      " ",
-                      <a
-                        href="https://github.com/cloudera/impyla"
-                        rel="noreferrer noopener"
-                        target="_blank"
+                      <div
+                        style={
+                          Object {
+                            "padding": "10px",
+                          }
+                        }
                       >
-                        impyla
-                      </a>,
+                        <div>
+                          HDFS LOCATION
+                        </div>
+                        <div
+                          style={
+                            Object {
+                              "fontWeight": 200,
+                            }
+                          }
+                        >
+                          
+                        </div>
+                      </div>,
+                      <div
+                        style={
+                          Object {
+                            "padding": "10px",
+                          }
+                        }
+                      >
+                        <div>
+                          HIVE NAMESPACE
+                        </div>
+                        <div
+                          style={
+                            Object {
+                              "fontWeight": 200,
+                            }
+                          }
+                        >
+                          
+                        </div>
+                      </div>,
+                      <div
+                        style={
+                          Object {
+                            "padding": "10px",
+                          }
+                        }
+                      >
+                        <div>
+                          RESOURCE POOL
+                        </div>
+                        <div
+                          style={
+                            Object {
+                              "fontWeight": 200,
+                            }
+                          }
+                        >
+                          
+                        </div>
+                      </div>,
                     ],
+                    "style": Object {
+                      "display": "flex",
+                      "fontSize": "12px",
+                      "fontWeight": "bold",
+                      "justifyContent": "center",
+                      "textAlign": "center",
+                    },
                   },
                   "ref": null,
                   "rendered": Array [
-                    "Connect to Your Database With",
-                    " ",
                     Object {
                       "instance": null,
                       "key": undefined,
                       "nodeType": "host",
                       "props": Object {
-                        "children": "impyla",
-                        "href": "https://github.com/cloudera/impyla",
-                        "rel": "noreferrer noopener",
-                        "target": "_blank",
+                        "children": Array [
+                          <div>
+                            HDFS LOCATION
+                          </div>,
+                          <div
+                            style={
+                              Object {
+                                "fontWeight": 200,
+                              }
+                            }
+                          >
+                            
+                          </div>,
+                        ],
+                        "style": Object {
+                          "padding": "10px",
+                        },
                       },
                       "ref": null,
-                      "rendered": "impyla",
-                      "type": "a",
+                      "rendered": Array [
+                        Object {
+                          "instance": null,
+                          "key": undefined,
+                          "nodeType": "host",
+                          "props": Object {
+                            "children": "HDFS LOCATION",
+                          },
+                          "ref": null,
+                          "rendered": "HDFS LOCATION",
+                          "type": "div",
+                        },
+                        Object {
+                          "instance": null,
+                          "key": undefined,
+                          "nodeType": "host",
+                          "props": Object {
+                            "children": "",
+                            "style": Object {
+                              "fontWeight": 200,
+                            },
+                          },
+                          "ref": null,
+                          "rendered": "",
+                          "type": "div",
+                        },
+                      ],
+                      "type": "div",
+                    },
+                    Object {
+                      "instance": null,
+                      "key": undefined,
+                      "nodeType": "host",
+                      "props": Object {
+                        "children": Array [
+                          <div>
+                            HIVE NAMESPACE
+                          </div>,
+                          <div
+                            style={
+                              Object {
+                                "fontWeight": 200,
+                              }
+                            }
+                          >
+                            
+                          </div>,
+                        ],
+                        "style": Object {
+                          "padding": "10px",
+                        },
+                      },
+                      "ref": null,
+                      "rendered": Array [
+                        Object {
+                          "instance": null,
+                          "key": undefined,
+                          "nodeType": "host",
+                          "props": Object {
+                            "children": "HIVE NAMESPACE",
+                          },
+                          "ref": null,
+                          "rendered": "HIVE NAMESPACE",
+                          "type": "div",
+                        },
+                        Object {
+                          "instance": null,
+                          "key": undefined,
+                          "nodeType": "host",
+                          "props": Object {
+                            "children": "",
+                            "style": Object {
+                              "fontWeight": 200,
+                            },
+                          },
+                          "ref": null,
+                          "rendered": "",
+                          "type": "div",
+                        },
+                      ],
+                      "type": "div",
+                    },
+                    Object {
+                      "instance": null,
+                      "key": undefined,
+                      "nodeType": "host",
+                      "props": Object {
+                        "children": Array [
+                          <div>
+                            RESOURCE POOL
+                          </div>,
+                          <div
+                            style={
+                              Object {
+                                "fontWeight": 200,
+                              }
+                            }
+                          >
+                            
+                          </div>,
+                        ],
+                        "style": Object {
+                          "padding": "10px",
+                        },
+                      },
+                      "ref": null,
+                      "rendered": Array [
+                        Object {
+                          "instance": null,
+                          "key": undefined,
+                          "nodeType": "host",
+                          "props": Object {
+                            "children": "RESOURCE POOL",
+                          },
+                          "ref": null,
+                          "rendered": "RESOURCE POOL",
+                          "type": "div",
+                        },
+                        Object {
+                          "instance": null,
+                          "key": undefined,
+                          "nodeType": "host",
+                          "props": Object {
+                            "children": "",
+                            "style": Object {
+                              "fontWeight": 200,
+                            },
+                          },
+                          "ref": null,
+                          "rendered": "",
+                          "type": "div",
+                        },
+                      ],
+                      "type": "div",
                     },
                   ],
-                  "type": "h3",
+                  "type": "div",
                 },
                 Object {
                   "instance": null,
                   "key": undefined,
-                  "nodeType": "function",
+                  "nodeType": "class",
                   "props": Object {
-                    "children": "
-  from impala.dbapi import connect
-  conn = connect(host='undefined', port=undefined, database='')
-  cursor = conn.cursor()
-  cursor.execute('SELECT * FROM mytable LIMIT 100')
-  print cursor.description  # prints the result set's schema
-  results = cursor.fetchall()
-  ",
-                    "language": "python",
-                    "style": Object {
-                      "hljs": Object {
-                        "background": "#002b36",
-                        "color": "#839496",
-                        "display": "block",
-                        "overflowX": "auto",
-                        "padding": "0.5em",
-                      },
-                      "hljs-addition": Object {
-                        "color": "#859900",
-                      },
-                      "hljs-attr": Object {
-                        "color": "#b58900",
-                      },
-                      "hljs-attribute": Object {
-                        "color": "#b58900",
-                      },
-                      "hljs-built_in": Object {
-                        "color": "#dc322f",
-                      },
-                      "hljs-bullet": Object {
-                        "color": "#cb4b16",
-                      },
-                      "hljs-class .hljs-title": Object {
-                        "color": "#b58900",
-                      },
-                      "hljs-comment": Object {
-                        "color": "#586e75",
-                      },
-                      "hljs-deletion": Object {
-                        "color": "#dc322f",
-                      },
-                      "hljs-doctag": Object {
-                        "color": "#2aa198",
-                      },
-                      "hljs-emphasis": Object {
-                        "fontStyle": "italic",
-                      },
-                      "hljs-formula": Object {
-                        "background": "#073642",
-                      },
-                      "hljs-keyword": Object {
-                        "color": "#859900",
-                      },
-                      "hljs-link": Object {
-                        "color": "#cb4b16",
-                      },
-                      "hljs-literal": Object {
-                        "color": "#2aa198",
-                      },
-                      "hljs-meta": Object {
-                        "color": "#cb4b16",
-                      },
-                      "hljs-meta .hljs-keyword": Object {
-                        "color": "#cb4b16",
-                      },
-                      "hljs-meta .hljs-meta-string": Object {
-                        "color": "#2aa198",
-                      },
-                      "hljs-name": Object {
-                        "color": "#268bd2",
-                      },
-                      "hljs-number": Object {
-                        "color": "#2aa198",
-                      },
-                      "hljs-quote": Object {
-                        "color": "#586e75",
-                      },
-                      "hljs-regexp": Object {
-                        "color": "#2aa198",
-                      },
-                      "hljs-section": Object {
-                        "color": "#268bd2",
-                      },
-                      "hljs-selector-attr": Object {
-                        "color": "#cb4b16",
-                      },
-                      "hljs-selector-class": Object {
-                        "color": "#268bd2",
-                      },
-                      "hljs-selector-id": Object {
-                        "color": "#268bd2",
-                      },
-                      "hljs-selector-pseudo": Object {
-                        "color": "#cb4b16",
-                      },
-                      "hljs-selector-tag": Object {
-                        "color": "#859900",
-                      },
-                      "hljs-string": Object {
-                        "color": "#2aa198",
-                      },
-                      "hljs-strong": Object {
-                        "fontWeight": "bold",
-                      },
-                      "hljs-subst": Object {
-                        "color": "#cb4b16",
-                      },
-                      "hljs-symbol": Object {
-                        "color": "#cb4b16",
-                      },
-                      "hljs-template-variable": Object {
-                        "color": "#b58900",
-                      },
-                      "hljs-title": Object {
-                        "color": "#268bd2",
-                      },
-                      "hljs-type": Object {
-                        "color": "#b58900",
-                      },
-                      "hljs-variable": Object {
-                        "color": "#b58900",
-                      },
-                    },
+                    "children": Array [
+                      <Col
+                        span={24}
+                        style={
+                          Object {
+                            "marginTop": 10,
+                          }
+                        }
+                        xl={8}
+                      >
+                        <SetupHelp
+                          location=""
+                          namespace=""
+                        />
+                      </Col>,
+                      <Col
+                        span={24}
+                        style={
+                          Object {
+                            "marginTop": 10,
+                          }
+                        }
+                        xl={8}
+                      >
+                        <SetupHelp
+                          host=""
+                          namespace=""
+                          port=""
+                        />
+                      </Col>,
+                      <Col
+                        span={24}
+                        style={
+                          Object {
+                            "marginTop": 10,
+                          }
+                        }
+                        xl={8}
+                      >
+                        <RunHelp
+                          queue=""
+                        />
+                      </Col>,
+                    ],
+                    "gutter": 12,
                   },
                   "ref": null,
-                  "rendered": "
-  from impala.dbapi import connect
-  conn = connect(host='undefined', port=undefined, database='')
-  cursor = conn.cursor()
-  cursor.execute('SELECT * FROM mytable LIMIT 100')
-  print cursor.description  # prints the result set's schema
-  results = cursor.fetchall()
-  ",
+                  "rendered": Array [
+                    Object {
+                      "instance": null,
+                      "key": undefined,
+                      "nodeType": "class",
+                      "props": Object {
+                        "children": <SetupHelp
+                          location=""
+                          namespace=""
+                        />,
+                        "span": 24,
+                        "style": Object {
+                          "marginTop": 10,
+                        },
+                        "xl": 8,
+                      },
+                      "ref": null,
+                      "rendered": Object {
+                        "instance": null,
+                        "key": undefined,
+                        "nodeType": "function",
+                        "props": Object {
+                          "location": "",
+                          "namespace": "",
+                        },
+                        "ref": null,
+                        "rendered": null,
+                        "type": [Function],
+                      },
+                      "type": [Function],
+                    },
+                    Object {
+                      "instance": null,
+                      "key": undefined,
+                      "nodeType": "class",
+                      "props": Object {
+                        "children": <SetupHelp
+                          host=""
+                          namespace=""
+                          port=""
+                        />,
+                        "span": 24,
+                        "style": Object {
+                          "marginTop": 10,
+                        },
+                        "xl": 8,
+                      },
+                      "ref": null,
+                      "rendered": Object {
+                        "instance": null,
+                        "key": undefined,
+                        "nodeType": "function",
+                        "props": Object {
+                          "host": "",
+                          "namespace": "",
+                          "port": "",
+                        },
+                        "ref": null,
+                        "rendered": null,
+                        "type": [Function],
+                      },
+                      "type": [Function],
+                    },
+                    Object {
+                      "instance": null,
+                      "key": undefined,
+                      "nodeType": "class",
+                      "props": Object {
+                        "children": <RunHelp
+                          queue=""
+                        />,
+                        "span": 24,
+                        "style": Object {
+                          "marginTop": 10,
+                        },
+                        "xl": 8,
+                      },
+                      "ref": null,
+                      "rendered": Object {
+                        "instance": null,
+                        "key": undefined,
+                        "nodeType": "function",
+                        "props": Object {
+                          "queue": "",
+                        },
+                        "ref": null,
+                        "rendered": null,
+                        "type": [Function],
+                      },
+                      "type": [Function],
+                    },
+                  ],
                   "type": [Function],
                 },
               ],
-              "type": [Function],
-            },
-            Object {
-              "instance": null,
-              "key": undefined,
-              "nodeType": "function",
-              "props": Object {
-                "children": Array [
-                  <h3>
-                    Submit SparkPi to your personal queue on YARN
-                  </h3>,
-                  <SyntaxHighlighter
-                    language="shell"
-                    style={
-                      Object {
-                        "hljs": Object {
-                          "background": "#002b36",
-                          "color": "#839496",
-                          "display": "block",
-                          "overflowX": "auto",
-                          "padding": "0.5em",
-                        },
-                        "hljs-addition": Object {
-                          "color": "#859900",
-                        },
-                        "hljs-attr": Object {
-                          "color": "#b58900",
-                        },
-                        "hljs-attribute": Object {
-                          "color": "#b58900",
-                        },
-                        "hljs-built_in": Object {
-                          "color": "#dc322f",
-                        },
-                        "hljs-bullet": Object {
-                          "color": "#cb4b16",
-                        },
-                        "hljs-class .hljs-title": Object {
-                          "color": "#b58900",
-                        },
-                        "hljs-comment": Object {
-                          "color": "#586e75",
-                        },
-                        "hljs-deletion": Object {
-                          "color": "#dc322f",
-                        },
-                        "hljs-doctag": Object {
-                          "color": "#2aa198",
-                        },
-                        "hljs-emphasis": Object {
-                          "fontStyle": "italic",
-                        },
-                        "hljs-formula": Object {
-                          "background": "#073642",
-                        },
-                        "hljs-keyword": Object {
-                          "color": "#859900",
-                        },
-                        "hljs-link": Object {
-                          "color": "#cb4b16",
-                        },
-                        "hljs-literal": Object {
-                          "color": "#2aa198",
-                        },
-                        "hljs-meta": Object {
-                          "color": "#cb4b16",
-                        },
-                        "hljs-meta .hljs-keyword": Object {
-                          "color": "#cb4b16",
-                        },
-                        "hljs-meta .hljs-meta-string": Object {
-                          "color": "#2aa198",
-                        },
-                        "hljs-name": Object {
-                          "color": "#268bd2",
-                        },
-                        "hljs-number": Object {
-                          "color": "#2aa198",
-                        },
-                        "hljs-quote": Object {
-                          "color": "#586e75",
-                        },
-                        "hljs-regexp": Object {
-                          "color": "#2aa198",
-                        },
-                        "hljs-section": Object {
-                          "color": "#268bd2",
-                        },
-                        "hljs-selector-attr": Object {
-                          "color": "#cb4b16",
-                        },
-                        "hljs-selector-class": Object {
-                          "color": "#268bd2",
-                        },
-                        "hljs-selector-id": Object {
-                          "color": "#268bd2",
-                        },
-                        "hljs-selector-pseudo": Object {
-                          "color": "#cb4b16",
-                        },
-                        "hljs-selector-tag": Object {
-                          "color": "#859900",
-                        },
-                        "hljs-string": Object {
-                          "color": "#2aa198",
-                        },
-                        "hljs-strong": Object {
-                          "fontWeight": "bold",
-                        },
-                        "hljs-subst": Object {
-                          "color": "#cb4b16",
-                        },
-                        "hljs-symbol": Object {
-                          "color": "#cb4b16",
-                        },
-                        "hljs-template-variable": Object {
-                          "color": "#b58900",
-                        },
-                        "hljs-title": Object {
-                          "color": "#268bd2",
-                        },
-                        "hljs-type": Object {
-                          "color": "#b58900",
-                        },
-                        "hljs-variable": Object {
-                          "color": "#b58900",
-                        },
-                      }
-                    }
-                  >
-                    
-  $ spark-submit --class org.apache.spark.examples.SparkPi \\
-              --master yarn \\
-              --deploy-mode cluster \\
-              --queue  \\
-              examples/jars/spark-examples*.jar \\
-              10
-  
-                  </SyntaxHighlighter>,
-                ],
-                "style": Object {
-                  "boxShadow": "none",
-                  "flex": 1,
-                },
-              },
-              "ref": null,
-              "rendered": Array [
-                Object {
-                  "instance": null,
-                  "key": undefined,
-                  "nodeType": "host",
-                  "props": Object {
-                    "children": "Submit SparkPi to your personal queue on YARN",
-                  },
-                  "ref": null,
-                  "rendered": "Submit SparkPi to your personal queue on YARN",
-                  "type": "h3",
-                },
-                Object {
-                  "instance": null,
-                  "key": undefined,
-                  "nodeType": "function",
-                  "props": Object {
-                    "children": "
-  $ spark-submit --class org.apache.spark.examples.SparkPi \\\\
-              --master yarn \\\\
-              --deploy-mode cluster \\\\
-              --queue  \\\\
-              examples/jars/spark-examples*.jar \\\\
-              10
-  ",
-                    "language": "shell",
-                    "style": Object {
-                      "hljs": Object {
-                        "background": "#002b36",
-                        "color": "#839496",
-                        "display": "block",
-                        "overflowX": "auto",
-                        "padding": "0.5em",
-                      },
-                      "hljs-addition": Object {
-                        "color": "#859900",
-                      },
-                      "hljs-attr": Object {
-                        "color": "#b58900",
-                      },
-                      "hljs-attribute": Object {
-                        "color": "#b58900",
-                      },
-                      "hljs-built_in": Object {
-                        "color": "#dc322f",
-                      },
-                      "hljs-bullet": Object {
-                        "color": "#cb4b16",
-                      },
-                      "hljs-class .hljs-title": Object {
-                        "color": "#b58900",
-                      },
-                      "hljs-comment": Object {
-                        "color": "#586e75",
-                      },
-                      "hljs-deletion": Object {
-                        "color": "#dc322f",
-                      },
-                      "hljs-doctag": Object {
-                        "color": "#2aa198",
-                      },
-                      "hljs-emphasis": Object {
-                        "fontStyle": "italic",
-                      },
-                      "hljs-formula": Object {
-                        "background": "#073642",
-                      },
-                      "hljs-keyword": Object {
-                        "color": "#859900",
-                      },
-                      "hljs-link": Object {
-                        "color": "#cb4b16",
-                      },
-                      "hljs-literal": Object {
-                        "color": "#2aa198",
-                      },
-                      "hljs-meta": Object {
-                        "color": "#cb4b16",
-                      },
-                      "hljs-meta .hljs-keyword": Object {
-                        "color": "#cb4b16",
-                      },
-                      "hljs-meta .hljs-meta-string": Object {
-                        "color": "#2aa198",
-                      },
-                      "hljs-name": Object {
-                        "color": "#268bd2",
-                      },
-                      "hljs-number": Object {
-                        "color": "#2aa198",
-                      },
-                      "hljs-quote": Object {
-                        "color": "#586e75",
-                      },
-                      "hljs-regexp": Object {
-                        "color": "#2aa198",
-                      },
-                      "hljs-section": Object {
-                        "color": "#268bd2",
-                      },
-                      "hljs-selector-attr": Object {
-                        "color": "#cb4b16",
-                      },
-                      "hljs-selector-class": Object {
-                        "color": "#268bd2",
-                      },
-                      "hljs-selector-id": Object {
-                        "color": "#268bd2",
-                      },
-                      "hljs-selector-pseudo": Object {
-                        "color": "#cb4b16",
-                      },
-                      "hljs-selector-tag": Object {
-                        "color": "#859900",
-                      },
-                      "hljs-string": Object {
-                        "color": "#2aa198",
-                      },
-                      "hljs-strong": Object {
-                        "fontWeight": "bold",
-                      },
-                      "hljs-subst": Object {
-                        "color": "#cb4b16",
-                      },
-                      "hljs-symbol": Object {
-                        "color": "#cb4b16",
-                      },
-                      "hljs-template-variable": Object {
-                        "color": "#b58900",
-                      },
-                      "hljs-title": Object {
-                        "color": "#268bd2",
-                      },
-                      "hljs-type": Object {
-                        "color": "#b58900",
-                      },
-                      "hljs-variable": Object {
-                        "color": "#b58900",
-                      },
-                    },
-                  },
-                  "ref": null,
-                  "rendered": "
-  $ spark-submit --class org.apache.spark.examples.SparkPi \\\\
-              --master yarn \\\\
-              --deploy-mode cluster \\\\
-              --queue  \\\\
-              examples/jars/spark-examples*.jar \\\\
-              10
-  ",
-                  "type": [Function],
-                },
-              ],
-              "type": [Function],
+              "type": "div",
             },
           ],
           "type": [Function],
@@ -1820,302 +1234,138 @@ ShallowWrapper {
               bodyStyle={
                 Object {
                   "display": "flex",
+                  "flexDirection": "column",
                 }
               }
-              title="Your Personal Workspace"
             >
-              <Unknown
-                style={
-                  Object {
-                    "boxShadow": "none",
-                    "flex": 1,
+              <Label>
+                Your Personal Workspace
+              </Label>
+              <div>
+                <div
+                  style={
+                    Object {
+                      "display": "flex",
+                      "fontSize": "12px",
+                      "fontWeight": "bold",
+                      "justifyContent": "center",
+                      "textAlign": "center",
+                    }
                   }
-                }
-              >
-                <h3>
-                  Connect to Your Database With
-                   
-                  <a
-                    href="https://github.com/cloudera/impyla"
-                    rel="noreferrer noopener"
-                    target="_blank"
+                >
+                  <div
+                    style={
+                      Object {
+                        "padding": "10px",
+                      }
+                    }
                   >
-                    impyla
-                  </a>
-                </h3>
-                <SyntaxHighlighter
-                  language="python"
-                  style={
-                    Object {
-                      "hljs": Object {
-                        "background": "#002b36",
-                        "color": "#839496",
-                        "display": "block",
-                        "overflowX": "auto",
-                        "padding": "0.5em",
-                      },
-                      "hljs-addition": Object {
-                        "color": "#859900",
-                      },
-                      "hljs-attr": Object {
-                        "color": "#b58900",
-                      },
-                      "hljs-attribute": Object {
-                        "color": "#b58900",
-                      },
-                      "hljs-built_in": Object {
-                        "color": "#dc322f",
-                      },
-                      "hljs-bullet": Object {
-                        "color": "#cb4b16",
-                      },
-                      "hljs-class .hljs-title": Object {
-                        "color": "#b58900",
-                      },
-                      "hljs-comment": Object {
-                        "color": "#586e75",
-                      },
-                      "hljs-deletion": Object {
-                        "color": "#dc322f",
-                      },
-                      "hljs-doctag": Object {
-                        "color": "#2aa198",
-                      },
-                      "hljs-emphasis": Object {
-                        "fontStyle": "italic",
-                      },
-                      "hljs-formula": Object {
-                        "background": "#073642",
-                      },
-                      "hljs-keyword": Object {
-                        "color": "#859900",
-                      },
-                      "hljs-link": Object {
-                        "color": "#cb4b16",
-                      },
-                      "hljs-literal": Object {
-                        "color": "#2aa198",
-                      },
-                      "hljs-meta": Object {
-                        "color": "#cb4b16",
-                      },
-                      "hljs-meta .hljs-keyword": Object {
-                        "color": "#cb4b16",
-                      },
-                      "hljs-meta .hljs-meta-string": Object {
-                        "color": "#2aa198",
-                      },
-                      "hljs-name": Object {
-                        "color": "#268bd2",
-                      },
-                      "hljs-number": Object {
-                        "color": "#2aa198",
-                      },
-                      "hljs-quote": Object {
-                        "color": "#586e75",
-                      },
-                      "hljs-regexp": Object {
-                        "color": "#2aa198",
-                      },
-                      "hljs-section": Object {
-                        "color": "#268bd2",
-                      },
-                      "hljs-selector-attr": Object {
-                        "color": "#cb4b16",
-                      },
-                      "hljs-selector-class": Object {
-                        "color": "#268bd2",
-                      },
-                      "hljs-selector-id": Object {
-                        "color": "#268bd2",
-                      },
-                      "hljs-selector-pseudo": Object {
-                        "color": "#cb4b16",
-                      },
-                      "hljs-selector-tag": Object {
-                        "color": "#859900",
-                      },
-                      "hljs-string": Object {
-                        "color": "#2aa198",
-                      },
-                      "hljs-strong": Object {
-                        "fontWeight": "bold",
-                      },
-                      "hljs-subst": Object {
-                        "color": "#cb4b16",
-                      },
-                      "hljs-symbol": Object {
-                        "color": "#cb4b16",
-                      },
-                      "hljs-template-variable": Object {
-                        "color": "#b58900",
-                      },
-                      "hljs-title": Object {
-                        "color": "#268bd2",
-                      },
-                      "hljs-type": Object {
-                        "color": "#b58900",
-                      },
-                      "hljs-variable": Object {
-                        "color": "#b58900",
-                      },
+                    <div>
+                      HDFS LOCATION
+                    </div>
+                    <div
+                      style={
+                        Object {
+                          "fontWeight": 200,
+                        }
+                      }
+                    >
+                      
+                    </div>
+                  </div>
+                  <div
+                    style={
+                      Object {
+                        "padding": "10px",
+                      }
                     }
-                  }
-                >
-                  
-  from impala.dbapi import connect
-  conn = connect(host='undefined', port=undefined, database='')
-  cursor = conn.cursor()
-  cursor.execute('SELECT * FROM mytable LIMIT 100')
-  print cursor.description  # prints the result set's schema
-  results = cursor.fetchall()
-  
-                </SyntaxHighlighter>
-              </Unknown>
-              <Unknown
-                style={
-                  Object {
-                    "boxShadow": "none",
-                    "flex": 1,
-                  }
-                }
-              >
-                <h3>
-                  Submit SparkPi to your personal queue on YARN
-                </h3>
-                <SyntaxHighlighter
-                  language="shell"
-                  style={
-                    Object {
-                      "hljs": Object {
-                        "background": "#002b36",
-                        "color": "#839496",
-                        "display": "block",
-                        "overflowX": "auto",
-                        "padding": "0.5em",
-                      },
-                      "hljs-addition": Object {
-                        "color": "#859900",
-                      },
-                      "hljs-attr": Object {
-                        "color": "#b58900",
-                      },
-                      "hljs-attribute": Object {
-                        "color": "#b58900",
-                      },
-                      "hljs-built_in": Object {
-                        "color": "#dc322f",
-                      },
-                      "hljs-bullet": Object {
-                        "color": "#cb4b16",
-                      },
-                      "hljs-class .hljs-title": Object {
-                        "color": "#b58900",
-                      },
-                      "hljs-comment": Object {
-                        "color": "#586e75",
-                      },
-                      "hljs-deletion": Object {
-                        "color": "#dc322f",
-                      },
-                      "hljs-doctag": Object {
-                        "color": "#2aa198",
-                      },
-                      "hljs-emphasis": Object {
-                        "fontStyle": "italic",
-                      },
-                      "hljs-formula": Object {
-                        "background": "#073642",
-                      },
-                      "hljs-keyword": Object {
-                        "color": "#859900",
-                      },
-                      "hljs-link": Object {
-                        "color": "#cb4b16",
-                      },
-                      "hljs-literal": Object {
-                        "color": "#2aa198",
-                      },
-                      "hljs-meta": Object {
-                        "color": "#cb4b16",
-                      },
-                      "hljs-meta .hljs-keyword": Object {
-                        "color": "#cb4b16",
-                      },
-                      "hljs-meta .hljs-meta-string": Object {
-                        "color": "#2aa198",
-                      },
-                      "hljs-name": Object {
-                        "color": "#268bd2",
-                      },
-                      "hljs-number": Object {
-                        "color": "#2aa198",
-                      },
-                      "hljs-quote": Object {
-                        "color": "#586e75",
-                      },
-                      "hljs-regexp": Object {
-                        "color": "#2aa198",
-                      },
-                      "hljs-section": Object {
-                        "color": "#268bd2",
-                      },
-                      "hljs-selector-attr": Object {
-                        "color": "#cb4b16",
-                      },
-                      "hljs-selector-class": Object {
-                        "color": "#268bd2",
-                      },
-                      "hljs-selector-id": Object {
-                        "color": "#268bd2",
-                      },
-                      "hljs-selector-pseudo": Object {
-                        "color": "#cb4b16",
-                      },
-                      "hljs-selector-tag": Object {
-                        "color": "#859900",
-                      },
-                      "hljs-string": Object {
-                        "color": "#2aa198",
-                      },
-                      "hljs-strong": Object {
-                        "fontWeight": "bold",
-                      },
-                      "hljs-subst": Object {
-                        "color": "#cb4b16",
-                      },
-                      "hljs-symbol": Object {
-                        "color": "#cb4b16",
-                      },
-                      "hljs-template-variable": Object {
-                        "color": "#b58900",
-                      },
-                      "hljs-title": Object {
-                        "color": "#268bd2",
-                      },
-                      "hljs-type": Object {
-                        "color": "#b58900",
-                      },
-                      "hljs-variable": Object {
-                        "color": "#b58900",
-                      },
+                  >
+                    <div>
+                      HIVE NAMESPACE
+                    </div>
+                    <div
+                      style={
+                        Object {
+                          "fontWeight": 200,
+                        }
+                      }
+                    >
+                      
+                    </div>
+                  </div>
+                  <div
+                    style={
+                      Object {
+                        "padding": "10px",
+                      }
                     }
-                  }
+                  >
+                    <div>
+                      RESOURCE POOL
+                    </div>
+                    <div
+                      style={
+                        Object {
+                          "fontWeight": 200,
+                        }
+                      }
+                    >
+                      
+                    </div>
+                  </div>
+                </div>
+                <Row
+                  gutter={12}
                 >
-                  
-  $ spark-submit --class org.apache.spark.examples.SparkPi \\
-              --master yarn \\
-              --deploy-mode cluster \\
-              --queue  \\
-              examples/jars/spark-examples*.jar \\
-              10
-  
-                </SyntaxHighlighter>
-              </Unknown>
+                  <Col
+                    span={24}
+                    style={
+                      Object {
+                        "marginTop": 10,
+                      }
+                    }
+                    xl={8}
+                  >
+                    <SetupHelp
+                      location=""
+                      namespace=""
+                    />
+                  </Col>
+                  <Col
+                    span={24}
+                    style={
+                      Object {
+                        "marginTop": 10,
+                      }
+                    }
+                    xl={8}
+                  >
+                    <SetupHelp
+                      host=""
+                      namespace=""
+                      port=""
+                    />
+                  </Col>
+                  <Col
+                    span={24}
+                    style={
+                      Object {
+                        "marginTop": 10,
+                      }
+                    }
+                    xl={8}
+                  >
+                    <RunHelp
+                      queue=""
+                    />
+                  </Col>
+                </Row>
+              </div>
             </Card>
           </div>,
         ],
         "style": Object {
+          "flex": 1,
           "position": "relative",
         },
       },
@@ -2232,298 +1482,133 @@ ShallowWrapper {
               bodyStyle={
                 Object {
                   "display": "flex",
+                  "flexDirection": "column",
                 }
               }
-              title="Your Personal Workspace"
             >
-              <Unknown
-                style={
-                  Object {
-                    "boxShadow": "none",
-                    "flex": 1,
+              <Label>
+                Your Personal Workspace
+              </Label>
+              <div>
+                <div
+                  style={
+                    Object {
+                      "display": "flex",
+                      "fontSize": "12px",
+                      "fontWeight": "bold",
+                      "justifyContent": "center",
+                      "textAlign": "center",
+                    }
                   }
-                }
-              >
-                <h3>
-                  Connect to Your Database With
-                   
-                  <a
-                    href="https://github.com/cloudera/impyla"
-                    rel="noreferrer noopener"
-                    target="_blank"
+                >
+                  <div
+                    style={
+                      Object {
+                        "padding": "10px",
+                      }
+                    }
                   >
-                    impyla
-                  </a>
-                </h3>
-                <SyntaxHighlighter
-                  language="python"
-                  style={
-                    Object {
-                      "hljs": Object {
-                        "background": "#002b36",
-                        "color": "#839496",
-                        "display": "block",
-                        "overflowX": "auto",
-                        "padding": "0.5em",
-                      },
-                      "hljs-addition": Object {
-                        "color": "#859900",
-                      },
-                      "hljs-attr": Object {
-                        "color": "#b58900",
-                      },
-                      "hljs-attribute": Object {
-                        "color": "#b58900",
-                      },
-                      "hljs-built_in": Object {
-                        "color": "#dc322f",
-                      },
-                      "hljs-bullet": Object {
-                        "color": "#cb4b16",
-                      },
-                      "hljs-class .hljs-title": Object {
-                        "color": "#b58900",
-                      },
-                      "hljs-comment": Object {
-                        "color": "#586e75",
-                      },
-                      "hljs-deletion": Object {
-                        "color": "#dc322f",
-                      },
-                      "hljs-doctag": Object {
-                        "color": "#2aa198",
-                      },
-                      "hljs-emphasis": Object {
-                        "fontStyle": "italic",
-                      },
-                      "hljs-formula": Object {
-                        "background": "#073642",
-                      },
-                      "hljs-keyword": Object {
-                        "color": "#859900",
-                      },
-                      "hljs-link": Object {
-                        "color": "#cb4b16",
-                      },
-                      "hljs-literal": Object {
-                        "color": "#2aa198",
-                      },
-                      "hljs-meta": Object {
-                        "color": "#cb4b16",
-                      },
-                      "hljs-meta .hljs-keyword": Object {
-                        "color": "#cb4b16",
-                      },
-                      "hljs-meta .hljs-meta-string": Object {
-                        "color": "#2aa198",
-                      },
-                      "hljs-name": Object {
-                        "color": "#268bd2",
-                      },
-                      "hljs-number": Object {
-                        "color": "#2aa198",
-                      },
-                      "hljs-quote": Object {
-                        "color": "#586e75",
-                      },
-                      "hljs-regexp": Object {
-                        "color": "#2aa198",
-                      },
-                      "hljs-section": Object {
-                        "color": "#268bd2",
-                      },
-                      "hljs-selector-attr": Object {
-                        "color": "#cb4b16",
-                      },
-                      "hljs-selector-class": Object {
-                        "color": "#268bd2",
-                      },
-                      "hljs-selector-id": Object {
-                        "color": "#268bd2",
-                      },
-                      "hljs-selector-pseudo": Object {
-                        "color": "#cb4b16",
-                      },
-                      "hljs-selector-tag": Object {
-                        "color": "#859900",
-                      },
-                      "hljs-string": Object {
-                        "color": "#2aa198",
-                      },
-                      "hljs-strong": Object {
-                        "fontWeight": "bold",
-                      },
-                      "hljs-subst": Object {
-                        "color": "#cb4b16",
-                      },
-                      "hljs-symbol": Object {
-                        "color": "#cb4b16",
-                      },
-                      "hljs-template-variable": Object {
-                        "color": "#b58900",
-                      },
-                      "hljs-title": Object {
-                        "color": "#268bd2",
-                      },
-                      "hljs-type": Object {
-                        "color": "#b58900",
-                      },
-                      "hljs-variable": Object {
-                        "color": "#b58900",
-                      },
+                    <div>
+                      HDFS LOCATION
+                    </div>
+                    <div
+                      style={
+                        Object {
+                          "fontWeight": 200,
+                        }
+                      }
+                    >
+                      
+                    </div>
+                  </div>
+                  <div
+                    style={
+                      Object {
+                        "padding": "10px",
+                      }
                     }
-                  }
-                >
-                  
-  from impala.dbapi import connect
-  conn = connect(host='undefined', port=undefined, database='')
-  cursor = conn.cursor()
-  cursor.execute('SELECT * FROM mytable LIMIT 100')
-  print cursor.description  # prints the result set's schema
-  results = cursor.fetchall()
-  
-                </SyntaxHighlighter>
-              </Unknown>
-              <Unknown
-                style={
-                  Object {
-                    "boxShadow": "none",
-                    "flex": 1,
-                  }
-                }
-              >
-                <h3>
-                  Submit SparkPi to your personal queue on YARN
-                </h3>
-                <SyntaxHighlighter
-                  language="shell"
-                  style={
-                    Object {
-                      "hljs": Object {
-                        "background": "#002b36",
-                        "color": "#839496",
-                        "display": "block",
-                        "overflowX": "auto",
-                        "padding": "0.5em",
-                      },
-                      "hljs-addition": Object {
-                        "color": "#859900",
-                      },
-                      "hljs-attr": Object {
-                        "color": "#b58900",
-                      },
-                      "hljs-attribute": Object {
-                        "color": "#b58900",
-                      },
-                      "hljs-built_in": Object {
-                        "color": "#dc322f",
-                      },
-                      "hljs-bullet": Object {
-                        "color": "#cb4b16",
-                      },
-                      "hljs-class .hljs-title": Object {
-                        "color": "#b58900",
-                      },
-                      "hljs-comment": Object {
-                        "color": "#586e75",
-                      },
-                      "hljs-deletion": Object {
-                        "color": "#dc322f",
-                      },
-                      "hljs-doctag": Object {
-                        "color": "#2aa198",
-                      },
-                      "hljs-emphasis": Object {
-                        "fontStyle": "italic",
-                      },
-                      "hljs-formula": Object {
-                        "background": "#073642",
-                      },
-                      "hljs-keyword": Object {
-                        "color": "#859900",
-                      },
-                      "hljs-link": Object {
-                        "color": "#cb4b16",
-                      },
-                      "hljs-literal": Object {
-                        "color": "#2aa198",
-                      },
-                      "hljs-meta": Object {
-                        "color": "#cb4b16",
-                      },
-                      "hljs-meta .hljs-keyword": Object {
-                        "color": "#cb4b16",
-                      },
-                      "hljs-meta .hljs-meta-string": Object {
-                        "color": "#2aa198",
-                      },
-                      "hljs-name": Object {
-                        "color": "#268bd2",
-                      },
-                      "hljs-number": Object {
-                        "color": "#2aa198",
-                      },
-                      "hljs-quote": Object {
-                        "color": "#586e75",
-                      },
-                      "hljs-regexp": Object {
-                        "color": "#2aa198",
-                      },
-                      "hljs-section": Object {
-                        "color": "#268bd2",
-                      },
-                      "hljs-selector-attr": Object {
-                        "color": "#cb4b16",
-                      },
-                      "hljs-selector-class": Object {
-                        "color": "#268bd2",
-                      },
-                      "hljs-selector-id": Object {
-                        "color": "#268bd2",
-                      },
-                      "hljs-selector-pseudo": Object {
-                        "color": "#cb4b16",
-                      },
-                      "hljs-selector-tag": Object {
-                        "color": "#859900",
-                      },
-                      "hljs-string": Object {
-                        "color": "#2aa198",
-                      },
-                      "hljs-strong": Object {
-                        "fontWeight": "bold",
-                      },
-                      "hljs-subst": Object {
-                        "color": "#cb4b16",
-                      },
-                      "hljs-symbol": Object {
-                        "color": "#cb4b16",
-                      },
-                      "hljs-template-variable": Object {
-                        "color": "#b58900",
-                      },
-                      "hljs-title": Object {
-                        "color": "#268bd2",
-                      },
-                      "hljs-type": Object {
-                        "color": "#b58900",
-                      },
-                      "hljs-variable": Object {
-                        "color": "#b58900",
-                      },
+                  >
+                    <div>
+                      HIVE NAMESPACE
+                    </div>
+                    <div
+                      style={
+                        Object {
+                          "fontWeight": 200,
+                        }
+                      }
+                    >
+                      
+                    </div>
+                  </div>
+                  <div
+                    style={
+                      Object {
+                        "padding": "10px",
+                      }
                     }
-                  }
+                  >
+                    <div>
+                      RESOURCE POOL
+                    </div>
+                    <div
+                      style={
+                        Object {
+                          "fontWeight": 200,
+                        }
+                      }
+                    >
+                      
+                    </div>
+                  </div>
+                </div>
+                <Row
+                  gutter={12}
                 >
-                  
-  $ spark-submit --class org.apache.spark.examples.SparkPi \\
-              --master yarn \\
-              --deploy-mode cluster \\
-              --queue  \\
-              examples/jars/spark-examples*.jar \\
-              10
-  
-                </SyntaxHighlighter>
-              </Unknown>
+                  <Col
+                    span={24}
+                    style={
+                      Object {
+                        "marginTop": 10,
+                      }
+                    }
+                    xl={8}
+                  >
+                    <SetupHelp
+                      location=""
+                      namespace=""
+                    />
+                  </Col>
+                  <Col
+                    span={24}
+                    style={
+                      Object {
+                        "marginTop": 10,
+                      }
+                    }
+                    xl={8}
+                  >
+                    <SetupHelp
+                      host=""
+                      namespace=""
+                      port=""
+                    />
+                  </Col>
+                  <Col
+                    span={24}
+                    style={
+                      Object {
+                        "marginTop": 10,
+                      }
+                    }
+                    xl={8}
+                  >
+                    <RunHelp
+                      queue=""
+                    />
+                  </Col>
+                </Row>
+              </div>
             </Card>,
             "style": Object {
               "filter": "none",
@@ -2538,298 +1623,133 @@ ShallowWrapper {
             "props": Object {
               "bodyStyle": Object {
                 "display": "flex",
+                "flexDirection": "column",
               },
               "children": Array [
-                <Unknown
-                  style={
-                    Object {
-                      "boxShadow": "none",
-                      "flex": 1,
+                <Label>
+                  Your Personal Workspace
+                </Label>,
+                <div>
+                  <div
+                    style={
+                      Object {
+                        "display": "flex",
+                        "fontSize": "12px",
+                        "fontWeight": "bold",
+                        "justifyContent": "center",
+                        "textAlign": "center",
+                      }
                     }
-                  }
-                >
-                  <h3>
-                    Connect to Your Database With
-                     
-                    <a
-                      href="https://github.com/cloudera/impyla"
-                      rel="noreferrer noopener"
-                      target="_blank"
+                  >
+                    <div
+                      style={
+                        Object {
+                          "padding": "10px",
+                        }
+                      }
                     >
-                      impyla
-                    </a>
-                  </h3>
-                  <SyntaxHighlighter
-                    language="python"
-                    style={
-                      Object {
-                        "hljs": Object {
-                          "background": "#002b36",
-                          "color": "#839496",
-                          "display": "block",
-                          "overflowX": "auto",
-                          "padding": "0.5em",
-                        },
-                        "hljs-addition": Object {
-                          "color": "#859900",
-                        },
-                        "hljs-attr": Object {
-                          "color": "#b58900",
-                        },
-                        "hljs-attribute": Object {
-                          "color": "#b58900",
-                        },
-                        "hljs-built_in": Object {
-                          "color": "#dc322f",
-                        },
-                        "hljs-bullet": Object {
-                          "color": "#cb4b16",
-                        },
-                        "hljs-class .hljs-title": Object {
-                          "color": "#b58900",
-                        },
-                        "hljs-comment": Object {
-                          "color": "#586e75",
-                        },
-                        "hljs-deletion": Object {
-                          "color": "#dc322f",
-                        },
-                        "hljs-doctag": Object {
-                          "color": "#2aa198",
-                        },
-                        "hljs-emphasis": Object {
-                          "fontStyle": "italic",
-                        },
-                        "hljs-formula": Object {
-                          "background": "#073642",
-                        },
-                        "hljs-keyword": Object {
-                          "color": "#859900",
-                        },
-                        "hljs-link": Object {
-                          "color": "#cb4b16",
-                        },
-                        "hljs-literal": Object {
-                          "color": "#2aa198",
-                        },
-                        "hljs-meta": Object {
-                          "color": "#cb4b16",
-                        },
-                        "hljs-meta .hljs-keyword": Object {
-                          "color": "#cb4b16",
-                        },
-                        "hljs-meta .hljs-meta-string": Object {
-                          "color": "#2aa198",
-                        },
-                        "hljs-name": Object {
-                          "color": "#268bd2",
-                        },
-                        "hljs-number": Object {
-                          "color": "#2aa198",
-                        },
-                        "hljs-quote": Object {
-                          "color": "#586e75",
-                        },
-                        "hljs-regexp": Object {
-                          "color": "#2aa198",
-                        },
-                        "hljs-section": Object {
-                          "color": "#268bd2",
-                        },
-                        "hljs-selector-attr": Object {
-                          "color": "#cb4b16",
-                        },
-                        "hljs-selector-class": Object {
-                          "color": "#268bd2",
-                        },
-                        "hljs-selector-id": Object {
-                          "color": "#268bd2",
-                        },
-                        "hljs-selector-pseudo": Object {
-                          "color": "#cb4b16",
-                        },
-                        "hljs-selector-tag": Object {
-                          "color": "#859900",
-                        },
-                        "hljs-string": Object {
-                          "color": "#2aa198",
-                        },
-                        "hljs-strong": Object {
-                          "fontWeight": "bold",
-                        },
-                        "hljs-subst": Object {
-                          "color": "#cb4b16",
-                        },
-                        "hljs-symbol": Object {
-                          "color": "#cb4b16",
-                        },
-                        "hljs-template-variable": Object {
-                          "color": "#b58900",
-                        },
-                        "hljs-title": Object {
-                          "color": "#268bd2",
-                        },
-                        "hljs-type": Object {
-                          "color": "#b58900",
-                        },
-                        "hljs-variable": Object {
-                          "color": "#b58900",
-                        },
+                      <div>
+                        HDFS LOCATION
+                      </div>
+                      <div
+                        style={
+                          Object {
+                            "fontWeight": 200,
+                          }
+                        }
+                      >
+                        
+                      </div>
+                    </div>
+                    <div
+                      style={
+                        Object {
+                          "padding": "10px",
+                        }
                       }
-                    }
-                  >
-                    
-  from impala.dbapi import connect
-  conn = connect(host='undefined', port=undefined, database='')
-  cursor = conn.cursor()
-  cursor.execute('SELECT * FROM mytable LIMIT 100')
-  print cursor.description  # prints the result set's schema
-  results = cursor.fetchall()
-  
-                  </SyntaxHighlighter>
-                </Unknown>,
-                <Unknown
-                  style={
-                    Object {
-                      "boxShadow": "none",
-                      "flex": 1,
-                    }
-                  }
-                >
-                  <h3>
-                    Submit SparkPi to your personal queue on YARN
-                  </h3>
-                  <SyntaxHighlighter
-                    language="shell"
-                    style={
-                      Object {
-                        "hljs": Object {
-                          "background": "#002b36",
-                          "color": "#839496",
-                          "display": "block",
-                          "overflowX": "auto",
-                          "padding": "0.5em",
-                        },
-                        "hljs-addition": Object {
-                          "color": "#859900",
-                        },
-                        "hljs-attr": Object {
-                          "color": "#b58900",
-                        },
-                        "hljs-attribute": Object {
-                          "color": "#b58900",
-                        },
-                        "hljs-built_in": Object {
-                          "color": "#dc322f",
-                        },
-                        "hljs-bullet": Object {
-                          "color": "#cb4b16",
-                        },
-                        "hljs-class .hljs-title": Object {
-                          "color": "#b58900",
-                        },
-                        "hljs-comment": Object {
-                          "color": "#586e75",
-                        },
-                        "hljs-deletion": Object {
-                          "color": "#dc322f",
-                        },
-                        "hljs-doctag": Object {
-                          "color": "#2aa198",
-                        },
-                        "hljs-emphasis": Object {
-                          "fontStyle": "italic",
-                        },
-                        "hljs-formula": Object {
-                          "background": "#073642",
-                        },
-                        "hljs-keyword": Object {
-                          "color": "#859900",
-                        },
-                        "hljs-link": Object {
-                          "color": "#cb4b16",
-                        },
-                        "hljs-literal": Object {
-                          "color": "#2aa198",
-                        },
-                        "hljs-meta": Object {
-                          "color": "#cb4b16",
-                        },
-                        "hljs-meta .hljs-keyword": Object {
-                          "color": "#cb4b16",
-                        },
-                        "hljs-meta .hljs-meta-string": Object {
-                          "color": "#2aa198",
-                        },
-                        "hljs-name": Object {
-                          "color": "#268bd2",
-                        },
-                        "hljs-number": Object {
-                          "color": "#2aa198",
-                        },
-                        "hljs-quote": Object {
-                          "color": "#586e75",
-                        },
-                        "hljs-regexp": Object {
-                          "color": "#2aa198",
-                        },
-                        "hljs-section": Object {
-                          "color": "#268bd2",
-                        },
-                        "hljs-selector-attr": Object {
-                          "color": "#cb4b16",
-                        },
-                        "hljs-selector-class": Object {
-                          "color": "#268bd2",
-                        },
-                        "hljs-selector-id": Object {
-                          "color": "#268bd2",
-                        },
-                        "hljs-selector-pseudo": Object {
-                          "color": "#cb4b16",
-                        },
-                        "hljs-selector-tag": Object {
-                          "color": "#859900",
-                        },
-                        "hljs-string": Object {
-                          "color": "#2aa198",
-                        },
-                        "hljs-strong": Object {
-                          "fontWeight": "bold",
-                        },
-                        "hljs-subst": Object {
-                          "color": "#cb4b16",
-                        },
-                        "hljs-symbol": Object {
-                          "color": "#cb4b16",
-                        },
-                        "hljs-template-variable": Object {
-                          "color": "#b58900",
-                        },
-                        "hljs-title": Object {
-                          "color": "#268bd2",
-                        },
-                        "hljs-type": Object {
-                          "color": "#b58900",
-                        },
-                        "hljs-variable": Object {
-                          "color": "#b58900",
-                        },
+                    >
+                      <div>
+                        HIVE NAMESPACE
+                      </div>
+                      <div
+                        style={
+                          Object {
+                            "fontWeight": 200,
+                          }
+                        }
+                      >
+                        
+                      </div>
+                    </div>
+                    <div
+                      style={
+                        Object {
+                          "padding": "10px",
+                        }
                       }
-                    }
+                    >
+                      <div>
+                        RESOURCE POOL
+                      </div>
+                      <div
+                        style={
+                          Object {
+                            "fontWeight": 200,
+                          }
+                        }
+                      >
+                        
+                      </div>
+                    </div>
+                  </div>
+                  <Row
+                    gutter={12}
                   >
-                    
-  $ spark-submit --class org.apache.spark.examples.SparkPi \\
-              --master yarn \\
-              --deploy-mode cluster \\
-              --queue  \\
-              examples/jars/spark-examples*.jar \\
-              10
-  
-                  </SyntaxHighlighter>
-                </Unknown>,
+                    <Col
+                      span={24}
+                      style={
+                        Object {
+                          "marginTop": 10,
+                        }
+                      }
+                      xl={8}
+                    >
+                      <SetupHelp
+                        location=""
+                        namespace=""
+                      />
+                    </Col>
+                    <Col
+                      span={24}
+                      style={
+                        Object {
+                          "marginTop": 10,
+                        }
+                      }
+                      xl={8}
+                    >
+                      <SetupHelp
+                        host=""
+                        namespace=""
+                        port=""
+                      />
+                    </Col>
+                    <Col
+                      span={24}
+                      style={
+                        Object {
+                          "marginTop": 10,
+                        }
+                      }
+                      xl={8}
+                    >
+                      <RunHelp
+                        queue=""
+                      />
+                    </Col>
+                  </Row>
+                </div>,
               ],
-              "title": "Your Personal Workspace",
             },
             "ref": null,
             "rendered": Array [
@@ -2838,151 +1758,137 @@ ShallowWrapper {
                 "key": undefined,
                 "nodeType": "function",
                 "props": Object {
+                  "children": "Your Personal Workspace",
+                },
+                "ref": null,
+                "rendered": "Your Personal Workspace",
+                "type": [Function],
+              },
+              Object {
+                "instance": null,
+                "key": undefined,
+                "nodeType": "host",
+                "props": Object {
                   "children": Array [
-                    <h3>
-                      Connect to Your Database With
-                       
-                      <a
-                        href="https://github.com/cloudera/impyla"
-                        rel="noreferrer noopener"
-                        target="_blank"
-                      >
-                        impyla
-                      </a>
-                    </h3>,
-                    <SyntaxHighlighter
-                      language="python"
+                    <div
                       style={
                         Object {
-                          "hljs": Object {
-                            "background": "#002b36",
-                            "color": "#839496",
-                            "display": "block",
-                            "overflowX": "auto",
-                            "padding": "0.5em",
-                          },
-                          "hljs-addition": Object {
-                            "color": "#859900",
-                          },
-                          "hljs-attr": Object {
-                            "color": "#b58900",
-                          },
-                          "hljs-attribute": Object {
-                            "color": "#b58900",
-                          },
-                          "hljs-built_in": Object {
-                            "color": "#dc322f",
-                          },
-                          "hljs-bullet": Object {
-                            "color": "#cb4b16",
-                          },
-                          "hljs-class .hljs-title": Object {
-                            "color": "#b58900",
-                          },
-                          "hljs-comment": Object {
-                            "color": "#586e75",
-                          },
-                          "hljs-deletion": Object {
-                            "color": "#dc322f",
-                          },
-                          "hljs-doctag": Object {
-                            "color": "#2aa198",
-                          },
-                          "hljs-emphasis": Object {
-                            "fontStyle": "italic",
-                          },
-                          "hljs-formula": Object {
-                            "background": "#073642",
-                          },
-                          "hljs-keyword": Object {
-                            "color": "#859900",
-                          },
-                          "hljs-link": Object {
-                            "color": "#cb4b16",
-                          },
-                          "hljs-literal": Object {
-                            "color": "#2aa198",
-                          },
-                          "hljs-meta": Object {
-                            "color": "#cb4b16",
-                          },
-                          "hljs-meta .hljs-keyword": Object {
-                            "color": "#cb4b16",
-                          },
-                          "hljs-meta .hljs-meta-string": Object {
-                            "color": "#2aa198",
-                          },
-                          "hljs-name": Object {
-                            "color": "#268bd2",
-                          },
-                          "hljs-number": Object {
-                            "color": "#2aa198",
-                          },
-                          "hljs-quote": Object {
-                            "color": "#586e75",
-                          },
-                          "hljs-regexp": Object {
-                            "color": "#2aa198",
-                          },
-                          "hljs-section": Object {
-                            "color": "#268bd2",
-                          },
-                          "hljs-selector-attr": Object {
-                            "color": "#cb4b16",
-                          },
-                          "hljs-selector-class": Object {
-                            "color": "#268bd2",
-                          },
-                          "hljs-selector-id": Object {
-                            "color": "#268bd2",
-                          },
-                          "hljs-selector-pseudo": Object {
-                            "color": "#cb4b16",
-                          },
-                          "hljs-selector-tag": Object {
-                            "color": "#859900",
-                          },
-                          "hljs-string": Object {
-                            "color": "#2aa198",
-                          },
-                          "hljs-strong": Object {
-                            "fontWeight": "bold",
-                          },
-                          "hljs-subst": Object {
-                            "color": "#cb4b16",
-                          },
-                          "hljs-symbol": Object {
-                            "color": "#cb4b16",
-                          },
-                          "hljs-template-variable": Object {
-                            "color": "#b58900",
-                          },
-                          "hljs-title": Object {
-                            "color": "#268bd2",
-                          },
-                          "hljs-type": Object {
-                            "color": "#b58900",
-                          },
-                          "hljs-variable": Object {
-                            "color": "#b58900",
-                          },
+                          "display": "flex",
+                          "fontSize": "12px",
+                          "fontWeight": "bold",
+                          "justifyContent": "center",
+                          "textAlign": "center",
                         }
                       }
                     >
-                      
-  from impala.dbapi import connect
-  conn = connect(host='undefined', port=undefined, database='')
-  cursor = conn.cursor()
-  cursor.execute('SELECT * FROM mytable LIMIT 100')
-  print cursor.description  # prints the result set's schema
-  results = cursor.fetchall()
-  
-                    </SyntaxHighlighter>,
+                      <div
+                        style={
+                          Object {
+                            "padding": "10px",
+                          }
+                        }
+                      >
+                        <div>
+                          HDFS LOCATION
+                        </div>
+                        <div
+                          style={
+                            Object {
+                              "fontWeight": 200,
+                            }
+                          }
+                        >
+                          
+                        </div>
+                      </div>
+                      <div
+                        style={
+                          Object {
+                            "padding": "10px",
+                          }
+                        }
+                      >
+                        <div>
+                          HIVE NAMESPACE
+                        </div>
+                        <div
+                          style={
+                            Object {
+                              "fontWeight": 200,
+                            }
+                          }
+                        >
+                          
+                        </div>
+                      </div>
+                      <div
+                        style={
+                          Object {
+                            "padding": "10px",
+                          }
+                        }
+                      >
+                        <div>
+                          RESOURCE POOL
+                        </div>
+                        <div
+                          style={
+                            Object {
+                              "fontWeight": 200,
+                            }
+                          }
+                        >
+                          
+                        </div>
+                      </div>
+                    </div>,
+                    <Row
+                      gutter={12}
+                    >
+                      <Col
+                        span={24}
+                        style={
+                          Object {
+                            "marginTop": 10,
+                          }
+                        }
+                        xl={8}
+                      >
+                        <SetupHelp
+                          location=""
+                          namespace=""
+                        />
+                      </Col>
+                      <Col
+                        span={24}
+                        style={
+                          Object {
+                            "marginTop": 10,
+                          }
+                        }
+                        xl={8}
+                      >
+                        <SetupHelp
+                          host=""
+                          namespace=""
+                          port=""
+                        />
+                      </Col>
+                      <Col
+                        span={24}
+                        style={
+                          Object {
+                            "marginTop": 10,
+                          }
+                        }
+                        xl={8}
+                      >
+                        <RunHelp
+                          queue=""
+                        />
+                      </Col>
+                    </Row>,
                   ],
-                  "style": Object {
-                    "boxShadow": "none",
-                    "flex": 1,
-                  },
                 },
                 "ref": null,
                 "rendered": Array [
@@ -2992,479 +1898,387 @@ ShallowWrapper {
                     "nodeType": "host",
                     "props": Object {
                       "children": Array [
-                        "Connect to Your Database With",
-                        " ",
-                        <a
-                          href="https://github.com/cloudera/impyla"
-                          rel="noreferrer noopener"
-                          target="_blank"
+                        <div
+                          style={
+                            Object {
+                              "padding": "10px",
+                            }
+                          }
                         >
-                          impyla
-                        </a>,
+                          <div>
+                            HDFS LOCATION
+                          </div>
+                          <div
+                            style={
+                              Object {
+                                "fontWeight": 200,
+                              }
+                            }
+                          >
+                            
+                          </div>
+                        </div>,
+                        <div
+                          style={
+                            Object {
+                              "padding": "10px",
+                            }
+                          }
+                        >
+                          <div>
+                            HIVE NAMESPACE
+                          </div>
+                          <div
+                            style={
+                              Object {
+                                "fontWeight": 200,
+                              }
+                            }
+                          >
+                            
+                          </div>
+                        </div>,
+                        <div
+                          style={
+                            Object {
+                              "padding": "10px",
+                            }
+                          }
+                        >
+                          <div>
+                            RESOURCE POOL
+                          </div>
+                          <div
+                            style={
+                              Object {
+                                "fontWeight": 200,
+                              }
+                            }
+                          >
+                            
+                          </div>
+                        </div>,
                       ],
+                      "style": Object {
+                        "display": "flex",
+                        "fontSize": "12px",
+                        "fontWeight": "bold",
+                        "justifyContent": "center",
+                        "textAlign": "center",
+                      },
                     },
                     "ref": null,
                     "rendered": Array [
-                      "Connect to Your Database With",
-                      " ",
                       Object {
                         "instance": null,
                         "key": undefined,
                         "nodeType": "host",
                         "props": Object {
-                          "children": "impyla",
-                          "href": "https://github.com/cloudera/impyla",
-                          "rel": "noreferrer noopener",
-                          "target": "_blank",
+                          "children": Array [
+                            <div>
+                              HDFS LOCATION
+                            </div>,
+                            <div
+                              style={
+                                Object {
+                                  "fontWeight": 200,
+                                }
+                              }
+                            >
+                              
+                            </div>,
+                          ],
+                          "style": Object {
+                            "padding": "10px",
+                          },
                         },
                         "ref": null,
-                        "rendered": "impyla",
-                        "type": "a",
+                        "rendered": Array [
+                          Object {
+                            "instance": null,
+                            "key": undefined,
+                            "nodeType": "host",
+                            "props": Object {
+                              "children": "HDFS LOCATION",
+                            },
+                            "ref": null,
+                            "rendered": "HDFS LOCATION",
+                            "type": "div",
+                          },
+                          Object {
+                            "instance": null,
+                            "key": undefined,
+                            "nodeType": "host",
+                            "props": Object {
+                              "children": "",
+                              "style": Object {
+                                "fontWeight": 200,
+                              },
+                            },
+                            "ref": null,
+                            "rendered": "",
+                            "type": "div",
+                          },
+                        ],
+                        "type": "div",
+                      },
+                      Object {
+                        "instance": null,
+                        "key": undefined,
+                        "nodeType": "host",
+                        "props": Object {
+                          "children": Array [
+                            <div>
+                              HIVE NAMESPACE
+                            </div>,
+                            <div
+                              style={
+                                Object {
+                                  "fontWeight": 200,
+                                }
+                              }
+                            >
+                              
+                            </div>,
+                          ],
+                          "style": Object {
+                            "padding": "10px",
+                          },
+                        },
+                        "ref": null,
+                        "rendered": Array [
+                          Object {
+                            "instance": null,
+                            "key": undefined,
+                            "nodeType": "host",
+                            "props": Object {
+                              "children": "HIVE NAMESPACE",
+                            },
+                            "ref": null,
+                            "rendered": "HIVE NAMESPACE",
+                            "type": "div",
+                          },
+                          Object {
+                            "instance": null,
+                            "key": undefined,
+                            "nodeType": "host",
+                            "props": Object {
+                              "children": "",
+                              "style": Object {
+                                "fontWeight": 200,
+                              },
+                            },
+                            "ref": null,
+                            "rendered": "",
+                            "type": "div",
+                          },
+                        ],
+                        "type": "div",
+                      },
+                      Object {
+                        "instance": null,
+                        "key": undefined,
+                        "nodeType": "host",
+                        "props": Object {
+                          "children": Array [
+                            <div>
+                              RESOURCE POOL
+                            </div>,
+                            <div
+                              style={
+                                Object {
+                                  "fontWeight": 200,
+                                }
+                              }
+                            >
+                              
+                            </div>,
+                          ],
+                          "style": Object {
+                            "padding": "10px",
+                          },
+                        },
+                        "ref": null,
+                        "rendered": Array [
+                          Object {
+                            "instance": null,
+                            "key": undefined,
+                            "nodeType": "host",
+                            "props": Object {
+                              "children": "RESOURCE POOL",
+                            },
+                            "ref": null,
+                            "rendered": "RESOURCE POOL",
+                            "type": "div",
+                          },
+                          Object {
+                            "instance": null,
+                            "key": undefined,
+                            "nodeType": "host",
+                            "props": Object {
+                              "children": "",
+                              "style": Object {
+                                "fontWeight": 200,
+                              },
+                            },
+                            "ref": null,
+                            "rendered": "",
+                            "type": "div",
+                          },
+                        ],
+                        "type": "div",
                       },
                     ],
-                    "type": "h3",
+                    "type": "div",
                   },
                   Object {
                     "instance": null,
                     "key": undefined,
-                    "nodeType": "function",
+                    "nodeType": "class",
                     "props": Object {
-                      "children": "
-  from impala.dbapi import connect
-  conn = connect(host='undefined', port=undefined, database='')
-  cursor = conn.cursor()
-  cursor.execute('SELECT * FROM mytable LIMIT 100')
-  print cursor.description  # prints the result set's schema
-  results = cursor.fetchall()
-  ",
-                      "language": "python",
-                      "style": Object {
-                        "hljs": Object {
-                          "background": "#002b36",
-                          "color": "#839496",
-                          "display": "block",
-                          "overflowX": "auto",
-                          "padding": "0.5em",
-                        },
-                        "hljs-addition": Object {
-                          "color": "#859900",
-                        },
-                        "hljs-attr": Object {
-                          "color": "#b58900",
-                        },
-                        "hljs-attribute": Object {
-                          "color": "#b58900",
-                        },
-                        "hljs-built_in": Object {
-                          "color": "#dc322f",
-                        },
-                        "hljs-bullet": Object {
-                          "color": "#cb4b16",
-                        },
-                        "hljs-class .hljs-title": Object {
-                          "color": "#b58900",
-                        },
-                        "hljs-comment": Object {
-                          "color": "#586e75",
-                        },
-                        "hljs-deletion": Object {
-                          "color": "#dc322f",
-                        },
-                        "hljs-doctag": Object {
-                          "color": "#2aa198",
-                        },
-                        "hljs-emphasis": Object {
-                          "fontStyle": "italic",
-                        },
-                        "hljs-formula": Object {
-                          "background": "#073642",
-                        },
-                        "hljs-keyword": Object {
-                          "color": "#859900",
-                        },
-                        "hljs-link": Object {
-                          "color": "#cb4b16",
-                        },
-                        "hljs-literal": Object {
-                          "color": "#2aa198",
-                        },
-                        "hljs-meta": Object {
-                          "color": "#cb4b16",
-                        },
-                        "hljs-meta .hljs-keyword": Object {
-                          "color": "#cb4b16",
-                        },
-                        "hljs-meta .hljs-meta-string": Object {
-                          "color": "#2aa198",
-                        },
-                        "hljs-name": Object {
-                          "color": "#268bd2",
-                        },
-                        "hljs-number": Object {
-                          "color": "#2aa198",
-                        },
-                        "hljs-quote": Object {
-                          "color": "#586e75",
-                        },
-                        "hljs-regexp": Object {
-                          "color": "#2aa198",
-                        },
-                        "hljs-section": Object {
-                          "color": "#268bd2",
-                        },
-                        "hljs-selector-attr": Object {
-                          "color": "#cb4b16",
-                        },
-                        "hljs-selector-class": Object {
-                          "color": "#268bd2",
-                        },
-                        "hljs-selector-id": Object {
-                          "color": "#268bd2",
-                        },
-                        "hljs-selector-pseudo": Object {
-                          "color": "#cb4b16",
-                        },
-                        "hljs-selector-tag": Object {
-                          "color": "#859900",
-                        },
-                        "hljs-string": Object {
-                          "color": "#2aa198",
-                        },
-                        "hljs-strong": Object {
-                          "fontWeight": "bold",
-                        },
-                        "hljs-subst": Object {
-                          "color": "#cb4b16",
-                        },
-                        "hljs-symbol": Object {
-                          "color": "#cb4b16",
-                        },
-                        "hljs-template-variable": Object {
-                          "color": "#b58900",
-                        },
-                        "hljs-title": Object {
-                          "color": "#268bd2",
-                        },
-                        "hljs-type": Object {
-                          "color": "#b58900",
-                        },
-                        "hljs-variable": Object {
-                          "color": "#b58900",
-                        },
-                      },
+                      "children": Array [
+                        <Col
+                          span={24}
+                          style={
+                            Object {
+                              "marginTop": 10,
+                            }
+                          }
+                          xl={8}
+                        >
+                          <SetupHelp
+                            location=""
+                            namespace=""
+                          />
+                        </Col>,
+                        <Col
+                          span={24}
+                          style={
+                            Object {
+                              "marginTop": 10,
+                            }
+                          }
+                          xl={8}
+                        >
+                          <SetupHelp
+                            host=""
+                            namespace=""
+                            port=""
+                          />
+                        </Col>,
+                        <Col
+                          span={24}
+                          style={
+                            Object {
+                              "marginTop": 10,
+                            }
+                          }
+                          xl={8}
+                        >
+                          <RunHelp
+                            queue=""
+                          />
+                        </Col>,
+                      ],
+                      "gutter": 12,
                     },
                     "ref": null,
-                    "rendered": "
-  from impala.dbapi import connect
-  conn = connect(host='undefined', port=undefined, database='')
-  cursor = conn.cursor()
-  cursor.execute('SELECT * FROM mytable LIMIT 100')
-  print cursor.description  # prints the result set's schema
-  results = cursor.fetchall()
-  ",
+                    "rendered": Array [
+                      Object {
+                        "instance": null,
+                        "key": undefined,
+                        "nodeType": "class",
+                        "props": Object {
+                          "children": <SetupHelp
+                            location=""
+                            namespace=""
+                          />,
+                          "span": 24,
+                          "style": Object {
+                            "marginTop": 10,
+                          },
+                          "xl": 8,
+                        },
+                        "ref": null,
+                        "rendered": Object {
+                          "instance": null,
+                          "key": undefined,
+                          "nodeType": "function",
+                          "props": Object {
+                            "location": "",
+                            "namespace": "",
+                          },
+                          "ref": null,
+                          "rendered": null,
+                          "type": [Function],
+                        },
+                        "type": [Function],
+                      },
+                      Object {
+                        "instance": null,
+                        "key": undefined,
+                        "nodeType": "class",
+                        "props": Object {
+                          "children": <SetupHelp
+                            host=""
+                            namespace=""
+                            port=""
+                          />,
+                          "span": 24,
+                          "style": Object {
+                            "marginTop": 10,
+                          },
+                          "xl": 8,
+                        },
+                        "ref": null,
+                        "rendered": Object {
+                          "instance": null,
+                          "key": undefined,
+                          "nodeType": "function",
+                          "props": Object {
+                            "host": "",
+                            "namespace": "",
+                            "port": "",
+                          },
+                          "ref": null,
+                          "rendered": null,
+                          "type": [Function],
+                        },
+                        "type": [Function],
+                      },
+                      Object {
+                        "instance": null,
+                        "key": undefined,
+                        "nodeType": "class",
+                        "props": Object {
+                          "children": <RunHelp
+                            queue=""
+                          />,
+                          "span": 24,
+                          "style": Object {
+                            "marginTop": 10,
+                          },
+                          "xl": 8,
+                        },
+                        "ref": null,
+                        "rendered": Object {
+                          "instance": null,
+                          "key": undefined,
+                          "nodeType": "function",
+                          "props": Object {
+                            "queue": "",
+                          },
+                          "ref": null,
+                          "rendered": null,
+                          "type": [Function],
+                        },
+                        "type": [Function],
+                      },
+                    ],
                     "type": [Function],
                   },
                 ],
-                "type": [Function],
-              },
-              Object {
-                "instance": null,
-                "key": undefined,
-                "nodeType": "function",
-                "props": Object {
-                  "children": Array [
-                    <h3>
-                      Submit SparkPi to your personal queue on YARN
-                    </h3>,
-                    <SyntaxHighlighter
-                      language="shell"
-                      style={
-                        Object {
-                          "hljs": Object {
-                            "background": "#002b36",
-                            "color": "#839496",
-                            "display": "block",
-                            "overflowX": "auto",
-                            "padding": "0.5em",
-                          },
-                          "hljs-addition": Object {
-                            "color": "#859900",
-                          },
-                          "hljs-attr": Object {
-                            "color": "#b58900",
-                          },
-                          "hljs-attribute": Object {
-                            "color": "#b58900",
-                          },
-                          "hljs-built_in": Object {
-                            "color": "#dc322f",
-                          },
-                          "hljs-bullet": Object {
-                            "color": "#cb4b16",
-                          },
-                          "hljs-class .hljs-title": Object {
-                            "color": "#b58900",
-                          },
-                          "hljs-comment": Object {
-                            "color": "#586e75",
-                          },
-                          "hljs-deletion": Object {
-                            "color": "#dc322f",
-                          },
-                          "hljs-doctag": Object {
-                            "color": "#2aa198",
-                          },
-                          "hljs-emphasis": Object {
-                            "fontStyle": "italic",
-                          },
-                          "hljs-formula": Object {
-                            "background": "#073642",
-                          },
-                          "hljs-keyword": Object {
-                            "color": "#859900",
-                          },
-                          "hljs-link": Object {
-                            "color": "#cb4b16",
-                          },
-                          "hljs-literal": Object {
-                            "color": "#2aa198",
-                          },
-                          "hljs-meta": Object {
-                            "color": "#cb4b16",
-                          },
-                          "hljs-meta .hljs-keyword": Object {
-                            "color": "#cb4b16",
-                          },
-                          "hljs-meta .hljs-meta-string": Object {
-                            "color": "#2aa198",
-                          },
-                          "hljs-name": Object {
-                            "color": "#268bd2",
-                          },
-                          "hljs-number": Object {
-                            "color": "#2aa198",
-                          },
-                          "hljs-quote": Object {
-                            "color": "#586e75",
-                          },
-                          "hljs-regexp": Object {
-                            "color": "#2aa198",
-                          },
-                          "hljs-section": Object {
-                            "color": "#268bd2",
-                          },
-                          "hljs-selector-attr": Object {
-                            "color": "#cb4b16",
-                          },
-                          "hljs-selector-class": Object {
-                            "color": "#268bd2",
-                          },
-                          "hljs-selector-id": Object {
-                            "color": "#268bd2",
-                          },
-                          "hljs-selector-pseudo": Object {
-                            "color": "#cb4b16",
-                          },
-                          "hljs-selector-tag": Object {
-                            "color": "#859900",
-                          },
-                          "hljs-string": Object {
-                            "color": "#2aa198",
-                          },
-                          "hljs-strong": Object {
-                            "fontWeight": "bold",
-                          },
-                          "hljs-subst": Object {
-                            "color": "#cb4b16",
-                          },
-                          "hljs-symbol": Object {
-                            "color": "#cb4b16",
-                          },
-                          "hljs-template-variable": Object {
-                            "color": "#b58900",
-                          },
-                          "hljs-title": Object {
-                            "color": "#268bd2",
-                          },
-                          "hljs-type": Object {
-                            "color": "#b58900",
-                          },
-                          "hljs-variable": Object {
-                            "color": "#b58900",
-                          },
-                        }
-                      }
-                    >
-                      
-  $ spark-submit --class org.apache.spark.examples.SparkPi \\
-              --master yarn \\
-              --deploy-mode cluster \\
-              --queue  \\
-              examples/jars/spark-examples*.jar \\
-              10
-  
-                    </SyntaxHighlighter>,
-                  ],
-                  "style": Object {
-                    "boxShadow": "none",
-                    "flex": 1,
-                  },
-                },
-                "ref": null,
-                "rendered": Array [
-                  Object {
-                    "instance": null,
-                    "key": undefined,
-                    "nodeType": "host",
-                    "props": Object {
-                      "children": "Submit SparkPi to your personal queue on YARN",
-                    },
-                    "ref": null,
-                    "rendered": "Submit SparkPi to your personal queue on YARN",
-                    "type": "h3",
-                  },
-                  Object {
-                    "instance": null,
-                    "key": undefined,
-                    "nodeType": "function",
-                    "props": Object {
-                      "children": "
-  $ spark-submit --class org.apache.spark.examples.SparkPi \\\\
-              --master yarn \\\\
-              --deploy-mode cluster \\\\
-              --queue  \\\\
-              examples/jars/spark-examples*.jar \\\\
-              10
-  ",
-                      "language": "shell",
-                      "style": Object {
-                        "hljs": Object {
-                          "background": "#002b36",
-                          "color": "#839496",
-                          "display": "block",
-                          "overflowX": "auto",
-                          "padding": "0.5em",
-                        },
-                        "hljs-addition": Object {
-                          "color": "#859900",
-                        },
-                        "hljs-attr": Object {
-                          "color": "#b58900",
-                        },
-                        "hljs-attribute": Object {
-                          "color": "#b58900",
-                        },
-                        "hljs-built_in": Object {
-                          "color": "#dc322f",
-                        },
-                        "hljs-bullet": Object {
-                          "color": "#cb4b16",
-                        },
-                        "hljs-class .hljs-title": Object {
-                          "color": "#b58900",
-                        },
-                        "hljs-comment": Object {
-                          "color": "#586e75",
-                        },
-                        "hljs-deletion": Object {
-                          "color": "#dc322f",
-                        },
-                        "hljs-doctag": Object {
-                          "color": "#2aa198",
-                        },
-                        "hljs-emphasis": Object {
-                          "fontStyle": "italic",
-                        },
-                        "hljs-formula": Object {
-                          "background": "#073642",
-                        },
-                        "hljs-keyword": Object {
-                          "color": "#859900",
-                        },
-                        "hljs-link": Object {
-                          "color": "#cb4b16",
-                        },
-                        "hljs-literal": Object {
-                          "color": "#2aa198",
-                        },
-                        "hljs-meta": Object {
-                          "color": "#cb4b16",
-                        },
-                        "hljs-meta .hljs-keyword": Object {
-                          "color": "#cb4b16",
-                        },
-                        "hljs-meta .hljs-meta-string": Object {
-                          "color": "#2aa198",
-                        },
-                        "hljs-name": Object {
-                          "color": "#268bd2",
-                        },
-                        "hljs-number": Object {
-                          "color": "#2aa198",
-                        },
-                        "hljs-quote": Object {
-                          "color": "#586e75",
-                        },
-                        "hljs-regexp": Object {
-                          "color": "#2aa198",
-                        },
-                        "hljs-section": Object {
-                          "color": "#268bd2",
-                        },
-                        "hljs-selector-attr": Object {
-                          "color": "#cb4b16",
-                        },
-                        "hljs-selector-class": Object {
-                          "color": "#268bd2",
-                        },
-                        "hljs-selector-id": Object {
-                          "color": "#268bd2",
-                        },
-                        "hljs-selector-pseudo": Object {
-                          "color": "#cb4b16",
-                        },
-                        "hljs-selector-tag": Object {
-                          "color": "#859900",
-                        },
-                        "hljs-string": Object {
-                          "color": "#2aa198",
-                        },
-                        "hljs-strong": Object {
-                          "fontWeight": "bold",
-                        },
-                        "hljs-subst": Object {
-                          "color": "#cb4b16",
-                        },
-                        "hljs-symbol": Object {
-                          "color": "#cb4b16",
-                        },
-                        "hljs-template-variable": Object {
-                          "color": "#b58900",
-                        },
-                        "hljs-title": Object {
-                          "color": "#268bd2",
-                        },
-                        "hljs-type": Object {
-                          "color": "#b58900",
-                        },
-                        "hljs-variable": Object {
-                          "color": "#b58900",
-                        },
-                      },
-                    },
-                    "ref": null,
-                    "rendered": "
-  $ spark-submit --class org.apache.spark.examples.SparkPi \\\\
-              --master yarn \\\\
-              --deploy-mode cluster \\\\
-              --queue  \\\\
-              examples/jars/spark-examples*.jar \\\\
-              10
-  ",
-                    "type": [Function],
-                  },
-                ],
-                "type": [Function],
+                "type": "div",
               },
             ],
             "type": [Function],

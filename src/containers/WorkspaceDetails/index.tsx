@@ -38,7 +38,7 @@ import * as selectors from './selectors';
 const TimeAgo = require('timeago-react').default;
 
 interface DetailsRouteProps {
-  id: number;
+  id: any;
 }
 
 interface Props extends RouteComponentProps<DetailsRouteProps> {

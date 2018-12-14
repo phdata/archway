@@ -89,7 +89,7 @@ ShallowWrapper {
             }
           }
         >
-          1.0/1.0 GB
+          1/1 GB
         </div>,
       ],
       "style": Object {
@@ -205,14 +205,14 @@ ShallowWrapper {
         "key": undefined,
         "nodeType": "host",
         "props": Object {
-          "children": "1.0/1.0 GB",
+          "children": "1/1 GB",
           "style": Object {
             "letterSpacing": 1,
             "textAlign": "center",
           },
         },
         "ref": null,
-        "rendered": "1.0/1.0 GB",
+        "rendered": "1/1 GB",
         "type": "div",
       },
     ],
@@ -293,7 +293,7 @@ ShallowWrapper {
               }
             }
           >
-            1.0/1.0 GB
+            1/1 GB
           </div>,
         ],
         "style": Object {
@@ -409,14 +409,14 @@ ShallowWrapper {
           "key": undefined,
           "nodeType": "host",
           "props": Object {
-            "children": "1.0/1.0 GB",
+            "children": "1/1 GB",
             "style": Object {
               "letterSpacing": 1,
               "textAlign": "center",
             },
           },
           "ref": null,
-          "rendered": "1.0/1.0 GB",
+          "rendered": "1/1 GB",
           "type": "div",
         },
       ],

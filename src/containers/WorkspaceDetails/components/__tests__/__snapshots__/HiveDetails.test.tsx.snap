@@ -31,6 +31,18 @@ ShallowWrapper {
         <CardHeader
           heading="Hive Tables"
           icon="database"
+          rightAction={
+            <Icon
+              onClick={[Function]}
+              style={
+                Object {
+                  "alignSelf": "flex-start",
+                  "cursor": "pointer",
+                }
+              }
+              type="sync"
+            />
+          }
           subheading={
             <Dropdown
               mouseEnterDelay={0.15}
@@ -95,6 +107,16 @@ ShallowWrapper {
         "props": Object {
           "heading": "Hive Tables",
           "icon": "database",
+          "rightAction": <Icon
+            onClick={[Function]}
+            style={
+              Object {
+                "alignSelf": "flex-start",
+                "cursor": "pointer",
+              }
+            }
+            type="sync"
+          />,
           "subheading": <Dropdown
             mouseEnterDelay={0.15}
             mouseLeaveDelay={0.1}
@@ -135,18 +157,15 @@ ShallowWrapper {
         "key": undefined,
         "nodeType": "class",
         "props": Object {
-          "children": Array [
-            undefined,
-            <div
-              style={
-                Object {
-                  "color": "rgba(0, 0, 0, .65)",
-                }
+          "children": <div
+            style={
+              Object {
+                "color": "rgba(0, 0, 0, .65)",
               }
-            >
-              No tables yet.
-            </div>,
-          ],
+            }
+          >
+            No tables yet.
+          </div>,
           "gutter": 12,
           "justify": "center",
           "style": Object {
@@ -155,23 +174,20 @@ ShallowWrapper {
           "type": "flex",
         },
         "ref": null,
-        "rendered": Array [
-          undefined,
-          Object {
-            "instance": null,
-            "key": undefined,
-            "nodeType": "host",
-            "props": Object {
-              "children": "No tables yet.",
-              "style": Object {
-                "color": "rgba(0, 0, 0, .65)",
-              },
+        "rendered": Object {
+          "instance": null,
+          "key": undefined,
+          "nodeType": "host",
+          "props": Object {
+            "children": "No tables yet.",
+            "style": Object {
+              "color": "rgba(0, 0, 0, .65)",
             },
-            "ref": null,
-            "rendered": "No tables yet.",
-            "type": "div",
           },
-        ],
+          "ref": null,
+          "rendered": "No tables yet.",
+          "type": "div",
+        },
         "type": [Function],
       },
     ],
@@ -194,6 +210,18 @@ ShallowWrapper {
           <CardHeader
             heading="Hive Tables"
             icon="database"
+            rightAction={
+              <Icon
+                onClick={[Function]}
+                style={
+                  Object {
+                    "alignSelf": "flex-start",
+                    "cursor": "pointer",
+                  }
+                }
+                type="sync"
+              />
+            }
             subheading={
               <Dropdown
                 mouseEnterDelay={0.15}
@@ -258,6 +286,16 @@ ShallowWrapper {
           "props": Object {
             "heading": "Hive Tables",
             "icon": "database",
+            "rightAction": <Icon
+              onClick={[Function]}
+              style={
+                Object {
+                  "alignSelf": "flex-start",
+                  "cursor": "pointer",
+                }
+              }
+              type="sync"
+            />,
             "subheading": <Dropdown
               mouseEnterDelay={0.15}
               mouseLeaveDelay={0.1}
@@ -298,18 +336,15 @@ ShallowWrapper {
           "key": undefined,
           "nodeType": "class",
           "props": Object {
-            "children": Array [
-              undefined,
-              <div
-                style={
-                  Object {
-                    "color": "rgba(0, 0, 0, .65)",
-                  }
+            "children": <div
+              style={
+                Object {
+                  "color": "rgba(0, 0, 0, .65)",
                 }
-              >
-                No tables yet.
-              </div>,
-            ],
+              }
+            >
+              No tables yet.
+            </div>,
             "gutter": 12,
             "justify": "center",
             "style": Object {
@@ -318,23 +353,20 @@ ShallowWrapper {
             "type": "flex",
           },
           "ref": null,
-          "rendered": Array [
-            undefined,
-            Object {
-              "instance": null,
-              "key": undefined,
-              "nodeType": "host",
-              "props": Object {
-                "children": "No tables yet.",
-                "style": Object {
-                  "color": "rgba(0, 0, 0, .65)",
-                },
+          "rendered": Object {
+            "instance": null,
+            "key": undefined,
+            "nodeType": "host",
+            "props": Object {
+              "children": "No tables yet.",
+              "style": Object {
+                "color": "rgba(0, 0, 0, .65)",
               },
-              "ref": null,
-              "rendered": "No tables yet.",
-              "type": "div",
             },
-          ],
+            "ref": null,
+            "rendered": "No tables yet.",
+            "type": "div",
+          },
           "type": [Function],
         },
       ],

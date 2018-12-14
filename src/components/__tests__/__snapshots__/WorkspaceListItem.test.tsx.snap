@@ -131,7 +131,7 @@ ShallowWrapper {
                           "hsl(204, 20%, 100%)",
                         ],
                         "data": Array [
-                          0,
+                          1,
                           0,
                         ],
                         "label": false,
@@ -163,7 +163,7 @@ ShallowWrapper {
                 }
               }
             >
-              0.0/0.0 GB
+              1/1 GB
             </div>
           </div>
         </div>
@@ -268,7 +268,7 @@ ShallowWrapper {
                             "hsl(204, 20%, 100%)",
                           ],
                           "data": Array [
-                            0,
+                            1,
                             0,
                           ],
                           "label": false,
@@ -300,7 +300,7 @@ ShallowWrapper {
                   }
                 }
               >
-                0.0/0.0 GB
+                1/1 GB
               </div>
             </div>
           </div>,
@@ -403,7 +403,7 @@ ShallowWrapper {
                               "hsl(204, 20%, 100%)",
                             ],
                             "data": Array [
-                              0,
+                              1,
                               0,
                             ],
                             "label": false,
@@ -435,7 +435,7 @@ ShallowWrapper {
                     }
                   }
                 >
-                  0.0/0.0 GB
+                  1/1 GB
                 </div>
               </div>,
             ],
@@ -607,7 +607,7 @@ ShallowWrapper {
                                 "hsl(204, 20%, 100%)",
                               ],
                               "data": Array [
-                                0,
+                                1,
                                 0,
                               ],
                               "label": false,
@@ -639,7 +639,7 @@ ShallowWrapper {
                       }
                     }
                   >
-                    0.0/0.0 GB
+                    1/1 GB
                   </div>,
                 ],
                 "style": Object {
@@ -663,7 +663,7 @@ ShallowWrapper {
                                 "hsl(204, 20%, 100%)",
                               ],
                               "data": Array [
-                                0,
+                                1,
                                 0,
                               ],
                               "label": false,
@@ -709,7 +709,7 @@ ShallowWrapper {
                               "hsl(204, 20%, 100%)",
                             ],
                             "data": Array [
-                              0,
+                              1,
                               0,
                             ],
                             "label": false,
@@ -740,14 +740,14 @@ ShallowWrapper {
                   "key": undefined,
                   "nodeType": "host",
                   "props": Object {
-                    "children": "0.0/0.0 GB",
+                    "children": "1/1 GB",
                     "style": Object {
                       "letterSpacing": 1,
                       "textAlign": "center",
                     },
                   },
                   "ref": null,
-                  "rendered": "0.0/0.0 GB",
+                  "rendered": "1/1 GB",
                   "type": "div",
                 },
               ],
@@ -865,7 +865,7 @@ ShallowWrapper {
                             "hsl(204, 20%, 100%)",
                           ],
                           "data": Array [
-                            0,
+                            1,
                             0,
                           ],
                           "label": false,
@@ -897,7 +897,7 @@ ShallowWrapper {
                   }
                 }
               >
-                0.0/0.0 GB
+                1/1 GB
               </div>
             </div>
           </div>
@@ -1002,7 +1002,7 @@ ShallowWrapper {
                               "hsl(204, 20%, 100%)",
                             ],
                             "data": Array [
-                              0,
+                              1,
                               0,
                             ],
                             "label": false,
@@ -1034,7 +1034,7 @@ ShallowWrapper {
                     }
                   }
                 >
-                  0.0/0.0 GB
+                  1/1 GB
                 </div>
               </div>
             </div>,
@@ -1137,7 +1137,7 @@ ShallowWrapper {
                                 "hsl(204, 20%, 100%)",
                               ],
                               "data": Array [
-                                0,
+                                1,
                                 0,
                               ],
                               "label": false,
@@ -1169,7 +1169,7 @@ ShallowWrapper {
                       }
                     }
                   >
-                    0.0/0.0 GB
+                    1/1 GB
                   </div>
                 </div>,
               ],
@@ -1341,7 +1341,7 @@ ShallowWrapper {
                                   "hsl(204, 20%, 100%)",
                                 ],
                                 "data": Array [
-                                  0,
+                                  1,
                                   0,
                                 ],
                                 "label": false,
@@ -1373,7 +1373,7 @@ ShallowWrapper {
                         }
                       }
                     >
-                      0.0/0.0 GB
+                      1/1 GB
                     </div>,
                   ],
                   "style": Object {
@@ -1397,7 +1397,7 @@ ShallowWrapper {
                                   "hsl(204, 20%, 100%)",
                                 ],
                                 "data": Array [
-                                  0,
+                                  1,
                                   0,
                                 ],
                                 "label": false,
@@ -1443,7 +1443,7 @@ ShallowWrapper {
                                 "hsl(204, 20%, 100%)",
                               ],
                               "data": Array [
-                                0,
+                                1,
                                 0,
                               ],
                               "label": false,
@@ -1474,14 +1474,14 @@ ShallowWrapper {
                     "key": undefined,
                     "nodeType": "host",
                     "props": Object {
-                      "children": "0.0/0.0 GB",
+                      "children": "1/1 GB",
                       "style": Object {
                         "letterSpacing": 1,
                         "textAlign": "center",
                       },
                     },
                     "ref": null,
-                    "rendered": "0.0/0.0 GB",
+                    "rendered": "1/1 GB",
                     "type": "div",
                   },
                 ],
