@@ -1,0 +1,19 @@
+image: openjdk:8-jdk
+
+pipelines:
+  default:
+    - step:
+        services:
+          - postgres
+        caches:
+          - sbt
+        script:
+          - './flyway/flyway migrate -url="jdbc:postgresql://postgres:5432/heimdali" -user=postgres -password=postgres'
+          - ./sbt -ivy ./.ivy -sbt-dir ./.sbt test
+
+definitions:
+  services:
+    postgres:
+      image: postgres:9
+      environment:
+        POSTGRES_DB: heimdali
