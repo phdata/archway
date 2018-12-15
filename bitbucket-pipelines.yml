@@ -8,7 +8,7 @@ pipelines:
         caches:
           - sbt
         script:
-          - './flyway/flyway migrate -url="jdbc:postgresql://postgres:5432/heimdali" -user=postgres -password=postgres'
+          - './flyway/flyway migrate -url="jdbc:postgresql://localhost:5432/heimdali" -user=postgres -password=postgres'
           - ./sbt -ivy ./.ivy -sbt-dir ./.sbt test
 
 definitions:
