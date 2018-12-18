@@ -57,8 +57,8 @@
     antd "*"
 
 "@types/chart.js@^2.7.32":
-  version "2.7.36"
-  resolved "https://registry.yarnpkg.com/@types/chart.js/-/chart.js-2.7.36.tgz#561fee60e09acabc25c6414d36554f80dcf33dca"
+  version "2.7.41"
+  resolved "https://registry.yarnpkg.com/@types/chart.js/-/chart.js-2.7.41.tgz#3e59d82fbfd536dfec8c092bfbf218cac567ab2e"
 
 "@types/cheerio@*":
   version "0.22.9"
@@ -1943,8 +1943,8 @@ chardet@^0.4.0:
   resolved "https://registry.yarnpkg.com/chardet/-/chardet-0.4.2.tgz#b5473b33dc97c424e5d98dc87d55d4d8a29c8bf2"
 
 chart.js@^2.7.2:
-  version "2.7.2"
-  resolved "https://registry.yarnpkg.com/chart.js/-/chart.js-2.7.2.tgz#3c9fde4dc5b95608211bdefeda7e5d33dffa5714"
+  version "2.7.3"
+  resolved "https://registry.yarnpkg.com/chart.js/-/chart.js-2.7.3.tgz#cdb61618830bf216dc887e2f7b1b3c228b73c57e"
   dependencies:
     chartjs-color "^2.1.0"
     moment "^2.10.2"
@@ -2134,7 +2134,7 @@ collection-visit@^1.0.0:
 
 color-convert@^0.5.3:
   version "0.5.3"
-  resolved "https://registry.yarnpkg.com/color-convert/-/color-convert-0.5.3.tgz#bdb6c69ce660fadffe0b0007cc447e1b9f7282bd"
+  resolved "http://registry.npmjs.org/color-convert/-/color-convert-0.5.3.tgz#bdb6c69ce660fadffe0b0007cc447e1b9f7282bd"
 
 color-convert@^1.3.0, color-convert@^1.9.0:
   version "1.9.2"
@@ -2437,7 +2437,7 @@ create-hmac@^1.1.0, create-hmac@^1.1.2, create-hmac@^1.1.4:
     safe-buffer "^5.0.1"
     sha.js "^2.4.8"
 
-create-react-class@^15.5.2, create-react-class@^15.5.3, create-react-class@^15.6.0, create-react-class@^15.6.2:
+create-react-class@^15.5.2, create-react-class@^15.5.3, create-react-class@^15.6.0:
   version "15.6.3"
   resolved "https://registry.yarnpkg.com/create-react-class/-/create-react-class-15.6.3.tgz#2d73237fb3f970ae6ebe011a9e66f46dbca80036"
   dependencies:
@@ -3172,12 +3172,6 @@ error-ex@^1.2.0:
   dependencies:
     is-arrayish "^0.2.1"
 
-error-stack-parser@^1.3.6:
-  version "1.3.6"
-  resolved "https://registry.yarnpkg.com/error-stack-parser/-/error-stack-parser-1.3.6.tgz#e0e73b93e417138d1cd7c0b746b1a4a14854c292"
-  dependencies:
-    stackframe "^0.3.1"
-
 es-abstract@^1.10.0, es-abstract@^1.5.0, es-abstract@^1.5.1, es-abstract@^1.6.1, es-abstract@^1.7.0:
   version "1.12.0"
   resolved "https://registry.yarnpkg.com/es-abstract/-/es-abstract-1.12.0.tgz#9dbbdd27c6856f0001421ca18782d786bf8a6165"
@@ -3856,10 +3850,6 @@ fbjs@^0.8.0, fbjs@^0.8.15, fbjs@^0.8.16, fbjs@^0.8.9:
     promise "^7.1.1"
     setimmediate "^1.0.5"
     ua-parser-js "^0.7.18"
-
-fetch-intercept@2.2.3:
-  version "2.2.3"
-  resolved "https://registry.yarnpkg.com/fetch-intercept/-/fetch-intercept-2.2.3.tgz#8cfc03237347be1fecd571006cd8490983a7fed5"
 
 figures@^2.0.0:
   version "2.0.0"
@@ -8775,12 +8765,6 @@ react-chartjs-2@^2.7.4:
     lodash "^4.17.4"
     prop-types "^15.5.8"
 
-react-chartjs@^1.2.0:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/react-chartjs/-/react-chartjs-1.2.0.tgz#54d0f90f3e9026666d9fcae447cd090bab65689d"
-  dependencies:
-    create-react-class "^15.6.2"
-
 react-csv@^1.0.15-RC2:
   version "1.0.18"
   resolved "https://registry.yarnpkg.com/react-csv/-/react-csv-1.0.18.tgz#2c9e1ceda02da84fc9a6b12a54804ba5a08b8a0f"
@@ -9036,10 +9020,6 @@ react-test-renderer@^16.0.0-0, react-test-renderer@^16.5.1:
     react-is "^16.5.2"
     schedule "^0.5.0"
 
-react-timeago@^4.1.9:
-  version "4.1.9"
-  resolved "https://registry.yarnpkg.com/react-timeago/-/react-timeago-4.1.9.tgz#a5dee4ac072299a9a5ca5a61f56177a80f83c1fb"
-
 react@16.2.0:
   version "16.2.0"
   resolved "https://registry.yarnpkg.com/react/-/react-16.2.0.tgz#a31bd2dab89bff65d42134fa187f24d054c273ba"
@@ -9126,15 +9106,6 @@ recursive-readdir@2.2.1:
   resolved "https://registry.yarnpkg.com/recursive-readdir/-/recursive-readdir-2.2.1.tgz#90ef231d0778c5ce093c9a48d74e5c5422d13a99"
   dependencies:
     minimatch "3.0.3"
-
-redbox-react@latest:
-  version "1.6.0"
-  resolved "https://registry.yarnpkg.com/redbox-react/-/redbox-react-1.6.0.tgz#e753ac02595bc1bf695b3935889a4f5b1b5a21a1"
-  dependencies:
-    error-stack-parser "^1.3.6"
-    object-assign "^4.0.1"
-    prop-types "^15.5.4"
-    sourcemapped-stacktrace "^1.1.6"
 
 redent@^1.0.0:
   version "1.0.0"
@@ -9992,10 +9963,6 @@ source-map-url@^0.4.0:
   version "0.4.0"
   resolved "https://registry.yarnpkg.com/source-map-url/-/source-map-url-0.4.0.tgz#3e935d7ddd73631b97659956d55128e87b5084a3"
 
-source-map@0.5.6:
-  version "0.5.6"
-  resolved "https://registry.yarnpkg.com/source-map/-/source-map-0.5.6.tgz#75ce38f52bf0733c5a7f0c118d81334a2bb5f412"
-
 source-map@0.5.x, source-map@^0.5.3, source-map@^0.5.6, source-map@^0.5.7, source-map@~0.5.1:
   version "0.5.7"
   resolved "https://registry.yarnpkg.com/source-map/-/source-map-0.5.7.tgz#8a039d2d1021d22d1ea14c80d8ea468ba2ef3fcc"
@@ -10009,12 +9976,6 @@ source-map@^0.4.2, source-map@^0.4.4:
 source-map@^0.6.0, source-map@^0.6.1, source-map@~0.6.0, source-map@~0.6.1:
   version "0.6.1"
   resolved "https://registry.yarnpkg.com/source-map/-/source-map-0.6.1.tgz#74722af32e9614e9c287a8d0bbde48b5e2f1a263"
-
-sourcemapped-stacktrace@^1.1.6:
-  version "1.1.8"
-  resolved "https://registry.yarnpkg.com/sourcemapped-stacktrace/-/sourcemapped-stacktrace-1.1.8.tgz#6b7a3f1a6fb15f6d40e701e23ce404553480d688"
-  dependencies:
-    source-map "0.5.6"
 
 space-separated-tokens@^1.0.0:
   version "1.1.2"
@@ -10101,10 +10062,6 @@ ssri@^5.2.4:
 stack-utils@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/stack-utils/-/stack-utils-1.0.1.tgz#d4f33ab54e8e38778b0ca5cfd3b3afb12db68620"
-
-stackframe@^0.3.1:
-  version "0.3.1"
-  resolved "https://registry.yarnpkg.com/stackframe/-/stackframe-0.3.1.tgz#33aa84f1177a5548c8935533cbfeb3420975f5a4"
 
 static-extend@^0.1.1:
   version "0.1.2"
@@ -11349,7 +11306,7 @@ whatwg-fetch@2.0.3:
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/whatwg-fetch/-/whatwg-fetch-2.0.3.tgz#9c84ec2dcf68187ff00bc64e1274b442176e1c84"
 
-whatwg-fetch@>=0.10.0, whatwg-fetch@^2.0.4:
+whatwg-fetch@>=0.10.0:
   version "2.0.4"
   resolved "https://registry.yarnpkg.com/whatwg-fetch/-/whatwg-fetch-2.0.4.tgz#dde6a5df315f9d39991aa17621853d720b85566f"
 

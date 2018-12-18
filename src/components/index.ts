@@ -3,3 +3,4 @@ export { default as Colors } from './Colors';
 export { default as FieldLabel } from './FieldLabel';
 export { default as WorkspaceListItem } from './WorkspaceListItem';
 export { default as ListCardToggle } from './ListCardToggle';
+export { default as Main } from './Main';

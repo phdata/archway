@@ -38,7 +38,7 @@ module.exports = {
     noInfo: true,
     quiet: false,
     // minimize the output to terminal.
-    contentBase: resolve(__dirname, 'src'),
+    contentBase: resolve(__dirname, 'public'),
     // match the output path
     publicPath: '/'
     // match the output `publicPath`

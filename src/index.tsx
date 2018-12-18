@@ -2,8 +2,9 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { createHashHistory } from 'history';
 import { Provider } from 'react-redux';
-import App from './App';
-import store from './store';
+import App from './containers/App';
+import store from './redux';
+import './index.less';
 
 if (module.hot) {
   module.hot.accept();
