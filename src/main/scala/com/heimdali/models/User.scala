@@ -1,5 +1,7 @@
 package com.heimdali.models
 
+import cats.Show
+import cats.implicits._
 import io.circe.generic.extras.Configuration
 import io.circe.{Decoder, Encoder}
 import io.circe.generic.semiauto._
@@ -9,6 +11,7 @@ case class User(name: String, username: String, distinguishedName: String, permi
   val role: ApproverRole = permissions match {
     case UserPermissions(true, false) => Risk
     case UserPermissions(false, true) => Infra
+    case UserPermissions(true, true) => Full
     case _ => NA
   }
 
@@ -22,4 +25,7 @@ object User {
 
   implicit val decoder: Decoder[User] =
     Decoder.forProduct4("name", "username", "distinguished_name", "permissions")(User.apply)
+
+  implicit val shower: Show[User] =
+    Show.show(user => s"${user.name} (${user.role.show}")
 }

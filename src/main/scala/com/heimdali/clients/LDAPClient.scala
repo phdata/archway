@@ -64,7 +64,7 @@ abstract class LDAPClientImpl[F[_]: Effect](
   def getEntry(dn: String): OptionT[F, SearchResultEntry] =
     OptionT(Sync[F].delay(
       try {
-        logger.info(s"getting info for $dn")
+        logger.debug(s"getting info for $dn")
         Option(connectionFactory().getEntry(dn))
       } catch {
         case exc: Throwable =>

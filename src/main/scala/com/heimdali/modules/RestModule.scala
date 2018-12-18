@@ -33,11 +33,14 @@ trait RestModule {
 
   val memberController: MemberController = new MemberController(authService, memberService)
 
+  val riskController: RiskController = new RiskController(authService, workspaceService)
+
   val restAPI: RestAPI = new RestAPI(
     accountController,
     clusterController,
     workspaceController,
     templateController,
-    memberController
+    memberController,
+    riskController,
   )
 }

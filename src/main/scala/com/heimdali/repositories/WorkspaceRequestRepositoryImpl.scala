@@ -1,6 +1,7 @@
 package com.heimdali.repositories
 
 import cats.data.OptionT
+import cats.implicits._
 import com.heimdali.models._
 import doobie._
 import doobie.implicits._
@@ -34,6 +35,9 @@ class WorkspaceRequestRepositoryImpl
 
   override def findByUsername(distinguishedName: String): OptionT[doobie.ConnectionIO, WorkspaceRequest] =
     OptionT(WorkspaceRequestRepositoryImpl.Statements.findByUsername(distinguishedName).option)
+
+  override def pendingQueue(role: ApproverRole): ConnectionIO[List[WorkspaceSearchResult]] =
+    WorkspaceRequestRepositoryImpl.Statements.pending(role).to[List]
 }
 
 object WorkspaceRequestRepositoryImpl {
@@ -93,6 +97,9 @@ object WorkspaceRequestRepositoryImpl {
             when s.approvals = 2 then 'approved'
             else 'pending'
           end as status,
+          c.phi_data,
+          c.pci_data,
+          c.pii_data,
           wr.request_date as requested,
           case
             when s.approvals = 2 then s.latestApproval
@@ -102,7 +109,8 @@ object WorkspaceRequestRepositoryImpl {
           res.cores as maxCores,
           COALESCE(res.mem, 0.0) as maxMemoryInGB
         from workspace_request wr
-        left join (select workspace_request_id, count(*) as approvals, max(approval_time) as latestApproval from approval group by workspace_request_id) as s on s.workspace_request_id = wr.id
+        inner join compliance c on wr.compliance_id = c.id
+        left join (select workspace_request_id, sum(case when "role" = 'risk' then 1 else 0 end) as risk_approved, sum(case when "role" = 'infra' then 1 else 0 end) as infra_approved, count(*) as approvals, max(approval_time) as latestApproval from approval group by workspace_request_id) as s on s.workspace_request_id = wr.id
         left join (select wd.workspace_request_id, sum(size_in_gb) as size from workspace_database as wd inner join hive_database as hd on wd.hive_database_id = hd.id group by wd.workspace_request_id) as db on db.workspace_request_id = wr.id
         left join (select wp.workspace_request_id, sum(max_cores) as cores, sum(max_memory_in_gb) as mem from workspace_pool wp inner join resource_pool rp on wp.resource_pool_id = rp.id group by wp.workspace_request_id) as res on res.workspace_request_id = wr.id
         """
@@ -156,6 +164,9 @@ object WorkspaceRequestRepositoryImpl {
 
     def findByUsername(username: String): Query0[WorkspaceRequest] =
       (selectFragment ++ whereAnd(fr"wr.requested_by = $username", fr"wr.single_user = true")).query[WorkspaceRequest]
+
+    def pending(role: ApproverRole): Query0[WorkspaceSearchResult] =
+      (listFragment ++ whereAnd(fr"COALESCE(s." ++ Fragment.const(s"${role.show}_approved") ++ fr", 0) = 0", fr"wr.single_user = false")).queryWithLogHandler[WorkspaceSearchResult](LogHandler.jdkLogHandler)
 
   }
 

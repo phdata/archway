@@ -15,6 +15,7 @@ import org.http4s.server.middleware.authentication.BasicAuth.BasicAuthenticator
 import org.http4s.circe._
 import org.http4s.{AuthedService, BasicCredentials, Request}
 import cats.syntax.applicative._
+import cats.syntax.show._
 
 trait AuthService[F[_]] {
   def basicAuth: AuthMiddleware[F, Token]
@@ -28,8 +29,6 @@ class AuthServiceImpl[F[_] : Sync](accountService: AccountService[F])
   extends AuthService[F] with LazyLogging {
 
   object dsl extends Http4sDsl[F]
-
-  import dsl._
 
   def failure(reason: String): Json = Json.obj(
     "message" -> reason.asJson
@@ -53,6 +52,7 @@ class AuthServiceImpl[F[_] : Sync](accountService: AccountService[F])
       for {
         header <- OptionT.fromOption(request.headers.get(Authorization.name))
         user <- accountService.validate(header.value.replace("Bearer ", "")).toOption
+        _ <- OptionT.some[F](logger.debug(s"authorizing ${user.role.show}"))
         result <- if(auth(user)) OptionT.some(user) else OptionT.none
       } yield result
     }

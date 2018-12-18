@@ -9,6 +9,8 @@ case object Infra extends ApproverRole
 
 case object Risk extends ApproverRole
 
+case object Full extends ApproverRole
+
 case object NA extends ApproverRole
 
 object ApproverRole {
@@ -19,6 +21,7 @@ object ApproverRole {
       case "risk" => Risk
     }
 
-  implicit def approverShow[A <: ApproverRole]: Show[A] = Show.show(_.getClass.getSimpleName.toLowerCase)
+  implicit def approverShow[A <: ApproverRole]: Show[A] =
+    Show.show(_.getClass.getSimpleName.replace("$", "").toLowerCase())
 
 }

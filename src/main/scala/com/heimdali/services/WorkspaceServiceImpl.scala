@@ -161,4 +161,7 @@ class WorkspaceServiceImpl[F[_]](ldapClient: LDAPClient[F],
         case _ => OptionT.none[F, HiveDatabase]
       }.traverse(_.value).map(_.flatten)
     } yield result
+
+  override def reviewerList(role: ApproverRole): F[List[WorkspaceSearchResult]] =
+    workspaceRepository.pendingQueue(role).transact(transactor)
 }
