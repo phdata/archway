@@ -218,6 +218,14 @@ class WorkspaceServiceImplSpec
     )
   }
 
+  it should "list risk workspaces" in new Context {
+    workspaceRepository.pendingQueue _ expects Risk returning List(searchResult).pure[ConnectionIO]
+
+    val projects = projectServiceImpl.reviewerList(Risk).unsafeRunSync()
+    projects.length should be(1)
+    projects.head should be(searchResult)
+  }
+
   trait Context {
     implicit val contextShift = IO.contextShift(ExecutionContext.global)
 

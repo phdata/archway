@@ -1,7 +1,7 @@
 package com.heimdali.repositories
 
 import cats.data.OptionT
-import com.heimdali.models.{WorkspaceRequest, WorkspaceSearchResult}
+import com.heimdali.models.{ApproverRole, WorkspaceRequest, WorkspaceSearchResult}
 import doobie._
 
 trait WorkspaceRequestRepository {
@@ -21,4 +21,5 @@ trait WorkspaceRequestRepository {
 
   def linkApplication(workspaceId: Long, applicationId: Long): ConnectionIO[Int]
 
+  def pendingQueue(role: ApproverRole): ConnectionIO[List[WorkspaceSearchResult]]
 }

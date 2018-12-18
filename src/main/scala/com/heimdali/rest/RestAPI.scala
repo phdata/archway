@@ -15,7 +15,8 @@ class RestAPI(accountController: AccountController,
               clusterController: ClusterController,
               workspaceController: WorkspaceController,
               templateController: TemplateController,
-              memberController: MemberController)
+              memberController: MemberController,
+              riskController: RiskController)
              (implicit val concurrentEffect: ConcurrentEffect[IO], timer: Timer[IO])
   extends LazyLogging {
 
@@ -34,7 +35,8 @@ class RestAPI(accountController: AccountController,
     "/templates" -> templateController.route,
     "/clusters" -> clusterController.route,
     "/workspaces" -> workspaceController.route,
-    "/members" -> memberController.route
+    "/members" -> memberController.route,
+    "/risk" -> riskController.route,
   )
 
 }
