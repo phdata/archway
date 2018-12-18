@@ -18,20 +18,10 @@ Heimdali UI is a web application for managing resources.
 In order to get started developing, you'll need to do a few things first.
 
 1. Install all of the `node_modules` required for the package. Depending on your computer's configuration, you may need to prefix this command with a `sudo`.
+
+npm >= 5.0,       node >= 8.0
 ```
 npm install
-```
-or
-```
-sudo npm install
-```
-You can use `yarn` as well.
-```
-yarn install
-```
-or
-```
-sudo yarn install
 ```
 
 2. Make sure you are using correct API endpoint url. Replace the base url if needed.
@@ -47,10 +37,6 @@ window.config = {
 ```
 npm start
 ```
-or
-```
-yarn start
-```
 
 4. Head over to [http://localhost:3000](http://localhost:3000) to see your app live!
 
@@ -59,27 +45,15 @@ yarn start
 ```
 npm run test
 ```
-or
-```
-yarn test
-```
 when you need to update snapshots, you need to add `-u` flag.
 ```
 npm run test -u
-```
-or
-```
-yarn test -u
 ```
 
 6. Create a production-ready build.
 
 ```
 npm run build
-```
-or
-```
-yarn build
 ```
 
 ## File Structure
