@@ -12,6 +12,8 @@ Heimdali UI is a web application for managing resources.
 * [Fuse](http://fusejs.io/) for fuzzy-search feature.
 * [React-Csv](https://github.com/react-csv/react-csv/) for exporting data in csv format.
 * [Lodash](https://lodash.com/) for using various utility functions.
+* [Node](https://nodejs.org) Version 8.x
+* [NPM](https://npmjs.com) Version 5.x
 
 
 ## Getting Started
@@ -19,7 +21,6 @@ In order to get started developing, you'll need to do a few things first.
 
 1. Install all of the `node_modules` required for the package. Depending on your computer's configuration, you may need to prefix this command with a `sudo`.
 
-npm >= 5.0,       node >= 8.0
 ```
 npm install
 ```
