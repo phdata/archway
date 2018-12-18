@@ -27,7 +27,7 @@ object Dependencies {
 
   val mailerVersion = "1.0.0"
   val mailer = Seq(
-    "com.github.daddykotex" %% "courier" % mailerVersion,
+    "com.github.daddykotex" %% "courier" % mailerVersion exclude("com.sun.mail", "javax.mail"),
     "org.jvnet.mock-javamail" % "mock-javamail" % "1.9" % "test"
   )
 
