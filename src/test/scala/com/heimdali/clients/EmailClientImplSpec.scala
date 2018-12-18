@@ -12,7 +12,7 @@ class EmailClientImplSpec extends FlatSpec with Matchers {
 
   behavior of "EmailClientImplSpec"
 
-  it should "send" in {
+  ignore should "send" in {
     import scala.concurrent.ExecutionContext.Implicits.global
     val mailer = Mailer("localhost", 25)()
     val emailClient = new EmailClientImpl[IO](mailer)
