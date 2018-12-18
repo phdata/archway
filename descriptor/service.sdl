@@ -404,6 +404,62 @@
           "required": "true",
           "type": "string",
           "configurableInWizard": "true"
+        },
+        {
+          "name": "heimdali_ui_url",
+          "label": "Heimdali UI",
+          "description": "Full url for Heimdali UI",
+          "required": "true",
+          "type": "uri",
+          "configurableInWizard": "true"
+        },
+        {
+          "name": "heimdali_smtp_host",
+          "label": "SMTP Host",
+          "description": "SMTP Host",
+          "required": "true",
+          "type": "string",
+          "configurableInWizard": "true"
+        },
+        {
+          "name": "heimdali_smtp_port",
+          "label": "SMTP Port",
+          "description": "SMTP Port",
+          "required": "true",
+          "type": "port",
+          "configurableInWizard": "true"
+        },
+        {
+          "name": "heimdali_smtp_ssl",
+          "label": "Enable SMTP SSL",
+          "description": "Enable SMTP SSL",
+          "required": "true",
+          "type": "boolean",
+          "configurableInWizard": "true"
+        },
+        {
+          "name": "heimdali_smtp_should_auth",
+          "label": "SMTP Auth",
+          "description": "SMTP Auth Required?",
+          "required": "true",
+          "type": "boolean",
+          "configurableInWizard": "true"
+        },
+        {
+          "name": "heimdali_smtp_user",
+          "label": "Username for SMTP",
+          "description": "Username for SMTP",
+          "required": "true",
+          "type": "string",
+          "configurableInWizard": "true"
+        },
+        {
+          "name": "heimdali_smtp_pass",
+          "label": "Password for SMTP",
+          "description": "Pssword for SMTP",
+          "required": "true",
+          "type": "password",
+          "configurableInWizard": "true"
         }
       ],
       "startRunner": {
@@ -449,7 +505,14 @@
           "HEIMDALI_LDAP_ADMIN_DN": "${heimdali_ldap_admin_dn}",
           "HEIMDALI_LDAP_ADMIN_PASS": "${heimdali_ldap_admin_pass}",
           "HEIMDALI_INFRA_APPROVERS": "${heimdali_infra_approvers}",
-          "HEIMDALI_RISK_APPROVERS": "${heimdali_risk_approvers}"
+          "HEIMDALI_RISK_APPROVERS": "${heimdali_risk_approvers}",
+          "HEIMDALI_UI_URL": "${heimdali_ui_url}",
+          "HEIMDALI_SMTP_HOST": "${heimdali_smtp_host}",
+          "HEIMDALI_SMTP_PORT": "${heimdali_smtp_port}",
+          "HEIMDALI_SMTP_SSL": "${heimdali_smtp_ssl}",
+          "HEIMDALI_SMTP_SHOULD_AUTH": "${heimdali_smtp_should_auth}",
+          "HEIMDALI_SMTP_USER": "${heimdali_smtp_user}",
+          "HEIMDALI_SMTP_PASS": "${heimdali_smtp_pass}"
         }
       }
     }
