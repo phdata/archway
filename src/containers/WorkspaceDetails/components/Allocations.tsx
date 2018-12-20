@@ -10,13 +10,14 @@ interface Props {
     location: string;
 }
 
-const Allocations = ({ location, allocated = 1, consumed = 0 }: Props) => {
+const Allocations = ({ location, allocated, consumed = 0 }: Props) => {
+  const allocatedWithDefault = allocated || 1;
   const data = {
     labels: ['Available (GB)', 'Consumed (GB)'],
     datasets: [
       {
         label: false,
-        data: [allocated - consumed, consumed],
+        data: [allocatedWithDefault - consumed, consumed],
         backgroundColor: [Colors.Green.string(), Colors.Green.lighten(.5).string()],
       },
     ],
@@ -26,7 +27,7 @@ const Allocations = ({ location, allocated = 1, consumed = 0 }: Props) => {
     <Card
       style={{ display: 'flex', flex: 1 }}
       bodyStyle={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
-      <Label style={{ textAlign: 'center' }}>Available Capacity</Label>
+      <Label style={{ textAlign: 'center', fontSize: 12, fontWeight: 200 }}>Available</Label>
       <div
         style={{
           textAlign: 'center',
@@ -46,7 +47,7 @@ const Allocations = ({ location, allocated = 1, consumed = 0 }: Props) => {
             options={{ legend: false, title: false, maintainAspectRatio: false }} />
       </div>
       <div style={{ letterSpacing: 1, textAlign: 'center' }}>
-        {`${(allocated - consumed)}/${allocated} GB`}
+        {(allocated && allocated > consumed) ? `${(allocated - consumed)}/${allocated} GB` : 'NA'}
       </div>
     </Card>
   );
