@@ -19,13 +19,14 @@ const Allocations = ({
 }: Props) => {
   const allocated = selectedAllocation ? selectedAllocation.size_in_gb : 1;
   const consumed = selectedAllocation ? selectedAllocation.consumed_in_gb : 0;
+  const allocatedWithDefault = allocated || 1;
 
   const data = {
     labels: ['Available (GB)', 'Consumed (GB)'],
     datasets: [
       {
         label: false,
-        data: [allocated - consumed, consumed],
+        data: [allocatedWithDefault - consumed, consumed],
         backgroundColor: [Colors.Green.string(), Colors.Green.lighten(.5).string()],
       },
     ],
@@ -36,7 +37,7 @@ const Allocations = ({
       style={{ display: 'flex', flex: 1 }}
       bodyStyle={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
       <CardHeader
-        heading={<Label style={{ textAlign: 'center' }}>Available Capacity</Label>}
+        heading={<Label style={{ textAlign: 'center', fontSize: 12, fontWeight: 200 }}>Available</Label>}
         subheading={selectedAllocation && (
           <div style={{ textAlign: 'center' }}>
             <Dropdown
@@ -78,7 +79,7 @@ const Allocations = ({
             options={{ legend: false, title: false, maintainAspectRatio: false }} />
       </div>}
       {selectedAllocation && <div style={{ letterSpacing: 1, textAlign: 'center' }}>
-        {`${(allocated - consumed).toFixed(1)}GB/${allocated}GB`}
+      {(allocated && allocated > consumed) ? `${(allocated - consumed)}/${allocated} GB` : 'NA'}
       </div>}
     </Card>
   );
