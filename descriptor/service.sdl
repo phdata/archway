@@ -496,7 +496,7 @@
           "HEIMDALI_DB_URL": "${heimdali_db_url}",
           "HEIMDALI_DB_USER": "${heimdali_db_user}",
           "HEIMDALI_DB_PASS": "${heimdali_db_pass}",
-          "HEIMDALI_HIVE_URL": "${heimdali_hive_url};principal=hive/_HOST@PHDATA.IO",
+          "HEIMDALI_HIVE_URL": "${heimdali_hive_url}",
           "HEIMDALI_LDAP_HOST": "${heimdali_ldap_host}",
           "HEIMDALI_LDAP_PORT": "${heimdali_ldap_port}",
           "HEIMDALI_LDAP_BASE_DN": "${heimdali_ldap_base_dn}",
