@@ -24,8 +24,10 @@ export const workspaceList = () => createSelector(
   getListFilters(),
   (fuse, filters: { filter: string, behaviors: string[], statuses: string[] }) => {
     return (filters.filter ? fuse.search(filters.filter) : fuse.list)
-      .filter((workspace: WorkspaceSearchResult) => filters.behaviors.indexOf(workspace.behavior) >= 0)
-      .filter((workspace: WorkspaceSearchResult) => filters.statuses.indexOf(workspace.status || '') >= 0);
+      .filter((workspace: WorkspaceSearchResult) =>
+        filters.behaviors.indexOf(workspace.behavior.toLowerCase()) >= 0)
+      .filter((workspace: WorkspaceSearchResult) =>
+        filters.statuses.indexOf((workspace.status || '').toLowerCase()) >= 0);
   },
 );
 

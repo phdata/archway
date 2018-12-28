@@ -21,6 +21,11 @@ export interface ListingState {
   };
 }
 
+export interface RiskState {
+    fetching: boolean;
+    workspaces: any;
+}
+
 export interface RequestState {
     generating: boolean;
     behavior: boolean;
@@ -43,6 +48,7 @@ export interface DetailsState {
 export interface IState {
     login: LoginState;
     listing: ListingState;
+    risk: RiskState;
     request: RequestState;
     cluster: ClusterState;
     details: DetailsState;

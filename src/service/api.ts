@@ -108,6 +108,10 @@ export const listWorkspaces =
   (token: string) =>
     get('/workspaces', token);
 
+export const listRiskWorkspaces =
+  (token: string) =>
+    get('/risk/workspaces', token);
+
 export const getWorkspace =
   (token: string, id: number) =>
     get(`/workspaces/${id}`, token);

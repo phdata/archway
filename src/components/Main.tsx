@@ -5,6 +5,7 @@ import Navigation from '../containers/Navigation';
 import Home from '../containers/Home';
 import WorkspaceDetails from '../containers/WorkspaceDetails';
 import WorkspaceListing from '../containers/WorkspaceListing';
+import RiskListing from '../containers/RiskListing';
 import WorkspaceRequest from '../containers/WorkspaceRequest';
 
 const { Content, Footer } = Layout;
@@ -21,6 +22,7 @@ const Main = () => (
             <Route exact={true} path="/" component={SendHome} />
             <Route path="/home" component={Home} />
             <Route exact={true} path="/workspaces" component={WorkspaceListing} />
+            <Route exact={true} path="/risks" component={RiskListing} />
             <Route path="/request" component={WorkspaceRequest} />
             <Route path="/workspaces/:id" component={WorkspaceDetails} />
           </Switch>

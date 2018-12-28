@@ -155,6 +155,9 @@ export interface WorkspaceSearchResult {
   summary: string;
   status: string;
   behavior: string;
+  pii_data?: boolean;
+  pci_data?: boolean;
+  phi_data?: boolean;
   date_requested: Date;
   date_fully_approved: Date;
   total_disk_allocated_in_gb: number;
