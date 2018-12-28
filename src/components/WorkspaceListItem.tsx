@@ -24,14 +24,14 @@ const WorkspaceListItem = ({ workspace, onSelected }: Props) => {
 
   const ApprovalMessage = () => {
     let color = '';
-    switch (status) {
-      case 'Pending':
+    switch (status.toLowerCase()) {
+      case 'pending':
         color = '#CFB2B0';
         break;
-      case 'Rejected':
+      case 'rejected':
         color = '#7B2D26';
         break;
-      case 'Approved':
+      case 'approved':
         color = '#0B7A75';
         break;
       default:

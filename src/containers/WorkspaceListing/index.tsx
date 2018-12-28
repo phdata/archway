@@ -10,6 +10,7 @@ import {
   WorkspaceListItem,
   Colors,
   FieldLabel,
+  workspaceColumns,
 } from '../../components';
 import { WorkspaceSearchResult } from '../../models/Workspace';
 import { Profile } from '../../models/Profile';
@@ -34,31 +35,6 @@ interface Props {
   listWorkspaces: () => void;
   setListingMode: (mode: string) => void;
 }
-
-const workspaceColumns = [{
-  title: 'Name',
-  dataIndex: 'name',
-  key: 'name',
-  width: 160,
-}, {
-  title: 'Summary',
-  dataIndex: 'summary',
-  key: 'summary',
-}, {
-  title: 'Behavior',
-  dataIndex: 'behavior',
-  key: 'behavior',
-  width: 100,
-}, {
-  title: 'Status',
-  dataIndex: 'status',
-  key: 'status',
-  width: 100,
-}, {
-  title: 'Description',
-  dataIndex: 'description',
-  key: 'description',
-}];
 
 class WorkspaceList extends React.PureComponent<Props> {
   constructor(props: Props) {
@@ -133,7 +109,7 @@ class WorkspaceList extends React.PureComponent<Props> {
       profile,
       cluster,
     } = this.props;
-    const allStatuses: string[] = ['Approved', 'Pending', 'Rejected'];
+    const allStatuses: string[] = ['approved', 'pending', 'rejected'];
     const emptyText = (!filter && behaviors.length === 2 && statuses.length === 3)
       ? 'No workspaces yet. Create one from the link on the left.'
       : 'No workspaces found';

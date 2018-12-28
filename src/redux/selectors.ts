@@ -6,6 +6,7 @@ export const clusterSelector = (state: any) => state.get('cluster');
 export const requestSelector = (state: any) => state.get('request');
 export const workspaceSelector = (state: any) => state.get('details');
 export const workspaceListSelector = (state: any) => state.get('listing');
+export const riskSelector = (state: any) => state.get('risk');
 
 export const isLoading = () => createSelector(
     authSelector,

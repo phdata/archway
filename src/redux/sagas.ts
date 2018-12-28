@@ -3,6 +3,7 @@ import cluster from '../containers/Navigation/sagas';
 import login from '../containers/Login/sagas';
 import workspace from '../containers/WorkspaceDetails/sagas';
 import listing from '../containers/WorkspaceListing/sagas';
+import risk from '../containers/RiskListing/sagas';
 import request from '../containers/WorkspaceRequest/sagas';
 
 const sagas = [
@@ -11,6 +12,7 @@ const sagas = [
   request,
   workspace,
   listing,
+  risk,
 ];
 
 export const CANCEL_SAGAS_HMR = 'CANCEL_SAGAS_HMR';
