@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Card, Dropdown, Menu, Icon } from 'antd';
 import Label from './Label';
 import { Doughnut } from 'react-chartjs-2';
-import { HiveAllocation } from '../../../types/Workspace';
+import { HiveAllocation } from '../../../models/Workspace';
 import { Colors } from '../../../components';
 import CardHeader from './CardHeader';
 
