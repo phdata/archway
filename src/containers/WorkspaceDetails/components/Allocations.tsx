@@ -19,14 +19,13 @@ const Allocations = ({
 }: Props) => {
   const allocated = selectedAllocation ? selectedAllocation.size_in_gb : 1;
   const consumed = selectedAllocation ? selectedAllocation.consumed_in_gb : 0;
-  const allocatedWithDefault = allocated || 1;
 
   const data = {
     labels: ['Available (GB)', 'Consumed (GB)'],
     datasets: [
       {
         label: false,
-        data: [allocatedWithDefault - consumed, consumed],
+        data: [allocated - consumed, consumed],
         backgroundColor: [Colors.Green.string(), Colors.Green.lighten(.5).string()],
       },
     ],
