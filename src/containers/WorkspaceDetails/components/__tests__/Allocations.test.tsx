@@ -5,7 +5,7 @@ import Allocations from '../Allocations';
 
 describe('Allocations', () => {
   it('renders correctly', () => {
-    const wrapper = shallow(<Allocations allocated={1} location="" />);
+    const wrapper = shallow(<Allocations allocations={[]} onChangeAllocation={() => null} />);
     expect(wrapper).toMatchSnapshot();
   });
 });

@@ -4,8 +4,8 @@ exports[`Allocations renders correctly 1`] = `
 ShallowWrapper {
   Symbol(enzyme.__root__): [Circular],
   Symbol(enzyme.__unrendered__): <Allocations
-    allocated={1}
-    location=""
+    allocations={Array []}
+    onChangeAllocation={[Function]}
   />,
   Symbol(enzyme.__renderer__): Object {
     "batchedUpdates": [Function],
@@ -26,71 +26,21 @@ ShallowWrapper {
         "flexDirection": "column",
       },
       "children": Array [
-        <Label
-          style={
-            Object {
-              "textAlign": "center",
-            }
-          }
-        >
-          Available Capacity
-        </Label>,
-        <div
-          style={
-            Object {
-              "alignItems": "center",
-              "display": "flex",
-              "flex": 1,
-              "flexDirection": "column",
-              "justifyContent": "center",
-              "textAlign": "center",
-            }
-          }
-        >
-          <Doughnut
-            data={
-              Object {
-                "datasets": Array [
-                  Object {
-                    "backgroundColor": Array [
-                      "rgb(67, 170, 139)",
-                      "hsl(161.89999999999998, 43.5%, 69.7%)",
-                    ],
-                    "data": Array [
-                      1,
-                      0,
-                    ],
-                    "label": false,
-                  },
-                ],
-                "labels": Array [
-                  "Available (GB)",
-                  "Consumed (GB)",
-                ],
+        <CardHeader
+          heading={
+            <Label
+              style={
+                Object {
+                  "textAlign": "center",
+                }
               }
-            }
-            height={100}
-            options={
-              Object {
-                "legend": false,
-                "maintainAspectRatio": false,
-                "title": false,
-              }
-            }
-            redraw={false}
-            width={100}
-          />
-        </div>,
-        <div
-          style={
-            Object {
-              "letterSpacing": 1,
-              "textAlign": "center",
-            }
+            >
+              Available Capacity
+            </Label>
           }
-        >
-          1/1 GB
-        </div>,
+        />,
+        undefined,
+        undefined,
       ],
       "style": Object {
         "display": "flex",
@@ -104,117 +54,23 @@ ShallowWrapper {
         "key": undefined,
         "nodeType": "function",
         "props": Object {
-          "children": "Available Capacity",
-          "style": Object {
-            "textAlign": "center",
-          },
+          "heading": <Label
+            style={
+              Object {
+                "textAlign": "center",
+              }
+            }
+          >
+            Available Capacity
+          </Label>,
+          "subheading": undefined,
         },
         "ref": null,
-        "rendered": "Available Capacity",
+        "rendered": null,
         "type": [Function],
       },
-      Object {
-        "instance": null,
-        "key": undefined,
-        "nodeType": "host",
-        "props": Object {
-          "children": <Doughnut
-            data={
-              Object {
-                "datasets": Array [
-                  Object {
-                    "backgroundColor": Array [
-                      "rgb(67, 170, 139)",
-                      "hsl(161.89999999999998, 43.5%, 69.7%)",
-                    ],
-                    "data": Array [
-                      1,
-                      0,
-                    ],
-                    "label": false,
-                  },
-                ],
-                "labels": Array [
-                  "Available (GB)",
-                  "Consumed (GB)",
-                ],
-              }
-            }
-            height={100}
-            options={
-              Object {
-                "legend": false,
-                "maintainAspectRatio": false,
-                "title": false,
-              }
-            }
-            redraw={false}
-            width={100}
-          />,
-          "style": Object {
-            "alignItems": "center",
-            "display": "flex",
-            "flex": 1,
-            "flexDirection": "column",
-            "justifyContent": "center",
-            "textAlign": "center",
-          },
-        },
-        "ref": null,
-        "rendered": Object {
-          "instance": null,
-          "key": undefined,
-          "nodeType": "class",
-          "props": Object {
-            "data": Object {
-              "datasets": Array [
-                Object {
-                  "backgroundColor": Array [
-                    "rgb(67, 170, 139)",
-                    "hsl(161.89999999999998, 43.5%, 69.7%)",
-                  ],
-                  "data": Array [
-                    1,
-                    0,
-                  ],
-                  "label": false,
-                },
-              ],
-              "labels": Array [
-                "Available (GB)",
-                "Consumed (GB)",
-              ],
-            },
-            "height": 100,
-            "options": Object {
-              "legend": false,
-              "maintainAspectRatio": false,
-              "title": false,
-            },
-            "redraw": false,
-            "width": 100,
-          },
-          "ref": null,
-          "rendered": null,
-          "type": [Function],
-        },
-        "type": "div",
-      },
-      Object {
-        "instance": null,
-        "key": undefined,
-        "nodeType": "host",
-        "props": Object {
-          "children": "1/1 GB",
-          "style": Object {
-            "letterSpacing": 1,
-            "textAlign": "center",
-          },
-        },
-        "ref": null,
-        "rendered": "1/1 GB",
-        "type": "div",
-      },
+      undefined,
+      undefined,
     ],
     "type": [Function],
   },
@@ -230,71 +86,21 @@ ShallowWrapper {
           "flexDirection": "column",
         },
         "children": Array [
-          <Label
-            style={
-              Object {
-                "textAlign": "center",
-              }
-            }
-          >
-            Available Capacity
-          </Label>,
-          <div
-            style={
-              Object {
-                "alignItems": "center",
-                "display": "flex",
-                "flex": 1,
-                "flexDirection": "column",
-                "justifyContent": "center",
-                "textAlign": "center",
-              }
-            }
-          >
-            <Doughnut
-              data={
-                Object {
-                  "datasets": Array [
-                    Object {
-                      "backgroundColor": Array [
-                        "rgb(67, 170, 139)",
-                        "hsl(161.89999999999998, 43.5%, 69.7%)",
-                      ],
-                      "data": Array [
-                        1,
-                        0,
-                      ],
-                      "label": false,
-                    },
-                  ],
-                  "labels": Array [
-                    "Available (GB)",
-                    "Consumed (GB)",
-                  ],
+          <CardHeader
+            heading={
+              <Label
+                style={
+                  Object {
+                    "textAlign": "center",
+                  }
                 }
-              }
-              height={100}
-              options={
-                Object {
-                  "legend": false,
-                  "maintainAspectRatio": false,
-                  "title": false,
-                }
-              }
-              redraw={false}
-              width={100}
-            />
-          </div>,
-          <div
-            style={
-              Object {
-                "letterSpacing": 1,
-                "textAlign": "center",
-              }
+              >
+                Available Capacity
+              </Label>
             }
-          >
-            1/1 GB
-          </div>,
+          />,
+          undefined,
+          undefined,
         ],
         "style": Object {
           "display": "flex",
@@ -308,117 +114,23 @@ ShallowWrapper {
           "key": undefined,
           "nodeType": "function",
           "props": Object {
-            "children": "Available Capacity",
-            "style": Object {
-              "textAlign": "center",
-            },
+            "heading": <Label
+              style={
+                Object {
+                  "textAlign": "center",
+                }
+              }
+            >
+              Available Capacity
+            </Label>,
+            "subheading": undefined,
           },
           "ref": null,
-          "rendered": "Available Capacity",
+          "rendered": null,
           "type": [Function],
         },
-        Object {
-          "instance": null,
-          "key": undefined,
-          "nodeType": "host",
-          "props": Object {
-            "children": <Doughnut
-              data={
-                Object {
-                  "datasets": Array [
-                    Object {
-                      "backgroundColor": Array [
-                        "rgb(67, 170, 139)",
-                        "hsl(161.89999999999998, 43.5%, 69.7%)",
-                      ],
-                      "data": Array [
-                        1,
-                        0,
-                      ],
-                      "label": false,
-                    },
-                  ],
-                  "labels": Array [
-                    "Available (GB)",
-                    "Consumed (GB)",
-                  ],
-                }
-              }
-              height={100}
-              options={
-                Object {
-                  "legend": false,
-                  "maintainAspectRatio": false,
-                  "title": false,
-                }
-              }
-              redraw={false}
-              width={100}
-            />,
-            "style": Object {
-              "alignItems": "center",
-              "display": "flex",
-              "flex": 1,
-              "flexDirection": "column",
-              "justifyContent": "center",
-              "textAlign": "center",
-            },
-          },
-          "ref": null,
-          "rendered": Object {
-            "instance": null,
-            "key": undefined,
-            "nodeType": "class",
-            "props": Object {
-              "data": Object {
-                "datasets": Array [
-                  Object {
-                    "backgroundColor": Array [
-                      "rgb(67, 170, 139)",
-                      "hsl(161.89999999999998, 43.5%, 69.7%)",
-                    ],
-                    "data": Array [
-                      1,
-                      0,
-                    ],
-                    "label": false,
-                  },
-                ],
-                "labels": Array [
-                  "Available (GB)",
-                  "Consumed (GB)",
-                ],
-              },
-              "height": 100,
-              "options": Object {
-                "legend": false,
-                "maintainAspectRatio": false,
-                "title": false,
-              },
-              "redraw": false,
-              "width": 100,
-            },
-            "ref": null,
-            "rendered": null,
-            "type": [Function],
-          },
-          "type": "div",
-        },
-        Object {
-          "instance": null,
-          "key": undefined,
-          "nodeType": "host",
-          "props": Object {
-            "children": "1/1 GB",
-            "style": Object {
-              "letterSpacing": 1,
-              "textAlign": "center",
-            },
-          },
-          "ref": null,
-          "rendered": "1/1 GB",
-          "type": "div",
-        },
+        undefined,
+        undefined,
       ],
       "type": [Function],
     },
