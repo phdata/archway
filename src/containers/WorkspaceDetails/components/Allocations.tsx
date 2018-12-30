@@ -36,7 +36,7 @@ const Allocations = ({
       style={{ display: 'flex', flex: 1 }}
       bodyStyle={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
       <CardHeader
-        heading={<Label style={{ textAlign: 'center' }}>Available Capacity</Label>}
+        heading={<Label style={{ textAlign: 'center', fontSize: 12, fontWeight: 200 }}>Available</Label>}
         subheading={selectedAllocation && (
           <div style={{ textAlign: 'center' }}>
             <Dropdown
@@ -78,7 +78,7 @@ const Allocations = ({
             options={{ legend: false, title: false, maintainAspectRatio: false }} />
       </div>}
       {selectedAllocation && <div style={{ letterSpacing: 1, textAlign: 'center' }}>
-        {`${(allocated - consumed).toFixed(1)}GB/${allocated}GB`}
+      {(allocated && allocated > consumed) ? `${(allocated - consumed)}/${allocated} GB` : 'NA'}
       </div>}
     </Card>
   );
