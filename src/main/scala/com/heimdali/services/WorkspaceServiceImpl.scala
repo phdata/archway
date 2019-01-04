@@ -9,7 +9,7 @@ import cats.effect.implicits._
 import com.heimdali.clients._
 import com.heimdali.models._
 import com.heimdali.repositories.{MemberRepository, _}
-import com.heimdali.tasks.{AddMember, ProvisionResult}
+import com.heimdali.tasks.{AddMember, NoOp, ProvisionResult}
 import com.typesafe.scalalogging.LazyLogging
 import doobie._
 import doobie.implicits._
@@ -36,16 +36,6 @@ class WorkspaceServiceImpl[F[_]](ldapClient: LDAPClient[F],
   private val provisionContext =
     ExecutionContext.fromExecutor(Executors.newFixedThreadPool(10))
   private val provisionContextShift = IO.contextShift(provisionContext)
-
-  private val GroupExtractor = "CN=edh_sw_([A-z0-9_]+),OU=.*".r
-
-  def sharedMemberships(user: LDAPUser): List[String] =
-    user.memberships.flatMap {
-      case GroupExtractor(name) =>
-        logger.info("found shared workspace {}", name)
-        Some(name)
-      case _ => None
-    }.toList
 
   def fillHive(dbs: List[HiveAllocation]): F[List[HiveAllocation]] =
     dbs.map {
@@ -136,9 +126,9 @@ class WorkspaceServiceImpl[F[_]](ldapClient: LDAPClient[F],
       for {
         datas <- workspace.data.map(_.provision)
         dbLiasion <- workspace.data.map(d => AddMember(d.id.get, d.managingGroup.ldapRegistration.distinguishedName, workspace.requestedBy).provision)
-        yarns <- workspace.processing.map(_.provision)
-        apps <- workspace.applications.map(_.provision)
-        appLiasion <- workspace.applications.map(d => AddMember(d.id.get, d.group.distinguishedName, workspace.requestedBy).provision)
+        yarns <- if (workspace.processing.isEmpty) List(Kleisli[F, AppContext[F], ProvisionResult](_ => F.pure(NoOp("resource pool")))) else workspace.processing.map(_.provision)
+        apps <- if (workspace.applications.isEmpty) List(Kleisli[F, AppContext[F], ProvisionResult](_ => F.pure(NoOp("application")))) else workspace.applications.map(_.provision)
+        appLiasion <- if (workspace.applications.isEmpty) List(Kleisli[F, AppContext[F], ProvisionResult](_ => F.pure(NoOp("application liasion")))) else workspace.applications.map(d => AddMember(d.id.get, d.group.distinguishedName, workspace.requestedBy).provision)
       } yield (datas, dbLiasion, yarns, apps, appLiasion).mapN(_ |+| _ |+| _ |+| _ |+| _)
 
     combined.sequence.map(_.combineAll).apply(appConfig).map(_.messages)

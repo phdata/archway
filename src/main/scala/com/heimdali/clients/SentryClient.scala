@@ -4,6 +4,7 @@ import java.security.PrivilegedAction
 
 import cats.effect.{Effect, IO, Sync}
 import cats.implicits._
+import com.heimdali.repositories.{DatabaseRole, Manager, ReadOnly}
 import com.heimdali.services.LoginContextProvider
 import com.typesafe.scalalogging.LazyLogging
 import doobie._
@@ -39,7 +40,7 @@ trait SentryClient[F[_]] {
 
   def grantGroup(group: String, role: String): F[Unit]
 
-  def enableAccessToDB(database: String, role: String): F[Unit]
+  def enableAccessToDB(database: String, role: String, databaseRole: DatabaseRole): F[Unit]
 
   def enableAccessToLocation(location: String, role: String): F[Unit]
 
@@ -73,10 +74,16 @@ class SentryClientImpl[F[_]](transactor: Transactor[F],
         .update.run.transact(transactor).flatMap(_ => Sync[F].unit)
     }
 
-  override def enableAccessToDB(database: String, role: String): F[Unit] =
+  override def enableAccessToDB(database: String, role: String, databaseRole: DatabaseRole): F[Unit] =
     loginContextProvider.hadoopInteraction {
-      (fr"GRANT ALL ON DATABASE" ++ Fragment.const(database) ++ fr"TO ROLE" ++ Fragment.const(role) ++ fr"WITH GRANT OPTION")
-        .update.run.transact(transactor).flatMap(_ => Sync[F].unit)
+       databaseRole match {
+        case Manager =>
+          (fr"GRANT ALL ON DATABASE" ++ Fragment.const(database) ++ fr"TO ROLE" ++ Fragment.const(role) ++ fr"WITH GRANT OPTION")
+            .update.run.transact(transactor).flatMap(_ => Sync[F].unit)
+        case ReadOnly =>
+          (fr"GRANT SELECT ON DATABASE" ++ Fragment.const(database) ++ fr"TO ROLE" ++ Fragment.const(role))
+            .update.run.transact(transactor).flatMap(_ => Sync[F].unit)
+      }
     }
 
   override def enableAccessToLocation(location: String, role: String): F[Unit] =

@@ -8,7 +8,7 @@ import doobie.implicits._
 import com.heimdali.models.AppContext
 import com.heimdali.repositories.DatabaseRole
 
-case class GrantDatabaseAccess(id: Long, roleName: String, databaseName: String)
+case class GrantDatabaseAccess(id: Long, roleName: String, databaseName: String, databaseRole: DatabaseRole)
 
 object GrantDatabaseAccess {
 
@@ -18,7 +18,7 @@ object GrantDatabaseAccess {
   implicit def provisioner[F[_]](implicit F: Effect[F]): ProvisionTask[F, GrantDatabaseAccess] =
     ProvisionTask.instance { grant =>
       Kleisli[F, AppContext[F], ProvisionResult] { config =>
-        F.flatMap(F.attempt(config.sentryClient.enableAccessToDB(grant.databaseName, grant.roleName))) {
+        F.flatMap(F.attempt(config.sentryClient.enableAccessToDB(grant.databaseName, grant.roleName, grant.databaseRole))) {
           case Left(exception) => F.pure(Error(grant, exception))
           case Right(_) =>
             config

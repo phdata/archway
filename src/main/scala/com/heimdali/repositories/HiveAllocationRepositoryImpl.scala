@@ -2,14 +2,18 @@ package com.heimdali.repositories
 
 import java.time.{Clock, Instant}
 
-import cats._, cats.data._, cats.implicits._
-import com.heimdali.models.HiveAllocation
+import cats._
+import cats.data._
+import cats.implicits._
+import com.heimdali.models.{HiveAllocation, HiveGrant}
 import doobie._
 import doobie.implicits._
 import doobie.util.fragments.whereAnd
 
 class HiveAllocationRepositoryImpl(val clock: Clock)
   extends HiveAllocationRepository {
+
+  implicit val logHandler = LogHandler.jdkLogHandler
 
   def find(id: Long): OptionT[ConnectionIO, HiveAllocation] = {
     OptionT {
@@ -63,6 +67,7 @@ class HiveAllocationRepositoryImpl(val clock: Clock)
          m.group_created,
          m.role_created,
          m.group_associated,
+         CAST('manager' as CHAR),
          mg.id,
          mg.location_access,
          mg.database_access,
@@ -76,6 +81,7 @@ class HiveAllocationRepositoryImpl(val clock: Clock)
          r.group_created,
          r.role_created,
          r.group_associated,
+         CAST('readonly' as CHAR),
          rg.id,
          rg.location_access,
          rg.database_access,

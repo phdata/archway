@@ -10,6 +10,7 @@ import cats.effect.IO
 import com.heimdali.clients.CMClient
 import com.heimdali.config.{AppConfig, ClusterConfig, CredentialsConfig, LDAPConfig}
 import com.heimdali.models._
+import com.heimdali.repositories.{Manager, ReadOnly}
 import com.heimdali.services.{CDH, Cluster, ClusterApp}
 import io.circe._
 import io.circe.parser._
@@ -56,10 +57,10 @@ package object fixtures {
   val initialCompliance = savedCompliance.copy(id = None)
   val savedLDAP = LDAPRegistration(ldapDn, s"edh_sw_$systemName", "role_sesame", Some(id))
   val initialLDAP = savedLDAP.copy(id = None)
-  val savedGrant = HiveGrant("sw_sesame", "/shared_workspaces/sw_sesame", savedLDAP, id = Some(id))
+  val savedGrant = HiveGrant("sw_sesame", "/shared_workspaces/sw_sesame", savedLDAP, Manager, id = Some(id))
   val initialGrant = savedGrant.copy(id = None, ldapRegistration = initialLDAP)
-  val savedHive = HiveAllocation("sw_sesame", "/shared_workspaces/sw_sesame", hdfsRequestedSize, None, savedGrant, id = Some(id))
-  val initialHive = savedHive.copy(id = None, managingGroup = initialGrant)
+  val savedHive = HiveAllocation("sw_sesame", "/shared_workspaces/sw_sesame", hdfsRequestedSize, None, savedGrant, readonlyGroup = Some(savedGrant.copy(databaseRole = ReadOnly)), id = Some(id))
+  val initialHive = savedHive.copy(id = None, managingGroup = initialGrant, readonlyGroup = Some(initialGrant))
   val savedYarn = Yarn(poolName, maxCores, maxMemoryInGB, Some(id))
   val initialYarn = savedYarn.copy(id = None)
   val savedTopic = KafkaTopic(s"$systemName.incoming", 1, 1, TopicGrant(s"$systemName.incoming", savedLDAP, "all", Some(id)), TopicGrant(s"$systemName.incoming", savedLDAP, "read", Some(id)), Some(id))
@@ -163,6 +164,13 @@ package object fixtures {
        |      "location" : "${savedHive.location}",
        |      "size_in_gb" : ${savedHive.sizeInGB},
        |      "managing_group" : {
+       |        "group": {
+       |          "common_name" : "${savedLDAP.commonName}",
+       |          "distinguished_name" : "${savedLDAP.distinguishedName}",
+       |          "sentry_role" : "${savedLDAP.sentryRole}"
+       |        }
+       |      },
+       |      "readonly_group" : {
        |        "group": {
        |          "common_name" : "${savedLDAP.commonName}",
        |          "distinguished_name" : "${savedLDAP.distinguishedName}",

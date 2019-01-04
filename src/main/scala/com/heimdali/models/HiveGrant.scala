@@ -5,6 +5,7 @@ import java.time.Instant
 import cats._
 import cats.effect._
 import cats.implicits._
+import com.heimdali.repositories.{DatabaseRole, ReadOnly}
 import com.heimdali.tasks.ProvisionTask._
 import com.heimdali.tasks._
 import io.circe._
@@ -13,6 +14,7 @@ import io.circe.java8.time._
 case class HiveGrant(databaseName: String,
                      location: String,
                      ldapRegistration: LDAPRegistration,
+                     databaseRole: DatabaseRole,
                      id: Option[Long] = None,
                      locationAccess: Option[Instant] = None,
                      databaseAccess: Option[Instant] = None)
@@ -26,7 +28,7 @@ object HiveGrant {
     ProvisionTask.instance { grant =>
       for {
         ldap <- grant.ldapRegistration.provision[F]
-        db <- GrantDatabaseAccess(grant.id.get, grant.ldapRegistration.sentryRole, grant.databaseName).provision[F]
+        db <- GrantDatabaseAccess(grant.id.get, grant.ldapRegistration.sentryRole, grant.databaseName, grant.databaseRole).provision[F]
         location <- GrantLocationAccess(grant.id.get, grant.ldapRegistration.sentryRole, grant.location).provision[F]
       } yield ldap |+| db |+| location
     }
@@ -35,6 +37,6 @@ object HiveGrant {
     Encoder.forProduct3("location_access", "database_access", "group")(g => (g.locationAccess, g.databaseAccess, g.ldapRegistration))
 
   implicit val decoder: Decoder[HiveGrant] =
-    Decoder.forProduct1("group")((g: LDAPRegistration) => HiveGrant("", "", g))
+    Decoder.forProduct1("group")((g: LDAPRegistration) => HiveGrant("", "", g, ReadOnly))
 
 }

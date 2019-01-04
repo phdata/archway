@@ -3,11 +3,14 @@ package com.heimdali.models
 import java.time.Instant
 
 import cats._
-import cats.effect.Effect
+import cats.data.Kleisli
+import cats.effect._
 import cats.implicits._
+import com.heimdali.repositories.{Manager, ReadOnly}
 import com.heimdali.tasks.ProvisionResult._
 import com.heimdali.tasks.ProvisionTask._
 import com.heimdali.tasks._
+import doobie._
 import io.circe._
 
 import scala.concurrent.ExecutionContext
@@ -29,7 +32,7 @@ object HiveAllocation {
             sizeInGB: Int,
             managerLDAP: LDAPRegistration,
             readonlyLDAP: Option[LDAPRegistration]): HiveAllocation =
-    apply(name, location, sizeInGB, None, HiveGrant(name, location, managerLDAP), readonlyLDAP.map(ldap => HiveGrant(name, location, ldap)))
+    apply(name, location, sizeInGB, None, HiveGrant(name, location, managerLDAP, Manager), readonlyLDAP.map(ldap => HiveGrant(name, location, ldap, ReadOnly)))
 
   implicit val viewer: Show[HiveAllocation] =
     Show.show(h => s"creating hive database ${h.name}")
@@ -41,7 +44,8 @@ object HiveAllocation {
         setDiskQuota <- SetDiskQuota(hive.id.get, hive.location, hive.sizeInGB).provision[F]
         createDatabase <- CreateHiveDatabase(hive.id.get, hive.name, hive.location).provision[F]
         managers <- hive.managingGroup.provision[F]
-      } yield createDirectory |+| setDiskQuota |+| createDatabase |+| managers
+        readonly <- hive.readonlyGroup.map(_.provision[F]).getOrElse(Kleisli[F, AppContext[F], ProvisionResult](_ => Effect[F].liftIO(IO.pure(NoOp("hive database readonly"))) ))
+      } yield createDirectory |+| setDiskQuota |+| createDatabase |+| managers |+| readonly
     }
 
   implicit val encoder: Encoder[HiveAllocation] =
