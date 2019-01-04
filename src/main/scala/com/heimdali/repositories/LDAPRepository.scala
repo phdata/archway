@@ -5,7 +5,7 @@ import cats.implicits._
 import cats.data.OptionT
 import com.heimdali.models.LDAPRegistration
 import doobie.free.connection.ConnectionIO
-import doobie.util.Read
+import doobie.util.{Get, Read}
 
 trait LDAPRepository {
 
@@ -40,8 +40,8 @@ object DatabaseRole {
       case _ => None
     }
 
-  implicit val reader: Read[DatabaseRole] =
-    Read[String].map(unapply(_).get)
+  implicit val reader: Get[DatabaseRole] =
+    Get[String].map(unapply(_).get)
 
 }
 

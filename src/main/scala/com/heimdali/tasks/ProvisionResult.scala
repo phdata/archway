@@ -11,9 +11,9 @@ object ProvisionResult {
     def combine(result1: ProvisionResult, result2: ProvisionResult): ProvisionResult =
       (result1, result2) match {
         case (Success(messages1), Success(messages2)) => Success(messages1.concatNel(messages2))
-        case (Unknown, Unknown) => Unknown
-        case (Unknown, out) => out
-        case (out, Unknown) => out
+        case (_ @ (NoOp(_) | Unknown), Unknown) => Unknown
+        case (_ @ (NoOp(_) | Unknown), out) => out
+        case (out, _ @ (NoOp(_) | Unknown)) => out
         case (out1, out2) => Error(out1.messages.concatNel(out2.messages))
       }
     def empty: ProvisionResult = Unknown
@@ -23,6 +23,10 @@ object ProvisionResult {
 
 case object Unknown extends ProvisionResult {
   override def messages: NonEmptyList[String] = NonEmptyList.one(s"Undetermined provisioning result")
+}
+
+case class NoOp(provisionType: String) extends ProvisionResult {
+  override def messages: NonEmptyList[String] = NonEmptyList.one(s"Nothing to do for $provisionType")
 }
 
 case class Error(messages: NonEmptyList[String]) extends ProvisionResult

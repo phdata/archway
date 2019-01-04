@@ -77,8 +77,6 @@ trait ClientModule[F[_]] {
 
   private val mailer: Mailer = appConfig.smtp match {
     case SMTPConfig(host, port, true, Some(user), Some(pass), ssl) =>
-      logger.info(s"username: $user")
-      logger.info(s"password: $pass")
       Mailer(host, port)
         .auth(true)
         .as(user, pass)

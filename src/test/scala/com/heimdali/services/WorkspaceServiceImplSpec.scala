@@ -8,7 +8,7 @@ import cats.syntax.applicative._
 import com.heimdali.clients._
 import com.heimdali.models._
 import com.heimdali.repositories.{MemberRepository, _}
-import com.heimdali.test.fixtures._
+import com.heimdali.test.fixtures.{id, _}
 import doobie._
 import doobie.implicits._
 import doobie.util.transactor.Strategy
@@ -44,25 +44,20 @@ class WorkspaceServiceImplSpec
     projects.head should be(searchResult)
   }
 
-  it should "get memberships accurately" in new Context {
-    val table: TableFor2[LDAPUser, Seq[String]] = Table(
-      ("user", "memberships"),
-      (LDAPUser("name", "username", standardUserDN, Seq("something_else"), None), Seq.empty)
-    )
-
-    forAll(table) { (user, memberships) =>
-      projectServiceImpl.sharedMemberships(user) should be(memberships)
-    }
-  }
-
   it should "create a workspace" in new Context {
     inSequence {
       (complianceRepository.create _).expects(initialCompliance).returning(savedCompliance.pure[ConnectionIO])
       (workspaceRepository.create _).expects(initialWorkspaceRequest.copy(compliance = savedCompliance)).returning(id.pure[ConnectionIO])
+
       (ldapRepository.create _).expects(initialLDAP).returning(savedLDAP.pure[ConnectionIO])
       (grantRepository.create _).expects(id).returning(id.pure[ConnectionIO])
       (memberRepository.create _).expects(standardUserDN, id).returning(id.pure[ConnectionIO])
-      (hiveDatabaseRepository.create _).expects(initialHive.copy(managingGroup = initialGrant.copy(id = Some(id), ldapRegistration = savedLDAP))).returning(id.pure[ConnectionIO])
+
+      // Read only
+      (ldapRepository.create _).expects(initialLDAP).returning(savedLDAP.pure[ConnectionIO])
+      (grantRepository.create _).expects(id).returning(id.pure[ConnectionIO])
+
+      (hiveDatabaseRepository.create _).expects(initialHive.copy(managingGroup = initialGrant.copy(id = Some(id), ldapRegistration = savedLDAP), readonlyGroup = Some(initialGrant.copy(id = Some(id), ldapRegistration = savedLDAP)))).returning(id.pure[ConnectionIO])
       (workspaceRepository.linkHive _).expects(id, id).returning(1.pure[ConnectionIO])
 
       (yarnRepository.create _).expects(initialYarn).returning(id.pure[ConnectionIO])
@@ -156,7 +151,19 @@ class WorkspaceServiceImplSpec
       ldapRepository.roleCreated _ expects id returning 0.pure[ConnectionIO]
       sentryClient.grantGroup _ expects(savedLDAP.commonName, savedLDAP.sentryRole) returning IO.unit
       ldapRepository.groupAssociated _ expects id returning 0.pure[ConnectionIO]
-      sentryClient.enableAccessToDB _ expects(savedHive.name, savedLDAP.sentryRole) returning IO.unit
+      sentryClient.enableAccessToDB _ expects(savedHive.name, savedLDAP.sentryRole, Manager) returning IO.unit
+      grantRepository.databaseGranted _ expects id returning 0.pure[ConnectionIO]
+      sentryClient.enableAccessToLocation _ expects(savedHive.location, savedLDAP.sentryRole) returning IO.unit
+      grantRepository.locationGranted _ expects id returning 0.pure[ConnectionIO]
+
+      ldapClient.createGroup _ expects(savedLDAP.id.get, savedLDAP.commonName, savedLDAP.distinguishedName) returning EitherT
+        .right(IO.unit)
+      ldapRepository.groupCreated _ expects id returning 0.pure[ConnectionIO]
+      sentryClient.createRole _ expects savedLDAP.sentryRole returning IO.unit
+      ldapRepository.roleCreated _ expects id returning 0.pure[ConnectionIO]
+      sentryClient.grantGroup _ expects(savedLDAP.commonName, savedLDAP.sentryRole) returning IO.unit
+      ldapRepository.groupAssociated _ expects id returning 0.pure[ConnectionIO]
+      sentryClient.enableAccessToDB _ expects(savedHive.name, savedLDAP.sentryRole, ReadOnly) returning IO.unit
       grantRepository.databaseGranted _ expects id returning 0.pure[ConnectionIO]
       sentryClient.enableAccessToLocation _ expects(savedHive.location, savedLDAP.sentryRole) returning IO.unit
       grantRepository.locationGranted _ expects id returning 0.pure[ConnectionIO]
@@ -180,7 +187,7 @@ class WorkspaceServiceImplSpec
       ldapRepository.roleCreated _ expects id returning 0.pure[ConnectionIO]
       sentryClient.grantGroup _ expects(savedLDAP.commonName, savedLDAP.sentryRole) returning IO.unit
       ldapRepository.groupAssociated _ expects id returning 0.pure[ConnectionIO]
-      sentryClient.grantPrivilege _ expects(savedLDAP.sentryRole, Kafka, s"ConsumerGroup=${savedApplication.consumerGroup}->action=ALL") returning IO.unit
+      sentryClient.grantPrivilege _ expects(*, *, *) returning IO.unit
       applicationRepository.consumerGroupAccess _ expects id returning 0.pure[ConnectionIO]
     }
 
