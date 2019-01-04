@@ -39,7 +39,7 @@ const WorkspaceRequest =
 
     return (
     <div style={{ textAlign: 'center', color: 'black' }}>
-      <h1>New Workspace Request and so much</h1>
+      <h1>New Workspace Request</h1>
 
       <Tabs tabBarStyle={{ textAlign: 'center' }} activeKey={`${selectedPage}`}>
         <Tabs.TabPane tab="Behavior" key="1">
