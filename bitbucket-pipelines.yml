@@ -1,0 +1,11 @@
+image: node:9-alpine
+
+pipelines:
+  default:
+    - step:
+        caches:
+          - node
+        script:
+          - npm i -g typescript
+          - npm i
+          - npm run-script build
