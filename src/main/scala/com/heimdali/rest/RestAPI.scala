@@ -4,12 +4,11 @@ import cats.effect._
 import cats.implicits._
 import com.typesafe.scalalogging.LazyLogging
 import org.http4s._
-import org.http4s.syntax._
-import org.http4s.dsl.io._
 import org.http4s.implicits._
 import org.http4s.server.Router
 import org.http4s.server.blaze._
 import org.http4s.server.middleware.CORS
+import scala.concurrent.duration._
 
 class RestAPI(accountController: AccountController,
               clusterController: ClusterController,
@@ -24,6 +23,8 @@ class RestAPI(accountController: AccountController,
     BlazeServerBuilder[IO]
       .bindHttp(8080, "0.0.0.0")
       .withHttpApp(CORS(router.orNotFound))
+      .withIdleTimeout(5 minutes)
+      .withResponseHeaderTimeout(5 minutes)
       .serve
       .compile
       .drain
