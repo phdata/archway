@@ -21,13 +21,13 @@ pipelines:
             - sbt
             - ivy2
           artifacts:
-            - heimdali-api_${BITBUCKET_TAG}.jar
+            - target/scala-2.12/*
           script:
             - ./sbt "set test in assembly := {}" assembly
-            - mv target/scala-2.12/heimdali-api.jar heimdali-api_${BITBUCKET_TAG}.jar
       - step:
           name: "Deploy"
           script:
+            - mv target/scala-2.12/heimdali-api.jar heimdali-api_${BITBUCKET_TAG}.jar
             - curl -X POST --user "${BB_AUTH_STRING}" "https://api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"heimdali-api_${BITBUCKET_TAG}.jar"
 
 definitions:
