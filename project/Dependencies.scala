@@ -45,12 +45,12 @@ object Dependencies {
 
   val catsVersion = "1.3.0"
   val cats = Seq(
-    "org.typelevel" %% "cats-core" % catsVersion withSources()
+    "org.typelevel" %% "cats-core" % catsVersion
   )
 
   val catsEffectVersion = "1.0.0"
   val catsEffect = Seq(
-    "org.typelevel" %% "cats-effect" % catsEffectVersion withSources()
+    "org.typelevel" %% "cats-effect" % catsEffectVersion
   )
 
   val circeVersion = "0.10.0"
