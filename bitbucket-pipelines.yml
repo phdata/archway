@@ -17,6 +17,9 @@ pipelines:
     "*":
       - step:
           name: "Package"
+          caches:
+            - sbt
+            - ivy2
           artifacts:
             - heimdali-api_${BITBUCKET_TAG}.jar
           script:
