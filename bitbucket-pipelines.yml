@@ -9,7 +9,7 @@ pipelines:
   tags:
     "*":
       - step:
-          name: "Package"
+          name: "Package and deploy"
           script:
             - sed -i -e "s/0.1.0/${BITBUCKET_TAG}/g" descriptor/service.sdl
             - jar cvf HEIMDALI-${BITBUCKET_TAG}.jar `find . -mindepth 1 -not -path "./.git*"`
