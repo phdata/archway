@@ -1,0 +1,31 @@
+image: ubuntu
+
+pipelines:
+  default:
+    - step:
+        image: jotunn/cm-validator
+        script:
+          - java -jar /usr/src/validator.jar -p $PWD/meta/parcel.json
+          - java -jar /usr/src/validator.jar -r $PWD/meta/permissions.json
+
+  tags:
+    "*":
+      - step:
+          image: ubuntu
+          name: "Package"
+          script:
+            - apt-get update && apt-get install -y curl
+            - mkdir ready
+            - cp -R meta ready/
+            - sed -i "s/0.1.5/${BITBUCKET_TAG}/g" ready/meta/parcel.json
+            - curl -u$ARTIFACTORY_USER:$ARTIFACTORY_TOKEN -O https://repository.phdata.io/artifactory/binary-dev/com/heimdali/${BITBUCKET_TAG}/heimdali-ui_${BITBUCKET_TAG}.tar
+            - curl -u$ARTIFACTORY_USER:$ARTIFACTORY_TOKEN -O https://repository.phdata.io/artifactory/binary-dev/com/heimdali/${BITBUCKET_TAG}/heimdali-api_${BITBUCKET_TAG}.jar
+            - mkdir -p ready/usr/lib/heimdali-api
+            - mv heimdali-api_${BITBUCKET_TAG}.jar ready/usr/lib/heimdali-api/heimdali-api.jar
+            - tar xvf heimdali-ui_${BITBUCKET_TAG}.tar
+            - mv dist ready/usr/lib/heimdali-ui
+            - chown -R 10000:10000 ready
+            - mv ready HEIMDALI-${BITBUCKET_TAG}
+            - tar cvf HEIMDALI-${BITBUCKET_TAG}.parcel HEIMDALI-${BITBUCKET_TAG}
+            - curl -u$ARTIFACTORY_USER:$ARTIFACTORY_TOKEN -T HEIMDALI-${BITBUCKET_TAG}.parcel https://repository.phdata.io/artifactory/parcels-release/com/heimdali/${BITBUCKET_TAG}/HEIMDALI-${BITBUCKET_TAG}-el6.parcel
+            - curl -u$ARTIFACTORY_USER:$ARTIFACTORY_TOKEN -T HEIMDALI-${BITBUCKET_TAG}.parcel https://repository.phdata.io/artifactory/parcels-release/com/heimdali/${BITBUCKET_TAG}/HEIMDALI-${BITBUCKET_TAG}-el7.parcel
