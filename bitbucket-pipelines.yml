@@ -29,6 +29,7 @@ pipelines:
             - cd publish
             - ln -s HEIMDALI-${BITBUCKET_TAG}-el6.parcel HEIMDALI-${BITBUCKET_TAG}-el7.parcel
             - ln -s HEIMDALI-${BITBUCKET_TAG}-el6.parcel HEIMDALI-${BITBUCKET_TAG}-xenial.parcel
+            - python /usr/src/make_manifest.py .
             - curl -u$ARTIFACTORY_USER:$ARTIFACTORY_TOKEN -T manifest.json https://repository.phdata.io/artifactory/parcels-release/com/heimdali/${BITBUCKET_TAG}/manifest.json
             - curl -u$ARTIFACTORY_USER:$ARTIFACTORY_TOKEN -T HEIMDALI-${BITBUCKET_TAG}.parcel https://repository.phdata.io/artifactory/parcels-release/com/heimdali/${BITBUCKET_TAG}/HEIMDALI-${BITBUCKET_TAG}-el6.parcel
             - curl -u$ARTIFACTORY_USER:$ARTIFACTORY_TOKEN -T HEIMDALI-${BITBUCKET_TAG}.parcel https://repository.phdata.io/artifactory/parcels-release/com/heimdali/${BITBUCKET_TAG}/HEIMDALI-${BITBUCKET_TAG}-el7.parcel
