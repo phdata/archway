@@ -3,6 +3,7 @@ image: jotunn/cm-validator
 pipelines:
   default:
     - step:
+        name: "Validate"
         script:
           - java -jar /usr/src/validator.jar -s $PWD/descriptor/service.sdl
 
