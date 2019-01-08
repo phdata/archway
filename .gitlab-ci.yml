@@ -15,7 +15,7 @@ build:
   script:
     - npm i -g typescript
     - npm i
-    - npm run-script build
+    - npm run-script prepare
 
 publish:
   stage: publish

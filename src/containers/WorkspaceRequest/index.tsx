@@ -7,6 +7,7 @@ import { Workspace } from '../../models/Workspace';
 import * as actions from './actions';
 import { BehaviorPage, OverviewPage, SummaryPage } from './components';
 import * as selectors from './selectors';
+import { Profile } from '../../models/Profile';
 
 interface Props {
     behavior?: string;
@@ -15,6 +16,7 @@ interface Props {
     workspace?: Workspace;
     ready: boolean;
     completeEnabled: boolean;
+    profile: Profile;
 
     setBehavior: (behavior: string) => void;
     setRequest: (request: RequestInput) => void;
@@ -33,6 +35,7 @@ const WorkspaceRequest =
     setRequest,
     setPage,
     selectedPage,
+    profile: { name },
   }: Props) => {
     const nextPage = () => setPage(selectedPage + 1);
     const previousPage = () => setPage(selectedPage - 1);
@@ -54,7 +57,7 @@ const WorkspaceRequest =
         <Tabs.TabPane tab="Review" key="3">
           <SummaryPage
             workspace={workspace}
-            name="Benny Thompson" />
+            name={name} />
         </Tabs.TabPane>
       </Tabs>
 

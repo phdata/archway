@@ -61,9 +61,11 @@ module.exports = {
       filename: "style.css",
       chunkFilename: "[id].css"
     }),
-    new HtmlWebpackPlugin({ hash: true, template: resolve(__dirname, 'public/index.html') }),
-    new webpack.DefinePlugin({
-      'process.env.NODE_ENV': '"production"'
+    new HtmlWebpackPlugin({
+      hash: true,
+      template: resolve(__dirname, 'public/index.html'),
+      inject: 'body',
+      baseUrl: "%%BASE_URL%%"
     }),
   ],
 };

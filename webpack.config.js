@@ -99,7 +99,11 @@ module.exports = {
     // enable HMR globally
     new webpack.NamedModulesPlugin(),
     // prints more readable module names in the browser console on HMR updates
-    new HtmlWebpackPlugin({ template: resolve(__dirname, 'public/index.html') }),
+    new HtmlWebpackPlugin({
+      template: resolve(__dirname, 'public/index.html'),
+      inject: 'body',
+      baseUrl: process.env.BASE_URL || "http://master1.jotunn.io:8080"
+    }),
     // inject <script> in html file. 
     new OpenBrowserPlugin({ url: 'http://localhost:3000' }),
   ],
