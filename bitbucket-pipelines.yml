@@ -21,7 +21,7 @@ pipelines:
             - dist/*
           script:
             - npm i -g typescript
-            - npm run-script build
+            - npm run-script prepare
       - step:
           name: "Deploy"
           script:
