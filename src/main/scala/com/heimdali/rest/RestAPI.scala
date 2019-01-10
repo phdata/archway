@@ -23,8 +23,8 @@ class RestAPI(accountController: AccountController,
     BlazeServerBuilder[IO]
       .bindHttp(8080, "0.0.0.0")
       .withHttpApp(CORS(router.orNotFound))
-      .withIdleTimeout(5 minutes)
-      .withResponseHeaderTimeout(5 minutes)
+      .withIdleTimeout(10 minutes)
+      .withResponseHeaderTimeout(10 minutes)
       .serve
       .compile
       .drain

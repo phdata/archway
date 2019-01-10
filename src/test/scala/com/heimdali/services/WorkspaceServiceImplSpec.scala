@@ -126,11 +126,16 @@ class WorkspaceServiceImplSpec
 
   it should "approve the workspace" in new Context {
     val instant = Instant.now()
-    approvalRepository.create _ expects(id, approval(instant)) returning approval(
-      instant
-    ).copy(id = Some(id)).pure[ConnectionIO]
+    approvalRepository.create _ expects(id, approval(instant)) returning approval(instant).copy(id = Some(id)).pure[ConnectionIO]
 
-    projectServiceImpl.approve(id, approval(instant))
+    workspaceRepository.find _ expects id returning OptionT.some(savedWorkspaceRequest)
+    hiveDatabaseRepository.findByWorkspace _ expects id returning List(savedHive).pure[ConnectionIO]
+    yarnRepository.findByWorkspaceId _ expects id returning List(savedYarn).pure[ConnectionIO]
+    approvalRepository.findByWorkspaceId _ expects id returning List(approval()).pure[ConnectionIO]
+    topicRepository.findByWorkspaceId _ expects id returning List(savedTopic).pure[ConnectionIO]
+    applicationRepository.findByWorkspaceId _ expects id returning List(savedApplication).pure[ConnectionIO]
+
+    projectServiceImpl.approve(id, approval(instant)).unsafeRunSync()
   }
 
   it should "provision a workspace" in new Context {

@@ -10,7 +10,7 @@ import org.http4s.implicits._
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FlatSpec, Matchers}
 
-class MemberControllerSpec
+class  MemberControllerSpec
   extends FlatSpec
     with Matchers
     with MockFactory

@@ -115,7 +115,9 @@ class WorkspaceServiceImpl[F[_]](ldapClient: LDAPClient[F],
     approvalRepository.create(id, approval).transact(transactor).flatMap { approval =>
       find(id).value.flatMap {
         case Some(workspace) if workspace.approvals.lengthCompare(2) == 0 =>
-          ConcurrentEffect[F].liftIO(IO(provision(workspace)).start(provisionContextShift))
+          ConcurrentEffect[F].liftIO(IO(provision(workspace)).start(provisionContextShift).void)
+        case _ =>
+          ConcurrentEffect[F].liftIO(IO.unit)
       }.map(_ => approval)
     }
 
