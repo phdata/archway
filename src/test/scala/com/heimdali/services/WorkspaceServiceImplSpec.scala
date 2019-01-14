@@ -238,6 +238,14 @@ class WorkspaceServiceImplSpec
     projects.head should be(searchResult)
   }
 
+  it should "list infra workspaces" in new Context {
+    workspaceRepository.pendingQueue _ expects Infra returning List(searchResult).pure[ConnectionIO]
+
+    val projects = projectServiceImpl.reviewerList(Infra).unsafeRunSync()
+    projects.length should be(1)
+    projects.head should be(searchResult)
+  }
+
   trait Context {
     implicit val contextShift = IO.contextShift(ExecutionContext.global)
 

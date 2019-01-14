@@ -35,6 +35,8 @@ trait RestModule {
 
   val riskController: RiskController = new RiskController(authService, workspaceService)
 
+  val opsController: OpsController = new OpsController(authService, workspaceService)
+
   val restAPI: RestAPI = new RestAPI(
     accountController,
     clusterController,
@@ -42,5 +44,6 @@ trait RestModule {
     templateController,
     memberController,
     riskController,
+    opsController,
   )
 }
