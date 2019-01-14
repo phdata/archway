@@ -12,7 +12,7 @@ import { requestRemoveMember } from '../actions';
 interface Props {
   members?: Member[];
 
-  removeMember: (distinguished_name: string) => void;
+  removeMember: (distinguished_name: string, database_role: string) => void;
   showModal: (e: React.MouseEvent) => void;
 }
 
@@ -53,7 +53,7 @@ class MemberList extends React.Component<Props> {
 
   public renderMember = (member: Member) => {
     const { removeMember } = this.props;
-    const { name, distinguished_name, removeStatus = {} } = member;
+    const { name, distinguished_name, removeStatus = {}, data } = member;
 
     return (
       <div
@@ -90,7 +90,7 @@ class MemberList extends React.Component<Props> {
                 fontSize: '10px',
                 cursor: 'pointer',
               }}
-              onClick={() => removeMember(distinguished_name)}
+              onClick={() => removeMember(distinguished_name, data[Object.keys(data)[0]].role)}
             >REMOVE</span>
           )}
         </div>
@@ -130,7 +130,7 @@ const mapStateToProps = () =>
   });
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
-  removeMember: (distinguished_name: string) => dispatch(requestRemoveMember(distinguished_name)),
+  removeMember: (distinguished_name: string, role: string) => dispatch(requestRemoveMember(distinguished_name, role)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(MemberList);

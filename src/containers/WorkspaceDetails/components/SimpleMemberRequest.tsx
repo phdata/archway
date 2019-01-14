@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { AutoComplete } from 'antd';
+import { AutoComplete, Row, Radio } from 'antd';
 import { InjectedFormProps } from 'redux-form';
 import { Field } from 'redux-form/immutable';
 import { reduxForm } from 'redux-form/immutable';
@@ -9,6 +9,24 @@ import { UserSuggestions, UserSuggestion } from './../../../models/Workspace';
 /* tslint:disable:no-var-requires */
 const { createComponent, customMap } = require('redux-form-antd');
 
+const RadioGroup = ({ options, onChange, defaultValue }: any) => (
+  <Radio.Group defaultValue={defaultValue} buttonStyle="solid" onChange={onChange}>
+    {options.map((option: any) => (
+      <Radio.Button
+        key={option.value}
+        value={option.value}
+      >
+        {option.label}
+      </Radio.Button>
+    ))}
+  </Radio.Group>
+);
+
+const RadioField = createComponent(RadioGroup, customMap((mapProps: any, { input: { onChange } }: any) => ({
+  ...mapProps,
+  onChange: (e: any) => onChange(e.target.value),
+})));
+
 const ReduxAutoComplete = createComponent(AutoComplete, customMap((mapProps: any, { input: { onChange } }: any) => ({
   ...mapProps,
   onChange: (v: any) => onChange(v),
@@ -16,6 +34,7 @@ const ReduxAutoComplete = createComponent(AutoComplete, customMap((mapProps: any
 
 interface SimpleMemberForm {
   username: string;
+  role: string;
 }
 
 interface SimpleMemberRequestProps {
@@ -42,7 +61,7 @@ const SimpleMemberRequest = ({
   handleSubmit,
 }: InjectedFormProps<SimpleMemberForm, {}> & SimpleMemberRequestProps) => (
   <form style={{  }} onSubmit={handleSubmit}>
-    <FieldLabel>Username</FieldLabel>
+    <FieldLabel>member</FieldLabel>
     <Field
       name="username"
       dataSource={suggestions ? [
@@ -65,9 +84,21 @@ const SimpleMemberRequest = ({
       component={ReduxAutoComplete}
       style={{ marginBottom: 0 }}
     />
+    <FieldLabel>READ ONLY</FieldLabel>
+    <Row type="flex" align="middle" justify="center" style={{ marginBottom: 0 }}>
+      <Field
+        defaultValue="readonly"
+        name="role"
+        options={[ { label: 'Manager', value: 'manager' }, { label: 'Read Only', value: 'readonly' } ]}
+        component={RadioField} />
+    </Row>
   </form>
 );
 
 export default reduxForm<SimpleMemberForm, SimpleMemberRequestProps>({
   form: 'simpleMemberRequest',
+  initialValues: {
+    username: '',
+    role: 'readonly',
+  },
 })(SimpleMemberRequest);

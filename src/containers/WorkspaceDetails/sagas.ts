@@ -28,7 +28,10 @@ import {
   refreshHiveTablesSuccess,
   refreshHiveTablesFailure,
 } from './actions';
-import { Workspace } from '../../models/Workspace';
+
+export const tokenExtractor = (s: any) => s.getIn(['login', 'token']);
+export const detailExtractor = (s: any) => s.getIn(['details', 'details']);
+export const memberRequestFormExtractor = (s: any) => s.getIn(['form', 'simpleMemberRequest', 'values']);
 
 function* fetchUserSuggestions({ filter }: { type: string, filter: string }) {
   const token = yield select((s: any) => s.get('login').get('token'));
@@ -94,19 +97,13 @@ function* topicRequestedListener() {
   yield takeLatest(REQUEST_TOPIC, topicRequested);
 }
 
-function* simpleMemberRequested() {
-  const token = yield select((s: any) => s.get('login').get('token'));
-  const workspace: Workspace = yield select<Workspace>((s: any) => s.get('details').get('details').toJS() as Workspace);
-  const { username } = yield select((s: any) => s.getIn(['form', 'simpleMemberRequest', 'values']).toJS());
-  const { applications, data, topics } = {
-    applications: workspace.applications.map(({ id }) => ({ type: 'applications', id })),
-    data: workspace.data.map(({ id }) => ({ type: 'data', id })),
-    topics: workspace.topics.map(({ id }) => ({ type: 'topics', id })),
-  };
-  const allResources = applications.concat(data).concat(topics);
+export function* simpleMemberRequested() {
+  const token = yield select(tokenExtractor);
+  const workspace = (yield select(detailExtractor)).toJS();
+  const { username, role } = (yield select(memberRequestFormExtractor)).toJS();
   yield all(
-    allResources.map(({ type, id }) => (
-      call(Api.newWorkspaceMember, token, workspace.id, type, id, 'manager', username)
+    workspace.data.map(({ id }: { id: number }) => (
+      call(Api.newWorkspaceMember, token, workspace.id, 'data', id, role, username)
     )),
   );
   yield put(simpleMemberRequestComplete());
@@ -118,22 +115,18 @@ function* simpleMemberRequestedListener() {
   yield takeLatest(SIMPLE_MEMBER_REQUEST, simpleMemberRequested);
 }
 
-function* removeMemberRequested({ distinguished_name }: RemoveMemberRequestAction) {
-  const token = yield select((s: any) => s.get('login').get('token'));
-  const workspace: Workspace = yield select<Workspace>((s: any) => s.get('details').get('details').toJS() as Workspace);
-  const { applications, data, topics } = {
-    applications: workspace.applications.map(({ id }) => ({ type: 'applications', id })),
-    data: workspace.data.map(({ id }) => ({ type: 'data', id })),
-    topics: workspace.topics.map(({ id }) => ({ type: 'topics', id })),
-  };
-  const allResources = applications.concat(data).concat(topics);
+export function* removeMemberRequested({ distinguished_name, role }: RemoveMemberRequestAction) {
+  const token = yield select(tokenExtractor);
+  const workspace = (yield select(detailExtractor)).toJS();
   try {
     yield all(
-      allResources.map(({ type, id }) => (
-        call(Api.removeWorkspaceMember, token, workspace.id, type, id, 'manager', distinguished_name)
+      workspace.data.map(({ id }: { id: number }) => (
+        call(Api.removeWorkspaceMember, token, workspace.id, 'data', id, role, distinguished_name)
       )),
     );
     yield put(removeMemberSuccess(distinguished_name));
+    const members = yield call(Api.getMembers, token, workspace.id);
+    yield put(setMembers(members));
   } catch (e) {
     yield put(removeMemberFailure(distinguished_name, e.toString()));
   }

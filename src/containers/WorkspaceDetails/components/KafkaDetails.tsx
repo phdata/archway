@@ -11,7 +11,7 @@ interface Props {
 }
 
 const renderTopic = (topic: KafkaTopic) => (
-  <div style={{ textAlign: 'center' }}>{topic.name}</div>
+  <div key={topic.id} style={{ textAlign: 'center' }}>{topic.name}</div>
 );
 
 const KafkaDetails = ({ consumerGroup, topics, showModal }: Props) => (

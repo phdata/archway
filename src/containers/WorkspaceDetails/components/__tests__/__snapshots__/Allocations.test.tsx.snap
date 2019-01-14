@@ -31,11 +31,13 @@ ShallowWrapper {
             <Label
               style={
                 Object {
+                  "fontSize": 12,
+                  "fontWeight": 200,
                   "textAlign": "center",
                 }
               }
             >
-              Available Capacity
+              Available
             </Label>
           }
         />,
@@ -57,11 +59,13 @@ ShallowWrapper {
           "heading": <Label
             style={
               Object {
+                "fontSize": 12,
+                "fontWeight": 200,
                 "textAlign": "center",
               }
             }
           >
-            Available Capacity
+            Available
           </Label>,
           "subheading": undefined,
         },
@@ -91,11 +95,13 @@ ShallowWrapper {
               <Label
                 style={
                   Object {
+                    "fontSize": 12,
+                    "fontWeight": 200,
                     "textAlign": "center",
                   }
                 }
               >
-                Available Capacity
+                Available
               </Label>
             }
           />,
@@ -117,11 +123,13 @@ ShallowWrapper {
             "heading": <Label
               style={
                 Object {
+                  "fontSize": 12,
+                  "fontWeight": 200,
                   "textAlign": "center",
                 }
               }
             >
-              Available Capacity
+              Available
             </Label>,
             "subheading": undefined,
           },

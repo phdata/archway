@@ -40,6 +40,7 @@ export interface Member {
   distinguished_name: string;
   name: string;
   removeStatus?: MemberRemoveStatus;
+  data: any;
 }
 
 export interface Application {
@@ -111,7 +112,7 @@ export interface ApprovalStatus {
 
 export interface ApprovalItem {
   approver?: string;
-  approval_time?: string;
+  approval_time?: Date;
   status?: ApprovalStatus;
 }
 

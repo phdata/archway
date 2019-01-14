@@ -5,7 +5,7 @@ import { ApprovalItem } from '../../../models/Workspace';
 
 interface ItemProps {
   loading?: boolean;
-  approvalDate?: string;
+  approvalDate?: Date;
   children: any;
 
   approve?: React.MouseEventHandler<HTMLAnchorElement>;

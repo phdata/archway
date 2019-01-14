@@ -47,11 +47,14 @@ const liasionFilter = (state: any) => (member: Member) =>
   member.distinguished_name !== (state.get('details').toJS() as Workspace).requester &&
   !(member.removeStatus || {}).success;
 
+const dataFilter = (member: Member) =>
+  Object.keys(member.data).length !== 0;
+
 export const getMembers = () => createSelector(
   workspaceSelector,
   (workspaceState) =>
     (workspaceState.get('members') && workspaceState.get('details') &&
-      workspaceState.get('members').toJS().filter(liasionFilter(workspaceState)) as Member[]),
+      workspaceState.get('members').toJS().filter(liasionFilter(workspaceState)).filter(dataFilter) as Member[]),
 );
 
 export const getNamespaceInfo = () => createSelector(
