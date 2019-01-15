@@ -20,6 +20,9 @@ function getKeyFromPath(path: string): string {
   if (path.startsWith('/risks')) {
     return 'risks';
   }
+  if (path.startsWith('/operations')) {
+    return 'operations';
+  }
 
   return '';
 }
@@ -51,6 +54,13 @@ const Navigation = ({ location, profile }: Props) => (
         <Menu.Item style={{ marginTop: 20 }} key="risks">
           <NavLink to="/risks">
           <Icon type="gold" style={{ fontSize: 18 }} /> Risk/Compliance
+          </NavLink>
+        </Menu.Item>
+      )}
+      {profile && profile.permissions.platform_operations && (
+        <Menu.Item style={{ marginTop: 20 }} key="operations">
+          <NavLink to="/operations">
+          <Icon type="gold" style={{ fontSize: 18 }} /> Operations
           </NavLink>
         </Menu.Item>
       )}
