@@ -1,9 +1,5 @@
 # See https://help.github.com/ignore-files/ for more about ignoring files.
 
-.idea
-
-src/main/resources/*-site.xml
-
 # dependencies
 /node_modules
 
@@ -11,8 +7,6 @@ src/main/resources/*-site.xml
 /coverage
 
 # production
-/build
-/built
 /dist
 
 # misc

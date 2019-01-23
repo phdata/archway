@@ -13,7 +13,7 @@ const WorkspaceListItem = ({ workspace, onSelected }: Props) => {
   const {
     id,
     name,
-    status,
+    status = '',
     behavior,
     summary,
     total_disk_allocated_in_gb = 1,

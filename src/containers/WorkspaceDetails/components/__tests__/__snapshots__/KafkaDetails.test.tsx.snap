@@ -7,7 +7,7 @@ ShallowWrapper {
     consumerGroup=""
     showModal={[Function]}
     topics={Array []}
-  />,
+/>,
   Symbol(enzyme.__renderer__): Object {
     "batchedUpdates": [Function],
     "getNode": [Function],
@@ -25,36 +25,36 @@ ShallowWrapper {
         <a
           href="#"
           onClick={[Function]}
-        >
+>
           Add a topic
-        </a>,
+</a>,
       ],
       "children": Array [
         <CardHeader
           heading="Kafka Topics"
           icon="sound"
           subheading=""
-        />,
+/>,
         <Row
           gutter={12}
           justify="center"
           style={
-            Object {
-              "marginTop": 18,
-            }
+                    Object {
+                              "marginTop": 18,
+                            }
           }
           type="flex"
-        >
+>
           <div
-            style={
-              Object {
-                "color": "rgba(0, 0, 0, .65)",
-              }
-            }
+                    style={
+                              Object {
+                                        "color": "rgba(0, 0, 0, .65)",
+                                      }
+                    }
           >
-            No topics yet.
+                    No topics yet.
           </div>
-        </Row>,
+</Row>,
       ],
     },
     "ref": null,
@@ -81,13 +81,13 @@ ShallowWrapper {
             false,
             <div
               style={
-                Object {
-                  "color": "rgba(0, 0, 0, .65)",
-                }
+                            Object {
+                                          "color": "rgba(0, 0, 0, .65)",
+                                        }
               }
-            >
+>
               No topics yet.
-            </div>,
+</div>,
           ],
           "gutter": 12,
           "justify": "center",
@@ -129,36 +129,36 @@ ShallowWrapper {
           <a
             href="#"
             onClick={[Function]}
-          >
+>
             Add a topic
-          </a>,
+</a>,
         ],
         "children": Array [
           <CardHeader
             heading="Kafka Topics"
             icon="sound"
             subheading=""
-          />,
+/>,
           <Row
             gutter={12}
             justify="center"
             style={
-              Object {
-                "marginTop": 18,
-              }
+                        Object {
+                                    "marginTop": 18,
+                                  }
             }
             type="flex"
-          >
+>
             <div
-              style={
-                Object {
-                  "color": "rgba(0, 0, 0, .65)",
-                }
-              }
+                        style={
+                                    Object {
+                                                "color": "rgba(0, 0, 0, .65)",
+                                              }
+                        }
             >
-              No topics yet.
+                        No topics yet.
             </div>
-          </Row>,
+</Row>,
         ],
       },
       "ref": null,
@@ -185,13 +185,13 @@ ShallowWrapper {
               false,
               <div
                 style={
-                  Object {
-                    "color": "rgba(0, 0, 0, .65)",
-                  }
+                                Object {
+                                                "color": "rgba(0, 0, 0, .65)",
+                                              }
                 }
-              >
+>
                 No topics yet.
-              </div>,
+</div>,
             ],
             "gutter": 12,
             "justify": "center",
@@ -240,8 +240,6 @@ ShallowWrapper {
         },
       },
     },
-    "attachTo": undefined,
-    "hydrateIn": undefined,
   },
 }
 `;

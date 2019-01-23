@@ -149,7 +149,7 @@ class WorkspaceList extends React.PureComponent<Props> {
                           style={{ fontSize: 12, textTransform: 'uppercase' }}
                           defaultChecked
                           name={status}
-                          checked={statuses.includes(status)}
+                          checked={statuses.indexOf(status) >= 0}
                           onChange={(e: any) => this.statusChanged(status, e.target.checked)}
                         >
                           {status}

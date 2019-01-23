@@ -17,7 +17,7 @@ const renderTopic = (topic: KafkaTopic) => (
 const KafkaDetails = ({ consumerGroup, topics, showModal }: Props) => (
   <Card
     actions={[
-      <a href="#" onClick={showModal}>Add a topic</a>,
+      <a key="action" href="#" onClick={showModal}>Add a topic</a>,
     ]}>
     <CardHeader
       icon="sound"

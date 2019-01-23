@@ -6,7 +6,7 @@ ShallowWrapper {
   Symbol(enzyme.__unrendered__): <HiveDetails
     allocations={Array []}
     onChangeAllocation={[Function]}
-  />,
+/>,
   Symbol(enzyme.__renderer__): Object {
     "batchedUpdates": [Function],
     "getNode": [Function],
@@ -22,80 +22,82 @@ ShallowWrapper {
     "props": Object {
       "actions": Array [
         <a
+          href={undefined}
           target="_blank"
-        >
+>
           See in Hue
-        </a>,
+</a>,
       ],
       "children": Array [
         <CardHeader
           heading="Hive Tables"
           icon="database"
           rightAction={
-            <Icon
-              onClick={[Function]}
-              style={
-                Object {
-                  "alignSelf": "flex-start",
-                  "cursor": "pointer",
-                }
-              }
-              type="sync"
-            />
+                    <Icon
+                              onClick={[Function]}
+                              spin={undefined}
+                              style={
+                                        Object {
+                                                  "alignSelf": "flex-start",
+                                                  "cursor": "pointer",
+                                                }
+                              }
+                              type="sync"
+                    />
           }
           subheading={
-            <Dropdown
-              mouseEnterDelay={0.15}
-              mouseLeaveDelay={0.1}
-              overlay={
-                <Menu
-                  className=""
-                  focusable={false}
-                  onClick={[Function]}
-                  prefixCls="ant-menu"
-                  theme="light"
-                />
-              }
-              placement="bottomLeft"
-              prefixCls="ant-dropdown"
-              trigger={
-                Array [
-                  "click",
-                ]
-              }
-            >
-              <a
-                className="ant-dropdown-link"
-                href="#"
-              >
-                No Database Found
-                <Icon
-                  type="down"
-                />
-              </a>
-            </Dropdown>
+                    <Dropdown
+                              mouseEnterDelay={0.15}
+                              mouseLeaveDelay={0.1}
+                              overlay={
+                                        <Menu
+                                                  className=""
+                                                  focusable={false}
+                                                  onClick={[Function]}
+                                                  theme="light"
+                                        >
+                                                  
+                                        </Menu>
+                              }
+                              placement="bottomLeft"
+                              trigger={
+                                        Array [
+                                                  "click",
+                                                ]
+                              }
+                    >
+                              <a
+                                        className="ant-dropdown-link"
+                                        href="#"
+                              >
+                                        No Database Found
+                                        <Icon
+                                                  type="down"
+                                        />
+                              </a>
+                    </Dropdown>
           }
-        />,
+/>,
         <Row
           gutter={12}
           justify="center"
           style={
-            Object {
-              "marginTop": 18,
-            }
+                    Object {
+                              "marginTop": 18,
+                            }
           }
           type="flex"
-        >
+>
           <div
-            style={
-              Object {
-                "color": "rgba(0, 0, 0, .65)",
-              }
-            }
+                    style={
+                              Object {
+                                        "color": "rgba(0, 0, 0, .65)",
+                                      }
+                    }
           >
-            No tables yet.
+                    No tables yet.
           </div>
-        </Row>,
+</Row>,
       ],
     },
     "ref": null,
@@ -109,44 +111,45 @@ ShallowWrapper {
           "icon": "database",
           "rightAction": <Icon
             onClick={[Function]}
+            spin={undefined}
             style={
-              Object {
-                "alignSelf": "flex-start",
-                "cursor": "pointer",
-              }
+                        Object {
+                                    "alignSelf": "flex-start",
+                                    "cursor": "pointer",
+                                  }
             }
             type="sync"
-          />,
+/>,
           "subheading": <Dropdown
             mouseEnterDelay={0.15}
             mouseLeaveDelay={0.1}
             overlay={
-              <Menu
-                className=""
-                focusable={false}
-                onClick={[Function]}
-                prefixCls="ant-menu"
-                theme="light"
-              />
+                        <Menu
+                                    className=""
+                                    focusable={false}
+                                    onClick={[Function]}
+                                    theme="light"
+                        >
+                                    
+                        </Menu>
             }
             placement="bottomLeft"
-            prefixCls="ant-dropdown"
             trigger={
-              Array [
-                "click",
-              ]
+                        Array [
+                                    "click",
+                                  ]
             }
-          >
+>
             <a
-              className="ant-dropdown-link"
-              href="#"
+                        className="ant-dropdown-link"
+                        href="#"
             >
-              No Database Found
-              <Icon
-                type="down"
-              />
+                        No Database Found
+                        <Icon
+                                    type="down"
+                        />
             </a>
-          </Dropdown>,
+</Dropdown>,
         },
         "ref": null,
         "rendered": null,
@@ -159,13 +162,13 @@ ShallowWrapper {
         "props": Object {
           "children": <div
             style={
-              Object {
-                "color": "rgba(0, 0, 0, .65)",
-              }
+                        Object {
+                                    "color": "rgba(0, 0, 0, .65)",
+                                  }
             }
-          >
+>
             No tables yet.
-          </div>,
+</div>,
           "gutter": 12,
           "justify": "center",
           "style": Object {
@@ -201,80 +204,82 @@ ShallowWrapper {
       "props": Object {
         "actions": Array [
           <a
+            href={undefined}
             target="_blank"
-          >
+>
             See in Hue
-          </a>,
+</a>,
         ],
         "children": Array [
           <CardHeader
             heading="Hive Tables"
             icon="database"
             rightAction={
-              <Icon
-                onClick={[Function]}
-                style={
-                  Object {
-                    "alignSelf": "flex-start",
-                    "cursor": "pointer",
-                  }
-                }
-                type="sync"
-              />
+                        <Icon
+                                    onClick={[Function]}
+                                    spin={undefined}
+                                    style={
+                                                Object {
+                                                            "alignSelf": "flex-start",
+                                                            "cursor": "pointer",
+                                                          }
+                                    }
+                                    type="sync"
+                        />
             }
             subheading={
-              <Dropdown
-                mouseEnterDelay={0.15}
-                mouseLeaveDelay={0.1}
-                overlay={
-                  <Menu
-                    className=""
-                    focusable={false}
-                    onClick={[Function]}
-                    prefixCls="ant-menu"
-                    theme="light"
-                  />
-                }
-                placement="bottomLeft"
-                prefixCls="ant-dropdown"
-                trigger={
-                  Array [
-                    "click",
-                  ]
-                }
-              >
-                <a
-                  className="ant-dropdown-link"
-                  href="#"
-                >
-                  No Database Found
-                  <Icon
-                    type="down"
-                  />
-                </a>
-              </Dropdown>
+                        <Dropdown
+                                    mouseEnterDelay={0.15}
+                                    mouseLeaveDelay={0.1}
+                                    overlay={
+                                                <Menu
+                                                            className=""
+                                                            focusable={false}
+                                                            onClick={[Function]}
+                                                            theme="light"
+                                                >
+                                                            
+                                                </Menu>
+                                    }
+                                    placement="bottomLeft"
+                                    trigger={
+                                                Array [
+                                                            "click",
+                                                          ]
+                                    }
+                        >
+                                    <a
+                                                className="ant-dropdown-link"
+                                                href="#"
+                                    >
+                                                No Database Found
+                                                <Icon
+                                                            type="down"
+                                                />
+                                    </a>
+                        </Dropdown>
             }
-          />,
+/>,
           <Row
             gutter={12}
             justify="center"
             style={
-              Object {
-                "marginTop": 18,
-              }
+                        Object {
+                                    "marginTop": 18,
+                                  }
             }
             type="flex"
-          >
+>
             <div
-              style={
-                Object {
-                  "color": "rgba(0, 0, 0, .65)",
-                }
-              }
+                        style={
+                                    Object {
+                                                "color": "rgba(0, 0, 0, .65)",
+                                              }
+                        }
             >
-              No tables yet.
+                        No tables yet.
             </div>
-          </Row>,
+</Row>,
         ],
       },
       "ref": null,
@@ -288,44 +293,45 @@ ShallowWrapper {
             "icon": "database",
             "rightAction": <Icon
               onClick={[Function]}
+              spin={undefined}
               style={
-                Object {
-                  "alignSelf": "flex-start",
-                  "cursor": "pointer",
-                }
+                            Object {
+                                          "alignSelf": "flex-start",
+                                          "cursor": "pointer",
+                                        }
               }
               type="sync"
-            />,
+/>,
             "subheading": <Dropdown
               mouseEnterDelay={0.15}
               mouseLeaveDelay={0.1}
               overlay={
-                <Menu
-                  className=""
-                  focusable={false}
-                  onClick={[Function]}
-                  prefixCls="ant-menu"
-                  theme="light"
-                />
+                            <Menu
+                                          className=""
+                                          focusable={false}
+                                          onClick={[Function]}
+                                          theme="light"
+                            >
+                                          
+                            </Menu>
               }
               placement="bottomLeft"
-              prefixCls="ant-dropdown"
               trigger={
-                Array [
-                  "click",
-                ]
+                            Array [
+                                          "click",
+                                        ]
               }
-            >
+>
               <a
-                className="ant-dropdown-link"
-                href="#"
+                            className="ant-dropdown-link"
+                            href="#"
               >
-                No Database Found
-                <Icon
-                  type="down"
-                />
+                            No Database Found
+                            <Icon
+                                          type="down"
+                            />
               </a>
-            </Dropdown>,
+</Dropdown>,
           },
           "ref": null,
           "rendered": null,
@@ -338,13 +344,13 @@ ShallowWrapper {
           "props": Object {
             "children": <div
               style={
-                Object {
-                  "color": "rgba(0, 0, 0, .65)",
-                }
+                            Object {
+                                          "color": "rgba(0, 0, 0, .65)",
+                                        }
               }
-            >
+>
               No tables yet.
-            </div>,
+</div>,
             "gutter": 12,
             "justify": "center",
             "style": Object {
@@ -389,8 +395,6 @@ ShallowWrapper {
         },
       },
     },
-    "attachTo": undefined,
-    "hydrateIn": undefined,
   },
 }
 `;

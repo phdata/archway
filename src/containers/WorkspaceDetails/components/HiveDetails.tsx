@@ -30,6 +30,7 @@ const HiveDetails = ({
     <Card
       actions={[
         <a
+          key="action"
           target="_blank"
           href={hue && selectedAllocation ? `//${hueHost}/hue/metastore/tables/${selectedAllocation.name}` : undefined}>
           See in Hue

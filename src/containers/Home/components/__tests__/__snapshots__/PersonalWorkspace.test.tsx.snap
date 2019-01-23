@@ -7,64 +7,64 @@ ShallowWrapper {
     loading={false}
     requestWorkspace={[Function]}
     services={
-      Object {
-        "hive": Object {
-          "thrift": Array [
-            Object {
-              "host": "",
-              "port": "",
+        Object {
+            "hive": Object {
+              "thrift": Array [
+                Object {
+                  "host": "",
+                  "port": "",
+                },
+              ],
             },
-          ],
-        },
-        "hue": Object {},
-        "impala": Object {},
-        "yarn": Object {},
-      }
+            "hue": Object {},
+            "impala": Object {},
+            "yarn": Object {},
+          }
     }
     workspace={
-      Object {
-        "applications": Array [],
-        "behavior": "",
-        "compliance": Object {
-          "pci_data": false,
-          "phi_data": false,
-          "pii_data": false,
-        },
-        "data": Array [
-          Object {
-            "consumed_in_gb": 0,
-            "id": 1,
-            "location": "",
-            "managing_group": Object {
-              "group": Object {
-                "common_name": "",
-                "distinguished_name": "",
-                "sentry_role": "",
-              },
+        Object {
+            "applications": Array [],
+            "behavior": "",
+            "compliance": Object {
+              "pci_data": false,
+              "phi_data": false,
+              "pii_data": false,
             },
-            "name": "",
-            "size_in_gb": 0,
-          },
-        ],
-        "description": "",
-        "id": 0,
-        "name": "",
-        "processing": Array [
-          Object {
+            "data": Array [
+              Object {
+                "consumed_in_gb": 0,
+                "id": 1,
+                "location": "",
+                "managing_group": Object {
+                  "group": Object {
+                    "common_name": "",
+                    "distinguished_name": "",
+                    "sentry_role": "",
+                  },
+                },
+                "name": "",
+                "size_in_gb": 0,
+              },
+            ],
+            "description": "",
             "id": 0,
-            "max_cores": 0,
-            "max_memory_in_gb": 0,
-            "pool_name": "",
-          },
-        ],
-        "requested_date": 1970-01-01T00:00:00.000Z,
-        "requester": "",
-        "single_user": false,
-        "summary": "",
-        "topics": Array [],
-      }
+            "name": "",
+            "processing": Array [
+              Object {
+                "id": 0,
+                "max_cores": 0,
+                "max_memory_in_gb": 0,
+                "pool_name": "",
+              },
+            ],
+            "requested_date": 1970-01-01T00:00:00.000Z,
+            "requester": "",
+            "single_user": false,
+            "summary": "",
+            "topics": Array [],
+          }
     }
-  />,
+/>,
   Symbol(enzyme.__renderer__): Object {
     "batchedUpdates": [Function],
     "getNode": [Function],
@@ -81,180 +81,173 @@ ShallowWrapper {
       "children": Array [
         <div
           style={
-            Object {
-              "alignItems": "center",
-              "display": "none",
-              "height": "100%",
-              "justifyContent": "center",
-              "position": "absolute",
-              "width": "100%",
-              "zIndex": 999,
-            }
+                    Object {
+                              "alignItems": "center",
+                              "display": "none",
+                              "height": "100%",
+                              "justifyContent": "center",
+                              "position": "absolute",
+                              "width": "100%",
+                              "zIndex": 999,
+                            }
           }
-        >
+>
           <Card
-            bodyStyle={
-              Object {
-                "textAlign": "center",
-              }
-            }
+                    bodyStyle={
+                              Object {
+                                        "textAlign": "center",
+                                      }
+                    }
           >
-            <h3>
-              You don't have a personal workspace yet!
-            </h3>
-            <Button
-              block={false}
-              ghost={false}
-              loading={false}
-              onClick={[Function]}
-              prefixCls="ant-btn"
-              type="primary"
-            >
-              Create One Now
-            </Button>
+                    <h3>
+                              You don't have a personal workspace yet!
+                    </h3>
+                    <Button
+                              block={false}
+                              ghost={false}
+                              loading={false}
+                              onClick={[Function]}
+                              type="primary"
+                    >
+                              Create One Now
+                    </Button>
           </Card>
-        </div>,
+</div>,
         <div
           style={
-            Object {
-              "filter": "none",
-              "transition": "1s ease",
-            }
+                    Object {
+                              "filter": "none",
+                              "transition": "1s ease",
+                            }
           }
-        >
+>
           <Card
-            bodyStyle={
-              Object {
-                "display": "flex",
-                "flexDirection": "column",
-              }
-            }
+                    bodyStyle={
+                              Object {
+                                        "display": "flex",
+                                        "flexDirection": "column",
+                                      }
+                    }
           >
-            <Label>
-              Your Personal Workspace
-            </Label>
-            <div>
-              <div
-                style={
-                  Object {
-                    "display": "flex",
-                    "fontSize": "12px",
-                    "fontWeight": "bold",
-                    "justifyContent": "center",
-                    "textAlign": "center",
-                  }
-                }
-              >
-                <div
-                  style={
-                    Object {
-                      "padding": "10px",
-                    }
-                  }
-                >
-                  <div>
-                    HDFS LOCATION
-                  </div>
-                  <div
-                    style={
-                      Object {
-                        "fontWeight": 200,
-                      }
-                    }
-                  >
-                    
-                  </div>
-                </div>
-                <div
-                  style={
-                    Object {
-                      "padding": "10px",
-                    }
-                  }
-                >
-                  <div>
-                    HIVE NAMESPACE
-                  </div>
-                  <div
-                    style={
-                      Object {
-                        "fontWeight": 200,
-                      }
-                    }
-                  >
-                    
-                  </div>
-                </div>
-                <div
-                  style={
-                    Object {
-                      "padding": "10px",
-                    }
-                  }
-                >
-                  <div>
-                    RESOURCE POOL
-                  </div>
-                  <div
-                    style={
-                      Object {
-                        "fontWeight": 200,
-                      }
-                    }
-                  >
-                    
-                  </div>
-                </div>
-              </div>
-              <Row
-                gutter={12}
-              >
-                <Col
-                  span={24}
-                  style={
-                    Object {
-                      "marginTop": 10,
-                    }
-                  }
-                  xl={8}
-                >
-                  <SetupHelp
-                    location=""
-                    namespace=""
-                  />
-                </Col>
-                <Col
-                  span={24}
-                  style={
-                    Object {
-                      "marginTop": 10,
-                    }
-                  }
-                  xl={8}
-                >
-                  <SetupHelp
-                    host=""
-                    namespace=""
-                    port=""
-                  />
-                </Col>
-                <Col
-                  span={24}
-                  style={
-                    Object {
-                      "marginTop": 10,
-                    }
-                  }
-                  xl={8}
-                >
-                  <RunHelp
-                    queue=""
-                  />
-                </Col>
-              </Row>
-            </div>
+                    <Label>
+                              Your Personal Workspace
+                    </Label>
+                    <div>
+                              <div
+                                        style={
+                                                  Object {
+                                                            "display": "flex",
+                                                            "fontSize": "12px",
+                                                            "fontWeight": "bold",
+                                                            "justifyContent": "center",
+                                                            "textAlign": "center",
+                                                          }
+                                        }
+                              >
+                                        <div
+                                                  style={
+                                                            Object {
+                                                                      "padding": "10px",
+                                                                    }
+                                                  }
+                                        >
+                                                  <div>
+                                                            HDFS LOCATION
+                                                  </div>
+                                                  <div
+                                                            style={
+                                                                      Object {
+                                                                                "fontWeight": 200,
+                                                                              }
+                                                            }
+                                                  />
+                                        </div>
+                                        <div
+                                                  style={
+                                                            Object {
+                                                                      "padding": "10px",
+                                                                    }
+                                                  }
+                                        >
+                                                  <div>
+                                                            HIVE NAMESPACE
+                                                  </div>
+                                                  <div
+                                                            style={
+                                                                      Object {
+                                                                                "fontWeight": 200,
+                                                                              }
+                                                            }
+                                                  />
+                                        </div>
+                                        <div
+                                                  style={
+                                                            Object {
+                                                                      "padding": "10px",
+                                                                    }
+                                                  }
+                                        >
+                                                  <div>
+                                                            RESOURCE POOL
+                                                  </div>
+                                                  <div
+                                                            style={
+                                                                      Object {
+                                                                                "fontWeight": 200,
+                                                                              }
+                                                            }
+                                                  />
+                                        </div>
+                              </div>
+                              <Row
+                                        gutter={12}
+                              >
+                                        <Col
+                                                  span={24}
+                                                  style={
+                                                            Object {
+                                                                      "marginTop": 10,
+                                                                    }
+                                                  }
+                                                  xl={8}
+                                        >
+                                                  <SetupHelp
+                                                            location=""
+                                                            namespace=""
+                                                  />
+                                        </Col>
+                                        <Col
+                                                  span={24}
+                                                  style={
+                                                            Object {
+                                                                      "marginTop": 10,
+                                                                    }
+                                                  }
+                                                  xl={8}
+                                        >
+                                                  <SetupHelp
+                                                            host=""
+                                                            namespace=""
+                                                            port=""
+                                                  />
+                                        </Col>
+                                        <Col
+                                                  span={24}
+                                                  style={
+                                                            Object {
+                                                                      "marginTop": 10,
+                                                                    }
+                                                  }
+                                                  xl={8}
+                                        >
+                                                  <RunHelp
+                                                            queue=""
+                                                  />
+                                        </Col>
+                              </Row>
+                    </div>
           </Card>
-        </div>,
+</div>,
       ],
       "style": Object {
         "flex": 1,
@@ -272,25 +265,24 @@ ShallowWrapper {
             false,
             <Card
               bodyStyle={
-                Object {
-                  "textAlign": "center",
-                }
+                            Object {
+                                          "textAlign": "center",
+                                        }
               }
-            >
+>
               <h3>
-                You don't have a personal workspace yet!
+                            You don't have a personal workspace yet!
               </h3>
               <Button
-                block={false}
-                ghost={false}
-                loading={false}
-                onClick={[Function]}
-                prefixCls="ant-btn"
-                type="primary"
+                            block={false}
+                            ghost={false}
+                            loading={false}
+                            onClick={[Function]}
+                            type="primary"
               >
-                Create One Now
+                            Create One Now
               </Button>
-            </Card>,
+</Card>,
           ],
           "style": Object {
             "alignItems": "center",
@@ -316,17 +308,16 @@ ShallowWrapper {
               "children": Array [
                 <h3>
                   You don't have a personal workspace yet!
-                </h3>,
+</h3>,
                 <Button
                   block={false}
                   ghost={false}
                   loading={false}
                   onClick={[Function]}
-                  prefixCls="ant-btn"
                   type="primary"
-                >
+>
                   Create One Now
-                </Button>,
+</Button>,
               ],
             },
             "ref": null,
@@ -352,7 +343,6 @@ ShallowWrapper {
                   "ghost": false,
                   "loading": false,
                   "onClick": [Function],
-                  "prefixCls": "ant-btn",
                   "type": "primary",
                 },
                 "ref": null,
@@ -372,136 +362,130 @@ ShallowWrapper {
         "props": Object {
           "children": <Card
             bodyStyle={
-              Object {
-                "display": "flex",
-                "flexDirection": "column",
-              }
+                        Object {
+                                    "display": "flex",
+                                    "flexDirection": "column",
+                                  }
             }
-          >
+>
             <Label>
-              Your Personal Workspace
+                        Your Personal Workspace
             </Label>
             <div>
-              <div
-                style={
-                  Object {
-                    "display": "flex",
-                    "fontSize": "12px",
-                    "fontWeight": "bold",
-                    "justifyContent": "center",
-                    "textAlign": "center",
-                  }
-                }
-              >
-                <div
-                  style={
-                    Object {
-                      "padding": "10px",
-                    }
-                  }
-                >
-                  <div>
-                    HDFS LOCATION
-                  </div>
-                  <div
-                    style={
-                      Object {
-                        "fontWeight": 200,
-                      }
-                    }
-                  >
-                    
-                  </div>
-                </div>
-                <div
-                  style={
-                    Object {
-                      "padding": "10px",
-                    }
-                  }
-                >
-                  <div>
-                    HIVE NAMESPACE
-                  </div>
-                  <div
-                    style={
-                      Object {
-                        "fontWeight": 200,
-                      }
-                    }
-                  >
-                    
-                  </div>
-                </div>
-                <div
-                  style={
-                    Object {
-                      "padding": "10px",
-                    }
-                  }
-                >
-                  <div>
-                    RESOURCE POOL
-                  </div>
-                  <div
-                    style={
-                      Object {
-                        "fontWeight": 200,
-                      }
-                    }
-                  >
-                    
-                  </div>
-                </div>
-              </div>
-              <Row
-                gutter={12}
-              >
-                <Col
-                  span={24}
-                  style={
-                    Object {
-                      "marginTop": 10,
-                    }
-                  }
-                  xl={8}
-                >
-                  <SetupHelp
-                    location=""
-                    namespace=""
-                  />
-                </Col>
-                <Col
-                  span={24}
-                  style={
-                    Object {
-                      "marginTop": 10,
-                    }
-                  }
-                  xl={8}
-                >
-                  <SetupHelp
-                    host=""
-                    namespace=""
-                    port=""
-                  />
-                </Col>
-                <Col
-                  span={24}
-                  style={
-                    Object {
-                      "marginTop": 10,
-                    }
-                  }
-                  xl={8}
-                >
-                  <RunHelp
-                    queue=""
-                  />
-                </Col>
-              </Row>
+                        <div
+                                    style={
+                                                Object {
+                                                            "display": "flex",
+                                                            "fontSize": "12px",
+                                                            "fontWeight": "bold",
+                                                            "justifyContent": "center",
+                                                            "textAlign": "center",
+                                                          }
+                                    }
+                        >
+                                    <div
+                                                style={
+                                                            Object {
+                                                                        "padding": "10px",
+                                                                      }
+                                                }
+                                    >
+                                                <div>
+                                                            HDFS LOCATION
+                                                </div>
+                                                <div
+                                                            style={
+                                                                        Object {
+                                                                                    "fontWeight": 200,
+                                                                                  }
+                                                            }
+                                                />
+                                    </div>
+                                    <div
+                                                style={
+                                                            Object {
+                                                                        "padding": "10px",
+                                                                      }
+                                                }
+                                    >
+                                                <div>
+                                                            HIVE NAMESPACE
+                                                </div>
+                                                <div
+                                                            style={
+                                                                        Object {
+                                                                                    "fontWeight": 200,
+                                                                                  }
+                                                            }
+                                                />
+                                    </div>
+                                    <div
+                                                style={
+                                                            Object {
+                                                                        "padding": "10px",
+                                                                      }
+                                                }
+                                    >
+                                                <div>
+                                                            RESOURCE POOL
+                                                </div>
+                                                <div
+                                                            style={
+                                                                        Object {
+                                                                                    "fontWeight": 200,
+                                                                                  }
+                                                            }
+                                                />
+                                    </div>
+                        </div>
+                        <Row
+                                    gutter={12}
+                        >
+                                    <Col
+                                                span={24}
+                                                style={
+                                                            Object {
+                                                                        "marginTop": 10,
+                                                                      }
+                                                }
+                                                xl={8}
+                                    >
+                                                <SetupHelp
+                                                            location=""
+                                                            namespace=""
+                                                />
+                                    </Col>
+                                    <Col
+                                                span={24}
+                                                style={
+                                                            Object {
+                                                                        "marginTop": 10,
+                                                                      }
+                                                }
+                                                xl={8}
+                                    >
+                                                <SetupHelp
+                                                            host=""
+                                                            namespace=""
+                                                            port=""
+                                                />
+                                    </Col>
+                                    <Col
+                                                span={24}
+                                                style={
+                                                            Object {
+                                                                        "marginTop": 10,
+                                                                      }
+                                                }
+                                                xl={8}
+                                    >
+                                                <RunHelp
+                                                            queue=""
+                                                />
+                                    </Col>
+                        </Row>
             </div>
-          </Card>,
+</Card>,
           "style": Object {
             "filter": "none",
             "transition": "1s ease",
@@ -520,127 +504,121 @@ ShallowWrapper {
             "children": Array [
               <Label>
                 Your Personal Workspace
-              </Label>,
+</Label>,
               <div>
                 <div
-                  style={
-                    Object {
-                      "display": "flex",
-                      "fontSize": "12px",
-                      "fontWeight": "bold",
-                      "justifyContent": "center",
-                      "textAlign": "center",
-                    }
-                  }
+                                style={
+                                                Object {
+                                                                "display": "flex",
+                                                                "fontSize": "12px",
+                                                                "fontWeight": "bold",
+                                                                "justifyContent": "center",
+                                                                "textAlign": "center",
+                                                              }
+                                }
                 >
-                  <div
-                    style={
-                      Object {
-                        "padding": "10px",
-                      }
-                    }
-                  >
-                    <div>
-                      HDFS LOCATION
-                    </div>
-                    <div
-                      style={
-                        Object {
-                          "fontWeight": 200,
-                        }
-                      }
-                    >
-                      
-                    </div>
-                  </div>
-                  <div
-                    style={
-                      Object {
-                        "padding": "10px",
-                      }
-                    }
-                  >
-                    <div>
-                      HIVE NAMESPACE
-                    </div>
-                    <div
-                      style={
-                        Object {
-                          "fontWeight": 200,
-                        }
-                      }
-                    >
-                      
-                    </div>
-                  </div>
-                  <div
-                    style={
-                      Object {
-                        "padding": "10px",
-                      }
-                    }
-                  >
-                    <div>
-                      RESOURCE POOL
-                    </div>
-                    <div
-                      style={
-                        Object {
-                          "fontWeight": 200,
-                        }
-                      }
-                    >
-                      
-                    </div>
-                  </div>
+                                <div
+                                                style={
+                                                                Object {
+                                                                                "padding": "10px",
+                                                                              }
+                                                }
+                                >
+                                                <div>
+                                                                HDFS LOCATION
+                                                </div>
+                                                <div
+                                                                style={
+                                                                                Object {
+                                                                                                "fontWeight": 200,
+                                                                                              }
+                                                                }
+                                                />
+                                </div>
+                                <div
+                                                style={
+                                                                Object {
+                                                                                "padding": "10px",
+                                                                              }
+                                                }
+                                >
+                                                <div>
+                                                                HIVE NAMESPACE
+                                                </div>
+                                                <div
+                                                                style={
+                                                                                Object {
+                                                                                                "fontWeight": 200,
+                                                                                              }
+                                                                }
+                                                />
+                                </div>
+                                <div
+                                                style={
+                                                                Object {
+                                                                                "padding": "10px",
+                                                                              }
+                                                }
+                                >
+                                                <div>
+                                                                RESOURCE POOL
+                                                </div>
+                                                <div
+                                                                style={
+                                                                                Object {
+                                                                                                "fontWeight": 200,
+                                                                                              }
+                                                                }
+                                                />
+                                </div>
                 </div>
                 <Row
-                  gutter={12}
+                                gutter={12}
                 >
-                  <Col
-                    span={24}
-                    style={
-                      Object {
-                        "marginTop": 10,
-                      }
-                    }
-                    xl={8}
-                  >
-                    <SetupHelp
-                      location=""
-                      namespace=""
-                    />
-                  </Col>
-                  <Col
-                    span={24}
-                    style={
-                      Object {
-                        "marginTop": 10,
-                      }
-                    }
-                    xl={8}
-                  >
-                    <SetupHelp
-                      host=""
-                      namespace=""
-                      port=""
-                    />
-                  </Col>
-                  <Col
-                    span={24}
-                    style={
-                      Object {
-                        "marginTop": 10,
-                      }
-                    }
-                    xl={8}
-                  >
-                    <RunHelp
-                      queue=""
-                    />
-                  </Col>
+                                <Col
+                                                span={24}
+                                                style={
+                                                                Object {
+                                                                                "marginTop": 10,
+                                                                              }
+                                                }
+                                                xl={8}
+                                >
+                                                <SetupHelp
+                                                                location=""
+                                                                namespace=""
+                                                />
+                                </Col>
+                                <Col
+                                                span={24}
+                                                style={
+                                                                Object {
+                                                                                "marginTop": 10,
+                                                                              }
+                                                }
+                                                xl={8}
+                                >
+                                                <SetupHelp
+                                                                host=""
+                                                                namespace=""
+                                                                port=""
+                                                />
+                                </Col>
+                                <Col
+                                                span={24}
+                                                style={
+                                                                Object {
+                                                                                "marginTop": 10,
+                                                                              }
+                                                }
+                                                xl={8}
+                                >
+                                                <RunHelp
+                                                                queue=""
+                                                />
+                                </Col>
                 </Row>
-              </div>,
+</div>,
             ],
           },
           "ref": null,
@@ -664,122 +642,116 @@ ShallowWrapper {
                 "children": Array [
                   <div
                     style={
-                      Object {
-                        "display": "flex",
-                        "fontSize": "12px",
-                        "fontWeight": "bold",
-                        "justifyContent": "center",
-                        "textAlign": "center",
-                      }
+                                        Object {
+                                                            "display": "flex",
+                                                            "fontSize": "12px",
+                                                            "fontWeight": "bold",
+                                                            "justifyContent": "center",
+                                                            "textAlign": "center",
+                                                          }
                     }
-                  >
+>
                     <div
-                      style={
-                        Object {
-                          "padding": "10px",
-                        }
-                      }
+                                        style={
+                                                            Object {
+                                                                                "padding": "10px",
+                                                                              }
+                                        }
                     >
-                      <div>
-                        HDFS LOCATION
-                      </div>
-                      <div
-                        style={
-                          Object {
-                            "fontWeight": 200,
-                          }
-                        }
-                      >
-                        
-                      </div>
+                                        <div>
+                                                            HDFS LOCATION
+                                        </div>
+                                        <div
+                                                            style={
+                                                                                Object {
+                                                                                                    "fontWeight": 200,
+                                                                                                  }
+                                                            }
+                                        />
                     </div>
                     <div
-                      style={
-                        Object {
-                          "padding": "10px",
-                        }
-                      }
+                                        style={
+                                                            Object {
+                                                                                "padding": "10px",
+                                                                              }
+                                        }
                     >
-                      <div>
-                        HIVE NAMESPACE
-                      </div>
-                      <div
-                        style={
-                          Object {
-                            "fontWeight": 200,
-                          }
-                        }
-                      >
-                        
-                      </div>
+                                        <div>
+                                                            HIVE NAMESPACE
+                                        </div>
+                                        <div
+                                                            style={
+                                                                                Object {
+                                                                                                    "fontWeight": 200,
+                                                                                                  }
+                                                            }
+                                        />
                     </div>
                     <div
-                      style={
-                        Object {
-                          "padding": "10px",
-                        }
-                      }
+                                        style={
+                                                            Object {
+                                                                                "padding": "10px",
+                                                                              }
+                                        }
                     >
-                      <div>
-                        RESOURCE POOL
-                      </div>
-                      <div
-                        style={
-                          Object {
-                            "fontWeight": 200,
-                          }
-                        }
-                      >
-                        
-                      </div>
+                                        <div>
+                                                            RESOURCE POOL
+                                        </div>
+                                        <div
+                                                            style={
+                                                                                Object {
+                                                                                                    "fontWeight": 200,
+                                                                                                  }
+                                                            }
+                                        />
                     </div>
-                  </div>,
+</div>,
                   <Row
                     gutter={12}
-                  >
+>
                     <Col
-                      span={24}
-                      style={
-                        Object {
-                          "marginTop": 10,
-                        }
-                      }
-                      xl={8}
+                                        span={24}
+                                        style={
+                                                            Object {
+                                                                                "marginTop": 10,
+                                                                              }
+                                        }
+                                        xl={8}
                     >
-                      <SetupHelp
-                        location=""
-                        namespace=""
-                      />
+                                        <SetupHelp
+                                                            location=""
+                                                            namespace=""
+                                        />
                     </Col>
                     <Col
-                      span={24}
-                      style={
-                        Object {
-                          "marginTop": 10,
-                        }
-                      }
-                      xl={8}
+                                        span={24}
+                                        style={
+                                                            Object {
+                                                                                "marginTop": 10,
+                                                                              }
+                                        }
+                                        xl={8}
                     >
-                      <SetupHelp
-                        host=""
-                        namespace=""
-                        port=""
-                      />
+                                        <SetupHelp
+                                                            host=""
+                                                            namespace=""
+                                                            port=""
+                                        />
                     </Col>
                     <Col
-                      span={24}
-                      style={
-                        Object {
-                          "marginTop": 10,
-                        }
-                      }
-                      xl={8}
+                                        span={24}
+                                        style={
+                                                            Object {
+                                                                                "marginTop": 10,
+                                                                              }
+                                        }
+                                        xl={8}
                     >
-                      <RunHelp
-                        queue=""
-                      />
+                                        <RunHelp
+                                                            queue=""
+                                        />
                     </Col>
-                  </Row>,
+</Row>,
                 ],
               },
               "ref": null,
@@ -792,64 +764,58 @@ ShallowWrapper {
                     "children": Array [
                       <div
                         style={
-                          Object {
-                            "padding": "10px",
-                          }
+                                                Object {
+                                                                        "padding": "10px",
+                                                                      }
                         }
-                      >
+>
                         <div>
-                          HDFS LOCATION
+                                                HDFS LOCATION
                         </div>
                         <div
-                          style={
-                            Object {
-                              "fontWeight": 200,
-                            }
-                          }
-                        >
-                          
-                        </div>
-                      </div>,
+                                                style={
+                                                                        Object {
+                                                                                                "fontWeight": 200,
+                                                                                              }
+                                                }
+                        />
+</div>,
                       <div
                         style={
-                          Object {
-                            "padding": "10px",
-                          }
+                                                Object {
+                                                                        "padding": "10px",
+                                                                      }
                         }
-                      >
+>
                         <div>
-                          HIVE NAMESPACE
+                                                HIVE NAMESPACE
                         </div>
                         <div
-                          style={
-                            Object {
-                              "fontWeight": 200,
-                            }
-                          }
-                        >
-                          
-                        </div>
-                      </div>,
+                                                style={
+                                                                        Object {
+                                                                                                "fontWeight": 200,
+                                                                                              }
+                                                }
+                        />
+</div>,
                       <div
                         style={
-                          Object {
-                            "padding": "10px",
-                          }
+                                                Object {
+                                                                        "padding": "10px",
+                                                                      }
                         }
-                      >
+>
                         <div>
-                          RESOURCE POOL
+                                                RESOURCE POOL
                         </div>
                         <div
-                          style={
-                            Object {
-                              "fontWeight": 200,
-                            }
-                          }
-                        >
-                          
-                        </div>
-                      </div>,
+                                                style={
+                                                                        Object {
+                                                                                                "fontWeight": 200,
+                                                                                              }
+                                                }
+                        />
+</div>,
                     ],
                     "style": Object {
                       "display": "flex",
@@ -869,16 +835,14 @@ ShallowWrapper {
                         "children": Array [
                           <div>
                             HDFS LOCATION
-                          </div>,
+</div>,
                           <div
                             style={
-                              Object {
-                                "fontWeight": 200,
-                              }
+                                                        Object {
+                                                                                    "fontWeight": 200,
+                                                                                  }
                             }
-                          >
-                            
-                          </div>,
+/>,
                         ],
                         "style": Object {
                           "padding": "10px",
@@ -922,16 +886,14 @@ ShallowWrapper {
                         "children": Array [
                           <div>
                             HIVE NAMESPACE
-                          </div>,
+</div>,
                           <div
                             style={
-                              Object {
-                                "fontWeight": 200,
-                              }
+                                                        Object {
+                                                                                    "fontWeight": 200,
+                                                                                  }
                             }
-                          >
-                            
-                          </div>,
+/>,
                         ],
                         "style": Object {
                           "padding": "10px",
@@ -975,16 +937,14 @@ ShallowWrapper {
                         "children": Array [
                           <div>
                             RESOURCE POOL
-                          </div>,
+</div>,
                           <div
                             style={
-                              Object {
-                                "fontWeight": 200,
-                              }
+                                                        Object {
+                                                                                    "fontWeight": 200,
+                                                                                  }
                             }
-                          >
-                            
-                          </div>,
+/>,
                         ],
                         "style": Object {
                           "padding": "10px",
@@ -1032,45 +992,45 @@ ShallowWrapper {
                       <Col
                         span={24}
                         style={
-                          Object {
-                            "marginTop": 10,
-                          }
+                                                Object {
+                                                                        "marginTop": 10,
+                                                                      }
                         }
                         xl={8}
-                      >
+>
                         <SetupHelp
-                          location=""
-                          namespace=""
+                                                location=""
+                                                namespace=""
                         />
-                      </Col>,
+</Col>,
                       <Col
                         span={24}
                         style={
-                          Object {
-                            "marginTop": 10,
-                          }
+                                                Object {
+                                                                        "marginTop": 10,
+                                                                      }
                         }
                         xl={8}
-                      >
+>
                         <SetupHelp
-                          host=""
-                          namespace=""
-                          port=""
+                                                host=""
+                                                namespace=""
+                                                port=""
                         />
-                      </Col>,
+</Col>,
                       <Col
                         span={24}
                         style={
-                          Object {
-                            "marginTop": 10,
-                          }
+                                                Object {
+                                                                        "marginTop": 10,
+                                                                      }
                         }
                         xl={8}
-                      >
+>
                         <RunHelp
-                          queue=""
+                                                queue=""
                         />
-                      </Col>,
+</Col>,
                     ],
                     "gutter": 12,
                   },
@@ -1084,7 +1044,7 @@ ShallowWrapper {
                         "children": <SetupHelp
                           location=""
                           namespace=""
-                        />,
+/>,
                         "span": 24,
                         "style": Object {
                           "marginTop": 10,
@@ -1115,7 +1075,7 @@ ShallowWrapper {
                           host=""
                           namespace=""
                           port=""
-                        />,
+/>,
                         "span": 24,
                         "style": Object {
                           "marginTop": 10,
@@ -1145,7 +1105,7 @@ ShallowWrapper {
                       "props": Object {
                         "children": <RunHelp
                           queue=""
-                        />,
+/>,
                         "span": 24,
                         "style": Object {
                           "marginTop": 10,
@@ -1189,180 +1149,173 @@ ShallowWrapper {
         "children": Array [
           <div
             style={
-              Object {
-                "alignItems": "center",
-                "display": "none",
-                "height": "100%",
-                "justifyContent": "center",
-                "position": "absolute",
-                "width": "100%",
-                "zIndex": 999,
-              }
+                        Object {
+                                    "alignItems": "center",
+                                    "display": "none",
+                                    "height": "100%",
+                                    "justifyContent": "center",
+                                    "position": "absolute",
+                                    "width": "100%",
+                                    "zIndex": 999,
+                                  }
             }
-          >
+>
             <Card
-              bodyStyle={
-                Object {
-                  "textAlign": "center",
-                }
-              }
+                        bodyStyle={
+                                    Object {
+                                                "textAlign": "center",
+                                              }
+                        }
             >
-              <h3>
-                You don't have a personal workspace yet!
-              </h3>
-              <Button
-                block={false}
-                ghost={false}
-                loading={false}
-                onClick={[Function]}
-                prefixCls="ant-btn"
-                type="primary"
-              >
-                Create One Now
-              </Button>
+                        <h3>
+                                    You don't have a personal workspace yet!
+                        </h3>
+                        <Button
+                                    block={false}
+                                    ghost={false}
+                                    loading={false}
+                                    onClick={[Function]}
+                                    type="primary"
+                        >
+                                    Create One Now
+                        </Button>
             </Card>
-          </div>,
+</div>,
           <div
             style={
-              Object {
-                "filter": "none",
-                "transition": "1s ease",
-              }
+                        Object {
+                                    "filter": "none",
+                                    "transition": "1s ease",
+                                  }
             }
-          >
+>
             <Card
-              bodyStyle={
-                Object {
-                  "display": "flex",
-                  "flexDirection": "column",
-                }
-              }
+                        bodyStyle={
+                                    Object {
+                                                "display": "flex",
+                                                "flexDirection": "column",
+                                              }
+                        }
             >
-              <Label>
-                Your Personal Workspace
-              </Label>
-              <div>
-                <div
-                  style={
-                    Object {
-                      "display": "flex",
-                      "fontSize": "12px",
-                      "fontWeight": "bold",
-                      "justifyContent": "center",
-                      "textAlign": "center",
-                    }
-                  }
-                >
-                  <div
-                    style={
-                      Object {
-                        "padding": "10px",
-                      }
-                    }
-                  >
-                    <div>
-                      HDFS LOCATION
-                    </div>
-                    <div
-                      style={
-                        Object {
-                          "fontWeight": 200,
-                        }
-                      }
-                    >
-                      
-                    </div>
-                  </div>
-                  <div
-                    style={
-                      Object {
-                        "padding": "10px",
-                      }
-                    }
-                  >
-                    <div>
-                      HIVE NAMESPACE
-                    </div>
-                    <div
-                      style={
-                        Object {
-                          "fontWeight": 200,
-                        }
-                      }
-                    >
-                      
-                    </div>
-                  </div>
-                  <div
-                    style={
-                      Object {
-                        "padding": "10px",
-                      }
-                    }
-                  >
-                    <div>
-                      RESOURCE POOL
-                    </div>
-                    <div
-                      style={
-                        Object {
-                          "fontWeight": 200,
-                        }
-                      }
-                    >
-                      
-                    </div>
-                  </div>
-                </div>
-                <Row
-                  gutter={12}
-                >
-                  <Col
-                    span={24}
-                    style={
-                      Object {
-                        "marginTop": 10,
-                      }
-                    }
-                    xl={8}
-                  >
-                    <SetupHelp
-                      location=""
-                      namespace=""
-                    />
-                  </Col>
-                  <Col
-                    span={24}
-                    style={
-                      Object {
-                        "marginTop": 10,
-                      }
-                    }
-                    xl={8}
-                  >
-                    <SetupHelp
-                      host=""
-                      namespace=""
-                      port=""
-                    />
-                  </Col>
-                  <Col
-                    span={24}
-                    style={
-                      Object {
-                        "marginTop": 10,
-                      }
-                    }
-                    xl={8}
-                  >
-                    <RunHelp
-                      queue=""
-                    />
-                  </Col>
-                </Row>
-              </div>
+                        <Label>
+                                    Your Personal Workspace
+                        </Label>
+                        <div>
+                                    <div
+                                                style={
+                                                            Object {
+                                                                        "display": "flex",
+                                                                        "fontSize": "12px",
+                                                                        "fontWeight": "bold",
+                                                                        "justifyContent": "center",
+                                                                        "textAlign": "center",
+                                                                      }
+                                                }
+                                    >
+                                                <div
+                                                            style={
+                                                                        Object {
+                                                                                    "padding": "10px",
+                                                                                  }
+                                                            }
+                                                >
+                                                            <div>
+                                                                        HDFS LOCATION
+                                                            </div>
+                                                            <div
+                                                                        style={
+                                                                                    Object {
+                                                                                                "fontWeight": 200,
+                                                                                              }
+                                                                        }
+                                                            />
+                                                </div>
+                                                <div
+                                                            style={
+                                                                        Object {
+                                                                                    "padding": "10px",
+                                                                                  }
+                                                            }
+                                                >
+                                                            <div>
+                                                                        HIVE NAMESPACE
+                                                            </div>
+                                                            <div
+                                                                        style={
+                                                                                    Object {
+                                                                                                "fontWeight": 200,
+                                                                                              }
+                                                                        }
+                                                            />
+                                                </div>
+                                                <div
+                                                            style={
+                                                                        Object {
+                                                                                    "padding": "10px",
+                                                                                  }
+                                                            }
+                                                >
+                                                            <div>
+                                                                        RESOURCE POOL
+                                                            </div>
+                                                            <div
+                                                                        style={
+                                                                                    Object {
+                                                                                                "fontWeight": 200,
+                                                                                              }
+                                                                        }
+                                                            />
+                                                </div>
+                                    </div>
+                                    <Row
+                                                gutter={12}
+                                    >
+                                                <Col
+                                                            span={24}
+                                                            style={
+                                                                        Object {
+                                                                                    "marginTop": 10,
+                                                                                  }
+                                                            }
+                                                            xl={8}
+                                                >
+                                                            <SetupHelp
+                                                                        location=""
+                                                                        namespace=""
+                                                            />
+                                                </Col>
+                                                <Col
+                                                            span={24}
+                                                            style={
+                                                                        Object {
+                                                                                    "marginTop": 10,
+                                                                                  }
+                                                            }
+                                                            xl={8}
+                                                >
+                                                            <SetupHelp
+                                                                        host=""
+                                                                        namespace=""
+                                                                        port=""
+                                                            />
+                                                </Col>
+                                                <Col
+                                                            span={24}
+                                                            style={
+                                                                        Object {
+                                                                                    "marginTop": 10,
+                                                                                  }
+                                                            }
+                                                            xl={8}
+                                                >
+                                                            <RunHelp
+                                                                        queue=""
+                                                            />
+                                                </Col>
+                                    </Row>
+                        </div>
             </Card>
-          </div>,
+</div>,
         ],
         "style": Object {
           "flex": 1,
@@ -1380,25 +1333,24 @@ ShallowWrapper {
               false,
               <Card
                 bodyStyle={
-                  Object {
-                    "textAlign": "center",
-                  }
+                                Object {
+                                                "textAlign": "center",
+                                              }
                 }
-              >
+>
                 <h3>
-                  You don't have a personal workspace yet!
+                                You don't have a personal workspace yet!
                 </h3>
                 <Button
-                  block={false}
-                  ghost={false}
-                  loading={false}
-                  onClick={[Function]}
-                  prefixCls="ant-btn"
-                  type="primary"
+                                block={false}
+                                ghost={false}
+                                loading={false}
+                                onClick={[Function]}
+                                type="primary"
                 >
-                  Create One Now
+                                Create One Now
                 </Button>
-              </Card>,
+</Card>,
             ],
             "style": Object {
               "alignItems": "center",
@@ -1424,17 +1376,16 @@ ShallowWrapper {
                 "children": Array [
                   <h3>
                     You don't have a personal workspace yet!
-                  </h3>,
+</h3>,
                   <Button
                     block={false}
                     ghost={false}
                     loading={false}
                     onClick={[Function]}
-                    prefixCls="ant-btn"
                     type="primary"
-                  >
+>
                     Create One Now
-                  </Button>,
+</Button>,
                 ],
               },
               "ref": null,
@@ -1460,7 +1411,6 @@ ShallowWrapper {
                     "ghost": false,
                     "loading": false,
                     "onClick": [Function],
-                    "prefixCls": "ant-btn",
                     "type": "primary",
                   },
                   "ref": null,
@@ -1480,136 +1430,130 @@ ShallowWrapper {
           "props": Object {
             "children": <Card
               bodyStyle={
-                Object {
-                  "display": "flex",
-                  "flexDirection": "column",
-                }
+                            Object {
+                                          "display": "flex",
+                                          "flexDirection": "column",
+                                        }
               }
-            >
+>
               <Label>
-                Your Personal Workspace
+                            Your Personal Workspace
               </Label>
               <div>
-                <div
-                  style={
-                    Object {
-                      "display": "flex",
-                      "fontSize": "12px",
-                      "fontWeight": "bold",
-                      "justifyContent": "center",
-                      "textAlign": "center",
-                    }
-                  }
-                >
-                  <div
-                    style={
-                      Object {
-                        "padding": "10px",
-                      }
-                    }
-                  >
-                    <div>
-                      HDFS LOCATION
-                    </div>
-                    <div
-                      style={
-                        Object {
-                          "fontWeight": 200,
-                        }
-                      }
-                    >
-                      
-                    </div>
-                  </div>
-                  <div
-                    style={
-                      Object {
-                        "padding": "10px",
-                      }
-                    }
-                  >
-                    <div>
-                      HIVE NAMESPACE
-                    </div>
-                    <div
-                      style={
-                        Object {
-                          "fontWeight": 200,
-                        }
-                      }
-                    >
-                      
-                    </div>
-                  </div>
-                  <div
-                    style={
-                      Object {
-                        "padding": "10px",
-                      }
-                    }
-                  >
-                    <div>
-                      RESOURCE POOL
-                    </div>
-                    <div
-                      style={
-                        Object {
-                          "fontWeight": 200,
-                        }
-                      }
-                    >
-                      
-                    </div>
-                  </div>
-                </div>
-                <Row
-                  gutter={12}
-                >
-                  <Col
-                    span={24}
-                    style={
-                      Object {
-                        "marginTop": 10,
-                      }
-                    }
-                    xl={8}
-                  >
-                    <SetupHelp
-                      location=""
-                      namespace=""
-                    />
-                  </Col>
-                  <Col
-                    span={24}
-                    style={
-                      Object {
-                        "marginTop": 10,
-                      }
-                    }
-                    xl={8}
-                  >
-                    <SetupHelp
-                      host=""
-                      namespace=""
-                      port=""
-                    />
-                  </Col>
-                  <Col
-                    span={24}
-                    style={
-                      Object {
-                        "marginTop": 10,
-                      }
-                    }
-                    xl={8}
-                  >
-                    <RunHelp
-                      queue=""
-                    />
-                  </Col>
-                </Row>
+                            <div
+                                          style={
+                                                        Object {
+                                                                      "display": "flex",
+                                                                      "fontSize": "12px",
+                                                                      "fontWeight": "bold",
+                                                                      "justifyContent": "center",
+                                                                      "textAlign": "center",
+                                                                    }
+                                          }
+                            >
+                                          <div
+                                                        style={
+                                                                      Object {
+                                                                                    "padding": "10px",
+                                                                                  }
+                                                        }
+                                          >
+                                                        <div>
+                                                                      HDFS LOCATION
+                                                        </div>
+                                                        <div
+                                                                      style={
+                                                                                    Object {
+                                                                                                  "fontWeight": 200,
+                                                                                                }
+                                                                      }
+                                                        />
+                                          </div>
+                                          <div
+                                                        style={
+                                                                      Object {
+                                                                                    "padding": "10px",
+                                                                                  }
+                                                        }
+                                          >
+                                                        <div>
+                                                                      HIVE NAMESPACE
+                                                        </div>
+                                                        <div
+                                                                      style={
+                                                                                    Object {
+                                                                                                  "fontWeight": 200,
+                                                                                                }
+                                                                      }
+                                                        />
+                                          </div>
+                                          <div
+                                                        style={
+                                                                      Object {
+                                                                                    "padding": "10px",
+                                                                                  }
+                                                        }
+                                          >
+                                                        <div>
+                                                                      RESOURCE POOL
+                                                        </div>
+                                                        <div
+                                                                      style={
+                                                                                    Object {
+                                                                                                  "fontWeight": 200,
+                                                                                                }
+                                                                      }
+                                                        />
+                                          </div>
+                            </div>
+                            <Row
+                                          gutter={12}
+                            >
+                                          <Col
+                                                        span={24}
+                                                        style={
+                                                                      Object {
+                                                                                    "marginTop": 10,
+                                                                                  }
+                                                        }
+                                                        xl={8}
+                                          >
+                                                        <SetupHelp
+                                                                      location=""
+                                                                      namespace=""
+                                                        />
+                                          </Col>
+                                          <Col
+                                                        span={24}
+                                                        style={
+                                                                      Object {
+                                                                                    "marginTop": 10,
+                                                                                  }
+                                                        }
+                                                        xl={8}
+                                          >
+                                                        <SetupHelp
+                                                                      host=""
+                                                                      namespace=""
+                                                                      port=""
+                                                        />
+                                          </Col>
+                                          <Col
+                                                        span={24}
+                                                        style={
+                                                                      Object {
+                                                                                    "marginTop": 10,
+                                                                                  }
+                                                        }
+                                                        xl={8}
+                                          >
+                                                        <RunHelp
+                                                                      queue=""
+                                                        />
+                                          </Col>
+                            </Row>
               </div>
-            </Card>,
+</Card>,
             "style": Object {
               "filter": "none",
               "transition": "1s ease",
@@ -1628,127 +1572,121 @@ ShallowWrapper {
               "children": Array [
                 <Label>
                   Your Personal Workspace
-                </Label>,
+</Label>,
                 <div>
                   <div
-                    style={
-                      Object {
-                        "display": "flex",
-                        "fontSize": "12px",
-                        "fontWeight": "bold",
-                        "justifyContent": "center",
-                        "textAlign": "center",
-                      }
-                    }
+                                    style={
+                                                      Object {
+                                                                        "display": "flex",
+                                                                        "fontSize": "12px",
+                                                                        "fontWeight": "bold",
+                                                                        "justifyContent": "center",
+                                                                        "textAlign": "center",
+                                                                      }
+                                    }
                   >
-                    <div
-                      style={
-                        Object {
-                          "padding": "10px",
-                        }
-                      }
-                    >
-                      <div>
-                        HDFS LOCATION
-                      </div>
-                      <div
-                        style={
-                          Object {
-                            "fontWeight": 200,
-                          }
-                        }
-                      >
-                        
-                      </div>
-                    </div>
-                    <div
-                      style={
-                        Object {
-                          "padding": "10px",
-                        }
-                      }
-                    >
-                      <div>
-                        HIVE NAMESPACE
-                      </div>
-                      <div
-                        style={
-                          Object {
-                            "fontWeight": 200,
-                          }
-                        }
-                      >
-                        
-                      </div>
-                    </div>
-                    <div
-                      style={
-                        Object {
-                          "padding": "10px",
-                        }
-                      }
-                    >
-                      <div>
-                        RESOURCE POOL
-                      </div>
-                      <div
-                        style={
-                          Object {
-                            "fontWeight": 200,
-                          }
-                        }
-                      >
-                        
-                      </div>
-                    </div>
+                                    <div
+                                                      style={
+                                                                        Object {
+                                                                                          "padding": "10px",
+                                                                                        }
+                                                      }
+                                    >
+                                                      <div>
+                                                                        HDFS LOCATION
+                                                      </div>
+                                                      <div
+                                                                        style={
+                                                                                          Object {
+                                                                                                            "fontWeight": 200,
+                                                                                                          }
+                                                                        }
+                                                      />
+                                    </div>
+                                    <div
+                                                      style={
+                                                                        Object {
+                                                                                          "padding": "10px",
+                                                                                        }
+                                                      }
+                                    >
+                                                      <div>
+                                                                        HIVE NAMESPACE
+                                                      </div>
+                                                      <div
+                                                                        style={
+                                                                                          Object {
+                                                                                                            "fontWeight": 200,
+                                                                                                          }
+                                                                        }
+                                                      />
+                                    </div>
+                                    <div
+                                                      style={
+                                                                        Object {
+                                                                                          "padding": "10px",
+                                                                                        }
+                                                      }
+                                    >
+                                                      <div>
+                                                                        RESOURCE POOL
+                                                      </div>
+                                                      <div
+                                                                        style={
+                                                                                          Object {
+                                                                                                            "fontWeight": 200,
+                                                                                                          }
+                                                                        }
+                                                      />
+                                    </div>
                   </div>
                   <Row
-                    gutter={12}
+                                    gutter={12}
                   >
-                    <Col
-                      span={24}
-                      style={
-                        Object {
-                          "marginTop": 10,
-                        }
-                      }
-                      xl={8}
-                    >
-                      <SetupHelp
-                        location=""
-                        namespace=""
-                      />
-                    </Col>
-                    <Col
-                      span={24}
-                      style={
-                        Object {
-                          "marginTop": 10,
-                        }
-                      }
-                      xl={8}
-                    >
-                      <SetupHelp
-                        host=""
-                        namespace=""
-                        port=""
-                      />
-                    </Col>
-                    <Col
-                      span={24}
-                      style={
-                        Object {
-                          "marginTop": 10,
-                        }
-                      }
-                      xl={8}
-                    >
-                      <RunHelp
-                        queue=""
-                      />
-                    </Col>
+                                    <Col
+                                                      span={24}
+                                                      style={
+                                                                        Object {
+                                                                                          "marginTop": 10,
+                                                                                        }
+                                                      }
+                                                      xl={8}
+                                    >
+                                                      <SetupHelp
+                                                                        location=""
+                                                                        namespace=""
+                                                      />
+                                    </Col>
+                                    <Col
+                                                      span={24}
+                                                      style={
+                                                                        Object {
+                                                                                          "marginTop": 10,
+                                                                                        }
+                                                      }
+                                                      xl={8}
+                                    >
+                                                      <SetupHelp
+                                                                        host=""
+                                                                        namespace=""
+                                                                        port=""
+                                                      />
+                                    </Col>
+                                    <Col
+                                                      span={24}
+                                                      style={
+                                                                        Object {
+                                                                                          "marginTop": 10,
+                                                                                        }
+                                                      }
+                                                      xl={8}
+                                    >
+                                                      <RunHelp
+                                                                        queue=""
+                                                      />
+                                    </Col>
                   </Row>
-                </div>,
+</div>,
               ],
             },
             "ref": null,
@@ -1772,122 +1710,116 @@ ShallowWrapper {
                   "children": Array [
                     <div
                       style={
-                        Object {
-                          "display": "flex",
-                          "fontSize": "12px",
-                          "fontWeight": "bold",
-                          "justifyContent": "center",
-                          "textAlign": "center",
-                        }
+                                            Object {
+                                                                  "display": "flex",
+                                                                  "fontSize": "12px",
+                                                                  "fontWeight": "bold",
+                                                                  "justifyContent": "center",
+                                                                  "textAlign": "center",
+                                                                }
                       }
-                    >
+>
                       <div
-                        style={
-                          Object {
-                            "padding": "10px",
-                          }
-                        }
+                                            style={
+                                                                  Object {
+                                                                                        "padding": "10px",
+                                                                                      }
+                                            }
                       >
-                        <div>
-                          HDFS LOCATION
-                        </div>
-                        <div
-                          style={
-                            Object {
-                              "fontWeight": 200,
-                            }
-                          }
-                        >
-                          
-                        </div>
+                                            <div>
+                                                                  HDFS LOCATION
+                                            </div>
+                                            <div
+                                                                  style={
+                                                                                        Object {
+                                                                                                              "fontWeight": 200,
+                                                                                                            }
+                                                                  }
+                                            />
                       </div>
                       <div
-                        style={
-                          Object {
-                            "padding": "10px",
-                          }
-                        }
+                                            style={
+                                                                  Object {
+                                                                                        "padding": "10px",
+                                                                                      }
+                                            }
                       >
-                        <div>
-                          HIVE NAMESPACE
-                        </div>
-                        <div
-                          style={
-                            Object {
-                              "fontWeight": 200,
-                            }
-                          }
-                        >
-                          
-                        </div>
+                                            <div>
+                                                                  HIVE NAMESPACE
+                                            </div>
+                                            <div
+                                                                  style={
+                                                                                        Object {
+                                                                                                              "fontWeight": 200,
+                                                                                                            }
+                                                                  }
+                                            />
                       </div>
                       <div
-                        style={
-                          Object {
-                            "padding": "10px",
-                          }
-                        }
+                                            style={
+                                                                  Object {
+                                                                                        "padding": "10px",
+                                                                                      }
+                                            }
                       >
-                        <div>
-                          RESOURCE POOL
-                        </div>
-                        <div
-                          style={
-                            Object {
-                              "fontWeight": 200,
-                            }
-                          }
-                        >
-                          
-                        </div>
+                                            <div>
+                                                                  RESOURCE POOL
+                                            </div>
+                                            <div
+                                                                  style={
+                                                                                        Object {
+                                                                                                              "fontWeight": 200,
+                                                                                                            }
+                                                                  }
+                                            />
                       </div>
-                    </div>,
+</div>,
                     <Row
                       gutter={12}
-                    >
+>
                       <Col
-                        span={24}
-                        style={
-                          Object {
-                            "marginTop": 10,
-                          }
-                        }
-                        xl={8}
+                                            span={24}
+                                            style={
+                                                                  Object {
+                                                                                        "marginTop": 10,
+                                                                                      }
+                                            }
+                                            xl={8}
                       >
-                        <SetupHelp
-                          location=""
-                          namespace=""
-                        />
+                                            <SetupHelp
+                                                                  location=""
+                                                                  namespace=""
+                                            />
                       </Col>
                       <Col
-                        span={24}
-                        style={
-                          Object {
-                            "marginTop": 10,
-                          }
-                        }
-                        xl={8}
+                                            span={24}
+                                            style={
+                                                                  Object {
+                                                                                        "marginTop": 10,
+                                                                                      }
+                                            }
+                                            xl={8}
                       >
-                        <SetupHelp
-                          host=""
-                          namespace=""
-                          port=""
-                        />
+                                            <SetupHelp
+                                                                  host=""
+                                                                  namespace=""
+                                                                  port=""
+                                            />
                       </Col>
                       <Col
-                        span={24}
-                        style={
-                          Object {
-                            "marginTop": 10,
-                          }
-                        }
-                        xl={8}
+                                            span={24}
+                                            style={
+                                                                  Object {
+                                                                                        "marginTop": 10,
+                                                                                      }
+                                            }
+                                            xl={8}
                       >
-                        <RunHelp
-                          queue=""
-                        />
+                                            <RunHelp
+                                                                  queue=""
+                                            />
                       </Col>
-                    </Row>,
+</Row>,
                   ],
                 },
                 "ref": null,
@@ -1900,64 +1832,58 @@ ShallowWrapper {
                       "children": Array [
                         <div
                           style={
-                            Object {
-                              "padding": "10px",
-                            }
+                                                    Object {
+                                                                              "padding": "10px",
+                                                                            }
                           }
-                        >
+>
                           <div>
-                            HDFS LOCATION
+                                                    HDFS LOCATION
                           </div>
                           <div
-                            style={
-                              Object {
-                                "fontWeight": 200,
-                              }
-                            }
-                          >
-                            
-                          </div>
-                        </div>,
+                                                    style={
+                                                                              Object {
+                                                                                                        "fontWeight": 200,
+                                                                                                      }
+                                                    }
+                          />
+</div>,
                         <div
                           style={
-                            Object {
-                              "padding": "10px",
-                            }
+                                                    Object {
+                                                                              "padding": "10px",
+                                                                            }
                           }
-                        >
+>
                           <div>
-                            HIVE NAMESPACE
+                                                    HIVE NAMESPACE
                           </div>
                           <div
-                            style={
-                              Object {
-                                "fontWeight": 200,
-                              }
-                            }
-                          >
-                            
-                          </div>
-                        </div>,
+                                                    style={
+                                                                              Object {
+                                                                                                        "fontWeight": 200,
+                                                                                                      }
+                                                    }
+                          />
+</div>,
                         <div
                           style={
-                            Object {
-                              "padding": "10px",
-                            }
+                                                    Object {
+                                                                              "padding": "10px",
+                                                                            }
                           }
-                        >
+>
                           <div>
-                            RESOURCE POOL
+                                                    RESOURCE POOL
                           </div>
                           <div
-                            style={
-                              Object {
-                                "fontWeight": 200,
-                              }
-                            }
-                          >
-                            
-                          </div>
-                        </div>,
+                                                    style={
+                                                                              Object {
+                                                                                                        "fontWeight": 200,
+                                                                                                      }
+                                                    }
+                          />
+</div>,
                       ],
                       "style": Object {
                         "display": "flex",
@@ -1977,16 +1903,14 @@ ShallowWrapper {
                           "children": Array [
                             <div>
                               HDFS LOCATION
-                            </div>,
+</div>,
                             <div
                               style={
-                                Object {
-                                  "fontWeight": 200,
-                                }
+                                                            Object {
+                                                                                          "fontWeight": 200,
+                                                                                        }
                               }
-                            >
-                              
-                            </div>,
+/>,
                           ],
                           "style": Object {
                             "padding": "10px",
@@ -2030,16 +1954,14 @@ ShallowWrapper {
                           "children": Array [
                             <div>
                               HIVE NAMESPACE
-                            </div>,
+</div>,
                             <div
                               style={
-                                Object {
-                                  "fontWeight": 200,
-                                }
+                                                            Object {
+                                                                                          "fontWeight": 200,
+                                                                                        }
                               }
-                            >
-                              
-                            </div>,
+/>,
                           ],
                           "style": Object {
                             "padding": "10px",
@@ -2083,16 +2005,14 @@ ShallowWrapper {
                           "children": Array [
                             <div>
                               RESOURCE POOL
-                            </div>,
+</div>,
                             <div
                               style={
-                                Object {
-                                  "fontWeight": 200,
-                                }
+                                                            Object {
+                                                                                          "fontWeight": 200,
+                                                                                        }
                               }
-                            >
-                              
-                            </div>,
+/>,
                           ],
                           "style": Object {
                             "padding": "10px",
@@ -2140,45 +2060,45 @@ ShallowWrapper {
                         <Col
                           span={24}
                           style={
-                            Object {
-                              "marginTop": 10,
-                            }
+                                                    Object {
+                                                                              "marginTop": 10,
+                                                                            }
                           }
                           xl={8}
-                        >
+>
                           <SetupHelp
-                            location=""
-                            namespace=""
+                                                    location=""
+                                                    namespace=""
                           />
-                        </Col>,
+</Col>,
                         <Col
                           span={24}
                           style={
-                            Object {
-                              "marginTop": 10,
-                            }
+                                                    Object {
+                                                                              "marginTop": 10,
+                                                                            }
                           }
                           xl={8}
-                        >
+>
                           <SetupHelp
-                            host=""
-                            namespace=""
-                            port=""
+                                                    host=""
+                                                    namespace=""
+                                                    port=""
                           />
-                        </Col>,
+</Col>,
                         <Col
                           span={24}
                           style={
-                            Object {
-                              "marginTop": 10,
-                            }
+                                                    Object {
+                                                                              "marginTop": 10,
+                                                                            }
                           }
                           xl={8}
-                        >
+>
                           <RunHelp
-                            queue=""
+                                                    queue=""
                           />
-                        </Col>,
+</Col>,
                       ],
                       "gutter": 12,
                     },
@@ -2192,7 +2112,7 @@ ShallowWrapper {
                           "children": <SetupHelp
                             location=""
                             namespace=""
-                          />,
+/>,
                           "span": 24,
                           "style": Object {
                             "marginTop": 10,
@@ -2223,7 +2143,7 @@ ShallowWrapper {
                             host=""
                             namespace=""
                             port=""
-                          />,
+/>,
                           "span": 24,
                           "style": Object {
                             "marginTop": 10,
@@ -2253,7 +2173,7 @@ ShallowWrapper {
                         "props": Object {
                           "children": <RunHelp
                             queue=""
-                          />,
+/>,
                           "span": 24,
                           "style": Object {
                             "marginTop": 10,
@@ -2305,8 +2225,6 @@ ShallowWrapper {
         },
       },
     },
-    "attachTo": undefined,
-    "hydrateIn": undefined,
   },
 }
 `;

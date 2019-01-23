@@ -5,7 +5,7 @@ ShallowWrapper {
   Symbol(enzyme.__root__): [Circular],
   Symbol(enzyme.__unrendered__): <YarnDetails
     poolName=""
-  />,
+/>,
   Symbol(enzyme.__renderer__): Object {
     "batchedUpdates": [Function],
     "getNode": [Function],
@@ -21,49 +21,51 @@ ShallowWrapper {
     "props": Object {
       "actions": Array [
         <a
+          href={undefined}
           target="_blank"
-        >
+>
           Open Resource Manager
-        </a>,
+</a>,
       ],
       "children": Array [
         <CardHeader
           heading="Yarn Applications"
           icon="rocket"
           rightAction={
-            <Icon
-              onClick={[Function]}
-              style={
-                Object {
-                  "alignSelf": "flex-start",
-                  "cursor": "pointer",
-                }
-              }
-              type="sync"
-            />
+                    <Icon
+                              onClick={[Function]}
+                              spin={undefined}
+                              style={
+                                        Object {
+                                                  "alignSelf": "flex-start",
+                                                  "cursor": "pointer",
+                                                }
+                              }
+                              type="sync"
+                    />
           }
           subheading=""
-        />,
+/>,
         <Row
           gutter={12}
           justify="center"
           style={
-            Object {
-              "marginTop": 18,
-            }
+                    Object {
+                              "marginTop": 18,
+                            }
           }
           type="flex"
-        >
+>
           <div
-            style={
-              Object {
-                "color": "rgba(0, 0, 0, .65)",
-              }
-            }
+                    style={
+                              Object {
+                                        "color": "rgba(0, 0, 0, .65)",
+                                      }
+                    }
           >
-            No running YARN applications.
+                    No running YARN applications.
           </div>
-        </Row>,
+</Row>,
       ],
     },
     "ref": null,
@@ -77,14 +79,15 @@ ShallowWrapper {
           "icon": "rocket",
           "rightAction": <Icon
             onClick={[Function]}
+            spin={undefined}
             style={
-              Object {
-                "alignSelf": "flex-start",
-                "cursor": "pointer",
-              }
+                        Object {
+                                    "alignSelf": "flex-start",
+                                    "cursor": "pointer",
+                                  }
             }
             type="sync"
-          />,
+/>,
           "subheading": "",
         },
         "ref": null,
@@ -100,13 +103,13 @@ ShallowWrapper {
             undefined,
             <div
               style={
-                Object {
-                  "color": "rgba(0, 0, 0, .65)",
-                }
+                            Object {
+                                          "color": "rgba(0, 0, 0, .65)",
+                                        }
               }
-            >
+>
               No running YARN applications.
-            </div>,
+</div>,
           ],
           "gutter": 12,
           "justify": "center",
@@ -146,49 +149,51 @@ ShallowWrapper {
       "props": Object {
         "actions": Array [
           <a
+            href={undefined}
             target="_blank"
-          >
+>
             Open Resource Manager
-          </a>,
+</a>,
         ],
         "children": Array [
           <CardHeader
             heading="Yarn Applications"
             icon="rocket"
             rightAction={
-              <Icon
-                onClick={[Function]}
-                style={
-                  Object {
-                    "alignSelf": "flex-start",
-                    "cursor": "pointer",
-                  }
-                }
-                type="sync"
-              />
+                        <Icon
+                                    onClick={[Function]}
+                                    spin={undefined}
+                                    style={
+                                                Object {
+                                                            "alignSelf": "flex-start",
+                                                            "cursor": "pointer",
+                                                          }
+                                    }
+                                    type="sync"
+                        />
             }
             subheading=""
-          />,
+/>,
           <Row
             gutter={12}
             justify="center"
             style={
-              Object {
-                "marginTop": 18,
-              }
+                        Object {
+                                    "marginTop": 18,
+                                  }
             }
             type="flex"
-          >
+>
             <div
-              style={
-                Object {
-                  "color": "rgba(0, 0, 0, .65)",
-                }
-              }
+                        style={
+                                    Object {
+                                                "color": "rgba(0, 0, 0, .65)",
+                                              }
+                        }
             >
-              No running YARN applications.
+                        No running YARN applications.
             </div>
-          </Row>,
+</Row>,
         ],
       },
       "ref": null,
@@ -202,14 +207,15 @@ ShallowWrapper {
             "icon": "rocket",
             "rightAction": <Icon
               onClick={[Function]}
+              spin={undefined}
               style={
-                Object {
-                  "alignSelf": "flex-start",
-                  "cursor": "pointer",
-                }
+                            Object {
+                                          "alignSelf": "flex-start",
+                                          "cursor": "pointer",
+                                        }
               }
               type="sync"
-            />,
+/>,
             "subheading": "",
           },
           "ref": null,
@@ -225,13 +231,13 @@ ShallowWrapper {
               undefined,
               <div
                 style={
-                  Object {
-                    "color": "rgba(0, 0, 0, .65)",
-                  }
+                                Object {
+                                                "color": "rgba(0, 0, 0, .65)",
+                                              }
                 }
-              >
+>
                 No running YARN applications.
-              </div>,
+</div>,
             ],
             "gutter": 12,
             "justify": "center",
@@ -280,8 +286,6 @@ ShallowWrapper {
         },
       },
     },
-    "attachTo": undefined,
-    "hydrateIn": undefined,
   },
 }
 `;

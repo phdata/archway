@@ -5,7 +5,7 @@ ShallowWrapper {
   Symbol(enzyme.__root__): [Circular],
   Symbol(enzyme.__unrendered__): <DescriptionDetails
     description=""
-  />,
+/>,
   Symbol(enzyme.__renderer__): Object {
     "batchedUpdates": [Function],
     "getNode": [Function],
@@ -27,30 +27,28 @@ ShallowWrapper {
       "children": Array [
         <Label>
           description
-        </Label>,
+</Label>,
         <div
           style={
-            Object {
-              "alignItems": "center",
-              "display": "flex",
-              "flex": 1,
-              "flexDirection": "column",
-              "justifyContent": "center",
-              "textAlign": "center",
-            }
+                    Object {
+                              "alignItems": "center",
+                              "display": "flex",
+                              "flex": 1,
+                              "flexDirection": "column",
+                              "justifyContent": "center",
+                              "textAlign": "center",
+                            }
           }
-        >
+>
           <p
-            style={
-              Object {
-                "marginBottom": 0,
-                "textAlign": "center",
-              }
-            }
-          >
-            
-          </p>
-        </div>,
+                    style={
+                              Object {
+                                        "marginBottom": 0,
+                                        "textAlign": "center",
+                                      }
+                    }
+          />
+</div>,
       ],
       "style": Object {
         "display": "flex",
@@ -77,14 +75,12 @@ ShallowWrapper {
         "props": Object {
           "children": <p
             style={
-              Object {
-                "marginBottom": 0,
-                "textAlign": "center",
-              }
+                        Object {
+                                    "marginBottom": 0,
+                                    "textAlign": "center",
+                                  }
             }
-          >
-            
-          </p>,
+/>,
           "style": Object {
             "alignItems": "center",
             "display": "flex",
@@ -129,30 +125,28 @@ ShallowWrapper {
         "children": Array [
           <Label>
             description
-          </Label>,
+</Label>,
           <div
             style={
-              Object {
-                "alignItems": "center",
-                "display": "flex",
-                "flex": 1,
-                "flexDirection": "column",
-                "justifyContent": "center",
-                "textAlign": "center",
-              }
+                        Object {
+                                    "alignItems": "center",
+                                    "display": "flex",
+                                    "flex": 1,
+                                    "flexDirection": "column",
+                                    "justifyContent": "center",
+                                    "textAlign": "center",
+                                  }
             }
-          >
+>
             <p
-              style={
-                Object {
-                  "marginBottom": 0,
-                  "textAlign": "center",
-                }
-              }
-            >
-              
-            </p>
-          </div>,
+                        style={
+                                    Object {
+                                                "marginBottom": 0,
+                                                "textAlign": "center",
+                                              }
+                        }
+            />
+</div>,
         ],
         "style": Object {
           "display": "flex",
@@ -179,14 +173,12 @@ ShallowWrapper {
           "props": Object {
             "children": <p
               style={
-                Object {
-                  "marginBottom": 0,
-                  "textAlign": "center",
-                }
+                            Object {
+                                          "marginBottom": 0,
+                                          "textAlign": "center",
+                                        }
               }
-            >
-              
-            </p>,
+/>,
             "style": Object {
               "alignItems": "center",
               "display": "flex",
@@ -234,8 +226,6 @@ ShallowWrapper {
         },
       },
     },
-    "attachTo": undefined,
-    "hydrateIn": undefined,
   },
 }
 `;

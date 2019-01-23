@@ -6,20 +6,20 @@ ShallowWrapper {
   Symbol(enzyme.__unrendered__): <WorkspaceListItem
     onSelected={[Function]}
     workspace={
-      Object {
-        "behavior": "simple",
-        "date_fully_approved": 1970-01-01T00:00:00.000Z,
-        "date_requested": 1970-01-01T00:00:00.000Z,
-        "id": 0,
-        "name": "",
-        "status": "Approved",
-        "summary": "",
-        "total_disk_allocated_in_gb": 0,
-        "total_max_cores": 0,
-        "total_max_memory_in_gb": 0,
-      }
+        Object {
+            "behavior": "simple",
+            "date_fully_approved": 1970-01-01T00:00:00.000Z,
+            "date_requested": 1970-01-01T00:00:00.000Z,
+            "id": 0,
+            "name": "",
+            "status": "Approved",
+            "summary": "",
+            "total_disk_allocated_in_gb": 0,
+            "total_max_cores": 0,
+            "total_max_memory_in_gb": 0,
+          }
     }
-  />,
+/>,
   Symbol(enzyme.__renderer__): Object {
     "batchedUpdates": [Function],
     "getNode": [Function],
@@ -35,139 +35,135 @@ ShallowWrapper {
     "props": Object {
       "children": <Card
         bodyStyle={
-          Object {
-            "padding": "20px",
-          }
+                Object {
+                        "padding": "20px",
+                      }
         }
         bordered={true}
         hoverable={true}
         onClick={[Function]}
-      >
+>
         <ApprovalMessage />
         <div
-          style={
-            Object {
-              "alignItems": "center",
-              "display": "flex",
-              "padding": "28px 0 40px",
-            }
-          }
+                style={
+                        Object {
+                                "alignItems": "center",
+                                "display": "flex",
+                                "padding": "28px 0 40px",
+                              }
+                }
         >
-          <div
-            style={
-              Object {
-                "color": "rgba(0, 0, 0, 0.65)",
-                "flex": 7,
-                "fontSize": "12px",
-              }
-            }
-          >
-            <div
-              style={
-                Object {
-                  "fontSize": "22px",
-                  "lineHeight": "30px",
-                  "textTransform": "uppercase",
-                }
-              }
-            >
-              
-            </div>
-            <div>
-              
-            </div>
-            <Icon
-              type="team"
-            />
-             
-            <div
-              style={
-                Object {
-                  "display": "inline-block",
-                  "textTransform": "uppercase",
-                }
-              }
-            >
-              simple
-               dataset
-            </div>
-            <div
-              style={
-                Object {
-                  "color": "#0B7A75",
-                  "lineHeight": "24px",
-                }
-              }
-            >
-              DETAILS &gt;
-            </div>
-          </div>
-          <div
-            style={
-              Object {
-                "flex": 3,
-              }
-            }
-          >
-            <div
-              style={
-                Object {
-                  "alignItems": "center",
-                  "display": "flex",
-                  "flex": 1,
-                  "flexDirection": "column",
-                  "justifyContent": "center",
-                  "textAlign": "center",
-                }
-              }
-            >
-              <Doughnut
-                data={
-                  Object {
-                    "datasets": Array [
-                      Object {
-                        "backgroundColor": Array [
-                          "rgb(240, 243, 245)",
-                          "hsl(204, 20%, 100%)",
-                        ],
-                        "data": Array [
-                          1,
-                          0,
-                        ],
-                        "label": false,
-                      },
-                    ],
-                    "labels": Array [
-                      "Available (GB)",
-                      "Consumed (GB)",
-                    ],
-                  }
-                }
-                height={52}
-                options={
-                  Object {
-                    "legend": false,
-                    "maintainAspectRatio": false,
-                    "title": false,
-                  }
-                }
-                redraw={false}
-                width={52}
-              />
-            </div>
-            <div
-              style={
-                Object {
-                  "letterSpacing": 1,
-                  "textAlign": "center",
-                }
-              }
-            >
-              1.0GB/1GB
-            </div>
-          </div>
+                <div
+                        style={
+                                Object {
+                                        "color": "rgba(0, 0, 0, 0.65)",
+                                        "flex": 7,
+                                        "fontSize": "12px",
+                                      }
+                        }
+                >
+                        <div
+                                style={
+                                        Object {
+                                                "fontSize": "22px",
+                                                "lineHeight": "30px",
+                                                "textTransform": "uppercase",
+                                              }
+                                }
+                        />
+                        <div />
+                        <Icon
+                                type="team"
+                        />
+                         
+                        <div
+                                style={
+                                        Object {
+                                                "display": "inline-block",
+                                                "textTransform": "uppercase",
+                                              }
+                                }
+                        >
+                                simple
+                                 dataset
+                        </div>
+                        <div
+                                style={
+                                        Object {
+                                                "color": "#0B7A75",
+                                                "lineHeight": "24px",
+                                              }
+                                }
+                        >
+                                DETAILS &gt;
+                        </div>
+                </div>
+                <div
+                        style={
+                                Object {
+                                        "flex": 3,
+                                      }
+                        }
+                >
+                        <div
+                                style={
+                                        Object {
+                                                "alignItems": "center",
+                                                "display": "flex",
+                                                "flex": 1,
+                                                "flexDirection": "column",
+                                                "justifyContent": "center",
+                                                "textAlign": "center",
+                                              }
+                                }
+                        >
+                                <Doughnut
+                                        data={
+                                                Object {
+                                                        "datasets": Array [
+                                                          Object {
+                                                            "backgroundColor": Array [
+                                                              "rgb(240, 243, 245)",
+                                                              "hsl(204, 20%, 100%)",
+                                                            ],
+                                                            "data": Array [
+                                                              1,
+                                                              0,
+                                                            ],
+                                                            "label": false,
+                                                          },
+                                                        ],
+                                                        "labels": Array [
+                                                          "Available (GB)",
+                                                          "Consumed (GB)",
+                                                        ],
+                                                      }
+                                        }
+                                        height={52}
+                                        options={
+                                                Object {
+                                                        "legend": false,
+                                                        "maintainAspectRatio": false,
+                                                        "title": false,
+                                                      }
+                                        }
+                                        redraw={false}
+                                        width={52}
+                                />
+                        </div>
+                        <div
+                                style={
+                                        Object {
+                                                "letterSpacing": 1,
+                                                "textAlign": "center",
+                                              }
+                                }
+                        >
+                                1.0GB/1GB
+                        </div>
+                </div>
         </div>
-      </Card>,
+</Card>,
     },
     "ref": null,
     "rendered": Object {
@@ -183,127 +179,123 @@ ShallowWrapper {
           <ApprovalMessage />,
           <div
             style={
-              Object {
-                "alignItems": "center",
-                "display": "flex",
-                "padding": "28px 0 40px",
-              }
-            }
-          >
-            <div
-              style={
-                Object {
-                  "color": "rgba(0, 0, 0, 0.65)",
-                  "flex": 7,
-                  "fontSize": "12px",
-                }
-              }
-            >
-              <div
-                style={
-                  Object {
-                    "fontSize": "22px",
-                    "lineHeight": "30px",
-                    "textTransform": "uppercase",
-                  }
-                }
-              >
-                
-              </div>
-              <div>
-                
-              </div>
-              <Icon
-                type="team"
-              />
-               
-              <div
-                style={
-                  Object {
-                    "display": "inline-block",
-                    "textTransform": "uppercase",
-                  }
-                }
-              >
-                simple
-                 dataset
-              </div>
-              <div
-                style={
-                  Object {
-                    "color": "#0B7A75",
-                    "lineHeight": "24px",
-                  }
-                }
-              >
-                DETAILS &gt;
-              </div>
-            </div>
-            <div
-              style={
-                Object {
-                  "flex": 3,
-                }
-              }
-            >
-              <div
-                style={
-                  Object {
-                    "alignItems": "center",
-                    "display": "flex",
-                    "flex": 1,
-                    "flexDirection": "column",
-                    "justifyContent": "center",
-                    "textAlign": "center",
-                  }
-                }
-              >
-                <Doughnut
-                  data={
-                    Object {
-                      "datasets": Array [
                         Object {
-                          "backgroundColor": Array [
-                            "rgb(240, 243, 245)",
-                            "hsl(204, 20%, 100%)",
-                          ],
-                          "data": Array [
-                            1,
-                            0,
-                          ],
-                          "label": false,
-                        },
-                      ],
-                      "labels": Array [
-                        "Available (GB)",
-                        "Consumed (GB)",
-                      ],
-                    }
-                  }
-                  height={52}
-                  options={
-                    Object {
-                      "legend": false,
-                      "maintainAspectRatio": false,
-                      "title": false,
-                    }
-                  }
-                  redraw={false}
-                  width={52}
-                />
-              </div>
-              <div
-                style={
-                  Object {
-                    "letterSpacing": 1,
-                    "textAlign": "center",
-                  }
-                }
-              >
-                1.0GB/1GB
-              </div>
+                                    "alignItems": "center",
+                                    "display": "flex",
+                                    "padding": "28px 0 40px",
+                                  }
+            }
+>
+            <div
+                        style={
+                                    Object {
+                                                "color": "rgba(0, 0, 0, 0.65)",
+                                                "flex": 7,
+                                                "fontSize": "12px",
+                                              }
+                        }
+            >
+                        <div
+                                    style={
+                                                Object {
+                                                            "fontSize": "22px",
+                                                            "lineHeight": "30px",
+                                                            "textTransform": "uppercase",
+                                                          }
+                                    }
+                        />
+                        <div />
+                        <Icon
+                                    type="team"
+                        />
+                         
+                        <div
+                                    style={
+                                                Object {
+                                                            "display": "inline-block",
+                                                            "textTransform": "uppercase",
+                                                          }
+                                    }
+                        >
+                                    simple
+                                     dataset
+                        </div>
+                        <div
+                                    style={
+                                                Object {
+                                                            "color": "#0B7A75",
+                                                            "lineHeight": "24px",
+                                                          }
+                                    }
+                        >
+                                    DETAILS &gt;
+                        </div>
             </div>
-          </div>,
+            <div
+                        style={
+                                    Object {
+                                                "flex": 3,
+                                              }
+                        }
+            >
+                        <div
+                                    style={
+                                                Object {
+                                                            "alignItems": "center",
+                                                            "display": "flex",
+                                                            "flex": 1,
+                                                            "flexDirection": "column",
+                                                            "justifyContent": "center",
+                                                            "textAlign": "center",
+                                                          }
+                                    }
+                        >
+                                    <Doughnut
+                                                data={
+                                                            Object {
+                                                                        "datasets": Array [
+                                                                          Object {
+                                                                            "backgroundColor": Array [
+                                                                              "rgb(240, 243, 245)",
+                                                                              "hsl(204, 20%, 100%)",
+                                                                            ],
+                                                                            "data": Array [
+                                                                              1,
+                                                                              0,
+                                                                            ],
+                                                                            "label": false,
+                                                                          },
+                                                                        ],
+                                                                        "labels": Array [
+                                                                          "Available (GB)",
+                                                                          "Consumed (GB)",
+                                                                        ],
+                                                                      }
+                                                }
+                                                height={52}
+                                                options={
+                                                            Object {
+                                                                        "legend": false,
+                                                                        "maintainAspectRatio": false,
+                                                                        "title": false,
+                                                                      }
+                                                }
+                                                redraw={false}
+                                                width={52}
+                                    />
+                        </div>
+                        <div
+                                    style={
+                                                Object {
+                                                            "letterSpacing": 1,
+                                                            "textAlign": "center",
+                                                          }
+                                    }
+                        >
+                                    1.0GB/1GB
+                        </div>
+            </div>
+</div>,
         ],
         "hoverable": true,
         "onClick": [Function],
@@ -327,117 +319,113 @@ ShallowWrapper {
             "children": Array [
               <div
                 style={
-                  Object {
-                    "color": "rgba(0, 0, 0, 0.65)",
-                    "flex": 7,
-                    "fontSize": "12px",
-                  }
+                                Object {
+                                                "color": "rgba(0, 0, 0, 0.65)",
+                                                "flex": 7,
+                                                "fontSize": "12px",
+                                              }
                 }
-              >
+>
                 <div
-                  style={
-                    Object {
-                      "fontSize": "22px",
-                      "lineHeight": "30px",
-                      "textTransform": "uppercase",
-                    }
-                  }
-                >
-                  
-                </div>
-                <div>
-                  
-                </div>
+                                style={
+                                                Object {
+                                                                "fontSize": "22px",
+                                                                "lineHeight": "30px",
+                                                                "textTransform": "uppercase",
+                                                              }
+                                }
+                />
+                <div />
                 <Icon
-                  type="team"
+                                type="team"
                 />
                  
                 <div
-                  style={
-                    Object {
-                      "display": "inline-block",
-                      "textTransform": "uppercase",
-                    }
-                  }
+                                style={
+                                                Object {
+                                                                "display": "inline-block",
+                                                                "textTransform": "uppercase",
+                                                              }
+                                }
                 >
-                  simple
-                   dataset
+                                simple
+                                 dataset
                 </div>
                 <div
-                  style={
-                    Object {
-                      "color": "#0B7A75",
-                      "lineHeight": "24px",
-                    }
-                  }
+                                style={
+                                                Object {
+                                                                "color": "#0B7A75",
+                                                                "lineHeight": "24px",
+                                                              }
+                                }
                 >
-                  DETAILS &gt;
+                                DETAILS &gt;
                 </div>
-              </div>,
+</div>,
               <div
                 style={
-                  Object {
-                    "flex": 3,
-                  }
+                                Object {
+                                                "flex": 3,
+                                              }
                 }
-              >
+>
                 <div
-                  style={
-                    Object {
-                      "alignItems": "center",
-                      "display": "flex",
-                      "flex": 1,
-                      "flexDirection": "column",
-                      "justifyContent": "center",
-                      "textAlign": "center",
-                    }
-                  }
+                                style={
+                                                Object {
+                                                                "alignItems": "center",
+                                                                "display": "flex",
+                                                                "flex": 1,
+                                                                "flexDirection": "column",
+                                                                "justifyContent": "center",
+                                                                "textAlign": "center",
+                                                              }
+                                }
                 >
-                  <Doughnut
-                    data={
-                      Object {
-                        "datasets": Array [
-                          Object {
-                            "backgroundColor": Array [
-                              "rgb(240, 243, 245)",
-                              "hsl(204, 20%, 100%)",
-                            ],
-                            "data": Array [
-                              1,
-                              0,
-                            ],
-                            "label": false,
-                          },
-                        ],
-                        "labels": Array [
-                          "Available (GB)",
-                          "Consumed (GB)",
-                        ],
-                      }
-                    }
-                    height={52}
-                    options={
-                      Object {
-                        "legend": false,
-                        "maintainAspectRatio": false,
-                        "title": false,
-                      }
-                    }
-                    redraw={false}
-                    width={52}
-                  />
+                                <Doughnut
+                                                data={
+                                                                Object {
+                                                                                "datasets": Array [
+                                                                                  Object {
+                                                                                    "backgroundColor": Array [
+                                                                                      "rgb(240, 243, 245)",
+                                                                                      "hsl(204, 20%, 100%)",
+                                                                                    ],
+                                                                                    "data": Array [
+                                                                                      1,
+                                                                                      0,
+                                                                                    ],
+                                                                                    "label": false,
+                                                                                  },
+                                                                                ],
+                                                                                "labels": Array [
+                                                                                  "Available (GB)",
+                                                                                  "Consumed (GB)",
+                                                                                ],
+                                                                              }
+                                                }
+                                                height={52}
+                                                options={
+                                                                Object {
+                                                                                "legend": false,
+                                                                                "maintainAspectRatio": false,
+                                                                                "title": false,
+                                                                              }
+                                                }
+                                                redraw={false}
+                                                width={52}
+                                />
                 </div>
                 <div
-                  style={
-                    Object {
-                      "letterSpacing": 1,
-                      "textAlign": "center",
-                    }
-                  }
+                                style={
+                                                Object {
+                                                                "letterSpacing": 1,
+                                                                "textAlign": "center",
+                                                              }
+                                }
                 >
-                  1.0GB/1GB
+                                1.0GB/1GB
                 </div>
-              </div>,
+</div>,
             ],
             "style": Object {
               "alignItems": "center",
@@ -455,43 +443,39 @@ ShallowWrapper {
                 "children": Array [
                   <div
                     style={
-                      Object {
-                        "fontSize": "22px",
-                        "lineHeight": "30px",
-                        "textTransform": "uppercase",
-                      }
+                                        Object {
+                                                            "fontSize": "22px",
+                                                            "lineHeight": "30px",
+                                                            "textTransform": "uppercase",
+                                                          }
                     }
-                  >
-                    
-                  </div>,
-                  <div>
-                    
-                  </div>,
+/>,
+                  <div />,
                   <Icon
                     type="team"
-                  />,
+/>,
                   " ",
                   <div
                     style={
-                      Object {
-                        "display": "inline-block",
-                        "textTransform": "uppercase",
-                      }
+                                        Object {
+                                                            "display": "inline-block",
+                                                            "textTransform": "uppercase",
+                                                          }
                     }
-                  >
+>
                     simple
                      dataset
-                  </div>,
+</div>,
                   <div
                     style={
-                      Object {
-                        "color": "#0B7A75",
-                        "lineHeight": "24px",
-                      }
+                                        Object {
+                                                            "color": "#0B7A75",
+                                                            "lineHeight": "24px",
+                                                          }
                     }
-                  >
+>
                     DETAILS &gt;
-                  </div>,
+</div>,
                 ],
                 "style": Object {
                   "color": "rgba(0, 0, 0, 0.65)",
@@ -587,60 +571,60 @@ ShallowWrapper {
                 "children": Array [
                   <div
                     style={
-                      Object {
-                        "alignItems": "center",
-                        "display": "flex",
-                        "flex": 1,
-                        "flexDirection": "column",
-                        "justifyContent": "center",
-                        "textAlign": "center",
-                      }
+                                        Object {
+                                                            "alignItems": "center",
+                                                            "display": "flex",
+                                                            "flex": 1,
+                                                            "flexDirection": "column",
+                                                            "justifyContent": "center",
+                                                            "textAlign": "center",
+                                                          }
                     }
-                  >
+>
                     <Doughnut
-                      data={
-                        Object {
-                          "datasets": Array [
-                            Object {
-                              "backgroundColor": Array [
-                                "rgb(240, 243, 245)",
-                                "hsl(204, 20%, 100%)",
-                              ],
-                              "data": Array [
-                                1,
-                                0,
-                              ],
-                              "label": false,
-                            },
-                          ],
-                          "labels": Array [
-                            "Available (GB)",
-                            "Consumed (GB)",
-                          ],
-                        }
-                      }
-                      height={52}
-                      options={
-                        Object {
-                          "legend": false,
-                          "maintainAspectRatio": false,
-                          "title": false,
-                        }
-                      }
-                      redraw={false}
-                      width={52}
+                                        data={
+                                                            Object {
+                                                                                "datasets": Array [
+                                                                                  Object {
+                                                                                    "backgroundColor": Array [
+                                                                                      "rgb(240, 243, 245)",
+                                                                                      "hsl(204, 20%, 100%)",
+                                                                                    ],
+                                                                                    "data": Array [
+                                                                                      1,
+                                                                                      0,
+                                                                                    ],
+                                                                                    "label": false,
+                                                                                  },
+                                                                                ],
+                                                                                "labels": Array [
+                                                                                  "Available (GB)",
+                                                                                  "Consumed (GB)",
+                                                                                ],
+                                                                              }
+                                        }
+                                        height={52}
+                                        options={
+                                                            Object {
+                                                                                "legend": false,
+                                                                                "maintainAspectRatio": false,
+                                                                                "title": false,
+                                                                              }
+                                        }
+                                        redraw={false}
+                                        width={52}
                     />
-                  </div>,
+</div>,
                   <div
                     style={
-                      Object {
-                        "letterSpacing": 1,
-                        "textAlign": "center",
-                      }
+                                        Object {
+                                                            "letterSpacing": 1,
+                                                            "textAlign": "center",
+                                                          }
                     }
-                  >
+>
                     1.0GB/1GB
-                  </div>,
+</div>,
                 ],
                 "style": Object {
                   "flex": 3,
@@ -655,37 +639,37 @@ ShallowWrapper {
                   "props": Object {
                     "children": <Doughnut
                       data={
-                        Object {
-                          "datasets": Array [
-                            Object {
-                              "backgroundColor": Array [
-                                "rgb(240, 243, 245)",
-                                "hsl(204, 20%, 100%)",
-                              ],
-                              "data": Array [
-                                1,
-                                0,
-                              ],
-                              "label": false,
-                            },
-                          ],
-                          "labels": Array [
-                            "Available (GB)",
-                            "Consumed (GB)",
-                          ],
-                        }
+                                            Object {
+                                                                  "datasets": Array [
+                                                                    Object {
+                                                                      "backgroundColor": Array [
+                                                                        "rgb(240, 243, 245)",
+                                                                        "hsl(204, 20%, 100%)",
+                                                                      ],
+                                                                      "data": Array [
+                                                                        1,
+                                                                        0,
+                                                                      ],
+                                                                      "label": false,
+                                                                    },
+                                                                  ],
+                                                                  "labels": Array [
+                                                                    "Available (GB)",
+                                                                    "Consumed (GB)",
+                                                                  ],
+                                                                }
                       }
                       height={52}
                       options={
-                        Object {
-                          "legend": false,
-                          "maintainAspectRatio": false,
-                          "title": false,
-                        }
+                                            Object {
+                                                                  "legend": false,
+                                                                  "maintainAspectRatio": false,
+                                                                  "title": false,
+                                                                }
                       }
                       redraw={false}
                       width={52}
-                    />,
+/>,
                     "style": Object {
                       "alignItems": "center",
                       "display": "flex",
@@ -769,139 +753,135 @@ ShallowWrapper {
       "props": Object {
         "children": <Card
           bodyStyle={
-            Object {
-              "padding": "20px",
-            }
+                    Object {
+                              "padding": "20px",
+                            }
           }
           bordered={true}
           hoverable={true}
           onClick={[Function]}
-        >
+>
           <ApprovalMessage />
           <div
-            style={
-              Object {
-                "alignItems": "center",
-                "display": "flex",
-                "padding": "28px 0 40px",
-              }
-            }
+                    style={
+                              Object {
+                                        "alignItems": "center",
+                                        "display": "flex",
+                                        "padding": "28px 0 40px",
+                                      }
+                    }
           >
-            <div
-              style={
-                Object {
-                  "color": "rgba(0, 0, 0, 0.65)",
-                  "flex": 7,
-                  "fontSize": "12px",
-                }
-              }
-            >
-              <div
-                style={
-                  Object {
-                    "fontSize": "22px",
-                    "lineHeight": "30px",
-                    "textTransform": "uppercase",
-                  }
-                }
-              >
-                
-              </div>
-              <div>
-                
-              </div>
-              <Icon
-                type="team"
-              />
-               
-              <div
-                style={
-                  Object {
-                    "display": "inline-block",
-                    "textTransform": "uppercase",
-                  }
-                }
-              >
-                simple
-                 dataset
-              </div>
-              <div
-                style={
-                  Object {
-                    "color": "#0B7A75",
-                    "lineHeight": "24px",
-                  }
-                }
-              >
-                DETAILS &gt;
-              </div>
-            </div>
-            <div
-              style={
-                Object {
-                  "flex": 3,
-                }
-              }
-            >
-              <div
-                style={
-                  Object {
-                    "alignItems": "center",
-                    "display": "flex",
-                    "flex": 1,
-                    "flexDirection": "column",
-                    "justifyContent": "center",
-                    "textAlign": "center",
-                  }
-                }
-              >
-                <Doughnut
-                  data={
-                    Object {
-                      "datasets": Array [
-                        Object {
-                          "backgroundColor": Array [
-                            "rgb(240, 243, 245)",
-                            "hsl(204, 20%, 100%)",
-                          ],
-                          "data": Array [
-                            1,
-                            0,
-                          ],
-                          "label": false,
-                        },
-                      ],
-                      "labels": Array [
-                        "Available (GB)",
-                        "Consumed (GB)",
-                      ],
-                    }
-                  }
-                  height={52}
-                  options={
-                    Object {
-                      "legend": false,
-                      "maintainAspectRatio": false,
-                      "title": false,
-                    }
-                  }
-                  redraw={false}
-                  width={52}
-                />
-              </div>
-              <div
-                style={
-                  Object {
-                    "letterSpacing": 1,
-                    "textAlign": "center",
-                  }
-                }
-              >
-                1.0GB/1GB
-              </div>
-            </div>
+                    <div
+                              style={
+                                        Object {
+                                                  "color": "rgba(0, 0, 0, 0.65)",
+                                                  "flex": 7,
+                                                  "fontSize": "12px",
+                                                }
+                              }
+                    >
+                              <div
+                                        style={
+                                                  Object {
+                                                            "fontSize": "22px",
+                                                            "lineHeight": "30px",
+                                                            "textTransform": "uppercase",
+                                                          }
+                                        }
+                              />
+                              <div />
+                              <Icon
+                                        type="team"
+                              />
+                               
+                              <div
+                                        style={
+                                                  Object {
+                                                            "display": "inline-block",
+                                                            "textTransform": "uppercase",
+                                                          }
+                                        }
+                              >
+                                        simple
+                                         dataset
+                              </div>
+                              <div
+                                        style={
+                                                  Object {
+                                                            "color": "#0B7A75",
+                                                            "lineHeight": "24px",
+                                                          }
+                                        }
+                              >
+                                        DETAILS &gt;
+                              </div>
+                    </div>
+                    <div
+                              style={
+                                        Object {
+                                                  "flex": 3,
+                                                }
+                              }
+                    >
+                              <div
+                                        style={
+                                                  Object {
+                                                            "alignItems": "center",
+                                                            "display": "flex",
+                                                            "flex": 1,
+                                                            "flexDirection": "column",
+                                                            "justifyContent": "center",
+                                                            "textAlign": "center",
+                                                          }
+                                        }
+                              >
+                                        <Doughnut
+                                                  data={
+                                                            Object {
+                                                                      "datasets": Array [
+                                                                        Object {
+                                                                          "backgroundColor": Array [
+                                                                            "rgb(240, 243, 245)",
+                                                                            "hsl(204, 20%, 100%)",
+                                                                          ],
+                                                                          "data": Array [
+                                                                            1,
+                                                                            0,
+                                                                          ],
+                                                                          "label": false,
+                                                                        },
+                                                                      ],
+                                                                      "labels": Array [
+                                                                        "Available (GB)",
+                                                                        "Consumed (GB)",
+                                                                      ],
+                                                                    }
+                                                  }
+                                                  height={52}
+                                                  options={
+                                                            Object {
+                                                                      "legend": false,
+                                                                      "maintainAspectRatio": false,
+                                                                      "title": false,
+                                                                    }
+                                                  }
+                                                  redraw={false}
+                                                  width={52}
+                                        />
+                              </div>
+                              <div
+                                        style={
+                                                  Object {
+                                                            "letterSpacing": 1,
+                                                            "textAlign": "center",
+                                                          }
+                                        }
+                              >
+                                        1.0GB/1GB
+                              </div>
+                    </div>
           </div>
-        </Card>,
+</Card>,
       },
       "ref": null,
       "rendered": Object {
@@ -917,127 +897,123 @@ ShallowWrapper {
             <ApprovalMessage />,
             <div
               style={
-                Object {
-                  "alignItems": "center",
-                  "display": "flex",
-                  "padding": "28px 0 40px",
-                }
+                            Object {
+                                          "alignItems": "center",
+                                          "display": "flex",
+                                          "padding": "28px 0 40px",
+                                        }
               }
-            >
+>
               <div
-                style={
-                  Object {
-                    "color": "rgba(0, 0, 0, 0.65)",
-                    "flex": 7,
-                    "fontSize": "12px",
-                  }
-                }
+                            style={
+                                          Object {
+                                                        "color": "rgba(0, 0, 0, 0.65)",
+                                                        "flex": 7,
+                                                        "fontSize": "12px",
+                                                      }
+                            }
               >
-                <div
-                  style={
-                    Object {
-                      "fontSize": "22px",
-                      "lineHeight": "30px",
-                      "textTransform": "uppercase",
-                    }
-                  }
-                >
-                  
-                </div>
-                <div>
-                  
-                </div>
-                <Icon
-                  type="team"
-                />
-                 
-                <div
-                  style={
-                    Object {
-                      "display": "inline-block",
-                      "textTransform": "uppercase",
-                    }
-                  }
-                >
-                  simple
-                   dataset
-                </div>
-                <div
-                  style={
-                    Object {
-                      "color": "#0B7A75",
-                      "lineHeight": "24px",
-                    }
-                  }
-                >
-                  DETAILS &gt;
-                </div>
+                            <div
+                                          style={
+                                                        Object {
+                                                                      "fontSize": "22px",
+                                                                      "lineHeight": "30px",
+                                                                      "textTransform": "uppercase",
+                                                                    }
+                                          }
+                            />
+                            <div />
+                            <Icon
+                                          type="team"
+                            />
+                             
+                            <div
+                                          style={
+                                                        Object {
+                                                                      "display": "inline-block",
+                                                                      "textTransform": "uppercase",
+                                                                    }
+                                          }
+                            >
+                                          simple
+                                           dataset
+                            </div>
+                            <div
+                                          style={
+                                                        Object {
+                                                                      "color": "#0B7A75",
+                                                                      "lineHeight": "24px",
+                                                                    }
+                                          }
+                            >
+                                          DETAILS &gt;
+                            </div>
               </div>
               <div
-                style={
-                  Object {
-                    "flex": 3,
-                  }
-                }
+                            style={
+                                          Object {
+                                                        "flex": 3,
+                                                      }
+                            }
               >
-                <div
-                  style={
-                    Object {
-                      "alignItems": "center",
-                      "display": "flex",
-                      "flex": 1,
-                      "flexDirection": "column",
-                      "justifyContent": "center",
-                      "textAlign": "center",
-                    }
-                  }
-                >
-                  <Doughnut
-                    data={
-                      Object {
-                        "datasets": Array [
-                          Object {
-                            "backgroundColor": Array [
-                              "rgb(240, 243, 245)",
-                              "hsl(204, 20%, 100%)",
-                            ],
-                            "data": Array [
-                              1,
-                              0,
-                            ],
-                            "label": false,
-                          },
-                        ],
-                        "labels": Array [
-                          "Available (GB)",
-                          "Consumed (GB)",
-                        ],
-                      }
-                    }
-                    height={52}
-                    options={
-                      Object {
-                        "legend": false,
-                        "maintainAspectRatio": false,
-                        "title": false,
-                      }
-                    }
-                    redraw={false}
-                    width={52}
-                  />
-                </div>
-                <div
-                  style={
-                    Object {
-                      "letterSpacing": 1,
-                      "textAlign": "center",
-                    }
-                  }
-                >
-                  1.0GB/1GB
-                </div>
+                            <div
+                                          style={
+                                                        Object {
+                                                                      "alignItems": "center",
+                                                                      "display": "flex",
+                                                                      "flex": 1,
+                                                                      "flexDirection": "column",
+                                                                      "justifyContent": "center",
+                                                                      "textAlign": "center",
+                                                                    }
+                                          }
+                            >
+                                          <Doughnut
+                                                        data={
+                                                                      Object {
+                                                                                    "datasets": Array [
+                                                                                      Object {
+                                                                                        "backgroundColor": Array [
+                                                                                          "rgb(240, 243, 245)",
+                                                                                          "hsl(204, 20%, 100%)",
+                                                                                        ],
+                                                                                        "data": Array [
+                                                                                          1,
+                                                                                          0,
+                                                                                        ],
+                                                                                        "label": false,
+                                                                                      },
+                                                                                    ],
+                                                                                    "labels": Array [
+                                                                                      "Available (GB)",
+                                                                                      "Consumed (GB)",
+                                                                                    ],
+                                                                                  }
+                                                        }
+                                                        height={52}
+                                                        options={
+                                                                      Object {
+                                                                                    "legend": false,
+                                                                                    "maintainAspectRatio": false,
+                                                                                    "title": false,
+                                                                                  }
+                                                        }
+                                                        redraw={false}
+                                                        width={52}
+                                          />
+                            </div>
+                            <div
+                                          style={
+                                                        Object {
+                                                                      "letterSpacing": 1,
+                                                                      "textAlign": "center",
+                                                                    }
+                                          }
+                            >
+                                          1.0GB/1GB
+                            </div>
               </div>
-            </div>,
+</div>,
           ],
           "hoverable": true,
           "onClick": [Function],
@@ -1061,117 +1037,113 @@ ShallowWrapper {
               "children": Array [
                 <div
                   style={
-                    Object {
-                      "color": "rgba(0, 0, 0, 0.65)",
-                      "flex": 7,
-                      "fontSize": "12px",
-                    }
+                                    Object {
+                                                      "color": "rgba(0, 0, 0, 0.65)",
+                                                      "flex": 7,
+                                                      "fontSize": "12px",
+                                                    }
                   }
-                >
+>
                   <div
-                    style={
-                      Object {
-                        "fontSize": "22px",
-                        "lineHeight": "30px",
-                        "textTransform": "uppercase",
-                      }
-                    }
-                  >
-                    
-                  </div>
-                  <div>
-                    
-                  </div>
+                                    style={
+                                                      Object {
+                                                                        "fontSize": "22px",
+                                                                        "lineHeight": "30px",
+                                                                        "textTransform": "uppercase",
+                                                                      }
+                                    }
+                  />
+                  <div />
                   <Icon
-                    type="team"
+                                    type="team"
                   />
                    
                   <div
-                    style={
-                      Object {
-                        "display": "inline-block",
-                        "textTransform": "uppercase",
-                      }
-                    }
+                                    style={
+                                                      Object {
+                                                                        "display": "inline-block",
+                                                                        "textTransform": "uppercase",
+                                                                      }
+                                    }
                   >
-                    simple
-                     dataset
+                                    simple
+                                     dataset
                   </div>
                   <div
-                    style={
-                      Object {
-                        "color": "#0B7A75",
-                        "lineHeight": "24px",
-                      }
-                    }
+                                    style={
+                                                      Object {
+                                                                        "color": "#0B7A75",
+                                                                        "lineHeight": "24px",
+                                                                      }
+                                    }
                   >
-                    DETAILS &gt;
+                                    DETAILS &gt;
                   </div>
-                </div>,
+</div>,
                 <div
                   style={
-                    Object {
-                      "flex": 3,
-                    }
+                                    Object {
+                                                      "flex": 3,
+                                                    }
                   }
-                >
+>
                   <div
-                    style={
-                      Object {
-                        "alignItems": "center",
-                        "display": "flex",
-                        "flex": 1,
-                        "flexDirection": "column",
-                        "justifyContent": "center",
-                        "textAlign": "center",
-                      }
-                    }
+                                    style={
+                                                      Object {
+                                                                        "alignItems": "center",
+                                                                        "display": "flex",
+                                                                        "flex": 1,
+                                                                        "flexDirection": "column",
+                                                                        "justifyContent": "center",
+                                                                        "textAlign": "center",
+                                                                      }
+                                    }
                   >
-                    <Doughnut
-                      data={
-                        Object {
-                          "datasets": Array [
-                            Object {
-                              "backgroundColor": Array [
-                                "rgb(240, 243, 245)",
-                                "hsl(204, 20%, 100%)",
-                              ],
-                              "data": Array [
-                                1,
-                                0,
-                              ],
-                              "label": false,
-                            },
-                          ],
-                          "labels": Array [
-                            "Available (GB)",
-                            "Consumed (GB)",
-                          ],
-                        }
-                      }
-                      height={52}
-                      options={
-                        Object {
-                          "legend": false,
-                          "maintainAspectRatio": false,
-                          "title": false,
-                        }
-                      }
-                      redraw={false}
-                      width={52}
-                    />
+                                    <Doughnut
+                                                      data={
+                                                                        Object {
+                                                                                          "datasets": Array [
+                                                                                            Object {
+                                                                                              "backgroundColor": Array [
+                                                                                                "rgb(240, 243, 245)",
+                                                                                                "hsl(204, 20%, 100%)",
+                                                                                              ],
+                                                                                              "data": Array [
+                                                                                                1,
+                                                                                                0,
+                                                                                              ],
+                                                                                              "label": false,
+                                                                                            },
+                                                                                          ],
+                                                                                          "labels": Array [
+                                                                                            "Available (GB)",
+                                                                                            "Consumed (GB)",
+                                                                                          ],
+                                                                                        }
+                                                      }
+                                                      height={52}
+                                                      options={
+                                                                        Object {
+                                                                                          "legend": false,
+                                                                                          "maintainAspectRatio": false,
+                                                                                          "title": false,
+                                                                                        }
+                                                      }
+                                                      redraw={false}
+                                                      width={52}
+                                    />
                   </div>
                   <div
-                    style={
-                      Object {
-                        "letterSpacing": 1,
-                        "textAlign": "center",
-                      }
-                    }
+                                    style={
+                                                      Object {
+                                                                        "letterSpacing": 1,
+                                                                        "textAlign": "center",
+                                                                      }
+                                    }
                   >
-                    1.0GB/1GB
+                                    1.0GB/1GB
                   </div>
-                </div>,
+</div>,
               ],
               "style": Object {
                 "alignItems": "center",
@@ -1189,43 +1161,39 @@ ShallowWrapper {
                   "children": Array [
                     <div
                       style={
-                        Object {
-                          "fontSize": "22px",
-                          "lineHeight": "30px",
-                          "textTransform": "uppercase",
-                        }
+                                            Object {
+                                                                  "fontSize": "22px",
+                                                                  "lineHeight": "30px",
+                                                                  "textTransform": "uppercase",
+                                                                }
                       }
-                    >
-                      
-                    </div>,
-                    <div>
-                      
-                    </div>,
+/>,
+                    <div />,
                     <Icon
                       type="team"
-                    />,
+/>,
                     " ",
                     <div
                       style={
-                        Object {
-                          "display": "inline-block",
-                          "textTransform": "uppercase",
-                        }
+                                            Object {
+                                                                  "display": "inline-block",
+                                                                  "textTransform": "uppercase",
+                                                                }
                       }
-                    >
+>
                       simple
                        dataset
-                    </div>,
+</div>,
                     <div
                       style={
-                        Object {
-                          "color": "#0B7A75",
-                          "lineHeight": "24px",
-                        }
+                                            Object {
+                                                                  "color": "#0B7A75",
+                                                                  "lineHeight": "24px",
+                                                                }
                       }
-                    >
+>
                       DETAILS &gt;
-                    </div>,
+</div>,
                   ],
                   "style": Object {
                     "color": "rgba(0, 0, 0, 0.65)",
@@ -1321,60 +1289,60 @@ ShallowWrapper {
                   "children": Array [
                     <div
                       style={
-                        Object {
-                          "alignItems": "center",
-                          "display": "flex",
-                          "flex": 1,
-                          "flexDirection": "column",
-                          "justifyContent": "center",
-                          "textAlign": "center",
-                        }
+                                            Object {
+                                                                  "alignItems": "center",
+                                                                  "display": "flex",
+                                                                  "flex": 1,
+                                                                  "flexDirection": "column",
+                                                                  "justifyContent": "center",
+                                                                  "textAlign": "center",
+                                                                }
                       }
-                    >
+>
                       <Doughnut
-                        data={
-                          Object {
-                            "datasets": Array [
-                              Object {
-                                "backgroundColor": Array [
-                                  "rgb(240, 243, 245)",
-                                  "hsl(204, 20%, 100%)",
-                                ],
-                                "data": Array [
-                                  1,
-                                  0,
-                                ],
-                                "label": false,
-                              },
-                            ],
-                            "labels": Array [
-                              "Available (GB)",
-                              "Consumed (GB)",
-                            ],
-                          }
-                        }
-                        height={52}
-                        options={
-                          Object {
-                            "legend": false,
-                            "maintainAspectRatio": false,
-                            "title": false,
-                          }
-                        }
-                        redraw={false}
-                        width={52}
+                                            data={
+                                                                  Object {
+                                                                                        "datasets": Array [
+                                                                                          Object {
+                                                                                            "backgroundColor": Array [
+                                                                                              "rgb(240, 243, 245)",
+                                                                                              "hsl(204, 20%, 100%)",
+                                                                                            ],
+                                                                                            "data": Array [
+                                                                                              1,
+                                                                                              0,
+                                                                                            ],
+                                                                                            "label": false,
+                                                                                          },
+                                                                                        ],
+                                                                                        "labels": Array [
+                                                                                          "Available (GB)",
+                                                                                          "Consumed (GB)",
+                                                                                        ],
+                                                                                      }
+                                            }
+                                            height={52}
+                                            options={
+                                                                  Object {
+                                                                                        "legend": false,
+                                                                                        "maintainAspectRatio": false,
+                                                                                        "title": false,
+                                                                                      }
+                                            }
+                                            redraw={false}
+                                            width={52}
                       />
-                    </div>,
+</div>,
                     <div
                       style={
-                        Object {
-                          "letterSpacing": 1,
-                          "textAlign": "center",
-                        }
+                                            Object {
+                                                                  "letterSpacing": 1,
+                                                                  "textAlign": "center",
+                                                                }
                       }
-                    >
+>
                       1.0GB/1GB
-                    </div>,
+</div>,
                   ],
                   "style": Object {
                     "flex": 3,
@@ -1389,37 +1357,37 @@ ShallowWrapper {
                     "props": Object {
                       "children": <Doughnut
                         data={
-                          Object {
-                            "datasets": Array [
-                              Object {
-                                "backgroundColor": Array [
-                                  "rgb(240, 243, 245)",
-                                  "hsl(204, 20%, 100%)",
-                                ],
-                                "data": Array [
-                                  1,
-                                  0,
-                                ],
-                                "label": false,
-                              },
-                            ],
-                            "labels": Array [
-                              "Available (GB)",
-                              "Consumed (GB)",
-                            ],
-                          }
+                                                Object {
+                                                                        "datasets": Array [
+                                                                          Object {
+                                                                            "backgroundColor": Array [
+                                                                              "rgb(240, 243, 245)",
+                                                                              "hsl(204, 20%, 100%)",
+                                                                            ],
+                                                                            "data": Array [
+                                                                              1,
+                                                                              0,
+                                                                            ],
+                                                                            "label": false,
+                                                                          },
+                                                                        ],
+                                                                        "labels": Array [
+                                                                          "Available (GB)",
+                                                                          "Consumed (GB)",
+                                                                        ],
+                                                                      }
                         }
                         height={52}
                         options={
-                          Object {
-                            "legend": false,
-                            "maintainAspectRatio": false,
-                            "title": false,
-                          }
+                                                Object {
+                                                                        "legend": false,
+                                                                        "maintainAspectRatio": false,
+                                                                        "title": false,
+                                                                      }
                         }
                         redraw={false}
                         width={52}
-                      />,
+/>,
                       "style": Object {
                         "alignItems": "center",
                         "display": "flex",
@@ -1512,8 +1480,6 @@ ShallowWrapper {
         },
       },
     },
-    "attachTo": undefined,
-    "hydrateIn": undefined,
   },
 }
 `;

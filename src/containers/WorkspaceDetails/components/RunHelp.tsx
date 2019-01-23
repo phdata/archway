@@ -1,6 +1,6 @@
 import * as React from 'react';
 import SyntaxHighlighter from 'react-syntax-highlighter';
-import { tomorrowNightEighties } from 'react-syntax-highlighter/styles/hljs';
+import { tomorrowNightEighties } from 'react-syntax-highlighter/dist/styles/hljs';
 import Label from './Label';
 
 interface Props {

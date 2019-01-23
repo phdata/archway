@@ -5,7 +5,7 @@ ShallowWrapper {
   Symbol(enzyme.__root__): [Circular],
   Symbol(enzyme.__unrendered__): <BehaviorPage
     onChange={[Function]}
-  />,
+/>,
   Symbol(enzyme.__renderer__): Object {
     "batchedUpdates": [Function],
     "getNode": [Function],
@@ -22,101 +22,100 @@ ShallowWrapper {
       "children": Array [
         <h3
           style={
-            Object {
-              "display": "inline-block",
-              "marginRight": 7,
-            }
+                    Object {
+                              "display": "inline-block",
+                              "marginRight": 7,
+                            }
           }
-        >
+>
           What kind of behavior should we manage?
-        </h3>,
+</h3>,
         <Tooltip
           arrowPointAtCenter={false}
           autoAdjustOverflow={true}
           mouseEnterDelay={0.1}
           mouseLeaveDelay={0.1}
           placement="top"
-          prefixCls="ant-tooltip"
           title="Heimdali will set up a structure that enables your team to work on a workspace in a certain way. See descriptions below for more information"
           transitionName="zoom-big-fast"
-        >
+>
           <Icon
-            theme="twoTone"
-            type="question-circle"
+                    theme="twoTone"
+                    type="question-circle"
           />
-        </Tooltip>,
+</Tooltip>,
         <Row
           gutter={25}
           justify="center"
           style={
-            Object {
-              "marginBottom": 25,
-              "marginTop": 25,
-            }
+                    Object {
+                              "marginBottom": 25,
+                              "marginTop": 25,
+                            }
           }
           type="flex"
-        >
+>
           <Col
-            lg={6}
-            span={12}
-            style={
-              Object {
-                "display": "flex",
-              }
-            }
+                    lg={6}
+                    span={12}
+                    style={
+                              Object {
+                                        "display": "flex",
+                                      }
+                    }
           >
-            <Behavior
-              behaviorKey="simple"
-              description="A simple place for multiple users to collaborate on a solution."
-              icon="team"
-              onChange={[Function]}
-              selected={false}
-              style={
-                Object {
-                  "flex": 1,
-                }
-              }
-              title="Simple"
-              useCases={
-                Array [
-                  "brainstorming",
-                  "evaluation",
-                  "prototypes",
-                ]
-              }
-            />
+                    <Behavior
+                              behaviorKey="simple"
+                              description="A simple place for multiple users to collaborate on a solution."
+                              icon="team"
+                              onChange={[Function]}
+                              selected={false}
+                              style={
+                                        Object {
+                                                  "flex": 1,
+                                                }
+                              }
+                              title="Simple"
+                              useCases={
+                                        Array [
+                                                  "brainstorming",
+                                                  "evaluation",
+                                                  "prototypes",
+                                                ]
+                              }
+                    />
           </Col>
           <Col
-            lg={6}
-            span={12}
-            style={
-              Object {
-                "display": "flex",
-              }
-            }
+                    lg={6}
+                    span={12}
+                    style={
+                              Object {
+                                        "display": "flex",
+                                      }
+                    }
           >
-            <Behavior
-              behaviorKey="structured"
-              description="Data moves through three steps: raw, staging, modeled. Each step represents a more \\"structured\\" version of the data."
-              icon="deployment-unit"
-              onChange={[Function]}
-              selected={false}
-              style={
-                Object {
-                  "flex": 1,
-                }
-              }
-              title="Structured"
-              useCases={
-                Array [
-                  "publishings",
-                  "data assets",
-                  "external interfacing",
-                ]
-              }
-            />
+                    <Behavior
+                              behaviorKey="structured"
+                              description="Data moves through three steps: raw, staging, modeled. Each step represents a more \\"structured\\" version of the data."
+                              icon="deployment-unit"
+                              onChange={[Function]}
+                              selected={false}
+                              style={
+                                        Object {
+                                                  "flex": 1,
+                                                }
+                              }
+                              title="Structured"
+                              useCases={
+                                        Array [
+                                                  "publishings",
+                                                  "data assets",
+                                                  "external interfacing",
+                                                ]
+                              }
+                    />
           </Col>
-        </Row>,
+</Row>,
       ],
     },
     "ref": null,
@@ -146,11 +145,10 @@ ShallowWrapper {
           "children": <Icon
             theme="twoTone"
             type="question-circle"
-          />,
+/>,
           "mouseEnterDelay": 0.1,
           "mouseLeaveDelay": 0.1,
           "placement": "top",
-          "prefixCls": "ant-tooltip",
           "title": "Heimdali will set up a structure that enables your team to work on a workspace in a certain way. See descriptions below for more information",
           "transitionName": "zoom-big-fast",
         },
@@ -179,62 +177,62 @@ ShallowWrapper {
               lg={6}
               span={12}
               style={
-                Object {
-                  "display": "flex",
-                }
+                            Object {
+                                          "display": "flex",
+                                        }
               }
-            >
+>
               <Behavior
-                behaviorKey="simple"
-                description="A simple place for multiple users to collaborate on a solution."
-                icon="team"
-                onChange={[Function]}
-                selected={false}
-                style={
-                  Object {
-                    "flex": 1,
-                  }
-                }
-                title="Simple"
-                useCases={
-                  Array [
-                    "brainstorming",
-                    "evaluation",
-                    "prototypes",
-                  ]
-                }
+                            behaviorKey="simple"
+                            description="A simple place for multiple users to collaborate on a solution."
+                            icon="team"
+                            onChange={[Function]}
+                            selected={false}
+                            style={
+                                          Object {
+                                                        "flex": 1,
+                                                      }
+                            }
+                            title="Simple"
+                            useCases={
+                                          Array [
+                                                        "brainstorming",
+                                                        "evaluation",
+                                                        "prototypes",
+                                                      ]
+                            }
               />
-            </Col>,
+</Col>,
             <Col
               lg={6}
               span={12}
               style={
-                Object {
-                  "display": "flex",
-                }
+                            Object {
+                                          "display": "flex",
+                                        }
               }
-            >
+>
               <Behavior
-                behaviorKey="structured"
-                description="Data moves through three steps: raw, staging, modeled. Each step represents a more \\"structured\\" version of the data."
-                icon="deployment-unit"
-                onChange={[Function]}
-                selected={false}
-                style={
-                  Object {
-                    "flex": 1,
-                  }
-                }
-                title="Structured"
-                useCases={
-                  Array [
-                    "publishings",
-                    "data assets",
-                    "external interfacing",
-                  ]
-                }
+                            behaviorKey="structured"
+                            description="Data moves through three steps: raw, staging, modeled. Each step represents a more \\"structured\\" version of the data."
+                            icon="deployment-unit"
+                            onChange={[Function]}
+                            selected={false}
+                            style={
+                                          Object {
+                                                        "flex": 1,
+                                                      }
+                            }
+                            title="Structured"
+                            useCases={
+                                          Array [
+                                                        "publishings",
+                                                        "data assets",
+                                                        "external interfacing",
+                                                      ]
+                            }
               />
-            </Col>,
+</Col>,
           ],
           "gutter": 25,
           "justify": "center",
@@ -258,19 +256,19 @@ ShallowWrapper {
                 onChange={[Function]}
                 selected={false}
                 style={
-                  Object {
-                    "flex": 1,
-                  }
+                                Object {
+                                                "flex": 1,
+                                              }
                 }
                 title="Simple"
                 useCases={
-                  Array [
-                    "brainstorming",
-                    "evaluation",
-                    "prototypes",
-                  ]
+                                Array [
+                                                "brainstorming",
+                                                "evaluation",
+                                                "prototypes",
+                                              ]
                 }
-              />,
+/>,
               "lg": 6,
               "span": 12,
               "style": Object {
@@ -316,19 +314,19 @@ ShallowWrapper {
                 onChange={[Function]}
                 selected={false}
                 style={
-                  Object {
-                    "flex": 1,
-                  }
+                                Object {
+                                                "flex": 1,
+                                              }
                 }
                 title="Structured"
                 useCases={
-                  Array [
-                    "publishings",
-                    "data assets",
-                    "external interfacing",
-                  ]
+                                Array [
+                                                "publishings",
+                                                "data assets",
+                                                "external interfacing",
+                                              ]
                 }
-              />,
+/>,
               "lg": 6,
               "span": 12,
               "style": Object {
@@ -377,101 +375,100 @@ ShallowWrapper {
         "children": Array [
           <h3
             style={
-              Object {
-                "display": "inline-block",
-                "marginRight": 7,
-              }
+                        Object {
+                                    "display": "inline-block",
+                                    "marginRight": 7,
+                                  }
             }
-          >
+>
             What kind of behavior should we manage?
-          </h3>,
+</h3>,
           <Tooltip
             arrowPointAtCenter={false}
             autoAdjustOverflow={true}
             mouseEnterDelay={0.1}
             mouseLeaveDelay={0.1}
             placement="top"
-            prefixCls="ant-tooltip"
             title="Heimdali will set up a structure that enables your team to work on a workspace in a certain way. See descriptions below for more information"
             transitionName="zoom-big-fast"
-          >
+>
             <Icon
-              theme="twoTone"
-              type="question-circle"
+                        theme="twoTone"
+                        type="question-circle"
             />
-          </Tooltip>,
+</Tooltip>,
           <Row
             gutter={25}
             justify="center"
             style={
-              Object {
-                "marginBottom": 25,
-                "marginTop": 25,
-              }
+                        Object {
+                                    "marginBottom": 25,
+                                    "marginTop": 25,
+                                  }
             }
             type="flex"
-          >
+>
             <Col
-              lg={6}
-              span={12}
-              style={
-                Object {
-                  "display": "flex",
-                }
-              }
+                        lg={6}
+                        span={12}
+                        style={
+                                    Object {
+                                                "display": "flex",
+                                              }
+                        }
             >
-              <Behavior
-                behaviorKey="simple"
-                description="A simple place for multiple users to collaborate on a solution."
-                icon="team"
-                onChange={[Function]}
-                selected={false}
-                style={
-                  Object {
-                    "flex": 1,
-                  }
-                }
-                title="Simple"
-                useCases={
-                  Array [
-                    "brainstorming",
-                    "evaluation",
-                    "prototypes",
-                  ]
-                }
-              />
+                        <Behavior
+                                    behaviorKey="simple"
+                                    description="A simple place for multiple users to collaborate on a solution."
+                                    icon="team"
+                                    onChange={[Function]}
+                                    selected={false}
+                                    style={
+                                                Object {
+                                                            "flex": 1,
+                                                          }
+                                    }
+                                    title="Simple"
+                                    useCases={
+                                                Array [
+                                                            "brainstorming",
+                                                            "evaluation",
+                                                            "prototypes",
+                                                          ]
+                                    }
+                        />
             </Col>
             <Col
-              lg={6}
-              span={12}
-              style={
-                Object {
-                  "display": "flex",
-                }
-              }
+                        lg={6}
+                        span={12}
+                        style={
+                                    Object {
+                                                "display": "flex",
+                                              }
+                        }
             >
-              <Behavior
-                behaviorKey="structured"
-                description="Data moves through three steps: raw, staging, modeled. Each step represents a more \\"structured\\" version of the data."
-                icon="deployment-unit"
-                onChange={[Function]}
-                selected={false}
-                style={
-                  Object {
-                    "flex": 1,
-                  }
-                }
-                title="Structured"
-                useCases={
-                  Array [
-                    "publishings",
-                    "data assets",
-                    "external interfacing",
-                  ]
-                }
-              />
+                        <Behavior
+                                    behaviorKey="structured"
+                                    description="Data moves through three steps: raw, staging, modeled. Each step represents a more \\"structured\\" version of the data."
+                                    icon="deployment-unit"
+                                    onChange={[Function]}
+                                    selected={false}
+                                    style={
+                                                Object {
+                                                            "flex": 1,
+                                                          }
+                                    }
+                                    title="Structured"
+                                    useCases={
+                                                Array [
+                                                            "publishings",
+                                                            "data assets",
+                                                            "external interfacing",
+                                                          ]
+                                    }
+                        />
             </Col>
-          </Row>,
+</Row>,
         ],
       },
       "ref": null,
@@ -501,11 +498,10 @@ ShallowWrapper {
             "children": <Icon
               theme="twoTone"
               type="question-circle"
-            />,
+/>,
             "mouseEnterDelay": 0.1,
             "mouseLeaveDelay": 0.1,
             "placement": "top",
-            "prefixCls": "ant-tooltip",
             "title": "Heimdali will set up a structure that enables your team to work on a workspace in a certain way. See descriptions below for more information",
             "transitionName": "zoom-big-fast",
           },
@@ -534,62 +530,62 @@ ShallowWrapper {
                 lg={6}
                 span={12}
                 style={
-                  Object {
-                    "display": "flex",
-                  }
+                                Object {
+                                                "display": "flex",
+                                              }
                 }
-              >
+>
                 <Behavior
-                  behaviorKey="simple"
-                  description="A simple place for multiple users to collaborate on a solution."
-                  icon="team"
-                  onChange={[Function]}
-                  selected={false}
-                  style={
-                    Object {
-                      "flex": 1,
-                    }
-                  }
-                  title="Simple"
-                  useCases={
-                    Array [
-                      "brainstorming",
-                      "evaluation",
-                      "prototypes",
-                    ]
-                  }
+                                behaviorKey="simple"
+                                description="A simple place for multiple users to collaborate on a solution."
+                                icon="team"
+                                onChange={[Function]}
+                                selected={false}
+                                style={
+                                                Object {
+                                                                "flex": 1,
+                                                              }
+                                }
+                                title="Simple"
+                                useCases={
+                                                Array [
+                                                                "brainstorming",
+                                                                "evaluation",
+                                                                "prototypes",
+                                                              ]
+                                }
                 />
-              </Col>,
+</Col>,
               <Col
                 lg={6}
                 span={12}
                 style={
-                  Object {
-                    "display": "flex",
-                  }
+                                Object {
+                                                "display": "flex",
+                                              }
                 }
-              >
+>
                 <Behavior
-                  behaviorKey="structured"
-                  description="Data moves through three steps: raw, staging, modeled. Each step represents a more \\"structured\\" version of the data."
-                  icon="deployment-unit"
-                  onChange={[Function]}
-                  selected={false}
-                  style={
-                    Object {
-                      "flex": 1,
-                    }
-                  }
-                  title="Structured"
-                  useCases={
-                    Array [
-                      "publishings",
-                      "data assets",
-                      "external interfacing",
-                    ]
-                  }
+                                behaviorKey="structured"
+                                description="Data moves through three steps: raw, staging, modeled. Each step represents a more \\"structured\\" version of the data."
+                                icon="deployment-unit"
+                                onChange={[Function]}
+                                selected={false}
+                                style={
+                                                Object {
+                                                                "flex": 1,
+                                                              }
+                                }
+                                title="Structured"
+                                useCases={
+                                                Array [
+                                                                "publishings",
+                                                                "data assets",
+                                                                "external interfacing",
+                                                              ]
+                                }
                 />
-              </Col>,
+</Col>,
             ],
             "gutter": 25,
             "justify": "center",
@@ -613,19 +609,19 @@ ShallowWrapper {
                   onChange={[Function]}
                   selected={false}
                   style={
-                    Object {
-                      "flex": 1,
-                    }
+                                    Object {
+                                                      "flex": 1,
+                                                    }
                   }
                   title="Simple"
                   useCases={
-                    Array [
-                      "brainstorming",
-                      "evaluation",
-                      "prototypes",
-                    ]
+                                    Array [
+                                                      "brainstorming",
+                                                      "evaluation",
+                                                      "prototypes",
+                                                    ]
                   }
-                />,
+/>,
                 "lg": 6,
                 "span": 12,
                 "style": Object {
@@ -671,19 +667,19 @@ ShallowWrapper {
                   onChange={[Function]}
                   selected={false}
                   style={
-                    Object {
-                      "flex": 1,
-                    }
+                                    Object {
+                                                      "flex": 1,
+                                                    }
                   }
                   title="Structured"
                   useCases={
-                    Array [
-                      "publishings",
-                      "data assets",
-                      "external interfacing",
-                    ]
+                                    Array [
+                                                      "publishings",
+                                                      "data assets",
+                                                      "external interfacing",
+                                                    ]
                   }
-                />,
+/>,
                 "lg": 6,
                 "span": 12,
                 "style": Object {
@@ -740,8 +736,6 @@ ShallowWrapper {
         },
       },
     },
-    "attachTo": undefined,
-    "hydrateIn": undefined,
   },
 }
 `;

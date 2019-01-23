@@ -104,7 +104,7 @@ class MemberList extends React.Component<Props> {
     return (
       <Card
         actions={[
-          <a href="#" onClick={showModal}>Add a member</a>,
+          <a key="action" href="#" onClick={showModal}>Add a member</a>,
         ]}
       >
       <CardHeader

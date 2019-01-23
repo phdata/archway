@@ -6,26 +6,26 @@ ShallowWrapper {
   Symbol(enzyme.__unrendered__): <ServiceDisplay
     index={0}
     links={
-      HiveServiceLinks {
-        "links": Array [],
-        "service": Object {
-          "status": "",
-          "thrift": Array [],
-        },
-      }
+        HiveServiceLinks {
+            "links": Array [],
+            "service": Object {
+              "status": "",
+              "thrift": Array [],
+            },
+          }
     }
     name=""
     status={
-      Status {
-        "glowColorText": [Function],
-        "statusColor": [Function],
-        "statusText": [Function],
-        "statusable": Object {
-          "status": "",
-        },
-      }
+        Status {
+            "glowColorText": [Function],
+            "statusColor": [Function],
+            "statusText": [Function],
+            "statusable": Object {
+              "status": "",
+            },
+          }
     }
-  />,
+/>,
   Symbol(enzyme.__renderer__): Object {
     "batchedUpdates": [Function],
     "getNode": [Function],
@@ -40,23 +40,22 @@ ShallowWrapper {
     "nodeType": "class",
     "props": Object {
       "actions": Array [],
-      "children": <Unknown
+      "children": <_default
         avatar={
-          <Avatar
-            prefixCls="ant-avatar"
-            shape="circle"
-            size="small"
-            style={
-              Object {
-                "backgroundColor": "rgb(187, 187, 187)",
-                "boxShadow": "0 0 5px 2px hsl(0, 0%, 73.3%)",
-              }
-            }
-          />
+                <Avatar
+                        shape="circle"
+                        size="small"
+                        style={
+                                Object {
+                                        "backgroundColor": "rgb(187, 187, 187)",
+                                        "boxShadow": "0 0 5px 2px hsl(0, 0%, 73.3%)",
+                                      }
+                        }
+                />
         }
         description="'s status is currently unknown"
         title=""
-      />,
+/>,
       "style": Object {
         "flex": 1,
         "marginLeft": 0,
@@ -69,16 +68,15 @@ ShallowWrapper {
       "nodeType": "function",
       "props": Object {
         "avatar": <Avatar
-          prefixCls="ant-avatar"
           shape="circle"
           size="small"
           style={
-            Object {
-              "backgroundColor": "rgb(187, 187, 187)",
-              "boxShadow": "0 0 5px 2px hsl(0, 0%, 73.3%)",
-            }
+                    Object {
+                              "backgroundColor": "rgb(187, 187, 187)",
+                              "boxShadow": "0 0 5px 2px hsl(0, 0%, 73.3%)",
+                            }
           }
-        />,
+/>,
         "description": "'s status is currently unknown",
         "title": "",
       },
@@ -95,23 +93,22 @@ ShallowWrapper {
       "nodeType": "class",
       "props": Object {
         "actions": Array [],
-        "children": <Unknown
+        "children": <_default
           avatar={
-            <Avatar
-              prefixCls="ant-avatar"
-              shape="circle"
-              size="small"
-              style={
-                Object {
-                  "backgroundColor": "rgb(187, 187, 187)",
-                  "boxShadow": "0 0 5px 2px hsl(0, 0%, 73.3%)",
-                }
-              }
-            />
+                    <Avatar
+                              shape="circle"
+                              size="small"
+                              style={
+                                        Object {
+                                                  "backgroundColor": "rgb(187, 187, 187)",
+                                                  "boxShadow": "0 0 5px 2px hsl(0, 0%, 73.3%)",
+                                                }
+                              }
+                    />
           }
           description="'s status is currently unknown"
           title=""
-        />,
+/>,
         "style": Object {
           "flex": 1,
           "marginLeft": 0,
@@ -124,16 +121,15 @@ ShallowWrapper {
         "nodeType": "function",
         "props": Object {
           "avatar": <Avatar
-            prefixCls="ant-avatar"
             shape="circle"
             size="small"
             style={
-              Object {
-                "backgroundColor": "rgb(187, 187, 187)",
-                "boxShadow": "0 0 5px 2px hsl(0, 0%, 73.3%)",
-              }
+                        Object {
+                                    "backgroundColor": "rgb(187, 187, 187)",
+                                    "boxShadow": "0 0 5px 2px hsl(0, 0%, 73.3%)",
+                                  }
             }
-          />,
+/>,
           "description": "'s status is currently unknown",
           "title": "",
         },
@@ -160,8 +156,6 @@ ShallowWrapper {
         },
       },
     },
-    "attachTo": undefined,
-    "hydrateIn": undefined,
   },
 }
 `;

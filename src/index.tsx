@@ -1,14 +1,10 @@
+import { createHashHistory } from 'history';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { createHashHistory } from 'history';
 import { Provider } from 'react-redux';
 import App from './containers/App';
 import store from './redux';
-import './index.less';
-
-if (module.hot) {
-  module.hot.accept();
-}
+import './index.css';
 
 const history = createHashHistory();
 
@@ -18,5 +14,5 @@ ReactDOM.render(
   <Provider store={providerStore}>
     <App history={history} />
   </Provider>,
-  document.getElementById('root') as HTMLElement,
+  document.getElementById('root') as HTMLElement
 );

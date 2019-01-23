@@ -8,7 +8,7 @@ ShallowWrapper {
     icon=""
     onChange={[Function]}
     title=""
-  />,
+/>,
   Symbol(enzyme.__renderer__): Object {
     "batchedUpdates": [Function],
     "getNode": [Function],
@@ -28,42 +28,40 @@ ShallowWrapper {
       "children": Array [
         <div
           style={
-            Object {
-              "opacity": 0,
-              "position": "absolute",
-              "right": 25,
-              "top": 25,
-              "transition": "opacity 300ms",
-            }
+                    Object {
+                              "opacity": 0,
+                              "position": "absolute",
+                              "right": 25,
+                              "top": 25,
+                              "transition": "opacity 300ms",
+                            }
           }
-        >
+>
           <Icon
-            style={
-              Object {
-                "fontSize": 14,
-              }
-            }
-            type="check"
+                    style={
+                              Object {
+                                        "fontSize": 14,
+                                      }
+                    }
+                    type="check"
           />
-        </div>,
+</div>,
         <Icon
           style={
-            Object {
-              "fontSize": 42,
-            }
+                    Object {
+                              "fontSize": 42,
+                            }
           }
           type=""
-        />,
+/>,
         <div
           style={
-            Object {
-              "fontSize": 14,
-              "textTransform": "uppercase",
-            }
+                    Object {
+                              "fontSize": 14,
+                              "textTransform": "uppercase",
+                            }
           }
-        >
-          
-        </div>,
+/>,
         undefined,
         undefined,
       ],
@@ -82,12 +80,12 @@ ShallowWrapper {
         "props": Object {
           "children": <Icon
             style={
-              Object {
-                "fontSize": 14,
-              }
+                        Object {
+                                    "fontSize": 14,
+                                  }
             }
             type="check"
-          />,
+/>,
           "style": Object {
             "opacity": 0,
             "position": "absolute",
@@ -159,42 +157,40 @@ ShallowWrapper {
         "children": Array [
           <div
             style={
-              Object {
-                "opacity": 0,
-                "position": "absolute",
-                "right": 25,
-                "top": 25,
-                "transition": "opacity 300ms",
-              }
+                        Object {
+                                    "opacity": 0,
+                                    "position": "absolute",
+                                    "right": 25,
+                                    "top": 25,
+                                    "transition": "opacity 300ms",
+                                  }
             }
-          >
+>
             <Icon
-              style={
-                Object {
-                  "fontSize": 14,
-                }
-              }
-              type="check"
+                        style={
+                                    Object {
+                                                "fontSize": 14,
+                                              }
+                        }
+                        type="check"
             />
-          </div>,
+</div>,
           <Icon
             style={
-              Object {
-                "fontSize": 42,
-              }
+                        Object {
+                                    "fontSize": 42,
+                                  }
             }
             type=""
-          />,
+/>,
           <div
             style={
-              Object {
-                "fontSize": 14,
-                "textTransform": "uppercase",
-              }
+                        Object {
+                                    "fontSize": 14,
+                                    "textTransform": "uppercase",
+                                  }
             }
-          >
-            
-          </div>,
+/>,
           undefined,
           undefined,
         ],
@@ -213,12 +209,12 @@ ShallowWrapper {
           "props": Object {
             "children": <Icon
               style={
-                Object {
-                  "fontSize": 14,
-                }
+                            Object {
+                                          "fontSize": 14,
+                                        }
               }
               type="check"
-            />,
+/>,
             "style": Object {
               "opacity": 0,
               "position": "absolute",
@@ -295,8 +291,6 @@ ShallowWrapper {
         },
       },
     },
-    "attachTo": undefined,
-    "hydrateIn": undefined,
   },
 }
 `;

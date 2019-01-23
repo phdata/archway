@@ -7,7 +7,7 @@ ShallowWrapper {
     pci={false}
     phi={false}
     pii={false}
-  />,
+/>,
   Symbol(enzyme.__renderer__): Object {
     "batchedUpdates": [Function],
     "getNode": [Function],
@@ -29,35 +29,35 @@ ShallowWrapper {
       "children": Array [
         <Label>
           compliance
-        </Label>,
+</Label>,
         <div
           style={
-            Object {
-              "alignItems": "center",
-              "display": "flex",
-              "flex": 1,
-            }
+                    Object {
+                              "alignItems": "center",
+                              "display": "flex",
+                              "flex": 1,
+                            }
           }
-        >
+>
           <ComplianceItem
-            checked={false}
-            icon="bank"
+                    checked={false}
+                    icon="bank"
           >
-            PCI
+                    PCI
           </ComplianceItem>
           <ComplianceItem
-            checked={false}
-            icon="medicine-box"
+                    checked={false}
+                    icon="medicine-box"
           >
-            PHI
+                    PHI
           </ComplianceItem>
           <ComplianceItem
-            checked={false}
-            icon="idcard"
+                    checked={false}
+                    icon="idcard"
           >
-            PII
+                    PII
           </ComplianceItem>
-        </div>,
+</div>,
       ],
       "style": Object {
         "display": "flex",
@@ -86,21 +86,21 @@ ShallowWrapper {
             <ComplianceItem
               checked={false}
               icon="bank"
-            >
+>
               PCI
-            </ComplianceItem>,
+</ComplianceItem>,
             <ComplianceItem
               checked={false}
               icon="medicine-box"
-            >
+>
               PHI
-            </ComplianceItem>,
+</ComplianceItem>,
             <ComplianceItem
               checked={false}
               icon="idcard"
-            >
+>
               PII
-            </ComplianceItem>,
+</ComplianceItem>,
           ],
           "style": Object {
             "alignItems": "center",
@@ -169,35 +169,35 @@ ShallowWrapper {
         "children": Array [
           <Label>
             compliance
-          </Label>,
+</Label>,
           <div
             style={
-              Object {
-                "alignItems": "center",
-                "display": "flex",
-                "flex": 1,
-              }
+                        Object {
+                                    "alignItems": "center",
+                                    "display": "flex",
+                                    "flex": 1,
+                                  }
             }
-          >
+>
             <ComplianceItem
-              checked={false}
-              icon="bank"
+                        checked={false}
+                        icon="bank"
             >
-              PCI
+                        PCI
             </ComplianceItem>
             <ComplianceItem
-              checked={false}
-              icon="medicine-box"
+                        checked={false}
+                        icon="medicine-box"
             >
-              PHI
+                        PHI
             </ComplianceItem>
             <ComplianceItem
-              checked={false}
-              icon="idcard"
+                        checked={false}
+                        icon="idcard"
             >
-              PII
+                        PII
             </ComplianceItem>
-          </div>,
+</div>,
         ],
         "style": Object {
           "display": "flex",
@@ -226,21 +226,21 @@ ShallowWrapper {
               <ComplianceItem
                 checked={false}
                 icon="bank"
-              >
+>
                 PCI
-              </ComplianceItem>,
+</ComplianceItem>,
               <ComplianceItem
                 checked={false}
                 icon="medicine-box"
-              >
+>
                 PHI
-              </ComplianceItem>,
+</ComplianceItem>,
               <ComplianceItem
                 checked={false}
                 icon="idcard"
-              >
+>
                 PII
-              </ComplianceItem>,
+</ComplianceItem>,
             ],
             "style": Object {
               "alignItems": "center",
@@ -312,8 +312,6 @@ ShallowWrapper {
         },
       },
     },
-    "attachTo": undefined,
-    "hydrateIn": undefined,
   },
 }
 `;

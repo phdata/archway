@@ -25,23 +25,31 @@ ShallowWrapper {
       "children": Array [
         <Label>
           approvals
-        </Label>,
+</Label>,
         <div
           style={
-            Object {
-              "alignItems": "center",
-              "display": "flex",
-              "flex": 1,
-            }
+                    Object {
+                              "alignItems": "center",
+                              "display": "flex",
+                              "flex": 1,
+                            }
           }
-        >
-          <Approval>
-            risk
+>
+          <Approval
+                    approvalDate={undefined}
+                    approve={undefined}
+                    loading={undefined}
+          >
+                    risk
           </Approval>
-          <Approval>
-            ops
+          <Approval
+                    approvalDate={undefined}
+                    approve={undefined}
+                    loading={undefined}
+          >
+                    ops
           </Approval>
-        </div>,
+</div>,
       ],
       "style": Object {
         "display": "flex",
@@ -67,12 +75,20 @@ ShallowWrapper {
         "nodeType": "host",
         "props": Object {
           "children": Array [
-            <Approval>
+            <Approval
+              approvalDate={undefined}
+              approve={undefined}
+              loading={undefined}
+>
               risk
-            </Approval>,
-            <Approval>
+</Approval>,
+            <Approval
+              approvalDate={undefined}
+              approve={undefined}
+              loading={undefined}
+>
               ops
-            </Approval>,
+</Approval>,
           ],
           "style": Object {
             "alignItems": "center",
@@ -130,23 +146,31 @@ ShallowWrapper {
         "children": Array [
           <Label>
             approvals
-          </Label>,
+</Label>,
           <div
             style={
-              Object {
-                "alignItems": "center",
-                "display": "flex",
-                "flex": 1,
-              }
+                        Object {
+                                    "alignItems": "center",
+                                    "display": "flex",
+                                    "flex": 1,
+                                  }
             }
-          >
-            <Approval>
-              risk
+>
+            <Approval
+                        approvalDate={undefined}
+                        approve={undefined}
+                        loading={undefined}
+            >
+                        risk
             </Approval>
-            <Approval>
-              ops
+            <Approval
+                        approvalDate={undefined}
+                        approve={undefined}
+                        loading={undefined}
+            >
+                        ops
             </Approval>
-          </div>,
+</div>,
         ],
         "style": Object {
           "display": "flex",
@@ -172,12 +196,20 @@ ShallowWrapper {
           "nodeType": "host",
           "props": Object {
             "children": Array [
-              <Approval>
+              <Approval
+                approvalDate={undefined}
+                approve={undefined}
+                loading={undefined}
+>
                 risk
-              </Approval>,
-              <Approval>
+</Approval>,
+              <Approval
+                approvalDate={undefined}
+                approve={undefined}
+                loading={undefined}
+>
                 ops
-              </Approval>,
+</Approval>,
             ],
             "style": Object {
               "alignItems": "center",
@@ -238,8 +270,6 @@ ShallowWrapper {
         },
       },
     },
-    "attachTo": undefined,
-    "hydrateIn": undefined,
   },
 }
 `;

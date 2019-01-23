@@ -3,7 +3,9 @@
 exports[`Liaison renders correctly 1`] = `
 ShallowWrapper {
   Symbol(enzyme.__root__): [Circular],
-  Symbol(enzyme.__unrendered__): <Liason />,
+  Symbol(enzyme.__unrendered__): <Liason
+    liaison={undefined}
+/>,
   Symbol(enzyme.__renderer__): Object {
     "batchedUpdates": [Function],
     "getNode": [Function],
@@ -25,39 +27,39 @@ ShallowWrapper {
       "children": Array [
         <Label>
           liaison
-        </Label>,
+</Label>,
         <div
           style={
-            Object {
-              "alignItems": "center",
-              "display": "flex",
-              "flex": 1,
-              "flexDirection": "column",
-              "justifyContent": "center",
-              "textAlign": "center",
-            }
+                    Object {
+                              "alignItems": "center",
+                              "display": "flex",
+                              "flex": 1,
+                              "flexDirection": "column",
+                              "justifyContent": "center",
+                              "textAlign": "center",
+                            }
           }
-        >
+>
           <Icon
-            style={
-              Object {
-                "fontSize": 42,
-                "marginBottom": 5,
-              }
-            }
-            theme="twoTone"
-            twoToneColor="#D7C9AA"
-            type="crown"
+                    style={
+                              Object {
+                                        "fontSize": 42,
+                                        "marginBottom": 5,
+                                      }
+                    }
+                    theme="twoTone"
+                    twoToneColor="#D7C9AA"
+                    type="crown"
           />
           <div
-            style={
-              Object {
-                "letterSpacing": 1,
-                "textTransform": "uppercase",
-              }
-            }
+                    style={
+                              Object {
+                                        "letterSpacing": 1,
+                                        "textTransform": "uppercase",
+                                      }
+                    }
           />
-        </div>,
+</div>,
       ],
       "style": Object {
         "display": "flex",
@@ -85,23 +87,23 @@ ShallowWrapper {
           "children": Array [
             <Icon
               style={
-                Object {
-                  "fontSize": 42,
-                  "marginBottom": 5,
-                }
+                            Object {
+                                          "fontSize": 42,
+                                          "marginBottom": 5,
+                                        }
               }
               theme="twoTone"
               twoToneColor="#D7C9AA"
               type="crown"
-            />,
+/>,
             <div
               style={
-                Object {
-                  "letterSpacing": 1,
-                  "textTransform": "uppercase",
-                }
+                            Object {
+                                          "letterSpacing": 1,
+                                          "textTransform": "uppercase",
+                                        }
               }
-            />,
+/>,
           ],
           "style": Object {
             "alignItems": "center",
@@ -166,39 +168,39 @@ ShallowWrapper {
         "children": Array [
           <Label>
             liaison
-          </Label>,
+</Label>,
           <div
             style={
-              Object {
-                "alignItems": "center",
-                "display": "flex",
-                "flex": 1,
-                "flexDirection": "column",
-                "justifyContent": "center",
-                "textAlign": "center",
-              }
+                        Object {
+                                    "alignItems": "center",
+                                    "display": "flex",
+                                    "flex": 1,
+                                    "flexDirection": "column",
+                                    "justifyContent": "center",
+                                    "textAlign": "center",
+                                  }
             }
-          >
+>
             <Icon
-              style={
-                Object {
-                  "fontSize": 42,
-                  "marginBottom": 5,
-                }
-              }
-              theme="twoTone"
-              twoToneColor="#D7C9AA"
-              type="crown"
+                        style={
+                                    Object {
+                                                "fontSize": 42,
+                                                "marginBottom": 5,
+                                              }
+                        }
+                        theme="twoTone"
+                        twoToneColor="#D7C9AA"
+                        type="crown"
             />
             <div
-              style={
-                Object {
-                  "letterSpacing": 1,
-                  "textTransform": "uppercase",
-                }
-              }
+                        style={
+                                    Object {
+                                                "letterSpacing": 1,
+                                                "textTransform": "uppercase",
+                                              }
+                        }
             />
-          </div>,
+</div>,
         ],
         "style": Object {
           "display": "flex",
@@ -226,23 +228,23 @@ ShallowWrapper {
             "children": Array [
               <Icon
                 style={
-                  Object {
-                    "fontSize": 42,
-                    "marginBottom": 5,
-                  }
+                                Object {
+                                                "fontSize": 42,
+                                                "marginBottom": 5,
+                                              }
                 }
                 theme="twoTone"
                 twoToneColor="#D7C9AA"
                 type="crown"
-              />,
+/>,
               <div
                 style={
-                  Object {
-                    "letterSpacing": 1,
-                    "textTransform": "uppercase",
-                  }
+                                Object {
+                                                "letterSpacing": 1,
+                                                "textTransform": "uppercase",
+                                              }
                 }
-              />,
+/>,
             ],
             "style": Object {
               "alignItems": "center",
@@ -310,8 +312,6 @@ ShallowWrapper {
         },
       },
     },
-    "attachTo": undefined,
-    "hydrateIn": undefined,
   },
 }
 `;

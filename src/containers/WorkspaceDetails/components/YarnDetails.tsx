@@ -31,6 +31,7 @@ const YarnDetails = ({ yarn, poolName, pools, onRefreshPools }: Props) => {
     <Card
       actions={[
         <a
+          key="action"
           target="_blank"
           href={yarn ? `//${rmURL}` : undefined}>
           Open Resource Manager

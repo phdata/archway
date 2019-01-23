@@ -9,7 +9,7 @@ pipelines:
         script:
           - npm i -g typescript
           - npm i
-          - npm run-script prepare
+          - npm run-script build
 
   tags:
     "*":
@@ -21,7 +21,7 @@ pipelines:
             - dist/*
           script:
             - npm i -g typescript
-            - npm run-script prepare
+            - npm run-script build
       - step:
           name: "Deploy"
           script:

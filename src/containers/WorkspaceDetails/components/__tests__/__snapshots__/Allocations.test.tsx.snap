@@ -6,7 +6,7 @@ ShallowWrapper {
   Symbol(enzyme.__unrendered__): <Allocations
     allocations={Array []}
     onChangeAllocation={[Function]}
-  />,
+/>,
   Symbol(enzyme.__renderer__): Object {
     "batchedUpdates": [Function],
     "getNode": [Function],
@@ -40,7 +40,8 @@ ShallowWrapper {
               Available
             </Label>
           }
-        />,
+          subheading={undefined}
+/>,
         undefined,
         undefined,
       ],
@@ -104,7 +105,8 @@ ShallowWrapper {
                 Available
               </Label>
             }
-          />,
+            subheading={undefined}
+/>,
           undefined,
           undefined,
         ],
@@ -159,8 +161,6 @@ ShallowWrapper {
         },
       },
     },
-    "attachTo": undefined,
-    "hydrateIn": undefined,
   },
 }
 `;

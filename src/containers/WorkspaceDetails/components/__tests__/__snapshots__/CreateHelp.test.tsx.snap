@@ -7,7 +7,7 @@ ShallowWrapper {
     host=""
     namespace=""
     port={123}
-  />,
+/>,
   Symbol(enzyme.__renderer__): Object {
     "batchedUpdates": [Function],
     "getNode": [Function],
@@ -24,131 +24,131 @@ ShallowWrapper {
       "children": Array [
         <Label>
           step 2. create
-        </Label>,
+</Label>,
         <p
           style={
-            Object {
-              "fontSize": "12px",
-              "marginBottom": "0.5em",
-              "textAlign": "center",
-            }
+                    Object {
+                              "fontSize": "12px",
+                              "marginBottom": "0.5em",
+                              "textAlign": "center",
+                            }
           }
-        >
+>
           create an app that interacts with your workspace
-        </p>,
+</p>,
         <SyntaxHighlighter
           language="python"
           style={
-            Object {
-              "hljs": Object {
-                "background": "#2d2d2d",
-                "color": "#cccccc",
-                "display": "block",
-                "overflowX": "auto",
-                "padding": "0.5em",
-              },
-              "hljs-addition": Object {
-                "color": "#99cc99",
-              },
-              "hljs-attribute": Object {
-                "color": "#ffcc66",
-              },
-              "hljs-built_in": Object {
-                "color": "#f99157",
-              },
-              "hljs-builtin-name": Object {
-                "color": "#f99157",
-              },
-              "hljs-bullet": Object {
-                "color": "#99cc99",
-              },
-              "hljs-comment": Object {
-                "color": "#999999",
-              },
-              "hljs-deletion": Object {
-                "color": "#f2777a",
-              },
-              "hljs-emphasis": Object {
-                "fontStyle": "italic",
-              },
-              "hljs-keyword": Object {
-                "color": "#cc99cc",
-              },
-              "hljs-link": Object {
-                "color": "#f99157",
-              },
-              "hljs-literal": Object {
-                "color": "#f99157",
-              },
-              "hljs-meta": Object {
-                "color": "#f99157",
-              },
-              "hljs-name": Object {
-                "color": "#f2777a",
-              },
-              "hljs-number": Object {
-                "color": "#f99157",
-              },
-              "hljs-params": Object {
-                "color": "#f99157",
-              },
-              "hljs-quote": Object {
-                "color": "#999999",
-              },
-              "hljs-regexp": Object {
-                "color": "#f2777a",
-              },
-              "hljs-section": Object {
-                "color": "#6699cc",
-              },
-              "hljs-selector-class": Object {
-                "color": "#f2777a",
-              },
-              "hljs-selector-id": Object {
-                "color": "#f2777a",
-              },
-              "hljs-selector-tag": Object {
-                "color": "#cc99cc",
-              },
-              "hljs-string": Object {
-                "color": "#99cc99",
-              },
-              "hljs-strong": Object {
-                "fontWeight": "bold",
-              },
-              "hljs-symbol": Object {
-                "color": "#99cc99",
-              },
-              "hljs-tag": Object {
-                "color": "#f2777a",
-              },
-              "hljs-template-variable": Object {
-                "color": "#f2777a",
-              },
-              "hljs-title": Object {
-                "color": "#6699cc",
-              },
-              "hljs-type": Object {
-                "color": "#f99157",
-              },
-              "hljs-variable": Object {
-                "color": "#f2777a",
-              },
-            }
+                    Object {
+                              "hljs": Object {
+                                "background": "#2d2d2d",
+                                "color": "#cccccc",
+                                "display": "block",
+                                "overflowX": "auto",
+                                "padding": "0.5em",
+                              },
+                              "hljs-addition": Object {
+                                "color": "#99cc99",
+                              },
+                              "hljs-attribute": Object {
+                                "color": "#ffcc66",
+                              },
+                              "hljs-built_in": Object {
+                                "color": "#f99157",
+                              },
+                              "hljs-builtin-name": Object {
+                                "color": "#f99157",
+                              },
+                              "hljs-bullet": Object {
+                                "color": "#99cc99",
+                              },
+                              "hljs-comment": Object {
+                                "color": "#999999",
+                              },
+                              "hljs-deletion": Object {
+                                "color": "#f2777a",
+                              },
+                              "hljs-emphasis": Object {
+                                "fontStyle": "italic",
+                              },
+                              "hljs-keyword": Object {
+                                "color": "#cc99cc",
+                              },
+                              "hljs-link": Object {
+                                "color": "#f99157",
+                              },
+                              "hljs-literal": Object {
+                                "color": "#f99157",
+                              },
+                              "hljs-meta": Object {
+                                "color": "#f99157",
+                              },
+                              "hljs-name": Object {
+                                "color": "#f2777a",
+                              },
+                              "hljs-number": Object {
+                                "color": "#f99157",
+                              },
+                              "hljs-params": Object {
+                                "color": "#f99157",
+                              },
+                              "hljs-quote": Object {
+                                "color": "#999999",
+                              },
+                              "hljs-regexp": Object {
+                                "color": "#f2777a",
+                              },
+                              "hljs-section": Object {
+                                "color": "#6699cc",
+                              },
+                              "hljs-selector-class": Object {
+                                "color": "#f2777a",
+                              },
+                              "hljs-selector-id": Object {
+                                "color": "#f2777a",
+                              },
+                              "hljs-selector-tag": Object {
+                                "color": "#cc99cc",
+                              },
+                              "hljs-string": Object {
+                                "color": "#99cc99",
+                              },
+                              "hljs-strong": Object {
+                                "fontWeight": "bold",
+                              },
+                              "hljs-symbol": Object {
+                                "color": "#99cc99",
+                              },
+                              "hljs-tag": Object {
+                                "color": "#f2777a",
+                              },
+                              "hljs-template-variable": Object {
+                                "color": "#f2777a",
+                              },
+                              "hljs-title": Object {
+                                "color": "#6699cc",
+                              },
+                              "hljs-type": Object {
+                                "color": "#f99157",
+                              },
+                              "hljs-variable": Object {
+                                "color": "#f2777a",
+                              },
+                            }
           }
-        >
+>
           from impala.dbapi
-import connect
-conn = connect(
-  host = '',
-  port = 123,
-  database = ''
-)
-cursor = conn.cursor()
-cursor.execute('SELECT * FROM mytable LIMIT 100')
-print cursor.description # prints the result set’ s schema
-results = cursor.fetchall()
-        </SyntaxHighlighter>,
+          import connect
+          conn = connect(
+            host = '',
+            port = 123,
+            database = ''
+          )
+          cursor = conn.cursor()
+          cursor.execute('SELECT * FROM mytable LIMIT 100')
+          print cursor.description # prints the result set’ s schema
+          results = cursor.fetchall()
+</SyntaxHighlighter>,
       ],
       "style": Object {
         "padding": "4px",
@@ -323,131 +323,131 @@ results = cursor.fetchall()",
         "children": Array [
           <Label>
             step 2. create
-          </Label>,
+</Label>,
           <p
             style={
-              Object {
-                "fontSize": "12px",
-                "marginBottom": "0.5em",
-                "textAlign": "center",
-              }
+                        Object {
+                                    "fontSize": "12px",
+                                    "marginBottom": "0.5em",
+                                    "textAlign": "center",
+                                  }
             }
-          >
+>
             create an app that interacts with your workspace
-          </p>,
+</p>,
           <SyntaxHighlighter
             language="python"
             style={
-              Object {
-                "hljs": Object {
-                  "background": "#2d2d2d",
-                  "color": "#cccccc",
-                  "display": "block",
-                  "overflowX": "auto",
-                  "padding": "0.5em",
-                },
-                "hljs-addition": Object {
-                  "color": "#99cc99",
-                },
-                "hljs-attribute": Object {
-                  "color": "#ffcc66",
-                },
-                "hljs-built_in": Object {
-                  "color": "#f99157",
-                },
-                "hljs-builtin-name": Object {
-                  "color": "#f99157",
-                },
-                "hljs-bullet": Object {
-                  "color": "#99cc99",
-                },
-                "hljs-comment": Object {
-                  "color": "#999999",
-                },
-                "hljs-deletion": Object {
-                  "color": "#f2777a",
-                },
-                "hljs-emphasis": Object {
-                  "fontStyle": "italic",
-                },
-                "hljs-keyword": Object {
-                  "color": "#cc99cc",
-                },
-                "hljs-link": Object {
-                  "color": "#f99157",
-                },
-                "hljs-literal": Object {
-                  "color": "#f99157",
-                },
-                "hljs-meta": Object {
-                  "color": "#f99157",
-                },
-                "hljs-name": Object {
-                  "color": "#f2777a",
-                },
-                "hljs-number": Object {
-                  "color": "#f99157",
-                },
-                "hljs-params": Object {
-                  "color": "#f99157",
-                },
-                "hljs-quote": Object {
-                  "color": "#999999",
-                },
-                "hljs-regexp": Object {
-                  "color": "#f2777a",
-                },
-                "hljs-section": Object {
-                  "color": "#6699cc",
-                },
-                "hljs-selector-class": Object {
-                  "color": "#f2777a",
-                },
-                "hljs-selector-id": Object {
-                  "color": "#f2777a",
-                },
-                "hljs-selector-tag": Object {
-                  "color": "#cc99cc",
-                },
-                "hljs-string": Object {
-                  "color": "#99cc99",
-                },
-                "hljs-strong": Object {
-                  "fontWeight": "bold",
-                },
-                "hljs-symbol": Object {
-                  "color": "#99cc99",
-                },
-                "hljs-tag": Object {
-                  "color": "#f2777a",
-                },
-                "hljs-template-variable": Object {
-                  "color": "#f2777a",
-                },
-                "hljs-title": Object {
-                  "color": "#6699cc",
-                },
-                "hljs-type": Object {
-                  "color": "#f99157",
-                },
-                "hljs-variable": Object {
-                  "color": "#f2777a",
-                },
-              }
+                        Object {
+                                    "hljs": Object {
+                                      "background": "#2d2d2d",
+                                      "color": "#cccccc",
+                                      "display": "block",
+                                      "overflowX": "auto",
+                                      "padding": "0.5em",
+                                    },
+                                    "hljs-addition": Object {
+                                      "color": "#99cc99",
+                                    },
+                                    "hljs-attribute": Object {
+                                      "color": "#ffcc66",
+                                    },
+                                    "hljs-built_in": Object {
+                                      "color": "#f99157",
+                                    },
+                                    "hljs-builtin-name": Object {
+                                      "color": "#f99157",
+                                    },
+                                    "hljs-bullet": Object {
+                                      "color": "#99cc99",
+                                    },
+                                    "hljs-comment": Object {
+                                      "color": "#999999",
+                                    },
+                                    "hljs-deletion": Object {
+                                      "color": "#f2777a",
+                                    },
+                                    "hljs-emphasis": Object {
+                                      "fontStyle": "italic",
+                                    },
+                                    "hljs-keyword": Object {
+                                      "color": "#cc99cc",
+                                    },
+                                    "hljs-link": Object {
+                                      "color": "#f99157",
+                                    },
+                                    "hljs-literal": Object {
+                                      "color": "#f99157",
+                                    },
+                                    "hljs-meta": Object {
+                                      "color": "#f99157",
+                                    },
+                                    "hljs-name": Object {
+                                      "color": "#f2777a",
+                                    },
+                                    "hljs-number": Object {
+                                      "color": "#f99157",
+                                    },
+                                    "hljs-params": Object {
+                                      "color": "#f99157",
+                                    },
+                                    "hljs-quote": Object {
+                                      "color": "#999999",
+                                    },
+                                    "hljs-regexp": Object {
+                                      "color": "#f2777a",
+                                    },
+                                    "hljs-section": Object {
+                                      "color": "#6699cc",
+                                    },
+                                    "hljs-selector-class": Object {
+                                      "color": "#f2777a",
+                                    },
+                                    "hljs-selector-id": Object {
+                                      "color": "#f2777a",
+                                    },
+                                    "hljs-selector-tag": Object {
+                                      "color": "#cc99cc",
+                                    },
+                                    "hljs-string": Object {
+                                      "color": "#99cc99",
+                                    },
+                                    "hljs-strong": Object {
+                                      "fontWeight": "bold",
+                                    },
+                                    "hljs-symbol": Object {
+                                      "color": "#99cc99",
+                                    },
+                                    "hljs-tag": Object {
+                                      "color": "#f2777a",
+                                    },
+                                    "hljs-template-variable": Object {
+                                      "color": "#f2777a",
+                                    },
+                                    "hljs-title": Object {
+                                      "color": "#6699cc",
+                                    },
+                                    "hljs-type": Object {
+                                      "color": "#f99157",
+                                    },
+                                    "hljs-variable": Object {
+                                      "color": "#f2777a",
+                                    },
+                                  }
             }
-          >
+>
             from impala.dbapi
-import connect
-conn = connect(
-  host = '',
-  port = 123,
-  database = ''
-)
-cursor = conn.cursor()
-cursor.execute('SELECT * FROM mytable LIMIT 100')
-print cursor.description # prints the result set’ s schema
-results = cursor.fetchall()
-          </SyntaxHighlighter>,
+            import connect
+            conn = connect(
+              host = '',
+              port = 123,
+              database = ''
+            )
+            cursor = conn.cursor()
+            cursor.execute('SELECT * FROM mytable LIMIT 100')
+            print cursor.description # prints the result set’ s schema
+            results = cursor.fetchall()
+</SyntaxHighlighter>,
         ],
         "style": Object {
           "padding": "4px",
@@ -630,8 +630,6 @@ results = cursor.fetchall()",
         },
       },
     },
-    "attachTo": undefined,
-    "hydrateIn": undefined,
   },
 }
 `;

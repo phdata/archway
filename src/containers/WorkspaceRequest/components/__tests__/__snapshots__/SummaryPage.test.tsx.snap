@@ -5,7 +5,7 @@ ShallowWrapper {
   Symbol(enzyme.__root__): [Circular],
   Symbol(enzyme.__unrendered__): <SummaryPage
     name=""
-  />,
+/>,
   Symbol(enzyme.__renderer__): Object {
     "batchedUpdates": [Function],
     "getNode": [Function],
@@ -22,171 +22,166 @@ ShallowWrapper {
       "children": Array [
         <h3>
           Here's a preview of what we'll request. Take a look and submit your request when you're ready!
-        </h3>,
+</h3>,
         <Row
           gutter={0}
           justify="center"
           style={
-            Object {
-              "marginBottom": 25,
-              "marginTop": 25,
-            }
+                    Object {
+                              "marginBottom": 25,
+                              "marginTop": 25,
+                            }
           }
           type="flex"
-        >
+>
           <Col
-            span={8}
+                    span={8}
           >
-            <Card>
-              <Icon
-                style={
-                  Object {
-                    "fontSize": 42,
-                  }
-                }
-                type="crown"
-              />
-              <Label>
-                You will be the liason for this project
-              </Label>
-              <h4>
-                
-              </h4>
-            </Card>
+                    <Card>
+                              <Icon
+                                        style={
+                                                  Object {
+                                                            "fontSize": 42,
+                                                          }
+                                        }
+                                        type="crown"
+                              />
+                              <Label>
+                                        You will be the liason for this project
+                              </Label>
+                              <h4 />
+                    </Card>
           </Col>
-        </Row>,
+</Row>,
         <Row
           gutter={25}
           justify="center"
           style={
-            Object {
-              "marginBottom": 25,
-              "marginTop": 25,
-            }
+                    Object {
+                              "marginBottom": 25,
+                              "marginTop": 25,
+                            }
           }
           type="flex"
-        >
+>
           <Col
-            span={6}
-            style={
-              Object {
-                "display": "flex",
-                "flex": 1,
-              }
-            }
+                    span={6}
+                    style={
+                              Object {
+                                        "display": "flex",
+                                        "flex": 1,
+                                      }
+                    }
           >
-            <Card
-              style={
-                Object {
-                  "display": "flex",
-                  "flex": 1,
-                  "justifyContent": "center",
-                }
-              }
-            >
-              <Icon
-                style={
-                  Object {
-                    "fontSize": 42,
-                  }
-                }
-                type="database"
-              />
-              <Label>
-                The following hive databases will be created for you
-              </Label>
-              <List
-                bordered={false}
-                dataSource={Array []}
-                loading={false}
-                pagination={false}
-                prefixCls="ant-list"
-                renderItem={[Function]}
-                split={true}
-              />
-            </Card>
+                    <Card
+                              style={
+                                        Object {
+                                                  "display": "flex",
+                                                  "flex": 1,
+                                                  "justifyContent": "center",
+                                                }
+                              }
+                    >
+                              <Icon
+                                        style={
+                                                  Object {
+                                                            "fontSize": 42,
+                                                          }
+                                        }
+                                        type="database"
+                              />
+                              <Label>
+                                        The following hive databases will be created for you
+                              </Label>
+                              <List
+                                        bordered={false}
+                                        dataSource={Array []}
+                                        loading={false}
+                                        pagination={false}
+                                        renderItem={[Function]}
+                                        split={true}
+                              />
+                    </Card>
           </Col>
           <Col
-            span={6}
-            style={
-              Object {
-                "display": "flex",
-                "flex": 1,
-              }
-            }
+                    span={6}
+                    style={
+                              Object {
+                                        "display": "flex",
+                                        "flex": 1,
+                                      }
+                    }
           >
-            <Card
-              style={
-                Object {
-                  "display": "flex",
-                  "flex": 1,
-                  "justifyContent": "center",
-                }
-              }
-            >
-              <Icon
-                style={
-                  Object {
-                    "fontSize": 42,
-                  }
-                }
-                type="rocket"
-              />
-              <Label>
-                The following resource pools will be created for you
-              </Label>
-              <List
-                bordered={false}
-                dataSource={Array []}
-                loading={false}
-                pagination={false}
-                prefixCls="ant-list"
-                renderItem={[Function]}
-                split={true}
-              />
-            </Card>
+                    <Card
+                              style={
+                                        Object {
+                                                  "display": "flex",
+                                                  "flex": 1,
+                                                  "justifyContent": "center",
+                                                }
+                              }
+                    >
+                              <Icon
+                                        style={
+                                                  Object {
+                                                            "fontSize": 42,
+                                                          }
+                                        }
+                                        type="rocket"
+                              />
+                              <Label>
+                                        The following resource pools will be created for you
+                              </Label>
+                              <List
+                                        bordered={false}
+                                        dataSource={Array []}
+                                        loading={false}
+                                        pagination={false}
+                                        renderItem={[Function]}
+                                        split={true}
+                              />
+                    </Card>
           </Col>
           <Col
-            span={6}
-            style={
-              Object {
-                "display": "flex",
-                "flex": 1,
-              }
-            }
+                    span={6}
+                    style={
+                              Object {
+                                        "display": "flex",
+                                        "flex": 1,
+                                      }
+                    }
           >
-            <Card
-              style={
-                Object {
-                  "display": "flex",
-                  "flex": 1,
-                  "justifyContent": "center",
-                }
-              }
-            >
-              <Icon
-                style={
-                  Object {
-                    "fontSize": 42,
-                  }
-                }
-                type="thunderbolt"
-              />
-              <Label>
-                The following applications (with their own consumer group) will be created for you
-              </Label>
-              <List
-                bordered={false}
-                dataSource={Array []}
-                loading={false}
-                pagination={false}
-                prefixCls="ant-list"
-                renderItem={[Function]}
-                split={true}
-              />
-            </Card>
+                    <Card
+                              style={
+                                        Object {
+                                                  "display": "flex",
+                                                  "flex": 1,
+                                                  "justifyContent": "center",
+                                                }
+                              }
+                    >
+                              <Icon
+                                        style={
+                                                  Object {
+                                                            "fontSize": 42,
+                                                          }
+                                        }
+                                        type="thunderbolt"
+                              />
+                              <Label>
+                                        The following applications (with their own consumer group) will be created for you
+                              </Label>
+                              <List
+                                        bordered={false}
+                                        dataSource={Array []}
+                                        loading={false}
+                                        pagination={false}
+                                        renderItem={[Function]}
+                                        split={true}
+                              />
+                    </Card>
           </Col>
-        </Row>,
+</Row>,
       ],
     },
     "ref": null,
@@ -209,24 +204,22 @@ ShallowWrapper {
         "props": Object {
           "children": <Col
             span={8}
-          >
+>
             <Card>
-              <Icon
-                style={
-                  Object {
-                    "fontSize": 42,
-                  }
-                }
-                type="crown"
-              />
-              <Label>
-                You will be the liason for this project
-              </Label>
-              <h4>
-                
-              </h4>
+                        <Icon
+                                    style={
+                                                Object {
+                                                            "fontSize": 42,
+                                                          }
+                                    }
+                                    type="crown"
+                        />
+                        <Label>
+                                    You will be the liason for this project
+                        </Label>
+                        <h4 />
             </Card>
-          </Col>,
+</Col>,
           "gutter": 0,
           "justify": "center",
           "style": Object {
@@ -243,20 +236,18 @@ ShallowWrapper {
           "props": Object {
             "children": <Card>
               <Icon
-                style={
-                  Object {
-                    "fontSize": 42,
-                  }
-                }
-                type="crown"
+                            style={
+                                          Object {
+                                                        "fontSize": 42,
+                                                      }
+                            }
+                            type="crown"
               />
               <Label>
-                You will be the liason for this project
+                            You will be the liason for this project
               </Label>
-              <h4>
-                
-              </h4>
-            </Card>,
+              <h4 />
+</Card>,
             "span": 8,
           },
           "ref": null,
@@ -268,18 +259,16 @@ ShallowWrapper {
               "children": Array [
                 <Icon
                   style={
-                    Object {
-                      "fontSize": 42,
-                    }
+                                    Object {
+                                                      "fontSize": 42,
+                                                    }
                   }
                   type="crown"
-                />,
+/>,
                 <Label>
                   You will be the liason for this project
-                </Label>,
-                <h4>
-                  
-                </h4>,
+</Label>,
+                <h4 />,
               ],
             },
             "ref": null,
@@ -336,123 +325,120 @@ ShallowWrapper {
             <Col
               span={6}
               style={
-                Object {
-                  "display": "flex",
-                  "flex": 1,
-                }
+                            Object {
+                                          "display": "flex",
+                                          "flex": 1,
+                                        }
               }
-            >
+>
               <Card
-                style={
-                  Object {
-                    "display": "flex",
-                    "flex": 1,
-                    "justifyContent": "center",
-                  }
-                }
+                            style={
+                                          Object {
+                                                        "display": "flex",
+                                                        "flex": 1,
+                                                        "justifyContent": "center",
+                                                      }
+                            }
               >
-                <Icon
-                  style={
-                    Object {
-                      "fontSize": 42,
-                    }
-                  }
-                  type="database"
-                />
-                <Label>
-                  The following hive databases will be created for you
-                </Label>
-                <List
-                  bordered={false}
-                  dataSource={Array []}
-                  loading={false}
-                  pagination={false}
-                  prefixCls="ant-list"
-                  renderItem={[Function]}
-                  split={true}
-                />
+                            <Icon
+                                          style={
+                                                        Object {
+                                                                      "fontSize": 42,
+                                                                    }
+                                          }
+                                          type="database"
+                            />
+                            <Label>
+                                          The following hive databases will be created for you
+                            </Label>
+                            <List
+                                          bordered={false}
+                                          dataSource={Array []}
+                                          loading={false}
+                                          pagination={false}
+                                          renderItem={[Function]}
+                                          split={true}
+                            />
               </Card>
-            </Col>,
+</Col>,
             <Col
               span={6}
               style={
-                Object {
-                  "display": "flex",
-                  "flex": 1,
-                }
+                            Object {
+                                          "display": "flex",
+                                          "flex": 1,
+                                        }
               }
-            >
+>
               <Card
-                style={
-                  Object {
-                    "display": "flex",
-                    "flex": 1,
-                    "justifyContent": "center",
-                  }
-                }
+                            style={
+                                          Object {
+                                                        "display": "flex",
+                                                        "flex": 1,
+                                                        "justifyContent": "center",
+                                                      }
+                            }
               >
-                <Icon
-                  style={
-                    Object {
-                      "fontSize": 42,
-                    }
-                  }
-                  type="rocket"
-                />
-                <Label>
-                  The following resource pools will be created for you
-                </Label>
-                <List
-                  bordered={false}
-                  dataSource={Array []}
-                  loading={false}
-                  pagination={false}
-                  prefixCls="ant-list"
-                  renderItem={[Function]}
-                  split={true}
-                />
+                            <Icon
+                                          style={
+                                                        Object {
+                                                                      "fontSize": 42,
+                                                                    }
+                                          }
+                                          type="rocket"
+                            />
+                            <Label>
+                                          The following resource pools will be created for you
+                            </Label>
+                            <List
+                                          bordered={false}
+                                          dataSource={Array []}
+                                          loading={false}
+                                          pagination={false}
+                                          renderItem={[Function]}
+                                          split={true}
+                            />
               </Card>
-            </Col>,
+</Col>,
             <Col
               span={6}
               style={
-                Object {
-                  "display": "flex",
-                  "flex": 1,
-                }
+                            Object {
+                                          "display": "flex",
+                                          "flex": 1,
+                                        }
               }
-            >
+>
               <Card
-                style={
-                  Object {
-                    "display": "flex",
-                    "flex": 1,
-                    "justifyContent": "center",
-                  }
-                }
+                            style={
+                                          Object {
+                                                        "display": "flex",
+                                                        "flex": 1,
+                                                        "justifyContent": "center",
+                                                      }
+                            }
               >
-                <Icon
-                  style={
-                    Object {
-                      "fontSize": 42,
-                    }
-                  }
-                  type="thunderbolt"
-                />
-                <Label>
-                  The following applications (with their own consumer group) will be created for you
-                </Label>
-                <List
-                  bordered={false}
-                  dataSource={Array []}
-                  loading={false}
-                  pagination={false}
-                  prefixCls="ant-list"
-                  renderItem={[Function]}
-                  split={true}
-                />
+                            <Icon
+                                          style={
+                                                        Object {
+                                                                      "fontSize": 42,
+                                                                    }
+                                          }
+                                          type="thunderbolt"
+                            />
+                            <Label>
+                                          The following applications (with their own consumer group) will be created for you
+                            </Label>
+                            <List
+                                          bordered={false}
+                                          dataSource={Array []}
+                                          loading={false}
+                                          pagination={false}
+                                          renderItem={[Function]}
+                                          split={true}
+                            />
               </Card>
-            </Col>,
+</Col>,
           ],
           "gutter": 25,
           "justify": "center",
@@ -471,34 +457,33 @@ ShallowWrapper {
             "props": Object {
               "children": <Card
                 style={
-                  Object {
-                    "display": "flex",
-                    "flex": 1,
-                    "justifyContent": "center",
-                  }
+                                Object {
+                                                "display": "flex",
+                                                "flex": 1,
+                                                "justifyContent": "center",
+                                              }
                 }
-              >
+>
                 <Icon
-                  style={
-                    Object {
-                      "fontSize": 42,
-                    }
-                  }
-                  type="database"
+                                style={
+                                                Object {
+                                                                "fontSize": 42,
+                                                              }
+                                }
+                                type="database"
                 />
                 <Label>
-                  The following hive databases will be created for you
+                                The following hive databases will be created for you
                 </Label>
                 <List
-                  bordered={false}
-                  dataSource={Array []}
-                  loading={false}
-                  pagination={false}
-                  prefixCls="ant-list"
-                  renderItem={[Function]}
-                  split={true}
+                                bordered={false}
+                                dataSource={Array []}
+                                loading={false}
+                                pagination={false}
+                                renderItem={[Function]}
+                                split={true}
                 />
-              </Card>,
+</Card>,
               "span": 6,
               "style": Object {
                 "display": "flex",
@@ -514,24 +499,23 @@ ShallowWrapper {
                 "children": Array [
                   <Icon
                     style={
-                      Object {
-                        "fontSize": 42,
-                      }
+                                        Object {
+                                                            "fontSize": 42,
+                                                          }
                     }
                     type="database"
-                  />,
+/>,
                   <Label>
                     The following hive databases will be created for you
-                  </Label>,
+</Label>,
                   <List
                     bordered={false}
                     dataSource={Array []}
                     loading={false}
                     pagination={false}
-                    prefixCls="ant-list"
                     renderItem={[Function]}
                     split={true}
-                  />,
+/>,
                 ],
                 "style": Object {
                   "display": "flex",
@@ -575,7 +559,6 @@ ShallowWrapper {
                     "dataSource": Array [],
                     "loading": false,
                     "pagination": false,
-                    "prefixCls": "ant-list",
                     "renderItem": [Function],
                     "split": true,
                   },
@@ -595,34 +578,33 @@ ShallowWrapper {
             "props": Object {
               "children": <Card
                 style={
-                  Object {
-                    "display": "flex",
-                    "flex": 1,
-                    "justifyContent": "center",
-                  }
+                                Object {
+                                                "display": "flex",
+                                                "flex": 1,
+                                                "justifyContent": "center",
+                                              }
                 }
-              >
+>
                 <Icon
-                  style={
-                    Object {
-                      "fontSize": 42,
-                    }
-                  }
-                  type="rocket"
+                                style={
+                                                Object {
+                                                                "fontSize": 42,
+                                                              }
+                                }
+                                type="rocket"
                 />
                 <Label>
-                  The following resource pools will be created for you
+                                The following resource pools will be created for you
                 </Label>
                 <List
-                  bordered={false}
-                  dataSource={Array []}
-                  loading={false}
-                  pagination={false}
-                  prefixCls="ant-list"
-                  renderItem={[Function]}
-                  split={true}
+                                bordered={false}
+                                dataSource={Array []}
+                                loading={false}
+                                pagination={false}
+                                renderItem={[Function]}
+                                split={true}
                 />
-              </Card>,
+</Card>,
               "span": 6,
               "style": Object {
                 "display": "flex",
@@ -638,24 +620,23 @@ ShallowWrapper {
                 "children": Array [
                   <Icon
                     style={
-                      Object {
-                        "fontSize": 42,
-                      }
+                                        Object {
+                                                            "fontSize": 42,
+                                                          }
                     }
                     type="rocket"
-                  />,
+/>,
                   <Label>
                     The following resource pools will be created for you
-                  </Label>,
+</Label>,
                   <List
                     bordered={false}
                     dataSource={Array []}
                     loading={false}
                     pagination={false}
-                    prefixCls="ant-list"
                     renderItem={[Function]}
                     split={true}
-                  />,
+/>,
                 ],
                 "style": Object {
                   "display": "flex",
@@ -699,7 +680,6 @@ ShallowWrapper {
                     "dataSource": Array [],
                     "loading": false,
                     "pagination": false,
-                    "prefixCls": "ant-list",
                     "renderItem": [Function],
                     "split": true,
                   },
@@ -719,34 +699,33 @@ ShallowWrapper {
             "props": Object {
               "children": <Card
                 style={
-                  Object {
-                    "display": "flex",
-                    "flex": 1,
-                    "justifyContent": "center",
-                  }
+                                Object {
+                                                "display": "flex",
+                                                "flex": 1,
+                                                "justifyContent": "center",
+                                              }
                 }
-              >
+>
                 <Icon
-                  style={
-                    Object {
-                      "fontSize": 42,
-                    }
-                  }
-                  type="thunderbolt"
+                                style={
+                                                Object {
+                                                                "fontSize": 42,
+                                                              }
+                                }
+                                type="thunderbolt"
                 />
                 <Label>
-                  The following applications (with their own consumer group) will be created for you
+                                The following applications (with their own consumer group) will be created for you
                 </Label>
                 <List
-                  bordered={false}
-                  dataSource={Array []}
-                  loading={false}
-                  pagination={false}
-                  prefixCls="ant-list"
-                  renderItem={[Function]}
-                  split={true}
+                                bordered={false}
+                                dataSource={Array []}
+                                loading={false}
+                                pagination={false}
+                                renderItem={[Function]}
+                                split={true}
                 />
-              </Card>,
+</Card>,
               "span": 6,
               "style": Object {
                 "display": "flex",
@@ -762,24 +741,23 @@ ShallowWrapper {
                 "children": Array [
                   <Icon
                     style={
-                      Object {
-                        "fontSize": 42,
-                      }
+                                        Object {
+                                                            "fontSize": 42,
+                                                          }
                     }
                     type="thunderbolt"
-                  />,
+/>,
                   <Label>
                     The following applications (with their own consumer group) will be created for you
-                  </Label>,
+</Label>,
                   <List
                     bordered={false}
                     dataSource={Array []}
                     loading={false}
                     pagination={false}
-                    prefixCls="ant-list"
                     renderItem={[Function]}
                     split={true}
-                  />,
+/>,
                 ],
                 "style": Object {
                   "display": "flex",
@@ -823,7 +801,6 @@ ShallowWrapper {
                     "dataSource": Array [],
                     "loading": false,
                     "pagination": false,
-                    "prefixCls": "ant-list",
                     "renderItem": [Function],
                     "split": true,
                   },
@@ -851,171 +828,166 @@ ShallowWrapper {
         "children": Array [
           <h3>
             Here's a preview of what we'll request. Take a look and submit your request when you're ready!
-          </h3>,
+</h3>,
           <Row
             gutter={0}
             justify="center"
             style={
-              Object {
-                "marginBottom": 25,
-                "marginTop": 25,
-              }
+                        Object {
+                                    "marginBottom": 25,
+                                    "marginTop": 25,
+                                  }
             }
             type="flex"
-          >
+>
             <Col
-              span={8}
+                        span={8}
             >
-              <Card>
-                <Icon
-                  style={
-                    Object {
-                      "fontSize": 42,
-                    }
-                  }
-                  type="crown"
-                />
-                <Label>
-                  You will be the liason for this project
-                </Label>
-                <h4>
-                  
-                </h4>
-              </Card>
+                        <Card>
+                                    <Icon
+                                                style={
+                                                            Object {
+                                                                        "fontSize": 42,
+                                                                      }
+                                                }
+                                                type="crown"
+                                    />
+                                    <Label>
+                                                You will be the liason for this project
+                                    </Label>
+                                    <h4 />
+                        </Card>
             </Col>
-          </Row>,
+</Row>,
           <Row
             gutter={25}
             justify="center"
             style={
-              Object {
-                "marginBottom": 25,
-                "marginTop": 25,
-              }
+                        Object {
+                                    "marginBottom": 25,
+                                    "marginTop": 25,
+                                  }
             }
             type="flex"
-          >
+>
             <Col
-              span={6}
-              style={
-                Object {
-                  "display": "flex",
-                  "flex": 1,
-                }
-              }
+                        span={6}
+                        style={
+                                    Object {
+                                                "display": "flex",
+                                                "flex": 1,
+                                              }
+                        }
             >
-              <Card
-                style={
-                  Object {
-                    "display": "flex",
-                    "flex": 1,
-                    "justifyContent": "center",
-                  }
-                }
-              >
-                <Icon
-                  style={
-                    Object {
-                      "fontSize": 42,
-                    }
-                  }
-                  type="database"
-                />
-                <Label>
-                  The following hive databases will be created for you
-                </Label>
-                <List
-                  bordered={false}
-                  dataSource={Array []}
-                  loading={false}
-                  pagination={false}
-                  prefixCls="ant-list"
-                  renderItem={[Function]}
-                  split={true}
-                />
-              </Card>
+                        <Card
+                                    style={
+                                                Object {
+                                                            "display": "flex",
+                                                            "flex": 1,
+                                                            "justifyContent": "center",
+                                                          }
+                                    }
+                        >
+                                    <Icon
+                                                style={
+                                                            Object {
+                                                                        "fontSize": 42,
+                                                                      }
+                                                }
+                                                type="database"
+                                    />
+                                    <Label>
+                                                The following hive databases will be created for you
+                                    </Label>
+                                    <List
+                                                bordered={false}
+                                                dataSource={Array []}
+                                                loading={false}
+                                                pagination={false}
+                                                renderItem={[Function]}
+                                                split={true}
+                                    />
+                        </Card>
             </Col>
             <Col
-              span={6}
-              style={
-                Object {
-                  "display": "flex",
-                  "flex": 1,
-                }
-              }
+                        span={6}
+                        style={
+                                    Object {
+                                                "display": "flex",
+                                                "flex": 1,
+                                              }
+                        }
             >
-              <Card
-                style={
-                  Object {
-                    "display": "flex",
-                    "flex": 1,
-                    "justifyContent": "center",
-                  }
-                }
-              >
-                <Icon
-                  style={
-                    Object {
-                      "fontSize": 42,
-                    }
-                  }
-                  type="rocket"
-                />
-                <Label>
-                  The following resource pools will be created for you
-                </Label>
-                <List
-                  bordered={false}
-                  dataSource={Array []}
-                  loading={false}
-                  pagination={false}
-                  prefixCls="ant-list"
-                  renderItem={[Function]}
-                  split={true}
-                />
-              </Card>
+                        <Card
+                                    style={
+                                                Object {
+                                                            "display": "flex",
+                                                            "flex": 1,
+                                                            "justifyContent": "center",
+                                                          }
+                                    }
+                        >
+                                    <Icon
+                                                style={
+                                                            Object {
+                                                                        "fontSize": 42,
+                                                                      }
+                                                }
+                                                type="rocket"
+                                    />
+                                    <Label>
+                                                The following resource pools will be created for you
+                                    </Label>
+                                    <List
+                                                bordered={false}
+                                                dataSource={Array []}
+                                                loading={false}
+                                                pagination={false}
+                                                renderItem={[Function]}
+                                                split={true}
+                                    />
+                        </Card>
             </Col>
             <Col
-              span={6}
-              style={
-                Object {
-                  "display": "flex",
-                  "flex": 1,
-                }
-              }
+                        span={6}
+                        style={
+                                    Object {
+                                                "display": "flex",
+                                                "flex": 1,
+                                              }
+                        }
             >
-              <Card
-                style={
-                  Object {
-                    "display": "flex",
-                    "flex": 1,
-                    "justifyContent": "center",
-                  }
-                }
-              >
-                <Icon
-                  style={
-                    Object {
-                      "fontSize": 42,
-                    }
-                  }
-                  type="thunderbolt"
-                />
-                <Label>
-                  The following applications (with their own consumer group) will be created for you
-                </Label>
-                <List
-                  bordered={false}
-                  dataSource={Array []}
-                  loading={false}
-                  pagination={false}
-                  prefixCls="ant-list"
-                  renderItem={[Function]}
-                  split={true}
-                />
-              </Card>
+                        <Card
+                                    style={
+                                                Object {
+                                                            "display": "flex",
+                                                            "flex": 1,
+                                                            "justifyContent": "center",
+                                                          }
+                                    }
+                        >
+                                    <Icon
+                                                style={
+                                                            Object {
+                                                                        "fontSize": 42,
+                                                                      }
+                                                }
+                                                type="thunderbolt"
+                                    />
+                                    <Label>
+                                                The following applications (with their own consumer group) will be created for you
+                                    </Label>
+                                    <List
+                                                bordered={false}
+                                                dataSource={Array []}
+                                                loading={false}
+                                                pagination={false}
+                                                renderItem={[Function]}
+                                                split={true}
+                                    />
+                        </Card>
             </Col>
-          </Row>,
+</Row>,
         ],
       },
       "ref": null,
@@ -1038,24 +1010,22 @@ ShallowWrapper {
           "props": Object {
             "children": <Col
               span={8}
-            >
+>
               <Card>
-                <Icon
-                  style={
-                    Object {
-                      "fontSize": 42,
-                    }
-                  }
-                  type="crown"
-                />
-                <Label>
-                  You will be the liason for this project
-                </Label>
-                <h4>
-                  
-                </h4>
+                            <Icon
+                                          style={
+                                                        Object {
+                                                                      "fontSize": 42,
+                                                                    }
+                                          }
+                                          type="crown"
+                            />
+                            <Label>
+                                          You will be the liason for this project
+                            </Label>
+                            <h4 />
               </Card>
-            </Col>,
+</Col>,
             "gutter": 0,
             "justify": "center",
             "style": Object {
@@ -1072,20 +1042,18 @@ ShallowWrapper {
             "props": Object {
               "children": <Card>
                 <Icon
-                  style={
-                    Object {
-                      "fontSize": 42,
-                    }
-                  }
-                  type="crown"
+                                style={
+                                                Object {
+                                                                "fontSize": 42,
+                                                              }
+                                }
+                                type="crown"
                 />
                 <Label>
-                  You will be the liason for this project
+                                You will be the liason for this project
                 </Label>
-                <h4>
-                  
-                </h4>
-              </Card>,
+                <h4 />
+</Card>,
               "span": 8,
             },
             "ref": null,
@@ -1097,18 +1065,16 @@ ShallowWrapper {
                 "children": Array [
                   <Icon
                     style={
-                      Object {
-                        "fontSize": 42,
-                      }
+                                        Object {
+                                                            "fontSize": 42,
+                                                          }
                     }
                     type="crown"
-                  />,
+/>,
                   <Label>
                     You will be the liason for this project
-                  </Label>,
-                  <h4>
-                    
-                  </h4>,
+</Label>,
+                  <h4 />,
                 ],
               },
               "ref": null,
@@ -1165,123 +1131,120 @@ ShallowWrapper {
               <Col
                 span={6}
                 style={
-                  Object {
-                    "display": "flex",
-                    "flex": 1,
-                  }
+                                Object {
+                                                "display": "flex",
+                                                "flex": 1,
+                                              }
                 }
-              >
+>
                 <Card
-                  style={
-                    Object {
-                      "display": "flex",
-                      "flex": 1,
-                      "justifyContent": "center",
-                    }
-                  }
+                                style={
+                                                Object {
+                                                                "display": "flex",
+                                                                "flex": 1,
+                                                                "justifyContent": "center",
+                                                              }
+                                }
                 >
-                  <Icon
-                    style={
-                      Object {
-                        "fontSize": 42,
-                      }
-                    }
-                    type="database"
-                  />
-                  <Label>
-                    The following hive databases will be created for you
-                  </Label>
-                  <List
-                    bordered={false}
-                    dataSource={Array []}
-                    loading={false}
-                    pagination={false}
-                    prefixCls="ant-list"
-                    renderItem={[Function]}
-                    split={true}
-                  />
+                                <Icon
+                                                style={
+                                                                Object {
+                                                                                "fontSize": 42,
+                                                                              }
+                                                }
+                                                type="database"
+                                />
+                                <Label>
+                                                The following hive databases will be created for you
+                                </Label>
+                                <List
+                                                bordered={false}
+                                                dataSource={Array []}
+                                                loading={false}
+                                                pagination={false}
+                                                renderItem={[Function]}
+                                                split={true}
+                                />
                 </Card>
-              </Col>,
+</Col>,
               <Col
                 span={6}
                 style={
-                  Object {
-                    "display": "flex",
-                    "flex": 1,
-                  }
+                                Object {
+                                                "display": "flex",
+                                                "flex": 1,
+                                              }
                 }
-              >
+>
                 <Card
-                  style={
-                    Object {
-                      "display": "flex",
-                      "flex": 1,
-                      "justifyContent": "center",
-                    }
-                  }
+                                style={
+                                                Object {
+                                                                "display": "flex",
+                                                                "flex": 1,
+                                                                "justifyContent": "center",
+                                                              }
+                                }
                 >
-                  <Icon
-                    style={
-                      Object {
-                        "fontSize": 42,
-                      }
-                    }
-                    type="rocket"
-                  />
-                  <Label>
-                    The following resource pools will be created for you
-                  </Label>
-                  <List
-                    bordered={false}
-                    dataSource={Array []}
-                    loading={false}
-                    pagination={false}
-                    prefixCls="ant-list"
-                    renderItem={[Function]}
-                    split={true}
-                  />
+                                <Icon
+                                                style={
+                                                                Object {
+                                                                                "fontSize": 42,
+                                                                              }
+                                                }
+                                                type="rocket"
+                                />
+                                <Label>
+                                                The following resource pools will be created for you
+                                </Label>
+                                <List
+                                                bordered={false}
+                                                dataSource={Array []}
+                                                loading={false}
+                                                pagination={false}
+                                                renderItem={[Function]}
+                                                split={true}
+                                />
                 </Card>
-              </Col>,
+</Col>,
               <Col
                 span={6}
                 style={
-                  Object {
-                    "display": "flex",
-                    "flex": 1,
-                  }
+                                Object {
+                                                "display": "flex",
+                                                "flex": 1,
+                                              }
                 }
-              >
+>
                 <Card
-                  style={
-                    Object {
-                      "display": "flex",
-                      "flex": 1,
-                      "justifyContent": "center",
-                    }
-                  }
+                                style={
+                                                Object {
+                                                                "display": "flex",
+                                                                "flex": 1,
+                                                                "justifyContent": "center",
+                                                              }
+                                }
                 >
-                  <Icon
-                    style={
-                      Object {
-                        "fontSize": 42,
-                      }
-                    }
-                    type="thunderbolt"
-                  />
-                  <Label>
-                    The following applications (with their own consumer group) will be created for you
-                  </Label>
-                  <List
-                    bordered={false}
-                    dataSource={Array []}
-                    loading={false}
-                    pagination={false}
-                    prefixCls="ant-list"
-                    renderItem={[Function]}
-                    split={true}
-                  />
+                                <Icon
+                                                style={
+                                                                Object {
+                                                                                "fontSize": 42,
+                                                                              }
+                                                }
+                                                type="thunderbolt"
+                                />
+                                <Label>
+                                                The following applications (with their own consumer group) will be created for you
+                                </Label>
+                                <List
+                                                bordered={false}
+                                                dataSource={Array []}
+                                                loading={false}
+                                                pagination={false}
+                                                renderItem={[Function]}
+                                                split={true}
+                                />
                 </Card>
-              </Col>,
+</Col>,
             ],
             "gutter": 25,
             "justify": "center",
@@ -1300,34 +1263,33 @@ ShallowWrapper {
               "props": Object {
                 "children": <Card
                   style={
-                    Object {
-                      "display": "flex",
-                      "flex": 1,
-                      "justifyContent": "center",
-                    }
+                                    Object {
+                                                      "display": "flex",
+                                                      "flex": 1,
+                                                      "justifyContent": "center",
+                                                    }
                   }
-                >
+>
                   <Icon
-                    style={
-                      Object {
-                        "fontSize": 42,
-                      }
-                    }
-                    type="database"
+                                    style={
+                                                      Object {
+                                                                        "fontSize": 42,
+                                                                      }
+                                    }
+                                    type="database"
                   />
                   <Label>
-                    The following hive databases will be created for you
+                                    The following hive databases will be created for you
                   </Label>
                   <List
-                    bordered={false}
-                    dataSource={Array []}
-                    loading={false}
-                    pagination={false}
-                    prefixCls="ant-list"
-                    renderItem={[Function]}
-                    split={true}
+                                    bordered={false}
+                                    dataSource={Array []}
+                                    loading={false}
+                                    pagination={false}
+                                    renderItem={[Function]}
+                                    split={true}
                   />
-                </Card>,
+</Card>,
                 "span": 6,
                 "style": Object {
                   "display": "flex",
@@ -1343,24 +1305,23 @@ ShallowWrapper {
                   "children": Array [
                     <Icon
                       style={
-                        Object {
-                          "fontSize": 42,
-                        }
+                                            Object {
+                                                                  "fontSize": 42,
+                                                                }
                       }
                       type="database"
-                    />,
+/>,
                     <Label>
                       The following hive databases will be created for you
-                    </Label>,
+</Label>,
                     <List
                       bordered={false}
                       dataSource={Array []}
                       loading={false}
                       pagination={false}
-                      prefixCls="ant-list"
                       renderItem={[Function]}
                       split={true}
-                    />,
+/>,
                   ],
                   "style": Object {
                     "display": "flex",
@@ -1404,7 +1365,6 @@ ShallowWrapper {
                       "dataSource": Array [],
                       "loading": false,
                       "pagination": false,
-                      "prefixCls": "ant-list",
                       "renderItem": [Function],
                       "split": true,
                     },
@@ -1424,34 +1384,33 @@ ShallowWrapper {
               "props": Object {
                 "children": <Card
                   style={
-                    Object {
-                      "display": "flex",
-                      "flex": 1,
-                      "justifyContent": "center",
-                    }
+                                    Object {
+                                                      "display": "flex",
+                                                      "flex": 1,
+                                                      "justifyContent": "center",
+                                                    }
                   }
-                >
+>
                   <Icon
-                    style={
-                      Object {
-                        "fontSize": 42,
-                      }
-                    }
-                    type="rocket"
+                                    style={
+                                                      Object {
+                                                                        "fontSize": 42,
+                                                                      }
+                                    }
+                                    type="rocket"
                   />
                   <Label>
-                    The following resource pools will be created for you
+                                    The following resource pools will be created for you
                   </Label>
                   <List
-                    bordered={false}
-                    dataSource={Array []}
-                    loading={false}
-                    pagination={false}
-                    prefixCls="ant-list"
-                    renderItem={[Function]}
-                    split={true}
+                                    bordered={false}
+                                    dataSource={Array []}
+                                    loading={false}
+                                    pagination={false}
+                                    renderItem={[Function]}
+                                    split={true}
                   />
-                </Card>,
+</Card>,
                 "span": 6,
                 "style": Object {
                   "display": "flex",
@@ -1467,24 +1426,23 @@ ShallowWrapper {
                   "children": Array [
                     <Icon
                       style={
-                        Object {
-                          "fontSize": 42,
-                        }
+                                            Object {
+                                                                  "fontSize": 42,
+                                                                }
                       }
                       type="rocket"
-                    />,
+/>,
                     <Label>
                       The following resource pools will be created for you
-                    </Label>,
+</Label>,
                     <List
                       bordered={false}
                       dataSource={Array []}
                       loading={false}
                       pagination={false}
-                      prefixCls="ant-list"
                       renderItem={[Function]}
                       split={true}
-                    />,
+/>,
                   ],
                   "style": Object {
                     "display": "flex",
@@ -1528,7 +1486,6 @@ ShallowWrapper {
                       "dataSource": Array [],
                       "loading": false,
                       "pagination": false,
-                      "prefixCls": "ant-list",
                       "renderItem": [Function],
                       "split": true,
                     },
@@ -1548,34 +1505,33 @@ ShallowWrapper {
               "props": Object {
                 "children": <Card
                   style={
-                    Object {
-                      "display": "flex",
-                      "flex": 1,
-                      "justifyContent": "center",
-                    }
+                                    Object {
+                                                      "display": "flex",
+                                                      "flex": 1,
+                                                      "justifyContent": "center",
+                                                    }
                   }
-                >
+>
                   <Icon
-                    style={
-                      Object {
-                        "fontSize": 42,
-                      }
-                    }
-                    type="thunderbolt"
+                                    style={
+                                                      Object {
+                                                                        "fontSize": 42,
+                                                                      }
+                                    }
+                                    type="thunderbolt"
                   />
                   <Label>
-                    The following applications (with their own consumer group) will be created for you
+                                    The following applications (with their own consumer group) will be created for you
                   </Label>
                   <List
-                    bordered={false}
-                    dataSource={Array []}
-                    loading={false}
-                    pagination={false}
-                    prefixCls="ant-list"
-                    renderItem={[Function]}
-                    split={true}
+                                    bordered={false}
+                                    dataSource={Array []}
+                                    loading={false}
+                                    pagination={false}
+                                    renderItem={[Function]}
+                                    split={true}
                   />
-                </Card>,
+</Card>,
                 "span": 6,
                 "style": Object {
                   "display": "flex",
@@ -1591,24 +1547,23 @@ ShallowWrapper {
                   "children": Array [
                     <Icon
                       style={
-                        Object {
-                          "fontSize": 42,
-                        }
+                                            Object {
+                                                                  "fontSize": 42,
+                                                                }
                       }
                       type="thunderbolt"
-                    />,
+/>,
                     <Label>
                       The following applications (with their own consumer group) will be created for you
-                    </Label>,
+</Label>,
                     <List
                       bordered={false}
                       dataSource={Array []}
                       loading={false}
                       pagination={false}
-                      prefixCls="ant-list"
                       renderItem={[Function]}
                       split={true}
-                    />,
+/>,
                   ],
                   "style": Object {
                     "display": "flex",
@@ -1652,7 +1607,6 @@ ShallowWrapper {
                       "dataSource": Array [],
                       "loading": false,
                       "pagination": false,
-                      "prefixCls": "ant-list",
                       "renderItem": [Function],
                       "split": true,
                     },
@@ -1688,8 +1642,6 @@ ShallowWrapper {
         },
       },
     },
-    "attachTo": undefined,
-    "hydrateIn": undefined,
   },
 }
 `;

@@ -40,31 +40,31 @@ const Navigation = ({ location, profile }: Props) => (
       letterSpacing: 1,
       textTransform: 'uppercase',
     }} selectedKeys={[getKeyFromPath(location.pathname)]} theme="dark" mode="inline">
-      <Menu.Item style={{ marginTop: 20 }} key="home">
+      <Menu.Item key="home">
         <NavLink to="/">
           <Icon type="home" style={{ fontSize: 18 }} /> Overview
         </NavLink>
       </Menu.Item>
-      <Menu.Item style={{ marginTop: 20 }} key="workspaces">
+      <Menu.Item key="workspaces">
         <NavLink to="/workspaces">
         <Icon type="gift" style={{ fontSize: 18 }} /> Your Workspaces
         </NavLink>
       </Menu.Item>
       {profile && profile.permissions.risk_management && (
-        <Menu.Item style={{ marginTop: 20 }} key="risks">
+        <Menu.Item key="risks">
           <NavLink to="/risks">
           <Icon type="gold" style={{ fontSize: 18 }} /> Risk/Compliance
           </NavLink>
         </Menu.Item>
       )}
       {profile && profile.permissions.platform_operations && (
-        <Menu.Item style={{ marginTop: 20 }} key="operations">
+        <Menu.Item key="operations">
           <NavLink to="/operations">
           <Icon type="gold" style={{ fontSize: 18 }} /> Operations
           </NavLink>
         </Menu.Item>
       )}
-      <Menu.Item style={{ marginTop: 20 }} key="request">
+      <Menu.Item key="request">
         <NavLink to="/request">
         <Icon type="plus" style={{ fontSize: 18 }} /> New Workspace
         </NavLink>

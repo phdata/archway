@@ -1,29 +1,3 @@
 {
-  "compilerOptions": {
-    "outDir": "./built/",
-    "module": "esnext",
-    "target": "es5",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "es5",
-      "es2015",
-      "es2016"
-    ],
-    "sourceMap": true,
-    "allowJs": true,
-    "jsx": "react",
-    "rootDir": "src",
-    "noImplicitReturns": true,
-    "noImplicitThis": true,
-    "noImplicitAny": true,
-    "strictNullChecks": true,
-    "noUnusedLocals": true
-  },
-  "include": [
-      "./src/**/*"
-  ],
-  "exclude": [
-    "node_modules"
-  ]
+  "extends": "./tsconfig.json"
 }
