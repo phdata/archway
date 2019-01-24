@@ -10,11 +10,11 @@ trait ActiveDirectoryClient[F[_]] { this: LDAPClientImpl[F] =>
   override def fullUsername(username: String): String =
     s"$username@${sys.env.getOrElse("HEIMDALI_REALM", "JOTUNN.IO")}"
 
-  override def ldapUser(searchResultEntry: SearchResultEntry) =
+  override def ldapUser(searchResultEntry: SearchResultEntry) = 
     LDAPUser(s"${searchResultEntry.getAttributeValue("cn")}",
       searchResultEntry.getAttributeValue("sAMAccountName"),
       searchResultEntry.getDN,
-      searchResultEntry.getAttributeValues("memberOf"),
+      Option(searchResultEntry.getAttributeValues("memberOf")).map(_.toSeq).getOrElse(Seq.empty),
       Option(searchResultEntry.getAttributeValue("mail")))
 
   override def groupObjectClass: String =
