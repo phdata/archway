@@ -1,19 +1,15 @@
 package com.heimdali.clients
 
-import cats._
-import cats.implicits._
 import cats.effect._
 import com.heimdali.models.YarnApplication
-import com.heimdali.services.{CDHClusterService, ClusterService}
+import com.heimdali.test.TestClusterService
 import com.heimdali.test.fixtures._
 import io.circe.parser._
-import org.apache.hadoop.conf.Configuration
 import org.http4s._
 import org.http4s.circe._
 import org.http4s.client.Client
 import org.http4s.dsl.io._
 import org.http4s.implicits._
-import org.http4s.syntax._
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FlatSpec, Matchers}
 
@@ -26,17 +22,16 @@ class CDHYarnClientSpec extends FlatSpec with MockFactory with Matchers with Htt
 
   it should "createPool" in new HttpContext {
     val yarnHttpClient = new CMClient[IO](yarnClient, clusterConfig)
-
-    val clusterService = new CDHClusterService[IO](httpClient, clusterConfig, new Configuration())
-
-    val client = new CDHYarnClient[IO](yarnHttpClient, clusterConfig, clusterService)
+    val clusterService = new TestClusterService()
+    val client = new CDHYarnClient(yarnHttpClient, clusterConfig, clusterService)
     client.createPool("root.pool", 1, 1).unsafeRunSync()
   }
 
   it should "evaluate the correct json" in {
     val Right(expected) = parse(Source.fromResource("cloudera/pool_json.json").getLines().mkString)
 
-    val client = new CDHYarnClient(null, clusterConfig, mock[ClusterService[IO]])
+    val clusterService = new TestClusterService()
+    val client = new CDHYarnClient(null, clusterConfig, clusterService)
     val result = client.config("test", 1, 1)
     result should be(expected)
   }
@@ -45,20 +40,22 @@ class CDHYarnClientSpec extends FlatSpec with MockFactory with Matchers with Htt
     val Right(input) = parse(Source.fromResource("cloudera/pool.json").getLines().mkString)
     val Right(expected) = parse(Source.fromResource("cloudera/pool_after.json").getLines().mkString)
 
-    val client = new CDHYarnClient(null, clusterConfig, mock[ClusterService[IO]])
+    val clusterService = new TestClusterService()
+    val client = new CDHYarnClient(null, clusterConfig, clusterService)
     val result = client.combine(input, "test", 1, 1, Queue("root"))
     result should be(expected)
   }
 
   it should "find correct queue" in {
     val Right(json) = parse(Source.fromResource("cloudera/pool.json").getLines().mkString)
-    val client = new CDHYarnClient(null, clusterConfig, mock[ClusterService[IO]])
+    val clusterService = new TestClusterService()
+    val client = new CDHYarnClient(null, clusterConfig, clusterService)
     val result = client.dig(json.hcursor, Queue("root"))
     result.top shouldBe defined
   }
 
   it should "list applications" in new HttpContext {
-    val clusterService = new CDHClusterService[IO](httpClient, clusterConfig, new Configuration())
+    val clusterService = new TestClusterService()
     val yarnHttpClient = new CMClient[IO](yarnClient, clusterConfig)
     val client = new CDHYarnClient(yarnHttpClient, clusterConfig, clusterService)
     val result = client.applications("pool").unsafeRunSync()
@@ -82,5 +79,3 @@ class CDHYarnClientSpec extends FlatSpec with MockFactory with Matchers with Htt
   }
 
 }
-
-

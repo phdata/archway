@@ -15,7 +15,7 @@ fullResolvers := ("Jboss" at "https://repository.jboss.org/maven2") +: resolvers
 addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full)
 
 libraryDependencies ++=
-  coreTest ++ dbCore ++ logging ++ bouncy ++ pureConfig ++
+  coreTest ++ dbCore ++ logging ++ bouncy ++ pureConfig ++ iniConfig ++
     http4s ++ fs2 ++ mailer ++ doobie ++ cats ++ catsEffect ++ circe ++ jwt ++ unbound ++ hadoop ++ fs2Http ++ scalatags
 
 assemblyMergeStrategy in assembly := {

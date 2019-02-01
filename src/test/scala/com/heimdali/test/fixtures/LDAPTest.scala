@@ -1,6 +1,5 @@
 package com.heimdali.test.fixtures
 
-import com.typesafe.config.ConfigFactory
 import com.unboundid.ldap.sdk.{LDAPConnection, LDAPConnectionPool}
 import com.unboundid.util.ssl.{SSLUtil, TrustAllTrustManager}
 

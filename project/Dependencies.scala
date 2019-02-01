@@ -53,7 +53,7 @@ object Dependencies {
     "org.typelevel" %% "cats-effect" % catsEffectVersion withSources()
   )
 
-  val circeVersion = "0.10.0"
+  val circeVersion = "0.11.0"
   val circe = Seq(
     "io.circe" %% "circe-core" % circeVersion,
     "io.circe" %% "circe-generic" % circeVersion,
@@ -112,5 +112,11 @@ object Dependencies {
     "org.flywaydb" % "flyway-core" % "4.2.0",
     "postgresql" % "postgresql" % "9.0-801.jdbc4" % "provided",
     "mysql" % "mysql-connector-java" % "6.0.6" % "provided"
+  )
+
+  val iniVersion = "0.5.1"
+  val iniConfig = Seq(
+    "org.ini4j" % "ini4j" % iniVersion
+
   )
 }

@@ -42,7 +42,7 @@ object ClusterApp {
 case class Cluster(id: String, name: String, cmURL: String, services: List[ClusterApp], distribution: CDH, status: String)
 
 object Cluster {
-  implicit val decoder: Encoder[Cluster] =
+  implicit val encoder: Encoder[Cluster] =
     Encoder.instance { a =>
       Json.obj(
         "id" -> a.id.asJson,

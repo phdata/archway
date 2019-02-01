@@ -83,4 +83,10 @@ trait ServiceModule[F[_]] {
 
   val accountService: AccountService[F] =
     new AccountServiceImpl[F](ldapClient, appConfig.rest, appConfig.approvers, appConfig.workspaces, workspaceService)
+
+  val fileReader: FileReader[F] =
+    new DefaultFileReader[F]()
+
+  val hueConfigurationReader: HueConfigurationReader[F] =
+    new IniHueConfigurationReader[F]()
 }
