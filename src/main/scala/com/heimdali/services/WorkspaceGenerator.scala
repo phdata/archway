@@ -10,7 +10,7 @@ import io.circe.generic.semiauto._
 
 sealed trait Template
 
-case class UserTemplate(username: String, disk: Option[Int], cores: Option[Int], memory: Option[Int]) extends Template
+case class UserTemplate(userDN: String, username: String, disk: Option[Int], cores: Option[Int], memory: Option[Int]) extends Template
 
 object UserTemplate {
   implicit val encoder: Encoder[UserTemplate] = deriveEncoder
@@ -62,7 +62,7 @@ object Generator {
 
   implicit object UserGenerator extends Generator[UserTemplate] {
     override def defaults(user: User): UserTemplate =
-      UserTemplate(user.username, Some(appConfig.workspaces.user.defaultSize), Some(appConfig.workspaces.sharedWorkspace.defaultCores), Some(appConfig.workspaces.sharedWorkspace.defaultMemory))
+      UserTemplate(user.distinguishedName, user.username, Some(appConfig.workspaces.user.defaultSize), Some(appConfig.workspaces.sharedWorkspace.defaultCores), Some(appConfig.workspaces.sharedWorkspace.defaultMemory))
 
     override def generate(input: UserTemplate)(implicit clock: Clock): WorkspaceRequest = {
       val request = WorkspaceRequest(
@@ -70,7 +70,7 @@ object Generator {
         input.username,
         input.username,
         "user",
-        input.username,
+        input.userDN,
         clock.instant(),
         Compliance(phiData = false, pciData = false, piiData = false),
         singleUser = true)
@@ -95,7 +95,7 @@ object Generator {
 
   implicit object SimpleGenerator extends Generator[SimpleTemplate] {
     override def defaults(user: User): SimpleTemplate =
-      SimpleTemplate(s"${user.username}'s Workspace", "A brief summary", "A longer description", user.username, Compliance.empty, Some(appConfig.workspaces.sharedWorkspace.defaultSize), Some(appConfig.workspaces.sharedWorkspace.defaultCores), Some(appConfig.workspaces.sharedWorkspace.defaultMemory))
+      SimpleTemplate(s"${user.username}'s Workspace", "A brief summary", "A longer description", user.distinguishedName, Compliance.empty, Some(appConfig.workspaces.sharedWorkspace.defaultSize), Some(appConfig.workspaces.sharedWorkspace.defaultCores), Some(appConfig.workspaces.sharedWorkspace.defaultMemory))
 
     override def generate(input: SimpleTemplate)(implicit clock: Clock): WorkspaceRequest = {
       val generatedName = generateName(input.name)
@@ -141,7 +141,7 @@ object Generator {
 
   implicit object GovernedGenerator extends Generator[StructuredTemplate] {
     override def defaults(user: User): StructuredTemplate =
-      StructuredTemplate(s"${user.username}'s Workspace", "A brief summary", "A longer description", user.username, Compliance.empty, includeEnvironment = false, Some(appConfig.workspaces.dataset.defaultSize), Some(appConfig.workspaces.dataset.defaultCores), Some(appConfig.workspaces.dataset.defaultMemory))
+      StructuredTemplate(s"${user.username}'s Workspace", "A brief summary", "A longer description", user.distinguishedName, Compliance.empty, includeEnvironment = false, Some(appConfig.workspaces.dataset.defaultSize), Some(appConfig.workspaces.dataset.defaultCores), Some(appConfig.workspaces.dataset.defaultMemory))
 
     override def generate(input: StructuredTemplate)(implicit clock: Clock): WorkspaceRequest = {
       val generatedName = generateName(input.name)
