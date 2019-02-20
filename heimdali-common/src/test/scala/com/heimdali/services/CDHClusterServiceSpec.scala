@@ -2,6 +2,7 @@ package com.heimdali.services
 
 import cats.data.OptionT
 import cats.effect.IO
+import com.heimdali.config.ServiceOverride
 import com.heimdali.test.fixtures.{HttpTest, _}
 import org.apache.hadoop.conf.Configuration
 import org.scalamock.scalatest.MockFactory
@@ -26,6 +27,19 @@ class CDHClusterServiceSpec
     val actual = service.impalaFlags.unsafeRunSync()
 
     actual shouldBe expected
+  }
+
+  it should "use hue override" in {
+    val configuration = new Configuration()
+    val fileReader = mock[FileReader[IO]]
+    val hueConfigurationReader = mock[HueConfigurationReader[IO]]
+
+    val newConfig = clusterConfig.copy(hueOverride = ServiceOverride(Some("abc"), Some(123)))
+
+    val service = new CDHClusterService(httpClient, newConfig, configuration, fileReader, hueConfigurationReader)
+
+    val ClusterApp(_, _, _, _, actual) = service.hueApp(null, null, null, null)
+    actual.head._2.head shouldBe AppLocation("abc", 123)
   }
 
   it should "return a cluster" in {

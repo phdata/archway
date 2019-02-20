@@ -3,7 +3,7 @@ package com.heimdali.services
 import cats.effect._
 import cats.implicits._
 import com.heimdali.clients.HttpClient
-import com.heimdali.config.ClusterConfig
+import com.heimdali.config.{ClusterConfig, ServiceOverride}
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.yarn.conf.YarnConfiguration
 import org.http4s._
@@ -44,6 +44,14 @@ class CDHClusterService[F[_]](http: HttpClient[F],
   lazy val hueFlags: F[Option[String]] =
     hueConfigurationReader.getValue("desktop.http_port").value
 
+  def hueApp(hue: ServiceInfo, hosts: ListContainer[HostInfo], hueFlag: Option[String], hueLBRole: List[AppRole]): ClusterApp =
+    clusterConfig.hueOverride match {
+      case ServiceOverride(Some(host), Some(port)) =>
+        ClusterApp("hue", "hue", "NA", "NA", Map("load_balancer" -> List(AppLocation(host, port))))
+      case _ =>
+        ClusterApp("hue", hue, hosts, Map("load_balancer" -> (hueFlag.getOrElse("8888").toInt, hueLBRole)))
+    }
+
   lazy val clusterDetails: F[Cluster] =
     for {
       details <- clusterDetailsRequest
@@ -79,7 +87,7 @@ class CDHClusterService[F[_]](http: HttpClient[F],
             impalaFlag.get("-hs2_port") getOrElse "21050"
           }.toInt, impalaDaemonRoles))),
         ClusterApp("hive", hive, hosts, Map("thrift" -> (hadoopConfiguration.get("hive.server2.thrift.port", "10000").toInt, hiveServer2Roles))),
-        ClusterApp("hue", hue, hosts, Map("load_balancer" -> (hueFlag.getOrElse("8888").toInt, hueLBRole))),
+        hueApp(hue, hosts, hueFlag, hueLBRole),
         ClusterApp("yarn", yarn, hosts, Map(
           "node_manager" -> (hadoopConfiguration.get("yarn.nodemanager.webapp.address", "0.0.0.0:8042").split("\\s?:\\s?")(1).toInt, nodeManagerRoles),
           "resource_manager" -> (hadoopConfiguration.get("yarn.resourcemanager.webapp.address", "0.0.0.0:8088").split("\\s?:\\s?")(1).toInt, resourceManagerRoles))),

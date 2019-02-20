@@ -4,7 +4,7 @@ import java.time.{Clock, Instant, ZoneId}
 
 import cats.effect.{IO, Resource}
 import com.heimdali.clients.CMClient
-import com.heimdali.config.{AppConfig, ClusterConfig, CredentialsConfig}
+import com.heimdali.config.{AppConfig, ClusterConfig, CredentialsConfig, ServiceOverride}
 import com.heimdali.models.{Manager, ReadOnly, _}
 import com.heimdali.services.{CDH, Cluster, ClusterApp}
 import io.circe._
@@ -67,7 +67,7 @@ package object fixtures {
 
   def approval(instant: Instant = Instant.now(clock)) = Approval(Risk, standardUsername, instant)
 
-  val clusterConfig = ClusterConfig(1 second, "", "cluster", "dev", CredentialsConfig("admin", "admin"))
+  val clusterConfig = ClusterConfig(1 second, "", "cluster", "dev", CredentialsConfig("admin", "admin"), ServiceOverride(None, None))
   private implicit def hint[T] = ProductHint[T](ConfigFieldMapping(CamelCase, CamelCase))
   val Right(appConfig) = pureconfig.loadConfig[AppConfig]
 

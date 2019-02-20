@@ -8,11 +8,14 @@ package object config {
 
   case class CredentialsConfig(username: String, password: String)
 
+  case class ServiceOverride(host: Option[String], port: Option[Int])
+
   case class ClusterConfig(sessionRefresh: FiniteDuration,
                            url: String,
                            name: String,
                            environment: String,
-                           admin: CredentialsConfig) {
+                           admin: CredentialsConfig,
+                           hueOverride: ServiceOverride) {
     private val encodedName: String = URLEncoder.encode(name, "utf-8").replaceAll("\\+", "%20")
 
     val clusterUrl: String = s"$url/api/v18/clusters/$encodedName"

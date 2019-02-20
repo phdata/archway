@@ -21,13 +21,13 @@ pipelines:
             - sbt
             - ivy2
           artifacts:
-            - target/scala-2.12/*
+            - heimdali-api/target/scala-2.12/*
           script:
             - ./sbt "set test in assembly := {}" assembly
       - step:
           name: "Deploy"
           script:
-            - mv target/scala-2.12/heimdali-api.jar heimdali-api_${BITBUCKET_TAG}.jar
+            - mv heimdali-api/target/scala-2.12/heimdali-api.jar heimdali-api_${BITBUCKET_TAG}.jar
             - curl -u$ARTIFACTORY_USER:$ARTIFACTORY_TOKEN -T heimdali-api_${BITBUCKET_TAG}.jar "https://repository.phdata.io/artifactory/binary-dev/com/heimdali/${BITBUCKET_TAG}/heimdali-api_${BITBUCKET_TAG}.jar"
 
 definitions:
