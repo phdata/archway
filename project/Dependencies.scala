@@ -95,6 +95,11 @@ object Dependencies {
     "org.powermock" % "powermock-core" % "1.7.4" % Test
   )
 
+  val scalacheckVersion = "1.14.0"
+  val scalacheck = Seq(
+    "org.scalacheck" %% "scalacheck" % scalacheckVersion % Test
+  )
+
   val bouncy = Seq(
     "org.bouncycastle" % "bcpkix-jdk15on" % "1.57" % "provided"
   )
@@ -117,6 +122,22 @@ object Dependencies {
   val iniVersion = "0.5.1"
   val iniConfig = Seq(
     "org.ini4j" % "ini4j" % iniVersion
-
   )
+  
+  val modelsDependencies =
+    cats ++ catsEffect ++ circe ++ doobie
+
+  val apiDependencies =
+    coreTest ++ dbCore ++ logging ++ bouncy ++ pureConfig ++
+      http4s ++ fs2 ++ doobie ++ cats ++ catsEffect ++ circe ++ hadoop
+
+  val configDependencies =
+    pureConfig
+
+  val commonDependencies =
+    unbound ++ mailer ++ logging ++ doobie ++ cats ++ catsEffect ++ fs2 ++ pureConfig ++
+      scalatags ++ hadoop ++ fs2Http ++ http4s ++ jwt ++ iniConfig ++ scalacheck ++ coreTest ++ bouncy
+
+  val provisioningDependencies =
+    coreTest ++ hadoop
 }
