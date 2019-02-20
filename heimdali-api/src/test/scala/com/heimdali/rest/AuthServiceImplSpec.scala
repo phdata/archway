@@ -5,7 +5,7 @@ import cats.effect.IO
 import cats.syntax.applicative._
 import com.heimdali.services.AccountService
 import com.heimdali.test.fixtures._
-import org.http4s.{Header, Headers, Request, Uri}
+import org.http4s._
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FlatSpec, Matchers}
 

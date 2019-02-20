@@ -3,8 +3,9 @@ package com.heimdali.rest
 import cats.effect.IO
 import com.heimdali.test.TestClusterService
 import com.heimdali.test.fixtures.{HttpTest, _}
+import org.http4s._
+import org.http4s.circe._
 import org.http4s.implicits._
-import org.http4s.{Request, Response, Status, Uri}
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FlatSpec, Matchers}
 

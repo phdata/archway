@@ -76,9 +76,9 @@ object Dependencies {
   val hadoopVersion = s"2.6.0-$cdhVersion"
   val sentryVersion = s"1.5.1-$cdhVersion"
   val hadoop = Seq(
-    "org.apache.sentry" % "sentry-provider-db" % sentryVersion, // % "provided",
-    "org.apache.hadoop" % "hadoop-client" % hadoopVersion, // % "provided",
-    "org.apache.hive" % "hive-jdbc" % hiveVersion, // % "provided",
+    "org.apache.sentry" % "sentry-provider-db" % sentryVersion % "provided",
+    "org.apache.hadoop" % "hadoop-client" % hadoopVersion % "provided",
+    "org.apache.hive" % "hive-jdbc" % hiveVersion % "provided",
     ("org.apache.kafka" %% "kafka" % "0.10.1.1")
       .exclude("org.slf4j", "slf4j-log4j12")
       .exclude("com.sun.jmx", "jmxri")
@@ -101,7 +101,7 @@ object Dependencies {
   )
 
   val bouncy = Seq(
-    "org.bouncycastle" % "bcpkix-jdk15on" % "1.57", // % "provided"
+    "org.bouncycastle" % "bcpkix-jdk15on" % "1.57" % "provided"
   )
 
   val logging = Seq(
@@ -115,8 +115,8 @@ object Dependencies {
 
   val dbCore = Seq(
     "org.flywaydb" % "flyway-core" % "4.2.0",
-    "postgresql" % "postgresql" % "9.0-801.jdbc4", // % "provided",
-    "mysql" % "mysql-connector-java" % "6.0.6", // % "provided"
+    "postgresql" % "postgresql" % "9.0-801.jdbc4" % "provided",
+    "mysql" % "mysql-connector-java" % "6.0.6" % "provided"
   )
 
   val iniVersion = "0.5.1"
