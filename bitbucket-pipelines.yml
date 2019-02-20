@@ -23,7 +23,7 @@ pipelines:
           artifacts:
             - heimdali-api/target/scala-2.12/*
           script:
-            - ./sbt "set test in assembly := {}" assembly
+            - ./sbt "set every test in assembly := {}" assembly
       - step:
           name: "Deploy"
           script:
