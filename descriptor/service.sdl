@@ -148,6 +148,22 @@
           "configurableInWizard": "true"
         },
         {
+          "name": "heimdali_hue_override_host",
+          "label": "Hue Override Host",
+          "description": "Optionally specify the host for Hue's alternative location",
+          "required": "false",
+          "type": "string",
+          "configurableInWizard": "true"
+        },
+        {
+          "name": "heimdali_hue_override_port",
+          "label": "Hue Override Port",
+          "description": "Optionally specify the port for Hue's alternative location",
+          "required": "false",
+          "type": "port",
+          "configurableInWizard": "true"
+        },
+        {
           "name": "heimdali_hdfs_user_root",
           "label": "User HDFS Path",
           "description": "The HDFS location for users",
@@ -489,6 +505,8 @@
           "HEIMDALI_CM_ADMIN_PASSWORD": "${heimdali_admin_password}",
           "HEIMDALI_CLUSTER_NAME": "${heimdali_cluster_name}",
           "HEIMDALI_CLUSTER_ENVIRONMENT": "${heimdali_cluster_environment}",
+          "HEIMDALI_HUE_OVERRIDE_HOST": "${heimdali_hue_override_host}",
+          "HEIMDALI_HUE_OVERRIDE_PORT": "${heimdali_hue_override_port}",
           "HEIMDALI_HDFS_USER_ROOT": "${heimdali_hdfs_user_root}",
           "HEIMDALI_HDFS_SW_ROOT": "${heimdali_hdfs_sw_root}",
           "HEIMDALI_HDFS_DS_ROOT": "${heimdali_hdfs_ds_root}",
