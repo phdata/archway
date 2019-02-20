@@ -54,7 +54,7 @@ class LDAPClientImplSpec
 
     client.createGroup(10000, "edh_sw_sesame", groupDN).value.unsafeRunSync()
     client.addUser(groupDN, userDN("benny")).value.unsafeRunSync()
-    client.addUser(groupDN, userDN("johndoe")).value.unsafeRunSync()
+    client.addUser(groupDN, userDN("John Doe")).value.unsafeRunSync()
 
     val result = client.groupMembers(groupDN).unsafeRunSync()
 

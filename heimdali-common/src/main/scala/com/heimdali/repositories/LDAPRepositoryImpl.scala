@@ -73,6 +73,16 @@ class LDAPRepositoryImpl(clock: Clock)
       }
     }
 
+  def findAll(resource: String, resourceId: Long): ConnectionIO[List[LDAPRegistration]] =
+    resource match {
+      case "data" =>
+        (select ++ fr"inner join hive_grant hg on hg.ldap_registration_id = l.id inner join hive_database h on " ++ whereAnd(fr"h.id = $resourceId")).query[LDAPRegistration].to[List]
+      case "topics" =>
+        (select ++ fr"inner join topic_grant tg on tg.ldap_registration_id = l.id inner join kafka_topic t on " ++ whereAnd(fr"t.id = $resourceId")).query[LDAPRegistration].to[List]
+      case "applications" =>
+        (select ++ fr"inner join application a on a.ldap_registration_id = l.id inner join workspace_application wa on wa.application_id = a.id" ++ whereAnd(fr"a.id = $resourceId")).query[LDAPRegistration].to[List]
+    }
+
   override def groupCreated(id: Long): ConnectionIO[Int] =
     sql"update ldap_registration set group_created = ${Instant.now(clock)} where id = $id".update.run
 

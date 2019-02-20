@@ -91,7 +91,7 @@ class WorkspaceControllerSpec
   }
 
   it should "add a user" in new Http4sClientDsl[IO] with Context {
-    val memberRequest = MemberRoleRequest(standardUserDN, "data", id, Manager)
+    val memberRequest = MemberRoleRequest(standardUserDN, "data", id, Some(Manager))
     (memberService.addMember _)
       .expects(id, memberRequest)
       .returning(OptionT.some(

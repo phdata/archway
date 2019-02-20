@@ -20,7 +20,7 @@ class EmailServiceImplSpec extends FlatSpec with Matchers with MockFactory {
     (ldapClient.findUser _).expects(standardUserDN).returning(OptionT.some(LDAPUser(personName, standardUsername, standardUserDN, Seq.empty, Some(s"$standardUsername@phdata.io"))))
     (emailClient.send _).expects(s"Welcome to $name", *, s"$standardUsername@phdata.io", "username@phdata.io").returning(IO.unit)
 
-    emailService.newMemberEmail(id, MemberRoleRequest(newMember, "data", id, Manager)).value.unsafeRunSync()
+    emailService.newMemberEmail(id, MemberRoleRequest(newMember, "data", id, Some(Manager))).value.unsafeRunSync()
   }
 
   trait Context {

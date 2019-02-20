@@ -46,7 +46,7 @@ class MemberServiceSpec extends FlatSpec with Matchers with DBTest with MockFact
     memberRepository.get _ expects id returning List(MemberRightsRecord("data", newMember, savedHive.name, id, Manager)).pure[ConnectionIO]
     ldapClient.findUser _ expects newMember returning OptionT.some(LDAPUser(personName, "username", newMember, Seq.empty, Some("username@phdata.io")))
 
-    memberService.addMember(123, MemberRoleRequest(newMember, "data", 123, Manager)).value.unsafeRunSync()
+    memberService.addMember(123, MemberRoleRequest(newMember, "data", 123, Some(Manager))).value.unsafeRunSync()
   }
 
   trait Context {

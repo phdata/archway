@@ -2,7 +2,7 @@
   "users": [
     {
       "display": "John Doe",
-      "distinguished_name": "cn=johndoe,dc=example,dc=io"
+      "distinguished_name": "cn=John Doe,dc=example,dc=io"
     }
   ],
   "groups": [

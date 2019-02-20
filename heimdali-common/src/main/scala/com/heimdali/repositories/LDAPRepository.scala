@@ -11,6 +11,8 @@ trait LDAPRepository {
 
   def complete(id: Long): ConnectionIO[LDAPRegistration]
 
+  def findAll(resource: String, resourceId: Long): ConnectionIO[List[LDAPRegistration]]
+
   def find(resource: String, resourceId: Long, role: String): OptionT[ConnectionIO, LDAPRegistration]
 
   def groupCreated(id: Long): ConnectionIO[Int]

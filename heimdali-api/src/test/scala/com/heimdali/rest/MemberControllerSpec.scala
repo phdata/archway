@@ -21,7 +21,7 @@ class  MemberControllerSpec
 
   it should "return a list of users and groups" in new Http4sClientDsl[IO] with Context {
     (memberService.availableMembers _).expects("jo").returning(IO.pure(MemberSearchResult(
-      List(MemberSearchResultItem("John Doe", "cn=johndoe,dc=example,dc=io")),
+      List(MemberSearchResultItem("John Doe", "cn=John Doe,dc=example,dc=io")),
       List(MemberSearchResultItem("John's Group", "cn=johngroup,dc=example,dc=io"))
     )))
 

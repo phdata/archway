@@ -80,6 +80,7 @@ class WorkspaceController(authService: AuthService[IO],
           } yield response
 
         case req@POST -> Root / LongVar(id) / "members" as _ =>
+          import MemberRoleRequest.decoder
           implicit val roleDecoder: EntityDecoder[IO, MemberRoleRequest] = jsonOf[IO, MemberRoleRequest]
           for {
             memberRequest <- req.req.as[MemberRoleRequest]
@@ -89,6 +90,7 @@ class WorkspaceController(authService: AuthService[IO],
           } yield response
 
         case req@DELETE -> Root / LongVar(id) / "members" as _ =>
+          import MemberRoleRequest.minDecoder
           implicit val roleDecoder: EntityDecoder[IO, MemberRoleRequest] = jsonOf[IO, MemberRoleRequest]
           for {
             memberRequest <- req.req.as[MemberRoleRequest]
