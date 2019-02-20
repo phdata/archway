@@ -10,7 +10,6 @@ import io.circe.Decoder
 import io.circe.generic.auto._
 import io.circe.syntax._
 import org.http4s._
-import org.http4s.circe._
 import org.http4s.dsl.io._
 
 class WorkspaceController(authService: AuthService[IO],

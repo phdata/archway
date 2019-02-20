@@ -4,7 +4,6 @@ import cats.effect._
 import com.heimdali.services.ClusterService
 import io.circe.syntax._
 import org.http4s._
-import org.http4s.circe._
 import org.http4s.dsl.io._
 
 class ClusterController(clusterService: ClusterService[IO]) {
