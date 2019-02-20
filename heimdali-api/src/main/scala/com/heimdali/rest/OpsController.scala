@@ -5,6 +5,7 @@ import com.heimdali.models._
 import com.heimdali.services._
 import io.circe.syntax._
 import org.http4s._
+import org.http4s.circe._
 import org.http4s.dsl.io._
 
 class OpsController(authService: AuthService[IO],

@@ -28,7 +28,7 @@ object API {
     mainClass in reStart := Some("com.heimdali.Main"),
     javaOptions in reStart := Seq(
       "-Dhadoop.home.dir=$PWD",
-      s"-Djava.security.krb5.conf=${baseDirectory.value}/krb5.conf"
+      s"-Djava.security.krb5.conf=${baseDirectory.value}/../krb5.conf"
     ),
     envVars in reStart := Map(
       "HEIMDALI_SECRET" -> """r8,q8vx~AnU^U"W.""",

@@ -2,7 +2,7 @@ import sbt._
 
 object Dependencies {
 
-  val http4sVersion = "0.20.0-M3"
+  val http4sVersion = "0.20.0-M6"
   val http4s = Seq(
     "org.http4s" %% "http4s-dsl" % http4sVersion,
     "org.http4s" %% "http4s-blaze-server" % http4sVersion,
@@ -63,7 +63,7 @@ object Dependencies {
     "io.circe" %% "circe-java8" % circeVersion
   )
 
-  val jwtVersion = "0.19.0"
+  val jwtVersion = "2.0.0"
   val jwt = Seq(
     ("com.pauldijou" %% "jwt-core" % jwtVersion)
       .exclude("org.bouncycastle", "bcpkix-jdk15on"),
@@ -76,9 +76,9 @@ object Dependencies {
   val hadoopVersion = s"2.6.0-$cdhVersion"
   val sentryVersion = s"1.5.1-$cdhVersion"
   val hadoop = Seq(
-    "org.apache.sentry" % "sentry-provider-db" % sentryVersion % "provided",
-    "org.apache.hadoop" % "hadoop-client" % hadoopVersion % "provided",
-    "org.apache.hive" % "hive-jdbc" % hiveVersion % "provided",
+    "org.apache.sentry" % "sentry-provider-db" % sentryVersion, // % "provided",
+    "org.apache.hadoop" % "hadoop-client" % hadoopVersion, // % "provided",
+    "org.apache.hive" % "hive-jdbc" % hiveVersion, // % "provided",
     ("org.apache.kafka" %% "kafka" % "0.10.1.1")
       .exclude("org.slf4j", "slf4j-log4j12")
       .exclude("com.sun.jmx", "jmxri")
@@ -101,7 +101,7 @@ object Dependencies {
   )
 
   val bouncy = Seq(
-    "org.bouncycastle" % "bcpkix-jdk15on" % "1.57" % "provided"
+    "org.bouncycastle" % "bcpkix-jdk15on" % "1.57", // % "provided"
   )
 
   val logging = Seq(
@@ -115,8 +115,8 @@ object Dependencies {
 
   val dbCore = Seq(
     "org.flywaydb" % "flyway-core" % "4.2.0",
-    "postgresql" % "postgresql" % "9.0-801.jdbc4" % "provided",
-    "mysql" % "mysql-connector-java" % "6.0.6" % "provided"
+    "postgresql" % "postgresql" % "9.0-801.jdbc4", // % "provided",
+    "mysql" % "mysql-connector-java" % "6.0.6", // % "provided"
   )
 
   val iniVersion = "0.5.1"
@@ -135,8 +135,9 @@ object Dependencies {
     pureConfig
 
   val commonDependencies =
-    unbound ++ mailer ++ logging ++ doobie ++ cats ++ catsEffect ++ fs2 ++ pureConfig ++
-      scalatags ++ hadoop ++ fs2Http ++ http4s ++ jwt ++ iniConfig ++ scalacheck ++ coreTest ++ bouncy
+    unbound ++ mailer ++ logging ++ doobie ++ cats ++ catsEffect ++ fs2 ++ pureConfig ++ circe ++
+      scalatags ++ hadoop ++ fs2Http ++ http4s ++ jwt ++ iniConfig ++ scalacheck ++ coreTest ++ bouncy ++
+      Seq("org.typelevel" %% "jawn-parser" % "0.14.0")
 
   val provisioningDependencies =
     coreTest ++ hadoop

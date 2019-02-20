@@ -3,11 +3,10 @@ package com.heimdali.rest
 import cats.effect._
 import com.heimdali.models._
 import com.heimdali.services._
-import org.http4s._
-import org.http4s.dsl.io._
-import io.circe.Decoder
-import io.circe.generic.auto._
 import io.circe.syntax._
+import org.http4s._
+import org.http4s.circe._
+import org.http4s.dsl.io._
 
 class RiskController(authService: AuthService[IO],
                      workspaceService: WorkspaceService[IO]) {
