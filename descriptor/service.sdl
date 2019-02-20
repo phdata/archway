@@ -25,6 +25,10 @@
     {
       "name": "HIVE",
       "required": "true"
+    },
+    {
+      "name": "IMPALA",
+      "required": "true"
     }
   ],
   "parameters": [
