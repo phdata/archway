@@ -8,7 +8,7 @@ package object config {
 
   case class CredentialsConfig(username: String, password: String)
 
-  case class ServiceOverride(host: Option[String], port: Option[Int])
+  case class ServiceOverride(host: Option[String], port: Int)
 
   case class ClusterConfig(sessionRefresh: FiniteDuration,
                            url: String,

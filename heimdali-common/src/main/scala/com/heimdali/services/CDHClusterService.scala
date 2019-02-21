@@ -10,8 +10,7 @@ import org.http4s._
 
 class CDHClusterService[F[_]](http: HttpClient[F],
                               clusterConfig: ClusterConfig,
-                              hadoopConfiguration: Configuration,
-                              hueConfigurationReader: HueConfigurationReader[F])
+                              hadoopConfiguration: Configuration)
                              (implicit val F: Effect[F])
   extends ClusterService[F] {
 
@@ -35,15 +34,12 @@ class CDHClusterService[F[_]](http: HttpClient[F],
   def servicesRequest: F[Services] =
     http.request[Services](Request(Method.GET, Uri.fromString(clusterConfig.serviceListUrl).right.get))
 
-  lazy val hueFlags: F[Option[String]] =
-    hueConfigurationReader.getValue("desktop.http_port").value
-
-  def hueApp(hue: ServiceInfo, hosts: ListContainer[HostInfo], hueFlag: Option[String], hueLBRole: List[AppRole]): ClusterApp =
+  def hueApp(hue: ServiceInfo, hosts: ListContainer[HostInfo], hueLBRole: List[AppRole]): ClusterApp =
     clusterConfig.hueOverride match {
-      case ServiceOverride(Some(host), Some(port)) =>
+      case ServiceOverride(Some(host), port) =>
         ClusterApp("hue", "hue", "NA", "NA", Map("load_balancer" -> List(AppLocation(host, port))))
       case _ =>
-        ClusterApp("hue", hue, hosts, Map("load_balancer" -> (hueFlag.getOrElse("8888").toInt, hueLBRole)))
+        ClusterApp("hue", hue, hosts, Map("load_balancer" -> (clusterConfig.hueOverride.port, hueLBRole)))
     }
 
   lazy val clusterDetails: F[Cluster] =
@@ -59,7 +55,6 @@ class CDHClusterService[F[_]](http: HttpClient[F],
       hiveServer2Roles <- serviceRoleListRequest(hive.name).map(_.items.filter(_.`type` == CDHClusterService.HiveServer2Role))
 
       hue = services.items.find(_.`type` == CDHClusterService.HUE_SERVICE_TYPE).get
-      hueFlag <- hueFlags
       hueLBRole <- serviceRoleListRequest(hue.name).map(_.items.filter(_.`type` == CDHClusterService.HueLoadBalancerRole))
 
       yarn = services.items.find(_.`type` == CDHClusterService.YARN_SERVICE_TYPE).get
@@ -76,7 +71,7 @@ class CDHClusterService[F[_]](http: HttpClient[F],
           "beeswax" -> (clusterConfig.beeswaxPort, impalaDaemonRoles),
           "hiveServer2" -> (clusterConfig.hiveServer2Port, impalaDaemonRoles))),
         ClusterApp("hive", hive, hosts, Map("thrift" -> (hadoopConfiguration.get("hive.server2.thrift.port", "10000").toInt, hiveServer2Roles))),
-        hueApp(hue, hosts, hueFlag, hueLBRole),
+        hueApp(hue, hosts, hueLBRole),
         ClusterApp("yarn", yarn, hosts, Map(
           "node_manager" -> (hadoopConfiguration.get("yarn.nodemanager.webapp.address", "0.0.0.0:8042").split("\\s?:\\s?")(1).toInt, nodeManagerRoles),
           "resource_manager" -> (hadoopConfiguration.get("yarn.resourcemanager.webapp.address", "0.0.0.0:8088").split("\\s?:\\s?")(1).toInt, resourceManagerRoles))),

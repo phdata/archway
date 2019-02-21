@@ -51,14 +51,8 @@ trait ClientModule[F[_]] {
   val hdfsClient: HDFSClient[F] =
     new HDFSClientImpl[F](fileSystemLoader, hdfsAdmin, loginContextProvider)
 
-  val fileReader: FileReader[F] =
-    new DefaultFileReader[F]()
-
-  val hueConfigurationReader: HueConfigurationReader[F] =
-    new IniHueConfigurationReader[F]()
-
   val clusterService: ClusterService[F] =
-    new CDHClusterService[F](http, appConfig.cluster, hadoopConfiguration, hueConfigurationReader)
+    new CDHClusterService[F](http, appConfig.cluster, hadoopConfiguration)
 
   val yarnClient: YarnClient[F] =
     new CDHYarnClient[F](http, appConfig.cluster, clusterService)

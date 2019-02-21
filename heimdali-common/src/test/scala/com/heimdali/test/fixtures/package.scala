@@ -67,7 +67,7 @@ package object fixtures {
 
   def approval(instant: Instant = Instant.now(clock)) = Approval(Risk, standardUsername, instant)
 
-  val clusterConfig = ClusterConfig(1 second, "", "cluster", "dev", 21000, 21050, CredentialsConfig("admin", "admin"), ServiceOverride(None, None))
+  val clusterConfig = ClusterConfig(1 second, "", "cluster", "dev", 21000, 21050, CredentialsConfig("admin", "admin"), ServiceOverride(None, 8088))
   private implicit def hint[T] = ProductHint[T](ConfigFieldMapping(CamelCase, CamelCase))
   val Right(appConfig) = pureconfig.loadConfig[AppConfig]
 
