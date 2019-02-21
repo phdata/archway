@@ -16,27 +16,13 @@ class CDHClusterServiceSpec
 
   behavior of "CDH Cluster service"
 
-  it should "break up impala flags" in {
-    val expected = Map("-beeswax_port" -> "21000", "-hs2_port" -> "21050")
-
-    val fileReader = mock[FileReader[IO]]
-    fileReader.readLines _ expects "impala-conf/impalad_flags" returning IO.pure(List("-beeswax_port=21000", "-hs2_port=21050"))
-
-    val service = new CDHClusterService(httpClient, clusterConfig, new Configuration(), fileReader, mock[HueConfigurationReader[IO]])
-
-    val actual = service.impalaFlags.unsafeRunSync()
-
-    actual shouldBe expected
-  }
-
   it should "use hue override" in {
     val configuration = new Configuration()
-    val fileReader = mock[FileReader[IO]]
     val hueConfigurationReader = mock[HueConfigurationReader[IO]]
 
     val newConfig = clusterConfig.copy(hueOverride = ServiceOverride(Some("abc"), Some(123)))
 
-    val service = new CDHClusterService(httpClient, newConfig, configuration, fileReader, hueConfigurationReader)
+    val service = new CDHClusterService(httpClient, newConfig, configuration, hueConfigurationReader)
 
     val ClusterApp(_, _, _, _, actual) = service.hueApp(null, null, null, null)
     actual.head._2.head shouldBe AppLocation("abc", 123)
@@ -50,9 +36,6 @@ class CDHClusterServiceSpec
     val username = "admin"
     val password = "admin"
 
-    val fileReader = mock[FileReader[IO]]
-    fileReader.readLines _ expects "impala-conf/impalad_flags" returning IO.pure(List("-beeswax_port=123", "-hs2_port=321"))
-
     val hueConfigurationReader = mock[HueConfigurationReader[IO]]
     hueConfigurationReader.getValue _ expects "desktop.http_port" returning OptionT.some("808")
 
@@ -61,15 +44,15 @@ class CDHClusterServiceSpec
     configuration.set("yarn.nodemanager.webapp.address", "0.0.0.0:9998")
     configuration.set("yarn.resourcemanager.webapp.address", "0.0.0.0:9999")
 
-    val service = new CDHClusterService(httpClient, clusterConfig, configuration, fileReader, hueConfigurationReader)
+    val service = new CDHClusterService(httpClient, clusterConfig, configuration, hueConfigurationReader)
     val list = service.list.unsafeRunSync()
     list should have length 1
 
     val first = list.head
 
     val impala = first.services.find(_.name == "impala").get
-    impala.capabilities("beeswax").head.port shouldBe 123
-    impala.capabilities("hiveServer2").head.port shouldBe 321
+    impala.capabilities("beeswax").head.port shouldBe 21000
+    impala.capabilities("hiveServer2").head.port shouldBe 21050
 
     val hive = first.services.find(_.name == "hive").get
     hive.capabilities("thrift").head.port shouldBe 888

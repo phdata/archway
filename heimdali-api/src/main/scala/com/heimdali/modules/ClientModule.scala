@@ -58,7 +58,7 @@ trait ClientModule[F[_]] {
     new IniHueConfigurationReader[F]()
 
   val clusterService: ClusterService[F] =
-    new CDHClusterService[F](http, appConfig.cluster, hadoopConfiguration, fileReader, hueConfigurationReader)
+    new CDHClusterService[F](http, appConfig.cluster, hadoopConfiguration, hueConfigurationReader)
 
   val yarnClient: YarnClient[F] =
     new CDHYarnClient[F](http, appConfig.cluster, clusterService)

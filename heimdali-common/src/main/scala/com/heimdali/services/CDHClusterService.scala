@@ -11,7 +11,6 @@ import org.http4s._
 class CDHClusterService[F[_]](http: HttpClient[F],
                               clusterConfig: ClusterConfig,
                               hadoopConfiguration: Configuration,
-                              fileReader: FileReader[F],
                               hueConfigurationReader: HueConfigurationReader[F])
                              (implicit val F: Effect[F])
   extends ClusterService[F] {
@@ -36,11 +35,6 @@ class CDHClusterService[F[_]](http: HttpClient[F],
   def servicesRequest: F[Services] =
     http.request[Services](Request(Method.GET, Uri.fromString(clusterConfig.serviceListUrl).right.get))
 
-  lazy val impalaFlags: F[Map[String, String]] =
-    fileReader.readLines("impala-conf/impalad_flags").map(_.map(_.split("\\s?=\\s?") match {
-      case Array(key, value) => key -> value
-    }).toMap)
-
   lazy val hueFlags: F[Option[String]] =
     hueConfigurationReader.getValue("desktop.http_port").value
 
@@ -59,7 +53,6 @@ class CDHClusterService[F[_]](http: HttpClient[F],
       hosts <- hostListRequest
 
       impala = services.items.find(_.`type` == CDHClusterService.IMPALA_SERVICE_TYPE).get
-      impalaFlag <- impalaFlags
       impalaDaemonRoles <- serviceRoleListRequest(impala.name).map(_.items.filter(_.`type` == CDHClusterService.ImpalaDaemonRole))
 
       hive = services.items.find(_.`type` == CDHClusterService.HIVE_SERVICE_TYPE).get
@@ -80,12 +73,8 @@ class CDHClusterService[F[_]](http: HttpClient[F],
       clusterConfig.url,
       List(
         ClusterApp("impala", impala, hosts, Map(
-          "beeswax" -> ({
-            impalaFlag.get("-beeswax_port") getOrElse "21000"
-          }.toInt, impalaDaemonRoles),
-          "hiveServer2" -> ({
-            impalaFlag.get("-hs2_port") getOrElse "21050"
-          }.toInt, impalaDaemonRoles))),
+          "beeswax" -> (clusterConfig.beeswaxPort, impalaDaemonRoles),
+          "hiveServer2" -> (clusterConfig.hiveServer2Port, impalaDaemonRoles))),
         ClusterApp("hive", hive, hosts, Map("thrift" -> (hadoopConfiguration.get("hive.server2.thrift.port", "10000").toInt, hiveServer2Roles))),
         hueApp(hue, hosts, hueFlag, hueLBRole),
         ClusterApp("yarn", yarn, hosts, Map(

@@ -14,6 +14,8 @@ package object config {
                            url: String,
                            name: String,
                            environment: String,
+                           beeswaxPort: Int,
+                           hiveServer2Port: Int,
                            admin: CredentialsConfig,
                            hueOverride: ServiceOverride) {
     private val encodedName: String = URLEncoder.encode(name, "utf-8").replaceAll("\\+", "%20")
