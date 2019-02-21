@@ -98,8 +98,8 @@ class MemberServiceImpl[F[_]](memberRepository: MemberRepository,
 
       _ <- OptionT.some[F](logger.info(s"[REMOVING MEMBER] deleted ${memberRequest.distinguishedName} record"))
 
-      result <- OptionT.liftF(convertRecord(member))
-    } yield result.head
+      result <- OptionT(convertRecord(member).map(_.headOption))
+    } yield result
 
   def toResult(searchResultEntry: SearchResultEntry): MemberSearchResultItem =
     MemberSearchResultItem(searchResultEntry.getAttributeValue("cn"), searchResultEntry.getDN)

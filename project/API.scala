@@ -65,7 +65,7 @@ object API {
 
       "HEIMDALI_DB_URL" -> "jdbc:postgresql://localhost/heimdali",
       "HEIMDALI_DB_USER" -> "postgres",
-      "HEIMDALI_DB_PASS" -> "postgres",
+      "HEIMDALI_DB_PASS" -> "Jotunn123!",
       "HEIMDALI_DB_DRIVER" -> "org.postgresql.Driver",
 
       "HEIMDALI_CLUSTER_NAME" -> "cluster",

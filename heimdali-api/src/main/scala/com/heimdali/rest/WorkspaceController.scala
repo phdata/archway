@@ -95,7 +95,7 @@ class WorkspaceController(authService: AuthService[IO],
           for {
             memberRequest <- req.req.as[MemberRoleRequest]
             removedMember <- memberService.removeMember(id, memberRequest).value
-            response <- removedMember.fold(NotFound())(member => Ok(member.asJson))
+            response <- Ok()
           } yield response
 
         case req@POST -> Root / LongVar(id) / "topics" as user =>
