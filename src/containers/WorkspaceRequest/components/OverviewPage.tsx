@@ -90,12 +90,16 @@ class OverviewPage extends React.PureComponent<InjectedFormikProps<Props, Reques
 
     private updateComplianceItem(e: CheckboxChangeEvent) {
     this.props.setFieldValue(`compliance.${e.target.name!}`, e.target.checked);
-    this.props.submitForm();
+    if (this.props.isValid) {
+      this.props.setRequest(this.props.values);
+    }
   }
 
     private onChangeWrapper(e: any) {
     this.props.handleChange(e);
-    this.props.submitForm();
+    if (this.props.isValid) {
+      this.props.setRequest(this.props.values);
+    }
   }
 }
 
