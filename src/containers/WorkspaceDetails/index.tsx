@@ -1,26 +1,26 @@
 import * as React from 'react';
-import { Col, Row, Spin, Modal, notification } from 'antd';
+import {
+  Spin,
+  Tabs,
+  Modal,
+  notification,
+} from 'antd';
 import { connect } from 'react-redux';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { Dispatch } from 'redux';
 import { createStructuredSelector } from 'reselect';
 import { throttle } from 'lodash';
 import {
-  ApprovalDetails,
-  ComplianceDetails,
-  DescriptionDetails,
-  HiveDetails,
-  KafkaDetails,
+  Status,
   Liaison,
-  MemberList,
-  YarnDetails,
-  Allocations,
-  KafkaTopicRequest,
-  PrepareHelp,
-  RunHelp,
-  CreateHelp,
+  Info,
+  Compliance,
+  QuickLinks,
+  OverviewTab,
+  DataTab,
+  ApplicationsTab,
   SimpleMemberRequest,
- } from './components';
+} from './components';
 import { Cluster } from '../../models/Cluster';
 import { Profile } from '../../models/Profile';
 import {
@@ -33,9 +33,6 @@ import {
 } from '../../models/Workspace';
 import * as actions from './actions';
 import * as selectors from './selectors';
-
-/* tslint:disable:no-var-requires */
-const TimeAgo = require('timeago-react').default;
 
 interface DetailsRouteProps {
   id: any;
@@ -52,6 +49,7 @@ interface Props extends RouteComponentProps<DetailsRouteProps> {
     selectedAllocation?: HiveAllocation;
     userSuggestions?: UserSuggestions;
     liasion?: Member;
+    members?: Member[];
 
     clearDetails: () => void;
     getWorkspaceDetails: (id: number) => void;
@@ -62,10 +60,12 @@ interface Props extends RouteComponentProps<DetailsRouteProps> {
     approveOperations: (e: React.MouseEvent) => void;
     requestTopic: () => void;
     simpleMemberRequest: () => void;
+    changeMemberRoleRequest: (distinguished_name: string, roleId: number, role: string) => void;
     updateSelectedAllocation: (allocation: HiveAllocation) => void;
     requestRefreshYarnApps: () => void;
     requestRefreshHiveTables: () => void;
     getUserSuggestions: (filter: string) => void;
+    removeMember: (distinguished_name: string, database_role: string) => void;
 }
 
 class WorkspaceDetails extends React.PureComponent<Props> {
@@ -152,152 +152,120 @@ class WorkspaceDetails extends React.PureComponent<Props> {
       pools,
       infos,
       approved,
+      members,
       activeModal,
-      showTopicDialog,
+      // showTopicDialog,
       showSimpleMemberDialog,
       clearModal,
       approveRisk,
       approveOperations,
       profile,
-      requestTopic,
+      // requestTopic,
       simpleMemberRequest,
+      changeMemberRoleRequest,
       selectedAllocation,
       updateSelectedAllocation,
       requestRefreshYarnApps,
       requestRefreshHiveTables,
       userSuggestions,
+      removeMember,
       liasion,
     } = this.props;
 
     if (!workspace) { return <Spin />; }
 
     return (
-      <div>
-          <div style={{ textAlign: 'center' }}>
-            <h1 style={{ marginBottom: 0 }}>
-              {workspace!.name}
-              <span
-                style={{
-                  verticalAlign: 'super',
-                  fontSize: 10,
-                  color: approved ? 'green' : 'red',
-                  textTransform: 'uppercase',
-                }}>
-                {approved ? 'approved' : 'pending'}
-              </span>
-            </h1>
-            <div>{workspace!.summary}</div>
-            <div
-              style={{
-                textTransform: 'uppercase',
-                fontSize: 12,
-                color: '#aaa',
-              }}>
-              created <TimeAgo datetime={workspace.requested_date} />
-            </div>
-          </div>
-          <Row gutter={12} type="flex">
-            <Col span={24} xxl={8} style={{ marginTop: 10, display: 'flex' }}>
-              <DescriptionDetails
-                description={workspace.description} />
-            </Col>
-            <Col span={12} xxl={4} style={{ marginTop: 10, display: 'flex' }}>
-              <ComplianceDetails
-                pii={workspace.compliance.pii_data}
-                pci={workspace.compliance.pci_data}
-                phi={workspace.compliance.phi_data} />
-            </Col>
-            <Col span={12} xxl={4} style={{ marginTop: 10, display: 'flex' }}>
-              <Liaison liaison={liasion} />
-            </Col>
-            <Col span={12} xxl={4} style={{ marginTop: 10, display: 'flex' }}>
-              {selectedAllocation && <Allocations
-                allocations={workspace.data}
-                selectedAllocation={selectedAllocation}
-                onChangeAllocation={updateSelectedAllocation}
-              />}
-            </Col>
-            <Col span={12} xxl={4} style={{ marginTop: 10, display: 'flex' }}>
-              <ApprovalDetails
-                risk={workspace.approvals && workspace.approvals.risk}
-                infra={workspace.approvals && workspace.approvals.infra}
-                approveOperations={
-                  (profile.permissions && profile.permissions.platform_operations) ? approveOperations : undefined
-                }
-                approveRisk={
-                  (profile.permissions && profile.permissions.risk_management) ? approveRisk : undefined
-                }
+      <div style={{ height: '100%' }}>
+
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            backgroundColor: 'white',
+            padding: 16,
+          }}
+        >
+          <Status
+            ready={approved}
+            createdAt={workspace.requested_date}
+          />
+          <Liaison
+            data={liasion}
+          />
+        </div>
+
+        <div style={{ backgroundColor: 'white', padding: '16px 0' }}>
+          <Info
+            behavior={workspace.behavior}
+            name={workspace.name}
+            summary={workspace.summary}
+          />
+          <Compliance
+            pii={workspace.compliance.pii_data}
+            pci={workspace.compliance.pci_data}
+            phi={workspace.compliance.phi_data}
+          />
+        </div>
+
+        <Tabs
+          tabBarStyle={{
+            textAlign: 'center',
+            margin: 0,
+            padding: '0 16px 0 156px',
+            height: 56,
+            backgroundColor: 'white'
+          }}
+          defaultActiveKey="overview"
+          tabBarExtraContent={(
+            <QuickLinks
+              hue={cluster.services && cluster.services.hue}
+              yarn={cluster.services && cluster.services.yarn}
+              selectedAllocation={selectedAllocation}
             />
-            </Col>
-          </Row>
-          {approved && (
-            <Row gutter={12} type="flex" style={{ alignItems: 'stretch' }}>
-              <Col span={24} lg={12} xxl={6} style={{ marginTop: 10 }}>
-                <HiveDetails
-                  hue={cluster.services && cluster.services.hue}
-                  allocations={workspace.data}
-                  info={infos}
-                  selectedAllocation={selectedAllocation}
-                  onChangeAllocation={updateSelectedAllocation}
-                  onRefreshHiveTables={requestRefreshHiveTables}
-                />
-              </Col>
-              <Col span={24} lg={12} xxl={6} style={{ marginTop: 10 }}>
-                {workspace.processing && <YarnDetails
-                  yarn={cluster.services && cluster.services.yarn}
-                  poolName={workspace.processing[0].pool_name}
-                  pools={pools}
-                  onRefreshPools={requestRefreshYarnApps}
-                />}
-              </Col>
-              <Col span={24} lg={12} xxl={6} style={{ marginTop: 10 }}>
-                {workspace.applications && <KafkaDetails
-                  consumerGroup={workspace.applications[0] && workspace.applications[0].consumer_group}
-                  topics={workspace.topics}
-                  showModal={showTopicDialog} />}
-                <Modal
-                  visible={activeModal === 'kafka'}
-                  title="New Topic"
-                  onCancel={clearModal}
-                  onOk={requestTopic}>
-                  <KafkaTopicRequest />
-                </Modal>
-              </Col>
-              <Col span={24} lg={12} xxl={6} style={{ marginTop: 10 }}>
-                <MemberList
-                  showModal={showSimpleMemberDialog} />
-                <Modal
-                  visible={activeModal === 'simpleMember'}
-                  title="Add A Member"
-                  onCancel={clearModal}
-                  onOk={simpleMemberRequest}>
-                  <SimpleMemberRequest
-                    suggestions={userSuggestions}
-                    onSearch={this.handleMemberSearch}
-                  />
-                </Modal>
-              </Col>
-            </Row>
           )}
-          {selectedAllocation && (
-            <Row gutter={12}>
-              <Col span={24} xxl={8} style={{ marginTop: 10 }}>
-                <PrepareHelp
-                  location={selectedAllocation.location}
-                  namespace={selectedAllocation.name} />
-              </Col>
-              <Col span={24} xxl={8} style={{ marginTop: 10 }}>
-                {cluster.services.hive.thrift && <CreateHelp
-                  host={cluster.services.hive.thrift[0].host}
-                  port={cluster.services.hive.thrift[0].port}
-                  namespace={selectedAllocation.name} />}
-              </Col>
-              <Col span={24} xxl={8} style={{ marginTop: 10 }}>
-                {workspace.processing && <RunHelp
-                  queue={workspace.processing[0].pool_name} />}
-              </Col>
-            </Row>
-          )}
+        >
+          <Tabs.TabPane tab="OVERVIEW" key="overview">
+            <OverviewTab
+              workspace={workspace}
+              profile={profile}
+              approveRisk={approveRisk}
+              approveOperations={approveOperations}
+            />
+          </Tabs.TabPane>
+          <Tabs.TabPane tab="DATA" key="data">
+            <DataTab
+              workspace={workspace}
+              cluster={cluster}
+              infos={infos}
+              members={members}
+              onAddMember={showSimpleMemberDialog}
+              removeMember={removeMember}
+              selectedAllocation={selectedAllocation}
+              onChangeAllocation={updateSelectedAllocation}
+              onChangeMemberRole={changeMemberRoleRequest}
+              requestRefreshHiveTables={requestRefreshHiveTables}
+            />
+          </Tabs.TabPane>
+          <Tabs.TabPane tab="APPLICATIONS" key="applications">
+            <ApplicationsTab
+              workspace={workspace}
+              yarn={cluster.services && cluster.services.yarn}
+              pools={pools}
+              onRefreshPools={requestRefreshYarnApps}
+            />
+          </Tabs.TabPane>
+        </Tabs>
+        <Modal
+          visible={activeModal === 'simpleMember'}
+          title="Add A Member"
+          onCancel={clearModal}
+          onOk={simpleMemberRequest}>
+          <SimpleMemberRequest
+            allocations={workspace.data}
+            suggestions={userSuggestions}
+            onSearch={this.handleMemberSearch}
+          />
+        </Modal>
       </div>
     );
   }
@@ -316,6 +284,7 @@ const mapStateToProps = () =>
     activeModal: selectors.getActiveModal(),
     userSuggestions: selectors.getUserSuggestions(),
     liasion: selectors.getLiaison(),
+    members: selectors.getMembers(),
   });
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
@@ -345,9 +314,13 @@ const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
   clearModal: () => dispatch(actions.setActiveModal(false)),
   requestTopic: () => dispatch(actions.requestTopic()),
   simpleMemberRequest: () => dispatch(actions.simpleMemberRequest()),
+  changeMemberRoleRequest: (distinguished_name: string, roleId: number, role: string) =>
+    dispatch(actions.changeMemberRoleRequest(distinguished_name, roleId, role)),
   requestRefreshYarnApps: () => dispatch(actions.requestRefreshYarnApps()),
   requestRefreshHiveTables: () => dispatch(actions.requestRefreshHiveTables()),
   getUserSuggestions: (filter: string) => dispatch(actions.getUserSuggestions(filter)),
+
+  removeMember: (distinguished_name: string, role: string) => dispatch(actions.requestRemoveMember(distinguished_name, role)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(withRouter(WorkspaceDetails));

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Button, Card, Spin, Row, Col } from 'antd';
-import { PrepareHelp, RunHelp, CreateHelp, Label } from '../../WorkspaceDetails/components';
+import { PrepareHelp, RunHelp, CreateHelp, Label } from './';
 import { Workspace } from '../../../models/Workspace';
 import { Cluster } from '../../../models/Cluster';
 

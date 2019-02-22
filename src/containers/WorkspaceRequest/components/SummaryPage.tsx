@@ -1,7 +1,7 @@
 import { Card, Col, Icon, List, Row } from 'antd';
 import * as React from 'react';
 import { ResourcePool, Workspace, Application, HiveAllocation } from '../../../models/Workspace';
-import { Label } from '../../WorkspaceDetails/components';
+import Label from './Label';
 
 interface Props {
     workspace?: Workspace;

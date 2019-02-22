@@ -18,13 +18,13 @@ pipelines:
           caches:
             - node
           artifacts:
-            - dist/*
+            - dist/**
           script:
             - npm i -g typescript
+            - npm i
             - npm run-script build
       - step:
           name: "Deploy"
           script:
-            - mv public/images dist/
             - tar cvf heimdali-ui_${BITBUCKET_TAG}.tar dist
             - curl -u$ARTIFACTORY_USER:$ARTIFACTORY_TOKEN -T heimdali-ui_${BITBUCKET_TAG}.tar "https://repository.phdata.io/artifactory/binary-dev/com/heimdali/${BITBUCKET_TAG}/heimdali-ui_${BITBUCKET_TAG}.tar"

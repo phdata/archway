@@ -53,14 +53,14 @@ const Navigation = ({ location, profile }: Props) => (
       {profile && profile.permissions.risk_management && (
         <Menu.Item key="risks">
           <NavLink to="/risks">
-          <Icon type="gold" style={{ fontSize: 18 }} /> Risk/Compliance
+          <Icon type="audit" style={{ fontSize: 18 }} /> Risk/Compliance
           </NavLink>
         </Menu.Item>
       )}
       {profile && profile.permissions.platform_operations && (
         <Menu.Item key="operations">
           <NavLink to="/operations">
-          <Icon type="gold" style={{ fontSize: 18 }} /> Operations
+          <Icon type="cloud" style={{ fontSize: 18 }} /> Platform Operations
           </NavLink>
         </Menu.Item>
       )}

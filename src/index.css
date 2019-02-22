@@ -37,3 +37,15 @@ h1, h2 {
 tbody {
   background-color: white;
 }
+
+.ant-tabs-tab {
+  color: #1DA57A !important;
+  font-size: 18px;
+  font-weight: 300 !important;
+  padding: 8px 0 4px 0 !important;
+  margin: 0 32px !important;
+}
+
+.ant-tabs-ink-bar {
+  background-color: #1DA57A;
+}

@@ -17,7 +17,7 @@ const Main = () => (
   <Layout style={{ minHeight: '100%' }}>
     <Navigation />
     <Layout style={{ minHeight: '100%', marginLeft: 250, backgroundColor: '#F0F3F5' }}>
-      <Content style={{ margin: '24px 16px 0', overflow: 'initial' }}>
+      <Content style={{ overflow: 'initial' }}>
         <div style={{ minHeight: '100%' }}>
           <Switch>
             <Route exact={true} path="/" component={SendHome} />
@@ -31,7 +31,7 @@ const Main = () => (
         </div>
       </Content>
       <Footer style={{ textAlign: 'center' }}>
-        Heimdali &copy;2018 Created by Jotunn LLC
+        Heimdali &copy;2018 Created by phData
       </Footer>
     </Layout>
   </Layout>

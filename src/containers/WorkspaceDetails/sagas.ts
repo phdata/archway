@@ -16,6 +16,9 @@ import {
   topicRequestSuccess,
   SIMPLE_MEMBER_REQUEST,
   simpleMemberRequestComplete,
+  CHANGE_MEMBER_ROLE_REQUESTED,
+  ChangeMemberRoleRequestAction,
+  changeMemberRoleRequestComplete,
   getWorkspace,
   approvalFailure,
   RemoveMemberRequestAction,
@@ -100,11 +103,12 @@ function* topicRequestedListener() {
 export function* simpleMemberRequested() {
   const token = yield select(tokenExtractor);
   const workspace = (yield select(detailExtractor)).toJS();
-  const { username, role } = (yield select(memberRequestFormExtractor)).toJS();
+  const { username, roles } = (yield select(memberRequestFormExtractor)).toJS();
   yield all(
-    workspace.data.map(({ id }: { id: number }) => (
-      call(Api.newWorkspaceMember, token, workspace.id, 'data', id, role, username)
-    )),
+    workspace.data.map(({ id, name }: { id: number, name: string }) => {
+      const role = roles[name] || 'readonly';
+      return (role !== 'none') && call(Api.newWorkspaceMember, token, workspace.id, 'data', id, role, username);
+    })
   );
   yield put(simpleMemberRequestComplete());
   const members = yield call(Api.getMembers, token, workspace.id);
@@ -113,6 +117,26 @@ export function* simpleMemberRequested() {
 
 function* simpleMemberRequestedListener() {
   yield takeLatest(SIMPLE_MEMBER_REQUEST, simpleMemberRequested);
+}
+
+export function* changeMemberRoleRequested({ distinguished_name, roleId, role }: ChangeMemberRoleRequestAction) {
+  const token = yield select(tokenExtractor);
+  const workspace = (yield select(detailExtractor)).toJS();
+  try {
+    yield call(Api.removeWorkspaceMember, token, workspace.id, 'data', roleId, role, distinguished_name)
+    if (role !== 'none') {
+      yield call(Api.newWorkspaceMember, token, workspace.id, 'data', roleId, role, distinguished_name);
+    }
+    yield put(changeMemberRoleRequestComplete());
+    const members = yield call(Api.getMembers, token, workspace.id);
+    yield put(setMembers(members));
+  } catch (e) {
+    //
+  }
+}
+
+function* changeMemberRoleRequestedListener() {
+  yield takeLatest(CHANGE_MEMBER_ROLE_REQUESTED, changeMemberRoleRequested);
 }
 
 export function* removeMemberRequested({ distinguished_name, role }: RemoveMemberRequestAction) {
@@ -173,6 +197,7 @@ export default function* root() {
     fork(approvalRequestedListener),
     fork(topicRequestedListener),
     fork(simpleMemberRequestedListener),
+    fork(changeMemberRoleRequestedListener),
     fork(removeMemberRequestedListener),
     fork(refreshYarnAppsRequestedListener),
     fork(refreshHiveTablesRequestedListener),

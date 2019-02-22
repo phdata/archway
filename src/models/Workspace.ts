@@ -11,7 +11,7 @@ export interface ResourcePoolsInfo {
 }
 
 export interface PoolInfo {
-  name: string;
+  resource_pool: string;
   applications: YarnApplication[];
 }
 

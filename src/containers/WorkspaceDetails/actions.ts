@@ -138,6 +138,29 @@ export const simpleMemberRequestComplete = () => ({
   type: SIMPLE_MEMBER_REQUEST_COMPLETE,
 });
 
+export const CHANGE_MEMBER_ROLE_REQUESTED = 'CHANGE_MEMBER_ROLE_REQUESTED';
+export interface ChangeMemberRoleRequestAction {
+  type: typeof CHANGE_MEMBER_ROLE_REQUESTED;
+  username: string;
+  distinguished_name: string;
+  roleId: number;
+  role: string;
+}
+export const changeMemberRoleRequest = (distinguished_name: string, roleId: number, role: string) => ({
+  type: CHANGE_MEMBER_ROLE_REQUESTED,
+  distinguished_name,
+  roleId,
+  role,
+});
+
+export const CHANGE_MEMBER_ROLE_REQUESTED_COMPLETE = 'CHANGE_MEMBER_ROLE_REQUESTED_COMPLETE';
+export interface ChangeMemberRoleRequestCompleteAction {
+  type: typeof CHANGE_MEMBER_ROLE_REQUESTED_COMPLETE;
+}
+export const changeMemberRoleRequestComplete = () => ({
+  type: CHANGE_MEMBER_ROLE_REQUESTED_COMPLETE,
+});
+
 export const APPROVAL_FAILURE = 'APPROVAL_FAILURE';
 export const approvalFailure = (approvalType: ApprovalType, error: string) => ({
   type: APPROVAL_FAILURE,
