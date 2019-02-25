@@ -2,8 +2,10 @@ package com.heimdali.modules
 
 import cats.effect.{ConcurrentEffect, Effect}
 import com.heimdali.AppContext
+import com.heimdali.models.{SimpleTemplate, StructuredTemplate, UserTemplate}
 import com.heimdali.provisioning.DefaultProvisioningService
 import com.heimdali.services._
+import com.heimdali.templates.TemplateGenerator
 import doobie.util.transactor.Transactor
 
 trait ServiceModule[F[_]] {
@@ -12,6 +14,15 @@ trait ServiceModule[F[_]] {
     with RepoModule
     with ConfigurationModule
     with HttpModule[F] =>
+
+  def userTemplateGenerator: TemplateGenerator[F, UserTemplate] =
+    TemplateGenerator.instance(appConfig, _.userGenerator)
+
+  def simpleTemplateGenerator: TemplateGenerator[F, SimpleTemplate] =
+    TemplateGenerator.instance(appConfig, _.simpleGenerator)
+
+  def structuredTemplateGenerator: TemplateGenerator[F, StructuredTemplate] =
+    TemplateGenerator.instance(appConfig, _.structuredGenerator)
 
   implicit def effect: ConcurrentEffect[F]
 
@@ -22,14 +33,8 @@ trait ServiceModule[F[_]] {
     appConfig.db.meta.password.get
   )(effect, contextShift)
 
-  val templateService: TemplateService[F] =
-    new DefaultTemplateService[F](appConfig)
-
   val keytabService: KeytabService[F] =
     new KeytabServiceImpl[F]()
-
-  val environment: String =
-    configuration.getString("cluster.environment")
 
   val memberService: MemberService[F] =
     new MemberServiceImpl(
@@ -86,7 +91,7 @@ trait ServiceModule[F[_]] {
     new KafkaServiceImpl[F](reader)
 
   val applicationService: ApplicationService[F] =
-    new ApplicationServiceImpl[F](reader, templateService)
+    new ApplicationServiceImpl[F](reader)
 
   val accountService: AccountService[F] =
     new AccountServiceImpl[F](
@@ -95,6 +100,6 @@ trait ServiceModule[F[_]] {
       appConfig.approvers,
       appConfig.workspaces,
       workspaceService,
-      templateService,
+      userTemplateGenerator,
       provisioningService)
 }
