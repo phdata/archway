@@ -1,16 +1,14 @@
 package com.heimdali.services
 
-import cats._
-import cats.data._
 import cats.effect._
 import cats.implicits._
 import com.heimdali.AppContext
 import com.heimdali.models.Application
+import com.heimdali.templates.TemplateGenerator
 import com.typesafe.scalalogging.LazyLogging
 import doobie.implicits._
 
-class ApplicationServiceImpl[F[_]](appContext: AppContext[F],
-                                   templateService: TemplateService[F])
+class ApplicationServiceImpl[F[_]](appContext: AppContext[F])
                                   (implicit F: Effect[F])
   extends ApplicationService[F]
     with LazyLogging {
@@ -28,7 +26,7 @@ class ApplicationServiceImpl[F[_]](appContext: AppContext[F],
 
       app = Application(
         username,
-        templateService.generateName(workspace.get.name),
+        TemplateGenerator.generateName(workspace.get.name),
         applicationRrequest.name,
         appContext.appConfig.ldap.groupPath
       )

@@ -16,8 +16,6 @@ trait ConfigurationModule {
 
   implicit val clock: Clock = Clock.systemUTC()
 
-  val configuration: Config = ConfigFactory.load()
-
   val hadoopConfiguration: Configuration = {
     val config = new Configuration()
     config.addResource(new File("./hive-conf/core-site.xml").toURI.toURL)

@@ -72,7 +72,10 @@ package object config {
 
   case class KafkaConfig(zookeeperConnect: String)
 
-  case class AppConfig(rest: RestConfig,
+  case class TemplateConfig(userGenerator: String, simpleGenerator: String, structuredGenerator: String)
+
+  case class AppConfig(templates: TemplateConfig,
+                       rest: RestConfig,
                        ui: UIConfig,
                        smtp: SMTPConfig,
                        cluster: ClusterConfig,

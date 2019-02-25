@@ -32,13 +32,17 @@ trait RestModule {
       provisioningService,
       clock,
     )
-  val templateController = new TemplateController(authService, templateService)
+  val templateController =
+    new TemplateController(authService, simpleTemplateGenerator, structuredTemplateGenerator)
 
-  val memberController: MemberController = new MemberController(authService, memberService)
+  val memberController: MemberController =
+    new MemberController(authService, memberService)
 
-  val riskController: RiskController = new RiskController(authService, workspaceService)
+  val riskController: RiskController =
+    new RiskController(authService, workspaceService)
 
-  val opsController: OpsController = new OpsController(authService, workspaceService)
+  val opsController: OpsController =
+    new OpsController(authService, workspaceService)
 
   val restAPI: RestAPI = new RestAPI(
     accountController,

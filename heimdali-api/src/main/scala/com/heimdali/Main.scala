@@ -1,13 +1,16 @@
 package com.heimdali
 
-import java.util.concurrent.{Executor, Executors}
+import java.util.concurrent.Executors
 
-import cats.effect.{ContextShift, ExitCode, IO, IOApp}
+import cats.effect.{ExitCode, IO, IOApp}
+import com.heimdali.config.AppConfig
 import com.heimdali.modules._
+import com.heimdali.templates.TemplateGenerator
+import pureconfig.{CamelCase, ConfigFieldMapping, ProductHint}
 
 import scala.concurrent.ExecutionContext
 
-object Main extends IOApp {
+trait Server extends IOApp {
 
   val heimdaliApp = new IOAppModule[IO]
     with ExecutionContextModule[IO]
@@ -21,8 +24,6 @@ object Main extends IOApp {
     with RestModule
 
   override def run(args: List[String]): IO[ExitCode] = {
-    import heimdaliApp._
-
     val startupContext = ExecutionContext.fromExecutor(Executors.newSingleThreadExecutor())
     val startupShift = IO.contextShift(startupContext)
 

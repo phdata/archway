@@ -20,3 +20,7 @@ lazy val api = (project in file("heimdali-api"))
     common % "compile->compile;test->test",
     provisioning % "compile->compile;test->test"
   )
+
+lazy val pioneer = (project in file("heimdali-pioneer"))
+  .settings(Common.settings: _*)
+  .dependsOn(common)
