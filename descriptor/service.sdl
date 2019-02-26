@@ -228,7 +228,7 @@
           "type": "string",
           "required": "true",
           "configurableInWizard": "true",
-          "default": "root,users"
+          "default": "root.users"
         },
         {
           "name": "heimdali_hdfs_sw_root",
