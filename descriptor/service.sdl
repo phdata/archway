@@ -168,6 +168,22 @@
           "configurableInWizard": "true"
         },
         {
+          "name": "heimdali_beeswax_port",
+          "label": "Impala Beeswax Port",
+          "description": "The port for Impala's beeswax port used by impala-shell",
+          "required": "false",
+          "type": "port",
+          "configurableInWizard": "true"
+        },
+        {
+          "name": "heimdali_hiveserver2_port",
+          "label": "Impala HiveServer2 Port",
+          "description": "The port for Impala's hiveserver2 port used by clients",
+          "required": "false",
+          "type": "port",
+          "configurableInWizard": "true"
+        },
+        {
           "name": "heimdali_hdfs_user_root",
           "label": "User HDFS Path",
           "description": "The HDFS location for users",
