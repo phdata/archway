@@ -123,7 +123,7 @@ object Dependencies {
   val iniConfig = Seq(
     "org.ini4j" % "ini4j" % iniVersion
   )
-  
+
   val modelsDependencies =
     cats ++ catsEffect ++ circe ++ doobie
 
@@ -138,6 +138,11 @@ object Dependencies {
     unbound ++ mailer ++ logging ++ doobie ++ cats ++ catsEffect ++ fs2 ++ pureConfig ++ circe ++
       scalatags ++ hadoop ++ fs2Http ++ http4s ++ jwt ++ iniConfig ++ scalacheck ++ coreTest ++ bouncy ++
       Seq("org.typelevel" %% "jawn-parser" % "0.14.0")
+        .map(_.excludeAll(
+          ExclusionRule(organization = "com.sun.jdmk"),
+          ExclusionRule(organization = "com.sun.jmx"),
+          ExclusionRule(organization = "javax.jms")
+        ))
 
   val provisioningDependencies =
     coreTest ++ hadoop
