@@ -2,8 +2,8 @@ package com.heimdali.services
 
 import java.time.Instant
 
-import cats.data.{EitherT, OptionT}
-import cats.effect.IO
+import cats.data.{EitherT, NonEmptyList, OptionT}
+import cats.effect.{IO, Timer}
 import cats.syntax.applicative._
 import com.heimdali.AppContext
 import com.heimdali.clients._
@@ -20,6 +20,7 @@ import org.scalatest.{FlatSpec, Matchers}
 
 import scala.concurrent.ExecutionContext
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.duration._
 
 class WorkspaceServiceImplSpec
   extends FlatSpec
@@ -134,6 +135,28 @@ class WorkspaceServiceImplSpec
     topicRepository.findByWorkspaceId _ expects id returning List(savedTopic).pure[ConnectionIO]
     applicationRepository.findByWorkspaceId _ expects id returning List(savedApplication).pure[ConnectionIO]
 
+    projectServiceImpl.approve(id, approval(instant)).unsafeRunSync()
+  }
+
+  it should "provision the workspace" in new Context {
+    val instant = Instant.now()
+    val firstApproval = approval(instant)
+    val secondApproval = approval(instant)
+    approvalRepository.create _ expects(id, firstApproval) returning firstApproval.copy(id = Some(id)).pure[ConnectionIO]
+    approvalRepository.create _ expects(id, secondApproval) returning secondApproval.copy(id = Some(id)).pure[ConnectionIO]
+
+    workspaceRepository.find _ expects id returning OptionT.some(savedWorkspaceRequest) twice()
+    hiveDatabaseRepository.findByWorkspace _ expects id returning List(savedHive).pure[ConnectionIO] twice()
+    yarnRepository.findByWorkspaceId _ expects id returning List(savedYarn).pure[ConnectionIO] twice()
+    topicRepository.findByWorkspaceId _ expects id returning List(savedTopic).pure[ConnectionIO] twice()
+    applicationRepository.findByWorkspaceId _ expects id returning List(savedApplication).pure[ConnectionIO] twice()
+
+    approvalRepository.findByWorkspaceId _ expects id returning List(firstApproval).pure[ConnectionIO]
+    approvalRepository.findByWorkspaceId _ expects id returning List(firstApproval, secondApproval).pure[ConnectionIO]
+
+    (provisioningService.provision(_: WorkspaceRequest)) expects * returning NonEmptyList.one("").pure[IO]
+
+    projectServiceImpl.approve(id, approval(instant)).unsafeRunSync()
     projectServiceImpl.approve(id, approval(instant)).unsafeRunSync()
   }
 

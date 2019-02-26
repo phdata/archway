@@ -5,6 +5,7 @@ import java.util.concurrent.Executors
 import cats.data._
 import cats.effect._
 import cats.implicits._
+import cats.effect.implicits._
 import com.heimdali.clients._
 import com.heimdali.models._
 import com.heimdali.AppContext
@@ -16,26 +17,23 @@ import doobie.util.transactor.Transactor
 
 import scala.concurrent.ExecutionContext
 
-class WorkspaceServiceImpl[F[_]](ldapClient: LDAPClient[F],
-                                 yarnRepository: YarnRepository,
-                                 hiveDatabaseRepository: HiveAllocationRepository,
-                                 ldapRepository: LDAPRepository,
-                                 workspaceRepository: WorkspaceRequestRepository,
-                                 complianceRepository: ComplianceRepository,
-                                 approvalRepository: ApprovalRepository,
-                                 transactor: Transactor[F],
-                                 memberRepository: MemberRepository,
-                                 topicRepository: KafkaTopicRepository,
-                                 applicationRepository: ApplicationRepository,
-                                 appConfig: AppContext[F],
-                                 provisioningService: ProvisioningService[F],
-                                )(implicit val F: ConcurrentEffect[F], val executionContext: ExecutionContext)
+class WorkspaceServiceImpl[F[_] : ConcurrentEffect : ContextShift](ldapClient: LDAPClient[F],
+                                                                   yarnRepository: YarnRepository,
+                                                                   hiveDatabaseRepository: HiveAllocationRepository,
+                                                                   ldapRepository: LDAPRepository,
+                                                                   workspaceRepository: WorkspaceRequestRepository,
+                                                                   complianceRepository: ComplianceRepository,
+                                                                   approvalRepository: ApprovalRepository,
+                                                                   transactor: Transactor[F],
+                                                                   memberRepository: MemberRepository,
+                                                                   topicRepository: KafkaTopicRepository,
+                                                                   applicationRepository: ApplicationRepository,
+                                                                   appConfig: AppContext[F],
+                                                                   provisioningService: ProvisioningService[F])
   extends WorkspaceService[F]
     with LazyLogging {
 
-  private val provisionContext =
-    ExecutionContext.fromExecutor(Executors.newFixedThreadPool(10))
-  private val provisionContextShift = IO.contextShift(provisionContext)
+  private val provisionContext = ExecutionContext.fromExecutor(Executors.newFixedThreadPool(10))
 
   def fillHive(dbs: List[HiveAllocation]): F[List[HiveAllocation]] =
     dbs.map {
@@ -115,7 +113,8 @@ class WorkspaceServiceImpl[F[_]](ldapClient: LDAPClient[F],
     approvalRepository.create(id, approval).transact(transactor).flatMap { approval =>
       find(id).value.flatMap {
         case Some(workspace) if workspace.approvals.lengthCompare(2) == 0 =>
-          ConcurrentEffect[F].liftIO(IO(provisioningService.provision(workspace)).start(provisionContextShift).void)
+          logger.info("starting provisioning for {}", workspace.name)
+          ContextShift[F].evalOn(provisionContext)(provisioningService.provision(workspace)).start.void
         case _ =>
           ConcurrentEffect[F].liftIO(IO.unit)
       }.map(_ => approval)
