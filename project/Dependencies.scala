@@ -79,13 +79,7 @@ object Dependencies {
     "org.apache.sentry" % "sentry-provider-db" % sentryVersion % "provided",
     "org.apache.hadoop" % "hadoop-client" % hadoopVersion % "provided",
     "org.apache.hive" % "hive-jdbc" % hiveVersion % "provided",
-    ("org.apache.kafka" %% "kafka" % "0.10.1.1")
-      .excludeAll(
-        ExclusionRule(organization = "org.slf4j"),
-        ExclusionRule(organization = "com.sun.jdmk"),
-        ExclusionRule(organization = "com.sun.jmx"),
-        ExclusionRule(organization = "javax.jms")
-      ),
+    "org.apache.kafka" %% "kafka" % "0.10.1.1",
     "org.apache.hadoop" % "hadoop-hdfs" % hadoopVersion % Test classifier "" classifier "tests",
     "org.apache.hadoop" % "hadoop-common" % hadoopVersion % Test classifier "" classifier "tests",
     "org.apache.hadoop" % "hadoop-client" % hadoopVersion % Test classifier "" classifier "tests",
@@ -127,21 +121,34 @@ object Dependencies {
     "org.ini4j" % "ini4j" % iniVersion
   )
 
+  def exclusions(module: ModuleID): ModuleID =
+    module.excludeAll(
+      ExclusionRule(organization = "org.slf4j"),
+      ExclusionRule(organization = "com.sun.jdmk"),
+      ExclusionRule(organization = "com.sun.jmx"),
+      ExclusionRule(organization = "javax.jms")
+    )
+
   val modelsDependencies =
-    cats ++ catsEffect ++ circe ++ doobie
+    (cats ++ catsEffect ++ circe ++ doobie)
+      .map(exclusions)
 
   val apiDependencies =
-    coreTest ++ dbCore ++ logging ++ bouncy ++ pureConfig ++
-      http4s ++ fs2 ++ doobie ++ cats ++ catsEffect ++ circe ++ hadoop
+    (coreTest ++ dbCore ++ logging ++ bouncy ++ pureConfig ++
+      http4s ++ fs2 ++ doobie ++ cats ++ catsEffect ++ circe ++ hadoop)
+      .map(exclusions)
 
   val configDependencies =
     pureConfig
+      .map(exclusions)
 
   val commonDependencies =
-    unbound ++ mailer ++ logging ++ doobie ++ cats ++ catsEffect ++ fs2 ++ pureConfig ++ circe ++
+    (unbound ++ mailer ++ logging ++ doobie ++ cats ++ catsEffect ++ fs2 ++ pureConfig ++ circe ++
       scalatags ++ hadoop ++ fs2Http ++ http4s ++ jwt ++ iniConfig ++ scalacheck ++ coreTest ++ bouncy ++
-      Seq("org.typelevel" %% "jawn-parser" % "0.14.0")
+      Seq("org.typelevel" %% "jawn-parser" % "0.14.0"))
+      .map(exclusions)
 
   val provisioningDependencies =
-    coreTest ++ hadoop
+    (coreTest ++ hadoop)
+      .map(exclusions)
 }
