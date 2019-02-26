@@ -1,34 +1,45 @@
 import { fromJS } from 'immutable';
 import {
+  SET_LOADING,
   SET_BEHAVIOR,
-  SET_GENERATING,
-  SET_PAGE_NUMBER,
   SET_REQUEST,
   SET_TEMPLATE,
   SET_WORKSPACE,
-  WORKSPACE_REQUESTED,
+  SET_CURRENT_PAGE,
+  CLEAR_REQUEST,
 } from './actions';
 
 const initialState = fromJS({
-  generating: false,
+  loading: false,
   behavior: false,
-  worksapce: false,
-  request: false,
-  requesting: false,
+  request: {
+    name: '',
+    summary: '',
+    description: '',
+    compliance: {
+      phi_data: false,
+      pci_data: false,
+      pii_data: false,
+    }
+  },
   template: false,
-  page: 1,
+  workspace: false,
+  currentPage: 1,
 });
 
 const request = (state = initialState, action: any) => {
   switch (action.type) {
 
-    case SET_REQUEST:
+    case SET_LOADING:
       return state
-        .set('request', action.request);
-
+        .set('loading', action.loading);
     case SET_BEHAVIOR:
       return state
         .set('behavior', action.behavior);
+
+    case SET_REQUEST:
+      return state
+        .set('request', fromJS(action.request));
 
     case SET_TEMPLATE:
       return state
@@ -38,17 +49,12 @@ const request = (state = initialState, action: any) => {
       return state
         .set('workspace', fromJS(action.workspace));
 
-    case SET_PAGE_NUMBER:
+    case SET_CURRENT_PAGE:
       return state
-        .set('page', action.page);
+        .set('currentPage', action.page);
 
-    case SET_GENERATING:
-      return state
-        .set('generating', action.generating);
-
-    case WORKSPACE_REQUESTED:
-      return state
-        .set('requesting', true);
+    case CLEAR_REQUEST:
+      return initialState;
 
     default:
       return state;

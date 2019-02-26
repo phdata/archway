@@ -11,12 +11,7 @@ export const getBehavior = () => createSelector(
 
 export const getRequest = () => createSelector(
   selectors.requestSelector,
-  (requestState) => requestState.get('request') && requestState.get('request') as RequestInput,
-);
-
-export const getSelectedPage = () => createSelector(
-  selectors.requestSelector,
-  (requestState) => requestState.get('page'),
+  (requestState) => requestState.get('request') && requestState.get('request').toJS() as RequestInput,
 );
 
 export const getGeneratedWorkspace = () => createSelector(
@@ -24,28 +19,42 @@ export const getGeneratedWorkspace = () => createSelector(
   (requestState) => requestState.get('workspace') && requestState.get('workspace').toJS() as Workspace,
 );
 
-export const isReady = () => createSelector(
+export const getProfile = () => createSelector(
+  selectors.authSelector,
+  (authState) =>
+    authState.get('profile') as Profile,
+);
+
+export const getLoading = () => createSelector(
+  selectors.requestSelector,
+  (requestState) => requestState.get('loading'),
+);
+
+export const isNextStepEnabled = () => createSelector(
   selectors.requestSelector,
   (requestState) => {
-    switch (requestState.get('page')) {
+    if (requestState.get('loading')) {
+      return false;
+    }
+
+    switch (requestState.get('currentPage')) {
       case 1:
-        return !!requestState.get('behavior');
+        return !!requestState.get('template');
       case 2:
-        return !!requestState.get('request');
+      {
+        const request: RequestInput = requestState.get('request').toJS();
+        return !!request.name && !!request.summary && !!request.description;
+      }
+      case 3:
+        return !!requestState.get('workspace');
       default:
         return false;
     }
   },
 );
 
-export const isCompleteEnabled = () => createSelector(
+export const getCurrentPage = () => createSelector(
   selectors.requestSelector,
-  (requestState) =>
-    requestState.get('page') === 3 && !!requestState.get('behavior') && !!requestState.get('request'),
+  (requestState) => requestState.get('currentPage'),
 );
 
-export const getProfile = () => createSelector(
-  selectors.authSelector,
-  (authState) =>
-    authState.get('profile') as Profile,
-);
