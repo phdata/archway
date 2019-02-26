@@ -79,7 +79,7 @@ object Dependencies {
     "org.apache.sentry" % "sentry-provider-db" % sentryVersion % "provided",
     "org.apache.hadoop" % "hadoop-client" % hadoopVersion % "provided",
     "org.apache.hive" % "hive-jdbc" % hiveVersion % "provided",
-    "org.apache.kafka" %% "kafka" % "0.10.1.1",
+    "org.apache.kafka" %% "kafka" % "0.10.1.1" excludeAll ExclusionRule(organization = "org.slf4j"),
     "org.apache.hadoop" % "hadoop-hdfs" % hadoopVersion % Test classifier "" classifier "tests",
     "org.apache.hadoop" % "hadoop-common" % hadoopVersion % Test classifier "" classifier "tests",
     "org.apache.hadoop" % "hadoop-client" % hadoopVersion % Test classifier "" classifier "tests",
@@ -123,7 +123,6 @@ object Dependencies {
 
   def exclusions(module: ModuleID): ModuleID =
     module.excludeAll(
-      ExclusionRule(organization = "org.slf4j"),
       ExclusionRule(organization = "com.sun.jdmk"),
       ExclusionRule(organization = "com.sun.jmx"),
       ExclusionRule(organization = "javax.jms")
