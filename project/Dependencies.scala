@@ -80,9 +80,12 @@ object Dependencies {
     "org.apache.hadoop" % "hadoop-client" % hadoopVersion % "provided",
     "org.apache.hive" % "hive-jdbc" % hiveVersion % "provided",
     ("org.apache.kafka" %% "kafka" % "0.10.1.1")
-      .exclude("org.slf4j", "slf4j-log4j12")
-      .exclude("com.sun.jmx", "jmxri")
-      .exclude("com.sun.jdmk", "jmxtools"),
+      .excludeAll(
+        ExclusionRule(organization = "org.slf4j"),
+        ExclusionRule(organization = "com.sun.jdmk"),
+        ExclusionRule(organization = "com.sun.jmx"),
+        ExclusionRule(organization = "javax.jms")
+      ),
     "org.apache.hadoop" % "hadoop-hdfs" % hadoopVersion % Test classifier "" classifier "tests",
     "org.apache.hadoop" % "hadoop-common" % hadoopVersion % Test classifier "" classifier "tests",
     "org.apache.hadoop" % "hadoop-client" % hadoopVersion % Test classifier "" classifier "tests",
@@ -138,11 +141,6 @@ object Dependencies {
     unbound ++ mailer ++ logging ++ doobie ++ cats ++ catsEffect ++ fs2 ++ pureConfig ++ circe ++
       scalatags ++ hadoop ++ fs2Http ++ http4s ++ jwt ++ iniConfig ++ scalacheck ++ coreTest ++ bouncy ++
       Seq("org.typelevel" %% "jawn-parser" % "0.14.0")
-        .map(_.excludeAll(
-          ExclusionRule(organization = "com.sun.jdmk"),
-          ExclusionRule(organization = "com.sun.jmx"),
-          ExclusionRule(organization = "javax.jms")
-        ))
 
   val provisioningDependencies =
     coreTest ++ hadoop
