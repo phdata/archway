@@ -1,121 +1,96 @@
 import { Checkbox, Col, Form, Input } from 'antd';
-import { CheckboxChangeEvent } from 'antd/lib/checkbox';
-import { FormikBag, InjectedFormikProps, withFormik } from 'formik';
 import * as React from 'react';
-import * as Yup from 'yup';
 import { FieldLabel } from '../../../components';
 import { RequestInput } from '../../../models/RequestInput';
 
 interface Props {
-  setRequest: (request: RequestInput) => void;
+  request: RequestInput,
+  setRequest: (request: RequestInput | boolean) => void;
 }
 
-const RequestSchema = Yup.object().shape({
-  name: Yup.string().required(),
-  summary: Yup.string().required(),
-  description: Yup.string().required(),
-});
-
-class OverviewPage extends React.PureComponent<InjectedFormikProps<Props, RequestInput>> {
-
-    constructor(props: InjectedFormikProps<Props, RequestInput>) {
-    super(props);
-
-    this.updateComplianceItem = this.updateComplianceItem.bind(this);
-    this.onChangeWrapper = this.onChangeWrapper.bind(this);
+export default class OverviewPage extends React.Component<Props> {
+  public onChangeValue = (key: string) => (e: any) => {
+    const { request, setRequest } = this.props;
+    setRequest({
+      ...request,
+      [key]: e.target.value,
+    });
   }
 
-    public render() {
-    const {
-      handleSubmit,
-      errors,
-      touched,
-      values: {
-        name,
-        summary,
-        description,
-        compliance: {
-          phi_data,
-          pii_data,
-          pci_data,
-        },
-      } } = this.props;
+  public onChangeCheckbox = (key: string) => (e: any) => {
+    const { request, setRequest } = this.props;
+    setRequest({
+      ...request,
+      compliance: {
+        ...request.compliance,
+        [key]: e.target.checked,
+      },
+    });
+  }
+
+  public render() {
+    const { request } = this.props;
 
     return (
       <Col span={12} offset={6}>
-        <Form
-          layout="vertical"
-          onSubmit={handleSubmit}>
+        <Form layout="vertical">
           <Form.Item
-            validateStatus={errors.name && touched.name ? 'error' : 'success'}
             label={<FieldLabel>Workspace Name</FieldLabel>}>
             <Input
               size="large"
               name="name"
               placeholder="Loan Modification Group (LMG)"
-              value={name}
-              onChange={this.onChangeWrapper} />
+              value={request.name}
+              onChange={this.onChangeValue('name')}
+            />
           </Form.Item>
           <Form.Item
-            validateStatus={errors.summary && touched.summary ? 'error' : 'success'}
             label={<FieldLabel>Summary</FieldLabel>}>
             <Input
               size="large"
               name="summary"
               placeholder="LMG's place to evaluate modification algorithms"
-              value={summary}
-              onChange={this.onChangeWrapper} />
+              value={request.summary}
+              onChange={this.onChangeValue('summary')}
+            />
           </Form.Item>
           <Form.Item
-            validateStatus={errors.description && touched.description ? 'error' : 'success'}
             label={<FieldLabel>Purpose for workspace</FieldLabel>}>
             <Input.TextArea
               name="description"
               /* tslint:disable:max-line-length */
               placeholder="(Use this area to fully describe to reviewers and future users why this workspace is needed.)"
               rows={5}
-              value={description}
-              onChange={this.onChangeWrapper} />
+              value={request.description}
+              onChange={this.onChangeValue('description')}
+            />
           </Form.Item>
           <Form.Item
             label={<FieldLabel>The data in this workspace may contain</FieldLabel>}>
-            <Checkbox name="phi_data" checked={phi_data} onChange={this.updateComplianceItem}>PHI</Checkbox>
-            <Checkbox name="pci_data" checked={pci_data} onChange={this.updateComplianceItem}>PCI</Checkbox>
-            <Checkbox name="pii_data" checked={pii_data} onChange={this.updateComplianceItem}>PII</Checkbox>
+            <Checkbox
+              name="phi_data"
+              checked={request.compliance.phi_data}
+              onChange={this.onChangeCheckbox('phi_data')}
+            >
+              PHI
+            </Checkbox>
+            <Checkbox
+              name="pci_data"
+              checked={request.compliance.pci_data}
+              onChange={this.onChangeCheckbox('pci_data')}
+            >
+              PCI
+            </Checkbox>
+            <Checkbox
+              name="pii_data"
+              checked={request.compliance.pii_data}
+              onChange={this.onChangeCheckbox('pii_data')}
+            >
+              PII
+            </Checkbox>
           </Form.Item>
         </Form>
       </Col>
     );
   }
-
-    private updateComplianceItem(e: CheckboxChangeEvent) {
-    this.props.setFieldValue(`compliance.${e.target.name!}`, e.target.checked);
-    if (this.props.isValid) {
-      this.props.setRequest(this.props.values);
-    }
-  }
-
-    private onChangeWrapper(e: any) {
-    this.props.handleChange(e);
-    if (this.props.isValid) {
-      this.props.setRequest(this.props.values);
-    }
-  }
 }
-
-export default withFormik({
-  validationSchema: RequestSchema,
-  handleSubmit: (payload: RequestInput, { props }: FormikBag<Props, RequestInput>) => {
-    props.setRequest(payload);
-  },
-  mapPropsToValues: () => ({
-    name: '',
-    summary: '',
-    description: '',
-    compliance: {
-      phi_data: false,
-      pii_data: false,
-      pci_data: false,
-    },
-  }),
-})(OverviewPage);

@@ -1,16 +1,17 @@
-import { Card, Col, Icon, List, Row } from 'antd';
 import * as React from 'react';
-import { ResourcePool, Workspace, Application, HiveAllocation } from '../../../models/Workspace';
+import { Card, Col, Icon, List, Row } from 'antd';
 import Label from './Label';
+import { ResourcePool, Workspace, Application, HiveAllocation } from '../../../models/Workspace';
+import { Profile } from '../../../models/Profile';
 
 interface Props {
     workspace?: Workspace;
-    name: string;
+    profile: Profile;
 }
 
 const ResourceItem = (name: string) => <h4>{name}</h4>;
 
-const SummaryPage = ({ workspace, name }: Props) => {
+const SummaryPage = ({ workspace, profile }: Props) => {
   const databaseNames = workspace && workspace.data.map((database: HiveAllocation) => database.name);
   const poolNames = workspace && workspace.processing.map((pool: ResourcePool) => pool.pool_name);
   const applicationNames = workspace && workspace.applications.map((application: Application) => application.name);
@@ -24,7 +25,7 @@ const SummaryPage = ({ workspace, name }: Props) => {
           <Card>
             <Icon type="crown" style={{ fontSize: 42 }} />
             <Label>You will be the liason for this project</Label>
-            <h4>{name}</h4>
+            <h4>{profile.name}</h4>
           </Card>
         </Col>
       </Row>

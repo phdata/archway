@@ -20,10 +20,9 @@ const BehaviorPage = ({ selected, onChange }: Props) => (
     <Row type="flex" justify="center" gutter={25} style={{ marginTop: 25, marginBottom: 25 }}>
       <Col span={12} lg={6} style={{ display: 'flex' }}>
         <Behavior
-          style={{ flex: 1 }}
           behaviorKey="simple"
           selected={selected === 'simple'}
-          onChange={onChange}
+          onChange={(behavior, checked) => checked && onChange(behavior)}
           icon="team"
           title="Simple"
           description="A simple place for multiple users to collaborate on a solution."
@@ -31,10 +30,9 @@ const BehaviorPage = ({ selected, onChange }: Props) => (
       </Col>
       <Col span={12} lg={6} style={{ display: 'flex' }}>
         <Behavior
-          style={{ flex: 1 }}
           behaviorKey="structured"
           selected={selected === 'structured'}
-          onChange={onChange}
+          onChange={(behavior, checked) => checked && onChange(behavior)}
           icon="deployment-unit"
           title="Structured"
           description={`Data moves through three steps: raw, staging, modeled. Each step represents a more "structured" version of the data.`}
