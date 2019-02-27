@@ -24,7 +24,6 @@ class EmailServiceImplSpec extends FlatSpec with Matchers with MockFactory {
   }
 
   it should "send a new workspace email" in new Context {
-    (workspaceService.find _).expects(id).returning(OptionT.some[IO](savedWorkspaceRequest))
     (emailClient.send _).expects(s"A New Workspace Is Waiting", *, appConfig.smtp.fromEmail, appConfig.approvers.notificationEmail).returning(IO.unit)
 
     emailService.newWorkspaceEmail(savedWorkspaceRequest).unsafeRunSync()
