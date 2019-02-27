@@ -58,7 +58,7 @@ class EmailServiceImpl[F[_]](emailClient: EmailClient[F],
       email <- Effect[F].delay(templateEngine.layout(emailTemplate("incoming"), values))
       toAddress = appConfig.approvers.notificationEmail
       fromAddress = appConfig.smtp.fromEmail
-      result <- emailClient.send("New Workspace Request!", email, fromAddress, toAddress)
+      result <- emailClient.send("A New Workspace Is Waiting", email, fromAddress, toAddress)
     } yield result
   }
 }
