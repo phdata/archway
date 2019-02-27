@@ -119,7 +119,7 @@ class AccountServiceSpec extends FlatSpec with MockFactory with Matchers {
 
   trait Context {
     val (name, wrongUsername, username, actualPassword, wrongPassword) = ("Dude Doe", "user", "username", "password", "passw0rd")
-    val approvalConfig = ApprovalConfig("CN=foo,DC=jotunN,dc=io", "cN=bar,dc=JOTUNN,dc=io")
+    val approvalConfig = ApprovalConfig("me@meail.com", "CN=foo,DC=jotunN,dc=io", "cN=bar,dc=JOTUNN,dc=io")
     val secret = "abc"
     val restConfig = RestConfig(1234, secret)
     val ldapUser = LDAPUser(personName, standardUsername, standardUserDN, Seq("cn=foo,dc=jotunn,dc=io"), Some("dude@email.com"))

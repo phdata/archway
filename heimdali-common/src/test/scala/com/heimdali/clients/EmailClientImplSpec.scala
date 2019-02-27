@@ -6,7 +6,6 @@ import javax.mail.Message
 import javax.mail.internet.MimeMultipart
 import org.jvnet.mock_javamail.Mailbox
 import org.scalatest.{FlatSpec, Matchers}
-import scalatags.Text.TypedTag
 
 class EmailClientImplSpec extends FlatSpec with Matchers {
 
@@ -19,8 +18,7 @@ class EmailClientImplSpec extends FlatSpec with Matchers {
     val subject: String = "Hey There"
     val body: String = "Welcome home!"
 
-    import scalatags.Text.all._
-    emailClient.send(subject, p(body), "me@me.com", "you@you.com").unsafeRunSync()
+    emailClient.send(subject, body, "me@me.com", "you@you.com").unsafeRunSync()
 
     val inbox = Mailbox.get("you@you.com")
     val message: Message = inbox.get(0)

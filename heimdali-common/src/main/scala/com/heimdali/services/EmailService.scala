@@ -5,9 +5,10 @@ import cats.effect._
 import cats.implicits._
 import com.heimdali.clients.{EmailClient, LDAPClient}
 import com.heimdali.config.AppConfig
-import com.heimdali.models.MemberRoleRequest
+import com.heimdali.models.{MemberRoleRequest, WorkspaceRequest}
 import com.typesafe.scalalogging.LazyLogging
-import scalatags.Text
+import org.fusesource.scalate.support.FileTemplateSource
+import org.fusesource.scalate.{TemplateEngine, TemplateSource}
 
 import scala.concurrent.ExecutionContext
 
@@ -15,65 +16,49 @@ trait EmailService[F[_]] {
 
   def newMemberEmail(workspaceId: Long, memberRoleRequest: MemberRoleRequest): OptionT[F, Unit]
 
+  def newWorkspaceEmail(workspaceRequest: WorkspaceRequest): F[Unit]
+
 }
 
 class EmailServiceImpl[F[_]](emailClient: EmailClient[F],
                              appConfig: AppConfig,
                              workspaceService: WorkspaceService[F],
                              ldapClient: LDAPClient[F],
+                             templateEngine: TemplateEngine
                             )(implicit val F: Effect[F], executionContext: ExecutionContext)
   extends EmailService[F] with LazyLogging {
 
-  import scalatags.Text.all._
-
-  private def welcomeEmail(memberName: String,
-                           roleName: String,
-                           resourceType: String,
-                           workspaceName: String,
-                           workspaceId: Long): Text.TypedTag[String] =
-    div(
-      backgroundColor := "#f0f3f5",
-      fontFamily := "'Helvetica Neue', Helvetica, 'Segoe UI', Arial, sans-serif",
-      fontWeight := "200")(
-      div(
-        color := "#ffffff",
-        backgroundColor := "#2e4052",
-        padding := "50px",
-        textAlign := "center",
-        textTransform := "uppercase")(
-        div(fontSize := "24px")(s"WELCOME ABOARD, $memberName!")
-      ),
-      div(
-        width := "50%",
-        padding := "25px",
-        margin := "50px auto",
-        backgroundColor := "#fff")(
-        p(s"Dear $memberName,"),
-        p(s"You've been added as a $roleName to $resourceType in $workspaceName. Use the link below to go check it out!")
-      ),
-      a(backgroundColor := "#2e4052",
-        textDecoration := "none",
-        padding := "10px 25px",
-        margin := "50px auto",
-        width := "250px",
-        display := "block",
-        color := "#ffffff",
-        fontWeight := "500",
-        textAlign := "center",
-        href := s"${appConfig.ui.url}/workspaces/$workspaceId")(
-        "GO THERE"
-      )
-    )
+  def emailTemplate(name: String): FileTemplateSource =
+    TemplateSource.fromFile(getClass.getResource(s"/emails/$name.mustache").getFile)
 
   override def newMemberEmail(workspaceId: Long, memberRoleRequest: MemberRoleRequest): OptionT[F, Unit] =
     for {
       workspace <- workspaceService.find(workspaceId)
-      from <- ldapClient.findUser(workspace.requestedBy)
-      fromAddress <- OptionT(F.pure(from.email))
+      fromAddress = appConfig.smtp.fromEmail
       to <- ldapClient.findUser(memberRoleRequest.distinguishedName)
       toAddress <- OptionT(F.pure(to.email))
-      email = welcomeEmail(to.name, memberRoleRequest.role.show, memberRoleRequest.resource, workspace.name, workspaceId)
+      values = Map(
+        "roleName" -> memberRoleRequest.role.get.show,
+        "resourceType" -> memberRoleRequest.resource,
+        "workspaceName" -> workspace.name,
+        "uiUrl" -> appConfig.ui.url,
+        "workspaceId" -> workspaceId
+      )
+      email <- OptionT.liftF(Effect[F].delay(templateEngine.layout(emailTemplate("welcome"), values)))
       result <- OptionT.liftF(emailClient.send(s"Welcome to ${workspace.name}", email, fromAddress, toAddress))
     } yield result
 
+  override def newWorkspaceEmail(workspaceRequest: WorkspaceRequest): F[Unit] = {
+    val values = Map(
+      "uiUrl" -> appConfig.ui.url,
+      "workspaceId" -> workspaceRequest.id.get
+    )
+
+    for {
+      email <- Effect[F].delay(templateEngine.layout(emailTemplate("incoming"), values))
+      toAddress = appConfig.approvers.notificationEmail
+      fromAddress = appConfig.smtp.fromEmail
+      result <- emailClient.send("New Workspace Request!", email, fromAddress, toAddress)
+    } yield result
+  }
 }

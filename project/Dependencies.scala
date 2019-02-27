@@ -92,6 +92,11 @@ object Dependencies {
     "org.powermock" % "powermock-core" % "1.7.4" % Test
   )
 
+  val scalateVersion = "1.9.0"
+  val scalate = Seq(
+    "org.scalatra.scalate" %% "scalate-core" % scalateVersion
+  )
+
   val scalacheckVersion = "1.14.0"
   val scalacheck = Seq(
     "org.scalacheck" %% "scalacheck" % scalacheckVersion % Test
@@ -142,7 +147,7 @@ object Dependencies {
       .map(exclusions)
 
   val commonDependencies =
-    (unbound ++ mailer ++ logging ++ doobie ++ cats ++ catsEffect ++ fs2 ++ pureConfig ++ circe ++
+    (scalate ++ unbound ++ mailer ++ logging ++ doobie ++ cats ++ catsEffect ++ fs2 ++ pureConfig ++ circe ++
       scalatags ++ hadoop ++ fs2Http ++ http4s ++ jwt ++ iniConfig ++ scalacheck ++ coreTest ++ bouncy ++
       Seq("org.typelevel" %% "jawn-parser" % "0.14.0"))
       .map(exclusions)

@@ -14,6 +14,7 @@ import doobie.util.transactor.{Strategy, Transactor}
 import org.apache.hadoop.fs.FileSystem
 import org.apache.hadoop.hdfs.client.HdfsAdmin
 import org.apache.sentry.provider.db.generic.service.thrift.{SentryGenericServiceClient, SentryGenericServiceClientFactory}
+import org.fusesource.scalate.TemplateEngine
 
 trait ClientModule[F[_]] {
   this: ConfigurationModule
@@ -78,18 +79,21 @@ trait ClientModule[F[_]] {
     new HiveClientImpl[F](loginContextProvider, hiveTransactor)
 
   private val mailer: Mailer = appConfig.smtp match {
-    case SMTPConfig(host, port, true, Some(user), Some(pass), ssl) =>
+    case SMTPConfig(_, host, port, true, Some(user), Some(pass), ssl) =>
       Mailer(host, port)
         .auth(true)
         .as(user, pass)
         .startTls(ssl)()
 
-    case SMTPConfig(host, port, _, _, _, ssl) =>
+    case SMTPConfig(_, host, port, _, _, _, ssl) =>
       Mailer(host, port)
         .startTls(ssl)()
   }
 
   val emailClient: EmailClient[F] =
     new EmailClientImpl[F](mailer)(effect, executionContext)
+
+  val templateEngine: TemplateEngine =
+    new TemplateEngine()
 
 }

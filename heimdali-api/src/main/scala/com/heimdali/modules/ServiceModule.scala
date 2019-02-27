@@ -80,7 +80,7 @@ trait ServiceModule[F[_]] {
     )
 
   val emailService: EmailService[F] =
-    new EmailServiceImpl[F](emailClient, appConfig, workspaceService, ldapClient)
+    new EmailServiceImpl[F](emailClient, appConfig, workspaceService, ldapClient, templateEngine)
 
   val kafkaService: KafkaService[F] =
     new KafkaServiceImpl[F](reader)

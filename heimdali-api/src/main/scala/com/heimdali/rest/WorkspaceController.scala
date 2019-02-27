@@ -58,6 +58,7 @@ class WorkspaceController(authService: AuthService[IO],
           for {
             workspaceRequest <- req.req.as[WorkspaceRequest]
             newWorkspace <- workspaceService.create(workspaceRequest)
+            _ <- emailService.newWorkspaceEmail(newWorkspace)
             response <- Created(newWorkspace.asJson)
           } yield response
 

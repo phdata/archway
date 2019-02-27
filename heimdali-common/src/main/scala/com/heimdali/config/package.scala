@@ -45,9 +45,9 @@ package object config {
 
   case class UIConfig(url: String)
 
-  case class SMTPConfig(host: String, port: Int, auth: Boolean, user: Option[String], pass: Option[String], ssl: Boolean)
+  case class SMTPConfig(fromEmail: String, host: String, port: Int, auth: Boolean, user: Option[String], pass: Option[String], ssl: Boolean)
 
-  case class ApprovalConfig(infrastructure: String, risk: String)
+  case class ApprovalConfig(notificationEmail: String, infrastructure: String, risk: String)
 
   case class WorkspaceConfigItem(root: String, defaultSize: Int, defaultCores: Int, defaultMemory: Int, poolParents: String)
 

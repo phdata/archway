@@ -4,6 +4,7 @@ import java.time.Instant
 
 import cats.data.OptionT
 import cats.effect._
+import cats.effect.implicits._
 import cats.implicits._
 import com.heimdali.models._
 import com.heimdali.services._
@@ -32,6 +33,7 @@ class WorkspaceControllerSpec
 
   it should "create a workspace" in new Http4sClientDsl[IO] with Context {
     workspaceService.create _ expects * returning IO(savedWorkspaceRequest)
+    emailService.newWorkspaceEmail _ expects savedWorkspaceRequest returning IO.unit
 
     val response = restApi.route.orNotFound.run(POST(fromResource("rest/workspaces.request.actual.json"), Uri.uri("/")).unsafeRunSync())
     check(response, Status.Created, Some(defaultResponse))
