@@ -426,6 +426,14 @@
           "configurableInWizard": "true"
         },
         {
+          "name": "heimdali_notification_email",
+          "label": "Notification Email Address",
+          "description": "The email address to send notification emails to",
+          "required": "true",
+          "type": "string",
+          "configurableInWizard": "true"
+        },
+        {
           "name": "heimdali_infra_approvers",
           "label": "Operations Group DN",
           "description": "Group DN for Platform Operations",
@@ -447,6 +455,14 @@
           "description": "Full url for Heimdali UI",
           "required": "true",
           "type": "uri",
+          "configurableInWizard": "true"
+        },
+        {
+          "name": "heimdali_from_email",
+          "label": "Notification Email Sender",
+          "description": "The email address to send notification emails as",
+          "required": "true",
+          "type": "string",
           "configurableInWizard": "true"
         },
         {
@@ -542,9 +558,11 @@
           "HEIMDALI_LDAP_GROUP_PATH": "${heimdali_ldap_group_path}",
           "HEIMDALI_LDAP_ADMIN_DN": "${heimdali_ldap_admin_dn}",
           "HEIMDALI_LDAP_ADMIN_PASS": "${heimdali_ldap_admin_pass}",
+          "HEIMDALI_NOTIFICATION_EMAIL": "${heimdali_notification_email}",
           "HEIMDALI_INFRA_APPROVERS": "${heimdali_infra_approvers}",
           "HEIMDALI_RISK_APPROVERS": "${heimdali_risk_approvers}",
           "HEIMDALI_UI_URL": "${heimdali_ui_url}",
+          "HEIMDALI_FROM_EMAIL": "${heimdali_notification_email}",
           "HEIMDALI_SMTP_HOST": "${heimdali_smtp_host}",
           "HEIMDALI_SMTP_PORT": "${heimdali_smtp_port}",
           "HEIMDALI_SMTP_SSL": "${heimdali_smtp_ssl}",
