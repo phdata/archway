@@ -1,6 +1,9 @@
 import { Workspace } from '../models/Workspace';
 
-const BASE_URL = (window as any).config.baseUrl;
+let BASE_URL = (window as any).config.baseUrl;
+if (!BASE_URL || BASE_URL === '%%BASE_URL%%') {
+  BASE_URL = 'http://master1.jotunn.io:8080';
+}
 
 export function login(username: string, password: string) {
   return fetch(`${BASE_URL}/token`, {
