@@ -22,80 +22,89 @@ interface Props {
   setRequest: (request: RequestInput) => void;
   gotoNextPage: () => void;
   gotoPrevPage: () => void;
+  clearRequest: () => void;
 }
 
-const WorkspaceRequest = ({
-  profile,
-  behavior,
-  request,
-  workspace,
-  loading,
-  nextStepEnabled,
-  currentPage,
-  setBehavior,
-  setRequest,
-  gotoNextPage,
-  gotoPrevPage,
-}: Props) => {
-  return (
-    <div style={{ textAlign: 'center', color: 'black' }}>
-      <h1 style={{ paddingTop: 16 }}>New Workspace Request</h1>
+class WorkspaceRequest extends React.Component<Props> {
+  public componentDidMount() {
+    this.props.clearRequest();
+  }
 
-      <Tabs tabBarStyle={{ textAlign: 'center' }} activeKey={`${currentPage}`}>
-        <Tabs.TabPane tab="Behavior" key="1">
-          <BehaviorPage
-            selected={behavior}
-            onChange={setBehavior}
-          />
-        </Tabs.TabPane>
+  public render() {
+    const {
+      profile,
+      behavior,
+      request,
+      workspace,
+      loading,
+      nextStepEnabled,
+      currentPage,
+      setBehavior,
+      setRequest,
+      gotoNextPage,
+      gotoPrevPage,
+    } = this.props;
 
-        <Tabs.TabPane tab="Details" key="2">
-          <OverviewPage
-            request={request}
-            setRequest={setRequest}
-          />
-        </Tabs.TabPane>
-
-        <Tabs.TabPane tab="Review" key="3">
-          <SummaryPage
-            workspace={workspace}
-            profile={profile}
-          />
-        </Tabs.TabPane>
-      </Tabs>
-
-      <Row type="flex" justify="center" gutter={16}>
-        <Col span={5}>
-          <Button
-            size="large"
-            type="primary"
-            block
-            disabled={loading || (currentPage === 1)}
-            onClick={gotoPrevPage}
-          >
-            <Icon type="left" />
-            Previous
-          </Button>
-        </Col>
-        <Col span={5}>
-          <Button
-            size="large"
-            type="primary"
-            block
-            disabled={!nextStepEnabled}
-            onClick={gotoNextPage}
-          >
-            {(currentPage === 3) ? (
-              <span><Icon type="inbox" />Request</span>
-            ): (
-              <span>Next<Icon type="right" /></span>
-            )}
-          </Button>
-        </Col>
-      </Row>
-    </div>
-  );
-};
+    return (
+      <div style={{ textAlign: 'center', color: 'black' }}>
+        <h1 style={{ paddingTop: 16 }}>New Workspace Request</h1>
+  
+        <Tabs tabBarStyle={{ textAlign: 'center' }} activeKey={`${currentPage}`}>
+          <Tabs.TabPane tab="Behavior" key="1">
+            <BehaviorPage
+              selected={behavior}
+              onChange={setBehavior}
+            />
+          </Tabs.TabPane>
+  
+          <Tabs.TabPane tab="Details" key="2">
+            <OverviewPage
+              request={request}
+              setRequest={setRequest}
+            />
+          </Tabs.TabPane>
+  
+          <Tabs.TabPane tab="Review" key="3">
+            <SummaryPage
+              workspace={workspace}
+              profile={profile}
+            />
+          </Tabs.TabPane>
+        </Tabs>
+  
+        <Row type="flex" justify="center" gutter={16}>
+          <Col span={5}>
+            <Button
+              size="large"
+              type="primary"
+              block
+              disabled={loading || (currentPage === 1)}
+              onClick={gotoPrevPage}
+            >
+              <Icon type="left" />
+              Previous
+            </Button>
+          </Col>
+          <Col span={5}>
+            <Button
+              size="large"
+              type="primary"
+              block
+              disabled={!nextStepEnabled}
+              onClick={gotoNextPage}
+            >
+              {(currentPage === 3) ? (
+                <span><Icon type="inbox" />Request</span>
+              ): (
+                <span>Next<Icon type="right" /></span>
+              )}
+            </Button>
+          </Col>
+        </Row>
+      </div>
+    );
+  }
+}
 
 const mapStateToProps = () => createStructuredSelector({
   profile: selectors.getProfile(),
@@ -112,6 +121,7 @@ const mapDispatchToProps = (dispatch: any) => ({
   setRequest: (request: RequestInput) => dispatch(actions.setRequest(request)),
   gotoNextPage: () => dispatch(actions.gotoNextPage()),
   gotoPrevPage: () => dispatch(actions.gotoPrevPage()),
+  clearRequest: () => dispatch(actions.clearRequest()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(WorkspaceRequest);
