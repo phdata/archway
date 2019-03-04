@@ -22,7 +22,7 @@ class SentryClientIntegrationSpec extends FlatSpec with Matchers with HiveTest {
 
 trait HiveTest {
 
-  lazy val hiveTransactor: Transactor[IO] = {
+  val hiveTransactor: Transactor[IO] = {
     implicit val contextShift = IO.contextShift(ExecutionContext.global)
     System.setProperty("java.security.krb5.conf", getClass.getResource("/krb5.conf").getPath)
     UserGroupInformation.loginUserFromKeytab("benny@JOTUNN.IO", getClass.getResource("/heimdali.keytab").getPath)

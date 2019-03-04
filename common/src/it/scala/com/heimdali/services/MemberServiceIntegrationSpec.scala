@@ -1,4 +1,4 @@
-package com.heimdali.com.heimdali.services
+package com.heimdali.services
 
 import cats.data.OptionT
 import cats.effect.IO
@@ -6,7 +6,6 @@ import cats.implicits._
 import com.heimdali.clients.{LDAPClient, LDAPUser}
 import com.heimdali.models._
 import com.heimdali.repositories._
-import com.heimdali.services.{EmailService, MemberSearchResult, MemberSearchResultItem, MemberServiceImpl}
 import com.heimdali.test.fixtures._
 import com.unboundid.ldap.sdk.{Attribute, SearchResultEntry}
 import doobie._
@@ -14,7 +13,7 @@ import doobie.implicits._
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FlatSpec, Matchers}
 
-class MemberServiceIntegrationSpec extends FlatSpec with DBTest with Matchers with MockFactory {
+class MemberServiceIntegrationSpec extends FlatSpec with Matchers with DBTest with MockFactory {
 
   behavior of "Member Service"
 
