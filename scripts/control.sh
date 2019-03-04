@@ -35,7 +35,7 @@ case ${COMPONENT} in
             (start)
                 cd $HEIMDALI_UI_HOME
                 sed -i -e "s@%%BASE_URL%%@http://$(hostname -f):$HEIMDALI_REST_PORT@g" index.html
-                exec python -m SimpleHTTPServer ${HEIMDALI_UI_PORT}
+                exec python $CONF_DIR/scripts/ui-server.py
                 ;;
             (*)
                 echo ${SYNTAX}

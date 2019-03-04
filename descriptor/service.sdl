@@ -2,12 +2,13 @@
   "name": "HEIMDALI",
   "label": "Heimdali",
   "description": "The Heimdali service",
-  "version": "0.1.0",
+  "version": "1.3.13",
   "runAs": {
     "user": "heimdali_api",
     "group": "heimdali_api",
     "principal": "heimdali_api"
   },
+  "rolesWithExternalLinks": ["HEIMDALI_UI"],
   "maxInstances": 1,
   "icon": "images/favicon_symbol.png",
   "parcel": {
@@ -54,6 +55,18 @@
           "instance": "${host}"
         }
       ],
+      "externalLink" : {
+        "name" : "heimdali_web_ui",
+        "label" : "Heimdali UI",
+        "url" : "https://${host}:${heimdali_ui_port}"
+      },
+      "sslServer" : {
+        "keystoreFormat" : "pem",
+          "enabledConfigName": "heimdali_ui.ssl.enabled",
+          "certificateLocationConfigName" : "heimdali_ui.ssl.certificate.location",
+          "privateKeyLocationConfigName" : "heimdali_ui.ssl.privatekey.location",
+          "privateKeyPasswordConfigName" : "heimdali_ui.ssl.privatekey.password"
+      },
       "parameters": [
         {
           "name": "heimdali_ui_port",
@@ -70,9 +83,12 @@
           "ui",
           "start"
         ],
-        "environmentVariables": {
-          "HEIMDALI_UI_PORT": "${heimdali_ui_port}",
-          "HEIMDALI_REST_PORT": "${heimdali_rest_port}"
+          "environmentVariables": {
+              "HEIMDALI_SSL_CERT_LOCATION": "${ssl_server_certificate_location}",
+              "HEIMDALI_SSL_KEY_LOCATION": "${ssl_server_privatekey_location}",
+              "HEIMDALI_SSL_KEY_PASSWORD": "${ssl_server_privatekey_password}",
+              "HEIMDALI_UI_PORT": "${heimdali_ui_port}",
+              "HEIMDALI_REST_PORT": "${heimdali_rest_port}"
         }
       }
     },
@@ -93,6 +109,14 @@
         "modifiable": true,
         "configName": "log.dir",
         "loggingType": "log4j"
+      },
+      "sslServer" : {
+        "keyIdentifier" : "heimdali_api",
+        "enabledConfigName" : "heimdali_api.ssl.enabled",
+        "keystoreLocationConfigName" : "heimdali_api.ssl.keystore.location",
+        "keystorePasswordConfigName" : "heimdali_api.ssl.keystore.password.script",
+        "keyPasswordOptionality" : "required",
+        "keystoreKeyPasswordConfigName" : "heimdali_api.ssl.keystore.key.password"
       },
       "parameters": [
         {
@@ -568,7 +592,10 @@
           "HEIMDALI_SMTP_SSL": "${heimdali_smtp_ssl}",
           "HEIMDALI_SMTP_SHOULD_AUTH": "${heimdali_smtp_should_auth}",
           "HEIMDALI_SMTP_USER": "${heimdali_smtp_user}",
-          "HEIMDALI_SMTP_PASS": "${heimdali_smtp_pass}"
+          "HEIMDALI_SMTP_PASS": "${heimdali_smtp_pass}",
+          "HEIMDALI_KEYSTORE_LOCATION": "${ssl_server_keystore_location}",
+          "HEIMDALI_KEYSTORE_PASSWORD": "${ssl_server_keystore_password}",
+          "HEIMDALI_KEYSTORE_KEY_PASSWORD": "${ssl_server_keystore_keypassword}"
         }
       }
     }
