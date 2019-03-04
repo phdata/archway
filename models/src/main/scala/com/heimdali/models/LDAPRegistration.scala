@@ -14,7 +14,7 @@ case class LDAPRegistration(distinguishedName: String,
                             groupCreated: Option[Instant] = None,
                             roleCreated: Option[Instant] = None,
                             roleAssociated: Option[Instant] = None,
-                            /*additionalAttributes: Map[String, String] = Map.empty*/)
+                            attributes: Map[String, String] = Map.empty)
 
 object LDAPRegistration {
 
