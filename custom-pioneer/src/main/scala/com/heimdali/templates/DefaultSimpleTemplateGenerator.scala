@@ -11,7 +11,8 @@ class DefaultSimpleTemplateGenerator[F[_]](appConfig: AppConfig)
                                           (implicit clock: Clock, F: Sync[F])
   extends TemplateGenerator[F, SimpleTemplate] {
 
-  def generateAtributes(workspaceRequest: WorkspaceRequest)
+  def genAttributes(workspaceRequest: WorkspaceRequest, ldapRegistration: LDAPRegistration): Map[String, String] =
+    Map.empty
 
   override def defaults(user: User): F[SimpleTemplate] =
     F.pure(
