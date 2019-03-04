@@ -92,7 +92,7 @@ object Dependencies {
     "org.powermock" % "powermock-core" % "1.7.4" % Test
   )
 
-  val scalateVersion = "1.9.0"
+  val scalateVersion = "1.9.1-RC1"
   val scalate = Seq(
     "org.scalatra.scalate" %% "scalate-core" % scalateVersion
   )

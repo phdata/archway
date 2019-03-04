@@ -48,5 +48,6 @@ trait RestModule {
     memberController,
     riskController,
     opsController,
+    appConfig
   )
 }

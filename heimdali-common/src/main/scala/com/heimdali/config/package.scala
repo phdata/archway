@@ -41,7 +41,11 @@ package object config {
     val refreshUrl = s"$clusterUrl/commands/poolsRefresh"
   }
 
-  case class RestConfig(port: Int, secret: String)
+  case class RestConfig(port: Int,
+                        secret: String,
+                        sslStore: Option[String] = None,
+                        sslStorePassword: Option[String] = None,
+                        sslKeyManagerPassword: Option[String] = None)
 
   case class UIConfig(url: String)
 

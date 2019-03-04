@@ -11,6 +11,7 @@ import org.fusesource.scalate.support.FileTemplateSource
 import org.fusesource.scalate.{TemplateEngine, TemplateSource}
 
 import scala.concurrent.ExecutionContext
+import scala.io.Source
 
 trait EmailService[F[_]] {
 
@@ -28,9 +29,6 @@ class EmailServiceImpl[F[_]](emailClient: EmailClient[F],
                             )(implicit val F: Effect[F], executionContext: ExecutionContext)
   extends EmailService[F] with LazyLogging {
 
-  def emailTemplate(name: String): FileTemplateSource =
-    TemplateSource.fromFile(getClass.getResource(s"/emails/$name.mustache").getFile)
-
   override def newMemberEmail(workspaceId: Long, memberRoleRequest: MemberRoleRequest): OptionT[F, Unit] =
     for {
       workspace <- workspaceService.find(workspaceId)
@@ -44,7 +42,7 @@ class EmailServiceImpl[F[_]](emailClient: EmailClient[F],
         "uiUrl" -> appConfig.ui.url,
         "workspaceId" -> workspaceId
       )
-      email <- OptionT.liftF(Effect[F].delay(templateEngine.layout(emailTemplate("welcome"), values)))
+      email <- OptionT.liftF(Effect[F].delay(templateEngine.layout("/templates/emails/welcome.mustache", values)))
       result <- OptionT.liftF(emailClient.send(s"Welcome to ${workspace.name}", email, fromAddress, toAddress))
     } yield result
 
@@ -55,7 +53,7 @@ class EmailServiceImpl[F[_]](emailClient: EmailClient[F],
     )
 
     for {
-      email <- Effect[F].delay(templateEngine.layout(emailTemplate("incoming"), values))
+      email <- Effect[F].delay(templateEngine.layout("/templates/emails/incoming.mustache", values))
       toAddress = appConfig.approvers.notificationEmail
       fromAddress = appConfig.smtp.fromEmail
       result <- emailClient.send("A New Workspace Is Waiting", email, fromAddress, toAddress)

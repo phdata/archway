@@ -1,6 +1,7 @@
 import sbt._
 import sbt.Keys._
-import Dependencies._
+import org.fusesource.scalate.ScalatePlugin._
+import ScalateKeys._
 
 object Common {
 
@@ -9,6 +10,18 @@ object Common {
     "Apache" at "http://repo.spring.io/plugins-release/",
     Resolver.sonatypeRepo("releases"),
     Resolver.sonatypeRepo("snapshots")
+  )
+
+  val scalateOptions = scalateSettings ++ Seq(
+    scalateOverwrite := true,
+    scalateTemplateConfig in Compile := Seq(
+      TemplateConfig(
+        baseDirectory.value / "src" / "main" / "templates",
+        Nil,
+        Nil,
+        Some("templates")
+      )
+    )
   )
 
   val jossResolver = "Jboss" at "https://repository.jboss.org/maven2"
@@ -26,7 +39,7 @@ object Common {
     scalacOptions := compilerOptions
   )
 
-  val commonSettings = Seq(
+  val commonSettings = scalateOptions ++ Seq(
     libraryDependencies ++= Dependencies.commonDependencies
   )
 

@@ -5,3 +5,5 @@ addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.fu
 addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.2.4")
 
 addSbtPlugin("io.spray" % "sbt-revolver" % "0.9.1")
+
+addSbtPlugin("org.scalatra.scalate" % "sbt-scalate-precompiler" % "1.9.0.0")
