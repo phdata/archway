@@ -31,8 +31,8 @@
     "yup": "^0.26.6"
   },
   "scripts": {
-    "start": "react-app-rewired start --scripts-version react-scripts-ts",
-    "build": "react-app-rewired build --scripts-version react-scripts-ts",
+    "start": "REACT_APP_BASE_URL=${REACT_APP_BASE_URL:-https://master1.jotunn.io:8080} react-app-rewired start --scripts-version react-scripts-ts",
+    "build": "REACT_APP_BASE_URL=%%BASE_URL%% react-app-rewired build --scripts-version react-scripts-ts",
     "test": "react-app-rewired test --env=jsdom --scripts-version react-scripts-ts",
     "eject": "react-scripts-ts eject"
   },
