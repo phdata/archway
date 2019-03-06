@@ -83,6 +83,13 @@ class WorkspaceDetails extends React.PureComponent<Props> {
   }
 
   public componentWillReceiveProps(nextProps: Props) {
+    const { match: { params: { id: oldId } } } = this.props;
+    const { match: { params: { id } } } = nextProps;
+    if (oldId !== id) {
+      this.props.clearDetails();
+      this.props.getWorkspaceDetails(id);
+    }
+
     const { workspace } = this.props;
     const { workspace: newWorkspace } = nextProps;
     const riskStatus = workspace && workspace.approvals

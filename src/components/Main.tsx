@@ -11,8 +11,6 @@ import WorkspaceRequest from '../containers/WorkspaceRequest';
 
 const { Content, Footer } = Layout;
 
-const SendHome = () => <Redirect to="/home" />;
-
 const Main = () => (
   <Layout style={{ minHeight: '100%' }}>
     <Navigation />
@@ -20,13 +18,13 @@ const Main = () => (
       <Content style={{ overflow: 'initial' }}>
         <div style={{ minHeight: '100%' }}>
           <Switch>
-            <Route exact={true} path="/" component={SendHome} />
             <Route path="/home" component={Home} />
-            <Route exact={true} path="/workspaces" component={WorkspaceListing} />
-            <Route exact={true} path="/risks" component={RiskListing} />
-            <Route exact={true} path="/operations" component={OpsListing} />
-            <Route path="/request" component={WorkspaceRequest} />
+            <Route exact path="/workspaces" component={WorkspaceListing} />
+            <Route exact path="/risks" component={RiskListing} />
+            <Route exact path="/operations" component={OpsListing} />
+            <Route exact path="/request" component={WorkspaceRequest} />
             <Route path="/workspaces/:id" component={WorkspaceDetails} />
+            <Redirect to="/home" />
           </Switch>
         </div>
       </Content>
