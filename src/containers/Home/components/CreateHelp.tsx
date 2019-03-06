@@ -4,8 +4,8 @@ import { tomorrowNightEighties } from 'react-syntax-highlighter/dist/styles/hljs
 import Label from './Label';
 
 interface Props {
-  host: string;
-  port: number;
+  host?: string;
+  port?: number;
   namespace: string;
 }
 
@@ -21,8 +21,8 @@ const SetupHelp = ({host, port, namespace}: Props) => (
         {`from impala.dbapi
 import connect
 conn = connect(
-  host = '${host}',
-  port = ${port},
+  host = '${host || 'worker1.example.com'}',
+  port = ${port || '10000'},
   database = '${namespace}'
 )
 cursor = conn.cursor()

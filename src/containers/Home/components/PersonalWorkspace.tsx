@@ -67,8 +67,8 @@ const PersonalWorkspace = ({ workspace, services, requestWorkspace, loading }: P
                 </Col>
                 <Col span={24} xl={8} style={{ marginTop: 10 }}>
                   <CreateHelp
-                    host={services.hive.thrift[0].host}
-                    port={services.hive.thrift[0].port}
+                    host={services.hive.thrift && services.hive.thrift[0].host}
+                    port={services.hive.thrift && services.hive.thrift[0].port}
                     namespace={workspace.data[0].name} />
                 </Col>
                 <Col span={24} xl={8} style={{ marginTop: 10 }}>
