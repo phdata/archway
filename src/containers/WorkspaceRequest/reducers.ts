@@ -6,6 +6,8 @@ import {
   SET_TEMPLATE,
   SET_WORKSPACE,
   SET_CURRENT_PAGE,
+  CREATE_WORKSPACE_REQUEST,
+  CREATE_WORKSPACE_FAILURE,
   CLEAR_REQUEST,
 } from './actions';
 
@@ -25,6 +27,7 @@ const initialState = fromJS({
   template: false,
   workspace: false,
   currentPage: 1,
+  error: '',
 });
 
 const request = (state = initialState, action: any) => {
@@ -52,6 +55,16 @@ const request = (state = initialState, action: any) => {
     case SET_CURRENT_PAGE:
       return state
         .set('currentPage', action.page);
+
+    case CREATE_WORKSPACE_REQUEST:
+      return state
+        .set('loading', true)
+        .set('error', '');
+
+    case CREATE_WORKSPACE_FAILURE:
+      return state
+        .set('loading', false)
+        .set('error', action.error);
 
     case CLEAR_REQUEST:
       return initialState;

@@ -30,6 +30,11 @@ export const getLoading = () => createSelector(
   (requestState) => requestState.get('loading'),
 );
 
+export const getError = () => createSelector(
+  selectors.requestSelector,
+  (requestState) => requestState.get('error'),
+);
+
 export const isNextStepEnabled = () => createSelector(
   selectors.requestSelector,
   (requestState) => {

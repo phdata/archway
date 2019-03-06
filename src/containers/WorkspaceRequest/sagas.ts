@@ -9,6 +9,8 @@ import {
   SET_BEHAVIOR,
   GOTO_NEXT_PAGE,
   GOTO_PREV_PAGE,
+  createWorkspaceRequest,
+  createWorkspaceFailure,
 } from './actions';
 
 /* tslint:disable:no-var-requires */
@@ -46,9 +48,14 @@ function* nextPageListener() {
   } else {
     const token = yield select((s: any) => s.get('login').get('token'));
     const workspace = yield select((s: any) => s.get('request').get('workspace'));
-    const newWorkspace = yield call(Api.requestWorkspace, token, workspace);
-    yield put(router.push({ pathname: `/workspaces/${newWorkspace.id}` }));
-    yield put(clearRequest());
+    yield put(createWorkspaceRequest());
+    try {
+      const newWorkspace = yield call(Api.requestWorkspace, token, workspace);
+      yield put(router.push({ pathname: `/workspaces/${newWorkspace.id}` }));
+      yield put(clearRequest());
+    } catch (e) {
+      yield put(createWorkspaceFailure(e.toString()));
+    }
   }
 }
 

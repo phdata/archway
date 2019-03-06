@@ -63,6 +63,17 @@ export function gotoPrevPage() {
   };
 }
 
+export const CREATE_WORKSPACE_REQUEST = 'CREATE_WORKSPACE_REQUEST';
+export const createWorkspaceRequest = () => ({
+  type: CREATE_WORKSPACE_REQUEST,
+});
+
+export const CREATE_WORKSPACE_FAILURE = 'CREATE_WORKSPACE_FAILURE';
+export const createWorkspaceFailure = (error: string) => ({
+  type: CREATE_WORKSPACE_FAILURE,
+  error,
+});
+
 export const CLEAR_REQUEST = 'CLEAR_REQUEST';
 export function clearRequest() {
   return {

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Row, Col, Button, Icon, Tabs } from 'antd';
+import { Row, Col, Button, Icon, Tabs, notification } from 'antd';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { BehaviorPage, OverviewPage, SummaryPage } from './components';
@@ -16,6 +16,7 @@ interface Props {
   workspace?: Workspace;
   currentPage: number;
   loading: boolean;
+  error: string;
   nextStepEnabled: boolean;
 
   setBehavior: (behavior: string) => void;
@@ -28,6 +29,19 @@ interface Props {
 class WorkspaceRequest extends React.Component<Props> {
   public componentDidMount() {
     this.props.clearRequest();
+  }
+
+  public componentWillReceiveProps(nextProps: Props) {
+    if (!this.props.error && nextProps.error) {
+      this.showFailedNotification(nextProps.error);
+    }
+  }
+
+  public showFailedNotification(error: string) {
+    notification.open({
+      message: 'Failed to create workspace',
+      description: `The request to create a personal workspace failed due to the following error: ${error}`,
+    });
   }
 
   public render() {
@@ -94,8 +108,12 @@ class WorkspaceRequest extends React.Component<Props> {
               onClick={gotoNextPage}
             >
               {(currentPage === 3) ? (
-                <span><Icon type="inbox" />Request</span>
-              ): (
+                loading ? (
+                  <Icon type="loading" spin style={{ color: 'white' }} />
+                ) : (
+                  <span><Icon type="inbox" />Request</span>
+                )
+              ) : (
                 <span>Next<Icon type="right" /></span>
               )}
             </Button>
@@ -109,6 +127,7 @@ class WorkspaceRequest extends React.Component<Props> {
 const mapStateToProps = () => createStructuredSelector({
   profile: selectors.getProfile(),
   loading: selectors.getLoading(),
+  error: selectors.getError(),
   behavior: selectors.getBehavior(),
   request: selectors.getRequest(),
   workspace: selectors.getGeneratedWorkspace(),
