@@ -8,7 +8,7 @@ import cats.implicits._
 import com.heimdali.clients.{LDAPClient, LDAPUser}
 import com.heimdali.config.{ApprovalConfig, RestConfig, WorkspaceConfig}
 import com.heimdali.models._
-import com.heimdali.templates.WorkspaceGenerator
+import com.heimdali.generators.WorkspaceGenerator
 import com.typesafe.scalalogging.LazyLogging
 import io.circe.Json
 import io.circe.syntax._

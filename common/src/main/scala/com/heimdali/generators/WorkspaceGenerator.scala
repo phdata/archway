@@ -1,9 +1,9 @@
-package com.heimdali.templates
+package com.heimdali.generators
 
 import java.time.Clock
 
 import cats.effect.Sync
-import com.heimdali.config.{AppConfig, TemplateConfig}
+import com.heimdali.config.{AppConfig, GeneratorConfig}
 import com.heimdali.models._
 
 trait WorkspaceGenerator[F[_], A] {
@@ -23,10 +23,10 @@ object WorkspaceGenerator {
       .replaceAll("""\s+""", "_")
       .toLowerCase
 
-  def instance[F[_], A <: WorkspaceGenerator[F, _]](appConfig: AppConfig, className: TemplateConfig => String)
+  def instance[F[_], A <: WorkspaceGenerator[F, _]](appConfig: AppConfig, className: GeneratorConfig => String)
                                                    (implicit clock: Clock, F: Sync[F]): A =
     Class
-      .forName(className(appConfig.templates))
+      .forName(className(appConfig.generators))
       .getConstructors
       .head
       .newInstance(appConfig, clock, F)

@@ -5,7 +5,7 @@ import cats.effect.IO
 import com.heimdali.clients.{LDAPClient, LDAPUser}
 import com.heimdali.config.{ApprovalConfig, RestConfig, WorkspaceConfig, WorkspaceConfigItem}
 import com.heimdali.models.WorkspaceRequest
-import com.heimdali.templates.DefaultUserWorkspaceGenerator
+import com.heimdali.generators.DefaultUserWorkspaceGenerator
 import com.heimdali.test.fixtures._
 import io.circe.Json
 import io.circe.syntax._

@@ -1,4 +1,4 @@
-package com.heimdali.templates
+package com.heimdali.generators
 
 import java.time.Clock
 

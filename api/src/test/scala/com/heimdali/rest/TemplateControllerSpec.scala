@@ -2,7 +2,7 @@ package com.heimdali.rest
 
 import cats.effect.IO
 import com.heimdali.models.{SimpleTemplate, StructuredTemplate}
-import com.heimdali.templates.{DefaultSimpleWorkspaceGenerator, DefaultStructuredWorkspaceGenerator, WorkspaceGenerator}
+import com.heimdali.generators.{DefaultSimpleWorkspaceGenerator, DefaultStructuredWorkspaceGenerator, WorkspaceGenerator}
 import com.heimdali.test.TestAuthService
 import com.heimdali.test.fixtures._
 import io.circe.Json

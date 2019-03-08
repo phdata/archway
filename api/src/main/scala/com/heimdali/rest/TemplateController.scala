@@ -4,7 +4,7 @@ import java.time.Clock
 
 import cats.effect._
 import com.heimdali.models._
-import com.heimdali.templates.WorkspaceGenerator
+import com.heimdali.generators.WorkspaceGenerator
 import io.circe.syntax._
 import org.http4s._
 import org.http4s.dsl.io._

@@ -1,11 +1,13 @@
-package com.heimdali.templates
+package com.heimdali.generators
 
 import cats.Monad
+import cats.effect.Sync
 import cats.implicits._
 import com.heimdali.config.{AppConfig, LDAPConfig}
 import com.heimdali.models._
 
-class DefaultTopicGenerator[F[_] : Monad](appConfig: AppConfig)
+class DefaultTopicGenerator[F[_]](appConfig: AppConfig)
+                                 (implicit F: Sync[F])
   extends TopicGenerator[F]
     with AttributeGenerator[F] {
 

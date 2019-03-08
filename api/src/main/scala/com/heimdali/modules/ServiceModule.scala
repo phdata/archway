@@ -5,7 +5,7 @@ import com.heimdali.AppContext
 import com.heimdali.models.{SimpleTemplate, StructuredTemplate, UserTemplate}
 import com.heimdali.provisioning.DefaultProvisioningService
 import com.heimdali.services._
-import com.heimdali.templates.WorkspaceGenerator
+import com.heimdali.generators.{ApplicationGenerator, TopicGenerator, WorkspaceGenerator}
 import doobie.util.transactor.Transactor
 
 trait ServiceModule[F[_]] {
@@ -23,6 +23,12 @@ trait ServiceModule[F[_]] {
 
   def structuredTemplateGenerator: WorkspaceGenerator[F, StructuredTemplate] =
     WorkspaceGenerator.instance(appConfig, _.structuredGenerator)
+
+  def topicGenerator: TopicGenerator[F] =
+    TopicGenerator.instance(appConfig, _.topicGenerator)
+
+  def applicationGenerator: ApplicationGenerator[F] =
+    ApplicationGenerator.instance(appConfig, _.applicationGenerator)
 
   implicit def effect: ConcurrentEffect[F]
 
@@ -88,10 +94,10 @@ trait ServiceModule[F[_]] {
     new EmailServiceImpl[F](emailClient, appConfig, workspaceService, ldapClient, templateEngine)
 
   val kafkaService: KafkaService[F] =
-    new KafkaServiceImpl[F](reader)
+    new KafkaServiceImpl[F](reader, topicGenerator)
 
   val applicationService: ApplicationService[F] =
-    new ApplicationServiceImpl[F](reader)
+    new ApplicationServiceImpl[F](reader, applicationGenerator)
 
   val accountService: AccountService[F] =
     new AccountServiceImpl[F](
