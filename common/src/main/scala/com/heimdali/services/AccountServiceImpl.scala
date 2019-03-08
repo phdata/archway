@@ -8,7 +8,7 @@ import cats.implicits._
 import com.heimdali.clients.{LDAPClient, LDAPUser}
 import com.heimdali.config.{ApprovalConfig, RestConfig, WorkspaceConfig}
 import com.heimdali.models._
-import com.heimdali.templates.TemplateGenerator
+import com.heimdali.templates.WorkspaceGenerator
 import com.typesafe.scalalogging.LazyLogging
 import io.circe.Json
 import io.circe.syntax._
@@ -20,7 +20,7 @@ class AccountServiceImpl[F[_] : Sync](ldapClient: LDAPClient[F],
                                       approvalConfig: ApprovalConfig,
                                       workspaceConfig: WorkspaceConfig,
                                       workspaceService: WorkspaceService[F],
-                                      userTemplateService: TemplateGenerator[F, UserTemplate],
+                                      userTemplateService: WorkspaceGenerator[F, UserTemplate],
                                       provisionService: ProvisioningService[F])
                                       (implicit val clock: Clock)
   extends AccountService[F]

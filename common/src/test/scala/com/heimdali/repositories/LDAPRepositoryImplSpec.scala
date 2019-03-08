@@ -8,7 +8,6 @@ import org.scalatest.{FunSuite, Matchers}
 
 class LDAPRepositoryImplSpec extends FunSuite with Matchers with DBTest with IOChecker {
 
-  test("find") { check(LDAPRepositoryImpl.Statements.find(123)) }
   test("groupAssociated") { check(LDAPRepositoryImpl.Statements.groupAssociated(123, Instant.now)) }
   test("roleCreated") { check(LDAPRepositoryImpl.Statements.roleCreated(123, Instant.now)) }
   test("groupCreated") { check(LDAPRepositoryImpl.Statements.groupCreated(123, Instant.now)) }
@@ -18,7 +17,6 @@ class LDAPRepositoryImplSpec extends FunSuite with Matchers with DBTest with IOC
   test("findApplications") { check(LDAPRepositoryImpl.Statements.findApplications(123, "manager")) }
   test("findTopics") { check(LDAPRepositoryImpl.Statements.findTopics(123, "manager")) }
   test("findData") { check(LDAPRepositoryImpl.Statements.findData(123, "manager")) }
-  test("insert") { check(LDAPRepositoryImpl.Statements.insert(savedLDAP.distinguishedName, savedLDAP.commonName, savedLDAP.sentryRole)) }
-  test("statements") { check(LDAPRepositoryImpl.Statements.statements(123)) }
+  test("insert") { check(LDAPRepositoryImpl.Statements.insert(savedLDAP)) }
 
 }

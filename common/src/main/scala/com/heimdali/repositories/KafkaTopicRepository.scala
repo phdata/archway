@@ -1,6 +1,5 @@
 package com.heimdali.repositories
 
-import cats.data.OptionT
 import com.heimdali.models.KafkaTopic
 import doobie._
 

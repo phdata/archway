@@ -9,7 +9,7 @@ import com.heimdali.models._
 
 class DefaultUserTemplateGenerator[F[_]](appConfig: AppConfig)
                                         (implicit clock: Clock, F: Sync[F])
-  extends TemplateGenerator[F, UserTemplate] {
+  extends WorkspaceGenerator[F, UserTemplate] {
 
     override def defaults(user: User): F[UserTemplate] =
       F.pure(

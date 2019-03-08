@@ -2,7 +2,7 @@ package com.heimdali.rest
 
 import cats.effect.IO
 import com.heimdali.models.{SimpleTemplate, StructuredTemplate}
-import com.heimdali.templates.{DefaultSimpleTemplateGenerator, DefaultStructuredTemplateGenerator, TemplateGenerator}
+import com.heimdali.templates.{DefaultSimpleWorkspaceGenerator, DefaultStructuredWorkspaceGenerator, WorkspaceGenerator}
 import com.heimdali.test.TestAuthService
 import com.heimdali.test.fixtures._
 import io.circe.Json
@@ -39,8 +39,8 @@ class TemplateControllerSpec
 
   trait Context {
     val authService: TestAuthService = new TestAuthService
-    val simpleTemplateService: TemplateGenerator[IO, SimpleTemplate] = new DefaultSimpleTemplateGenerator[IO](appConfig)
-    val structuredTemplateService: TemplateGenerator[IO, StructuredTemplate] = new DefaultStructuredTemplateGenerator[IO](appConfig)
+    val simpleTemplateService: WorkspaceGenerator[IO, SimpleTemplate] = new DefaultSimpleWorkspaceGenerator[IO](appConfig)
+    val structuredTemplateService: WorkspaceGenerator[IO, StructuredTemplate] = new DefaultStructuredWorkspaceGenerator[IO](appConfig)
 
     lazy val templateController: TemplateController = new TemplateController(authService, simpleTemplateService, structuredTemplateService)
   }

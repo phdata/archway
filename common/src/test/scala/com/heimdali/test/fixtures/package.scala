@@ -16,6 +16,7 @@ import org.http4s.dsl.io._
 import org.http4s.implicits._
 import pureconfig.{CamelCase, ConfigFieldMapping, ProductHint}
 
+import scala.collection.immutable.Map
 import scala.concurrent.duration._
 import scala.io.Source
 
@@ -57,7 +58,7 @@ package object fixtures {
   val initialYarn = savedYarn.copy(id = None)
   val savedTopic = KafkaTopic(s"$systemName.incoming", 1, 1, TopicGrant(s"$systemName.incoming", savedLDAP, "all", Some(id)), TopicGrant(s"$systemName.incoming", savedLDAP, "read", Some(id)), Some(id))
   val initialTopic = savedTopic.copy(id = None, managingRole = savedTopic.managingRole.copy(id = None, ldapRegistration = initialLDAP), readonlyRole = savedTopic.readonlyRole.copy(id = None, ldapRegistration = initialLDAP))
-  val savedApplication = Application("Tiller", s"${systemName}_cg", savedLDAP, Some(id), Some(standardUsername))
+  val savedApplication = Application("Tiller", s"${systemName}_cg", savedLDAP, Some(id))
   val initialApplication = savedApplication.copy(id = None, group = initialLDAP)
   implicit val clock = Clock.fixed(Instant.now(), ZoneId.of("UTC"))
   val searchResult = WorkspaceSearchResult(id, name, name, "simple", "Approved", piiCompliance, pciCompliance, phiCompliance, clock.instant(), Some(clock.instant()), 0, 0, 0)
@@ -70,6 +71,17 @@ package object fixtures {
   val clusterConfig = ClusterConfig(1 second, "", "cluster", "dev", 21000, 21050, CredentialsConfig("admin", "admin"), ServiceOverride(None, 8088))
   private implicit def hint[T] = ProductHint[T](ConfigFieldMapping(CamelCase, CamelCase))
   val Right(appConfig) = pureconfig.loadConfig[AppConfig]
+
+  def defaultLDAPAttributes(dn: String, cn: String): List[(String, String)] =
+    List(
+      "dn" -> dn,
+      "objectClass" -> "group",
+      "objectClass" -> "top",
+      "sAMAccountName" -> cn,
+      "cn" -> cn,
+      "msSFU30Name" -> cn,
+      "msSFU30NisDomain" -> "jotunn.io"
+    )
 
   val savedWorkspaceRequest = WorkspaceRequest(
     name,

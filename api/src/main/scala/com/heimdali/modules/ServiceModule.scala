@@ -5,7 +5,7 @@ import com.heimdali.AppContext
 import com.heimdali.models.{SimpleTemplate, StructuredTemplate, UserTemplate}
 import com.heimdali.provisioning.DefaultProvisioningService
 import com.heimdali.services._
-import com.heimdali.templates.TemplateGenerator
+import com.heimdali.templates.WorkspaceGenerator
 import doobie.util.transactor.Transactor
 
 trait ServiceModule[F[_]] {
@@ -15,14 +15,14 @@ trait ServiceModule[F[_]] {
     with ConfigurationModule
     with HttpModule[F] =>
 
-  def userTemplateGenerator: TemplateGenerator[F, UserTemplate] =
-    TemplateGenerator.instance(appConfig, _.userGenerator)
+  def userTemplateGenerator: WorkspaceGenerator[F, UserTemplate] =
+    WorkspaceGenerator.instance(appConfig, _.userGenerator)
 
-  def simpleTemplateGenerator: TemplateGenerator[F, SimpleTemplate] =
-    TemplateGenerator.instance(appConfig, _.simpleGenerator)
+  def simpleTemplateGenerator: WorkspaceGenerator[F, SimpleTemplate] =
+    WorkspaceGenerator.instance(appConfig, _.simpleGenerator)
 
-  def structuredTemplateGenerator: TemplateGenerator[F, StructuredTemplate] =
-    TemplateGenerator.instance(appConfig, _.structuredGenerator)
+  def structuredTemplateGenerator: WorkspaceGenerator[F, StructuredTemplate] =
+    WorkspaceGenerator.instance(appConfig, _.structuredGenerator)
 
   implicit def effect: ConcurrentEffect[F]
 

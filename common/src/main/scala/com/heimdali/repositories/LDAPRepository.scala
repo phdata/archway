@@ -1,6 +1,5 @@
 package com.heimdali.repositories
 
-import cats.implicits._
 import cats.data.OptionT
 import com.heimdali.models.LDAPRegistration
 import doobie.free.connection.ConnectionIO

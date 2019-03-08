@@ -16,9 +16,24 @@ class ApplicationRepositoryImpl(val clock: Clock)
     Statements.consumerGroupAccess(applicationId).run
 
   override def findByWorkspaceId(workspaceId: Long): doobie.ConnectionIO[List[Application]] =
-    Statements.findByWorkspaceId(workspaceId).to[List]
+    Statements
+      .findByWorkspaceId(workspaceId)
+      .to[List]
+      .map(_.groupBy(h => (h._1, h._2)).map {
+        case ((Statements.AppHeader(name, consumerGroup, id), ldap), group) =>
+          Application(
+            name,
+            consumerGroup,
+            fromRecord(ldap).copy(attributes = group.map(g => g._3.key -> g._3.value)),
+            id)
+      }.toList)
 
   object Statements {
+
+    case class AppHeader(name: String, consumerGroup: String, id: Option[Long])
+
+    type ApplicationRecord = (AppHeader, LDAPRecord, LDAPAttribute)
+
     def insert(application: Application): Update0 =
       sql"""
              insert into application (name, consumer_group_name, ldap_registration_id)
@@ -32,11 +47,12 @@ class ApplicationRepositoryImpl(val clock: Clock)
            where id = $applicationId
           """.update
 
-    def findByWorkspaceId(workspaceId: Long): Query0[Application] =
+    def findByWorkspaceId(workspaceId: Long): Query0[ApplicationRecord] =
       sql"""
            select
               a.name,
               a.consumer_group_name,
+              a.id,
 
               l.distinguished_name,
               l.common_name,
@@ -46,15 +62,16 @@ class ApplicationRepositoryImpl(val clock: Clock)
               l.role_created,
               l.group_associated,
 
-              a.id,
-              null
+              la.key,
+              la.value
            from application a
            inner join workspace_application wa on wa.application_id = a.id
            inner join ldap_registration l on a.ldap_registration_id = l.id
+           inner join ldap_attribute la on la.ldap_registration_id = l.id
 
            where
               wa.workspace_request_id = $workspaceId
-          """.query
+          """.query[ApplicationRecord]
   }
 
 }

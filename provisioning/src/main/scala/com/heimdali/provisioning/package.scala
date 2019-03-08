@@ -11,7 +11,7 @@ package object provisioning {
   implicit def registrationProvisioner[F[_] : Effect]: ProvisionTask[F, LDAPRegistration] =
     ProvisionTask.instance { registration =>
       for {
-        group <- CreateLDAPGroup(registration.id.get, registration.commonName, registration.distinguishedName).provision[F]
+        group <- CreateLDAPGroup(registration.id.get, registration.commonName, registration.distinguishedName, registration.attributes).provision[F]
         role <- CreateRole(registration.id.get, registration.sentryRole).provision[F]
         grant <- GrantGroupAccess(registration.id.get, registration.sentryRole, registration.commonName).provision[F]
       } yield role |+| group |+| grant
@@ -50,9 +50,9 @@ package object provisioning {
       for {
         create <- CreateKafkaTopic(topic.id.get, topic.name, topic.partitions, topic.replicationFactor).provision
         managingRole <- topic.managingRole.provision
-        manager <- AddMember(topic.managingRole.ldapRegistration.id.get, topic.managingRole.ldapRegistration.distinguishedName, topic.requestor.get).provision
+        /* manager <- AddMember(topic.managingRole.ldapRegistration.id.get, topic.managingRole.ldapRegistration.distinguishedName).provision */
         readonlyRole <- topic.readonlyRole.provision
-      } yield create |+| managingRole |+| manager |+| readonlyRole
+      } yield create |+| managingRole |+| readonlyRole /* |+| manager */
     )
 
   implicit def topicGrantProvisioner[F[_] : Effect]: ProvisionTask[F, TopicGrant] =

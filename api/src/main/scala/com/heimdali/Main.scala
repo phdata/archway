@@ -5,7 +5,7 @@ import java.util.concurrent.Executors
 import cats.effect.{ExitCode, IO, IOApp}
 import com.heimdali.config.AppConfig
 import com.heimdali.modules._
-import com.heimdali.templates.TemplateGenerator
+import com.heimdali.templates.WorkspaceGenerator
 import pureconfig.{CamelCase, ConfigFieldMapping, ProductHint}
 
 import scala.concurrent.ExecutionContext

@@ -11,7 +11,6 @@ class HiveAllocationRepositorySpec extends FunSuite with Matchers with DBTest wi
   val repo = new HiveAllocationRepositoryImpl(Clock.fixed(Instant.now, ZoneId.of("UTC")))
 
   test("insert") { check(repo.Statements.insert(initialHive)) }
-  test("find") { check(repo.Statements.find(id)) }
   test("list") { check(repo.Statements.list(id)) }
 
 }

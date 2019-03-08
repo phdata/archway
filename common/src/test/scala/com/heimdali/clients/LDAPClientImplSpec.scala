@@ -22,7 +22,7 @@ class LDAPClientImplSpec
   it should "create a group" in {
     val client = new LDAPClientImpl[IO](appConfig.ldap, () => ldapConnectionPool.getConnection) with ActiveDirectoryClient[IO]
 
-    client.createGroup(10000, "edh_sw_sesame", s"cn=edh_sw_sesame,${appConfig.ldap.groupPath}").value.unsafeRunSync()
+    client.createGroup("edh_sw_sesame", defaultLDAPAttributes(s"cn=edh_sw_sesame,${appConfig.ldap.groupPath}", "edh_sw_sesame")).value.unsafeRunSync()
 
     Option(ldapConnectionPool.getConnection.getEntry(s"cn=edh_sw_sesame,${appConfig.ldap.groupPath}")) shouldBe defined
     ldapConnectionPool.getConnection.delete(s"cn=edh_sw_sesame,${appConfig.ldap.groupPath}")
@@ -34,7 +34,7 @@ class LDAPClientImplSpec
 
     val client = new LDAPClientImpl[IO](appConfig.ldap, () => ldapConnectionPool.getConnection) with ActiveDirectoryClient[IO]
 
-    client.createGroup(10000, "edh_sw_sesame", groupDN).value.unsafeRunSync()
+    client.createGroup("edh_sw_sesame", defaultLDAPAttributes(groupDN, "edh_sw_sesame")).value.unsafeRunSync()
     client.addUser(groupDN, userDN).value.unsafeRunSync()
 
     ldapConnectionPool.getConnection.delete(s"cn=edh_sw_sesame,${appConfig.ldap.groupPath}")
@@ -52,7 +52,7 @@ class LDAPClientImplSpec
     def userDN(username: String) = s"cn=$username,${appConfig.ldap.userPath.get}"
     val client = new LDAPClientImpl[IO](appConfig.ldap, () => ldapConnectionPool.getConnection) with ActiveDirectoryClient[IO]
 
-    client.createGroup(10000, "edh_sw_sesame", groupDN).value.unsafeRunSync()
+    client.createGroup("edh_sw_sesame", defaultLDAPAttributes(groupDN, "edh_sw_sesame")).value.unsafeRunSync()
     client.addUser(groupDN, userDN("benny")).value.unsafeRunSync()
     client.addUser(groupDN, userDN("John Doe")).value.unsafeRunSync()
 

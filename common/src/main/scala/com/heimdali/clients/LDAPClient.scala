@@ -24,11 +24,7 @@ trait LDAPClient[F[_]] {
 
   def validateUser(username: String, password: String): OptionT[F, LDAPUser]
 
-  def createGroup(
-      gid: Long,
-      groupName: String,
-      groupDN: String
-  ): EitherT[F, GroupCreationError, Unit]
+  def createGroup(groupName: String, attributes: List[(String, String)]): EitherT[F, GroupCreationError, Unit]
 
   def addUser(groupName: String, distinguishedName: String): OptionT[F, String]
 
@@ -39,11 +35,11 @@ trait LDAPClient[F[_]] {
   def search(filter: String): F[List[SearchResultEntry]]
 }
 
-abstract class LDAPClientImpl[F[_]: Effect](
-    val ldapConfig: LDAPConfig,
-    val connectionFactory: () => LDAPConnection
-) extends LDAPClient[F]
-    with LazyLogging {
+abstract class LDAPClientImpl[F[_] : Effect](
+                                              val ldapConfig: LDAPConfig,
+                                              val connectionFactory: () => LDAPConnection
+                                            ) extends LDAPClient[F]
+  with LazyLogging {
 
   def searchQuery(username: String): String
 
@@ -77,9 +73,9 @@ abstract class LDAPClientImpl[F[_]: Effect](
     getEntry(distinguishedName).map(ldapUser)
 
   override def validateUser(
-      username: String,
-      password: String
-  ): OptionT[F, LDAPUser] =
+                             username: String,
+                             password: String
+                           ): OptionT[F, LDAPUser] =
     for {
       bindResult <- OptionT(Sync[F].delay(Try(connectionFactory().bind(fullUsername(username), password)).toOption))
       result <- if (bindResult.getResultCode == ResultCode.SUCCESS)
@@ -111,28 +107,17 @@ abstract class LDAPClientImpl[F[_]: Effect](
         )
     )
 
-  def requestGroup(
-      groupName: String,
-      groupDN: String,
-      gid: Long
-  ): EitherT[F, GroupCreationError, LDAPResult] =
+  def attribute(pair: (String, String)): Attribute =
+    pair match {
+      case (key, value) => new Attribute(key, value)
+    }
+
+  def requestGroup(groupName: String, attributes: List[(String, String)]): EitherT[F, GroupCreationError, LDAPResult] =
     EitherT(Sync[F].delay {
       try {
-        Right(
-          connectionFactory().add(
-            s"dn: $groupDN",
-            s"objectClass: $groupObjectClass",
-            "objectClass: top",
-            s"sAMAccountName: $groupName",
-            s"cn: $groupName",
-            s"msSFU30Name: $groupName",
-            s"msSFU30NisDomain: ${ldapConfig.domain}",
-            s"gidNumber: $gid"
-          )
-        )
+        Right(connectionFactory().add(attributes.toMap.get("dn").get, attributes.filterNot(_._1 == "dn").map(attribute): _*))
       } catch {
-        case exc: LDAPException
-            if exc.getResultCode == ResultCode.ENTRY_ALREADY_EXISTS =>
+        case exc: LDAPException if exc.getResultCode == ResultCode.ENTRY_ALREADY_EXISTS =>
           logger.warn("group {} already exists", groupName)
           Left(GroupAlreadyExists)
         case exc: Throwable =>
@@ -142,24 +127,17 @@ abstract class LDAPClientImpl[F[_]: Effect](
       }
     })
 
-  override def createGroup(
-      gid: Long,
-      groupName: String,
-      groupDN: String
-  ): EitherT[F, GroupCreationError, Unit] =
+  override def createGroup(groupName: String, attributes: List[(String, String)]): EitherT[F, GroupCreationError, Unit] =
     for {
-      _ <- EitherT.liftF(Sync[F].pure(logger.info("creating group {} with guid is {}", groupName, gid)))
-      _ <- requestGroup(groupName, groupDN, gid)
+      _ <- EitherT.liftF(Sync[F].pure(logger.info("creating group {}", groupName)))
+      _ <- requestGroup(groupName, attributes)
       _ <- EitherT.liftF(Sync[F].pure(logger.info("group {} created", groupName)))
     } yield ()
 
-  def createMemberAttribute(
-      groupEntry: SearchResultEntry,
-      newMember: String
-  ): OptionT[F, Unit] =
+  def createMemberAttribute(groupEntry: SearchResultEntry, newMember: String): OptionT[F, Unit] =
     if (!groupEntry.hasAttribute("member") || !groupEntry
-          .getAttributeValues("member")
-          .contains(newMember))
+      .getAttributeValues("member")
+      .contains(newMember))
       OptionT.liftF(Effect[F]
         .delay(
           connectionFactory()
@@ -170,10 +148,7 @@ abstract class LDAPClientImpl[F[_]: Effect](
         ).void)
     else OptionT.none[F, Unit]
 
-  override def addUser(
-      groupDN: String,
-      distinguishedName: String
-  ): OptionT[F, String] =
+  override def addUser(groupDN: String, distinguishedName: String): OptionT[F, String] =
     for {
       _ <- OptionT.liftF(Sync[F].pure(logger.info("getting group {}", groupDN)))
       groupEntry <- getEntry(groupDN)
@@ -194,10 +169,7 @@ abstract class LDAPClientImpl[F[_]: Effect](
         .toList
     }
 
-  override def removeUser(
-      groupDN: String,
-      memberDN: String
-  ): OptionT[F, String] =
+  override def removeUser(groupDN: String, memberDN: String): OptionT[F, String] =
     OptionT(getEntry(groupDN).value.map {
       case Some(group) if group.hasAttribute("member") && group.getAttributeValues("member").contains(memberDN) =>
         connectionFactory().modify(groupDN, new Modification(ModificationType.DELETE, "member", memberDN))

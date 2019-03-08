@@ -9,7 +9,7 @@ import com.heimdali.models._
 
 class DefaultStructuredTemplateGenerator[F[_]](appConfig: AppConfig)
                                               (implicit clock: Clock, F: Sync[F])
-  extends TemplateGenerator[F, StructuredTemplate] {
+  extends WorkspaceGenerator[F, StructuredTemplate] {
 
     override def defaults(user: User): F[StructuredTemplate] =
       F.pure(
@@ -18,7 +18,7 @@ class DefaultStructuredTemplateGenerator[F[_]](appConfig: AppConfig)
 
     override def workspaceFor(structuredTemplate: StructuredTemplate): F[WorkspaceRequest] =
       F.pure {
-        val generatedName = TemplateGenerator.generateName(structuredTemplate.name)
+        val generatedName = WorkspaceGenerator.generateName(structuredTemplate.name)
         val request = WorkspaceRequest(
           structuredTemplate.name,
           structuredTemplate.summary,

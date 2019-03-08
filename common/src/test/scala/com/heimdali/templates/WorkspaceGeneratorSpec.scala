@@ -9,7 +9,7 @@ import com.heimdali.test.fixtures._
 import org.scalatest.prop.TableDrivenPropertyChecks
 import org.scalatest.{Matchers, PropSpec}
 
-class TemplateGeneratorSpec extends PropSpec with TableDrivenPropertyChecks with Matchers {
+class WorkspaceGeneratorSpec extends PropSpec with TableDrivenPropertyChecks with Matchers {
 
   val variations = Table(
     ("project name", "system name"),
@@ -21,13 +21,13 @@ class TemplateGeneratorSpec extends PropSpec with TableDrivenPropertyChecks with
 
   property("generateName property") {
     forAll(variations) { (input, expected) =>
-      val actual = TemplateGenerator.generateName(input)
+      val actual = WorkspaceGenerator.generateName(input)
       actual shouldBe expected
     }
   }
 
   property("instance") {
-    TemplateGenerator.instance[SyncIO, TemplateGenerator[SyncIO, UserTemplate]](appConfig.copy(templates = appConfig.templates.copy(userGenerator = classOf[TestTemplateGenerator[SyncIO]].getName)), _.userGenerator)
+    WorkspaceGenerator.instance[SyncIO, WorkspaceGenerator[SyncIO, UserTemplate]](appConfig.copy(templates = appConfig.templates.copy(userGenerator = classOf[TestWorkspaceGenerator[SyncIO]].getName)), _.userGenerator)
   }
 
 }
