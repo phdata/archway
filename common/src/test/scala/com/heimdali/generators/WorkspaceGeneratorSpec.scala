@@ -1,4 +1,4 @@
-package com.heimdali.templates
+package com.heimdali.generators
 
 import java.time.Clock
 
@@ -27,7 +27,7 @@ class WorkspaceGeneratorSpec extends PropSpec with TableDrivenPropertyChecks wit
   }
 
   property("instance") {
-    WorkspaceGenerator.instance[SyncIO, WorkspaceGenerator[SyncIO, UserTemplate]](appConfig.copy(templates = appConfig.templates.copy(userGenerator = classOf[TestWorkspaceGenerator[SyncIO]].getName)), _.userGenerator)
+    WorkspaceGenerator.instance[SyncIO, WorkspaceGenerator[SyncIO, UserTemplate]](appConfig.copy(generators = appConfig.generators.copy(userGenerator = classOf[TestWorkspaceGenerator[SyncIO]].getName)), _.userGenerator)
   }
 
 }
