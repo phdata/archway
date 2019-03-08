@@ -1,7 +1,5 @@
 package com.heimdali.models
 
-import cats.effect.Effect
-import cats.implicits._
 import io.circe._
 import io.circe.syntax._
 
@@ -10,8 +8,7 @@ case class KafkaTopic(name: String,
                       replicationFactor: Int,
                       managingRole: TopicGrant,
                       readonlyRole: TopicGrant,
-                      id: Option[Long] = None,
-                      requestor: Option[String] = None)
+                      id: Option[Long] = None)
 
 object KafkaTopic {
 

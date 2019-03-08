@@ -3,8 +3,6 @@ package com.heimdali.models
 import java.time.Instant
 
 import cats._
-import cats.effect._
-import cats.implicits._
 import io.circe._
 import io.circe.java8.time._
 

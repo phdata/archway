@@ -1,16 +1,12 @@
 package com.heimdali.services
 
-import cats._
 import cats.data._
-import cats.implicits._
 import cats.effect.Effect
+import cats.implicits._
 import com.heimdali.AppContext
-import com.heimdali.clients.KafkaClient
 import com.heimdali.models._
-import com.heimdali.AppContext
-import com.heimdali.repositories.KafkaTopicRepository
+import com.heimdali.templates.{TopicGenerator, WorkspaceGenerator}
 import com.typesafe.scalalogging.LazyLogging
-import doobie._
 import doobie.implicits._
 
 trait KafkaService[F[_]] {
@@ -19,9 +15,11 @@ trait KafkaService[F[_]] {
 
 }
 
-class KafkaServiceImpl[F[_] : Effect](appContext: AppContext[F])
+class KafkaServiceImpl[F[_] : Effect](appContext: AppContext[F],
+                                      topicGenerator: TopicGenerator[F])
     extends KafkaService[F]
     with LazyLogging {
+
   override def create(username: String, workspaceId: Long, topicRequest: TopicRequest): F[NonEmptyList[String]] =
     (for {
        workspace <- OptionT(
@@ -32,14 +30,7 @@ class KafkaServiceImpl[F[_] : Effect](appContext: AppContext[F])
            .transact(appContext.transactor)
        )
 
-       kafkaTopic = KafkaTopic(
-         topicRequest.name,
-         topicRequest.partitions,
-         topicRequest.replicationFactor,
-         TopicGrant(topicRequest.name, LDAPRegistration(s"cn=${topicRequest.name},${appContext.appConfig.ldap.groupPath}", topicRequest.name, s"role_${topicRequest.name}"), "read,describe"),
-         TopicGrant(topicRequest.name, LDAPRegistration(s"cn=${topicRequest.name}_ro,${appContext.appConfig.ldap.groupPath}", s"${topicRequest.name}_ro", s"role_${topicRequest.name}_ro"), "read"),
-         requestor = Some(username)
-       )
+       kafkaTopic <- OptionT.liftF(topicGenerator.topicFor(topicRequest.name, topicRequest.partitions, topicRequest.replicationFactor, WorkspaceGenerator.generateName(workspace.name)))
 
        result <- OptionT.liftF {
          (for {

@@ -9,10 +9,7 @@ import com.heimdali.models._
 
 class DefaultSimpleTemplateGenerator[F[_]](appConfig: AppConfig)
                                           (implicit clock: Clock, F: Sync[F])
-  extends TemplateGenerator[F, SimpleTemplate] {
-
-  def genAttributes(workspaceRequest: WorkspaceRequest, ldapRegistration: LDAPRegistration): Map[String, String] =
-    Map.empty
+  extends WorkspaceGenerator[F, SimpleTemplate] {
 
   override def defaults(user: User): F[SimpleTemplate] =
     F.pure(
@@ -30,7 +27,7 @@ class DefaultSimpleTemplateGenerator[F[_]](appConfig: AppConfig)
 
   override def workspaceFor(simpleTemplate: SimpleTemplate): F[WorkspaceRequest] =
     F.pure {
-      val generatedName = TemplateGenerator.generateName(simpleTemplate.name)
+      val generatedName = WorkspaceGenerator.generateName(simpleTemplate.name)
       val request = WorkspaceRequest(
         simpleTemplate.name,
         simpleTemplate.summary,
@@ -46,9 +43,7 @@ class DefaultSimpleTemplateGenerator[F[_]](appConfig: AppConfig)
             s"cn=${generatedName}_default_cg,${appConfig.ldap.groupPath}",
             s"${generatedName}_default_cg",
             s"role_${generatedName}_default_cg"
-          ),
-          requestor = Some(simpleTemplate.requester)
-        )),
+          ))),
         singleUser = false)
       val afterDisk = simpleTemplate.disk.fold(request) {
         _ =>

@@ -4,14 +4,14 @@ import java.time.Clock
 
 import cats.effect._
 import com.heimdali.models._
-import com.heimdali.templates.TemplateGenerator
+import com.heimdali.templates.WorkspaceGenerator
 import io.circe.syntax._
 import org.http4s._
 import org.http4s.dsl.io._
 
 class TemplateController(authService: AuthService[IO],
-                         simpleTemplateGenerator: TemplateGenerator[IO, SimpleTemplate],
-                         structuredTemplateGenerator: TemplateGenerator[IO, StructuredTemplate])
+                         simpleTemplateGenerator: WorkspaceGenerator[IO, SimpleTemplate],
+                         structuredTemplateGenerator: WorkspaceGenerator[IO, StructuredTemplate])
                         (implicit val clock: Clock) {
 
   val route: HttpService[IO] =

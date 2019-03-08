@@ -6,7 +6,7 @@ import cats.effect.Sync
 import com.heimdali.config.{AppConfig, TemplateConfig}
 import com.heimdali.models._
 
-trait TemplateGenerator[F[_], A] {
+trait WorkspaceGenerator[F[_], A] {
 
   def defaults(user: User): F[A]
 
@@ -14,7 +14,7 @@ trait TemplateGenerator[F[_], A] {
 
 }
 
-object TemplateGenerator {
+object WorkspaceGenerator {
 
   def generateName(name: String): String =
     name
@@ -23,8 +23,8 @@ object TemplateGenerator {
       .replaceAll("""\s+""", "_")
       .toLowerCase
 
-  def instance[F[_], A <: TemplateGenerator[F, _]](appConfig: AppConfig, className: TemplateConfig => String)
-                                                  (implicit clock: Clock, F: Sync[F]): A =
+  def instance[F[_], A <: WorkspaceGenerator[F, _]](appConfig: AppConfig, className: TemplateConfig => String)
+                                                   (implicit clock: Clock, F: Sync[F]): A =
     Class
       .forName(className(appConfig.templates))
       .getConstructors

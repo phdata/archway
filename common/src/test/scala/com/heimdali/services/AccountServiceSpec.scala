@@ -5,7 +5,7 @@ import cats.effect.IO
 import com.heimdali.clients.{LDAPClient, LDAPUser}
 import com.heimdali.config.{ApprovalConfig, RestConfig, WorkspaceConfig, WorkspaceConfigItem}
 import com.heimdali.models.WorkspaceRequest
-import com.heimdali.templates.DefaultUserTemplateGenerator
+import com.heimdali.templates.DefaultUserWorkspaceGenerator
 import com.heimdali.test.fixtures._
 import io.circe.Json
 import io.circe.syntax._
@@ -102,7 +102,7 @@ class AccountServiceSpec extends FlatSpec with MockFactory with Matchers {
 
   it should "save and create a workspace" in new Context {
     val userWorkspace: WorkspaceRequest = (for {
-      service <- IO.pure(new DefaultUserTemplateGenerator[IO](appConfig))
+      service <- IO.pure(new DefaultUserWorkspaceGenerator[IO](appConfig))
       template <- service.defaults(infraApproverUser)
       result <- service.workspaceFor(template)
     } yield result.copy(requestDate = clock.instant())).unsafeRunSync()
@@ -130,7 +130,7 @@ class AccountServiceSpec extends FlatSpec with MockFactory with Matchers {
 
     val workspaceService = mock[WorkspaceService[IO]]
     val ldapClient = mock[LDAPClient[IO]]
-    val templateService = new DefaultUserTemplateGenerator[IO](appConfig)
+    val templateService = new DefaultUserWorkspaceGenerator[IO](appConfig)
     val provisioningService = mock[ProvisioningService[IO]]
 
     lazy val accountService = new AccountServiceImpl[IO](ldapClient, restConfig, approvalConfig, workspaceConfig, workspaceService, templateService, provisioningService)
