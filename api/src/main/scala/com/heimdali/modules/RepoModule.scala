@@ -28,4 +28,6 @@ trait RepoModule {
 
   val applicationRepository: ApplicationRepository = new ApplicationRepositoryImpl(clock)
 
+  val configRepository: ConfigRepository = new ConfigRepositoryImpl()
+
 }

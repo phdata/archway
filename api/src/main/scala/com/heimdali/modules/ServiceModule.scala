@@ -15,8 +15,21 @@ trait ServiceModule[F[_]] {
     with ConfigurationModule
     with HttpModule[F] =>
 
+  private val metaTransactor = Transactor.fromDriverManager[F](
+    appConfig.db.meta.driver,
+    appConfig.db.meta.url,
+    appConfig.db.meta.username.get,
+    appConfig.db.meta.password.get
+  )(effect, contextShift)
+
+  val configService: ConfigService[F] =
+    new DBConfigService[F](appConfig, configRepository, metaTransactor)
+
   val ldapGroupGenerator: LDAPGroupGenerator[F] =
-    LDAPGroupGenerator.instance(appConfig, _.ldapGroupGenerator)
+    LDAPGroupGenerator.instance(appConfig, configService, _.ldapGroupGenerator)
+
+  val applicationGenerator: ApplicationGenerator[F] =
+    ApplicationGenerator.instance(appConfig, ldapGroupGenerator, _.applicationGenerator)
 
   val userTemplateGenerator: WorkspaceGenerator[F, UserTemplate] =
     WorkspaceGenerator.instance(appConfig, ldapGroupGenerator, applicationGenerator, _.userGenerator)
@@ -30,17 +43,7 @@ trait ServiceModule[F[_]] {
   val topicGenerator: TopicGenerator[F] =
     TopicGenerator.instance(appConfig, ldapGroupGenerator, _.topicGenerator)
 
-  val applicationGenerator: ApplicationGenerator[F] =
-    ApplicationGenerator.instance(appConfig, ldapGroupGenerator, _.applicationGenerator)
-
   implicit def effect: ConcurrentEffect[F]
-
-  private val metaTransactor = Transactor.fromDriverManager[F](
-    appConfig.db.meta.driver,
-    appConfig.db.meta.url,
-    appConfig.db.meta.username.get,
-    appConfig.db.meta.password.get
-  )(effect, contextShift)
 
   val keytabService: KeytabService[F] =
     new KeytabServiceImpl[F]()

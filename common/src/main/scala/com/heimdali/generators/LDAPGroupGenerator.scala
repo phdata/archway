@@ -5,6 +5,7 @@ import java.time.Clock
 import cats.effect.Sync
 import com.heimdali.config.{AppConfig, GeneratorConfig}
 import com.heimdali.models.{LDAPRegistration, WorkspaceRequest}
+import com.heimdali.services.ConfigService
 
 trait LDAPGroupGenerator[F[_]] {
 
@@ -14,13 +15,13 @@ trait LDAPGroupGenerator[F[_]] {
 
 object LDAPGroupGenerator {
 
-  def instance[F[_]](appConfig: AppConfig, className: GeneratorConfig => String)
-                                                   (implicit clock: Clock, F: Sync[F]): LDAPGroupGenerator[F] =
+  def instance[F[_]](appConfig: AppConfig, configService: ConfigService[F], className: GeneratorConfig => String)
+                    (implicit clock: Clock, F: Sync[F]): LDAPGroupGenerator[F] =
     Class
       .forName(className(appConfig.generators))
       .getConstructors
       .head
-      .newInstance(appConfig, clock, F)
+      .newInstance(appConfig, configService, clock, F)
       .asInstanceOf[LDAPGroupGenerator[F]]
 
 }

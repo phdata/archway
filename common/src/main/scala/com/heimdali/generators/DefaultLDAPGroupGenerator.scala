@@ -2,26 +2,30 @@ package com.heimdali.generators
 
 import java.time.Clock
 
-import cats._
 import cats.effect.Sync
 import cats.implicits._
 import com.heimdali.config.AppConfig
 import com.heimdali.models.{LDAPRegistration, WorkspaceRequest}
+import com.heimdali.services.ConfigService
 
-class DefaultLDAPGroupGenerator[F[_]](appConfig: AppConfig)
+class DefaultLDAPGroupGenerator[F[_]](appConfig: AppConfig,
+                                      configService: ConfigService[F])
                                      (implicit clock: Clock, F: Sync[F])
   extends LDAPGroupGenerator[F] {
 
   def attributes(cn: String, dn: String, role: String, workspace: WorkspaceRequest): F[List[(String, String)]] =
-    List(
-      "dn" -> dn,
-      "objectClass" -> "group",
-      "objectClass" -> "top",
-      "sAMAccountName" -> cn,
-      "cn" -> cn,
-      "msSFU30Name" -> cn,
-      "msSFU30NisDomain" -> appConfig.ldap.domain
-    ).pure[F]
+    configService.getAndSetNextGid.map { gid =>
+      List(
+        "dn" -> dn,
+        "objectClass" -> "group",
+        "objectClass" -> "top",
+        "sAMAccountName" -> cn,
+        "cn" -> cn,
+        "msSFU30Name" -> cn,
+        "msSFU30NisDomain" -> appConfig.ldap.domain,
+        "gidNumber" -> gid.toString
+      )
+    }
 
   def generate(cn: String, dn: String, role: String, workspace: WorkspaceRequest): F[LDAPRegistration] =
     attributes(cn, dn, role, workspace)

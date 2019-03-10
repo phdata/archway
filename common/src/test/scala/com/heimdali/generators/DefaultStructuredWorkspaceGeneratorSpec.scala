@@ -1,14 +1,18 @@
 package com.heimdali.generators
 
 import cats.effect.IO
+import cats.implicits._
 import com.heimdali.models._
+import com.heimdali.services.ConfigService
 import com.heimdali.test.fixtures._
+import org.scalamock.scalatest.MockFactory
 import org.scalatest._
-import org.scalatest.prop._
 
 import scala.collection.immutable._
 
-class DefaultStructuredWorkspaceGeneratorSpec extends PropSpec with TableDrivenPropertyChecks with Matchers {
+class DefaultStructuredWorkspaceGeneratorSpec extends FlatSpec with MockFactory with Matchers {
+
+  behavior of "DefaultStructuredWorkspaceGenerator"
 
   val raw = HiveAllocation(
     "raw_open_sesame",
@@ -57,10 +61,12 @@ class DefaultStructuredWorkspaceGeneratorSpec extends PropSpec with TableDrivenP
 
   val yarn = Yarn("root.governed_open_sesame", 1, 1)
 
-  property("governed templates should generate workspaces") {
+  it should "governed templates should generate workspaces" in {
+    val configService = mock[ConfigService[IO]]
+    configService.getAndSetNextGid _ expects() returning 123L.pure[IO] repeat 6 times()
     val input = StructuredTemplate("Open Sesame", "A brief summary", "A longer description", standardUserDN, Compliance(phiData = false, pciData = false, piiData = false), includeEnvironment = true, Some(1), Some(1), Some(1))
     val expected = WorkspaceRequest("Open Sesame", "A brief summary", "A longer description", "structured", standardUserDN, clock.instant(), Compliance(phiData = false, pciData = false, piiData = false), singleUser = false, data = List(raw, staging, modeled), processing = List(yarn))
-    val ldapGenerator = new DefaultLDAPGroupGenerator[IO](appConfig)
+    val ldapGenerator = new DefaultLDAPGroupGenerator[IO](appConfig, configService)
     val appGenerator = new DefaultApplicationGenerator[IO](appConfig, ldapGenerator)
     val templateService = new DefaultStructuredWorkspaceGenerator[IO](appConfig, ldapGenerator, appGenerator)
     val actual: WorkspaceRequest = templateService.workspaceFor(input).unsafeRunSync()
