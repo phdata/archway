@@ -11,7 +11,9 @@ import scala.collection.immutable._
 class DefaultUserWorkspaceGeneratorSpec extends PropSpec with Matchers {
 
   property("user templates should generate workspaces") {
-    val templateService = new DefaultUserWorkspaceGenerator[IO](appConfig)
+    val ldapGenerator = new DefaultLDAPGroupGenerator[IO](appConfig)
+    val appGenerator = new DefaultApplicationGenerator[IO](appConfig, ldapGenerator)
+    val templateService = new DefaultUserWorkspaceGenerator[IO](appConfig, ldapGenerator, appGenerator)
     val input = UserTemplate(standardUserDN, standardUsername, Some(1), Some(1), Some(1))
     val expected = WorkspaceRequest(standardUsername, standardUsername, standardUsername, "user", standardUserDN, clock.instant(), Compliance(phiData = false, pciData = false, piiData = false), singleUser = true, data = List(HiveAllocation(s"user_$standardUsername", s"/user/$standardUsername/db", 250, LDAPRegistration(s"cn=user_$standardUsername,ou=heimdali,dc=jotunn,dc=io", s"user_$standardUsername", s"role_user_$standardUsername", attributes = defaultLDAPAttributes(s"cn=user_$standardUsername,ou=heimdali,dc=jotunn,dc=io", s"user_$standardUsername")), None)), processing = List(Yarn(s"root.user.$standardUsername", 1, 1)))
 

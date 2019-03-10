@@ -1,11 +1,11 @@
 package com.heimdali.modules
 
-import cats.effect.{ConcurrentEffect, Effect}
+import cats.effect.ConcurrentEffect
 import com.heimdali.AppContext
+import com.heimdali.generators.{ApplicationGenerator, LDAPGroupGenerator, TopicGenerator, WorkspaceGenerator}
 import com.heimdali.models.{SimpleTemplate, StructuredTemplate, UserTemplate}
 import com.heimdali.provisioning.DefaultProvisioningService
 import com.heimdali.services._
-import com.heimdali.generators.{ApplicationGenerator, TopicGenerator, WorkspaceGenerator}
 import doobie.util.transactor.Transactor
 
 trait ServiceModule[F[_]] {
@@ -15,20 +15,23 @@ trait ServiceModule[F[_]] {
     with ConfigurationModule
     with HttpModule[F] =>
 
-  def userTemplateGenerator: WorkspaceGenerator[F, UserTemplate] =
-    WorkspaceGenerator.instance(appConfig, _.userGenerator)
+  val ldapGroupGenerator: LDAPGroupGenerator[F] =
+    LDAPGroupGenerator.instance(appConfig, _.ldapGroupGenerator)
 
-  def simpleTemplateGenerator: WorkspaceGenerator[F, SimpleTemplate] =
-    WorkspaceGenerator.instance(appConfig, _.simpleGenerator)
+  val userTemplateGenerator: WorkspaceGenerator[F, UserTemplate] =
+    WorkspaceGenerator.instance(appConfig, ldapGroupGenerator, applicationGenerator, _.userGenerator)
 
-  def structuredTemplateGenerator: WorkspaceGenerator[F, StructuredTemplate] =
-    WorkspaceGenerator.instance(appConfig, _.structuredGenerator)
+  val simpleTemplateGenerator: WorkspaceGenerator[F, SimpleTemplate] =
+    WorkspaceGenerator.instance(appConfig, ldapGroupGenerator, applicationGenerator, _.simpleGenerator)
 
-  def topicGenerator: TopicGenerator[F] =
-    TopicGenerator.instance(appConfig, _.topicGenerator)
+  val structuredTemplateGenerator: WorkspaceGenerator[F, StructuredTemplate] =
+    WorkspaceGenerator.instance(appConfig, ldapGroupGenerator, applicationGenerator, _.structuredGenerator)
 
-  def applicationGenerator: ApplicationGenerator[F] =
-    ApplicationGenerator.instance(appConfig, _.applicationGenerator)
+  val topicGenerator: TopicGenerator[F] =
+    TopicGenerator.instance(appConfig, ldapGroupGenerator, _.topicGenerator)
+
+  val applicationGenerator: ApplicationGenerator[F] =
+    ApplicationGenerator.instance(appConfig, ldapGroupGenerator, _.applicationGenerator)
 
   implicit def effect: ConcurrentEffect[F]
 

@@ -76,7 +76,8 @@ package object config {
                              simpleGenerator: String,
                              structuredGenerator: String,
                              topicGenerator: String,
-                             applicationGenerator: String)
+                             applicationGenerator: String,
+                             ldapGroupGenerator: String)
 
   case class AppConfig(generators: GeneratorConfig,
                        rest: RestConfig,

@@ -60,7 +60,9 @@ class DefaultStructuredWorkspaceGeneratorSpec extends PropSpec with TableDrivenP
   property("governed templates should generate workspaces") {
     val input = StructuredTemplate("Open Sesame", "A brief summary", "A longer description", standardUserDN, Compliance(phiData = false, pciData = false, piiData = false), includeEnvironment = true, Some(1), Some(1), Some(1))
     val expected = WorkspaceRequest("Open Sesame", "A brief summary", "A longer description", "structured", standardUserDN, clock.instant(), Compliance(phiData = false, pciData = false, piiData = false), singleUser = false, data = List(raw, staging, modeled), processing = List(yarn))
-    val templateService = new DefaultStructuredWorkspaceGenerator[IO](appConfig)
+    val ldapGenerator = new DefaultLDAPGroupGenerator[IO](appConfig)
+    val appGenerator = new DefaultApplicationGenerator[IO](appConfig, ldapGenerator)
+    val templateService = new DefaultStructuredWorkspaceGenerator[IO](appConfig, ldapGenerator, appGenerator)
     val actual: WorkspaceRequest = templateService.workspaceFor(input).unsafeRunSync()
     val time = clock.instant()
     actual.copy(requestDate = time) should be(expected.copy(requestDate = time))

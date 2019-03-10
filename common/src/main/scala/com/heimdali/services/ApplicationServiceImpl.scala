@@ -25,7 +25,7 @@ class ApplicationServiceImpl[F[_]](appContext: AppContext[F],
 
       _ <- F.pure(logger.warn("found {}", workspace))
 
-      app <- applicationGenerator.applicationFor(applicationRrequest.name, WorkspaceGenerator.generateName(workspace.get.name))
+      app <- applicationGenerator.applicationFor(applicationRrequest.name, workspace.get)
 
       saved <- (for {
         ldap <- appContext.ldapRepository.create(app.group)

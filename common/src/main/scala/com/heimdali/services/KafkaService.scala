@@ -30,7 +30,7 @@ class KafkaServiceImpl[F[_] : Effect](appContext: AppContext[F],
            .transact(appContext.transactor)
        )
 
-       kafkaTopic <- OptionT.liftF(topicGenerator.topicFor(topicRequest.name, topicRequest.partitions, topicRequest.replicationFactor, WorkspaceGenerator.generateName(workspace.name)))
+       kafkaTopic <- OptionT.liftF(topicGenerator.topicFor(topicRequest.name, topicRequest.partitions, topicRequest.replicationFactor, workspace))
 
        result <- OptionT.liftF {
          (for {
