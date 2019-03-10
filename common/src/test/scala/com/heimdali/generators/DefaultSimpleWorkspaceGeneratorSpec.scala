@@ -1,17 +1,28 @@
 package com.heimdali.generators
 
 import cats.effect.IO
+import cats.implicits._
 import com.heimdali.models._
+import com.heimdali.services.ConfigService
 import com.heimdali.test.fixtures._
+import org.scalamock.scalatest.MockFactory
 import org.scalatest._
 import org.scalatest.prop._
 
 import scala.collection.immutable._
 
-class DefaultSimpleWorkspaceGeneratorSpec extends PropSpec with TableDrivenPropertyChecks with Matchers {
+class DefaultSimpleWorkspaceGeneratorSpec extends FlatSpec with MockFactory with Matchers {
 
-  property("shared templates should generate workspaces") {
-    val ldapGenerator = new DefaultLDAPGroupGenerator[IO](appConfig)
+  behavior of "DefaultSimpleWorkspaceGenerator"
+
+  it should "shared templates should generate workspaces" in {
+    val configService = mock[ConfigService[IO]]
+    // twice for test objects
+    configService.getAndSetNextGid _ expects () returning 123L.pure[IO] twice()
+    // twice for actual call
+    configService.getAndSetNextGid _ expects () returning 123L.pure[IO] twice()
+
+    val ldapGenerator = new DefaultLDAPGroupGenerator[IO](appConfig, configService)
     val appGenerator = new DefaultApplicationGenerator[IO](appConfig, ldapGenerator)
     val input = SimpleTemplate("Open Sesame", "A brief summary", "A longer description", standardUserDN, Compliance(phiData = false, pciData = false, piiData = false), Some(1), Some(1), Some(1))
     val workspace = WorkspaceRequest(

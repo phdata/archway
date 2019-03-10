@@ -80,7 +80,8 @@ package object fixtures {
       "sAMAccountName" -> cn,
       "cn" -> cn,
       "msSFU30Name" -> cn,
-      "msSFU30NisDomain" -> "jotunn.io"
+      "msSFU30NisDomain" -> "jotunn.io",
+      "gidNumber" -> "123"
     )
 
   val savedWorkspaceRequest = WorkspaceRequest(

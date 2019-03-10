@@ -1,17 +1,24 @@
 package com.heimdali.generators
 
 import cats.effect.IO
+import cats.implicits._
 import com.heimdali.models._
+import com.heimdali.services.ConfigService
 import com.heimdali.test.fixtures._
+import org.scalamock.scalatest.MockFactory
 import org.scalatest._
 import org.scalatest.prop._
 
 import scala.collection.immutable._
 
-class DefaultUserWorkspaceGeneratorSpec extends PropSpec with Matchers {
+class DefaultUserWorkspaceGeneratorSpec extends FlatSpec with MockFactory with Matchers {
 
-  property("user templates should generate workspaces") {
-    val ldapGenerator = new DefaultLDAPGroupGenerator[IO](appConfig)
+  behavior of "DefaultUserWorkspaceGenerator"
+
+  it should "user templates should generate workspaces" in {
+    val configService = mock[ConfigService[IO]]
+    configService.getAndSetNextGid _ expects () returning 123L.pure[IO]
+    val ldapGenerator = new DefaultLDAPGroupGenerator[IO](appConfig, configService)
     val appGenerator = new DefaultApplicationGenerator[IO](appConfig, ldapGenerator)
     val templateService = new DefaultUserWorkspaceGenerator[IO](appConfig, ldapGenerator, appGenerator)
     val input = UserTemplate(standardUserDN, standardUsername, Some(1), Some(1), Some(1))

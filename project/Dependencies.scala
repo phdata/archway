@@ -31,10 +31,9 @@ object Dependencies {
     "org.jvnet.mock-javamail" % "mock-javamail" % "1.9" % "test"
   )
   
-  val monocleVersion = "1.5.0"
-  val monocle = Seq(
-    "com.github.julien-truffaut" %%  "monocle-core"  % monocleVersion,
-    "com.github.julien-truffaut" %%  "monocle-macro" % monocleVersion
+  val attoVersion = "0.6.5"
+  val atto = Seq(
+    "org.tpolecat" %% "atto-core" % attoVersion
   )
 
   val doobieVersion = "0.6.0"
@@ -154,7 +153,7 @@ object Dependencies {
 
   val commonDependencies =
     (scalate ++ unbound ++ mailer ++ logging ++ doobie ++ cats ++ catsEffect ++ fs2 ++ pureConfig ++ circe ++
-      scalatags ++ hadoop ++ fs2Http ++ http4s ++ jwt ++ iniConfig ++ scalacheck ++ coreTest ++ bouncy ++ monocle ++
+      scalatags ++ hadoop ++ fs2Http ++ http4s ++ jwt ++ iniConfig ++ scalacheck ++ coreTest ++ bouncy ++ atto ++
       Seq("org.typelevel" %% "jawn-parser" % "0.14.0"))
       .map(exclusions)
 
