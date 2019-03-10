@@ -23,13 +23,16 @@ object WorkspaceGenerator {
       .replaceAll("""\s+""", "_")
       .toLowerCase
 
-  def instance[F[_], A <: WorkspaceGenerator[F, _]](appConfig: AppConfig, className: GeneratorConfig => String)
+  def instance[F[_], A <: WorkspaceGenerator[F, _]](appConfig: AppConfig,
+                                                    ldapGroupGenerator: LDAPGroupGenerator[F],
+                                                    applicationGenerator: ApplicationGenerator[F],
+                                                    className: GeneratorConfig => String)
                                                    (implicit clock: Clock, F: Sync[F]): A =
     Class
       .forName(className(appConfig.generators))
       .getConstructors
       .head
-      .newInstance(appConfig, clock, F)
+      .newInstance(appConfig, ldapGroupGenerator, applicationGenerator, clock, F)
       .asInstanceOf[A]
 
 

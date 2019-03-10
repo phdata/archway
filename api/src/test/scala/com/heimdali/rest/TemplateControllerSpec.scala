@@ -39,9 +39,10 @@ class TemplateControllerSpec
 
   trait Context {
     val authService: TestAuthService = new TestAuthService
-    val applicationGenerator: ApplicationGenerator[IO] = new DefaultApplicationGenerator[IO](appConfig)
-    val simpleTemplateService: WorkspaceGenerator[IO, SimpleTemplate] = new DefaultSimpleWorkspaceGenerator[IO](appConfig, applicationGenerator)
-    val structuredTemplateService: WorkspaceGenerator[IO, StructuredTemplate] = new DefaultStructuredWorkspaceGenerator[IO](appConfig)
+    val ldapGroupGenerator = new DefaultLDAPGroupGenerator[IO](appConfig)
+    val applicationGenerator: ApplicationGenerator[IO] = new DefaultApplicationGenerator[IO](appConfig, ldapGroupGenerator)
+    val simpleTemplateService: WorkspaceGenerator[IO, SimpleTemplate] = new DefaultSimpleWorkspaceGenerator[IO](appConfig, ldapGroupGenerator, applicationGenerator)
+    val structuredTemplateService: WorkspaceGenerator[IO, StructuredTemplate] = new DefaultStructuredWorkspaceGenerator[IO](appConfig, ldapGroupGenerator, applicationGenerator)
 
     lazy val templateController: TemplateController = new TemplateController(authService, simpleTemplateService, structuredTemplateService)
   }

@@ -27,7 +27,9 @@ class WorkspaceGeneratorSpec extends PropSpec with TableDrivenPropertyChecks wit
   }
 
   property("instance") {
-    WorkspaceGenerator.instance[SyncIO, WorkspaceGenerator[SyncIO, UserTemplate]](appConfig.copy(generators = appConfig.generators.copy(userGenerator = classOf[TestWorkspaceGenerator[SyncIO]].getName)), _.userGenerator)
+    val ldapGroupGenerator = new DefaultLDAPGroupGenerator[SyncIO](appConfig)
+    val appGenerator = new DefaultApplicationGenerator[SyncIO](appConfig, ldapGroupGenerator)
+    WorkspaceGenerator.instance[SyncIO, WorkspaceGenerator[SyncIO, UserTemplate]](appConfig.copy(generators = appConfig.generators.copy(userGenerator = classOf[TestWorkspaceGenerator[SyncIO]].getName)), ldapGroupGenerator, appGenerator, _.userGenerator)
   }
 
 }

@@ -1,19 +1,25 @@
 package com.heimdali.generators
 
+import java.time.Clock
+
 import cats.Monad
 import cats.implicits._
 import com.heimdali.config.AppConfig
-import com.heimdali.models.Application
+import com.heimdali.models.{Application, WorkspaceRequest}
 
-class DefaultApplicationGenerator[F[_] : Monad](appConfig: AppConfig)
-  extends ApplicationGenerator[F]
-    with AttributeGenerator[F] {
+class DefaultApplicationGenerator[F[_]](appConfig: AppConfig,
+                                        ldapGroupGenerator: LDAPGroupGenerator[F])
+                                       (implicit clock: Clock, F: Monad[F])
+  extends ApplicationGenerator[F] {
 
-  val ldapConfig = appConfig.ldap
-
-  override def applicationFor(name: String, workspaceSystemName: String): F[Application] = {
-    val consumerGroup = s"${workspaceSystemName}_${name}_cg"
-    generate(consumerGroup, s"cn=$consumerGroup,${appConfig.ldap.groupPath}", s"role_$consumerGroup").map { ldap =>
+  override def applicationFor(name: String, workspace: WorkspaceRequest): F[Application] = {
+    val consumerGroup = s"${WorkspaceGenerator.generateName(workspace.name)}_${name}_cg"
+    ldapGroupGenerator
+      .generate(
+        consumerGroup,
+        s"cn=$consumerGroup,${appConfig.ldap.groupPath}",
+        s"role_$consumerGroup",
+        workspace).map { ldap =>
       Application(
         name,
         consumerGroup,
