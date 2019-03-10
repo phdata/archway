@@ -21,7 +21,7 @@ pipelines:
             - sbt
             - ivy2
           artifacts:
-            - heimdali/target/scala-2.12/*
+            - api/target/scala-2.12/*
           script:
             - ./sbt "set every test in assembly := {}" assembly
       - step:
