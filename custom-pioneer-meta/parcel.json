@@ -3,7 +3,7 @@
   "name": "HEIMDALIPIONEER",
   "version": "0.1.5",
   "setActiveSymlink": true,
-  "replaces": "HEIMDALIPIONEER",
+  "replaces": "HEIMDALI-PIONEER",
   "provides": [
     "heimdali-custom-pioneer"
   ],
@@ -16,6 +16,8 @@
     }
   ],
   "users": {},
-  "scripts": {},
+  "scripts": {
+    "defines": "heimdali_pioneer_env.sh"
+  },
   "groups": []
 }
