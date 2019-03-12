@@ -7,7 +7,6 @@ pipelines:
           - java -jar /usr/src/validator.jar -p $PWD/heimdali-meta/parcel.json
           - java -jar /usr/src/validator.jar -r $PWD/heimdali-meta/permissions.json
           - java -jar /usr/src/validator.jar -p $PWD/custom-pioneer-meta/parcel.json
-          - java -jar /usr/src/validator.jar -r $PWD/custom-pioneer-meta/permissions.json
 
   tags:
     "*":
