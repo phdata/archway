@@ -34,8 +34,7 @@ class DefaultProvisioningServiceSpec extends FlatSpec with MockFactory with Matc
       hiveClient.createDatabase _ expects(savedHive.name, savedHive.location) returning IO.unit
       hiveDatabaseRepository.databaseCreated _ expects id returning 0.pure[ConnectionIO]
 
-      ldapClient.createGroup _ expects(savedLDAP.commonName, *) returning EitherT
-        .right(IO.unit)
+      ldapClient.createGroup _ expects(savedLDAP.commonName, *) returning IO.unit
       ldapRepository.groupCreated _ expects id returning 0.pure[ConnectionIO]
       sentryClient.createRole _ expects savedLDAP.sentryRole returning IO.unit
       ldapRepository.roleCreated _ expects id returning 0.pure[ConnectionIO]
@@ -46,7 +45,7 @@ class DefaultProvisioningServiceSpec extends FlatSpec with MockFactory with Matc
       sentryClient.enableAccessToLocation _ expects(savedHive.location, savedLDAP.sentryRole) returning IO.unit
       grantRepository.locationGranted _ expects id returning 0.pure[ConnectionIO]
 
-      ldapClient.createGroup _ expects(savedLDAP.commonName, *) returning EitherT.right(IO.unit)
+      ldapClient.createGroup _ expects(savedLDAP.commonName, *) returning IO.unit
       ldapRepository.groupCreated _ expects id returning 0.pure[ConnectionIO]
       sentryClient.createRole _ expects savedLDAP.sentryRole returning IO.unit
       ldapRepository.roleCreated _ expects id returning 0.pure[ConnectionIO]
@@ -69,8 +68,7 @@ class DefaultProvisioningServiceSpec extends FlatSpec with MockFactory with Matc
     }
 
     inSequence {
-      ldapClient.createGroup _ expects(savedLDAP.commonName, *) returning EitherT
-        .right(IO.unit)
+      ldapClient.createGroup _ expects(savedLDAP.commonName, *) returning IO.unit
       ldapRepository.groupCreated _ expects id returning 0.pure[ConnectionIO]
       sentryClient.createRole _ expects savedLDAP.sentryRole returning IO.unit
       ldapRepository.roleCreated _ expects id returning 0.pure[ConnectionIO]

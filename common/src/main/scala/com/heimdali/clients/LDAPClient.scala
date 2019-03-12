@@ -24,7 +24,7 @@ trait LDAPClient[F[_]] {
 
   def validateUser(username: String, password: String): OptionT[F, LDAPUser]
 
-  def createGroup(groupName: String, attributes: List[(String, String)]): EitherT[F, GroupCreationError, Unit]
+  def createGroup(groupName: String, attributes: List[(String, String)]): F[Unit]
 
   def addUser(groupName: String, distinguishedName: String): OptionT[F, String]
 
@@ -112,26 +112,42 @@ abstract class LDAPClientImpl[F[_] : Effect](
       case (key, value) => new Attribute(key, value)
     }
 
-  def requestGroup(groupName: String, attributes: List[(String, String)]): EitherT[F, GroupCreationError, LDAPResult] =
+  // intentionally ignore deletes (especially due to generated attributes)
+  def modificationsFor(existing: List[(String, String)], updated: List[(String, String)]): List[Modification] =
+    (updated diff existing).map {
+      case (key, value) if existing.exists(a => a._1 == key) =>
+        new Modification(ModificationType.REPLACE, key, value)
+      case (key, value) =>
+        new Modification(ModificationType.ADD, key, value)
+    }
+
+  def groupRequest(groupDN: String, groupName: String, attributes: List[(String, String)]): EitherT[F, AddRequest, ModifyRequest] =
     EitherT(Sync[F].delay {
-      try {
-        Right(connectionFactory().add(attributes.toMap.get("dn").get, attributes.filterNot(_._1 == "dn").map(attribute): _*))
-      } catch {
-        case exc: LDAPException if exc.getResultCode == ResultCode.ENTRY_ALREADY_EXISTS =>
-          logger.warn("group {} already exists", groupName)
-          Left(GroupAlreadyExists)
-        case exc: Throwable =>
-          logger.error("couldn't create ldap group")
-          logger.error(exc.getMessage, exc)
-          Left(GeneralError(exc))
+      Option(connectionFactory().getEntry(groupDN)) match {
+        case Some(entry) =>
+          val existing = entry.getAttributes.asScala.map(a => a.getName -> a.getValue).toList
+          val modifications = modificationsFor(existing, attributes)
+          Right(new ModifyRequest(groupDN, modifications:_*))
+        case None =>
+          Left(new AddRequest(groupDN, attributes.filterNot(_._1 == "dn").map(attribute):_*))
       }
     })
 
-  override def createGroup(groupName: String, attributes: List[(String, String)]): EitherT[F, GroupCreationError, Unit] =
+  def requestGroup(groupDN: String, groupName: String, attributes: List[(String, String)]): F[Unit] =
+    groupRequest(groupDN, groupName, attributes).value.map {
+      case Left(request) =>
+        connectionFactory().add(request)
+      case Right(request) =>
+        connectionFactory().modify(request)
+    }
+
+  override def createGroup(groupName: String, attributes: List[(String, String)]): F[Unit] =
     for {
-      _ <- EitherT.liftF(Sync[F].pure(logger.info("creating group {}", groupName)))
-      _ <- requestGroup(groupName, attributes)
-      _ <- EitherT.liftF(Sync[F].pure(logger.info("group {} created", groupName)))
+      _ <- Sync[F].pure(logger.info("creating group {}", groupName))
+      groupDN = attributes.find(_._1 == "dn").get._2
+      rest = attributes.filterNot(_._1 == "dn")
+      _ <- requestGroup(groupDN, groupName, rest)
+      _ <- Sync[F].pure(logger.info("group {} created", groupName))
     } yield ()
 
   def createMemberAttribute(groupEntry: SearchResultEntry, newMember: String): OptionT[F, Unit] =

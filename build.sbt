@@ -23,4 +23,5 @@ lazy val api = (project in file("api"))
 
 lazy val pioneer = (project in file("custom-pioneer"))
   .settings(Common.settings: _*)
+  .settings(Pioneer.settings: _*)
   .dependsOn(common)
