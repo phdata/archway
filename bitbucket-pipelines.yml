@@ -23,6 +23,7 @@ pipelines:
             - ivy2
           artifacts:
             - api/target/scala-2.12/*
+            - custom-pioneer/target/scala-2.12/*
           script:
             - ./sbt "set every test in assembly := {}" api/assembly
             - ./sbt "set every test in assembly := {}" pioneer/package
