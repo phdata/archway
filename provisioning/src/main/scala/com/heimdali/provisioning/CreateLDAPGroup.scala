@@ -17,17 +17,13 @@ object CreateLDAPGroup {
   implicit def provisioner[F[_]](implicit F: Effect[F]): ProvisionTask[F, CreateLDAPGroup] =
     ProvisionTask.instance[F, CreateLDAPGroup] { create =>
       Kleisli[F, AppContext[F], ProvisionResult] { config =>
-        F.flatMap(F.map(config.ldapClient.createGroup(create.commonName, create.attributes).value) {
-          case Right(_) => Success(create)
-          case Left(GroupAlreadyExists) => Success(create, "a group already existsed with that name")
-          case Left(GeneralError(error)) => Error(create, error)
-        }) {
-          case out: Success =>
+        F.flatMap(F.attempt(config.ldapClient.createGroup(create.commonName, create.attributes))) {
+          case Left(exception) => F.pure(Error(create, exception))
+          case Right(_) =>
             F.map(config
               .ldapRepository
               .groupCreated(create.groupId)
-              .transact(config.transactor)) { _ => out }
-          case out => F.pure(out)
+              .transact(config.transactor)) { _ => Success(create) }
         }
       }
     }
