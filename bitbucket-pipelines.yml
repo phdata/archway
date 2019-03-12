@@ -12,25 +12,5 @@ pipelines:
       - step:
           name: "Package"
           script:
-            - mkdir ready
-            - cp -R meta ready/
-            - sed -i "s/0.1.5/${BITBUCKET_TAG}/g" ready/meta/parcel.json
-            - curl -u$ARTIFACTORY_USER:$ARTIFACTORY_TOKEN -O https://repository.phdata.io/artifactory/binary-dev/com/heimdali/${BITBUCKET_TAG}/heimdali-ui_${BITBUCKET_TAG}.tar
-            - curl -u$ARTIFACTORY_USER:$ARTIFACTORY_TOKEN -O https://repository.phdata.io/artifactory/binary-dev/com/heimdali/${BITBUCKET_TAG}/heimdali-api_${BITBUCKET_TAG}.jar
-            - mkdir -p ready/usr/lib/heimdali-api
-            - mv heimdali-api_${BITBUCKET_TAG}.jar ready/usr/lib/heimdali-api/heimdali-api.jar
-            - tar xvf heimdali-ui_${BITBUCKET_TAG}.tar
-            - mv dist ready/usr/lib/heimdali-ui
-            - chown -R 10000:10000 ready
-            - mv ready HEIMDALI-${BITBUCKET_TAG}
-            - tar cvf HEIMDALI-${BITBUCKET_TAG}-el6.parcel HEIMDALI-${BITBUCKET_TAG}
-            - mkdir publish
-            - mv HEIMDALI-${BITBUCKET_TAG}-el6.parcel publish/
-            - cd publish
-            - ln -s HEIMDALI-${BITBUCKET_TAG}-el6.parcel HEIMDALI-${BITBUCKET_TAG}-el7.parcel
-            - ln -s HEIMDALI-${BITBUCKET_TAG}-el6.parcel HEIMDALI-${BITBUCKET_TAG}-xenial.parcel
-            - python /usr/src/make_manifest.py .
-            - curl -u$ARTIFACTORY_USER:$ARTIFACTORY_TOKEN -T manifest.json https://repository.phdata.io/artifactory/parcels-release/com/heimdali/${BITBUCKET_TAG}/manifest.json
-            - curl -u$ARTIFACTORY_USER:$ARTIFACTORY_TOKEN -T HEIMDALI-${BITBUCKET_TAG}-el6.parcel https://repository.phdata.io/artifactory/parcels-release/com/heimdali/${BITBUCKET_TAG}/HEIMDALI-${BITBUCKET_TAG}-el6.parcel
-            - curl -u$ARTIFACTORY_USER:$ARTIFACTORY_TOKEN -T HEIMDALI-${BITBUCKET_TAG}-el6.parcel https://repository.phdata.io/artifactory/parcels-release/com/heimdali/${BITBUCKET_TAG}/HEIMDALI-${BITBUCKET_TAG}-el7.parcel
-            - curl -u$ARTIFACTORY_USER:$ARTIFACTORY_TOKEN -T HEIMDALI-${BITBUCKET_TAG}-el6.parcel https://repository.phdata.io/artifactory/parcels-release/com/heimdali/${BITBUCKET_TAG}/HEIMDALI-${BITBUCKET_TAG}-xenial.parcel
+            - ./publish.sh heimdali
+            - ./publish.sh custom-pioneer
