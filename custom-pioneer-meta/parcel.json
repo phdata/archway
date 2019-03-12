@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
-  "name": "HEIMDALI-PIONEER",
+  "name": "HEIMDALIPIONEER",
   "version": "0.1.5",
   "setActiveSymlink": true,
-  "replaces": "HEIMDALI-PIONEER",
+  "replaces": "HEIMDALIPIONEER",
   "provides": [
     "heimdali-custom-pioneer"
   ],
@@ -15,5 +15,7 @@
       "pkg_version": "0.1.5"
     }
   ],
+  "users": {},
+  "scripts": {},
   "groups": []
 }
