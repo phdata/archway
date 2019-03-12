@@ -13,5 +13,6 @@ pipelines:
       - step:
           name: "Package"
           script:
-            - ./publish.sh heimdali
-            - ./publish.sh custom-pioneer
+            - ./publish.sh prepare heimdali
+            - ./publish.sh prepare custom-pioneer
+            - ./publish.sh ship
