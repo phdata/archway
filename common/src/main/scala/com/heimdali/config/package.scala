@@ -64,7 +64,8 @@ package object config {
                         userPath: Option[String],
                         bindDN: String,
                         bindPassword: String,
-                        domain: String)
+                        domain: String,
+                        realm: String)
 
   case class DatabaseConfigItem(driver: String, url: String, username: Option[String], password: Option[String])
 
