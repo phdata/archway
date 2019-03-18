@@ -24,7 +24,7 @@ prepare()
     mv dist $READY_DIR/usr/lib/heimdali-ui
   else
     curl -u$ARTIFACTORY_USER:$ARTIFACTORY_TOKEN -O https://repository.phdata.io/artifactory/binary-dev/com/heimdali/${BITBUCKET_TAG}/custom-pioneer_${BITBUCKET_TAG}.jar
-    mv custom-pioneer_${BITBUCKET_TAG}.jar $READY_DIR/usr/lib/heimdali-api/heimdali-api.jar
+    mv custom-pioneer_${BITBUCKET_TAG}.jar $READY_DIR/usr/lib/heimdali-api/custom-pioneer.jar
   fi
 
   tar cvf $READY_DIR-el6.parcel $READY_DIR

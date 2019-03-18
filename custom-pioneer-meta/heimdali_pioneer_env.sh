@@ -1,3 +1,2 @@
 #!/bin/bash
-export HEIMDALI_API_HOME=$PARCELS_ROOT/$PARCEL_DIRNAME/usr/lib/heimdali-api
-export HEIMDALI_UI_HOME=$PARCELS_ROOT/$PARCEL_DIRNAME/usr/lib/heimdali-ui
+export HEIMDALI_ADDITIONAL_CLASSPATH=$HEIMDALI_ADDITIONAL_CLASSPATH:$PARCELS_ROOT/$PARCEL_DIRNAME/usr/lib/heimdali-api/custom-pioneer.jar
