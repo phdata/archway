@@ -35,7 +35,7 @@ object Dependencies {
   val doobie = Seq(
     "org.tpolecat" %% "doobie-core" % doobieVersion,
     "org.tpolecat" %% "doobie-postgres" % doobieVersion,
-    "org.tpolecat" %% "doobie-scalatest" % doobieVersion % Test
+    "org.tpolecat" %% "doobie-scalatest" % doobieVersion % "test,it"
   )
 
   val pureConfigVersion = "0.9.1"
@@ -80,16 +80,16 @@ object Dependencies {
     "org.apache.hadoop" % "hadoop-client" % hadoopVersion % "provided",
     "org.apache.hive" % "hive-jdbc" % hiveVersion % "provided",
     "org.apache.kafka" %% "kafka" % "0.10.1.1" excludeAll ExclusionRule(organization = "org.slf4j"),
-    "org.apache.hadoop" % "hadoop-hdfs" % hadoopVersion % Test classifier "" classifier "tests",
-    "org.apache.hadoop" % "hadoop-common" % hadoopVersion % Test classifier "" classifier "tests",
-    "org.apache.hadoop" % "hadoop-client" % hadoopVersion % Test classifier "" classifier "tests",
-    "org.apache.hadoop" % "hadoop-minicluster" % hadoopVersion % Test
+    "org.apache.hadoop" % "hadoop-hdfs" % hadoopVersion % "test,it" classifier "" classifier "tests",
+    "org.apache.hadoop" % "hadoop-common" % hadoopVersion % "test,it" classifier "" classifier "tests",
+    "org.apache.hadoop" % "hadoop-client" % hadoopVersion % "test,it" classifier "" classifier "tests",
+    "org.apache.hadoop" % "hadoop-minicluster" % hadoopVersion % "test,it"
   )
 
   val coreTest = Seq(
-    "org.mockito" % "mockito-core" % "2.18.3" % Test,
-    "org.scalamock" %% "scalamock-scalatest-support" % "3.6.0" % Test,
-    "org.powermock" % "powermock-core" % "1.7.4" % Test
+    "org.mockito" % "mockito-core" % "2.18.3" % "test,it",
+    "org.scalamock" %% "scalamock-scalatest-support" % "3.6.0" % "test,it",
+    "org.powermock" % "powermock-core" % "1.7.4" % "test,it"
   )
 
   val scalateVersion = "1.9.1-RC1"
@@ -99,7 +99,7 @@ object Dependencies {
 
   val scalacheckVersion = "1.14.0"
   val scalacheck = Seq(
-    "org.scalacheck" %% "scalacheck" % scalacheckVersion % Test
+    "org.scalacheck" %% "scalacheck" % scalacheckVersion % "test,it"
   )
 
   val bouncy = Seq(

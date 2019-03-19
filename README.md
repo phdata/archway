@@ -13,6 +13,21 @@
 * Deployments will be automated, so get changes in before Sunday evening
 * Versions will be YYYY.MM.WW
 
+## Testing
+
+Run tests with
+```bash
+$ sbt test
+```
+
+Integration tests with
+
+```bash
+$ sbt it:test
+```
+
+Integration tests live in `src/it/`
+
 ## Requirements
 * Scala 2.12
 * Java 1.8

@@ -37,7 +37,7 @@ object Common {
     version := "2018.08.01",
     resolvers ++= customResolvers,
     scalacOptions := compilerOptions
-  )
+  ) ++ Defaults.itSettings
 
   val commonSettings = scalateOptions ++ Seq(
     libraryDependencies ++= Dependencies.commonDependencies
