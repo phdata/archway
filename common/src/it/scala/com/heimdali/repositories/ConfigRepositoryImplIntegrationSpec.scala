@@ -4,7 +4,7 @@ import com.heimdali.test.fixtures._
 import doobie.scalatest.IOChecker
 import org.scalatest.{FunSuite, Matchers}
 
-class ConfigRepositoryImplSpec extends FunSuite with Matchers with DBTest with IOChecker {
+class ConfigRepositoryImplIntegrationSpec extends FunSuite with Matchers with DBTest with IOChecker {
 
   val repo = new ConfigRepositoryImpl()
 

@@ -1,12 +1,10 @@
 package com.heimdali.repositories
 
-import java.time.{Clock, Instant, ZoneId}
-
 import com.heimdali.test.fixtures._
 import doobie.scalatest.IOChecker
 import org.scalatest.{FunSuite, Matchers}
 
-class KafkaTopicRepositoryImplSpec extends FunSuite with Matchers with DBTest with IOChecker {
+class KafkaTopicRepositoryImplIntegrationSpec extends FunSuite with Matchers with DBTest with IOChecker {
 
   val repo = new KafkaTopicRepositoryImpl()
 
