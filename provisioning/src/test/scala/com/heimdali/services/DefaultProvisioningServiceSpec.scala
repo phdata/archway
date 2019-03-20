@@ -2,7 +2,7 @@ package com.heimdali.services
 
 import cats.data.OptionT
 import cats.effect.{IO, Timer}
-import cats.syntax.applicative._
+import cats.implicits._
 import com.heimdali.AppContext
 import com.heimdali.clients._
 import com.heimdali.models._
@@ -111,6 +111,7 @@ class DefaultProvisioningServiceSpec extends FlatSpec with MockFactory with Matc
     val topicGrantRepository: TopicGrantRepository = mock[TopicGrantRepository]
     val applicationRepository: ApplicationRepository = mock[ApplicationRepository]
 
+    implicit val cs = IO.contextShift(ExecutionContext.global)
     val transactor = Transactor.fromConnection[IO](null, ExecutionContext.global).copy(strategy0 = Strategy(FC.unit, FC.unit, FC.unit, FC.unit))
 
     lazy val appContext: AppContext[IO] = AppContext(

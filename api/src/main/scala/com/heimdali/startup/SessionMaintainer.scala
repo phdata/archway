@@ -5,7 +5,7 @@ import cats.implicits._
 import com.heimdali.config.ClusterConfig
 import com.heimdali.services.LoginContextProvider
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.duration.FiniteDuration
 
 trait SessionMaintainer[F[_]] {
 
@@ -20,7 +20,7 @@ class SessionMaintainerImpl[F[_] : Sync](clusterConfig: ClusterConfig,
 
   override def setup: F[Unit] =
     loginContextProvider.kinit().flatMap { _ =>
-      fs2.Stream.awakeEvery[F](clusterConfig.sessionRefresh)
+      fs2.Stream.awakeEvery[F](clusterConfig.sessionRefresh.asInstanceOf[FiniteDuration])
         .evalMap(_ => loginContextProvider.kinit())
         .compile
         .drain

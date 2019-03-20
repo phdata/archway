@@ -36,7 +36,7 @@ class TemplateControllerSpec
       fromResource("rest/templates.simple.post.expected.json")
         .asObject
         .get
-        .add("requested_date", clock.instant().asJson)
+        .add("requested_date", timer.instant.asJson)
         .asJson
     check(response, Status.Ok, Some(expected))
   }
