@@ -1,12 +1,13 @@
-package com.heimdali.repositories
+package com.heimdali.com.heimdali.services
 
 import java.time.Instant
 
+import com.heimdali.repositories.LDAPRepositoryImpl
 import com.heimdali.test.fixtures._
 import doobie.scalatest.IOChecker
 import org.scalatest.{FunSuite, Matchers}
 
-class LDAPRepositoryImplSpec extends FunSuite with Matchers with DBTest with IOChecker {
+class LDAPRepositoryImplIntegrationSpec extends FunSuite with Matchers with DBTest with IOChecker {
 
   test("find") { check(LDAPRepositoryImpl.Statements.find(123)) }
   test("groupAssociated") { check(LDAPRepositoryImpl.Statements.groupAssociated(123, Instant.now)) }

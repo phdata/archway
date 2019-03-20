@@ -5,7 +5,7 @@ import com.heimdali.test.fixtures.{LDAPTest, _}
 import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{FlatSpec, Matchers}
 
-class LDAPClientImplSpec
+class LDAPClientImpIntegrationSpec
   extends FlatSpec
     with Matchers
     with MockitoSugar

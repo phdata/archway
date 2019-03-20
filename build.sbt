@@ -1,3 +1,5 @@
+lazy val IntegrationTest = config("it") extend(Test)
+
 lazy val models = (project in file("heimdali-models"))
   .configs(IntegrationTest)
   .settings(Common.settings: _*)

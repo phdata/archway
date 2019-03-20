@@ -9,12 +9,11 @@ import org.scalatest.{FlatSpec, Matchers}
 
 import scala.concurrent.ExecutionContext
 
-class SentryClientSpec extends FlatSpec with Matchers with HiveTest {
+class SentryClientIntegrationSpec extends FlatSpec with Matchers with HiveTest {
 
   behavior of "Sentry Client"
 
   ignore should "list roles" in {
-    import scala.concurrent.ExecutionContext.Implicits.global
     val client = new SentryClientImpl[IO](hiveTransactor, null, new UGILoginContextProvider())
     val result = client.roles.unsafeRunSync()
   }
@@ -23,7 +22,7 @@ class SentryClientSpec extends FlatSpec with Matchers with HiveTest {
 
 trait HiveTest {
 
-  val hiveTransactor: Transactor[IO] = {
+  lazy val hiveTransactor: Transactor[IO] = {
     implicit val contextShift = IO.contextShift(ExecutionContext.global)
     System.setProperty("java.security.krb5.conf", getClass.getResource("/krb5.conf").getPath)
     UserGroupInformation.loginUserFromKeytab("benny@JOTUNN.IO", getClass.getResource("/heimdali.keytab").getPath)

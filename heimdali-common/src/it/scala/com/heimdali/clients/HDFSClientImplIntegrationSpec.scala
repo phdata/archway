@@ -10,13 +10,10 @@ import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.fs.{FileSystem, Path}
 import org.apache.hadoop.hdfs.client.HdfsAdmin
 import org.apache.hadoop.security.UserGroupInformation
-import org.scalatest._
+import org.scalatest.{BeforeAndAfterAll, FlatSpec, Matchers}
 import org.scalatest.mockito.MockitoSugar
 
-import scala.concurrent.ExecutionContext
-import scala.io.Source
-
-class HDFSClientImplSpec extends FlatSpec with Matchers with MockitoSugar with BeforeAndAfterAll {
+class HDFSClientImplIntegrationSpec extends FlatSpec with Matchers with MockitoSugar with BeforeAndAfterAll {
 
   behavior of "HDFS Client"
 
