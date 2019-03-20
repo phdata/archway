@@ -1,5 +1,7 @@
 package com.heimdali.provisioning
 
+import java.time.Instant
+
 import cats._
 import cats.data._
 import cats.effect._
@@ -17,10 +19,10 @@ object GrantRoleToConsumerGroup {
   implicit val viewer: Show[GrantRoleToConsumerGroup] =
     Show.show(g => s"granting role ${g.roleName} rights to consumer group ${g.consumerGroup}")
 
-  implicit def provisioner[F[_]](implicit F: Effect[F]): ProvisionTask[F, GrantRoleToConsumerGroup] =
+  implicit def provisioner[F[_] : Effect : Timer]: ProvisionTask[F, GrantRoleToConsumerGroup] =
     ProvisionTask.instance { grant =>
       Kleisli { config =>
-        F.delay {
+        Effect[F].delay {
           config
             .sentryClient
             .grantPrivilege(
@@ -30,13 +32,15 @@ object GrantRoleToConsumerGroup {
             )
         }.attempt
           .flatMap {
-            case Left(exception) => F.pure(Error(grant, exception))
+            case Left(exception) => Effect[F].pure(Error(grant, exception))
             case Right(_) =>
-              config
-                .applicationRepository
-                .consumerGroupAccess(grant.applicationId)
-                .transact(config.transactor)
-                .map(_ => Success(grant))
+              for {
+                time <- Timer[F].clock.realTime(scala.concurrent.duration.MILLISECONDS)
+                _ <- config
+                  .applicationRepository
+                  .consumerGroupAccess(grant.applicationId, Instant.ofEpochMilli(time))
+                  .transact(config.transactor)
+              } yield Success(grant)
           }
       }
     }

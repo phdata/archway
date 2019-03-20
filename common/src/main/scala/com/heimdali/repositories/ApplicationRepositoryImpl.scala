@@ -1,19 +1,18 @@
 package com.heimdali.repositories
 
-import java.time.Clock
+import java.time.Instant
 
 import com.heimdali.models.Application
 import doobie._
 import doobie.implicits._
 
-class ApplicationRepositoryImpl(val clock: Clock)
-  extends ApplicationRepository {
+class ApplicationRepositoryImpl extends ApplicationRepository {
 
   override def create(application: Application): doobie.ConnectionIO[Long] =
     Statements.insert(application).withUniqueGeneratedKeys("id")
 
-  override def consumerGroupAccess(applicationId: Long): doobie.ConnectionIO[Int] =
-    Statements.consumerGroupAccess(applicationId).run
+  override def consumerGroupAccess(applicationId: Long, time: Instant): doobie.ConnectionIO[Int] =
+    Statements.consumerGroupAccess(applicationId, time).run
 
   override def findByWorkspaceId(workspaceId: Long): doobie.ConnectionIO[List[Application]] =
     Statements
@@ -40,10 +39,10 @@ class ApplicationRepositoryImpl(val clock: Clock)
              values (${application.name}, ${application.consumerGroup}, ${application.group.id})
             """.update
 
-    def consumerGroupAccess(applicationId: Long): Update0 =
+    def consumerGroupAccess(applicationId: Long, time: Instant): Update0 =
       sql"""
            update application
-           set consumer_group_access = ${clock.instant}
+           set consumer_group_access = $time
            where id = $applicationId
           """.update
 

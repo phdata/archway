@@ -4,7 +4,7 @@
       "name": "yarn-RESOURCEMANAGER-416c6afa711d68cad913a0f197301a36",
       "type": "RESOURCEMANAGER",
       "serviceRef": {
-        "clusterName": "cluster",
+        "clusterName": "cluster name",
         "serviceName": "yarn"
       },
       "hostRef": {
@@ -75,7 +75,7 @@
       "name": "yarn-NODEMANAGER-416c6afa711d68cad913a0f197301a36",
       "type": "NODEMANAGER",
       "serviceRef": {
-        "clusterName": "cluster",
+        "clusterName": "cluster name",
         "serviceName": "yarn"
       },
       "hostRef": {
@@ -170,7 +170,7 @@
       "name": "yarn-JOBHISTORY-416c6afa711d68cad913a0f197301a36",
       "type": "JOBHISTORY",
       "serviceRef": {
-        "clusterName": "cluster",
+        "clusterName": "cluster name",
         "serviceName": "yarn"
       },
       "hostRef": {

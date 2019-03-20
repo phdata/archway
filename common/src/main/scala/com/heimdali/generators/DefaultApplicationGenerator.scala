@@ -1,15 +1,14 @@
 package com.heimdali.generators
 
-import java.time.Clock
-
 import cats.Monad
+import cats.effect.Clock
 import cats.implicits._
 import com.heimdali.config.AppConfig
 import com.heimdali.models.{Application, WorkspaceRequest}
 
 class DefaultApplicationGenerator[F[_]](appConfig: AppConfig,
                                         ldapGroupGenerator: LDAPGroupGenerator[F])
-                                       (implicit clock: Clock, F: Monad[F])
+                                       (implicit clock: Clock[F], F: Monad[F])
   extends ApplicationGenerator[F] {
 
   override def applicationFor(name: String, workspace: WorkspaceRequest): F[Application] = {

@@ -31,7 +31,7 @@ class DefaultSimpleWorkspaceGeneratorSpec extends FlatSpec with MockFactory with
       "A longer description",
       "simple",
       standardUserDN,
-      clock.instant(),
+      timer.instant,
       Compliance(phiData = false, pciData = false, piiData = false),
       singleUser = false,
       data = List(
@@ -48,8 +48,7 @@ class DefaultSimpleWorkspaceGeneratorSpec extends FlatSpec with MockFactory with
     val templateService = new DefaultSimpleWorkspaceGenerator[IO](appConfig, ldapGenerator, appGenerator)
 
     val actual: WorkspaceRequest = templateService.workspaceFor(input).unsafeRunSync()
-    val time = clock.instant()
-    actual.copy(requestDate = time) should be(expected.copy(requestDate = time))
+    actual.copy(requestDate = timer.instant) should be(expected.copy(requestDate = timer.instant))
   }
 
 }

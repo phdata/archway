@@ -83,7 +83,7 @@ class HDFSClientImplIntegrationSpec extends FlatSpec with Matchers with MockitoS
     val context = new UGILoginContextProvider()
     val elevatedFS = context.elevate[IO, FileSystem]("hdfs"){ () => fileSystem() }.unsafeRunSync()
 
-    val client = new HDFSClientImpl[IO](fileSystem, admin, context)
+    val client = new HDFSClientImpl[IO](configuration, context)
   }
 
 }

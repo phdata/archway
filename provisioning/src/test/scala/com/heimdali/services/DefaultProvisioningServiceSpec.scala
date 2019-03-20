@@ -1,14 +1,15 @@
 package com.heimdali.services
 
-import cats.data.{EitherT, OptionT}
-import cats.effect.IO
+import cats.data.OptionT
+import cats.effect.{IO, Timer}
 import cats.syntax.applicative._
 import com.heimdali.AppContext
 import com.heimdali.clients._
 import com.heimdali.models._
+import com.heimdali.test.fixtures._
 import com.heimdali.provisioning.DefaultProvisioningService
 import com.heimdali.repositories.{MemberRepository, _}
-import com.heimdali.test.fixtures.{id, _}
+import com.heimdali.test.fixtures.{TestTimer, id, maxCores, maxMemoryInGB, poolName, savedHive, savedLDAP, savedWorkspaceRequest, standardUserDN}
 import doobie._
 import doobie.implicits._
 import doobie.util.transactor.Strategy
@@ -27,34 +28,34 @@ class DefaultProvisioningServiceSpec extends FlatSpec with MockFactory with Matc
     inSequence {
       hdfsClient.createDirectory _ expects(savedHive.location, None) returning IO
         .pure(new Path(savedHive.location))
-      hiveDatabaseRepository.directoryCreated _ expects id returning 0.pure[ConnectionIO]
+      hiveDatabaseRepository.directoryCreated _ expects(id, timer.instant) returning 0.pure[ConnectionIO]
       hdfsClient.setQuota _ expects(savedHive.location, savedHive.sizeInGB) returning IO
         .pure(HDFSAllocation(savedHive.location, savedHive.sizeInGB))
-      hiveDatabaseRepository.quotaSet _ expects id returning 0.pure[ConnectionIO]
+      hiveDatabaseRepository.quotaSet _ expects(id, timer.instant) returning 0.pure[ConnectionIO]
       hiveClient.createDatabase _ expects(savedHive.name, savedHive.location) returning IO.unit
-      hiveDatabaseRepository.databaseCreated _ expects id returning 0.pure[ConnectionIO]
+      hiveDatabaseRepository.databaseCreated _ expects(id, timer.instant) returning 0.pure[ConnectionIO]
 
       ldapClient.createGroup _ expects(savedLDAP.commonName, *) returning IO.unit
-      ldapRepository.groupCreated _ expects id returning 0.pure[ConnectionIO]
+      ldapRepository.groupCreated _ expects(id, timer.instant) returning 0.pure[ConnectionIO]
       sentryClient.createRole _ expects savedLDAP.sentryRole returning IO.unit
-      ldapRepository.roleCreated _ expects id returning 0.pure[ConnectionIO]
+      ldapRepository.roleCreated _ expects(id, timer.instant) returning 0.pure[ConnectionIO]
       sentryClient.grantGroup _ expects(savedLDAP.commonName, savedLDAP.sentryRole) returning IO.unit
-      ldapRepository.groupAssociated _ expects id returning 0.pure[ConnectionIO]
+      ldapRepository.groupAssociated _ expects(id, timer.instant) returning 0.pure[ConnectionIO]
       sentryClient.enableAccessToDB _ expects(savedHive.name, savedLDAP.sentryRole, Manager) returning IO.unit
-      grantRepository.databaseGranted _ expects id returning 0.pure[ConnectionIO]
+      grantRepository.databaseGranted _ expects(id, timer.instant) returning 0.pure[ConnectionIO]
       sentryClient.enableAccessToLocation _ expects(savedHive.location, savedLDAP.sentryRole) returning IO.unit
-      grantRepository.locationGranted _ expects id returning 0.pure[ConnectionIO]
+      grantRepository.locationGranted _ expects(id, timer.instant) returning 0.pure[ConnectionIO]
 
       ldapClient.createGroup _ expects(savedLDAP.commonName, *) returning IO.unit
-      ldapRepository.groupCreated _ expects id returning 0.pure[ConnectionIO]
+      ldapRepository.groupCreated _ expects(id, timer.instant) returning 0.pure[ConnectionIO]
       sentryClient.createRole _ expects savedLDAP.sentryRole returning IO.unit
-      ldapRepository.roleCreated _ expects id returning 0.pure[ConnectionIO]
+      ldapRepository.roleCreated _ expects(id, timer.instant) returning 0.pure[ConnectionIO]
       sentryClient.grantGroup _ expects(savedLDAP.commonName, savedLDAP.sentryRole) returning IO.unit
-      ldapRepository.groupAssociated _ expects id returning 0.pure[ConnectionIO]
+      ldapRepository.groupAssociated _ expects(id, timer.instant) returning 0.pure[ConnectionIO]
       sentryClient.enableAccessToDB _ expects(savedHive.name, savedLDAP.sentryRole, ReadOnly) returning IO.unit
-      grantRepository.databaseGranted _ expects id returning 0.pure[ConnectionIO]
+      grantRepository.databaseGranted _ expects(id, timer.instant) returning 0.pure[ConnectionIO]
       sentryClient.enableAccessToLocation _ expects(savedHive.location, savedLDAP.sentryRole) returning IO.unit
-      grantRepository.locationGranted _ expects id returning 0.pure[ConnectionIO]
+      grantRepository.locationGranted _ expects(id, timer.instant) returning 0.pure[ConnectionIO]
     }
 
     inSequence {
@@ -64,18 +65,18 @@ class DefaultProvisioningServiceSpec extends FlatSpec with MockFactory with Matc
 
     inSequence {
       yarnClient.createPool _ expects(poolName, maxCores, maxMemoryInGB) returning IO.unit
-      yarnRepository.complete _ expects id returning 0.pure[ConnectionIO]
+      yarnRepository.complete _ expects(id, timer.instant) returning 0.pure[ConnectionIO]
     }
 
     inSequence {
       ldapClient.createGroup _ expects(savedLDAP.commonName, *) returning IO.unit
-      ldapRepository.groupCreated _ expects id returning 0.pure[ConnectionIO]
+      ldapRepository.groupCreated _ expects(id, timer.instant) returning 0.pure[ConnectionIO]
       sentryClient.createRole _ expects savedLDAP.sentryRole returning IO.unit
-      ldapRepository.roleCreated _ expects id returning 0.pure[ConnectionIO]
+      ldapRepository.roleCreated _ expects(id, timer.instant) returning 0.pure[ConnectionIO]
       sentryClient.grantGroup _ expects(savedLDAP.commonName, savedLDAP.sentryRole) returning IO.unit
-      ldapRepository.groupAssociated _ expects id returning 0.pure[ConnectionIO]
+      ldapRepository.groupAssociated _ expects(id, timer.instant) returning 0.pure[ConnectionIO]
       sentryClient.grantPrivilege _ expects(*, *, *) returning IO.unit
-      applicationRepository.consumerGroupAccess _ expects id returning 0.pure[ConnectionIO]
+      applicationRepository.consumerGroupAccess _ expects(id, timer.instant) returning 0.pure[ConnectionIO]
     }
 
     inSequence {
@@ -87,8 +88,6 @@ class DefaultProvisioningServiceSpec extends FlatSpec with MockFactory with Matc
   }
 
   trait Context {
-    implicit val contextShift = IO.contextShift(ExecutionContext.global)
-
     val ldapClient: LDAPClient[IO] = mock[LDAPClient[IO]]
     val hdfsClient: HDFSClient[IO] = mock[HDFSClient[IO]]
     val sentryClient: SentryClient[IO] = mock[SentryClient[IO]]

@@ -1,28 +1,29 @@
 package com.heimdali.services
 
-import java.time.Clock
+import java.time.Instant
 
 import cats.data._
 import cats.effect._
 import cats.implicits._
 import com.heimdali.clients.{LDAPClient, LDAPUser}
 import com.heimdali.config.{ApprovalConfig, RestConfig, WorkspaceConfig}
-import com.heimdali.models._
 import com.heimdali.generators.WorkspaceGenerator
+import com.heimdali.models._
 import com.typesafe.scalalogging.LazyLogging
 import io.circe.Json
 import io.circe.syntax._
 import pdi.jwt.algorithms.JwtHmacAlgorithm
 import pdi.jwt.{JwtAlgorithm, JwtCirce}
 
-class AccountServiceImpl[F[_] : Sync](ldapClient: LDAPClient[F],
-                                      restConfig: RestConfig,
-                                      approvalConfig: ApprovalConfig,
-                                      workspaceConfig: WorkspaceConfig,
-                                      workspaceService: WorkspaceService[F],
-                                      userTemplateService: WorkspaceGenerator[F, UserTemplate],
-                                      provisionService: ProvisioningService[F])
-                                      (implicit val clock: Clock)
+import scala.concurrent.duration._
+
+class AccountServiceImpl[F[_] : Sync : Timer](ldapClient: LDAPClient[F],
+                                              restConfig: RestConfig,
+                                              approvalConfig: ApprovalConfig,
+                                              workspaceConfig: WorkspaceConfig,
+                                              workspaceService: WorkspaceService[F],
+                                              userTemplateService: WorkspaceGenerator[F, UserTemplate],
+                                              provisionService: ProvisioningService[F])
   extends AccountService[F]
     with LazyLogging {
 
@@ -32,16 +33,16 @@ class AccountServiceImpl[F[_] : Sync](ldapClient: LDAPClient[F],
     User(ldapUser.name,
       ldapUser.username,
       ldapUser.distinguishedName,
-         UserPermissions(riskManagement =
-                           ldapUser
-                             .memberships
-                             .map(_.toLowerCase())
-                           .contains(approvalConfig.risk.toLowerCase()),
-                         platformOperations =
-                           ldapUser
-                             .memberships
-                             .map(_.toLowerCase())
-                             .contains(approvalConfig.infrastructure.toLowerCase())))
+      UserPermissions(riskManagement =
+        ldapUser
+          .memberships
+          .map(_.toLowerCase())
+          .contains(approvalConfig.risk.toLowerCase()),
+        platformOperations =
+          ldapUser
+            .memberships
+            .map(_.toLowerCase())
+            .contains(approvalConfig.infrastructure.toLowerCase())))
   }
 
   private def decode(token: String, secret: String, algo: JwtHmacAlgorithm): Either[Throwable, Json] =
@@ -76,7 +77,8 @@ class AccountServiceImpl[F[_] : Sync](ldapClient: LDAPClient[F],
       case None =>
         for {
           template <- userTemplateService.defaults(user)
-          workspace <- userTemplateService.workspaceFor(template).map(_.copy(requestDate = clock.instant()))
+          time <- Clock[F].realTime(MILLISECONDS)
+          workspace <- userTemplateService.workspaceFor(template).map(_.copy(requestDate = Instant.ofEpochMilli(time)))
           savedWorkspace <- workspaceService.create(workspace)
           _ <- provisionService.provision(savedWorkspace)
           completed <- workspaceService.find(savedWorkspace.id.get).value

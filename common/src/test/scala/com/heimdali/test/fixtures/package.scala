@@ -14,7 +14,6 @@ import org.http4s.circe._
 import org.http4s.client.Client
 import org.http4s.dsl.io._
 import org.http4s.implicits._
-import pureconfig.{CamelCase, ConfigFieldMapping, ProductHint}
 
 import scala.collection.immutable.Map
 import scala.concurrent.duration._
@@ -29,6 +28,8 @@ package object fixtures {
   val infraApproverUser = User(personName, standardUsername, standardUserDN, UserPermissions(riskManagement = false, platformOperations = true))
   val basicUserToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJuYW1lIjoiRHVkZSBEb2UiLCJ1c2VybmFtZSI6InVzZXJuYW1lIiwicGVybWlzc2lvbnMiOnsicmlza19tYW5hZ2VtZW50IjpmYWxzZSwicGxhdGZvcm1fb3BlcmF0aW9ucyI6ZmFsc2V9fQ.ltGXxBh4S7gwmIbcKz22IFWpGI2-zxad2XYOoxuGm734L8GlzfwvLRWIs-ZVKn7T8w3RJy5bKZWZoPj8951Qug"
   val basicUser = User(personName, standardUsername, standardUserDN, UserPermissions(riskManagement = false, platformOperations = false))
+
+  implicit val timer = new TestTimer
 
   val id = 123L
   val name = "Sesame"
@@ -60,17 +61,15 @@ package object fixtures {
   val initialTopic = savedTopic.copy(id = None, managingRole = savedTopic.managingRole.copy(id = None, ldapRegistration = initialLDAP), readonlyRole = savedTopic.readonlyRole.copy(id = None, ldapRegistration = initialLDAP))
   val savedApplication = Application("Tiller", s"${systemName}_cg", savedLDAP, Some(id))
   val initialApplication = savedApplication.copy(id = None, group = initialLDAP)
-  implicit val clock = Clock.fixed(Instant.now(), ZoneId.of("UTC"))
-  val searchResult = WorkspaceSearchResult(id, name, name, "simple", "Approved", piiCompliance, pciCompliance, phiCompliance, clock.instant(), Some(clock.instant()), 0, 0, 0)
+  val searchResult = WorkspaceSearchResult(id, name, name, "simple", "Approved", piiCompliance, pciCompliance, phiCompliance, timer.instant, Some(timer.instant), 0, 0, 0)
 
   val yarnApp = ClusterApp("yarn", "yarn", "GOOD_HExALTH", "STARTED", Map())
   val cluster = Cluster("cluster name", "Cluster", "", List(yarnApp), CDH(""), "GOOD_HEALTH")
 
-  def approval(instant: Instant = Instant.now(clock)) = Approval(Risk, standardUsername, instant)
+  def approval(instant: Instant = timer.instant) = Approval(Risk, standardUsername, instant)
 
-  val clusterConfig = ClusterConfig(1 second, "", "cluster", "dev", 21000, 21050, CredentialsConfig("admin", "admin"), ServiceOverride(None, 8088))
-  private implicit def hint[T] = ProductHint[T](ConfigFieldMapping(CamelCase, CamelCase))
-  val Right(appConfig) = pureconfig.loadConfig[AppConfig]
+  import io.circe.generic.auto._
+  val Right(appConfig) = io.circe.config.parser.decodePath[AppConfig]("heimdali")
 
   def defaultLDAPAttributes(dn: String, cn: String): List[(String, String)] =
     List(
@@ -90,7 +89,7 @@ package object fixtures {
     name,
     "simple",
     standardUserDN,
-    Instant.now(clock),
+    timer.instant,
     savedCompliance,
     singleUser = false,
     id = Some(id),
@@ -131,8 +130,8 @@ package object fixtures {
        |    "pii_data": $piiCompliance,
        |    "pci_data": $pciCompliance,
        |    "phi_data": $phiCompliance,
-       |    "date_requested" : "${clock.instant().toString}",
-       |    "date_fully_approved" : "${clock.instant().toString}",
+       |    "date_requested" : "${timer.instant.toString}",
+       |    "date_fully_approved" : "${timer.instant.toString}",
        |    "total_disk_allocated_in_gb" : 0,
        |    "total_max_cores" : 0,
        |    "total_max_memory_in_gb" : 0
@@ -199,7 +198,7 @@ package object fixtures {
        |  "topics": [],
        |  "single_user": false,
        |  "requester": "$standardUserDN",
-       |  "requested_date": "${Instant.now(clock)}"
+       |  "requested_date": "${timer.instant}"
        |}
        """.stripMargin)
 
@@ -210,20 +209,20 @@ package object fixtures {
   }
 
   val testClient = Resource.make(IO.pure(Client.fromHttpApp(HttpRoutes.of[IO] {
-    case GET -> Root / "api" / "v18" / "clusters" / "cluster" =>
+    case GET -> Root / "api" / "v18" / "clusters" / "cluster name" =>
       Ok(fromResource("cloudera/clusters.cluster_name.actual.json"))
 
-    case GET -> Root / "api" / "v18" / "clusters" / "cluster" / "services" / serviceName / "roles" =>
+    case GET -> Root / "api" / "v18" / "clusters" / "cluster name" / "services" / serviceName / "roles" =>
       Ok(fromResource(s"cloudera/$serviceName.json"))
 
     case GET -> Root / "api" / "v18" / "hosts" =>
       Ok(fromResource("cloudera/hosts.json"))
 
-    case GET -> Root / "api" / "v18" / "clusters" / "cluster" / "services" =>
+    case GET -> Root / "api" / "v18" / "clusters" / "cluster name" / "services" =>
       Ok(fromResource("cloudera/services.json"))
   }.orNotFound)))(pool => IO.unit)
 
 
-  val httpClient = new CMClient[IO](testClient, clusterConfig)
+  val httpClient = new CMClient[IO](testClient, appConfig.cluster)
 
 }

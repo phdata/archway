@@ -35,7 +35,7 @@ class  MemberControllerSpec
     val authService: TestAuthService = new TestAuthService
     val memberService: MemberService[IO] = mock[MemberService[IO]]
 
-    lazy val memberController: MemberController = new MemberController(authService, memberService)
+    lazy val memberController: MemberController[IO] = new MemberController(authService, memberService)
   }
 
 }

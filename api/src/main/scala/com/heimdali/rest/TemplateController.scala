@@ -1,22 +1,21 @@
 package com.heimdali.rest
 
-import java.time.Clock
-
 import cats.effect._
-import com.heimdali.models._
+import cats.implicits._
 import com.heimdali.generators.WorkspaceGenerator
+import com.heimdali.models._
 import io.circe.syntax._
 import org.http4s._
-import org.http4s.dsl.io._
+import org.http4s.dsl.Http4sDsl
 
-class TemplateController(authService: AuthService[IO],
-                         simpleTemplateGenerator: WorkspaceGenerator[IO, SimpleTemplate],
-                         structuredTemplateGenerator: WorkspaceGenerator[IO, StructuredTemplate])
-                        (implicit val clock: Clock) {
+class TemplateController[F[_] : Sync](authService: AuthService[F],
+                                      simpleTemplateGenerator: WorkspaceGenerator[F, SimpleTemplate],
+                                      structuredTemplateGenerator: WorkspaceGenerator[F, StructuredTemplate])
+  extends Http4sDsl[F] {
 
-  val route: HttpService[IO] =
+  val route: HttpRoutes[F] =
     authService.tokenAuth {
-      AuthedService[User, IO] {
+      AuthedService[User, F] {
 
         case GET -> Root / "simple" as user =>
           for {
@@ -25,7 +24,7 @@ class TemplateController(authService: AuthService[IO],
           } yield response
 
         case req@POST -> Root / "simple" as _ =>
-          implicit val workspaceRequestEntityDecoder: EntityDecoder[IO, SimpleTemplate] = jsonOf[IO, SimpleTemplate]
+          implicit val workspaceRequestEntityDecoder: EntityDecoder[F, SimpleTemplate] = jsonOf[F, SimpleTemplate]
           for {
             simpleTemplate <- req.req.as[SimpleTemplate]
             workspaceRequest <- simpleTemplateGenerator.workspaceFor(simpleTemplate)
@@ -39,7 +38,7 @@ class TemplateController(authService: AuthService[IO],
           } yield response
 
         case req@POST -> Root / "structured" as _ =>
-          implicit val workspaceRequestEntityDecoder: EntityDecoder[IO, StructuredTemplate] = jsonOf[IO, StructuredTemplate]
+          implicit val workspaceRequestEntityDecoder: EntityDecoder[F, StructuredTemplate] = jsonOf[F, StructuredTemplate]
           for {
             structuredTemplate <- req.req.as[StructuredTemplate]
             workspaceRequest <- structuredTemplateGenerator.workspaceFor(structuredTemplate)

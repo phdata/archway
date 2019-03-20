@@ -1,8 +1,6 @@
 package com.heimdali.generators
 
-import java.time.Clock
-
-import cats.effect.Sync
+import cats.effect.{Clock, Sync, Timer}
 import cats.implicits._
 import com.heimdali.config.AppConfig
 import com.heimdali.models.{LDAPRegistration, WorkspaceRequest}
@@ -10,7 +8,7 @@ import com.heimdali.services.ConfigService
 
 class DefaultLDAPGroupGenerator[F[_]](appConfig: AppConfig,
                                       configService: ConfigService[F])
-                                     (implicit clock: Clock, F: Sync[F])
+                                     (implicit clock: Clock[F], F: Sync[F])
   extends LDAPGroupGenerator[F] {
 
   def attributes(cn: String, dn: String, role: String, workspace: WorkspaceRequest): F[List[(String, String)]] =

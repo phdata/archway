@@ -8,7 +8,7 @@ import org.scalatest.{FunSuite, Matchers}
 
 class ApplicationRepositoryImplSpec extends FunSuite with Matchers with DBTest with IOChecker {
 
-  val repo = new ApplicationRepositoryImpl(Clock.fixed(Instant.now, ZoneId.of("UTC")))
+  val repo = new ApplicationRepositoryImpl()
 
   test("insert") { check(repo.Statements.insert(initialApplication)) }
   test("list") { check(repo.Statements.findByWorkspaceId(id)) }

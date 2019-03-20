@@ -1,5 +1,7 @@
 package com.heimdali.provisioning
 
+import java.time.Instant
+
 import cats._
 import cats.data._
 import cats.effect._
@@ -16,7 +18,7 @@ object GrantTopicAccess {
   implicit val show: Show[GrantTopicAccess] =
     Show.show(s => "")
 
-  implicit def provisioner[F[_]](implicit F: Effect[F]): ProvisionTask[F, GrantTopicAccess] =
+  implicit def provisioner[F[_] : Effect : Timer]: ProvisionTask[F, GrantTopicAccess] =
     ProvisionTask.instance(grant =>
       Kleisli { context =>
         grant.actions.traverse[F, Either[Throwable, Unit]] { action =>
@@ -27,13 +29,15 @@ object GrantTopicAccess {
         }
           .map(_.combineAll)
           .flatMap {
-            case Left(exception) => F.pure(Error(grant, exception))
+            case Left(exception) => Effect[F].pure(Error(grant, exception))
             case Right(_) =>
-              context
-                .topicGrantRepository
-                .topicAccess(grant.id)
-                .transact(context.transactor)
-                .map(_ => Success(grant))
+              for {
+                time <- Timer[F].clock.realTime(scala.concurrent.duration.MILLISECONDS)
+                _ <- context
+                  .topicGrantRepository
+                  .topicAccess(grant.id, Instant.ofEpochMilli(time))
+                  .transact(context.transactor)
+              } yield Success(grant)
           }
       }
     )

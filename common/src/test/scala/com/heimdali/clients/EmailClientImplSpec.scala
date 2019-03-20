@@ -2,19 +2,20 @@ package com.heimdali.clients
 
 import cats.effect._
 import courier._
+import com.heimdali.test.fixtures._
 import javax.mail.Message
 import javax.mail.internet.MimeMultipart
 import org.jvnet.mock_javamail.Mailbox
 import org.scalatest.{FlatSpec, Matchers}
+
+import scala.concurrent.ExecutionContext
 
 class EmailClientImplSpec extends FlatSpec with Matchers {
 
   behavior of "EmailClientImplSpec"
 
   ignore should "send" in {
-    import scala.concurrent.ExecutionContext.Implicits.global
-    val mailer = Mailer("localhost", 25)()
-    val emailClient = new EmailClientImpl[IO](mailer)
+    val emailClient = new EmailClientImpl[IO](appConfig, ExecutionContext.global)
     val subject: String = "Hey There"
     val body: String = "Welcome home!"
 

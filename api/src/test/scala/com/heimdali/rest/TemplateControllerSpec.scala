@@ -49,7 +49,7 @@ class TemplateControllerSpec
     val simpleTemplateService: WorkspaceGenerator[IO, SimpleTemplate] = new DefaultSimpleWorkspaceGenerator[IO](appConfig, ldapGroupGenerator, applicationGenerator)
     val structuredTemplateService: WorkspaceGenerator[IO, StructuredTemplate] = new DefaultStructuredWorkspaceGenerator[IO](appConfig, ldapGroupGenerator, applicationGenerator)
 
-    lazy val templateController: TemplateController = new TemplateController(authService, simpleTemplateService, structuredTemplateService)
+    lazy val templateController: TemplateController[IO] = new TemplateController[IO](authService, simpleTemplateService, structuredTemplateService)
   }
 
 }

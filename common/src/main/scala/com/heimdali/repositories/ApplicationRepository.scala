@@ -1,11 +1,13 @@
 package com.heimdali.repositories
 
+import java.time.Instant
+
 import com.heimdali.models.Application
 import doobie._
 
 trait ApplicationRepository {
 
-  def consumerGroupAccess(applicationId: Long): ConnectionIO[Int]
+  def consumerGroupAccess(applicationId: Long, time: Instant): ConnectionIO[Int]
 
   def create(application: Application): ConnectionIO[Long]
 

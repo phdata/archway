@@ -56,7 +56,7 @@ class AccountControllerSpec
     val accountService: AccountService[IO] = mock[AccountService[IO]]
     val authService: TestAuthService = new TestAuthService
 
-    lazy val accountController: AccountController = new AccountController(authService, accountService)
+    lazy val accountController: AccountController[IO] = new AccountController[IO](authService, accountService)
   }
 
 }

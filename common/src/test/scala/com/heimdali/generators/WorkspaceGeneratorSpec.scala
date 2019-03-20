@@ -30,10 +30,11 @@ class WorkspaceGeneratorSpec extends PropSpec with TableDrivenPropertyChecks wit
   }
 
   property("instance") {
-    val configService = mock[ConfigService[SyncIO]]
-    val ldapGroupGenerator = new DefaultLDAPGroupGenerator[SyncIO](appConfig, configService)
-    val appGenerator = new DefaultApplicationGenerator[SyncIO](appConfig, ldapGroupGenerator)
-    WorkspaceGenerator.instance[SyncIO, WorkspaceGenerator[SyncIO, UserTemplate]](appConfig.copy(generators = appConfig.generators.copy(userGenerator = classOf[TestWorkspaceGenerator[SyncIO]].getName)), ldapGroupGenerator, appGenerator, _.userGenerator)
+    val configService = mock[ConfigService[IO]]
+    val ldapGroupGenerator = new DefaultLDAPGroupGenerator[IO](appConfig, configService)
+    val appGenerator = new DefaultApplicationGenerator[IO](appConfig, ldapGroupGenerator)
+
+    WorkspaceGenerator.instance[IO, WorkspaceGenerator[IO, UserTemplate]](appConfig.copy(generators = appConfig.generators.copy(userGenerator = classOf[TestWorkspaceGenerator[IO]].getName)), ldapGroupGenerator, appGenerator, _.userGenerator)
   }
 
 }

@@ -1,11 +1,13 @@
 package com.heimdali.clients
 
 import java.io.{File, InputStream, OutputStream}
+import java.net.URI
 import java.text.DecimalFormat
 
 import cats.effect.{Async, IO, Sync}
 import com.heimdali.services.LoginContextProvider
 import com.typesafe.scalalogging.LazyLogging
+import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.fs.{FileSystem, FileUtil, Path}
 import org.apache.hadoop.hdfs.client.HdfsAdmin
 
@@ -25,18 +27,25 @@ trait HDFSClient[F[_]] {
   def getConsumption(location: String): F[Double]
 }
 
-class HDFSClientImpl[F[_] : Async](fileSystem: () => FileSystem,
-                                   hdfsAdmin: () => HdfsAdmin,
+class HDFSClientImpl[F[_] : Async](hadoopConfiguration: Configuration,
                                    loginContextProvider: LoginContextProvider)
   extends HDFSClient[F]
     with LazyLogging {
+
+  lazy val fileSystem: FileSystem =
+    FileSystem.get(hadoopConfiguration)
+
+  val hdfsUri = new URI(hadoopConfiguration.get("fs.defaultFS"))
+
+  lazy val hdfsAdmin: HdfsAdmin =
+    new HdfsAdmin(hdfsUri, hadoopConfiguration)
 
   implicit def locationToPath(location: String): Path =
     new Path(location)
 
   def createDirectory(location: String): Path = {
-    logger.info(s"Creating $location in ${fileSystem()}")
-    fileSystem().mkdirs(location)
+    logger.info(s"Creating $location in $fileSystem")
+    fileSystem.mkdirs(location)
     location
   }
 
@@ -53,20 +62,20 @@ class HDFSClientImpl[F[_] : Async](fileSystem: () => FileSystem,
 
   override def setQuota(path: String, maxSizeInGB: Double): F[HDFSAllocation] =
     loginContextProvider.elevate("hdfs") { () =>
-      hdfsAdmin().setSpaceQuota(new Path(path), (maxSizeInGB * 1024 * 1024 * 1024).toLong)
+      hdfsAdmin.setSpaceQuota(new Path(path), (maxSizeInGB * 1024 * 1024 * 1024).toLong)
       HDFSAllocation(path.toUri.getPath, maxSizeInGB)
     }
 
   override def getQuota(path: Path): F[Double] =
     Sync[F].delay {
       val dec = new DecimalFormat("0.00")
-      dec.format(((fileSystem().getContentSummary(path).getSpaceQuota / 1024.0) / 1024.0) / 1024.0).toDouble
+      dec.format(((fileSystem.getContentSummary(path).getSpaceQuota / 1024.0) / 1024.0) / 1024.0).toDouble
     }
 
   override def uploadFile(stream: InputStream, hdfsLocation: String): F[Path] =
     Sync[F].delay {
       val path = new Path(hdfsLocation)
-      val output: OutputStream = fileSystem().create(path)
+      val output: OutputStream = fileSystem.create(path)
       Iterator.continually(stream.read())
         .takeWhile(-1 !=)
         .foreach(output.write)
@@ -76,6 +85,6 @@ class HDFSClientImpl[F[_] : Async](fileSystem: () => FileSystem,
 
   override def getConsumption(location: String): F[Double] =
     loginContextProvider.elevate("hdfs") { () =>
-      ((fileSystem().getContentSummary(new Path(location)).getSpaceConsumed / 1024.0) / 1024.0) / 1024.0
+      ((fileSystem.getContentSummary(new Path(location)).getSpaceConsumed / 1024.0) / 1024.0) / 1024.0
     }
 }

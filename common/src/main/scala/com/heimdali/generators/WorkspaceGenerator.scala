@@ -1,8 +1,6 @@
 package com.heimdali.generators
 
-import java.time.Clock
-
-import cats.effect.Sync
+import cats.effect.{Clock, Sync}
 import com.heimdali.config.{AppConfig, GeneratorConfig}
 import com.heimdali.models._
 
@@ -27,7 +25,7 @@ object WorkspaceGenerator {
                                                     ldapGroupGenerator: LDAPGroupGenerator[F],
                                                     applicationGenerator: ApplicationGenerator[F],
                                                     className: GeneratorConfig => String)
-                                                   (implicit clock: Clock, F: Sync[F]): A =
+                                                   (implicit clock: Clock[F], F: Sync[F]): A =
     Class
       .forName(className(appConfig.generators))
       .getConstructors

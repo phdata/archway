@@ -1,8 +1,8 @@
 package com.heimdali.generators
 
-import java.time.Clock
+import java.time.Instant
 
-import cats.effect.Sync
+import cats.effect.{Clock, Sync}
 import cats.implicits._
 import com.heimdali.config.AppConfig
 import com.heimdali.models._
@@ -10,7 +10,7 @@ import com.heimdali.models._
 class DefaultStructuredWorkspaceGenerator[F[_]](appConfig: AppConfig,
                                                 ldapGenerator: LDAPGroupGenerator[F],
                                                 applicationGenerator: ApplicationGenerator[F])
-                                               (implicit clock: Clock, val F: Sync[F])
+                                               (implicit clock: Clock[F], val F: Sync[F])
   extends WorkspaceGenerator[F, StructuredTemplate] {
 
   override def defaults(user: User): F[StructuredTemplate] =
@@ -40,21 +40,23 @@ class DefaultStructuredWorkspaceGenerator[F[_]](appConfig: AppConfig,
   override def workspaceFor(structuredTemplate: StructuredTemplate): F[WorkspaceRequest] = {
     val generatedName = WorkspaceGenerator.generateName(structuredTemplate.name)
 
-    val workspace = WorkspaceRequest(
-      structuredTemplate.name,
-      structuredTemplate.summary,
-      structuredTemplate.description,
-      "structured",
-      structuredTemplate.requester,
-      clock.instant(),
-      structuredTemplate.compliance,
-      singleUser = false,
-      processing = List(Yarn(
-        s"${appConfig.workspaces.dataset.poolParents}.governed_$generatedName",
-        structuredTemplate.cores.getOrElse(appConfig.workspaces.dataset.defaultCores),
-        structuredTemplate.memory.getOrElse(appConfig.workspaces.dataset.defaultMemory))))
-
     for {
+      time <- clock.realTime(scala.concurrent.duration.MILLISECONDS)
+
+      workspace = WorkspaceRequest(
+        structuredTemplate.name,
+        structuredTemplate.summary,
+        structuredTemplate.description,
+        "structured",
+        structuredTemplate.requester,
+        Instant.ofEpochMilli(time),
+        structuredTemplate.compliance,
+        singleUser = false,
+        processing = List(Yarn(
+          s"${appConfig.workspaces.dataset.poolParents}.governed_$generatedName",
+          structuredTemplate.cores.getOrElse(appConfig.workspaces.dataset.defaultCores),
+          structuredTemplate.memory.getOrElse(appConfig.workspaces.dataset.defaultMemory))))
+
       raw <- db("raw", generatedName, structuredTemplate, workspace)
       staging <- db("staging", generatedName, structuredTemplate, workspace)
       modeled <- db("modeled", generatedName, structuredTemplate, workspace)

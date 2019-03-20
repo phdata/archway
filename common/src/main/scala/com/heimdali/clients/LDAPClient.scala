@@ -6,6 +6,7 @@ import cats.implicits._
 import com.heimdali.config._
 import com.typesafe.scalalogging.LazyLogging
 import com.unboundid.ldap.sdk._
+import com.unboundid.util.ssl.{SSLUtil, TrustAllTrustManager}
 import org.slf4j.MarkerFactory
 
 import scala.collection.JavaConverters._
@@ -35,11 +36,26 @@ trait LDAPClient[F[_]] {
   def search(filter: String): F[List[SearchResultEntry]]
 }
 
-abstract class LDAPClientImpl[F[_] : Effect](
-                                              val ldapConfig: LDAPConfig,
-                                              val connectionFactory: () => LDAPConnection
-                                            ) extends LDAPClient[F]
-  with LazyLogging {
+abstract class LDAPClientImpl[F[_] : Effect](val ldapConfig: LDAPConfig)
+  extends LDAPClient[F]
+    with LazyLogging {
+
+
+  val ldapConnectionPool: LDAPConnectionPool = {
+    val sslUtil = new SSLUtil(new TrustAllTrustManager)
+    val sslSocketFactory = sslUtil.createSSLSocketFactory
+    val connection = new LDAPConnection(
+      sslSocketFactory,
+      ldapConfig.server,
+      ldapConfig.port,
+      ldapConfig.bindDN,
+      ldapConfig.bindPassword
+    )
+    new LDAPConnectionPool(connection, 10)
+  }
+
+  def connectionFactory(): LDAPConnection =
+    ldapConnectionPool.getConnection
 
   def searchQuery(username: String): String
 
@@ -127,9 +143,9 @@ abstract class LDAPClientImpl[F[_] : Effect](
         case Some(entry) =>
           val existing = entry.getAttributes.asScala.map(a => a.getName -> a.getValue).toList
           val modifications = modificationsFor(existing, attributes)
-          Right(new ModifyRequest(groupDN, modifications:_*))
+          Right(new ModifyRequest(groupDN, modifications: _*))
         case None =>
-          Left(new AddRequest(groupDN, attributes.filterNot(_._1 == "dn").map(attribute):_*))
+          Left(new AddRequest(groupDN, attributes.filterNot(_._1 == "dn").map(attribute): _*))
       }
     })
 

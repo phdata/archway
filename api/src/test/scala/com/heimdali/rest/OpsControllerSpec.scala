@@ -30,7 +30,7 @@ class OpsControllerSpec extends FlatSpec with MockFactory with Matchers with Htt
     val authService: TestAuthService = new TestAuthService(riskApprover = true)
     val workspaceService: WorkspaceService[IO] = mock[WorkspaceService[IO]]
 
-    lazy val riskController: OpsController = new OpsController(authService, workspaceService)
+    lazy val riskController: OpsController[IO] = new OpsController[IO](authService, workspaceService)
   }
 
 }

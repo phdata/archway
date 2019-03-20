@@ -1,16 +1,32 @@
 package com.heimdali
 
 import java.net.URLEncoder
+import java.util.concurrent.TimeUnit
 
-import scala.concurrent.duration.FiniteDuration
+import cats.effect.{Async, ContextShift, Resource}
+import doobie._
+import doobie.hikari.HikariTransactor
+import doobie.util.transactor.Strategy
+
+import scala.concurrent.duration._
+import io.circe.Decoder.Result
+import io.circe.{Decoder, DecodingFailure, HCursor}
+
+import scala.concurrent.ExecutionContext
+import scala.concurrent.duration.{Duration, FiniteDuration}
 
 package object config {
+
+  implicit final val finiteDurationDecoder: Decoder[Duration] =
+    (c: HCursor) => for {
+      duration <- c.as[String]
+    } yield Duration(duration)
 
   case class CredentialsConfig(username: String, password: String)
 
   case class ServiceOverride(host: Option[String], port: Int)
 
-  case class ClusterConfig(sessionRefresh: FiniteDuration,
+  case class ClusterConfig(sessionRefresh: Duration,
                            url: String,
                            name: String,
                            environment: String,
@@ -67,7 +83,22 @@ package object config {
                         domain: String,
                         realm: String)
 
-  case class DatabaseConfigItem(driver: String, url: String, username: Option[String], password: Option[String])
+  case class DatabaseConfigItem(driver: String, url: String, username: Option[String], password: Option[String]) {
+
+    def hiveTx[F[_] : Async : ContextShift]: Transactor[F] = {
+      Class.forName("org.apache.hive.jdbc.HiveDriver")
+
+      // Turn the transactor into no
+      val initialHiveTransactor = Transactor.fromDriverManager[F](driver, url, "", "")
+      val strategy = Strategy.void.copy(always = FC.close)
+
+      Transactor.strategy.set(initialHiveTransactor, strategy)
+    }
+
+    def tx[F[_] : Async : ContextShift](connectionEC: ExecutionContext, transactionEC: ExecutionContext): Resource[F, HikariTransactor[F]] =
+      HikariTransactor.newHikariTransactor[F](driver, url, username.getOrElse(""), password.getOrElse(""), connectionEC, transactionEC)
+
+  }
 
   case class DatabaseConfig(meta: DatabaseConfigItem, hive: DatabaseConfigItem)
 
@@ -90,5 +121,26 @@ package object config {
                        db: DatabaseConfig,
                        workspaces: WorkspaceConfig,
                        kafka: KafkaConfig)
+
+  object AppConfig {
+
+    import io.circe.generic.semiauto._
+    implicit val credentialsConfigDecoder: Decoder[CredentialsConfig] = deriveDecoder
+    implicit val serviceOverrideDecoder: Decoder[ServiceOverride] = deriveDecoder
+    implicit val clusterConfigDecoder: Decoder[ClusterConfig] = deriveDecoder
+    implicit val restConfigDecoder: Decoder[RestConfig] = deriveDecoder
+    implicit val uIConfigDecoder: Decoder[UIConfig] = deriveDecoder
+    implicit val sMTPConfigDecoder: Decoder[SMTPConfig] = deriveDecoder
+    implicit val approvalConfigDecoder: Decoder[ApprovalConfig] = deriveDecoder
+    implicit val workspaceConfigItemDecoder: Decoder[WorkspaceConfigItem] = deriveDecoder
+    implicit val workspaceConfigDecoder: Decoder[WorkspaceConfig] = deriveDecoder
+    implicit val lDAPConfigDecoder: Decoder[LDAPConfig] = deriveDecoder
+    implicit val databaseConfigItemDecoder: Decoder[DatabaseConfigItem] = deriveDecoder
+    implicit val databaseConfigDecoder: Decoder[DatabaseConfig] = deriveDecoder
+    implicit val kafkaConfigDecoder: Decoder[KafkaConfig] = deriveDecoder
+    implicit val generatorConfigDecoder: Decoder[GeneratorConfig] = deriveDecoder
+    implicit val appConfigDecoder: Decoder[AppConfig] = deriveDecoder
+
+  }
 
 }

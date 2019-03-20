@@ -1,8 +1,8 @@
 package com.heimdali.generators
 
-import java.time.Clock
+import java.time.Instant
 
-import cats.effect.Sync
+import cats.effect.{Clock, Sync}
 import cats.implicits._
 import com.heimdali.config.AppConfig
 import com.heimdali.models._
@@ -10,7 +10,7 @@ import com.heimdali.models._
 class DefaultSimpleWorkspaceGenerator[F[_]](appConfig: AppConfig,
                                             ldapGenerator: LDAPGroupGenerator[F],
                                             applicationGenerator: ApplicationGenerator[F])
-                                           (implicit clock: Clock, val F: Sync[F])
+                                           (implicit clock: Clock[F], val F: Sync[F])
   extends WorkspaceGenerator[F, SimpleTemplate] {
 
   override def defaults(user: User): F[SimpleTemplate] =
@@ -30,21 +30,23 @@ class DefaultSimpleWorkspaceGenerator[F[_]](appConfig: AppConfig,
   override def workspaceFor(simpleTemplate: SimpleTemplate): F[WorkspaceRequest] = {
     val generatedName = WorkspaceGenerator.generateName(simpleTemplate.name)
 
-    val workspace = WorkspaceRequest(
-      simpleTemplate.name,
-      simpleTemplate.summary,
-      simpleTemplate.description,
-      "simple",
-      simpleTemplate.requester,
-      clock.instant(),
-      simpleTemplate.compliance,
-      singleUser = false,
-      processing = List(Yarn(
-        s"${appConfig.workspaces.sharedWorkspace.poolParents}.sw_$generatedName",
-        appConfig.workspaces.sharedWorkspace.defaultCores,
-        appConfig.workspaces.sharedWorkspace.defaultMemory)))
-
     for {
+      time <- clock.realTime(scala.concurrent.duration.MILLISECONDS)
+
+      workspace = WorkspaceRequest(
+        simpleTemplate.name,
+        simpleTemplate.summary,
+        simpleTemplate.description,
+        "simple",
+        simpleTemplate.requester,
+        Instant.ofEpochMilli(time),
+        simpleTemplate.compliance,
+        singleUser = false,
+        processing = List(Yarn(
+          s"${appConfig.workspaces.sharedWorkspace.poolParents}.sw_$generatedName",
+          appConfig.workspaces.sharedWorkspace.defaultCores,
+          appConfig.workspaces.sharedWorkspace.defaultMemory)))
+
       manager <- ldapGenerator.generate(
         s"edh_sw_$generatedName",
         s"cn=edh_sw_$generatedName,${appConfig.ldap.groupPath}",

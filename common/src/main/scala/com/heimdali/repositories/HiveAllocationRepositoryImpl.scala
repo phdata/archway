@@ -1,14 +1,13 @@
 package com.heimdali.repositories
 
-import java.time.{Clock, Instant}
+import java.time.Instant
 
 import com.heimdali.models._
 import doobie._
 import doobie.implicits._
 import doobie.util.fragments.whereAnd
 
-class HiveAllocationRepositoryImpl(val clock: Clock)
-  extends HiveAllocationRepository {
+class HiveAllocationRepositoryImpl extends HiveAllocationRepository {
 
   def grant(role: DatabaseRole, manager: Statements.HiveRole, ldap: LDAPRecord, records: List[LDAPAttribute]): HiveGrant =
     HiveGrant(
@@ -69,19 +68,19 @@ class HiveAllocationRepositoryImpl(val clock: Clock)
       .to[List]
       .map(convertHiveResult)
 
-  override def directoryCreated(id: Long): ConnectionIO[Int] =
+  override def directoryCreated(id: Long, time: Instant): ConnectionIO[Int] =
     Statements
-      .directoryCreated(id)
+      .directoryCreated(id, time)
       .run
 
-  override def quotaSet(id: Long): ConnectionIO[Int] =
+  override def quotaSet(id: Long, time: Instant): ConnectionIO[Int] =
     Statements
-      .quotaSet(id)
+      .quotaSet(id, time)
       .run
 
-  override def databaseCreated(id: Long): ConnectionIO[Int] =
+  override def databaseCreated(id: Long, time: Instant): ConnectionIO[Int] =
     Statements
-      .databaseCreated(id)
+      .databaseCreated(id, time)
       .run
 
   object Statements {
@@ -165,24 +164,24 @@ class HiveAllocationRepositoryImpl(val clock: Clock)
     def list(workspaceId: Long): Query0[HiveResult] =
       (selectQuery ++ fr"inner join workspace_database wd on wd.hive_database_id = h.id" ++ whereAnd(fr"wd.workspace_request_id = $workspaceId")).query[HiveResult]
 
-    def directoryCreated(id: Long): Update0 =
+    def directoryCreated(id: Long, time: Instant): Update0 =
       sql"""
           update hive_database
-          set directory_created = ${Instant.now(clock)}
+          set directory_created = $time
           where id = $id
           """.update
 
-    def quotaSet(id: Long): Update0 =
+    def quotaSet(id: Long, time: Instant): Update0 =
       sql"""
           update hive_database
-          set quota_set = ${Instant.now(clock)}
+          set quota_set = $time
           where id = $id
           """.update
 
-    def databaseCreated(id: Long): Update0 =
+    def databaseCreated(id: Long, time: Instant): Update0 =
       sql"""
           update hive_database
-          set database_created = ${Instant.now(clock)}
+          set database_created = $time
           where id = $id
           """.update
 

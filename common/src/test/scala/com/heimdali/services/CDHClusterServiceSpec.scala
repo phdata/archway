@@ -19,7 +19,7 @@ class CDHClusterServiceSpec
   it should "use hue override" in {
     val configuration = new Configuration()
 
-    val newConfig = clusterConfig.copy(hueOverride = ServiceOverride(Some("abc"), 8088))
+    val newConfig = appConfig.cluster.copy(hueOverride = ServiceOverride(Some("abc"), 8088))
 
     val service = new CDHClusterService(httpClient, newConfig, configuration)
 
@@ -29,7 +29,7 @@ class CDHClusterServiceSpec
 
   it should "return a cluster" in {
     val url = ""
-    val name = "cluster"
+    val name = "cluster name"
     val version = "5.15.0"
 
     val username = "admin"
@@ -40,7 +40,7 @@ class CDHClusterServiceSpec
     configuration.set("yarn.nodemanager.webapp.address", "0.0.0.0:9998")
     configuration.set("yarn.resourcemanager.webapp.address", "0.0.0.0:9999")
 
-    val service = new CDHClusterService(httpClient, clusterConfig, configuration)
+    val service = new CDHClusterService(httpClient, appConfig.cluster, configuration)
     val list = service.list.unsafeRunSync()
     list should have length 1
 

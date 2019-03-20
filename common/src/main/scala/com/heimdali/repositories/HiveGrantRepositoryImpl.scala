@@ -1,43 +1,47 @@
 package com.heimdali.repositories
 
-import java.time.{Clock, Instant}
+import java.time.Instant
 
-import com.heimdali.models.HiveGrant
 import doobie._
 import doobie.implicits._
 
-class HiveGrantRepositoryImpl(val clock: Clock)
-  extends HiveGrantRepository {
+class HiveGrantRepositoryImpl extends HiveGrantRepository {
 
   override def create(ldapRegistrationId: Long): ConnectionIO[Long] =
-    Statements.insert(ldapRegistrationId).withUniqueGeneratedKeys("id")
+    Statements
+      .insert(ldapRegistrationId)
+      .withUniqueGeneratedKeys("id")
 
-  override def locationGranted(id: Long): ConnectionIO[Int] =
-    Statements.updateLocationAccess(id).run
+  override def locationGranted(id: Long, time: Instant): ConnectionIO[Int] =
+    Statements
+      .updateLocationAccess(id, time)
+      .run
 
-  override def databaseGranted(id: Long): ConnectionIO[Int] =
-    Statements.updateDatabaseAccess(id).run
+  override def databaseGranted(id: Long, time: Instant): ConnectionIO[Int] =
+    Statements
+      .updateDatabaseAccess(id, time)
+      .run
 
   object Statements {
 
-    def insert(ldapRegistrationId: Long) : Update0 =
+    def insert(ldapRegistrationId: Long): Update0 =
       sql"""
          insert into hive_grant (ldap_registration_id)
          values ($ldapRegistrationId)
          """.update
 
-    def updateDatabaseAccess(id: Long): Update0 =
+    def updateDatabaseAccess(id: Long, time: Instant): Update0 =
       sql"""
         update hive_grant
-        set database_access = ${Instant.now(clock)}
+        set database_access = $time
         where id = $id
         """.update
 
 
-    def updateLocationAccess(id: Long): Update0 =
+    def updateLocationAccess(id: Long, time: Instant): Update0 =
       sql"""
         update hive_grant
-        set location_access = ${Instant.now(clock)}
+        set location_access = $time
         where id = $id
         """.update
 

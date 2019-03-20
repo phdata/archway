@@ -1,5 +1,7 @@
 package com.heimdali.repositories
 
+import java.time.Instant
+
 import cats.data.OptionT
 import com.heimdali.models.LDAPRegistration
 import doobie.free.connection.ConnectionIO
@@ -12,10 +14,10 @@ trait LDAPRepository {
 
   def find(resource: String, resourceId: Long, role: String): OptionT[ConnectionIO, LDAPRegistration]
 
-  def groupCreated(id: Long): ConnectionIO[Int]
+  def groupCreated(id: Long, time: Instant): ConnectionIO[Int]
 
-  def roleCreated(id: Long): ConnectionIO[Int]
+  def roleCreated(id: Long, time: Instant): ConnectionIO[Int]
 
-  def groupAssociated(id: Long): ConnectionIO[Int]
+  def groupAssociated(id: Long, time: Instant): ConnectionIO[Int]
 
 }

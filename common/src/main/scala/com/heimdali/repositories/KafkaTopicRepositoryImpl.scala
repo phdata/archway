@@ -6,14 +6,15 @@ import com.heimdali.models.{KafkaTopic, LDAPRegistration, TopicGrant}
 import doobie._
 import doobie.implicits._
 
-class KafkaTopicRepositoryImpl(val clock: Clock)
-  extends KafkaTopicRepository {
+class KafkaTopicRepositoryImpl extends KafkaTopicRepository {
 
   override def create(kafkaTopic: KafkaTopic): ConnectionIO[Long] =
     Statements.create(kafkaTopic).withUniqueGeneratedKeys("id")
 
-  override def topicCreated(id: Long): ConnectionIO[Int] =
-    Statements.topicCreated(id).run
+  override def topicCreated(id: Long, time: Instant): ConnectionIO[Int] =
+    Statements
+      .topicCreated(id, time)
+      .run
 
   private def grant(role: Statements.KafkaGrantHeader, ldap: LDAPRegistration, attributes: List[LDAPAttribute]) =
     TopicGrant(
@@ -54,10 +55,10 @@ class KafkaTopicRepositoryImpl(val clock: Clock)
          values (${kafkaTopic.name}, ${kafkaTopic.partitions}, ${kafkaTopic.replicationFactor}, ${kafkaTopic.managingRole.id}, ${kafkaTopic.readonlyRole.id})
         """.update
 
-    def topicCreated(id: Long): Update0 =
+    def topicCreated(id: Long, time: Instant): Update0 =
       sql"""
          update kafka_topic
-         set topic_created = ${clock.instant}
+         set topic_created = $time
          where id = $id
         """.update
 

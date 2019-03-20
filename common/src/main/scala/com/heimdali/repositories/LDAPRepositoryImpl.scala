@@ -1,8 +1,7 @@
 package com.heimdali.repositories
 
-import java.time.{Clock, Instant}
+import java.time.Instant
 
-import cats._
 import cats.data._
 import cats.implicits._
 import com.heimdali.models.LDAPRegistration
@@ -11,9 +10,7 @@ import doobie._
 import doobie.implicits._
 import doobie.util.fragments.whereAnd
 
-class LDAPRepositoryImpl(clock: Clock)
-  extends LDAPRepository
-    with LazyLogging {
+class LDAPRepositoryImpl extends LDAPRepository with LazyLogging {
 
   import LDAPRepositoryImpl.Statements._
 
@@ -49,14 +46,23 @@ class LDAPRepositoryImpl(clock: Clock)
       case "applications" => LDAPRepositoryImpl.Statements.findAllApplications(resourceId)
     }).to[List].map(reduce)
 
-  override def groupCreated(id: Long): ConnectionIO[Int] =
-    LDAPRepositoryImpl.Statements.groupCreated(id, Instant.now(clock)).run
+  override def groupCreated(id: Long, time: Instant): ConnectionIO[Int] =
+    LDAPRepositoryImpl
+      .Statements
+      .groupCreated(id, time)
+      .run
 
-  override def roleCreated(id: Long): ConnectionIO[Int] =
-    LDAPRepositoryImpl.Statements.roleCreated(id, Instant.now(clock)).run
+  override def roleCreated(id: Long, time: Instant): ConnectionIO[Int] =
+    LDAPRepositoryImpl
+      .Statements
+      .roleCreated(id, time)
+      .run
 
-  override def groupAssociated(id: Long): ConnectionIO[Int] =
-    LDAPRepositoryImpl.Statements.groupAssociated(id, Instant.now(clock)).run
+  override def groupAssociated(id: Long, time: Instant): ConnectionIO[Int] =
+    LDAPRepositoryImpl
+      .Statements
+      .groupAssociated(id, time)
+      .run
 
 }
 

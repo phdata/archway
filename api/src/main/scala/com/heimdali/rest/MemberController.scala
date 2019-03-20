@@ -1,18 +1,20 @@
 package com.heimdali.rest
 
-import cats.effect._
+import cats.Monad
+import cats.implicits._
 import com.heimdali.models.User
 import com.heimdali.services.MemberService
 import io.circe.syntax._
 import org.http4s._
-import org.http4s.dsl.io._
+import org.http4s.dsl.Http4sDsl
 
-class MemberController(authService: AuthService[IO],
-                       memberService: MemberService[IO]) {
+class MemberController[F[_] : Monad](authService: AuthService[F],
+                                     memberService: MemberService[F])
+  extends Http4sDsl[F] {
 
-  val route: HttpService[IO] =
+  val route: HttpService[F] =
     authService.tokenAuth {
-      AuthedService[User, IO] {
+      AuthedService[User, F] {
         case GET -> Root / filter as _ =>
           for {
             members <- memberService.availableMembers(filter)

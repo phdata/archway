@@ -1,18 +1,20 @@
 package com.heimdali.rest
 
-import cats.effect._
+import cats.Monad
+import cats.implicits._
 import com.heimdali.models._
 import com.heimdali.services._
 import io.circe.syntax._
 import org.http4s._
-import org.http4s.dsl.io._
+import org.http4s.dsl.Http4sDsl
 
-class RiskController(authService: AuthService[IO],
-                     workspaceService: WorkspaceService[IO]) {
+class RiskController[F[_]: Monad](authService: AuthService[F],
+                               workspaceService: WorkspaceService[F])
+  extends Http4sDsl[F] {
 
-  val route: HttpRoutes[IO] =
+  val route: HttpRoutes[F] =
     authService.tokenRoleAuth(user => user.role == Risk || user.role == Full) {
-      AuthedService[User, IO] {
+      AuthedService[User, F] {
         case GET -> Root / "workspaces" as _ =>
           for {
             result <- workspaceService.reviewerList(Risk)

@@ -106,7 +106,7 @@ class WorkspaceServiceImplSpec
   }
 
   it should "get consumed space if directory has been created" in new Context {
-    val withCreated: HiveAllocation = savedHive.copy(directoryCreated = Some(clock.instant()))
+    val withCreated: HiveAllocation = savedHive.copy(directoryCreated = Some(timer.instant))
 
     workspaceRepository.find _ expects id returning OptionT.some(savedWorkspaceRequest)
     hiveDatabaseRepository.findByWorkspace _ expects id returning List(withCreated).pure[ConnectionIO]
@@ -172,7 +172,7 @@ class WorkspaceServiceImplSpec
   }
 
   it should "get details for hive" in new Context {
-    val (request1, request2) = (savedHive.copy(name = "name1", databaseCreated = Some(clock.instant())), savedHive.copy(name = "name2", databaseCreated = Some(clock.instant())))
+    val (request1, request2) = (savedHive.copy(name = "name1", databaseCreated = Some(timer.instant)), savedHive.copy(name = "name2", databaseCreated = Some(timer.instant)))
     hiveDatabaseRepository.findByWorkspace _ expects id returning List(request1, request2).pure[ConnectionIO]
 
     hiveClient.describeDatabase _ expects "name1" returning HiveDatabase("name1", List(HiveTable("table1"))).pure[IO]

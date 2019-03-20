@@ -51,7 +51,7 @@ class ActiveDirectoryClientSpec extends FlatSpec with Matchers {
 
   trait Context {
 
-    val client = new LDAPClientImpl[IO](appConfig.ldap, () => null) with ActiveDirectoryClient[IO]
+    val client = new LDAPClientImpl[IO](appConfig.ldap) with ActiveDirectoryClient[IO]
 
   }
 

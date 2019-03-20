@@ -9,12 +9,11 @@ import doobie._
 import doobie.implicits._
 import doobie.util.fragments.whereAnd
 
-class YarnRepositoryImpl(val clock: Clock)
-  extends YarnRepository {
+class YarnRepositoryImpl extends YarnRepository {
 
-  override def complete(id: Long): ConnectionIO[Int] =
+  override def complete(id: Long, time: Instant): ConnectionIO[Int] =
     Statements
-      .complete(id)
+      .complete(id, time)
       .run
 
   override def find(id: Long): OptionT[ConnectionIO, Yarn] =
@@ -57,10 +56,10 @@ class YarnRepositoryImpl(val clock: Clock)
        )
       """.update
 
-    def complete(id: Long): Update0 =
+    def complete(id: Long, time: Instant): Update0 =
       sql"""
          update resource_pool
-         set created = ${Instant.now(clock)}
+         set created = $time
          where id = $id
          """.update
 

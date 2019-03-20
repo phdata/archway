@@ -36,9 +36,8 @@ class EmailServiceImplSpec extends FlatSpec with Matchers with MockFactory {
     val emailClient = mock[EmailClient[IO]]
     val workspaceService = mock[WorkspaceService[IO]]
     val ldapClient = mock[LDAPClient[IO]]
-    val templateEngine = new TemplateEngine()
 
-    val emailService = new EmailServiceImpl[IO](emailClient, appConfig, workspaceService, ldapClient, templateEngine)
+    val emailService = new EmailServiceImpl[IO](emailClient, appConfig, workspaceService, ldapClient)
 
   }
 

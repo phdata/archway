@@ -120,16 +120,15 @@ class WorkspaceControllerSpec
     val emailService: EmailService[IO] = mock[EmailService[IO]]
     val provisioningService: ProvisioningService[IO] = mock[ProvisioningService[IO]]
 
-    def restApi: WorkspaceController =
-      new WorkspaceController(
+    def restApi: WorkspaceController[IO] =
+      new WorkspaceController[IO](
         authService,
         workspaceService,
         memberService,
         kafkaService,
         applicationService,
         emailService,
-        provisioningService,
-        clock
+        provisioningService
       )
   }
 }

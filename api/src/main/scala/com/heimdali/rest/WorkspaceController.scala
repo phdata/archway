@@ -1,35 +1,35 @@
 package com.heimdali.rest
 
-import java.time.{Clock, Instant}
-
 import cats.effect._
+import cats.implicits._
 import com.heimdali.models._
 import com.heimdali.services._
-import com.heimdali.provisioning.ProvisionTask._
 import io.circe.Decoder
 import io.circe.generic.auto._
 import io.circe.syntax._
 import org.http4s._
-import org.http4s.dsl.io._
+import org.http4s.dsl.Http4sDsl
 
-class WorkspaceController(authService: AuthService[IO],
-                          workspaceService: WorkspaceService[IO],
-                          memberService: MemberService[IO],
-                          kafkaService: KafkaService[IO],
-                          applicationService: ApplicationService[IO],
-                          emailService: EmailService[IO],
-                          provisioningService: ProvisioningService[IO],
-                          clock: Clock) {
+class WorkspaceController[F[_] : Sync : Timer](authService: AuthService[F],
+                                               workspaceService: WorkspaceService[F],
+                                               memberService: MemberService[F],
+                                               kafkaService: KafkaService[F],
+                                               applicationService: ApplicationService[F],
+                                               emailService: EmailService[F],
+                                               provisioningService: ProvisioningService[F])
+  extends Http4sDsl[F] {
 
-  implicit val memberRequestEntityDecoder: EntityDecoder[IO, MemberRequest] = jsonOf[IO, MemberRequest]
+  val clock = java.time.Clock.systemUTC()
 
-  val route: HttpRoutes[IO] =
+  implicit val memberRequestEntityDecoder: EntityDecoder[F, MemberRequest] = jsonOf[F, MemberRequest]
+
+  val route: HttpRoutes[F] =
     authService.tokenAuth {
-      AuthedService[User, IO] {
+      AuthedService[User, F] {
         case req@POST -> Root / LongVar(id) / "approve" as user =>
           if (user.canApprove) {
             implicit val decoder: Decoder[Approval] = Approval.decoder(user, clock)
-            implicit val approvalEntityDecoder: EntityDecoder[IO, Approval] = jsonOf[IO, Approval]
+            implicit val approvalEntityDecoder: EntityDecoder[F, Approval] = jsonOf[F, Approval]
             for {
               approval <- req.req.as[Approval]
               approved <- workspaceService.approve(id, approval)
@@ -53,7 +53,7 @@ class WorkspaceController(authService: AuthService[IO],
         case req@POST -> Root as user =>
           /* explicit implicit declaration because of `user` variable */
           implicit val decoder: Decoder[WorkspaceRequest] = WorkspaceRequest.decoder(user, clock)
-          implicit val workspaceRequestEntityDecoder: EntityDecoder[IO, WorkspaceRequest] = jsonOf[IO, WorkspaceRequest]
+          implicit val workspaceRequestEntityDecoder: EntityDecoder[F, WorkspaceRequest] = jsonOf[F, WorkspaceRequest]
 
           for {
             workspaceRequest <- req.req.as[WorkspaceRequest]
@@ -82,7 +82,7 @@ class WorkspaceController(authService: AuthService[IO],
 
         case req@POST -> Root / LongVar(id) / "members" as _ =>
           import MemberRoleRequest.decoder
-          implicit val roleDecoder: EntityDecoder[IO, MemberRoleRequest] = jsonOf[IO, MemberRoleRequest]
+          implicit val roleDecoder: EntityDecoder[F, MemberRoleRequest] = jsonOf[F, MemberRoleRequest]
           for {
             memberRequest <- req.req.as[MemberRoleRequest]
             newMember <- memberService.addMember(id, memberRequest).value
@@ -92,7 +92,7 @@ class WorkspaceController(authService: AuthService[IO],
 
         case req@DELETE -> Root / LongVar(id) / "members" as _ =>
           import MemberRoleRequest.minDecoder
-          implicit val roleDecoder: EntityDecoder[IO, MemberRoleRequest] = jsonOf[IO, MemberRoleRequest]
+          implicit val roleDecoder: EntityDecoder[F, MemberRoleRequest] = jsonOf[F, MemberRoleRequest]
           for {
             memberRequest <- req.req.as[MemberRoleRequest]
             removedMember <- memberService.removeMember(id, memberRequest).value
@@ -101,7 +101,7 @@ class WorkspaceController(authService: AuthService[IO],
 
         case req@POST -> Root / LongVar(id) / "topics" as user =>
           implicit val kafkaTopicDecoderBase: Decoder[TopicRequest] = TopicRequest.decoder(user.username)
-          implicit val kafkaTopicDecoder: EntityDecoder[IO, TopicRequest] = jsonOf[IO, TopicRequest]
+          implicit val kafkaTopicDecoder: EntityDecoder[F, TopicRequest] = jsonOf[F, TopicRequest]
           for {
             topic <- req.req.as[TopicRequest]
             result <- kafkaService.create(user.username, id, topic)
@@ -109,7 +109,7 @@ class WorkspaceController(authService: AuthService[IO],
           } yield response
 
         case req@POST -> Root / LongVar(id) / "applications" as user =>
-          implicit val applicationDecoder: EntityDecoder[IO, ApplicationRequest] = jsonOf[IO, ApplicationRequest]
+          implicit val applicationDecoder: EntityDecoder[F, ApplicationRequest] = jsonOf[F, ApplicationRequest]
           for {
             request <- req.req.as[ApplicationRequest]
             result <- applicationService.create(user.username, id, request)
@@ -117,14 +117,14 @@ class WorkspaceController(authService: AuthService[IO],
           } yield response
 
         case GET -> Root / LongVar(id) / "yarn" as _ =>
-          implicit val yarnInfoDecoder: EntityDecoder[IO, List[YarnInfo]] = jsonOf[IO, List[YarnInfo]]
+          implicit val yarnInfoDecoder: EntityDecoder[F, List[YarnInfo]] = jsonOf[F, List[YarnInfo]]
           for {
             result <- workspaceService.yarnInfo(id)
             response <- Ok(result.asJson)
           } yield response
 
         case GET -> Root / LongVar(id) / "hive" as user =>
-          implicit val hiveDecoder: EntityDecoder[IO, HiveDatabase] = jsonOf[IO, HiveDatabase]
+          implicit val hiveDecoder: EntityDecoder[F, HiveDatabase] = jsonOf[F, HiveDatabase]
           for {
             result <- workspaceService.hiveDetails(id)
             response <- Ok(result.asJson)

@@ -30,7 +30,7 @@ class RiskControllerSpec extends FlatSpec with MockFactory with Matchers with Ht
     val authService: TestAuthService = new TestAuthService(riskApprover = true)
     val workspaceService: WorkspaceService[IO] = mock[WorkspaceService[IO]]
 
-    lazy val riskController: RiskController = new RiskController(authService, workspaceService)
+    lazy val riskController: RiskController[IO] = new RiskController[IO](authService, workspaceService)
   }
 
 }

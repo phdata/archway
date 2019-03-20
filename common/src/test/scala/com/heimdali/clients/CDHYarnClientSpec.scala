@@ -21,9 +21,9 @@ class CDHYarnClientSpec extends FlatSpec with MockFactory with Matchers with Htt
   behavior of "CDHYarnClientSpec"
 
   it should "createPool" in new HttpContext {
-    val yarnHttpClient = new CMClient[IO](yarnClient, clusterConfig)
+    val yarnHttpClient = new CMClient[IO](yarnClient, appConfig.cluster)
     val clusterService = new TestClusterService()
-    val client = new CDHYarnClient(yarnHttpClient, clusterConfig, clusterService)
+    val client = new CDHYarnClient(yarnHttpClient, appConfig.cluster, clusterService)
     client.createPool("root.pool", 1, 1).unsafeRunSync()
   }
 
@@ -31,7 +31,7 @@ class CDHYarnClientSpec extends FlatSpec with MockFactory with Matchers with Htt
     val Right(expected) = parse(Source.fromResource("cloudera/pool_json.json").getLines().mkString)
 
     val clusterService = new TestClusterService()
-    val client = new CDHYarnClient(null, clusterConfig, clusterService)
+    val client = new CDHYarnClient(null, appConfig.cluster, clusterService)
     val result = client.config("test", 1, 1)
     result should be(expected)
   }
@@ -41,7 +41,7 @@ class CDHYarnClientSpec extends FlatSpec with MockFactory with Matchers with Htt
     val Right(expected) = parse(Source.fromResource("cloudera/pool_after.json").getLines().mkString)
 
     val clusterService = new TestClusterService()
-    val client = new CDHYarnClient(null, clusterConfig, clusterService)
+    val client = new CDHYarnClient(null, appConfig.cluster, clusterService)
     val result = client.combine(input, "test", 1, 1, Queue("root"))
     result should be(expected)
   }
@@ -49,15 +49,15 @@ class CDHYarnClientSpec extends FlatSpec with MockFactory with Matchers with Htt
   it should "find correct queue" in {
     val Right(json) = parse(Source.fromResource("cloudera/pool.json").getLines().mkString)
     val clusterService = new TestClusterService()
-    val client = new CDHYarnClient(null, clusterConfig, clusterService)
+    val client = new CDHYarnClient(null, appConfig.cluster, clusterService)
     val result = client.dig(json.hcursor, Queue("root"))
     result.top shouldBe defined
   }
 
   it should "list applications" in new HttpContext {
     val clusterService = new TestClusterService()
-    val yarnHttpClient = new CMClient[IO](yarnClient, clusterConfig)
-    val client = new CDHYarnClient(yarnHttpClient, clusterConfig, clusterService)
+    val yarnHttpClient = new CMClient[IO](yarnClient, appConfig.cluster)
+    val client = new CDHYarnClient(yarnHttpClient, appConfig.cluster, clusterService)
     val result = client.applications("pool").unsafeRunSync()
 
     result shouldBe List(YarnApplication("application_1536850095900_0122", "Spark shell"))
@@ -65,15 +65,15 @@ class CDHYarnClientSpec extends FlatSpec with MockFactory with Matchers with Htt
 
   trait HttpContext {
     val yarnClient = Resource.make(IO.pure(Client.fromHttpApp(HttpRoutes.of[IO] {
-      case GET -> Root / "api" / "v18" / "clusters" / "cluster" =>
+      case GET -> Root / "api" / "v18" / "clusters" / "cluster name" =>
         Ok(fromResource("cloudera/clusters.cluster_name.actual.json"))
-      case GET -> Root / "api" / "v18" / "clusters" / "cluster" / "services" / yarnApp.id / "config" =>
+      case GET -> Root / "api" / "v18" / "clusters" / "cluster name" / "services" / yarnApp.id / "config" =>
         Ok(fromResource("cloudera/config.json"))
-      case PUT -> Root / "api" / "v18" / "clusters" / "cluster" / "services" / yarnApp.id / "config" =>
+      case PUT -> Root / "api" / "v18" / "clusters" / "cluster name" / "services" / yarnApp.id / "config" =>
         Ok(fromResource("cloudera/config_update.json"))
-      case POST -> Root / "api" / "v18" / "clusters" / "cluster" / "commands" / "poolsRefresh" =>
+      case POST -> Root / "api" / "v18" / "clusters" / "cluster name" / "commands" / "poolsRefresh" =>
         Ok(fromResource("cloudera/commands.poolsRefresh.expected.json"))
-      case GET -> Root / "api" / "v18" / "clusters" / "cluster" / "services" / yarnApp.id / "yarnApplications" =>
+      case GET -> Root / "api" / "v18" / "clusters" / "cluster name" / "services" / yarnApp.id / "yarnApplications" =>
         Ok(fromResource("cloudera/clusters.cluster.services.yarn.yarnApplications.json"))
     }.orNotFound)))(_ => IO.unit)
   }

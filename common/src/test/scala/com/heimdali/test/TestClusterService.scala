@@ -5,8 +5,8 @@ import cats.implicits._
 import com.heimdali.services._
 import io.circe.Decoder
 import io.circe.parser.decode
-import scala.collection.JavaConverters._
 
+import scala.collection.JavaConverters._
 import scala.io.Source
 
 class TestClusterService extends ClusterService[IO] {

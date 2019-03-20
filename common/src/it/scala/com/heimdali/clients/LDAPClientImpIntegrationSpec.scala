@@ -15,13 +15,13 @@ class LDAPClientImpIntegrationSpec
   behavior of "LDAPClientImpl"
 
   it should "validate a user" in {
-    val client = new LDAPClientImpl[IO](appConfig.ldap, () => ldapConnectionPool.getConnection) with ActiveDirectoryClient[IO]
+    val client = new LDAPClientImpl[IO](appConfig.ldap) with ActiveDirectoryClient[IO]
     val maybeUser = client.validateUser(existingUser, existingPassword).value.unsafeRunSync()
     maybeUser shouldBe defined
   }
 
   it should "create a group" in {
-    val client = new LDAPClientImpl[IO](appConfig.ldap, () => ldapConnectionPool.getConnection) with ActiveDirectoryClient[IO]
+    val client = new LDAPClientImpl[IO](appConfig.ldap) with ActiveDirectoryClient[IO]
 
     client.createGroup("edh_sw_sesame", defaultLDAPAttributes(s"cn=edh_sw_sesame,${appConfig.ldap.groupPath}", "edh_sw_sesame")).unsafeRunSync()
 
@@ -30,7 +30,7 @@ class LDAPClientImpIntegrationSpec
   }
 
   it should "update a group's attributes" in {
-    val client = new LDAPClientImpl[IO](appConfig.ldap, () => ldapConnectionPool.getConnection) with ActiveDirectoryClient[IO]
+    val client = new LDAPClientImpl[IO](appConfig.ldap) with ActiveDirectoryClient[IO]
 
     val attributes = defaultLDAPAttributes(s"cn=edh_sw_sesame,${appConfig.ldap.groupPath}", "edh_sw_sesame")
     client.createGroup("edh_sw_sesame", attributes).unsafeRunSync()
@@ -50,7 +50,7 @@ class LDAPClientImpIntegrationSpec
     val groupDN = s"cn=edh_sw_sesame,${appConfig.ldap.groupPath}"
     val userDN = s"cn=$existingUser,${appConfig.ldap.userPath.get}"
 
-    val client = new LDAPClientImpl[IO](appConfig.ldap, () => ldapConnectionPool.getConnection) with ActiveDirectoryClient[IO]
+    val client = new LDAPClientImpl[IO](appConfig.ldap) with ActiveDirectoryClient[IO]
 
     client.createGroup("edh_sw_sesame", defaultLDAPAttributes(groupDN, "edh_sw_sesame")).unsafeRunSync()
     client.addUser(groupDN, userDN).value.unsafeRunSync()
@@ -60,7 +60,7 @@ class LDAPClientImpIntegrationSpec
 
   it should "find a user" in {
     val userDN = s"cn=$existingUser,${appConfig.ldap.userPath.get}"
-    val client = new LDAPClientImpl[IO](appConfig.ldap, () => ldapConnectionPool.getConnection) with ActiveDirectoryClient[IO]
+    val client = new LDAPClientImpl[IO](appConfig.ldap) with ActiveDirectoryClient[IO]
     val maybeUser = client.findUser(userDN).value.unsafeRunSync()
     maybeUser shouldBe defined
   }
@@ -68,7 +68,7 @@ class LDAPClientImpIntegrationSpec
   it should "find all users" in {
     val groupDN = s"cn=edh_sw_sesame,${appConfig.ldap.groupPath}"
     def userDN(username: String) = s"cn=$username,${appConfig.ldap.userPath.get}"
-    val client = new LDAPClientImpl[IO](appConfig.ldap, () => ldapConnectionPool.getConnection) with ActiveDirectoryClient[IO]
+    val client = new LDAPClientImpl[IO](appConfig.ldap) with ActiveDirectoryClient[IO]
 
     client.createGroup("edh_sw_sesame", defaultLDAPAttributes(groupDN, "edh_sw_sesame")).unsafeRunSync()
     client.addUser(groupDN, userDN("benny")).value.unsafeRunSync()
@@ -94,7 +94,7 @@ class LDAPClientImpIntegrationSpec
       "ignore" -> "me",
       "add" -> "me",
     )
-    val client = new LDAPClientImpl[IO](appConfig.ldap, () => ldapConnectionPool.getConnection) with ActiveDirectoryClient[IO]
+    val client = new LDAPClientImpl[IO](appConfig.ldap) with ActiveDirectoryClient[IO]
     val result = client.modificationsFor(existing, updated)
 
     result should contain theSameElementsAs List(
@@ -105,14 +105,14 @@ class LDAPClientImpIntegrationSpec
 
   it should "generate a new request" in {
     val groupDN = s"cn=absent_group,${appConfig.ldap.groupPath}"
-    val client = new LDAPClientImpl[IO](appConfig.ldap, () => ldapConnectionPool.getConnection) with ActiveDirectoryClient[IO]
+    val client = new LDAPClientImpl[IO](appConfig.ldap) with ActiveDirectoryClient[IO]
     val actual = client.groupRequest(groupDN, "absent_group", defaultLDAPAttributes(groupDN, "absent_group"))
     actual.value.unsafeRunSync().isLeft shouldBe true
   }
 
   it should "generate a modify request" in {
     val groupDN = s"CN=user_benny,OU=heimdali,DC=jotunn,DC=io"
-    val client = new LDAPClientImpl[IO](appConfig.ldap, () => ldapConnectionPool.getConnection) with ActiveDirectoryClient[IO]
+    val client = new LDAPClientImpl[IO](appConfig.ldap) with ActiveDirectoryClient[IO]
     val actual = client.groupRequest(groupDN, "user_benny", defaultLDAPAttributes(groupDN, "user_benny"))
     actual.value.unsafeRunSync().isRight shouldBe true
   }

@@ -1,7 +1,7 @@
 package com.heimdali.services
 
 import cats.data._
-import cats.effect.IO
+import cats.effect.{IO, Timer}
 import cats.implicits._
 import com.heimdali.clients.{LDAPClient, LDAPUser}
 import com.heimdali.config.{ApprovalConfig, RestConfig, WorkspaceConfig, WorkspaceConfigItem}
@@ -101,7 +101,7 @@ class AccountServiceSpec extends FlatSpec with MockFactory with Matchers {
     maybeWorkspace shouldBe Some(savedWorkspaceRequest)
   }
 
-  it should "save and create a workspace" in new Context {
+   it should "save and create a workspace" in new Context {
     // once for test
     configService.getAndSetNextGid _ expects() returning 123L.pure[IO]
     // once for actual
@@ -112,7 +112,7 @@ class AccountServiceSpec extends FlatSpec with MockFactory with Matchers {
     val userWorkspace: WorkspaceRequest = (for {
       template <- service.defaults(infraApproverUser)
       result <- service.workspaceFor(template)
-    } yield result.copy(requestDate = clock.instant())).unsafeRunSync()
+    } yield result.copy(requestDate = timer.instant)).unsafeRunSync()
 
     workspaceService.findByUsername _ expects standardUsername returning OptionT.none
     workspaceService.create _ expects userWorkspace returning IO.pure(savedWorkspaceRequest)

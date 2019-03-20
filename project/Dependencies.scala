@@ -30,7 +30,7 @@ object Dependencies {
     "com.github.daddykotex" %% "courier" % mailerVersion exclude("com.sun.mail", "javax.mail"),
     "org.jvnet.mock-javamail" % "mock-javamail" % "1.9" % "test"
   )
-  
+
   val attoVersion = "0.6.5"
   val atto = Seq(
     "org.tpolecat" %% "atto-core" % attoVersion
@@ -40,12 +40,8 @@ object Dependencies {
   val doobie = Seq(
     "org.tpolecat" %% "doobie-core" % doobieVersion,
     "org.tpolecat" %% "doobie-postgres" % doobieVersion,
+    "org.tpolecat" %% "doobie-hikari" % doobieVersion,
     "org.tpolecat" %% "doobie-scalatest" % doobieVersion % "test,it"
-  )
-
-  val pureConfigVersion = "0.9.1"
-  val pureConfig = Seq(
-    "com.github.pureconfig" %% "pureconfig" % pureConfigVersion
   )
 
   val catsVersion = "1.3.0"
@@ -66,6 +62,11 @@ object Dependencies {
     "io.circe" %% "circe-generic-extras" % circeVersion,
     "io.circe" %% "circe-optics" % circeVersion,
     "io.circe" %% "circe-java8" % circeVersion
+  )
+
+  val circeConfigVersion = "0.6.1"
+  val circeConfig = Seq(
+    "io.circe" %% "circe-config" % circeConfigVersion
   )
 
   val jwtVersion = "2.0.0"
@@ -143,16 +144,12 @@ object Dependencies {
       .map(exclusions)
 
   val apiDependencies =
-    (coreTest ++ dbCore ++ logging ++ bouncy ++ pureConfig ++
+    (coreTest ++ dbCore ++ logging ++ bouncy ++ circeConfig ++
       http4s ++ fs2 ++ doobie ++ cats ++ catsEffect ++ circe ++ hadoop)
       .map(exclusions)
 
-  val configDependencies =
-    pureConfig
-      .map(exclusions)
-
   val commonDependencies =
-    (scalate ++ unbound ++ mailer ++ logging ++ doobie ++ cats ++ catsEffect ++ fs2 ++ pureConfig ++ circe ++
+    (scalate ++ unbound ++ mailer ++ logging ++ doobie ++ cats ++ catsEffect ++ fs2 ++ circeConfig ++ circe ++
       scalatags ++ hadoop ++ fs2Http ++ http4s ++ jwt ++ iniConfig ++ scalacheck ++ coreTest ++ bouncy ++ atto ++
       Seq("org.typelevel" %% "jawn-parser" % "0.14.0"))
       .map(exclusions)

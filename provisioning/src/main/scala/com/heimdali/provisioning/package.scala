@@ -8,7 +8,7 @@ import com.heimdali.provisioning.ProvisionTask._
 
 package object provisioning {
 
-  implicit def registrationProvisioner[F[_] : Effect]: ProvisionTask[F, LDAPRegistration] =
+  implicit def registrationProvisioner[F[_] : Effect : Timer]: ProvisionTask[F, LDAPRegistration] =
     ProvisionTask.instance { registration =>
       for {
         group <- CreateLDAPGroup(registration.id.get, registration.commonName, registration.distinguishedName, registration.attributes).provision[F]
@@ -17,7 +17,7 @@ package object provisioning {
       } yield role |+| group |+| grant
     }
 
-  implicit def grantProvisioner[F[_] : Effect]: ProvisionTask[F, HiveGrant] =
+  implicit def grantProvisioner[F[_] : Effect : Timer]: ProvisionTask[F, HiveGrant] =
     ProvisionTask.instance { grant =>
       for {
         ldap <- grant.ldapRegistration.provision[F]
@@ -26,7 +26,7 @@ package object provisioning {
       } yield ldap |+| db |+| location
     }
 
-  implicit def hiveProvisioner[F[_] : Effect]: ProvisionTask[F, HiveAllocation] =
+  implicit def hiveProvisioner[F[_] : Effect : Timer]: ProvisionTask[F, HiveAllocation] =
     ProvisionTask.instance { hive =>
       for {
         createDirectory <- CreateDatabaseDirectory(hive.id.get, hive.location, None).provision[F]
@@ -37,7 +37,7 @@ package object provisioning {
       } yield createDirectory |+| setDiskQuota |+| createDatabase |+| managers |+| readonly
     }
 
-  implicit def appProvisioner[F[_] : Effect]: ProvisionTask[F, Application] =
+  implicit def appProvisioner[F[_] : Effect : Timer]: ProvisionTask[F, Application] =
     ProvisionTask.instance { app =>
       for {
         group <- app.group.provision[F]
@@ -45,7 +45,7 @@ package object provisioning {
       } yield group |+| grant
     }
 
-  implicit def topicProvisioner[F[_] : Effect]: ProvisionTask[F, KafkaTopic] =
+  implicit def topicProvisioner[F[_] : Effect : Timer]: ProvisionTask[F, KafkaTopic] =
     ProvisionTask.instance(topic =>
       for {
         create <- CreateKafkaTopic(topic.id.get, topic.name, topic.partitions, topic.replicationFactor).provision
@@ -55,7 +55,7 @@ package object provisioning {
       } yield create |+| managingRole |+| readonlyRole /* |+| manager */
     )
 
-  implicit def topicGrantProvisioner[F[_] : Effect]: ProvisionTask[F, TopicGrant] =
+  implicit def topicGrantProvisioner[F[_] : Effect : Timer]: ProvisionTask[F, TopicGrant] =
     ProvisionTask.instance { grant =>
       for {
         ldap <- grant.ldapRegistration.provision
@@ -63,7 +63,7 @@ package object provisioning {
       } yield access |+| ldap
     }
 
-  implicit def yarnProvisioner[F[_] : Effect]: ProvisionTask[F, Yarn] =
+  implicit def yarnProvisioner[F[_] : Effect : Timer]: ProvisionTask[F, Yarn] =
     ProvisionTask.instance { yarn =>
       CreateResourcePool(yarn.id.get, yarn.poolName, yarn.maxCores, yarn.maxMemoryInGB).provision
     }
