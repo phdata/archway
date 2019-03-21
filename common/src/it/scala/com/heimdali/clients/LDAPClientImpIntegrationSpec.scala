@@ -1,7 +1,7 @@
 package com.heimdali.clients
 
 import cats.effect._
-import com.heimdali.test.fixtures.{LDAPTest, _}
+import com.heimdali.test.fixtures._
 import com.unboundid.ldap.sdk.{Modification, ModificationType}
 import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{FlatSpec, Matchers}
