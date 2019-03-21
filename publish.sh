@@ -30,6 +30,8 @@ prepare()
   tar cvf $READY_DIR-el6.parcel $READY_DIR
   mkdir -p publish
   mv $READY_DIR-el6.parcel publish/
+  ln -s publish/$READY_DIR-el6.parcel publish/$READY_DIR-el7.parcel
+  ln -s publish/$READY_DIR-el6.parcel publish/$READY_DIR-xenial.parcel
 }
 
 ship()
