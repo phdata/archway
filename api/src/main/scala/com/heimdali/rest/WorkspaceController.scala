@@ -1,5 +1,7 @@
 package com.heimdali.rest
 
+import java.time.Instant
+
 import cats.effect._
 import cats.implicits._
 import com.heimdali.models._
@@ -19,8 +21,6 @@ class WorkspaceController[F[_] : Sync : Timer](authService: AuthService[F],
                                                provisioningService: ProvisioningService[F])
   extends Http4sDsl[F] {
 
-  val clock = java.time.Clock.systemUTC()
-
   implicit val memberRequestEntityDecoder: EntityDecoder[F, MemberRequest] = jsonOf[F, MemberRequest]
 
   val route: HttpRoutes[F] =
@@ -28,13 +28,15 @@ class WorkspaceController[F[_] : Sync : Timer](authService: AuthService[F],
       AuthedService[User, F] {
         case req@POST -> Root / LongVar(id) / "approve" as user =>
           if (user.canApprove) {
-            implicit val decoder: Decoder[Approval] = Approval.decoder(user, clock)
-            implicit val approvalEntityDecoder: EntityDecoder[F, Approval] = jsonOf[F, Approval]
-            for {
-              approval <- req.req.as[Approval]
-              approved <- workspaceService.approve(id, approval)
-              response <- Created(approved.asJson)
-            } yield response
+            Clock[F].realTime(scala.concurrent.duration.MILLISECONDS).flatMap { time =>
+              implicit val decoder: Decoder[Approval] = Approval.decoder(user, Instant.ofEpochMilli(time))
+              implicit val approvalEntityDecoder: EntityDecoder[F, Approval] = jsonOf[F, Approval]
+              for {
+                approval <- req.req.as[Approval]
+                approved <- workspaceService.approve(id, approval)
+                response <- Created(approved.asJson)
+              } yield response
+            }
           }
           else
             Forbidden()
@@ -52,15 +54,16 @@ class WorkspaceController[F[_] : Sync : Timer](authService: AuthService[F],
 
         case req@POST -> Root as user =>
           /* explicit implicit declaration because of `user` variable */
-          implicit val decoder: Decoder[WorkspaceRequest] = WorkspaceRequest.decoder(user, clock)
-          implicit val workspaceRequestEntityDecoder: EntityDecoder[F, WorkspaceRequest] = jsonOf[F, WorkspaceRequest]
-
-          for {
-            workspaceRequest <- req.req.as[WorkspaceRequest]
-            newWorkspace <- workspaceService.create(workspaceRequest)
-            _ <- emailService.newWorkspaceEmail(newWorkspace)
-            response <- Created(newWorkspace.asJson)
-          } yield response
+          Clock[F].realTime(scala.concurrent.duration.MILLISECONDS).flatMap { time =>
+            implicit val decoder: Decoder[WorkspaceRequest] = WorkspaceRequest.decoder(user, Instant.ofEpochMilli(time))
+            implicit val workspaceRequestEntityDecoder: EntityDecoder[F, WorkspaceRequest] = jsonOf[F, WorkspaceRequest]
+            for {
+              workspaceRequest <- req.req.as[WorkspaceRequest]
+              newWorkspace <- workspaceService.create(workspaceRequest)
+              _ <- emailService.newWorkspaceEmail(newWorkspace)
+              response <- Created(newWorkspace.asJson)
+            } yield response
+          }
 
         case GET -> Root as user =>
           for {
