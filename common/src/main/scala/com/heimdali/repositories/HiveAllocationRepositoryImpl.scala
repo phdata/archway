@@ -9,20 +9,11 @@ import doobie.util.fragments.whereAnd
 
 class HiveAllocationRepositoryImpl extends HiveAllocationRepository {
 
-  def grant(role: DatabaseRole, manager: Statements.HiveRole, ldap: LDAPRecord, records: List[LDAPAttribute]): HiveGrant =
+  def grant(role: DatabaseRole, manager: Statements.HiveRole, ldap: LDAPRegistration, records: List[LDAPAttribute]): HiveGrant =
     HiveGrant(
       manager.name,
       manager.location,
-      LDAPRegistration(
-        ldap.distinguishedName,
-        ldap.commonName,
-        ldap.sentryRole,
-        ldap.id,
-        ldap.groupCreated,
-        ldap.roleCreated,
-        ldap.roleAssociated,
-        records.map(a => a.key -> a.value)
-      ),
+      ldap.copy(attributes = records.map(a => a.key -> a.value)),
       role,
       manager.grantId,
       manager.locationAccess,

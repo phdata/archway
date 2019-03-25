@@ -3,10 +3,14 @@ package com.heimdali
 import java.io.File
 import java.util.concurrent.Executors
 
+import cats.effect.{ExitCode, IO, IOApp}
 import cats.effect._
 import cats.implicits._
 import com.heimdali.clients._
 import com.heimdali.config.AppConfig
+import com.heimdali.modules._
+import com.heimdali.generators.WorkspaceGenerator
+import pureconfig.{CamelCase, ConfigFieldMapping, ProductHint}
 import com.heimdali.generators.{ApplicationGenerator, LDAPGroupGenerator, TopicGenerator, WorkspaceGenerator}
 import com.heimdali.provisioning.DefaultProvisioningService
 import com.heimdali.repositories.{ApplicationRepositoryImpl, ApprovalRepositoryImpl, ComplianceRepositoryImpl, ConfigRepositoryImpl, HiveAllocationRepositoryImpl, HiveGrantRepositoryImpl, KafkaTopicRepositoryImpl, LDAPRepositoryImpl, MemberRepositoryImpl, TopicGrantRepositoryImpl, WorkspaceRequestRepositoryImpl, YarnRepositoryImpl}
@@ -29,7 +33,7 @@ import org.http4s.server.middleware.CORS
 import scala.concurrent.ExecutionContext
 import scala.concurrent.duration._
 
-trait Server extends IOApp {
+object Server extends IOApp {
 
   val hadoopConfiguration = {
     val conf = new Configuration()
@@ -54,7 +58,7 @@ trait Server extends IOApp {
         .withResponseHeaderTimeout(5 minutes)
         .resource
 
-      metaXA <- config.db.hive.tx(dbConnectionEC, dbTransactionEC)
+      metaXA <- config.db.meta.tx(dbConnectionEC, dbTransactionEC)
       hiveXA = config.db.hive.hiveTx
 
       httpClient = new CMClient[F](h4Client, config.cluster)
@@ -89,9 +93,9 @@ trait Server extends IOApp {
 
       ldapGroupGenerator = LDAPGroupGenerator.instance(config, configService, _.ldapGroupGenerator)
       applicationGenerator = ApplicationGenerator.instance(config, ldapGroupGenerator, _.applicationGenerator)
-      userTemplateGenerator = WorkspaceGenerator.instance(config, ldapGroupGenerator, applicationGenerator, _.userGenerator)
-      simpleTemplateGenerator = WorkspaceGenerator.instance(config, ldapGroupGenerator, applicationGenerator, _.simpleGenerator)
-      structuredTemplateGenerator = WorkspaceGenerator.instance(config, ldapGroupGenerator, applicationGenerator, _.structuredGenerator)
+      userTemplateGenerator = WorkspaceGenerator.instance[F, WorkspaceGenerator[F, UserTemplate]](config, ldapGroupGenerator, applicationGenerator, _.userGenerator)
+      simpleTemplateGenerator = WorkspaceGenerator.instance[F, WorkspaceGenerator[F, SimpleTemplate]](config, ldapGroupGenerator, applicationGenerator, _.simpleGenerator)
+      structuredTemplateGenerator = WorkspaceGenerator.instance[F, WorkspaceGenerator[F, StructuredTemplate]](config, ldapGroupGenerator, applicationGenerator, _.structuredGenerator)
       topicGenerator = TopicGenerator.instance(config, ldapGroupGenerator, _.topicGenerator)
 
       provisionService = new DefaultProvisioningService[F](context)
@@ -128,6 +132,7 @@ trait Server extends IOApp {
           .withHttpApp(CORS(httpApp))
           .withIdleTimeout(10 minutes)
           .withResponseHeaderTimeout(10 minutes)
+          .withSSL(StoreInfo(config.rest.sslStore.get, config.rest.sslStorePassword.get), config.rest.sslKeyManagerPassword.get)
           .resource
     } yield server
 

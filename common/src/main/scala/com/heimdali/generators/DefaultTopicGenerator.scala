@@ -1,15 +1,13 @@
 package com.heimdali.generators
 
-import java.time.Clock
-
-import cats.effect.Sync
+import cats.effect.{Clock, Sync}
 import cats.implicits._
 import com.heimdali.config.AppConfig
 import com.heimdali.models._
 
 class DefaultTopicGenerator[F[_]](appConfig: AppConfig,
                                   ldapGroupGenerator: LDAPGroupGenerator[F])
-                                 (implicit clock: Clock, F: Sync[F])
+                                 (implicit clock: Clock[F], F: Sync[F])
   extends TopicGenerator[F] {
 
   override def topicFor(name: String, partitions: Int, replicationFactor: Int, workspaceRequest: WorkspaceRequest): F[KafkaTopic] = {

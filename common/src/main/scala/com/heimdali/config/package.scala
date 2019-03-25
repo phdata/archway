@@ -10,7 +10,7 @@ import doobie.util.transactor.Strategy
 
 import scala.concurrent.duration._
 import io.circe.Decoder.Result
-import io.circe.{Decoder, DecodingFailure, HCursor}
+import io.circe.{Decoder, DecodingFailure, HCursor, Printer}
 
 import scala.concurrent.ExecutionContext
 import scala.concurrent.duration.{Duration, FiniteDuration}
@@ -18,9 +18,11 @@ import scala.concurrent.duration.{Duration, FiniteDuration}
 package object config {
 
   implicit final val finiteDurationDecoder: Decoder[Duration] =
-    (c: HCursor) => for {
-      duration <- c.as[String]
-    } yield Duration(duration)
+    (c: HCursor) => {
+      for {
+        duration <- c.as[String]
+      } yield Duration(duration)
+    }
 
   case class CredentialsConfig(username: String, password: String)
 
@@ -55,6 +57,29 @@ package object config {
     def serviceRoleUrl(service: String, roleId: String) = s"${serviceRoleListUrl(service)}/$roleId"
 
     val refreshUrl = s"$clusterUrl/commands/poolsRefresh"
+  }
+
+  object ClusterConfig {
+
+    import io.circe.generic.semiauto._
+
+    implicit val credentialsConfigDecoder: Decoder[CredentialsConfig] = deriveDecoder
+    implicit val serviceOverrideDecoder: Decoder[ServiceOverride] = deriveDecoder
+
+    implicit val decoder: Decoder[ClusterConfig] = Decoder.instance { cursor =>
+      println(cursor.value.pretty(Printer.spaces2))
+      for {
+        sessionRefresh <- cursor.downField("sessionRefresh").as[String].map(Duration.apply)
+        url <- cursor.downField("url").as[String]
+        name <- cursor.downField("name").as[String]
+        environment <- cursor.downField("environment").as[String]
+        beeswaxPort <- cursor.downField("beeswaxPort").as[Int]
+        hiveServer2Port <- cursor.downField("hiveServer2Port").as[Int]
+        admin <- cursor.downField("admin").as[CredentialsConfig]
+        hueOverride <- cursor.downField("hueOverride").as[ServiceOverride]
+      } yield ClusterConfig(sessionRefresh, url, name, environment, beeswaxPort, hiveServer2Port, admin, hueOverride)
+    }
+
   }
 
   case class RestConfig(port: Int,
@@ -125,9 +150,7 @@ package object config {
   object AppConfig {
 
     import io.circe.generic.semiauto._
-    implicit val credentialsConfigDecoder: Decoder[CredentialsConfig] = deriveDecoder
-    implicit val serviceOverrideDecoder: Decoder[ServiceOverride] = deriveDecoder
-    implicit val clusterConfigDecoder: Decoder[ClusterConfig] = deriveDecoder
+
     implicit val restConfigDecoder: Decoder[RestConfig] = deriveDecoder
     implicit val uIConfigDecoder: Decoder[UIConfig] = deriveDecoder
     implicit val sMTPConfigDecoder: Decoder[SMTPConfig] = deriveDecoder

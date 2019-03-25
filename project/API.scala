@@ -25,7 +25,7 @@ object API {
   )
 
   val revolverSettings = Seq(
-    mainClass in reStart := Some("com.heimdali.Main"),
+    mainClass in reStart := Some("com.heimdali.Server"),
     javaOptions in reStart := Seq(
       "-Dhadoop.home.dir=$PWD",
       s"-Djava.security.krb5.conf=${baseDirectory.value}/../krb5.conf"
@@ -43,7 +43,7 @@ object API {
 
       "HEIMDALI_CLUSTER_ENVIRONMENT" -> "dev",
 
-      "HEIMDALI_LDAP_HOST" -> "ad1.jotunn.io",
+      "HEIMDALI_LDAP_HOST" -> "165.227.59.134",
       "HEIMDALI_LDAP_PORT" -> "636",
       "HEIMDALI_LDAP_ADMIN_DN" -> "CN=Administrator,CN=Users,DC=jotunn,DC=io",
       "HEIMDALI_LDAP_ADMIN_PASS" -> "Jotunn123!",

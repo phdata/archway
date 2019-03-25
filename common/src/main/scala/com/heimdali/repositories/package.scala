@@ -17,18 +17,6 @@ package object repositories {
 
   case class LDAPAttribute(key: String, value: String)
 
-  def ldap(manager: LDAPRecord, records: List[LDAPAttribute]): LDAPRegistration =
-    LDAPRegistration(
-      manager.distinguishedName,
-      manager.commonName,
-      manager.sentryRole,
-      manager.id,
-      manager.groupCreated,
-      manager.roleCreated,
-      manager.roleAssociated,
-      records.map(a => a.key -> a.value)
-    )
-
   implicit val dbRoleGetter: Get[DatabaseRole] =
     Get[String].map(DatabaseRole.unapply(_).get)
 
@@ -41,6 +29,15 @@ package object repositories {
         WorkspaceRequest(name, summary, description, behavior, requestedBy, requestDate, Compliance(phiData, pciData, piiData, complianceId), singleUser, id)
     }
 
-  implicit def fromRecord(LDAPRecord: LDAPRecord): LDAPRegistration = ???
+  implicit def fromRecord(ldap: LDAPRecord): LDAPRegistration =
+    LDAPRegistration(
+      ldap.distinguishedName,
+      ldap.commonName,
+      ldap.sentryRole,
+      ldap.id,
+      ldap.groupCreated,
+      ldap.roleCreated,
+      ldap.roleAssociated
+    )
 
 }
