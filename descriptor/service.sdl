@@ -14,7 +14,6 @@
   "maxInstances": 1,
   "icon": "images/favicon_symbol.png",
   "parcel": {
-    "repoUrl": "http://parcels.jotunn.io/",
     "requiredTags": [
       "heimdali-api",
       "heimdali-ui"
@@ -90,7 +89,7 @@
           "HEIMDALI_SSL_KEY_LOCATION": "${ssl_server_privatekey_location}",
           "HEIMDALI_SSL_KEY_PASSWORD": "${ssl_server_privatekey_password}",
           "HEIMDALI_UI_PORT": "${heimdali_ui_port}",
-          "HEIMDALI_REST_PORT": "${heimdali_rest_port}"
+          "HEIMDALI_REST_PORT": "${heimdali.rest.port}"
         }
       }
     },
@@ -130,7 +129,7 @@
           "configurableInWizard": "true"
         },
         {
-          "name": "heimdal.cluster.sessionRefresh",
+          "name": "heimdali.cluster.sessionRefresh",
           "label": "Kerberos Refresh Interval",
           "description": "Interval between refreshing kerberos cache (eg. 1h, 30m, etc)",
           "required": "true",
@@ -138,15 +137,15 @@
           "default": "1h"
         },
         {
-          "name": "heimdal.cluster.url",
+          "name": "heimdali.cluster.url",
           "label": "Cloudera Manager Base URL",
           "description": "The base URL for CM API (eg. https://manager.valhalla.phdata.io:7183/api/v14)",
           "required": "true",
-          "type": "uri",
+          "type": "string",
           "configurableInWizard": "true"
         },
         {
-          "name": "heimdal.cluster.admin.username",
+          "name": "heimdali.cluster.admin.username",
           "label": "Heimdali CM User",
           "description": "The username for the CM user",
           "required": "true",
@@ -154,7 +153,7 @@
           "configurableInWizard": "true"
         },
         {
-          "name": "heimdal.cluster.admin.password",
+          "name": "heimdali.cluster.admin.password",
           "label": "Heimdali CM Password",
           "description": "The password for the CM user",
           "required": "true",
@@ -162,7 +161,7 @@
           "configurableInWizard": "true"
         },
         {
-          "name": "heimdal.cluster.name",
+          "name": "heimdali.cluster.name",
           "label": "Cluster Name",
           "description": "The name of the cluster to manage",
           "required": "true",
@@ -170,7 +169,7 @@
           "configurableInWizard": "true"
         },
         {
-          "name": "heimdal.cluster.environment",
+          "name": "heimdali.cluster.environment",
           "label": "Cluster Environment",
           "description": "The environment the cluster represents, such as dev, qa, prod, etc. Should be lowercase, no spaces or special chars",
           "required": "true",
@@ -178,7 +177,7 @@
           "configurableInWizard": "true"
         },
         {
-          "name": "heimdal.cluster.hueOverride.host",
+          "name": "heimdali.cluster.hueOverride.host",
           "label": "Hue Override Host",
           "description": "Optionally specify the host for Hue's alternative location",
           "required": "false",
@@ -186,7 +185,7 @@
           "configurableInWizard": "true"
         },
         {
-          "name": "heimdal.cluster.hueOverride.port",
+          "name": "heimdali.cluster.hueOverride.port",
           "label": "Hue Override Port",
           "description": "Optionally specify the port for Hue's alternative location",
           "required": "false",
@@ -194,7 +193,7 @@
           "configurableInWizard": "true"
         },
         {
-          "name": "heimdal.cluster.beeswaxPort",
+          "name": "heimdali.cluster.beeswaxPort",
           "label": "Impala Beeswax Port",
           "description": "The port for Impala's beeswax port used by impala-shell",
           "required": "false",
@@ -364,8 +363,8 @@
         },
         {
           "name": "heimdali.db.meta.url",
-          "label": "JDBC URI",
-          "description": "The JDBC URI to the Heimdali database",
+          "label": "JDBC string",
+          "description": "The JDBC string to the Heimdali database",
           "required": "true",
           "type": "string",
           "configurableInWizard": "true"
@@ -399,7 +398,7 @@
           "label": "LDAP Host",
           "description": "THe LDAP/AD host for users and groups",
           "required": "true",
-          "type": "uri",
+          "type": "string",
           "configurableInWizard": "true"
         },
         {
@@ -488,7 +487,7 @@
           "label": "Heimdali UI",
           "description": "Full url for Heimdali UI",
           "required": "true",
-          "type": "uri",
+          "type": "string",
           "configurableInWizard": "true"
         },
         {
@@ -564,20 +563,20 @@
           "configurableInWizard": "true"
         }
       ],
+      "configWriter": {
+        "generators": [
+          {
+            "filename": "runtime.conf",
+            "configFormat": "properties"
+          }
+        ]
+      },
       "startRunner": {
         "program": "scripts/control.sh",
         "args": [
           "api",
           "start"
-        ],
-        "configWriter": {
-          "generators": [
-            {
-              "filename": "runtime.conf",
-              "configFormat": "properties"
-            }
-          ]
-        }
+        ]
       }
     }
   ]

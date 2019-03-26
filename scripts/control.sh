@@ -20,10 +20,14 @@ case ${COMPONENT} in
     (api)
         case ${CMD} in
             (start)
+                sed -i -E 's/([[:alpha:]\.]+)\=(.*)/\1\="\2"/g' runtime.conf
+                sed -i -E 's/([[:alpha:]\.]+)\="(true|false)"/\1\=\2/g' runtime.conf
+                sed -i -E 's/([[:alpha:]\.]+)\="[:digit:]+"/\1\=\2/g' runtime.conf
                 exec $JAVA_HOME/bin/java -Djavax.security.auth.useSubjectCredsOnly=false \
                           -Djava.security.auth.login.config=${CONF_DIR}/jaas.conf \
+                          -Dconfig.resource=production.conf \
                           -cp ${CONF_DIR}:/usr/share/java/mysql-connector-java.jar:/usr/share/cmf/common_jars/postgres*.jar:/opt/cloudera/parcels/CDH/jars/bcprov-jdk15-1.45.jar:/opt/cloudera/parcels/CDH/lib/hive/lib/hive-jdbc-standalone.jar:/opt/cloudera/parcels/CDH/lib/sentry/lib/*:`hadoop classpath`:$HEIMDALI_ADDITIONAL_CLASSPATH:$HEIMDALI_API_HOME/heimdali-api.jar \
-                          com.heimdali.Main
+                          com.heimdali.Server
                 ;;
             (*)
                 echo ${SYNTAX}
