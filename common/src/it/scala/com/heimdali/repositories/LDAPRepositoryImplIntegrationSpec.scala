@@ -1,4 +1,4 @@
-package com.heimdali.com.heimdali.services
+package com.heimdali.repositories
 
 import java.time.Instant
 
