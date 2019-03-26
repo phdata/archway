@@ -1,0 +1,16 @@
+package com.heimdali.repositories
+
+import java.time.{Clock, Instant, ZoneId}
+
+import com.heimdali.test.fixtures._
+import doobie.scalatest.IOChecker
+import org.scalatest.{FunSuite, Matchers}
+
+class HiveAllocationRepositoryIntegrationSpec extends FunSuite with Matchers with DBTest with IOChecker {
+
+  val repo = new HiveAllocationRepositoryImpl()
+
+  test("insert") { check(repo.Statements.insert(initialHive)) }
+  test("list") { check(repo.Statements.list(id)) }
+
+}

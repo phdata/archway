@@ -1,0 +1,9 @@
+{
+  "id": 28930,
+  "name": "RefreshPools",
+  "startTime": "2018-06-02T15:26:31.509Z",
+  "active": true,
+  "clusterRef": {
+    "clusterName": "cluster name"
+  }
+}

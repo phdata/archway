@@ -1,0 +1,66 @@
+[
+  {
+    "id": "cluster name",
+    "name": "Odin",
+    "status": "GOOD_HEALTH",
+    "cm_url": "",
+    "services": {
+      "impala": {
+        "state": "STARTED",
+        "status": "GOOD_HEALTH",
+        "beeswax": [
+          {
+            "host": "master1.jotunn.io",
+            "port": 21000
+          }
+        ],
+        "hiveServer2": [
+          {
+            "host": "master1.jotunn.io",
+            "port": 21050
+          }
+        ]
+      },
+      "hive": {
+        "state": "STARTED",
+        "status": "GOOD_HEALTH",
+        "thrift": [
+          {
+            "host": "master1.jotunn.io",
+            "port": 10000
+          }
+        ]
+      },
+      "hue": {
+        "state": "STARTED",
+        "status": "GOOD_HEALTH",
+        "load_balancer": [
+          {
+            "host": "master1.jotunn.io",
+            "port": 8888
+          }
+        ]
+      },
+      "yarn": {
+        "state": "STARTED",
+        "status": "GOOD_HEALTH",
+        "node_manager": [
+          {
+            "host": "master1.jotunn.io",
+            "port": 8042
+          }
+        ],
+        "resource_manager": [
+          {
+            "host": "master1.jotunn.io",
+            "port": 8088
+          }
+        ]
+      }
+    },
+    "distribution": {
+      "name": "CDH",
+      "version": "5.15.0"
+    }
+  }
+]

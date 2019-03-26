@@ -289,28 +289,6 @@ CREATE INDEX fk_application_ldap_registration1_idx ON application (ldap_registra
 
 
 -- -----------------------------------------------------
--- Table `heimdali`.`profile`
--- -----------------------------------------------------
-CREATE SEQUENCE profile_seq;
-
-CREATE TABLE IF NOT EXISTS profile (
-  id BIGINT NOT NULL DEFAULT NEXTVAL ('profile_seq'),
-  username VARCHAR(45) NOT NULL,
-  hive_database_id BIGINT NOT NULL,
-  PRIMARY KEY (id),
-  CONSTRAINT username_UNIQUE UNIQUE  (username)
- ,
-  CONSTRAINT fk_profile_hive_database1
-    FOREIGN KEY (hive_database_id)
-    REFERENCES hive_database (id)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-;
-
-CREATE INDEX fk_profile_hive_database1_idx ON profile (hive_database_id);
-
-
--- -----------------------------------------------------
 -- Table `heimdali`.`workspace_topic`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS workspace_topic (

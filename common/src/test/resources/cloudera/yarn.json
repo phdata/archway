@@ -1,0 +1,240 @@
+{
+  "items": [
+    {
+      "name": "yarn-RESOURCEMANAGER-416c6afa711d68cad913a0f197301a36",
+      "type": "RESOURCEMANAGER",
+      "serviceRef": {
+        "clusterName": "cluster name",
+        "serviceName": "yarn"
+      },
+      "hostRef": {
+        "hostId": "dcca7d0f-3526-462f-98de-5e7c0d256321"
+      },
+      "roleUrl": "http://master1.jotunn.io:7180/cmf/roleRedirect/yarn-RESOURCEMANAGER-416c6afa711d68cad913a0f197301a36",
+      "roleState": "STARTED",
+      "healthSummary": "GOOD",
+      "healthChecks": [
+        {
+          "name": "RESOURCE_MANAGER_FILE_DESCRIPTOR",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "RESOURCE_MANAGER_GC_DURATION",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "RESOURCE_MANAGER_HEAP_DUMP_DIRECTORY_FREE_SPACE",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "RESOURCE_MANAGER_HOST_HEALTH",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "RESOURCE_MANAGER_LOG_DIRECTORY_FREE_SPACE",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "RESOURCE_MANAGER_SCM_HEALTH",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "RESOURCE_MANAGER_SWAP_MEMORY_USAGE",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "RESOURCE_MANAGER_UNEXPECTED_EXITS",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "RESOURCE_MANAGER_WEB_METRIC_COLLECTION",
+          "summary": "GOOD",
+          "suppressed": false
+        }
+      ],
+      "configStalenessStatus": "FRESH",
+      "haStatus": "ACTIVE",
+      "maintenanceMode": false,
+      "maintenanceOwners": [
+      ],
+      "commissionState": "COMMISSIONED",
+      "roleConfigGroupRef": {
+        "roleConfigGroupName": "yarn-RESOURCEMANAGER-BASE"
+      },
+      "entityStatus": "GOOD_HEALTH"
+    },
+    {
+      "name": "yarn-NODEMANAGER-416c6afa711d68cad913a0f197301a36",
+      "type": "NODEMANAGER",
+      "serviceRef": {
+        "clusterName": "cluster name",
+        "serviceName": "yarn"
+      },
+      "hostRef": {
+        "hostId": "dcca7d0f-3526-462f-98de-5e7c0d256321"
+      },
+      "roleUrl": "http://master1.jotunn.io:7180/cmf/roleRedirect/yarn-NODEMANAGER-416c6afa711d68cad913a0f197301a36",
+      "roleState": "STARTED",
+      "healthSummary": "GOOD",
+      "healthChecks": [
+        {
+          "name": "NODEMANAGER_LOCAL_DATA_DIRECTORIES_FREE_SPACE",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "NODEMANAGER_LOG_DIRECTORIES_FREE_SPACE",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "NODEMANAGER_RECOVERY_DIRECTORY_FREE_SPACE",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "NODE_MANAGER_CONNECTIVITY",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "NODE_MANAGER_FILE_DESCRIPTOR",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "NODE_MANAGER_GC_DURATION",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "NODE_MANAGER_HEALTH_CHECKER",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "NODE_MANAGER_HEAP_DUMP_DIRECTORY_FREE_SPACE",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "NODE_MANAGER_HOST_HEALTH",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "NODE_MANAGER_LOG_DIRECTORY_FREE_SPACE",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "NODE_MANAGER_SCM_HEALTH",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "NODE_MANAGER_SWAP_MEMORY_USAGE",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "NODE_MANAGER_UNEXPECTED_EXITS",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "NODE_MANAGER_WEB_METRIC_COLLECTION",
+          "summary": "GOOD",
+          "suppressed": false
+        }
+      ],
+      "configStalenessStatus": "FRESH",
+      "maintenanceMode": false,
+      "maintenanceOwners": [
+      ],
+      "commissionState": "COMMISSIONED",
+      "roleConfigGroupRef": {
+        "roleConfigGroupName": "yarn-NODEMANAGER-BASE"
+      },
+      "entityStatus": "GOOD_HEALTH"
+    },
+    {
+      "name": "yarn-JOBHISTORY-416c6afa711d68cad913a0f197301a36",
+      "type": "JOBHISTORY",
+      "serviceRef": {
+        "clusterName": "cluster name",
+        "serviceName": "yarn"
+      },
+      "hostRef": {
+        "hostId": "dcca7d0f-3526-462f-98de-5e7c0d256321"
+      },
+      "roleUrl": "http://master1.jotunn.io:7180/cmf/roleRedirect/yarn-JOBHISTORY-416c6afa711d68cad913a0f197301a36",
+      "roleState": "STARTED",
+      "healthSummary": "GOOD",
+      "healthChecks": [
+        {
+          "name": "JOBHISTORY_FILE_DESCRIPTOR",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "JOBHISTORY_GC_DURATION",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "JOBHISTORY_HEAP_DUMP_DIRECTORY_FREE_SPACE",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "JOBHISTORY_HOST_HEALTH",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "JOBHISTORY_LOG_DIRECTORY_FREE_SPACE",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "JOBHISTORY_SCM_HEALTH",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "JOBHISTORY_SWAP_MEMORY_USAGE",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "JOBHISTORY_UNEXPECTED_EXITS",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "JOBHISTORY_WEB_METRIC_COLLECTION",
+          "summary": "GOOD",
+          "suppressed": false
+        }
+      ],
+      "configStalenessStatus": "FRESH",
+      "maintenanceMode": false,
+      "maintenanceOwners": [
+      ],
+      "commissionState": "COMMISSIONED",
+      "roleConfigGroupRef": {
+        "roleConfigGroupName": "yarn-JOBHISTORY-BASE"
+      },
+      "entityStatus": "GOOD_HEALTH"
+    }
+  ]
+}

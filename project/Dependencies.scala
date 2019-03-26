@@ -31,16 +31,17 @@ object Dependencies {
     "org.jvnet.mock-javamail" % "mock-javamail" % "1.9" % "test"
   )
 
+  val attoVersion = "0.6.5"
+  val atto = Seq(
+    "org.tpolecat" %% "atto-core" % attoVersion
+  )
+
   val doobieVersion = "0.6.0"
   val doobie = Seq(
     "org.tpolecat" %% "doobie-core" % doobieVersion,
     "org.tpolecat" %% "doobie-postgres" % doobieVersion,
-    "org.tpolecat" %% "doobie-scalatest" % doobieVersion % "test,it"
-  )
-
-  val pureConfigVersion = "0.9.1"
-  val pureConfig = Seq(
-    "com.github.pureconfig" %% "pureconfig" % pureConfigVersion
+    "org.tpolecat" %% "doobie-hikari" % doobieVersion,
+    "org.tpolecat" %% "doobie-scalatest" % doobieVersion % "test"
   )
 
   val catsVersion = "1.3.0"
@@ -63,6 +64,11 @@ object Dependencies {
     "io.circe" %% "circe-java8" % circeVersion
   )
 
+  val circeConfigVersion = "0.6.1"
+  val circeConfig = Seq(
+    "io.circe" %% "circe-config" % circeConfigVersion
+  )
+
   val jwtVersion = "2.0.0"
   val jwt = Seq(
     ("com.pauldijou" %% "jwt-core" % jwtVersion)
@@ -80,16 +86,16 @@ object Dependencies {
     "org.apache.hadoop" % "hadoop-client" % hadoopVersion % "provided",
     "org.apache.hive" % "hive-jdbc" % hiveVersion % "provided",
     "org.apache.kafka" %% "kafka" % "0.10.1.1" excludeAll ExclusionRule(organization = "org.slf4j"),
-    "org.apache.hadoop" % "hadoop-hdfs" % hadoopVersion % "test,it" classifier "" classifier "tests",
-    "org.apache.hadoop" % "hadoop-common" % hadoopVersion % "test,it" classifier "" classifier "tests",
-    "org.apache.hadoop" % "hadoop-client" % hadoopVersion % "test,it" classifier "" classifier "tests",
-    "org.apache.hadoop" % "hadoop-minicluster" % hadoopVersion % "test,it"
+    "org.apache.hadoop" % "hadoop-hdfs" % hadoopVersion % "test" classifier "" classifier "tests",
+    "org.apache.hadoop" % "hadoop-common" % hadoopVersion % "test" classifier "" classifier "tests",
+    "org.apache.hadoop" % "hadoop-client" % hadoopVersion % "test" classifier "" classifier "tests",
+    "org.apache.hadoop" % "hadoop-minicluster" % hadoopVersion % "test"
   )
 
   val coreTest = Seq(
-    "org.mockito" % "mockito-core" % "2.18.3" % "test,it",
-    "org.scalamock" %% "scalamock-scalatest-support" % "3.6.0" % "test,it",
-    "org.powermock" % "powermock-core" % "1.7.4" % "test,it"
+    "org.mockito" % "mockito-core" % "2.18.3" % "test",
+    "org.scalamock" %% "scalamock-scalatest-support" % "3.6.0" % "test",
+    "org.powermock" % "powermock-core" % "1.7.4" % "test"
   )
 
   val scalateVersion = "1.9.1-RC1"
@@ -99,7 +105,7 @@ object Dependencies {
 
   val scalacheckVersion = "1.14.0"
   val scalacheck = Seq(
-    "org.scalacheck" %% "scalacheck" % scalacheckVersion % "test,it"
+    "org.scalacheck" %% "scalacheck" % scalacheckVersion % "test"
   )
 
   val bouncy = Seq(
@@ -138,17 +144,13 @@ object Dependencies {
       .map(exclusions)
 
   val apiDependencies =
-    (coreTest ++ dbCore ++ logging ++ bouncy ++ pureConfig ++
+    (coreTest ++ dbCore ++ logging ++ bouncy ++ circeConfig ++
       http4s ++ fs2 ++ doobie ++ cats ++ catsEffect ++ circe ++ hadoop)
       .map(exclusions)
 
-  val configDependencies =
-    pureConfig
-      .map(exclusions)
-
   val commonDependencies =
-    (scalate ++ unbound ++ mailer ++ logging ++ doobie ++ cats ++ catsEffect ++ fs2 ++ pureConfig ++ circe ++
-      scalatags ++ hadoop ++ fs2Http ++ http4s ++ jwt ++ iniConfig ++ scalacheck ++ coreTest ++ bouncy ++
+    (scalate ++ unbound ++ mailer ++ logging ++ doobie ++ cats ++ catsEffect ++ fs2 ++ circeConfig ++ circe ++
+      scalatags ++ hadoop ++ fs2Http ++ http4s ++ jwt ++ iniConfig ++ scalacheck ++ coreTest ++ bouncy ++ atto ++
       Seq("org.typelevel" %% "jawn-parser" % "0.14.0"))
       .map(exclusions)
 
