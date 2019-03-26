@@ -38,9 +38,12 @@ export interface MemberRemoveStatus {
 
 export interface Member {
   distinguished_name: string;
+  email?: string;
   name: string;
   removeStatus?: MemberRemoveStatus;
   data: any;
+  topics: any;
+  applications: any;
 }
 
 export interface Application {

@@ -76,6 +76,12 @@ export const getApproved = () => createSelector(
     workspaceState.hasIn(['details', 'approvals', 'risk']),
 );
 
+export const getActiveTopic = () => createSelector(
+  workspaceSelector,
+  (workspaceState) =>
+    workspaceState.get('activeTopic'),
+);
+
 export const getActiveModal = () => createSelector(
   workspaceSelector,
   (workspaceState) =>

@@ -5,6 +5,7 @@ import {
   NamespaceInfo,
   PoolInfo,
   ApprovalItem,
+  KafkaTopic,
 } from '../../models/Workspace';
 
 export const CLEAR_DETAILS = 'CLEAR_DETAILS';
@@ -83,6 +84,12 @@ export const setActiveModal = (activeModal: string | boolean) => ({
   activeModal,
 });
 
+export const SET_ACTIVE_TOPIC = 'SET_ACTIVE_TOPIC';
+export const setActiveTopic = (activeTopic: KafkaTopic) => ({
+  type: SET_ACTIVE_TOPIC,
+  activeTopic,
+});
+
 export const REQUEST_APPROVAL = 'REQUEST_APPROVAL';
 type ApprovalType = 'infra' | 'risk';
 export interface ApprovalRequestAction {
@@ -125,9 +132,11 @@ export const topicRequestSuccess = () => ({
 export const SIMPLE_MEMBER_REQUEST = 'SIMPLE_MEMBER_REQUEST';
 export interface SimpleMemberRequestAction {
   type: typeof SIMPLE_MEMBER_REQUEST;
+  resource: string;
 }
-export const simpleMemberRequest = () => ({
+export const simpleMemberRequest = (resource: string) => ({
   type: SIMPLE_MEMBER_REQUEST,
+  resource,
 });
 
 export const SIMPLE_MEMBER_REQUEST_COMPLETE = 'SIMPLE_MEMBER_REQUEST_COMPLETE';
@@ -145,12 +154,14 @@ export interface ChangeMemberRoleRequestAction {
   distinguished_name: string;
   roleId: number;
   role: string;
+  resource: string;
 }
-export const changeMemberRoleRequest = (distinguished_name: string, roleId: number, role: string) => ({
+export const changeMemberRoleRequest = (distinguished_name: string, roleId: number, role: string, resource: string) => ({
   type: CHANGE_MEMBER_ROLE_REQUESTED,
   distinguished_name,
   roleId,
   role,
+  resource,
 });
 
 export const CHANGE_MEMBER_ROLE_REQUESTED_COMPLETE = 'CHANGE_MEMBER_ROLE_REQUESTED_COMPLETE';

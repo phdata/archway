@@ -74,7 +74,7 @@ const details: Workspace = {
 };
 
 describe('new member flow', () => {
-    const generator = cloneableGenerator(simpleMemberRequested)();
+    const generator = cloneableGenerator(simpleMemberRequested)({ type: 'SIMPLE_MEMBER_REQUEST', resource: 'data' });
 
     test('add user success', () => {
         const clone = generator.clone();

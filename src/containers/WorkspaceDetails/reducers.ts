@@ -8,6 +8,7 @@ import {
   SET_MEMBERS,
   SET_NAMESPACE_INFO,
   SET_RESOURCE_POOLS,
+  SET_ACTIVE_TOPIC,
   SET_ACTIVE_MODAL,
   REQUEST_APPROVAL,
   APPROVAL_SUCCESS,
@@ -75,6 +76,10 @@ const details = (state = initialState, action: any) => {
           loading: false,
           data: action.resourcePools,
         }));
+
+    case SET_ACTIVE_TOPIC:
+      return state
+          .set('activeTopic', action.activeTopic);
 
     case SET_ACTIVE_MODAL:
       return state

@@ -7,3 +7,5 @@ export { default as PermissionsCard } from './PermissionsCard';
 export { default as TablesCard } from './TablesCard';
 export { default as ApplicationsInfoCard } from './ApplicationsInfoCard';
 export { default as YarnApplicationsCard } from './YarnApplicationsCard';
+export { default as TopicCard } from './TopicCard';
+export { default as TopicPermissionsCard } from './TopicPermissionsCard';

@@ -13,7 +13,7 @@ interface Props {
   selectedAllocation?: HiveAllocation;
   onAddMember: (e: React.MouseEvent) => void;
   onChangeAllocation: (allocation: HiveAllocation) => void;
-  onChangeMemberRole: (distinguished_name: string, roleId: number, role: string) => void;
+  onChangeMemberRole: (distinguished_name: string, roleId: number, role: string, resource: string) => void;
   requestRefreshHiveTables: () => void;
   removeMember: (distinguished_name: string, database_role: string) => void;
 }
@@ -78,7 +78,7 @@ class DataTab extends React.Component<Props> {
               members={members}
               onAddMember={onAddMember}
               onChangeMemberRole={(member, id, role) => {
-                onChangeMemberRole(member.distinguished_name, id, role);
+                onChangeMemberRole(member.distinguished_name, id, role, 'data');
               }}
             />
           </Col>

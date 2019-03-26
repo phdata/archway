@@ -10,11 +10,13 @@ import {
   setMembers,
   setNamespaceInfo,
   setResourcePools,
+  setActiveTopic,
   ApprovalRequestAction,
   approvalSuccess,
   REQUEST_TOPIC,
   topicRequestSuccess,
   SIMPLE_MEMBER_REQUEST,
+  SimpleMemberRequestAction,
   simpleMemberRequestComplete,
   CHANGE_MEMBER_ROLE_REQUESTED,
   ChangeMemberRoleRequestAction,
@@ -35,6 +37,8 @@ import {
 export const tokenExtractor = (s: any) => s.getIn(['login', 'token']);
 export const detailExtractor = (s: any) => s.getIn(['details', 'details']);
 export const memberRequestFormExtractor = (s: any) => s.getIn(['form', 'simpleMemberRequest', 'values']);
+export const topicMemberRequestFormExtractor = (s: any) => s.getIn(['form', 'simpleTopicMemberRequest', 'values']);
+export const activeTopicExtractor = (s: any) => s.getIn(['details', 'activeTopic']);
 
 function* fetchUserSuggestions({ filter }: { type: string, filter: string }) {
   const token = yield select((s: any) => s.get('login').get('token'));
@@ -66,6 +70,10 @@ function* fetchWorkspace({ id }: { type: string, id: number }) {
     put(setNamespaceInfo(infos)),
     put(setResourcePools(resourcePools)),
   ]);
+
+  if (workspace.topics.length > 0) {
+    yield put(setActiveTopic(workspace.topics[0]));
+  }
 }
 
 function* workspaceRequest() {
@@ -100,32 +108,43 @@ function* topicRequestedListener() {
   yield takeLatest(REQUEST_TOPIC, topicRequested);
 }
 
-export function* simpleMemberRequested() {
+export function* simpleMemberRequested({ resource }: SimpleMemberRequestAction) {
   const token = yield select(tokenExtractor);
   const workspace = (yield select(detailExtractor)).toJS();
-  const { username, roles } = (yield select(memberRequestFormExtractor)).toJS();
-  yield all(
-    workspace.data.map(({ id, name }: { id: number, name: string }) => {
-      const role = roles[name] || 'readonly';
-      return (role !== 'none') && call(Api.newWorkspaceMember, token, workspace.id, 'data', id, role, username);
-    })
-  );
-  yield put(simpleMemberRequestComplete());
-  const members = yield call(Api.getMembers, token, workspace.id);
-  yield put(setMembers(members));
+  try {
+    if (resource === 'data') {
+      const { username, roles } = (yield select(memberRequestFormExtractor)).toJS();
+      yield all(
+        workspace.data.map(({ id, name }: { id: number, name: string }) => {
+          const role = roles[name] || 'readonly';
+          return (role !== 'none') && call(Api.newWorkspaceMember, token, workspace.id, resource, id, role, username);
+        })
+      );
+      yield put(simpleMemberRequestComplete());
+    } else if (resource === 'topics') {
+      const { id } = yield select(activeTopicExtractor);
+      const { username, role } = (yield select(topicMemberRequestFormExtractor)).toJS();
+      yield call(Api.newWorkspaceMember, token, workspace.id, resource, id, role, username);
+      yield put(simpleMemberRequestComplete());
+    }
+    const members = yield call(Api.getMembers, token, workspace.id);
+    yield put(setMembers(members));
+  } catch (e) {
+    //
+  }
 }
 
 function* simpleMemberRequestedListener() {
   yield takeLatest(SIMPLE_MEMBER_REQUEST, simpleMemberRequested);
 }
 
-export function* changeMemberRoleRequested({ distinguished_name, roleId, role }: ChangeMemberRoleRequestAction) {
+export function* changeMemberRoleRequested({ distinguished_name, roleId, role, resource }: ChangeMemberRoleRequestAction) {
   const token = yield select(tokenExtractor);
   const workspace = (yield select(detailExtractor)).toJS();
   try {
-    yield call(Api.removeWorkspaceMember, token, workspace.id, 'data', roleId, role, distinguished_name)
+    yield call(Api.removeWorkspaceMember, token, workspace.id, resource, roleId, role, distinguished_name)
     if (role !== 'none') {
-      yield call(Api.newWorkspaceMember, token, workspace.id, 'data', roleId, role, distinguished_name);
+      yield call(Api.newWorkspaceMember, token, workspace.id, resource, roleId, role, distinguished_name);
     }
     yield put(changeMemberRoleRequestComplete());
     const members = yield call(Api.getMembers, token, workspace.id);

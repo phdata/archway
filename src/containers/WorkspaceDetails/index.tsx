@@ -19,7 +19,10 @@ import {
   OverviewTab,
   DataTab,
   ApplicationsTab,
+  MessagingTab,
+  KafkaTopicRequest,
   SimpleMemberRequest,
+  SimpleTopicMemberRequest,
 } from './components';
 import { Cluster } from '../../models/Cluster';
 import { Profile } from '../../models/Profile';
@@ -30,6 +33,7 @@ import {
   UserSuggestions,
   HiveAllocation,
   Member,
+  KafkaTopic,
 } from '../../models/Workspace';
 import * as actions from './actions';
 import * as selectors from './selectors';
@@ -45,6 +49,7 @@ interface Props extends RouteComponentProps<DetailsRouteProps> {
     pools?: ResourcePoolsInfo;
     infos?: NamespaceInfoList;
     approved: boolean;
+    activeTopic?: KafkaTopic;
     activeModal?: string;
     selectedAllocation?: HiveAllocation;
     userSuggestions?: UserSuggestions;
@@ -53,14 +58,16 @@ interface Props extends RouteComponentProps<DetailsRouteProps> {
 
     clearDetails: () => void;
     getWorkspaceDetails: (id: number) => void;
+    selectTopic: (topic: KafkaTopic) => void;
     showTopicDialog: (e: React.MouseEvent) => void;
     showSimpleMemberDialog: (e: React.MouseEvent) => void;
+    showSimpleTopicMemberDialog: (e: React.MouseEvent) => void;
     clearModal: () => void;
     approveRisk: (e: React.MouseEvent) => void;
     approveOperations: (e: React.MouseEvent) => void;
     requestTopic: () => void;
-    simpleMemberRequest: () => void;
-    changeMemberRoleRequest: (distinguished_name: string, roleId: number, role: string) => void;
+    simpleMemberRequest: (resource: string) => void;
+    changeMemberRoleRequest: (distinguished_name: string, roleId: number, role: string, resource: string) => void;
     updateSelectedAllocation: (allocation: HiveAllocation) => void;
     requestRefreshYarnApps: () => void;
     requestRefreshHiveTables: () => void;
@@ -160,14 +167,17 @@ class WorkspaceDetails extends React.PureComponent<Props> {
       infos,
       approved,
       members,
+      activeTopic,
       activeModal,
-      // showTopicDialog,
+      selectTopic,
+      showTopicDialog,
       showSimpleMemberDialog,
+      showSimpleTopicMemberDialog,
       clearModal,
       approveRisk,
       approveOperations,
       profile,
-      // requestTopic,
+      requestTopic,
       simpleMemberRequest,
       changeMemberRoleRequest,
       selectedAllocation,
@@ -261,17 +271,46 @@ class WorkspaceDetails extends React.PureComponent<Props> {
               onRefreshPools={requestRefreshYarnApps}
             />
           </Tabs.TabPane>
+          <Tabs.TabPane tab="MESSAGING" key="messaging">
+            <MessagingTab
+              workspace={workspace}
+              members={members}
+              selectedTopic={activeTopic}
+              onAddTopic={showTopicDialog}
+              onAddMember={showSimpleTopicMemberDialog}
+              onChangeMemberRole={changeMemberRoleRequest}
+              onSelectTopic={selectTopic}
+              removeMember={removeMember}
+            />
+          </Tabs.TabPane>
         </Tabs>
         <Modal
           visible={activeModal === 'simpleMember'}
           title="Add A Member"
           onCancel={clearModal}
-          onOk={simpleMemberRequest}>
+          onOk={() => simpleMemberRequest('data')}>
           <SimpleMemberRequest
             allocations={workspace.data}
             suggestions={userSuggestions}
             onSearch={this.handleMemberSearch}
           />
+        </Modal>
+        <Modal
+          visible={activeModal === 'simpleTopicMember'}
+          title="Add A Member"
+          onCancel={clearModal}
+          onOk={() => simpleMemberRequest('topics')}>
+          <SimpleTopicMemberRequest
+            suggestions={userSuggestions}
+            onSearch={this.handleMemberSearch}
+          />
+        </Modal>
+        <Modal
+          visible={activeModal === 'kafka'}
+          title="New Topic"
+          onCancel={clearModal}
+          onOk={requestTopic}>
+          <KafkaTopicRequest />
         </Modal>
       </div>
     );
@@ -288,6 +327,7 @@ const mapStateToProps = () =>
     infos: selectors.getNamespaceInfo(),
     pools: selectors.getPoolInfo(),
     approved: selectors.getApproved(),
+    activeTopic: selectors.getActiveTopic(),
     activeModal: selectors.getActiveModal(),
     userSuggestions: selectors.getUserSuggestions(),
     liasion: selectors.getLiaison(),
@@ -300,6 +340,8 @@ const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
 
   updateSelectedAllocation: (allocation: HiveAllocation) => dispatch(actions.updateSelectedAllocation(allocation)),
 
+  selectTopic: (topic: KafkaTopic) => dispatch(actions.setActiveTopic(topic)),
+
   showTopicDialog: (e: React.MouseEvent) => {
     e.preventDefault();
     return dispatch(actions.setActiveModal('kafka'));
@@ -307,6 +349,10 @@ const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
   showSimpleMemberDialog: (e: React.MouseEvent) => {
     e.preventDefault();
     return dispatch(actions.setActiveModal('simpleMember'));
+  },
+  showSimpleTopicMemberDialog: (e: React.MouseEvent) => {
+    e.preventDefault();
+    return dispatch(actions.setActiveModal('simpleTopicMember'));
   },
 
   approveRisk: (e: React.MouseEvent) => {
@@ -320,9 +366,9 @@ const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
 
   clearModal: () => dispatch(actions.setActiveModal(false)),
   requestTopic: () => dispatch(actions.requestTopic()),
-  simpleMemberRequest: () => dispatch(actions.simpleMemberRequest()),
-  changeMemberRoleRequest: (distinguished_name: string, roleId: number, role: string) =>
-    dispatch(actions.changeMemberRoleRequest(distinguished_name, roleId, role)),
+  simpleMemberRequest: (resource: string) => dispatch(actions.simpleMemberRequest(resource)),
+  changeMemberRoleRequest: (distinguished_name: string, roleId: number, role: string, resource: string) =>
+    dispatch(actions.changeMemberRoleRequest(distinguished_name, roleId, role, resource)),
   requestRefreshYarnApps: () => dispatch(actions.requestRefreshYarnApps()),
   requestRefreshHiveTables: () => dispatch(actions.requestRefreshHiveTables()),
   getUserSuggestions: (filter: string) => dispatch(actions.getUserSuggestions(filter)),

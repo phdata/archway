@@ -60,7 +60,7 @@ const PermissionsCard = ({ allocations, members, onAddMember, onChangeMemberRole
       <CardHeader>
         Permissions
         <Button style={{ marginLeft: 'auto' }} type="primary" onClick={onAddMember}>
-          ADD
+        Add a Member
         </Button>
       </CardHeader>
       <Table
