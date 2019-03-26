@@ -7,6 +7,7 @@ import com.heimdali.clients.{LDAPClient, LDAPUser}
 import com.heimdali.config.{ApprovalConfig, RestConfig, WorkspaceConfig, WorkspaceConfigItem}
 import com.heimdali.models.WorkspaceRequest
 import com.heimdali.generators.{DefaultApplicationGenerator, DefaultLDAPGroupGenerator, DefaultUserWorkspaceGenerator}
+import com.heimdali.provisioning.SimpleMessage
 import com.heimdali.test.fixtures._
 import io.circe.Json
 import io.circe.syntax._
@@ -118,7 +119,7 @@ class AccountServiceSpec extends FlatSpec with MockFactory with Matchers {
     workspaceService.create _ expects userWorkspace returning IO.pure(savedWorkspaceRequest)
     workspaceService.find _ expects id returning OptionT.some(savedWorkspaceRequest)
 
-    provisioningService.provision _ expects savedWorkspaceRequest returning IO.pure(NonEmptyList.one(""))
+    provisioningService.provision _ expects savedWorkspaceRequest returning IO.pure(NonEmptyList.one(SimpleMessage("")))
 
     val maybeWorkspace = accountService.createWorkspace(infraApproverUser).value.unsafeRunSync()
 

@@ -40,7 +40,12 @@ object ProvisionTask extends LazyLogging {
       val endLogging: Kleisli[F, ProvisionResult, ProvisionResult] =
         Kleisli[F, ProvisionResult, ProvisionResult] { result =>
           F.delay {
-            result.messages.map(m => logger.debug("---- RESULT: {}", m))
+            result.messages.map(m =>
+              m match {
+                case SimpleMessage(m) => logger.debug("---- RESULT: {}", m)
+                case ExceptionMessage(m, t) => logger.error(m, t)
+              }
+            )
             logger.debug("<<<< {} ----", provisionable.getClass.getSimpleName)
             result
           }

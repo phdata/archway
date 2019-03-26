@@ -10,7 +10,7 @@ import com.heimdali.services.ProvisioningService
 class DefaultProvisioningService[F[_] : Effect : Timer](appContext: AppContext[F])
   extends ProvisioningService[F] {
 
-  override def provision(workspace: WorkspaceRequest): F[NonEmptyList[String]] = {
+  override def provision(workspace: WorkspaceRequest): F[NonEmptyList[Message]] = {
     import com.heimdali.provisioning.ProvisionTask._
 
     val combined: List[ReaderT[F, AppContext[F], ProvisionResult]] =

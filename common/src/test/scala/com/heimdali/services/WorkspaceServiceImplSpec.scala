@@ -8,6 +8,7 @@ import cats.syntax.applicative._
 import com.heimdali.AppContext
 import com.heimdali.clients._
 import com.heimdali.models._
+import com.heimdali.provisioning.SimpleMessage
 import com.heimdali.repositories.{MemberRepository, _}
 import com.heimdali.test.fixtures.{id, _}
 import doobie._
@@ -154,7 +155,7 @@ class WorkspaceServiceImplSpec
     approvalRepository.findByWorkspaceId _ expects id returning List(firstApproval).pure[ConnectionIO]
     approvalRepository.findByWorkspaceId _ expects id returning List(firstApproval, secondApproval).pure[ConnectionIO]
 
-    (provisioningService.provision(_: WorkspaceRequest)) expects * returning NonEmptyList.one("").pure[IO]
+    (provisioningService.provision(_: WorkspaceRequest)) expects * returning NonEmptyList.one(SimpleMessage("")).pure[IO]
 
     projectServiceImpl.approve(id, approval(instant)).unsafeRunSync()
     projectServiceImpl.approve(id, approval(instant)).unsafeRunSync()

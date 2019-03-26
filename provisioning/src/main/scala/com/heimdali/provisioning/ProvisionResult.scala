@@ -3,7 +3,7 @@ package com.heimdali.provisioning
 import cats._
 import cats.data._
 
-sealed trait ProvisionResult { def messages: NonEmptyList[String] }
+sealed trait ProvisionResult { def messages: NonEmptyList[Message] }
 
 object ProvisionResult {
 
@@ -22,40 +22,38 @@ object ProvisionResult {
 }
 
 case object Unknown extends ProvisionResult {
-  override def messages: NonEmptyList[String] = NonEmptyList.one(s"Undetermined provisioning result")
+  override def messages: NonEmptyList[Message] = NonEmptyList.one(SimpleMessage(s"Undetermined provisioning result"))
 }
 
 case class NoOp(provisionType: String) extends ProvisionResult {
-  override def messages: NonEmptyList[String] = NonEmptyList.one(s"Nothing to do for $provisionType")
+  override def messages: NonEmptyList[Message] = NonEmptyList.one(SimpleMessage(s"Nothing to do for $provisionType"))
 }
 
-case class Error(messages: NonEmptyList[String]) extends ProvisionResult
+case class Error(messages: NonEmptyList[Message]) extends ProvisionResult
 
 object Error {
 
   def apply[A](a: A, exception: Throwable)(implicit show: Show[A]): Error = {
     exception.printStackTrace()
     apply(NonEmptyList.of(
-      s"""${show.show(a)} FAILED due to ${exception.getMessage}"""
+      ExceptionMessage(s"""${show.show(a)} FAILED due to ${exception.getMessage}""", exception)
     ))
   }
 
 }
 
-case class Success(messages: NonEmptyList[String]) extends ProvisionResult
+case class Success(messages: NonEmptyList[Message]) extends ProvisionResult
 
 object Success {
 
   def apply[A](a: A, message: String)(implicit show: Show[A]): Success =
     apply(NonEmptyList.of(
-      s"${show.show(a)} SUCCEEDED",
-      s"${show.show(a)}: $message"
-    ))
+      SimpleMessage(s"${show.show(a)} SUCCEEDED, $message")))
 
 
   def apply[A](a: A)(implicit show: Show[A]): Success =
     apply(NonEmptyList.one(
-      s"${show.show(a)} SUCCEEDED"
+      SimpleMessage(s"${show.show(a)} SUCCEEDED")
     ))
 
 }
