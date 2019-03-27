@@ -20,7 +20,7 @@ case ${COMPONENT} in
     (api)
         case ${CMD} in
             (start)
-                mv generated.conf runtime.conf
+                cp -f generated.conf runtime.conf
                 sed -i -E 's/([[:alpha:]\.]+)\=(.*)/\1\="\2"/g' runtime.conf
                 sed -i -E 's/([[:alpha:]\.]+)\="(true|false)"/\1\=\2/g' runtime.conf
                 sed -i -E 's/([[:alpha:]\.]+)\="[:digit:]+"/\1\=\2/g' runtime.conf
