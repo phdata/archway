@@ -155,7 +155,7 @@ class WorkspaceServiceImplSpec
     approvalRepository.findByWorkspaceId _ expects id returning List(firstApproval).pure[ConnectionIO]
     approvalRepository.findByWorkspaceId _ expects id returning List(firstApproval, secondApproval).pure[ConnectionIO]
 
-    (provisioningService.provision(_: WorkspaceRequest)) expects * returning NonEmptyList.one(SimpleMessage("")).pure[IO]
+    (provisioningService.provision(_: WorkspaceRequest)) expects * returning NonEmptyList.one(SimpleMessage(Some(1l), "")).pure[IO]
 
     projectServiceImpl.approve(id, approval(instant)).unsafeRunSync()
     projectServiceImpl.approve(id, approval(instant)).unsafeRunSync()

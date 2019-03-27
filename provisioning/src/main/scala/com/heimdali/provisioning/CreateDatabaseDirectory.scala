@@ -19,21 +19,21 @@ object CreateDatabaseDirectory {
 
   implicit def provisioner[F[_] : Effect : Timer]: ProvisionTask[F, CreateDatabaseDirectory] =
     ProvisionTask.instance[F, CreateDatabaseDirectory] { create =>
-      Kleisli[F, AppContext[F], ProvisionResult] { config =>
-        config
+      Kleisli[F, WorkspaceContext[F], ProvisionResult] { case (id, context) =>
+        context
           .hdfsClient
           .createDirectory(create.location, create.onBehalfOf)
           .attempt
           .flatMap {
-            case Left(exception) => Effect[F].pure(Error(create, exception))
+            case Left(exception) => Effect[F].pure(Error(id, create, exception))
             case Right(_) =>
               for {
                 time <- Timer[F].clock.realTime(MILLISECONDS)
-                _ <- config
+                _ <- context
                   .databaseRepository
                   .directoryCreated(create.workspaceId, Instant.ofEpochMilli(time))
-                  .transact[F](config.transactor)
-              } yield Success(create)
+                  .transact[F](context.transactor)
+              } yield Success(id, create)
           }
       }
     }

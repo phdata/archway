@@ -17,21 +17,21 @@ object CreateResourcePool {
 
   implicit def provisioner[F[_] : Effect : Timer]: ProvisionTask[F, CreateResourcePool] =
     ProvisionTask.instance { create =>
-      Kleisli { config =>
-        config
+      Kleisli[F, WorkspaceContext[F], ProvisionResult] { case (id, context) =>
+        context
           .yarnClient
           .createPool(create.name, create.cores, create.memory)
           .attempt
           .flatMap {
-            case Left(exception) => Effect[F].pure(Error(create, exception))
+            case Left(exception) => Effect[F].pure(Error(id, create, exception))
             case Right(_) =>
               for {
                 time <- Timer[F].clock.realTime(scala.concurrent.duration.MILLISECONDS)
-                _ <- config
+                _ <- context
                   .yarnRepository
                   .complete(create.id, Instant.ofEpochMilli(time))
-                  .transact(config.transactor)
-              } yield Success(create)
+                  .transact(context.transactor)
+              } yield Success(id, create)
           }
       }
     }

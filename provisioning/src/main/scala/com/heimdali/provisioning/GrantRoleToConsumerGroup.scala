@@ -21,9 +21,9 @@ object GrantRoleToConsumerGroup {
 
   implicit def provisioner[F[_] : Effect : Timer]: ProvisionTask[F, GrantRoleToConsumerGroup] =
     ProvisionTask.instance { grant =>
-      Kleisli { config =>
+      Kleisli { case (id, context) =>
         Effect[F].delay {
-          config
+          context
             .sentryClient
             .grantPrivilege(
               grant.roleName,
@@ -32,15 +32,15 @@ object GrantRoleToConsumerGroup {
             )
         }.attempt
           .flatMap {
-            case Left(exception) => Effect[F].pure(Error(grant, exception))
+            case Left(exception) => Effect[F].pure(Error(id, grant, exception))
             case Right(_) =>
               for {
                 time <- Timer[F].clock.realTime(scala.concurrent.duration.MILLISECONDS)
-                _ <- config
+                _ <- context
                   .applicationRepository
                   .consumerGroupAccess(grant.applicationId, Instant.ofEpochMilli(time))
-                  .transact(config.transactor)
-              } yield Success(grant)
+                  .transact(context.transactor)
+              } yield Success(id, grant)
           }
       }
     }

@@ -84,7 +84,7 @@ class DefaultProvisioningServiceSpec extends FlatSpec with MockFactory with Matc
       memberRepository.complete _ expects(id, standardUserDN) returning 0.pure[ConnectionIO]
     }
 
-    provisioningService.provision(savedWorkspaceRequest).unsafeRunSync()
+    provisioningService.provision(savedWorkspaceRequest).unsafeRunSync().map(x => println(x.message))
   }
 
   trait Context {

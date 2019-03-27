@@ -14,11 +14,11 @@ object RemoveMember {
 
   implicit def provisioner[F[_]](implicit F: Effect[F]): ProvisionTask[F, RemoveMember] =
     ProvisionTask.instance { remove =>
-      Kleisli[F, AppContext[F], ProvisionResult] { config =>
-        F.map(F.attempt(config.ldapClient.removeUser(remove.groupDN, remove.userDN).value)) {
-          case Left(exception) => Error(remove, exception)
-          case Right(Some(_)) => Success(remove)
-          case Right(None) => Success(remove, s"${remove.userDN} wasn't a member of ${remove.groupDN}")
+      Kleisli[F, WorkspaceContext[F], ProvisionResult] { case (id, context) =>
+        F.map(F.attempt(context.ldapClient.removeUser(remove.groupDN, remove.userDN).value)) {
+          case Left(exception) => Error(id, remove, exception)
+          case Right(Some(_)) => Success(id, remove)
+          case Right(None) => Success(id, remove, s"${remove.userDN} wasn't a member of ${remove.groupDN}")
         }
       }
     }

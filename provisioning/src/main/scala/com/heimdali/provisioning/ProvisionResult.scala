@@ -3,7 +3,8 @@ package com.heimdali.provisioning
 import cats._
 import cats.data._
 
-sealed trait ProvisionResult { def messages: NonEmptyList[Message] }
+sealed trait ProvisionResult {
+  def messages: NonEmptyList[Message] }
 
 object ProvisionResult {
 
@@ -22,22 +23,28 @@ object ProvisionResult {
 }
 
 case object Unknown extends ProvisionResult {
-  override def messages: NonEmptyList[Message] = NonEmptyList.one(SimpleMessage(s"Undetermined provisioning result"))
+  override def messages: NonEmptyList[Message] = NonEmptyList.one(SimpleMessage(None, s"Undetermined provisioning result"))
 }
 
 case class NoOp(provisionType: String) extends ProvisionResult {
-  override def messages: NonEmptyList[Message] = NonEmptyList.one(SimpleMessage(s"Nothing to do for $provisionType"))
+  override def messages: NonEmptyList[Message] = NonEmptyList.one(SimpleMessage(None, s"Nothing to do for $provisionType"))
 }
 
 case class Error(messages: NonEmptyList[Message]) extends ProvisionResult
 
 object Error {
 
-  def apply[A](a: A, exception: Throwable)(implicit show: Show[A]): Error = {
+  def apply[A](workspaceId: Option[Long], a: A, exception: Throwable)(implicit show: Show[A]): Error = {
     exception.printStackTrace()
+    val workspaceString = workspaceId.map(_.toString).getOrElse("unknown")
+    val message = s"""${show.show(a)} for workspace $workspaceString FAILED due to ${exception.getMessage}"""
     apply(NonEmptyList.of(
-      ExceptionMessage(s"""${show.show(a)} FAILED due to ${exception.getMessage}""", exception)
+      ExceptionMessage(workspaceId, message, exception)
     ))
+  }
+
+  def apply[A](workspaceId: Long, a: A, exception: Throwable)(implicit show: Show[A]): Error = {
+    apply(Some(workspaceId), a, exception)
   }
 
 }
@@ -46,14 +53,19 @@ case class Success(messages: NonEmptyList[Message]) extends ProvisionResult
 
 object Success {
 
-  def apply[A](a: A, message: String)(implicit show: Show[A]): Success =
+  def apply[A](workspaceId: Option[Long], a: A, message: String)(implicit show: Show[A]): Success = {
+    val workspaceString = workspaceId.map(_.toString).getOrElse("unknown")
+
     apply(NonEmptyList.of(
-      SimpleMessage(s"${show.show(a)} SUCCEEDED, $message")))
+      SimpleMessage(workspaceId, s"${show.show(a)} for workspace $workspaceString SUCCEEDED, $message")))
+  }
 
+  def apply[A](workspaceId: Option[Long], a: A)(implicit show: Show[A]): Success = {
+    val workspaceString = workspaceId.map(_.toString).getOrElse("unknown")
 
-  def apply[A](a: A)(implicit show: Show[A]): Success =
     apply(NonEmptyList.one(
-      SimpleMessage(s"${show.show(a)} SUCCEEDED")
+      SimpleMessage(workspaceId: Option[Long], s"${show.show(a)} for workspace $workspaceString SUCCEEDED")
     ))
+  }
 
 }

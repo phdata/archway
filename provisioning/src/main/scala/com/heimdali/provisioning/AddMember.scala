@@ -17,23 +17,23 @@ object AddMember {
 
   implicit def provisioner[F[_]](implicit F: Effect[F]): ProvisionTask[F, AddMember] =
     ProvisionTask.instance { add =>
-      Kleisli[F, AppContext[F], ProvisionResult] { config =>
-        config
+      Kleisli[F, WorkspaceContext[F], ProvisionResult] { case (id, context) =>
+        context
           .ldapClient
           .addUser(add.groupDN, add.distinguishedName)
           .value
           .attempt
           .map {
-            case Left(exception) => Error(add, exception)
-            case Right(Some(_)) => Success(add)
-            case Right(None) => Success(add, s"${add.distinguishedName} already belongs to ${add.groupDN}")
+            case Left(exception) => Error(id, add, exception)
+            case Right(Some(_)) => Success(id, add)
+            case Right(None) => Success(id, add, s"${add.distinguishedName} already belongs to ${add.groupDN}")
           }
           .flatMap {
             case out: Success =>
-              F.map(config
+              F.map(context
                 .memberRepository
                 .complete(add.ldapRegistrationId, add.distinguishedName)
-                .transact(config.transactor)) { _ => out }
+                .transact(context.transactor)) { _ => out }
           }
       }
     }

@@ -20,7 +20,7 @@ object GrantTopicAccess {
 
   implicit def provisioner[F[_] : Effect : Timer]: ProvisionTask[F, GrantTopicAccess] =
     ProvisionTask.instance(grant =>
-      Kleisli { context =>
+      Kleisli { case (id, context) =>
         grant.actions.traverse[F, Either[Throwable, Unit]] { action =>
           context
             .sentryClient
@@ -29,7 +29,7 @@ object GrantTopicAccess {
         }
           .map(_.combineAll)
           .flatMap {
-            case Left(exception) => Effect[F].pure(Error(grant, exception))
+            case Left(exception) => Effect[F].pure(Error(id, grant, exception))
             case Right(_) =>
               for {
                 time <- Timer[F].clock.realTime(scala.concurrent.duration.MILLISECONDS)
@@ -37,7 +37,7 @@ object GrantTopicAccess {
                   .topicGrantRepository
                   .topicAccess(grant.id, Instant.ofEpochMilli(time))
                   .transact(context.transactor)
-              } yield Success(grant)
+              } yield Success(id, grant)
           }
       }
     )

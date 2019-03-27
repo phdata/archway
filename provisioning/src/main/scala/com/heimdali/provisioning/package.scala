@@ -8,6 +8,8 @@ import com.heimdali.provisioning.ProvisionTask._
 
 package object provisioning {
 
+  type WorkspaceContext[F[_]] = (Option[Long], AppContext[F])
+
   implicit def registrationProvisioner[F[_] : Effect : Timer]: ProvisionTask[F, LDAPRegistration] =
     ProvisionTask.instance { registration =>
       for {
@@ -33,7 +35,7 @@ package object provisioning {
         setDiskQuota <- SetDiskQuota(hive.id.get, hive.location, hive.sizeInGB).provision[F]
         createDatabase <- CreateHiveDatabase(hive.id.get, hive.name, hive.location).provision[F]
         managers <- hive.managingGroup.provision[F]
-        readonly <- hive.readonlyGroup.map(_.provision[F]).getOrElse(Kleisli[F, AppContext[F], ProvisionResult](_ => Effect[F].liftIO(IO.pure(NoOp("hive database readonly")))))
+        readonly <- hive.readonlyGroup.map(_.provision[F]).getOrElse(Kleisli[F, WorkspaceContext[F], ProvisionResult](_ => Effect[F].liftIO(IO.pure(NoOp("hive database readonly")))))
       } yield createDirectory |+| setDiskQuota |+| createDatabase |+| managers |+| readonly
     }
 

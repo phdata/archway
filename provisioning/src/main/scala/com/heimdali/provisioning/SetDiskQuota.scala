@@ -18,21 +18,21 @@ object SetDiskQuota {
 
   implicit def provisioner[F[_] : Effect : Timer]: ProvisionTask[F, SetDiskQuota] =
     ProvisionTask.instance[F, SetDiskQuota] { set =>
-      Kleisli[F, AppContext[F], ProvisionResult] { config =>
-        config
+      Kleisli[F, WorkspaceContext[F], ProvisionResult] { case (id, context) =>
+        context
           .hdfsClient
           .setQuota(set.location, set.sizeInGB)
           .attempt
           .flatMap {
-            case Left(exception) => Effect[F].pure(Error(set, exception))
+            case Left(exception) => Effect[F].pure(Error(id, set, exception))
             case Right(_) =>
               for {
                 time <- Timer[F].clock.realTime(scala.concurrent.duration.MILLISECONDS)
-                _ <- config
+                _ <- context
                   .databaseRepository
                   .quotaSet(set.workspaceId, Instant.ofEpochMilli(time))
-                  .transact(config.transactor)
-              } yield Success(set)
+                  .transact(context.transactor)
+              } yield Success(id, set)
           }
       }
     }

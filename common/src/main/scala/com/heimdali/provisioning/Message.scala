@@ -6,12 +6,13 @@ import io.circe.Encoder
 
 sealed trait Message {
   val message: String
+  val workspaceId: Option[Long]
 }
 
-case class ExceptionMessage(override val message: String, exception: Throwable)
+case class ExceptionMessage(override val workspaceId: Option[Long], override val message: String, exception: Throwable)
     extends Message
 
-case class SimpleMessage(override val message: String) extends Message
+case class SimpleMessage(override val workspaceId: Option[Long], override val message: String) extends Message
 
 object Message {
   implicit final val encoder: Encoder[Message] =

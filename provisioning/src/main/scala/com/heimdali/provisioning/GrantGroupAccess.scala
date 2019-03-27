@@ -18,21 +18,21 @@ object GrantGroupAccess {
 
   implicit def provisioner[F[_] : Effect : Timer]: ProvisionTask[F, GrantGroupAccess] =
     ProvisionTask.instance { grant =>
-      Kleisli[F, AppContext[F], ProvisionResult] { config =>
-        config
+      Kleisli[F, WorkspaceContext[F], ProvisionResult] { case (id, context) =>
+        context
           .sentryClient
           .grantGroup(grant.groupName, grant.roleName)
           .attempt
           .flatMap {
-            case Left(exception) => Effect[F].pure(Error(grant, exception))
+            case Left(exception) => Effect[F].pure(Error(id, grant, exception))
             case Right(_) =>
               for {
                 time <- Timer[F].clock.realTime(scala.concurrent.duration.MILLISECONDS)
-                _ <- config
+                _ <- context
                   .ldapRepository
                   .groupAssociated(grant.ldapId, Instant.ofEpochMilli(time))
-                  .transact(config.transactor)
-              } yield Success(grant)
+                  .transact(context.transactor)
+              } yield Success(id, grant)
           }
       }
     }

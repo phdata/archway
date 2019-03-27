@@ -18,21 +18,21 @@ object CreateRole {
 
   implicit def provisioner[F[_] : Effect : Timer]: ProvisionTask[F, CreateRole] =
     ProvisionTask.instance { create =>
-      Kleisli[F, AppContext[F], ProvisionResult] { config =>
-        config
+      Kleisli[F, WorkspaceContext[F], ProvisionResult] { case (id, context) =>
+        context
           .sentryClient
           .createRole(create.name)
           .attempt
           .flatMap {
-            case Left(exception) => Effect[F].pure(Error(create, exception))
+            case Left(exception) => Effect[F].pure(Error(id, create, exception))
             case Right(_) =>
               for {
                 time <- Timer[F].clock.realTime(scala.concurrent.duration.MILLISECONDS)
-                _ <- config
+                _ <- context
                   .ldapRepository
                   .roleCreated(create.id, Instant.ofEpochMilli(time))
-                  .transact(config.transactor)
-              } yield Success(create)
+                  .transact(context.transactor)
+              } yield Success(id, create)
           }
       }
     }

@@ -20,17 +20,17 @@ object CreateHiveDatabase {
 
   implicit def provisioner[F[_] : Effect : Timer]: ProvisionTask[F, CreateHiveDatabase] =
     ProvisionTask.instance { create =>
-      Kleisli[F, AppContext[F], ProvisionResult] { config =>
-        config.hiveClient.createDatabase(create.name, create.location).attempt.flatMap {
-          case Left(exception) => Effect[F].pure(Error(create, exception))
+      Kleisli[F, WorkspaceContext[F], ProvisionResult] { case (id, context) =>
+        context.hiveClient.createDatabase(create.name, create.location).attempt.flatMap {
+          case Left(exception) => Effect[F].pure(Error(id, create, exception))
           case Right(_) =>
             for {
               time <- Timer[F].clock.realTime(MILLISECONDS)
-              _ <- config
+              _ <- context
                 .databaseRepository
                 .databaseCreated(create.workspaceId, Instant.ofEpochMilli(time))
-                .transact(config.transactor)
-            } yield Success(create)
+                .transact(context.transactor)
+            } yield Success(id, create)
         }
       }
     }

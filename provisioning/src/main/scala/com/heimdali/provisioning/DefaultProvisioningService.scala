@@ -13,16 +13,18 @@ class DefaultProvisioningService[F[_] : Effect : Timer](appContext: AppContext[F
   override def provision(workspace: WorkspaceRequest): F[NonEmptyList[Message]] = {
     import com.heimdali.provisioning.ProvisionTask._
 
-    val combined: List[ReaderT[F, AppContext[F], ProvisionResult]] =
+    val workspaceContext = (workspace.id, appContext)
+
+    val combined: List[ReaderT[F, WorkspaceContext[F], ProvisionResult]] =
       for {
         datas <- workspace.data.map(_.provision)
         dbLiasion <- workspace.data.map(d => AddMember(d.id.get, d.managingGroup.ldapRegistration.distinguishedName, workspace.requestedBy).provision)
-        yarns <- if (workspace.processing.isEmpty) List(Kleisli[F, AppContext[F], ProvisionResult](_ => Effect[F].pure(NoOp("resource pool")))) else workspace.processing.map(_.provision)
-        apps <- if (workspace.applications.isEmpty) List(Kleisli[F, AppContext[F], ProvisionResult](_ => Effect[F].pure(NoOp("application")))) else workspace.applications.map(_.provision)
-        appLiasion <- if (workspace.applications.isEmpty) List(Kleisli[F, AppContext[F], ProvisionResult](_ => Effect[F].pure(NoOp("application liasion")))) else workspace.applications.map(d => AddMember(d.id.get, d.group.distinguishedName, workspace.requestedBy).provision)
+        yarns <- if (workspace.processing.isEmpty) List(Kleisli[F, WorkspaceContext[F], ProvisionResult](_ => Effect[F].pure(NoOp("resource pool")))) else workspace.processing.map(_.provision)
+        apps <- if (workspace.applications.isEmpty) List(Kleisli[F, WorkspaceContext[F], ProvisionResult](_ => Effect[F].pure(NoOp("application")))) else workspace.applications.map(_.provision)
+        appLiasion <- if (workspace.applications.isEmpty) List(Kleisli[F, WorkspaceContext[F], ProvisionResult](_ => Effect[F].pure(NoOp("application liasion")))) else workspace.applications.map(d => AddMember(d.id.get, d.group.distinguishedName, workspace.requestedBy).provision)
       } yield (datas, dbLiasion, yarns, apps, appLiasion).mapN(_ |+| _ |+| _ |+| _ |+| _)
 
-    combined.sequence.map(_.combineAll).apply(appContext).map(_.messages)
+    combined.sequence.map(_.combineAll).apply(workspaceContext).map(_.messages)
   }
 
 }

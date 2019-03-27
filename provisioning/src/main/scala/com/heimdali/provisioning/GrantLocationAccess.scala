@@ -18,21 +18,21 @@ object GrantLocationAccess {
 
   implicit def provisioner[F[_] : Effect : Timer]: ProvisionTask[F, GrantLocationAccess] =
     ProvisionTask.instance { grant =>
-      Kleisli[F, AppContext[F], ProvisionResult] { config =>
-        config
+      Kleisli[F, WorkspaceContext[F], ProvisionResult] { case (id, context) =>
+        context
           .sentryClient
           .enableAccessToLocation(grant.location, grant.roleName)
           .attempt
           .flatMap {
-            case Left(exception) => Effect[F].pure(Error(grant, exception))
+            case Left(exception) => Effect[F].pure(Error(id, grant, exception))
             case Right(_) =>
               for {
                 time <- Timer[F].clock.realTime(scala.concurrent.duration.MILLISECONDS)
-                _ <- config
+                _ <- context
                   .databaseGrantRepository
                   .locationGranted(grant.id, Instant.ofEpochMilli(time))
-                  .transact(config.transactor)
-              } yield Success(grant)
+                  .transact(context.transactor)
+              } yield Success(id, grant)
           }
       }
     }
