@@ -67,7 +67,6 @@ package object config {
     implicit val serviceOverrideDecoder: Decoder[ServiceOverride] = deriveDecoder
 
     implicit val decoder: Decoder[ClusterConfig] = Decoder.instance { cursor =>
-      println(cursor.value.pretty(Printer.spaces2))
       for {
         sessionRefresh <- cursor.downField("sessionRefresh").as[String].map(Duration.apply)
         url <- cursor.downField("url").as[String]

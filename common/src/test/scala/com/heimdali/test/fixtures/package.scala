@@ -1,10 +1,10 @@
 package com.heimdali.test
 
-import java.time.{Clock, Instant, ZoneId}
+import java.time.Instant
 
 import cats.effect.{IO, Resource}
 import com.heimdali.clients.CMClient
-import com.heimdali.config.{AppConfig, ClusterConfig, CredentialsConfig, ServiceOverride}
+import com.heimdali.config.AppConfig
 import com.heimdali.models.{Manager, ReadOnly, _}
 import com.heimdali.services.{CDH, Cluster, ClusterApp}
 import io.circe._
@@ -16,7 +16,6 @@ import org.http4s.dsl.io._
 import org.http4s.implicits._
 
 import scala.collection.immutable.Map
-import scala.concurrent.duration._
 import scala.io.Source
 
 package object fixtures {
@@ -67,8 +66,6 @@ package object fixtures {
   val cluster = Cluster("cluster name", "Cluster", "", List(yarnApp), CDH(""), "GOOD_HEALTH")
 
   def approval(instant: Instant = timer.instant) = Approval(Risk, standardUsername, instant)
-
-  import io.circe.generic.auto._
   val Right(appConfig) = io.circe.config.parser.decodePath[AppConfig]("heimdali")
 
   def defaultLDAPAttributes(dn: String, cn: String): List[(String, String)] =

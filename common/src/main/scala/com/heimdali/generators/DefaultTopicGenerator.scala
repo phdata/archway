@@ -12,12 +12,14 @@ class DefaultTopicGenerator[F[_]](appConfig: AppConfig,
 
   override def topicFor(name: String, partitions: Int, replicationFactor: Int, workspaceRequest: WorkspaceRequest): F[KafkaTopic] = {
     val workspaceSystemName = WorkspaceGenerator.generateName(workspaceRequest.name)
-    val registeredName = s"$workspaceSystemName.$name"
-    val snakedName = s"${workspaceSystemName}_$name"
+    val topicSystemName = WorkspaceGenerator.generateName(name)
+    val registeredName = s"$workspaceSystemName.$topicSystemName"
+    val managerName = s"${workspaceSystemName}_$topicSystemName"
+    val readonlyName = s"${workspaceSystemName}_${topicSystemName}_ro"
 
     for {
-      manager <- ldapGroupGenerator.generate(snakedName, s"cn=$snakedName,${appConfig.ldap.groupPath}", s"role_$snakedName", workspaceRequest)
-      readonly <- ldapGroupGenerator.generate(s"${snakedName}_ro", s"cn=${snakedName}_ro,${appConfig.ldap.groupPath}", s"role_${snakedName}_ro", workspaceRequest)
+      manager <- ldapGroupGenerator.generate(managerName, s"cn=$managerName,${appConfig.ldap.groupPath}", s"role_$managerName", workspaceRequest)
+      readonly <- ldapGroupGenerator.generate(readonlyName, s"cn=$readonlyName,${appConfig.ldap.groupPath}", s"role_$readonlyName", workspaceRequest)
     } yield KafkaTopic(
       registeredName,
       partitions,
