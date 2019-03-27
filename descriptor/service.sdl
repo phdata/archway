@@ -566,7 +566,7 @@
       "configWriter": {
         "generators": [
           {
-            "filename": "runtime.conf",
+            "filename": "generated.conf",
             "configFormat": "properties"
           }
         ]
