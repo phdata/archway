@@ -20,9 +20,6 @@ case ${COMPONENT} in
     (api)
         case ${CMD} in
             (start)
-                sed -i -E 's/([[:alpha:]\.]+)\=(.*)/\1\="\2"/g' runtime.conf
-                sed -i -E 's/([[:alpha:]\.]+)\="(true|false)"/\1\=\2/g' runtime.conf
-                sed -i -E 's/([[:alpha:]\.]+)\="[:digit:]+"/\1\=\2/g' runtime.conf
                 exec $JAVA_HOME/bin/java -Djavax.security.auth.useSubjectCredsOnly=false \
                           -Djava.security.auth.login.config=${CONF_DIR}/jaas.conf \
                           -Dconfig.resource=production.conf \
