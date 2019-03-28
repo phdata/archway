@@ -6,7 +6,7 @@ import cats.implicits._
 import com.heimdali.clients.{LDAPClient, LDAPUser}
 import com.heimdali.config.{ApprovalConfig, RestConfig, WorkspaceConfig, WorkspaceConfigItem}
 import com.heimdali.models.WorkspaceRequest
-import com.heimdali.generators.{DefaultApplicationGenerator, DefaultLDAPGroupGenerator, DefaultUserWorkspaceGenerator}
+import com.heimdali.generators.{DefaultApplicationGenerator, DefaultLDAPGroupGenerator, DefaultTopicGenerator, DefaultUserWorkspaceGenerator}
 import com.heimdali.provisioning.SimpleMessage
 import com.heimdali.test.fixtures._
 import io.circe.Json
@@ -103,12 +103,9 @@ class AccountServiceSpec extends FlatSpec with MockFactory with Matchers {
   }
 
    it should "save and create a workspace" in new Context {
-    // once for test
-    configService.getAndSetNextGid _ expects() returning 123L.pure[IO]
-    // once for actual
-    configService.getAndSetNextGid _ expects() returning 123L.pure[IO]
+    configService.getAndSetNextGid _ expects() returning 123L.pure[IO] repeat 6 times()
 
-    val service = new DefaultUserWorkspaceGenerator[IO](appConfig, ldapGenerator, appGenerator)
+    val service = new DefaultUserWorkspaceGenerator[IO](appConfig, ldapGenerator, appGenerator, topicGenerator)
 
     val userWorkspace: WorkspaceRequest = (for {
       template <- service.defaults(infraApproverUser)
@@ -141,7 +138,8 @@ class AccountServiceSpec extends FlatSpec with MockFactory with Matchers {
     val configService = mock[ConfigService[IO]]
     val ldapGenerator = new DefaultLDAPGroupGenerator[IO](appConfig, configService)
     val appGenerator = new DefaultApplicationGenerator[IO](appConfig, ldapGenerator)
-    val templateService = new DefaultUserWorkspaceGenerator[IO](appConfig, ldapGenerator, appGenerator)
+    val topicGenerator = new DefaultTopicGenerator[IO](appConfig, ldapGenerator)
+    val templateService = new DefaultUserWorkspaceGenerator[IO](appConfig, ldapGenerator, appGenerator, topicGenerator)
     val provisioningService = mock[ProvisioningService[IO]]
 
     lazy val accountService = new AccountServiceImpl[IO](ldapClient, restConfig, approvalConfig, workspaceConfig, workspaceService, templateService, provisioningService)

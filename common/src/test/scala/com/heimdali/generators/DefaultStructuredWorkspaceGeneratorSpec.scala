@@ -68,7 +68,8 @@ class DefaultStructuredWorkspaceGeneratorSpec extends FlatSpec with MockFactory 
     val expected = WorkspaceRequest("Open Sesame", "A brief summary", "A longer description", "structured", standardUserDN, timer.instant, Compliance(phiData = false, pciData = false, piiData = false), singleUser = false, data = List(raw, staging, modeled), processing = List(yarn))
     val ldapGenerator = new DefaultLDAPGroupGenerator[IO](appConfig, configService)
     val appGenerator = new DefaultApplicationGenerator[IO](appConfig, ldapGenerator)
-    val templateService = new DefaultStructuredWorkspaceGenerator[IO](appConfig, ldapGenerator, appGenerator)
+    val topicGenerator = new DefaultTopicGenerator[IO](appConfig, ldapGenerator)
+    val templateService = new DefaultStructuredWorkspaceGenerator[IO](appConfig, ldapGenerator, appGenerator, topicGenerator)
     val actual: WorkspaceRequest = templateService.workspaceFor(input).unsafeRunSync()
     actual.copy(requestDate = timer.instant) should be(expected.copy(requestDate = timer.instant))
   }

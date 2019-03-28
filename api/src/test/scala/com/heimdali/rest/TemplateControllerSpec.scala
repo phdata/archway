@@ -46,8 +46,9 @@ class TemplateControllerSpec
     val configService: ConfigService[IO] = mock[ConfigService[IO]]
     val ldapGroupGenerator = new DefaultLDAPGroupGenerator[IO](appConfig, configService)
     val applicationGenerator: ApplicationGenerator[IO] = new DefaultApplicationGenerator[IO](appConfig, ldapGroupGenerator)
-    val simpleTemplateService: WorkspaceGenerator[IO, SimpleTemplate] = new DefaultSimpleWorkspaceGenerator[IO](appConfig, ldapGroupGenerator, applicationGenerator)
-    val structuredTemplateService: WorkspaceGenerator[IO, StructuredTemplate] = new DefaultStructuredWorkspaceGenerator[IO](appConfig, ldapGroupGenerator, applicationGenerator)
+    val topicGenerator: TopicGenerator[IO] = new DefaultTopicGenerator[IO](appConfig, ldapGroupGenerator)
+    val simpleTemplateService: WorkspaceGenerator[IO, SimpleTemplate] = new DefaultSimpleWorkspaceGenerator[IO](appConfig, ldapGroupGenerator, applicationGenerator, topicGenerator)
+    val structuredTemplateService: WorkspaceGenerator[IO, StructuredTemplate] = new DefaultStructuredWorkspaceGenerator[IO](appConfig, ldapGroupGenerator, applicationGenerator, topicGenerator)
 
     lazy val templateController: TemplateController[IO] = new TemplateController[IO](authService, simpleTemplateService, structuredTemplateService)
   }

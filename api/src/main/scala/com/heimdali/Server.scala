@@ -92,10 +92,10 @@ object Server extends IOApp {
 
       ldapGroupGenerator = LDAPGroupGenerator.instance(config, configService, _.ldapGroupGenerator)
       applicationGenerator = ApplicationGenerator.instance(config, ldapGroupGenerator, _.applicationGenerator)
-      userTemplateGenerator = WorkspaceGenerator.instance[F, WorkspaceGenerator[F, UserTemplate]](config, ldapGroupGenerator, applicationGenerator, _.userGenerator)
-      simpleTemplateGenerator = WorkspaceGenerator.instance[F, WorkspaceGenerator[F, SimpleTemplate]](config, ldapGroupGenerator, applicationGenerator, _.simpleGenerator)
-      structuredTemplateGenerator = WorkspaceGenerator.instance[F, WorkspaceGenerator[F, StructuredTemplate]](config, ldapGroupGenerator, applicationGenerator, _.structuredGenerator)
       topicGenerator = TopicGenerator.instance(config, ldapGroupGenerator, _.topicGenerator)
+      userTemplateGenerator = WorkspaceGenerator.instance[F, WorkspaceGenerator[F, UserTemplate]](config, ldapGroupGenerator, applicationGenerator, topicGenerator, _.userGenerator)
+      simpleTemplateGenerator = WorkspaceGenerator.instance[F, WorkspaceGenerator[F, SimpleTemplate]](config, ldapGroupGenerator, applicationGenerator, topicGenerator, _.simpleGenerator)
+      structuredTemplateGenerator = WorkspaceGenerator.instance[F, WorkspaceGenerator[F, StructuredTemplate]](config, ldapGroupGenerator, applicationGenerator, topicGenerator, _.structuredGenerator)
 
       provisionService = new DefaultProvisioningService[F](context)
       workspaceService = new WorkspaceServiceImpl[F](ldapClient, yarnRepository, hiveDatabaseRepository, ldapRepository, workspaceRepository, complianceRepository, approvalRepository, metaXA, memberRepository, topicRepository, applicationRepository, context, provisionService)

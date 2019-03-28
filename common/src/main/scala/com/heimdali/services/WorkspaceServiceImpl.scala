@@ -106,7 +106,25 @@ class WorkspaceServiceImpl[F[_] : ConcurrentEffect : ContextShift](ldapClient: L
           _ <- memberRepository.create(workspace.requestedBy, appLdap.id.get)
         } yield app.copy(id = Some(newApplicationId))
       }
-    } yield updatedWorkspace.copy(id = Some(newWorkspaceId), data = insertedHive, processing = insertedYarn, applications = insertedApplications))
+
+      insertedTopics <- workspace.kafkaTopics.traverse[ConnectionIO, KafkaTopic] { topic =>
+        for {
+          managerLdap <- ldapRepository.create(topic.managingRole.ldapRegistration)
+          managerId <- appConfig.topicGrantRepository.create(topic.managingRole.copy(ldapRegistration = managerLdap))
+          manager = topic.managingRole.copy(id = Some(managerId), ldapRegistration = managerLdap)
+
+          _ <- memberRepository.create(workspace.requestedBy, managerLdap.id.get)
+
+          readonlyLdap <- ldapRepository.create(topic.readonlyRole.ldapRegistration)
+          readonlyId <- appConfig.topicGrantRepository.create(topic.readonlyRole.copy(ldapRegistration = readonlyLdap))
+          readonly = topic.readonlyRole.copy(id = Some(readonlyId), ldapRegistration = readonlyLdap)
+
+          beforeCreate = topic.copy(managingRole = manager, readonlyRole = readonly)
+          newTopicId <- topicRepository.create(beforeCreate)
+          _ <- workspaceRepository.linkTopic(newWorkspaceId, newTopicId)
+        } yield beforeCreate.copy(id = Some(newTopicId))
+      }
+    } yield updatedWorkspace.copy(id = Some(newWorkspaceId), data = insertedHive, processing = insertedYarn, applications = insertedApplications, kafkaTopics = insertedTopics))
       .transact(transactor)
 
   override def approve(id: Long, approval: Approval): F[Approval] =

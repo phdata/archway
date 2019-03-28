@@ -9,7 +9,8 @@ import com.heimdali.models._
 
 class DefaultSimpleWorkspaceGenerator[F[_]](appConfig: AppConfig,
                                             ldapGenerator: LDAPGroupGenerator[F],
-                                            applicationGenerator: ApplicationGenerator[F])
+                                            applicationGenerator: ApplicationGenerator[F],
+                                            topicGenerator: TopicGenerator[F])
                                            (implicit clock: Clock[F], val F: Sync[F])
   extends WorkspaceGenerator[F, SimpleTemplate] {
 

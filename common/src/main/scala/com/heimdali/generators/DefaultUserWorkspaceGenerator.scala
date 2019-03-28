@@ -9,7 +9,8 @@ import com.heimdali.models._
 
 class DefaultUserWorkspaceGenerator[F[_]](appConfig: AppConfig,
                                           ldapGroupGenerator: LDAPGroupGenerator[F],
-                                          applicationGenerator: ApplicationGenerator[F])
+                                          applicationGenerator: ApplicationGenerator[F],
+                                          topicGenerator: TopicGenerator[F])
                                          (implicit val clock: Clock[F], val F: Sync[F])
   extends WorkspaceGenerator[F, UserTemplate] {
 
@@ -42,6 +43,7 @@ class DefaultUserWorkspaceGenerator[F[_]](appConfig: AppConfig,
           s"cn=user_${template.username},${appConfig.ldap.groupPath}",
           s"role_user_${template.username}",
           workspace)
+      topic <- topicGenerator.topicFor("default", 1, 1, workspace)
     } yield workspace.copy(
       data = List(HiveAllocation(
         s"user_${template.username}",
@@ -49,7 +51,8 @@ class DefaultUserWorkspaceGenerator[F[_]](appConfig: AppConfig,
         appConfig.workspaces.user.defaultSize,
         managerHive,
         None
-      ))
+      )),
+      kafkaTopics = List(topic)
     )
   }
 

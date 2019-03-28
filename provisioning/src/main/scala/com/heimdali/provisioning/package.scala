@@ -52,7 +52,6 @@ package object provisioning {
       for {
         create <- CreateKafkaTopic(topic.id.get, topic.name, topic.partitions, topic.replicationFactor).provision
         managingRole <- topic.managingRole.provision
-        /* manager <- AddMember(topic.managingRole.ldapRegistration.id.get, topic.managingRole.ldapRegistration.distinguishedName).provision */
         readonlyRole <- topic.readonlyRole.provision
       } yield create |+| managingRole |+| readonlyRole /* |+| manager */
     )

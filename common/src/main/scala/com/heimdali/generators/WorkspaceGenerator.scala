@@ -24,13 +24,14 @@ object WorkspaceGenerator {
   def instance[F[_], A <: WorkspaceGenerator[F, _]](appConfig: AppConfig,
                                                     ldapGroupGenerator: LDAPGroupGenerator[F],
                                                     applicationGenerator: ApplicationGenerator[F],
+                                                    topicGenerator: TopicGenerator[F],
                                                     className: GeneratorConfig => String)
                                                    (implicit clock: Clock[F], F: Sync[F]): A =
     Class
       .forName(className(appConfig.generators))
       .getConstructors
       .head
-      .newInstance(appConfig, ldapGroupGenerator, applicationGenerator, clock, F)
+      .newInstance(appConfig, ldapGroupGenerator, applicationGenerator, topicGenerator, clock, F)
       .asInstanceOf[A]
 
 

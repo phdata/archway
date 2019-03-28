@@ -24,6 +24,7 @@ class DefaultSimpleWorkspaceGeneratorSpec extends FlatSpec with MockFactory with
 
     val ldapGenerator = new DefaultLDAPGroupGenerator[IO](appConfig, configService)
     val appGenerator = new DefaultApplicationGenerator[IO](appConfig, ldapGenerator)
+    val topicGenerator = new DefaultTopicGenerator[IO](appConfig, ldapGenerator)
     val input = SimpleTemplate("Open Sesame", "A brief summary", "A longer description", standardUserDN, Compliance(phiData = false, pciData = false, piiData = false), Some(1), Some(1), Some(1))
     val workspace = WorkspaceRequest(
       "Open Sesame",
@@ -45,7 +46,7 @@ class DefaultSimpleWorkspaceGeneratorSpec extends FlatSpec with MockFactory with
 
     val expected = workspace.copy(applications = List(appGenerator.applicationFor("default", workspace).unsafeRunSync()))
 
-    val templateService = new DefaultSimpleWorkspaceGenerator[IO](appConfig, ldapGenerator, appGenerator)
+    val templateService = new DefaultSimpleWorkspaceGenerator[IO](appConfig, ldapGenerator, appGenerator, topicGenerator)
 
     val actual: WorkspaceRequest = templateService.workspaceFor(input).unsafeRunSync()
     actual.copy(requestDate = timer.instant) should be(expected.copy(requestDate = timer.instant))

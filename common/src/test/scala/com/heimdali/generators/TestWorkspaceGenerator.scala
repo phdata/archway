@@ -6,7 +6,8 @@ import com.heimdali.models.{User, UserTemplate, WorkspaceRequest}
 
 class TestWorkspaceGenerator[F[_]](appConfig: AppConfig,
                                    ldapGroupGenerator: LDAPGroupGenerator[F],
-                                   applicationGenerator: ApplicationGenerator[F])
+                                   applicationGenerator: ApplicationGenerator[F],
+                                   topicGenerator: TopicGenerator[F])
                                   (implicit clock: Clock[F], F: Sync[F])
   extends WorkspaceGenerator[F, UserTemplate] {
 

@@ -22,7 +22,9 @@ class DefaultProvisioningService[F[_] : Effect : Timer](appContext: AppContext[F
         yarns <- if (workspace.processing.isEmpty) List(Kleisli[F, WorkspaceContext[F], ProvisionResult](_ => Effect[F].pure(NoOp("resource pool")))) else workspace.processing.map(_.provision)
         apps <- if (workspace.applications.isEmpty) List(Kleisli[F, WorkspaceContext[F], ProvisionResult](_ => Effect[F].pure(NoOp("application")))) else workspace.applications.map(_.provision)
         appLiasion <- if (workspace.applications.isEmpty) List(Kleisli[F, WorkspaceContext[F], ProvisionResult](_ => Effect[F].pure(NoOp("application liasion")))) else workspace.applications.map(d => AddMember(d.id.get, d.group.distinguishedName, workspace.requestedBy).provision)
-      } yield (datas, dbLiasion, yarns, apps, appLiasion).mapN(_ |+| _ |+| _ |+| _ |+| _)
+        topics <- if (workspace.kafkaTopics.isEmpty) List(Kleisli[F, WorkspaceContext[F], ProvisionResult](_ => Effect[F].pure(NoOp("kafka topic")))) else workspace.kafkaTopics.map(_.provision)
+        topicLiaison <- if (workspace.kafkaTopics.isEmpty) List(Kleisli[F, WorkspaceContext[F], ProvisionResult](_ => Effect[F].pure(NoOp("application liaison")))) else workspace.kafkaTopics.map(d => AddMember(d.id.get, d.managingRole.ldapRegistration.distinguishedName, workspace.requestedBy).provision)
+      } yield (datas, dbLiasion, yarns, apps, appLiasion, topics, topicLiaison).mapN(_ |+| _ |+| _ |+| _ |+| _ |+| _ |+| _)
 
     combined.sequence.map(_.combineAll).apply(workspaceContext).map(_.messages)
   }
