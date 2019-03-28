@@ -58,6 +58,10 @@ const PersonalWorkspace = ({ workspace, services, requestWorkspace, loading }: P
                   <div>RESOURCE POOL</div>
                   <div style={{ fontWeight: 200 }}>{workspace.processing[0].pool_name}</div>
                 </div>
+                {workspace.topics[0] && <div style={{ padding: '10px' }}>
+                  <div>KAFKA TOPIC</div>
+                  <div style={{ fontWeight: 200 }}>{workspace.topics[0].name}</div>
+                </div>}
               </div>
               <Row gutter={12}>
                 <Col span={24} xl={8} style={{ marginTop: 10 }}>
