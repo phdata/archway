@@ -54,7 +54,7 @@ const Home = ({ cluster, personalWorkspace, profileLoading, requestWorkspace, op
           </a>
         </h2>
       </div>
-      <div style={{ display: 'flex', marginTop: 25, marginBottom: 25 }}>
+      <div style={{ display: 'flex', padding: 25 }}>
         <ServiceDisplay
           name="Hive"
           status={new Status<HiveService>(cluster.services.hive)}
