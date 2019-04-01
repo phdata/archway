@@ -25,7 +25,7 @@ const RecentWorkspaces = ({ onSelectWorkspace }: Props) => {
   );
 
   return (
-    <div style={{ padding: '0 25px' }}>
+    <div style={{ padding: '0 12px' }}>
       <h3 style={{ paddingTop: '16px' }}>
         {recentWorkspaces.length > 0 ? 'RECENT WORKSPACES' : 'NO RECENT WORKSPACES'}
       </h3>
