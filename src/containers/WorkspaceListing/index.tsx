@@ -205,7 +205,7 @@ class WorkspaceList extends React.PureComponent<Props> {
         />
         {listingMode === 'cards' && (
           <Row>
-            <Col span={24}>
+            <Col span={24} style={{ padding: '0 12px' }}>
               <List
                 grid={{ gutter: 12, column: 2 }}
                 locale={{ emptyText }}

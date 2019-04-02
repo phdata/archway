@@ -25,12 +25,12 @@ const RecentWorkspaces = ({ onSelectWorkspace }: Props) => {
   );
 
   return (
-    <div>
+    <div style={{ padding: '0 12px' }}>
       <h3 style={{ paddingTop: '16px' }}>
         {recentWorkspaces.length > 0 ? 'RECENT WORKSPACES' : 'NO RECENT WORKSPACES'}
       </h3>
       <List
-        grid={{ gutter: 16, column: 1, lg: 2 }}
+        grid={{ gutter: 25, column: 1, lg: 2 }}
         dataSource={recentWorkspaces}
         renderItem={renderItem}
       />
