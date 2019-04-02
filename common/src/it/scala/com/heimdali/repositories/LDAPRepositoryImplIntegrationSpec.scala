@@ -2,7 +2,6 @@ package com.heimdali.repositories
 
 import java.time.Instant
 
-import com.heimdali.repositories.LDAPRepositoryImpl
 import com.heimdali.test.fixtures._
 import doobie.scalatest.IOChecker
 import org.scalatest.{FunSuite, Matchers}

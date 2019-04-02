@@ -26,65 +26,69 @@ class DefaultProvisioningServiceSpec extends FlatSpec with MockFactory with Matc
 
   it should "provision a workspace" in new Context {
     inSequence {
-      hdfsClient.createDirectory _ expects(savedHive.location, None) returning IO
-        .pure(new Path(savedHive.location))
-      hiveDatabaseRepository.directoryCreated _ expects(id, timer.instant) returning 0.pure[ConnectionIO]
-      hdfsClient.setQuota _ expects(savedHive.location, savedHive.sizeInGB) returning IO
-        .pure(HDFSAllocation(savedHive.location, savedHive.sizeInGB))
-      hiveDatabaseRepository.quotaSet _ expects(id, timer.instant) returning 0.pure[ConnectionIO]
-      hiveClient.createDatabase _ expects(savedHive.name, savedHive.location) returning IO.unit
-      hiveDatabaseRepository.databaseCreated _ expects(id, timer.instant) returning 0.pure[ConnectionIO]
+      inSequence {
+        hdfsClient.createDirectory _ expects(savedHive.location, None) returning IO
+          .pure(new Path(savedHive.location))
+        hiveDatabaseRepository.directoryCreated _ expects(id, timer.instant) returning 0.pure[ConnectionIO]
+        hdfsClient.setQuota _ expects(savedHive.location, savedHive.sizeInGB) returning IO
+          .pure(HDFSAllocation(savedHive.location, savedHive.sizeInGB))
+        hiveDatabaseRepository.quotaSet _ expects(id, timer.instant) returning 0.pure[ConnectionIO]
+        hiveClient.createDatabase _ expects(savedHive.name, savedHive.location) returning IO.unit
+        hiveDatabaseRepository.databaseCreated _ expects(id, timer.instant) returning 0.pure[ConnectionIO]
 
-      ldapClient.createGroup _ expects(savedLDAP.commonName, *) returning IO.unit
-      ldapRepository.groupCreated _ expects(id, timer.instant) returning 0.pure[ConnectionIO]
-      sentryClient.createRole _ expects savedLDAP.sentryRole returning IO.unit
-      ldapRepository.roleCreated _ expects(id, timer.instant) returning 0.pure[ConnectionIO]
-      sentryClient.grantGroup _ expects(savedLDAP.commonName, savedLDAP.sentryRole) returning IO.unit
-      ldapRepository.groupAssociated _ expects(id, timer.instant) returning 0.pure[ConnectionIO]
-      sentryClient.enableAccessToDB _ expects(savedHive.name, savedLDAP.sentryRole, Manager) returning IO.unit
-      grantRepository.databaseGranted _ expects(id, timer.instant) returning 0.pure[ConnectionIO]
-      sentryClient.enableAccessToLocation _ expects(savedHive.location, savedLDAP.sentryRole) returning IO.unit
-      grantRepository.locationGranted _ expects(id, timer.instant) returning 0.pure[ConnectionIO]
+        ldapClient.createGroup _ expects(savedLDAP.commonName, *) returning IO.unit
+        ldapRepository.groupCreated _ expects(id, timer.instant) returning 0.pure[ConnectionIO]
+        sentryClient.createRole _ expects savedLDAP.sentryRole returning IO.unit
+        ldapRepository.roleCreated _ expects(id, timer.instant) returning 0.pure[ConnectionIO]
+        sentryClient.grantGroup _ expects(savedLDAP.commonName, savedLDAP.sentryRole) returning IO.unit
+        ldapRepository.groupAssociated _ expects(id, timer.instant) returning 0.pure[ConnectionIO]
+        sentryClient.enableAccessToDB _ expects(savedHive.name, savedLDAP.sentryRole, Manager) returning IO.unit
+        grantRepository.databaseGranted _ expects(id, timer.instant) returning 0.pure[ConnectionIO]
+        sentryClient.enableAccessToLocation _ expects(savedHive.location, savedLDAP.sentryRole) returning IO.unit
+        grantRepository.locationGranted _ expects(id, timer.instant) returning 0.pure[ConnectionIO]
 
-      ldapClient.createGroup _ expects(savedLDAP.commonName, *) returning IO.unit
-      ldapRepository.groupCreated _ expects(id, timer.instant) returning 0.pure[ConnectionIO]
-      sentryClient.createRole _ expects savedLDAP.sentryRole returning IO.unit
-      ldapRepository.roleCreated _ expects(id, timer.instant) returning 0.pure[ConnectionIO]
-      sentryClient.grantGroup _ expects(savedLDAP.commonName, savedLDAP.sentryRole) returning IO.unit
-      ldapRepository.groupAssociated _ expects(id, timer.instant) returning 0.pure[ConnectionIO]
-      sentryClient.enableAccessToDB _ expects(savedHive.name, savedLDAP.sentryRole, ReadOnly) returning IO.unit
-      grantRepository.databaseGranted _ expects(id, timer.instant) returning 0.pure[ConnectionIO]
-      sentryClient.enableAccessToLocation _ expects(savedHive.location, savedLDAP.sentryRole) returning IO.unit
-      grantRepository.locationGranted _ expects(id, timer.instant) returning 0.pure[ConnectionIO]
+        ldapClient.createGroup _ expects(savedLDAP.commonName, *) returning IO.unit
+        ldapRepository.groupCreated _ expects(id, timer.instant) returning 0.pure[ConnectionIO]
+        sentryClient.createRole _ expects savedLDAP.sentryRole returning IO.unit
+        ldapRepository.roleCreated _ expects(id, timer.instant) returning 0.pure[ConnectionIO]
+        sentryClient.grantGroup _ expects(savedLDAP.commonName, savedLDAP.sentryRole) returning IO.unit
+        ldapRepository.groupAssociated _ expects(id, timer.instant) returning 0.pure[ConnectionIO]
+        sentryClient.enableAccessToDB _ expects(savedHive.name, savedLDAP.sentryRole, ReadOnly) returning IO.unit
+        grantRepository.databaseGranted _ expects(id, timer.instant) returning 0.pure[ConnectionIO]
+        sentryClient.enableAccessToLocation _ expects(savedHive.location, savedLDAP.sentryRole) returning IO.unit
+        grantRepository.locationGranted _ expects(id, timer.instant) returning 0.pure[ConnectionIO]
+      }
+
+      inSequence {
+        ldapClient.addUser _ expects(savedLDAP.distinguishedName, standardUserDN) returning OptionT.some(standardUserDN)
+        memberRepository.complete _ expects(id, standardUserDN) returning 0.pure[ConnectionIO]
+      }
+
+      inSequence {
+        yarnClient.createPool _ expects(poolName, maxCores, maxMemoryInGB) returning IO.unit
+        yarnRepository.complete _ expects(id, timer.instant) returning 0.pure[ConnectionIO]
+      }
+
+      inSequence {
+        ldapClient.createGroup _ expects(savedLDAP.commonName, *) returning IO.unit
+        ldapRepository.groupCreated _ expects(id, timer.instant) returning 0.pure[ConnectionIO]
+        sentryClient.createRole _ expects savedLDAP.sentryRole returning IO.unit
+        ldapRepository.roleCreated _ expects(id, timer.instant) returning 0.pure[ConnectionIO]
+        sentryClient.grantGroup _ expects(savedLDAP.commonName, savedLDAP.sentryRole) returning IO.unit
+        ldapRepository.groupAssociated _ expects(id, timer.instant) returning 0.pure[ConnectionIO]
+        sentryClient.grantPrivilege _ expects(*, *, *) returning IO.unit
+        applicationRepository.consumerGroupAccess _ expects(id, timer.instant) returning 0.pure[ConnectionIO]
+      }
+
+      inSequence {
+        ldapClient.addUser _ expects(savedLDAP.distinguishedName, standardUserDN) returning OptionT.some(standardUserDN)
+        memberRepository.complete _ expects(id, standardUserDN) returning 0.pure[ConnectionIO]
+      }
+
+      workspaceRepository.markProvisioned _ expects(id, *) returning 0.pure[ConnectionIO]
     }
 
-    inSequence {
-      ldapClient.addUser _ expects(savedLDAP.distinguishedName, standardUserDN) returning OptionT.some(standardUserDN)
-      memberRepository.complete _ expects(id, standardUserDN) returning 0.pure[ConnectionIO]
-    }
-
-    inSequence {
-      yarnClient.createPool _ expects(poolName, maxCores, maxMemoryInGB) returning IO.unit
-      yarnRepository.complete _ expects(id, timer.instant) returning 0.pure[ConnectionIO]
-    }
-
-    inSequence {
-      ldapClient.createGroup _ expects(savedLDAP.commonName, *) returning IO.unit
-      ldapRepository.groupCreated _ expects(id, timer.instant) returning 0.pure[ConnectionIO]
-      sentryClient.createRole _ expects savedLDAP.sentryRole returning IO.unit
-      ldapRepository.roleCreated _ expects(id, timer.instant) returning 0.pure[ConnectionIO]
-      sentryClient.grantGroup _ expects(savedLDAP.commonName, savedLDAP.sentryRole) returning IO.unit
-      ldapRepository.groupAssociated _ expects(id, timer.instant) returning 0.pure[ConnectionIO]
-      sentryClient.grantPrivilege _ expects(*, *, *) returning IO.unit
-      applicationRepository.consumerGroupAccess _ expects(id, timer.instant) returning 0.pure[ConnectionIO]
-    }
-
-    inSequence {
-      ldapClient.addUser _ expects(savedLDAP.distinguishedName, standardUserDN) returning OptionT.some(standardUserDN)
-      memberRepository.complete _ expects(id, standardUserDN) returning 0.pure[ConnectionIO]
-    }
-
-    provisioningService.provision(savedWorkspaceRequest).unsafeRunSync().map(x => println(x.message))
+    provisioningService.provision(savedWorkspaceRequest, 0).unsafeRunSync().map(x => println(x.message))
   }
 
   trait Context {
@@ -134,7 +138,7 @@ class DefaultProvisioningServiceSpec extends FlatSpec with MockFactory with Matc
       topicGrantRepository,
       applicationRepository)
 
-    lazy val provisioningService = new DefaultProvisioningService[IO](appContext)
+    lazy val provisioningService = new DefaultProvisioningService[IO](appContext, ExecutionContext.global)
   }
 
 }

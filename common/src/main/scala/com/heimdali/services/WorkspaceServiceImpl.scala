@@ -5,7 +5,6 @@ import java.util.concurrent.Executors
 import cats.data._
 import cats.effect._
 import cats.implicits._
-import cats.effect.implicits._
 import com.heimdali.clients._
 import com.heimdali.models._
 import com.heimdali.AppContext
@@ -14,8 +13,6 @@ import com.typesafe.scalalogging.LazyLogging
 import doobie._
 import doobie.implicits._
 import doobie.util.transactor.Transactor
-
-import scala.concurrent.ExecutionContext
 
 class WorkspaceServiceImpl[F[_] : ConcurrentEffect : ContextShift](ldapClient: LDAPClient[F],
                                                                    yarnRepository: YarnRepository,
@@ -32,8 +29,6 @@ class WorkspaceServiceImpl[F[_] : ConcurrentEffect : ContextShift](ldapClient: L
                                                                    provisioningService: ProvisioningService[F])
   extends WorkspaceService[F]
     with LazyLogging {
-
-  private val provisionContext = ExecutionContext.fromExecutor(Executors.newFixedThreadPool(10))
 
   def fillHive(dbs: List[HiveAllocation]): F[List[HiveAllocation]] =
     dbs.map {
@@ -129,12 +124,8 @@ class WorkspaceServiceImpl[F[_] : ConcurrentEffect : ContextShift](ldapClient: L
 
   override def approve(id: Long, approval: Approval): F[Approval] =
     approvalRepository.create(id, approval).transact(transactor).flatMap { approval =>
-      find(id).value.flatMap {
-        case Some(workspace) if workspace.approvals.lengthCompare(2) == 0 =>
-          logger.info("starting provisioning for {}", workspace.name)
-          ContextShift[F].evalOn(provisionContext)(provisioningService.provision(workspace)).start.void
-        case _ =>
-          ConcurrentEffect[F].liftIO(IO.unit)
+      find(id).value.flatMap { ws =>
+        provisioningService.provision(ws.get, 0)// TODO match
       }.map(_ => approval)
     }
 

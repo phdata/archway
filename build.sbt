@@ -20,6 +20,13 @@ lazy val provisioning = (project in file("provisioning"))
     common % "test->it"
   )
 
+lazy val `provisioning-app` = (project in file("provisioning-app"))
+  .settings(Common.settings: _*)
+  .settings(Provisioning.provisioningSettings: _*)
+  .dependsOn(
+    provisioning
+  )
+
 lazy val api = (project in file("api"))
   .settings(Common.settings: _*)
   .settings(API.apiSettings: _*)

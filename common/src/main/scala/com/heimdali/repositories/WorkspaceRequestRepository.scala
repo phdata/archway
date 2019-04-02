@@ -1,5 +1,7 @@
 package com.heimdali.repositories
 
+import java.time.Instant
+
 import cats.data.OptionT
 import com.heimdali.models.{ApproverRole, WorkspaceRequest, WorkspaceSearchResult}
 import doobie._
@@ -12,6 +14,10 @@ trait WorkspaceRequestRepository {
   def list(username: String): ConnectionIO[List[WorkspaceSearchResult]]
 
   def find(id: Long): OptionT[ConnectionIO, WorkspaceRequest]
+
+  def findUnprovisioned(): ConnectionIO[List[WorkspaceRequest]]
+
+  def markProvisioned(workspaceId: Long, time: Instant):  ConnectionIO[Int]
 
   def linkHive(workspaceId: Long, hiveDatabaseId: Long): ConnectionIO[Int]
 

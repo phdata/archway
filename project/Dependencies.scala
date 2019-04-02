@@ -157,4 +157,6 @@ object Dependencies {
   val provisioningDependencies =
     (coreTest ++ hadoop)
       .map(exclusions)
+  
+  val provisioningAppDependencies = (cats ++ catsEffect)
 }

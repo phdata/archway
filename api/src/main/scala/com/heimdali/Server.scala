@@ -51,6 +51,7 @@ object Server extends IOApp {
       dbConnectionEC <- ExecutionContexts.fixedThreadPool(10)
       dbTransactionEC <- ExecutionContexts.cachedThreadPool
       emailEC <- ExecutionContexts.fixedThreadPool(10)
+      provisionEC <-   ExecutionContexts.fixedThreadPool(10)
 
       h4Client = BlazeClientBuilder[F](httpEC)
         .withRequestTimeout(5 minutes)
@@ -97,7 +98,7 @@ object Server extends IOApp {
       simpleTemplateGenerator = WorkspaceGenerator.instance[F, WorkspaceGenerator[F, SimpleTemplate]](config, ldapGroupGenerator, applicationGenerator, topicGenerator, _.simpleGenerator)
       structuredTemplateGenerator = WorkspaceGenerator.instance[F, WorkspaceGenerator[F, StructuredTemplate]](config, ldapGroupGenerator, applicationGenerator, topicGenerator, _.structuredGenerator)
 
-      provisionService = new DefaultProvisioningService[F](context)
+      provisionService = new DefaultProvisioningService[F](context, provisionEC)
       workspaceService = new WorkspaceServiceImpl[F](ldapClient, yarnRepository, hiveDatabaseRepository, ldapRepository, workspaceRepository, complianceRepository, approvalRepository, metaXA, memberRepository, topicRepository, applicationRepository, context, provisionService)
       accountService = new AccountServiceImpl[F](ldapClient, config.rest, config.approvers, config.workspaces, workspaceService, userTemplateGenerator, provisionService)
       authService = new AuthServiceImpl[F](accountService)

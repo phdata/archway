@@ -6,6 +6,10 @@ import com.heimdali.provisioning.Message
 
 trait ProvisioningService[F[_]] {
 
-  def provision(workspace: WorkspaceRequest): F[NonEmptyList[Message]]
+  def provision(workspace: WorkspaceRequest, requiredApprovals: Int = 2): F[NonEmptyList[Message]]
+
+  def findUnprovisioned(): F[List[WorkspaceRequest]]
+
+  def provisionAll(): F[Unit]
 
 }

@@ -21,6 +21,12 @@ class WorkspaceRequestRepositoryImpl
   override def find(id: Long): OptionT[ConnectionIO, WorkspaceRequest] =
     OptionT(WorkspaceRequestRepositoryImpl.Statements.find(id).option)
 
+  override def findUnprovisioned(): ConnectionIO[List[WorkspaceRequest]] =
+    WorkspaceRequestRepositoryImpl.Statements.findUnprovisioned.to[List]
+
+  override def markProvisioned(workspaceId: Long, time: Instant): ConnectionIO[Int] =
+    WorkspaceRequestRepositoryImpl.Statements.markProvisioned(workspaceId, time).run
+
   override def create(workspaceRequest: WorkspaceRequest): ConnectionIO[Long] =
     WorkspaceRequestRepositoryImpl.Statements.insert(workspaceRequest).withUniqueGeneratedKeys("id")
 
@@ -41,6 +47,7 @@ class WorkspaceRequestRepositoryImpl
 
   override def pendingQueue(role: ApproverRole): ConnectionIO[List[WorkspaceSearchResult]] =
     WorkspaceRequestRepositoryImpl.Statements.pending(role).to[List]
+
 }
 
 object WorkspaceRequestRepositoryImpl {
@@ -164,6 +171,12 @@ object WorkspaceRequestRepositoryImpl {
 
     def find(id: Long): Query0[WorkspaceRequest] =
       (selectFragment ++ whereAnd(fr"wr.id = $id")).query[WorkspaceRequest]
+
+    def findUnprovisioned(): Query0[WorkspaceRequest] =
+      (selectFragment ++ whereAnd(fr"wr.workspace_created is null")).query[WorkspaceRequest]
+
+    def markProvisioned(id: Long, time: Instant): Update0 =
+      sql"update workspace_request SET workspace_created = $time where id = $id".update
 
     def findByUsername(username: String): Query0[WorkspaceRequest] =
       (selectFragment ++ whereAnd(fr"wr.requested_by = $username", fr"wr.single_user = true")).query[WorkspaceRequest]

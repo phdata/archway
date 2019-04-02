@@ -19,5 +19,4 @@ trait WorkspaceService[F[_]] {
   def hiveDetails(id: Long): F[List[HiveDatabase]]
 
   def reviewerList(role: ApproverRole): F[List[WorkspaceSearchResult]]
-
 }
