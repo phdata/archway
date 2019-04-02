@@ -29,13 +29,11 @@ const RecentWorkspaces = ({ onSelectWorkspace }: Props) => {
       <h3 style={{ paddingTop: '16px' }}>
         {recentWorkspaces.length > 0 ? 'RECENT WORKSPACES' : 'NO RECENT WORKSPACES'}
       </h3>
-      <div>
-        <List
-          grid={{ gutter: 25, column: 1, lg: 2 }}
-          dataSource={recentWorkspaces}
-          renderItem={renderItem}
-        />
-      </div>
+      <List
+        grid={{ gutter: 25, column: 1, lg: 2 }}
+        dataSource={recentWorkspaces}
+        renderItem={renderItem}
+      />
     </div>
   );
 };
