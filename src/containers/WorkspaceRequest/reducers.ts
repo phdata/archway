@@ -10,6 +10,7 @@ import {
   CREATE_WORKSPACE_FAILURE,
   CLEAR_REQUEST,
 } from './actions';
+import { PAGE_BEHAVIOR } from './constants';
 
 const initialState = fromJS({
   loading: false,
@@ -18,15 +19,11 @@ const initialState = fromJS({
     name: '',
     summary: '',
     description: '',
-    compliance: {
-      phi_data: false,
-      pci_data: false,
-      pii_data: false,
-    }
+    compliance: {},
   },
   template: false,
   workspace: false,
-  currentPage: 1,
+  currentPage: PAGE_BEHAVIOR,
   error: '',
 });
 

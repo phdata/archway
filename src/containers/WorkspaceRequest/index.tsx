@@ -2,9 +2,15 @@ import * as React from 'react';
 import { Row, Col, Button, Icon, Tabs, notification } from 'antd';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import { BehaviorPage, OverviewPage, SummaryPage } from './components';
+import { BehaviorPage, OverviewPage, CompliancePage, SummaryPage } from './components';
 import * as actions from './actions';
 import * as selectors from './selectors';
+import {
+  PAGE_BEHAVIOR,
+  PAGE_DETAILS,
+  PAGE_COMPLIANCE,
+  PAGE_REVIEW,
+} from './constants';
 import { RequestInput } from '../../models/RequestInput';
 import { Workspace } from '../../models/Workspace';
 import { Profile } from '../../models/Profile';
@@ -14,7 +20,7 @@ interface Props {
   behavior: string;
   request: RequestInput;
   workspace?: Workspace;
-  currentPage: number;
+  currentPage: string;
   loading: boolean;
   error: string;
   nextStepEnabled: boolean;
@@ -63,22 +69,29 @@ class WorkspaceRequest extends React.Component<Props> {
       <div style={{ textAlign: 'center', color: 'black' }}>
         <h1 style={{ paddingTop: 16 }}>New Workspace Request</h1>
   
-        <Tabs tabBarStyle={{ textAlign: 'center' }} activeKey={`${currentPage}`}>
-          <Tabs.TabPane tab="Behavior" key="1">
+        <Tabs tabBarStyle={{ textAlign: 'center' }} activeKey={currentPage}>
+          <Tabs.TabPane tab="Behavior" key={PAGE_BEHAVIOR}>
             <BehaviorPage
               selected={behavior}
               onChange={setBehavior}
             />
           </Tabs.TabPane>
-  
-          <Tabs.TabPane tab="Details" key="2">
+
+          <Tabs.TabPane tab="Details" key={PAGE_DETAILS}>
             <OverviewPage
               request={request}
               setRequest={setRequest}
             />
           </Tabs.TabPane>
   
-          <Tabs.TabPane tab="Review" key="3">
+          <Tabs.TabPane tab="Compliance" key={PAGE_COMPLIANCE}>
+            <CompliancePage
+              request={request}
+              setRequest={setRequest}
+            />
+          </Tabs.TabPane>
+
+          <Tabs.TabPane tab="Review" key={PAGE_REVIEW}>
             <SummaryPage
               workspace={workspace}
               profile={profile}
@@ -92,7 +105,7 @@ class WorkspaceRequest extends React.Component<Props> {
               size="large"
               type="primary"
               block
-              disabled={loading || (currentPage === 1)}
+              disabled={loading || (currentPage === PAGE_BEHAVIOR)}
               onClick={gotoPrevPage}
             >
               <Icon type="left" />
@@ -107,7 +120,7 @@ class WorkspaceRequest extends React.Component<Props> {
               disabled={!nextStepEnabled}
               onClick={gotoNextPage}
             >
-              {(currentPage === 3) ? (
+              {(currentPage === PAGE_REVIEW) ? (
                 loading ? (
                   <Icon type="loading" spin style={{ color: 'white' }} />
                 ) : (

@@ -42,7 +42,7 @@ export function setWorkspace(workspace: Workspace) {
 }
 
 export const SET_CURRENT_PAGE = 'SET_CURRENT_PAGE';
-export function setCurrentPage(page: number) {
+export function setCurrentPage(page: string) {
   return {
     type: SET_CURRENT_PAGE,
     page,

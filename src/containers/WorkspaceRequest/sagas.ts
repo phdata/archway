@@ -12,6 +12,12 @@ import {
   createWorkspaceRequest,
   createWorkspaceFailure,
 } from './actions';
+import {
+  PAGE_BEHAVIOR,
+  PAGE_DETAILS,
+  PAGE_COMPLIANCE,
+  PAGE_REVIEW,
+} from './constants';
 
 /* tslint:disable:no-var-requires */
 const router = require('connected-react-router/immutable');
@@ -30,9 +36,11 @@ function* behaviorChanged() {
 
 function* nextPageListener() {
   const currentPage = yield select((s: any) => s.get('request').get('currentPage'));
-  if (currentPage === 1) {
-    yield put(setCurrentPage(currentPage + 1));
-  } else if (currentPage === 2) {
+  if (currentPage === PAGE_BEHAVIOR) {
+    yield put(setCurrentPage(PAGE_DETAILS));
+  } else if (currentPage === PAGE_DETAILS) {
+    yield put(setCurrentPage(PAGE_COMPLIANCE));
+  } else if (currentPage === PAGE_COMPLIANCE) {
     const request = yield select((s: any) => s.get('request').get('request').toJS());
     if (request) {
       yield put(setLoading(true));
@@ -43,9 +51,9 @@ function* nextPageListener() {
       const workspace = yield call(Api.processTemplate, token, requestType, workspaceRequest);
       yield put(setWorkspace(workspace));
       yield put(setLoading(false));
-      yield put(setCurrentPage(currentPage + 1));
+      yield put(setCurrentPage(PAGE_REVIEW));
     }
-  } else {
+  } else if (currentPage === PAGE_REVIEW) {
     const token = yield select((s: any) => s.get('login').get('token'));
     const workspace = yield select((s: any) => s.get('request').get('workspace'));
     yield put(createWorkspaceRequest());
@@ -65,8 +73,12 @@ function* nextPage() {
 
 function* prevPageListener() {
   const currentPage = yield select((s: any) => s.get('request').get('currentPage'));
-  if (currentPage > 1) {
-    yield put(setCurrentPage(currentPage - 1));
+  if (currentPage === PAGE_REVIEW) {
+    yield put(setCurrentPage(PAGE_COMPLIANCE));
+  } else if (currentPage === PAGE_COMPLIANCE) {
+    yield put(setCurrentPage(PAGE_DETAILS));
+  } else if (currentPage === PAGE_DETAILS) {
+    yield put(setCurrentPage(PAGE_BEHAVIOR));
   }
 }
 

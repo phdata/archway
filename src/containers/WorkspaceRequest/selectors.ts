@@ -3,6 +3,12 @@ import * as selectors from '../../redux/selectors';
 import { RequestInput } from '../../models/RequestInput';
 import { Workspace } from '../../models/Workspace';
 import { Profile } from '../../models/Profile';
+import {
+  PAGE_BEHAVIOR,
+  PAGE_DETAILS,
+  PAGE_COMPLIANCE,
+  PAGE_REVIEW,
+} from './constants';
 
 export const getBehavior = () => createSelector(
   selectors.requestSelector,
@@ -43,14 +49,21 @@ export const isNextStepEnabled = () => createSelector(
     }
 
     switch (requestState.get('currentPage')) {
-      case 1:
+      case PAGE_BEHAVIOR:
         return !!requestState.get('template');
-      case 2:
+      case PAGE_DETAILS:
       {
         const request: RequestInput = requestState.get('request').toJS();
         return !!request.name && !!request.summary && !!request.description;
       }
-      case 3:
+      case PAGE_COMPLIANCE:
+      {
+        const request: RequestInput = requestState.get('request').toJS();
+        return (request.compliance.pci_data !== undefined)
+          && (request.compliance.pii_data !== undefined)
+          && (request.compliance.phi_data !== undefined);
+      }
+      case PAGE_REVIEW:
         return !!requestState.get('workspace');
       default:
         return false;

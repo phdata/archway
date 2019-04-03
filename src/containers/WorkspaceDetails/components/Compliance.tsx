@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Icon } from 'antd';
 
 interface ItemProps {
-  checked: boolean;
+  checked?: boolean;
   children: string;
   icon: string;
 }
@@ -20,9 +20,9 @@ const ComplianceItem = ({ checked, children, icon }: ItemProps) => (
 );
 
 interface Props {
-  pci: boolean;
-  phi: boolean;
-  pii: boolean;
+  pci?: boolean;
+  phi?: boolean;
+  pii?: boolean;
 }
 
 const Compliance = ({ pci, phi, pii }: Props) => (

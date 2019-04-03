@@ -86,9 +86,9 @@ export interface SecurityGroup {
 }
 
 export interface Compliance {
-  phi_data: boolean;
-  pci_data: boolean;
-  pii_data: boolean;
+  phi_data?: boolean;
+  pci_data?: boolean;
+  pii_data?: boolean;
 }
 
 export interface DatabaseGrant {
