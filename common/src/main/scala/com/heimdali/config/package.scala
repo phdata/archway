@@ -1,16 +1,12 @@
 package com.heimdali
 
 import java.net.URLEncoder
-import java.util.concurrent.TimeUnit
 
 import cats.effect.{Async, ContextShift, Resource}
 import doobie._
 import doobie.hikari.HikariTransactor
 import doobie.util.transactor.Strategy
-
-import scala.concurrent.duration._
-import io.circe.Decoder.Result
-import io.circe.{Decoder, DecodingFailure, HCursor, Printer}
+import io.circe.{Decoder, HCursor}
 
 import scala.concurrent.ExecutionContext
 import scala.concurrent.duration.{Duration, FiniteDuration}
@@ -124,6 +120,19 @@ package object config {
 
   }
 
+  case class ProvisioningConfig(threadPoolSize: Int, provisionInterval: FiniteDuration)
+
+  object ProvisioningConfig {
+
+    implicit val decoder: Decoder[ProvisioningConfig] = Decoder.instance { cursor =>
+      for {
+        provisionInterval <- cursor.downField("provisionInterval").as[String]
+          .map(d => Duration.apply(d).asInstanceOf[FiniteDuration])
+        threadpoolSize <- cursor.downField("threadPoolSize").as[Int]
+      } yield ProvisioningConfig(threadpoolSize, provisionInterval)
+    }
+  }
+
   case class DatabaseConfig(meta: DatabaseConfigItem, hive: DatabaseConfigItem)
 
   case class KafkaConfig(zookeeperConnect: String)
@@ -144,7 +153,8 @@ package object config {
                        ldap: LDAPConfig,
                        db: DatabaseConfig,
                        workspaces: WorkspaceConfig,
-                       kafka: KafkaConfig)
+                       kafka: KafkaConfig,
+                       provisioning: ProvisioningConfig)
 
   object AppConfig {
 
@@ -161,6 +171,7 @@ package object config {
     implicit val databaseConfigDecoder: Decoder[DatabaseConfig] = deriveDecoder
     implicit val kafkaConfigDecoder: Decoder[KafkaConfig] = deriveDecoder
     implicit val generatorConfigDecoder: Decoder[GeneratorConfig] = deriveDecoder
+    implicit val provisioningConfigDecoder: Decoder[ProvisioningConfig] = ProvisioningConfig.decoder
     implicit val appConfigDecoder: Decoder[AppConfig] = deriveDecoder
 
   }

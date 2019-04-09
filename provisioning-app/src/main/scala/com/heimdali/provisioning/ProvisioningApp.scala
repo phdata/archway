@@ -22,10 +22,7 @@ object ProvisioningApp extends IOApp {
 
   override def run(args: List[String]): IO[ExitCode] = {
     createProvisioningService[IO]().use { provisioningService =>
-      fs2.Stream.awakeEvery[IO](15 minutes)
-        .evalMap(_ => provisioningService.provisionAll())
-        .compile
-        .drain
+      provisioningService.scheduleProvisioning()
     }.as(ExitCode.Success)
   }
 
@@ -46,7 +43,7 @@ object ProvisioningApp extends IOApp {
       httpEC <- ExecutionContexts.fixedThreadPool(10)
       dbConnectionEC <- ExecutionContexts.fixedThreadPool(10)
       dbTransactionEC <- ExecutionContexts.cachedThreadPool
-      provisionEC <-   ExecutionContexts.fixedThreadPool(10)
+      provisionEC <-   ExecutionContexts.fixedThreadPool(config.provisioning.threadPoolSize)
 
       h4Client = BlazeClientBuilder[F](httpEC)
         .withRequestTimeout(5 minutes)

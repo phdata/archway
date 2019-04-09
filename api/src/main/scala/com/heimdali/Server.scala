@@ -51,7 +51,7 @@ object Server extends IOApp {
       dbConnectionEC <- ExecutionContexts.fixedThreadPool(10)
       dbTransactionEC <- ExecutionContexts.cachedThreadPool
       emailEC <- ExecutionContexts.fixedThreadPool(10)
-      provisionEC <-   ExecutionContexts.fixedThreadPool(10)
+      provisionEC <-   ExecutionContexts.fixedThreadPool(config.provisioning.threadPoolSize)
 
       h4Client = BlazeClientBuilder[F](httpEC)
         .withRequestTimeout(5 minutes)
