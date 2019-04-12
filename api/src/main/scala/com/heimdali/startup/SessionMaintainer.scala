@@ -7,23 +7,17 @@ import com.heimdali.services.LoginContextProvider
 
 import scala.concurrent.duration.FiniteDuration
 
-trait SessionMaintainer[F[_]] {
+class SessionMaintainer[F[_] : Sync](clusterConfig: ClusterConfig,
+                                     loginContextProvider: LoginContextProvider)
+                                    (implicit timer: Timer[F])
+  extends ScheduledJob[F] {
 
-  def setup: F[Unit]
-
-}
-
-class SessionMaintainerImpl[F[_] : Sync](clusterConfig: ClusterConfig,
-                            loginContextProvider: LoginContextProvider)
-                           (implicit timer: Timer[F])
-  extends SessionMaintainer[F] {
-
-  override def setup: F[Unit] =
+  override def start: F[Unit] =
     loginContextProvider.kinit().flatMap { _ =>
-      fs2.Stream.awakeEvery[F](clusterConfig.sessionRefresh.asInstanceOf[FiniteDuration])
-        .evalMap(_ => loginContextProvider.kinit())
-        .compile
-        .drain
+      ScheduledJob.onInterval(
+        loginContextProvider.kinit[F],
+        clusterConfig.sessionRefresh.asInstanceOf[FiniteDuration]
+      )
     }
 
 }

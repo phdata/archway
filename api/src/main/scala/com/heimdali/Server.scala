@@ -1,7 +1,6 @@
 package com.heimdali
 
 import java.io.File
-import java.util.concurrent.Executors
 
 import cats.effect.{ExitCode, IO, IOApp}
 import cats.effect._
@@ -15,21 +14,17 @@ import com.heimdali.provisioning.DefaultProvisioningService
 import com.heimdali.repositories._
 import com.heimdali.rest._
 import com.heimdali.services._
-import com.unboundid.ldap.sdk.{LDAPConnection, LDAPConnectionPool}
-import com.unboundid.util.ssl.{SSLUtil, TrustAllTrustManager}
+import com.heimdali.startup.{HeimdaliStartup, Provisioning, SessionMaintainer}
 import doobie.util.ExecutionContexts
-import io.circe.config._
 import org.apache.hadoop.conf.Configuration
 import org.apache.sentry.provider.db.generic.service.thrift.SentryGenericServiceClientFactory
 import org.http4s.client.blaze.BlazeClientBuilder
-import org.http4s._
 import org.http4s.implicits._
 import org.http4s.server.SSLKeyStoreSupport.StoreInfo
-import org.http4s.server.{Server => H4Server, Router, SSLKeyStoreSupport}
+import org.http4s.server.{Router, Server => H4Server}
 import org.http4s.server.blaze._
 import org.http4s.server.middleware.CORS
 
-import scala.concurrent.ExecutionContext
 import scala.concurrent.duration._
 
 object Server extends IOApp {
@@ -52,6 +47,7 @@ object Server extends IOApp {
       dbTransactionEC <- ExecutionContexts.cachedThreadPool
       emailEC <- ExecutionContexts.fixedThreadPool(10)
       provisionEC <-   ExecutionContexts.fixedThreadPool(config.provisioning.threadPoolSize)
+      startupEC <- ExecutionContexts.fixedThreadPool(1)
 
       h4Client = BlazeClientBuilder[F](httpEC)
         .withRequestTimeout(5 minutes)
@@ -125,6 +121,12 @@ object Server extends IOApp {
         "/risk" -> riskController.route,
         "/ops" -> opsController.route,
       ).orNotFound
+
+      provisioningJob =  new Provisioning[F](config.provisioning, provisionService)
+      sessionMaintainer = new SessionMaintainer[F](config.cluster, loginContextProvider)
+      startup = new HeimdaliStartup[F](provisioningJob, sessionMaintainer)(startupEC)
+
+      _ <- Resource.liftF(startup.start())
 
       server <-
         BlazeServerBuilder[F]

@@ -10,6 +10,6 @@ trait ProvisioningService[F[_]] {
 
   def findUnprovisioned(): F[List[WorkspaceRequest]]
 
-  def scheduleProvisioning(): F[Unit]
+  def provisionAll(): F[Unit]
 
 }

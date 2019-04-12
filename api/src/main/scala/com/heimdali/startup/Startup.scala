@@ -1,22 +1,19 @@
 package com.heimdali.startup
 
-import cats._
-import cats.effect._
-import com.heimdali.config.{ClusterConfig, DatabaseConfig}
+import cats.effect.Sync
+import cats.implicits._
 
 import scala.concurrent.ExecutionContext
 
 trait Startup[F[_]] {
-  def start()(implicit monadEvidence: Monad[F]): F[Unit]
+  def start(): F[Unit]
 }
 
-class HeimdaliStartup[F[_] : Effect](databaseConfig: DatabaseConfig,
-                                     clusterConfig: ClusterConfig,
-                                     maintainer: SessionMaintainer[F])
-                                    (implicit executionContext: ExecutionContext)
+class HeimdaliStartup[F[_]: Sync](jobs: ScheduledJob[F]*)
+                                    (executionContext: ExecutionContext)
   extends Startup[F] {
 
-  def start()(implicit monadEvidence: Monad[F]): F[Unit] =
-    maintainer.setup
+  def start(): F[Unit] =
+    jobs.toList.traverse(_.start()).void
 
 }

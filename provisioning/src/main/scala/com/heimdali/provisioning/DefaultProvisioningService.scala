@@ -18,14 +18,7 @@ import scala.concurrent.ExecutionContext
 class DefaultProvisioningService[F[_] : ContextShift: ConcurrentEffect : Effect : Timer](appContext: AppContext[F], provisionContext: ExecutionContext)
   extends ProvisioningService[F] {
 
-  override def scheduleProvisioning(): F[Unit] = {
-    fs2.Stream.awakeEvery[F](appContext.appConfig.provisioning.provisionInterval)
-      .evalMap(_ => provisionAll())
-      .compile
-      .drain
-  }
-
-  private def provisionAll(): F[Unit] =
+  override def provisionAll(): F[Unit] =
     for {
       workspaces <- findUnprovisioned()
       _ <- ContextShift[F].evalOn(provisionContext)(workspaces.traverse(ws => provision(ws)))
