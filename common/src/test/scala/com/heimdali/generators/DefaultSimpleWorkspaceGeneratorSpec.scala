@@ -3,7 +3,7 @@ package com.heimdali.generators
 import cats.effect.IO
 import cats.implicits._
 import com.heimdali.models._
-import com.heimdali.services.ConfigService
+import com.heimdali.services.{ApplicationRequest, ConfigService}
 import com.heimdali.test.fixtures._
 import org.scalamock.scalatest.MockFactory
 import org.scalatest._
@@ -44,7 +44,8 @@ class DefaultSimpleWorkspaceGeneratorSpec extends FlatSpec with MockFactory with
           Some(LDAPRegistration("cn=edh_sw_open_sesame_ro,ou=heimdali,dc=jotunn,dc=io", "edh_sw_open_sesame_ro", "role_sw_open_sesame_ro", attributes = defaultLDAPAttributes("cn=edh_sw_open_sesame_ro,ou=heimdali,dc=jotunn,dc=io", "edh_sw_open_sesame_ro"))))),
       processing = List(Yarn("root.sw_open_sesame", 4, 16)))
 
-    val expected = workspace.copy(applications = List(appGenerator.applicationFor("default", workspace).unsafeRunSync()))
+    val application = appGenerator.applicationFor(ApplicationRequest("default"), workspace).unsafeRunSync()
+    val expected = workspace.copy(applications = List(application))
 
     val templateService = new DefaultSimpleWorkspaceGenerator[IO](appConfig, ldapGenerator, appGenerator, topicGenerator)
 

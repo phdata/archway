@@ -6,6 +6,10 @@ import io.circe.syntax._
 case class Application(name: String,
                        consumerGroup: String,
                        group: LDAPRegistration,
+                       applicationType: Option[String] = None,
+                       logo: Option[String] = None,
+                       language: Option[String] = None,
+                       repository: Option[String] = None,
                        id: Option[Long] = None)
 
 object Application {
@@ -15,12 +19,24 @@ object Application {
       "id" -> application.id.asJson,
       "name" -> application.name.asJson,
       "consumer_group" -> application.consumerGroup.asJson,
-      "group" -> application.group.asJson
+      "group" -> application.group.asJson,
+      "application_type" -> application.applicationType.asJson,
+      "logo" -> application.logo.asJson,
+      "language" -> application.language.asJson,
+      "repository" -> application.repository.asJson
     )
   }
 
-  implicit val decoder: Decoder[Application] =
-    Decoder.forProduct4("id", "name", "group", "consumer_group")((id: Option[Long], name: String, group: LDAPRegistration, consumer: String) => Application(name, consumer, group, id))
 
+  implicit val decoder: Decoder[Application] =
+    Decoder.forProduct8(
+      "name",
+      "consumer_group",
+      "group",
+      "application_type",
+      "logo",
+      "language",
+      "repository",
+      "id")(Application.apply)
 
 }

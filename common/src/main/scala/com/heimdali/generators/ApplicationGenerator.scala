@@ -3,10 +3,11 @@ package com.heimdali.generators
 import cats.effect.{Clock, Sync}
 import com.heimdali.config.{AppConfig, GeneratorConfig}
 import com.heimdali.models.{Application, WorkspaceRequest}
+import com.heimdali.services.ApplicationRequest
 
 trait ApplicationGenerator[F[_]] {
 
-  def applicationFor(name: String, workspace: WorkspaceRequest): F[Application]
+  def applicationFor(application: ApplicationRequest, workspace: WorkspaceRequest): F[Application]
 
 }
 

@@ -7,7 +7,7 @@ import cats.data._
 import cats.effect._
 import cats.implicits._
 import com.heimdali.AppContext
-import com.heimdali.models.WorkspaceRequest
+import com.heimdali.models.{Application, KafkaTopic, WorkspaceRequest}
 import com.heimdali.services.ProvisioningService
 import doobie.implicits._
 import com.heimdali.provisioning.ProvisionTask._
@@ -64,4 +64,10 @@ class DefaultProvisioningService[F[_] : ContextShift: ConcurrentEffect : Effect 
   override def findUnprovisioned(): F[List[WorkspaceRequest]] = {
     appContext.workspaceRequestRepository.findUnprovisioned().transact(appContext.transactor)
   }
+
+  override def provisionApplication(workspaceId: Long, application: Application): F[Unit] =
+    application.provision.apply((Some(workspaceId), appContext)).void
+
+  override def provisionTopic(workspaceId: Long, topic: KafkaTopic): F[Unit] =
+    topic.provision.apply((Some(workspaceId), appContext)).void
 }

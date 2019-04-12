@@ -99,8 +99,8 @@ object Server extends IOApp {
       accountService = new AccountServiceImpl[F](ldapClient, config.rest, config.approvers, config.workspaces, workspaceService, userTemplateGenerator, provisionService)
       authService = new AuthServiceImpl[F](accountService)
       memberService = new MemberServiceImpl[F](memberRepository, metaXA, ldapRepository, ldapClient)
-      kafkaService = new KafkaServiceImpl[F](context, topicGenerator)
-      applicationService = new ApplicationServiceImpl[F](context, applicationGenerator)
+      kafkaService = new KafkaServiceImpl[F](context, provisionService, topicGenerator)
+      applicationService = new ApplicationServiceImpl[F](context, provisionService, applicationGenerator)
       emailService = new EmailServiceImpl[F](emailClient, config, workspaceService, ldapClient)
 
       accountController = new AccountController[F](authService, accountService)

@@ -58,7 +58,7 @@ package object fixtures {
   val initialYarn = savedYarn.copy(id = None)
   val savedTopic = KafkaTopic(s"$systemName.incoming", 1, 1, TopicGrant(s"$systemName.incoming", savedLDAP, "all", Some(id)), TopicGrant(s"$systemName.incoming", savedLDAP, "read", Some(id)), Some(id))
   val initialTopic = savedTopic.copy(id = None, managingRole = savedTopic.managingRole.copy(id = None, ldapRegistration = initialLDAP), readonlyRole = savedTopic.readonlyRole.copy(id = None, ldapRegistration = initialLDAP))
-  val savedApplication = Application("Tiller", s"${systemName}_cg", savedLDAP, Some(id))
+  val savedApplication = Application("Tiller", s"${systemName}_cg", savedLDAP, None, None, None, None, Some(id))
   val initialApplication = savedApplication.copy(id = None, group = initialLDAP)
   val searchResult = WorkspaceSearchResult(id, name, name, "simple", "Approved", piiCompliance, pciCompliance, phiCompliance, timer.instant, Some(timer.instant), 0, 0, 0)
 

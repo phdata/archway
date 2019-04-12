@@ -6,6 +6,7 @@ import cats.effect.{Clock, Sync}
 import cats.implicits._
 import com.heimdali.config.AppConfig
 import com.heimdali.models._
+import com.heimdali.services.ApplicationRequest
 
 class DefaultSimpleWorkspaceGenerator[F[_]](appConfig: AppConfig,
                                             ldapGenerator: LDAPGroupGenerator[F],
@@ -58,7 +59,7 @@ class DefaultSimpleWorkspaceGenerator[F[_]](appConfig: AppConfig,
         s"cn=edh_sw_${generatedName}_ro,${appConfig.ldap.groupPath}",
         s"role_sw_${generatedName}_ro",
         workspace)
-      app <- applicationGenerator.applicationFor("default", workspace)
+      app <- applicationGenerator.applicationFor(ApplicationRequest("default"), workspace)
     } yield workspace.copy(
       applications = List(app),
       data = List(HiveAllocation(

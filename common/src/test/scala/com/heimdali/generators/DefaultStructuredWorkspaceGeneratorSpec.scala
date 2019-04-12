@@ -3,7 +3,7 @@ package com.heimdali.generators
 import cats.effect.IO
 import cats.implicits._
 import com.heimdali.models._
-import com.heimdali.services.ConfigService
+import com.heimdali.services.{ApplicationRequest, ConfigService}
 import com.heimdali.test.fixtures._
 import org.scalamock.scalatest.MockFactory
 import org.scalatest._
@@ -63,13 +63,19 @@ class DefaultStructuredWorkspaceGeneratorSpec extends FlatSpec with MockFactory 
 
   it should "governed templates should generate workspaces" in {
     val configService = mock[ConfigService[IO]]
-    configService.getAndSetNextGid _ expects() returning 123L.pure[IO] repeat 6 times()
-    val input = StructuredTemplate("Open Sesame", "A brief summary", "A longer description", standardUserDN, Compliance(phiData = false, pciData = false, piiData = false), includeEnvironment = true, Some(1), Some(1), Some(1))
-    val expected = WorkspaceRequest("Open Sesame", "A brief summary", "A longer description", "structured", standardUserDN, timer.instant, Compliance(phiData = false, pciData = false, piiData = false), singleUser = false, data = List(raw, staging, modeled), processing = List(yarn))
+    // for tests
+    configService.getAndSetNextGid _ expects() returning 123L.pure[IO] repeat 4 times()
+    // for logic
+    configService.getAndSetNextGid _ expects() returning 123L.pure[IO] repeat 4 times()
     val ldapGenerator = new DefaultLDAPGroupGenerator[IO](appConfig, configService)
     val appGenerator = new DefaultApplicationGenerator[IO](appConfig, ldapGenerator)
     val topicGenerator = new DefaultTopicGenerator[IO](appConfig, ldapGenerator)
     val templateService = new DefaultStructuredWorkspaceGenerator[IO](appConfig, ldapGenerator, appGenerator, topicGenerator)
+    val input = StructuredTemplate("Open Sesame", "A brief summary", "A longer description", standardUserDN, Compliance(phiData = false, pciData = false, piiData = false), includeEnvironment = true, Some(1), Some(1), Some(1))
+
+    val workspace = WorkspaceRequest("Open Sesame", "A brief summary", "A longer description", "structured", standardUserDN, timer.instant, Compliance(phiData = false, pciData = false, piiData = false), singleUser = false, data = List(raw, staging, modeled), processing = List(yarn))
+    val application = appGenerator.applicationFor(ApplicationRequest("default"), workspace).unsafeRunSync()
+    val expected = workspace.copy(applications = List(application))
     val actual: WorkspaceRequest = templateService.workspaceFor(input).unsafeRunSync()
     actual.copy(requestDate = timer.instant) should be(expected.copy(requestDate = timer.instant))
   }

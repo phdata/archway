@@ -6,6 +6,7 @@ import cats.effect.{Clock, Sync}
 import cats.implicits._
 import com.heimdali.config.AppConfig
 import com.heimdali.models._
+import com.heimdali.services.ApplicationRequest
 
 class DefaultStructuredWorkspaceGenerator[F[_]](appConfig: AppConfig,
                                                 ldapGenerator: LDAPGroupGenerator[F],
@@ -61,6 +62,7 @@ class DefaultStructuredWorkspaceGenerator[F[_]](appConfig: AppConfig,
       raw <- db("raw", generatedName, structuredTemplate, workspace)
       staging <- db("staging", generatedName, structuredTemplate, workspace)
       modeled <- db("modeled", generatedName, structuredTemplate, workspace)
-    } yield workspace.copy(data = List(raw, staging, modeled))
+      application <- applicationGenerator.applicationFor(ApplicationRequest("default"), workspace)
+    } yield workspace.copy(data = List(raw, staging, modeled), applications = List(application))
   }
 }

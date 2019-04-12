@@ -16,6 +16,7 @@ trait KafkaService[F[_]] {
 }
 
 class KafkaServiceImpl[F[_] : Effect](appContext: AppContext[F],
+                                      provisioningService: ProvisioningService[F],
                                       topicGenerator: TopicGenerator[F])
     extends KafkaService[F]
     with LazyLogging {
@@ -51,11 +52,7 @@ class KafkaServiceImpl[F[_] : Effect](appContext: AppContext[F],
           } yield afterRoles.copy(id = Some(id))).transact(appContext.transactor)
        }
 
-//       provisionResult <- OptionT.liftF(
-//         result
-//           .provision
-//           .run(appContext)
-//       )
+       _ <- OptionT.liftF(provisioningService.provisionTopic(workspaceId, result))
 
     } yield NonEmptyList.one("")).value.map(_.get)
 }

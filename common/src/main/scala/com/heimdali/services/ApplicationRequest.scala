@@ -2,15 +2,20 @@ package com.heimdali.services
 
 import io.circe._
 
-case class ApplicationRequest(name: String)
+case class ApplicationRequest(name: String,
+                              applicationType: Option[String] = None,
+                              logo: Option[String] = None,
+                              language: Option[String] = None,
+                              repository: Option[String] = None)
 
 object ApplicationRequest {
 
   implicit val encoder: Decoder[ApplicationRequest] =
-    Decoder.instance { json =>
-      for {
-        name <- json.downField("name").as[String]
-      } yield ApplicationRequest(name)
-    }
+    Decoder.forProduct5(
+      "name",
+      "application_type",
+      "logo",
+      "language",
+      "repository")(ApplicationRequest.apply)
 
 }

@@ -19,24 +19,28 @@ class ApplicationRepositoryImpl extends ApplicationRepository {
       .findByWorkspaceId(workspaceId)
       .to[List]
       .map(_.groupBy(h => (h._1, h._2)).map {
-        case ((Statements.AppHeader(name, consumerGroup, id), ldap), group) =>
+        case ((Statements.AppHeader(name, consumerGroup, applicationType, logo, language, repository, id), ldap), group) =>
           Application(
             name,
             consumerGroup,
             fromRecord(ldap).copy(attributes = group.map(g => g._3.key -> g._3.value)),
+            applicationType,
+            logo,
+            language,
+            repository,
             id)
       }.toList)
 
   object Statements {
 
-    case class AppHeader(name: String, consumerGroup: String, id: Option[Long])
+    case class AppHeader(name: String, consumerGroup: String, applicationType: Option[String], logo: Option[String], language: Option[String], repository: Option[String], id: Option[Long])
 
     type ApplicationRecord = (AppHeader, LDAPRecord, LDAPAttribute)
 
     def insert(application: Application): Update0 =
       sql"""
-             insert into application (name, consumer_group_name, ldap_registration_id)
-             values (${application.name}, ${application.consumerGroup}, ${application.group.id})
+             insert into application (name, consumer_group_name, application_type, logo, language, repository, ldap_registration_id)
+             values (${application.name}, ${application.consumerGroup}, ${application.applicationType}, ${application.logo}, ${application.language}, ${application.repository}, ${application.group.id})
             """.update
 
     def consumerGroupAccess(applicationId: Long, time: Instant): Update0 =
@@ -51,6 +55,10 @@ class ApplicationRepositoryImpl extends ApplicationRepository {
            select
               a.name,
               a.consumer_group_name,
+              a.application_type,
+              a.logo,
+              a.language,
+              a.repository,
               a.id,
 
               l.distinguished_name,

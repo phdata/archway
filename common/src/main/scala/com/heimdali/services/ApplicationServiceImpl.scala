@@ -9,6 +9,7 @@ import com.typesafe.scalalogging.LazyLogging
 import doobie.implicits._
 
 class ApplicationServiceImpl[F[_]](appContext: AppContext[F],
+                                   provisioningService: ProvisioningService[F],
                                    applicationGenerator: ApplicationGenerator[F])
                                   (implicit F: Effect[F])
   extends ApplicationService[F]
@@ -25,7 +26,7 @@ class ApplicationServiceImpl[F[_]](appContext: AppContext[F],
 
       _ <- F.pure(logger.warn("found {}", workspace))
 
-      app <- applicationGenerator.applicationFor(applicationRrequest.name, workspace.get)
+      app <- applicationGenerator.applicationFor(applicationRrequest, workspace.get)
 
       saved <- (for {
         ldap <- appContext.ldapRepository.create(app.group)
@@ -34,6 +35,8 @@ class ApplicationServiceImpl[F[_]](appContext: AppContext[F],
         _ <- appContext.memberRepository.create(username, ldap.id.get)
         _ <- appContext.workspaceRequestRepository.linkApplication(workspaceId, appId)
       } yield beforeSave.copy(id = Some(appId))).transact(appContext.transactor)
+
+      _ <- provisioningService.provisionApplication(workspaceId, saved)
     } yield saved
 
 }
