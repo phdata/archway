@@ -8,6 +8,7 @@ import cats.implicits._
 import com.heimdali.clients._
 import com.heimdali.models._
 import com.heimdali.AppContext
+import com.heimdali.provisioning.{ExceptionMessage, Message, SimpleMessage}
 import com.heimdali.repositories.{MemberRepository, _}
 import com.typesafe.scalalogging.LazyLogging
 import doobie._
@@ -125,9 +126,15 @@ class WorkspaceServiceImpl[F[_] : ConcurrentEffect : ContextShift](ldapClient: L
   override def approve(id: Long, approval: Approval): F[Approval] =
     approvalRepository.create(id, approval).transact(transactor).flatMap { approval =>
       find(id).value.flatMap { ws =>
-        provisioningService.provision(ws.get, 0)// TODO match
+        ws match {
+          case Some(workspace) => provisioningService.provision(workspace)
+          case _ =>
+            val message = s"Workspace not found for id ${id}"
+            NonEmptyList.one[Message](ExceptionMessage(Some(id), message, new Exception(message))).pure[F]
+        }
       }.map(_ => approval)
     }
+
 
   override def findByUsername(distinguishedName: String): OptionT[F, WorkspaceRequest] =
     OptionT(fill(workspaceRepository.findByUsername(distinguishedName)).value.transact(transactor))
