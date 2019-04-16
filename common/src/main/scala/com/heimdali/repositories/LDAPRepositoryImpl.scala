@@ -135,7 +135,7 @@ object LDAPRepositoryImpl {
 
     def insertAttribute(ldapRegistrationId: Long, key: String, value: String): Update0 =
       sql"""
-            insert into ldap_attribute (ldap_registration_id, key, value)
+            insert into ldap_attribute (ldap_registration_id, `key`, value)
             values ($ldapRegistrationId, $key, $value)
         """.update
 

@@ -1,7 +1,8 @@
 package com.heimdali.startup
 
-import cats.effect.Sync
+import cats.effect._
 import cats.implicits._
+import cats.effect.implicits._
 
 import scala.concurrent.ExecutionContext
 
@@ -9,11 +10,11 @@ trait Startup[F[_]] {
   def start(): F[Unit]
 }
 
-class HeimdaliStartup[F[_]: Sync](jobs: ScheduledJob[F]*)
-                                    (executionContext: ExecutionContext)
+class HeimdaliStartup[F[_] : ConcurrentEffect : ContextShift](jobs: ScheduledJob[F]*)
+                                                             (executionContext: ExecutionContext)
   extends Startup[F] {
 
   def start(): F[Unit] =
-    jobs.toList.traverse(_.start()).void
+    ContextShift[F].evalOn(executionContext)(jobs.toList.traverse(_.start())).start.void
 
 }
