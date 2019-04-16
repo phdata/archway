@@ -33,7 +33,8 @@ class DefaultProvisioningServiceSpec extends FlatSpec with MockFactory with Matc
         hdfsClient.setQuota _ expects(savedHive.location, savedHive.sizeInGB) returning IO
           .pure(HDFSAllocation(savedHive.location, savedHive.sizeInGB))
         hiveDatabaseRepository.quotaSet _ expects(id, timer.instant) returning 0.pure[ConnectionIO]
-        hiveClient.createDatabase _ expects(savedHive.name, savedHive.location) returning IO.unit
+        workspaceRepository.find _ expects (id) returning OptionT.some(savedWorkspaceRequest)
+        hiveClient.createDatabase _ expects(savedHive.name, savedHive.location, "Sesame", Map("phi_data" -> "false", "pci_data" -> "false", "pii_data" -> "false")) returning IO.unit
         hiveDatabaseRepository.databaseCreated _ expects(id, timer.instant) returning 0.pure[ConnectionIO]
 
         ldapClient.createGroup _ expects(savedLDAP.commonName, *) returning IO.unit
