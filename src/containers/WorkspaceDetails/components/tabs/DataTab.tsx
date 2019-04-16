@@ -1,9 +1,12 @@
 import * as React from 'react';
-import { Row, Col } from 'antd';
+import { Row, Col, Tabs, Card } from 'antd';
 import HiveDatabase from '../HiveDatabase';
-import { InstructionCard, PermissionsCard, TablesCard } from '../cards';
+import { PermissionsCard, TablesCard } from '../cards';
 import { Member, HiveAllocation, Workspace, NamespaceInfoList } from '../../../../models/Workspace';
 import { Cluster } from '../../../../models/Cluster';
+import SyntaxHighlighter from 'react-syntax-highlighter';
+import { tomorrowNightEighties } from 'react-syntax-highlighter/dist/styles/hljs';
+import CardHeader from '../cards/CardHeader';
 
 interface Props {
   workspace?: Workspace;
@@ -22,12 +25,9 @@ class DataTab extends React.Component<Props> {
   public render() {
     const {
       workspace,
-      cluster,
       infos,
       members,
-      selectedAllocation,
       onAddMember,
-      onChangeAllocation,
       onChangeMemberRole,
       requestRefreshHiveTables,
     } = this.props;
@@ -38,51 +38,53 @@ class DataTab extends React.Component<Props> {
 
     return (
       <div style={{ padding: 16 }}>
-        <Row gutter={16} type="flex">
-          <Col span={12}>
-            <Row gutter={16}>
-              {workspace.data.map((allocation: HiveAllocation, index: number) => (
-                <Col key={index} span={8} offset={workspace.data.length === 1 ? 8 : 0}>
+        <Tabs>
+          {workspace.data.map((allocation: HiveAllocation, index: number) => {
+            const isDefault = workspace.data.length === 1;
+            const name = isDefault ? 'Default' : allocation.name.split('_')[0];
+            return (
+            <Tabs.TabPane tab={name} key={allocation.id.toString()}>
+              <Row gutter={16} type="flex" justify="center" style={{ marginBottom: 16 }}>
+                <Col span={6}>
                   <HiveDatabase
                     data={allocation}
-                    isDefault={workspace.data.length === 1}
-                    isSelected={!!selectedAllocation && allocation.id === selectedAllocation.id}
-                    onSelect={() => onChangeAllocation(allocation)}
+                    isDefault
                   />
                 </Col>
-              ))}
-            </Row>
-            <Row style={{ marginTop: 16 }}>
-              <Col span={24}>
-                <InstructionCard
-                  location={selectedAllocation && selectedAllocation.location}
-                  namespace={selectedAllocation && selectedAllocation.name}
-                  host={cluster.services.hive.thrift && cluster.services.hive.thrift[0].host}
-                  port={cluster.services.hive.thrift && cluster.services.hive.thrift[0].port}
-                  queue={workspace && workspace.processing && workspace.processing[0].pool_name}
-                />
-              </Col>
-            </Row>
-            <Row style={{ marginTop: 16 }}>
-              <Col span={24}>
-                <TablesCard
-                  info={infos}
-                  onRefreshHiveTables={requestRefreshHiveTables}
-                />
-              </Col>
-            </Row>
-          </Col>
-          <Col span={12}>
-            <PermissionsCard
-              allocations={workspace.data}
-              members={members}
-              onAddMember={onAddMember}
-              onChangeMemberRole={(member, id, role) => {
-                onChangeMemberRole(member.distinguished_name, id, role, 'data');
-              }}
-            />
-          </Col>
-        </Row>
+                <Col span={18}>
+                  <Card style={{ height: '100%' }}>
+                    <CardHeader>
+                      Example
+                    </CardHeader>
+                    <SyntaxHighlighter language="sql" style={{ overflow: 'auto', ...tomorrowNightEighties }}>
+                        {`CREATE TABLE ${allocation.name}.new_data_landing
+LOCATION '${location}/new_data/landing'`}
+                    </SyntaxHighlighter>
+                  </Card>
+                </Col>
+              </Row>
+              <Row gutter={16} type="flex" justify="center">
+                <Col span={12}>
+                  <TablesCard
+                    info={infos}
+                    onRefreshHiveTables={requestRefreshHiveTables}
+                  />
+                </Col>
+                <Col span={12}>
+                  <PermissionsCard
+                    allocation={allocation}
+                    members={members}
+                    onAddMember={onAddMember}
+                    onChangeMemberRole={(member, id, role) => {
+                      onChangeMemberRole(member.distinguished_name, id, role, 'data');
+                    }}
+                  />
+                </Col>
+              </Row>
+            </Tabs.TabPane>
+          );
+          })}
+        </Tabs>
       </div>
     );
   }

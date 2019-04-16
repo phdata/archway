@@ -141,5 +141,11 @@ export const requestTopic =
     withBody(`/workspaces/${id}/topics`, token, { name, partitions, replication_factor });
 
 export const requestApplication =
-  (token: string, id: number, name: string) =>
-    withBody(`/workspaces/${id}/applications`, token, { name });
+  (token: string, id: number, name: string, application_type: string, logo: string, language: string, repository: string) =>
+    withBody(`/workspaces/${id}/applications`, token, {
+      name,
+      application_type,
+      logo,
+      language,
+      repository,
+    });

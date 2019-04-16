@@ -9,7 +9,7 @@ interface Props {
 }
 
 const ApplicationsInfoCard = ({ application }: Props) => (
-  <Card bordered style={{ marginBottom: 16 }}>
+  <Card bordered>
     <div style={{ display: 'flex', alignItems: 'center' }}>
       <div style={{ flex: 1 }}>
         <CardHeader>

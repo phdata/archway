@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Row, Col, Button } from 'antd';
+import { Tabs, Button, Row, Col } from 'antd';
 
 import { TopicCard, TopicPermissionsCard } from '../cards';
 import { Member, KafkaTopic, Workspace } from '../../../../models/Workspace';
@@ -11,7 +11,6 @@ interface Props {
   onAddTopic: (e: React.MouseEvent) => void;
   onAddMember: (e: React.MouseEvent) => void;
   onChangeMemberRole: (distinguished_name: string, roleId: number, role: string, resource: string) => void;
-  onSelectTopic: (topic: KafkaTopic) => void;
   removeMember: (distinguished_name: string, database_role: string) => void;
 }
 
@@ -20,11 +19,9 @@ class MessagingTab extends React.Component<Props> {
     const {
       workspace,
       members,
-      selectedTopic,
       onAddTopic,
       onAddMember,
       onChangeMemberRole,
-      onSelectTopic,
     } = this.props;
 
     if (!workspace) {
@@ -33,33 +30,32 @@ class MessagingTab extends React.Component<Props> {
 
     return (
       <div style={{ padding: 16 }}>
-        <Row style={{ height: 'calc(100vh - 465px)' }} gutter={16} type="flex">
-          <Col span={8} style={{ display: 'flex', flexDirection: 'column', maxHeight: '100%' }}>
-            <Button style={{ alignSelf: 'flex-start', marginBottom: 16 }} type="primary" onClick={onAddTopic}>
-              Add a Topic
-            </Button>
-            <div style={{ flex: 1, overflow: 'auto' }}>
-              {workspace.topics.map((topic: KafkaTopic) => (
-                <TopicCard
-                  key={topic.id}
-                  topic={topic}
-                  selected={selectedTopic && selectedTopic.id === topic.id}
-                  onClick={() => onSelectTopic(topic)}
-                />
-              ))}
-            </div>
-          </Col>
-          <Col span={16}>
-            {selectedTopic && (<TopicPermissionsCard
-              topic={selectedTopic}
-              members={members}
-              onAddMember={onAddMember}
-              onChangeMemberRole={(member, id, role) => {
-                onChangeMemberRole(member.distinguished_name, id, role, 'topics');
-              }}
-            />)}
-          </Col>
-        </Row>
+        <Button style={{ zIndex: 999, position: 'absolute', right: 12 }} type="primary" onClick={onAddTopic}>
+          Add a Topic
+        </Button>
+        <Tabs>
+          {workspace.topics.map((topic: KafkaTopic) => (
+            <Tabs.TabPane tab={topic.name} key={topic.id.toString()}>
+              <Row gutter={16} type="flex" justify="center">
+                <Col span={24} style={{ marginBottom: 12 }}>
+                  <TopicCard topic={topic} />
+                </Col>
+              </Row>
+              <Row gutter={16} type="flex" justify="center">
+                <Col span={24} style={{ marginBottom: 12 }}>
+                  <TopicPermissionsCard
+                    topic={topic}
+                    members={members}
+                    onAddMember={onAddMember}
+                    onChangeMemberRole={(member, id, role) => {
+                      onChangeMemberRole(member.distinguished_name, id, role, 'topics');
+                    }}
+                  />
+                </Col>
+              </Row>
+            </Tabs.TabPane>
+          ))}
+        </Tabs>
       </div>
     );
   }

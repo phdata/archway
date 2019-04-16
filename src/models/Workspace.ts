@@ -51,6 +51,10 @@ export interface Application {
   name: string;
   consumer_group: string;
   group: SecurityGroup;
+  type?: string;
+  logo?: string;
+  language?: string;
+  repository?: string;
 }
 
 export interface TopicGrant {

@@ -11,6 +11,7 @@ import {
   setNamespaceInfo,
   setResourcePools,
   setActiveTopic,
+  setActiveApplication,
   ApprovalRequestAction,
   approvalSuccess,
   REQUEST_TOPIC,
@@ -21,6 +22,8 @@ import {
   CHANGE_MEMBER_ROLE_REQUESTED,
   ChangeMemberRoleRequestAction,
   changeMemberRoleRequestComplete,
+  REQUEST_APPLICATION,
+  applicationRequestSuccess,
   getWorkspace,
   approvalFailure,
   RemoveMemberRequestAction,
@@ -32,6 +35,7 @@ import {
   REQUEST_REFRESH_HIVE_TABLES,
   refreshHiveTablesSuccess,
   refreshHiveTablesFailure,
+  setActiveModal,
 } from './actions';
 
 export const tokenExtractor = (s: any) => s.getIn(['login', 'token']);
@@ -74,6 +78,9 @@ function* fetchWorkspace({ id }: { type: string, id: number }) {
   if (workspace.topics.length > 0) {
     yield put(setActiveTopic(workspace.topics[0]));
   }
+  if (workspace.applications.length > 0) {
+    yield put(setActiveApplication(workspace.applications[0]));
+  }
 }
 
 function* workspaceRequest() {
@@ -106,6 +113,30 @@ function* topicRequested() {
 
 function* topicRequestedListener() {
   yield takeLatest(REQUEST_TOPIC, topicRequested);
+}
+
+function* applicationRequested() {
+  const token = yield select((s: any) => s.get('login').get('token'));
+  const { id } = yield select((s: any) => s.get('details').get('details').toJS());
+  const {
+    name,
+    application_type,
+    logo,
+    language,
+    repository,
+  } = yield select((s: any) => s.getIn(['form', 'applicationRequest', 'values']).toJS());
+  try {
+    yield call(Api.requestApplication, token, id, name, application_type, logo, language, repository);
+    yield put(applicationRequestSuccess());
+    yield put(getWorkspace(id));
+    yield put(setActiveModal(false));
+  } catch (e) {
+    //
+  }
+}
+
+function* applicationRequestedListener() {
+  yield takeLatest(REQUEST_APPLICATION, applicationRequested);
 }
 
 export function* simpleMemberRequested({ resource }: SimpleMemberRequestAction) {
@@ -142,9 +173,10 @@ export function* changeMemberRoleRequested({ distinguished_name, roleId, role, r
   const token = yield select(tokenExtractor);
   const workspace = (yield select(detailExtractor)).toJS();
   try {
-    yield call(Api.removeWorkspaceMember, token, workspace.id, resource, roleId, role, distinguished_name)
     if (role !== 'none') {
       yield call(Api.newWorkspaceMember, token, workspace.id, resource, roleId, role, distinguished_name);
+    } else {
+      yield call(Api.removeWorkspaceMember, token, workspace.id, resource, roleId, role, distinguished_name);
     }
     yield put(changeMemberRoleRequestComplete());
     const members = yield call(Api.getMembers, token, workspace.id);
@@ -220,5 +252,6 @@ export default function* root() {
     fork(removeMemberRequestedListener),
     fork(refreshYarnAppsRequestedListener),
     fork(refreshHiveTablesRequestedListener),
+    fork(applicationRequestedListener),
   ]);
 }

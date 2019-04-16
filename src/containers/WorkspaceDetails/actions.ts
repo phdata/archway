@@ -6,6 +6,7 @@ import {
   PoolInfo,
   ApprovalItem,
   KafkaTopic,
+  Application,
 } from '../../models/Workspace';
 
 export const CLEAR_DETAILS = 'CLEAR_DETAILS';
@@ -88,6 +89,12 @@ export const SET_ACTIVE_TOPIC = 'SET_ACTIVE_TOPIC';
 export const setActiveTopic = (activeTopic: KafkaTopic) => ({
   type: SET_ACTIVE_TOPIC,
   activeTopic,
+});
+
+export const SET_ACTIVE_APPLICATION = 'SET_ACTIVE_APPLICATION';
+export const setActiveApplication = (activeApplication: Application) => ({
+  type: SET_ACTIVE_APPLICATION,
+  activeApplication,
 });
 
 export const REQUEST_APPROVAL = 'REQUEST_APPROVAL';
@@ -210,6 +217,22 @@ export const removeMemberFailure = (distinguished_name: string, error: string) =
 export const REQUEST_REFRESH_YARN_APPS = 'REQUEST_REFRESH_YARN_APPS';
 export const requestRefreshYarnApps = () => ({
   type: REQUEST_REFRESH_YARN_APPS,
+});
+
+export const REQUEST_APPLICATION = 'REQUEST_APPLICATION';
+export interface RequestApplicationAction {
+  type: typeof REQUEST_APPLICATION;
+}
+export const requestApplication = (): RequestApplicationAction => ({
+  type: REQUEST_APPLICATION,
+});
+
+export const APPLICATION_REQUEST_SUCCESS = 'APPLICATION_REQUEST_SUCCESS';
+export interface ApplicationRequestSuccessAction {
+  type: typeof APPLICATION_REQUEST_SUCCESS;
+}
+export const applicationRequestSuccess = () => ({
+  type: APPLICATION_REQUEST_SUCCESS,
 });
 
 export const REFRESH_YARN_APPS_SUCCESS = 'REFRESH_YARN_APPS_SUCCESS';

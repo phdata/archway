@@ -4,14 +4,14 @@ import CardHeader from './CardHeader';
 import { Member, HiveAllocation } from '../../../../models/Workspace';
 
 interface Props {
-  allocations: HiveAllocation[];
+  allocation: HiveAllocation;
   members?: Member[];
   onAddMember: (e: React.MouseEvent) => void;
   onChangeMemberRole: (member: Member, id: number, role: string) => void;
 }
 
-const renderRoleColumn = (onChangeMemberRole: (member: Member, key: string, role: string) => void) =>
-  ({ member, key }: { member: Member, key: string }) => {
+const renderRoleColumn = (key: string, onChangeMemberRole: (member: Member, role: string) => void) =>
+  (member: any) => {
     const memberRole = member.data[key] ? member.data[key].role : 'none';
 
     return (
@@ -21,7 +21,7 @@ const renderRoleColumn = (onChangeMemberRole: (member: Member, key: string, role
           <Menu
             onClick={({ key: role }) => {
               if (memberRole !== role) {
-                onChangeMemberRole(member, key, role)
+                onChangeMemberRole(member, role)
               }
             }}
           >
@@ -40,55 +40,33 @@ const renderRoleColumn = (onChangeMemberRole: (member: Member, key: string, role
     );
   };
 
-const PermissionsCard = ({ allocations, members, onAddMember, onChangeMemberRole }: Props) => {
-  const roleKeys = allocations.map((allocation: HiveAllocation) => allocation.name);
-  const roleColumns = {
-    raw_loan_mecca: 'Raw',
-    staging_loan_mecca: 'Staging',
-    modeled_loan_mecca: 'Modeled',
-  };
-  const dataSource = members ? members.map((member: Member) => {
-    const data = { name: member.name };
-    roleKeys.forEach((key) => {
-      data[key] = { member, key };
-    });
-    return data;
-  }) : [];
-
-  return (
-    <Card style={{ height: '100%' }} bordered>
-      <CardHeader>
-        Permissions
-        <Button style={{ marginLeft: 'auto' }} type="primary" onClick={onAddMember}>
+const PermissionsCard = ({ allocation, members, onAddMember, onChangeMemberRole }: Props) => (
+  <Card style={{ height: '100%' }} bordered>
+    <CardHeader>
+      Permissions
+      <Button style={{ marginLeft: 'auto' }} type="primary" onClick={onAddMember}>
         Add a Member
-        </Button>
-      </CardHeader>
-      <Table
-        dataSource={dataSource}
-        pagination={false}
-      >
-        <Table.Column
-          title="Name"
-          dataIndex="name"
-          key="name"
-        />
-        {roleKeys.map((roleKey: string) => (
-          <Table.Column
-            title={roleColumns[roleKey] || 'Default'}
-            dataIndex={roleKey}
-            key={roleKey}
-            render={renderRoleColumn((member: Member, key: string, role: string) => {
-              // convert key to id
-              const filteredAllocations = allocations.filter((allocation: HiveAllocation) => allocation.name === key);
-              if (filteredAllocations.length > 0) {
-                onChangeMemberRole(member, filteredAllocations[0].id, role);
-              }
-            })}
-          />
-        ))}
-      </Table>
-    </Card>
-  );
-};
+      </Button>
+    </CardHeader>
+    <Table
+      dataSource={members}
+      pagination={false}
+      rowKey="distinguished_name"
+    >
+      <Table.Column
+        title="Name"
+        dataIndex="name"
+        key="name"
+      />
+      <Table.Column
+        title="Role"
+        render={renderRoleColumn(allocation.name, (member: Member, role: string) => {
+          onChangeMemberRole(member, allocation.id, role);
+        })}
+      />
+      ))}
+    </Table>
+  </Card>
+);
 
 export default PermissionsCard;

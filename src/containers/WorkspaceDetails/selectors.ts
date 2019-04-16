@@ -82,6 +82,12 @@ export const getActiveTopic = () => createSelector(
     workspaceState.get('activeTopic'),
 );
 
+export const getActiveApplication = () => createSelector(
+  workspaceSelector,
+  (workspaceState) =>
+    workspaceState.get('activeApplication'),
+);
+
 export const getActiveModal = () => createSelector(
   workspaceSelector,
   (workspaceState) =>

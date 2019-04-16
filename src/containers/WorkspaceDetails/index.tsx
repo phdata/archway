@@ -23,6 +23,7 @@ import {
   KafkaTopicRequest,
   SimpleMemberRequest,
   SimpleTopicMemberRequest,
+  ApplicationRequest,
 } from './components';
 import { Cluster } from '../../models/Cluster';
 import { Profile } from '../../models/Profile';
@@ -34,6 +35,7 @@ import {
   HiveAllocation,
   Member,
   KafkaTopic,
+  Application,
 } from '../../models/Workspace';
 import * as actions from './actions';
 import * as selectors from './selectors';
@@ -49,7 +51,7 @@ interface Props extends RouteComponentProps<DetailsRouteProps> {
     pools?: ResourcePoolsInfo;
     infos?: NamespaceInfoList;
     approved: boolean;
-    activeTopic?: KafkaTopic;
+    activeApplication?: Application;
     activeModal?: string;
     selectedAllocation?: HiveAllocation;
     userSuggestions?: UserSuggestions;
@@ -58,16 +60,18 @@ interface Props extends RouteComponentProps<DetailsRouteProps> {
 
     clearDetails: () => void;
     getWorkspaceDetails: (id: number) => void;
-    selectTopic: (topic: KafkaTopic) => void;
+    selectApplication: (application: Application) => void;
     showTopicDialog: (e: React.MouseEvent) => void;
     showSimpleMemberDialog: (e: React.MouseEvent) => void;
     showSimpleTopicMemberDialog: (e: React.MouseEvent) => void;
+    showApplicationDialog: (e: React.MouseEvent) => void;
     clearModal: () => void;
     approveRisk: (e: React.MouseEvent) => void;
     approveOperations: (e: React.MouseEvent) => void;
     requestTopic: () => void;
     simpleMemberRequest: (resource: string) => void;
     changeMemberRoleRequest: (distinguished_name: string, roleId: number, role: string, resource: string) => void;
+    requestApplication: () => void;
     updateSelectedAllocation: (allocation: HiveAllocation) => void;
     requestRefreshYarnApps: () => void;
     requestRefreshHiveTables: () => void;
@@ -167,12 +171,13 @@ class WorkspaceDetails extends React.PureComponent<Props> {
       infos,
       approved,
       members,
-      activeTopic,
+      activeApplication,
       activeModal,
-      selectTopic,
+      selectApplication,
       showTopicDialog,
       showSimpleMemberDialog,
       showSimpleTopicMemberDialog,
+      showApplicationDialog,
       clearModal,
       approveRisk,
       approveOperations,
@@ -180,6 +185,7 @@ class WorkspaceDetails extends React.PureComponent<Props> {
       requestTopic,
       simpleMemberRequest,
       changeMemberRoleRequest,
+      requestApplication,
       selectedAllocation,
       updateSelectedAllocation,
       requestRefreshYarnApps,
@@ -268,18 +274,19 @@ class WorkspaceDetails extends React.PureComponent<Props> {
               workspace={workspace}
               yarn={cluster.services && cluster.services.yarn}
               pools={pools}
+              selectedApplication={activeApplication}
+              onAddApplication={showApplicationDialog}
               onRefreshPools={requestRefreshYarnApps}
+              onSelectApplication={selectApplication}
             />
           </Tabs.TabPane>
           <Tabs.TabPane tab="MESSAGING" key="messaging">
             <MessagingTab
               workspace={workspace}
               members={members}
-              selectedTopic={activeTopic}
               onAddTopic={showTopicDialog}
               onAddMember={showSimpleTopicMemberDialog}
               onChangeMemberRole={changeMemberRoleRequest}
-              onSelectTopic={selectTopic}
               removeMember={removeMember}
             />
           </Tabs.TabPane>
@@ -312,6 +319,13 @@ class WorkspaceDetails extends React.PureComponent<Props> {
           onOk={requestTopic}>
           <KafkaTopicRequest />
         </Modal>
+        <Modal
+          visible={activeModal === 'application'}
+          title="New Application"
+          onCancel={clearModal}
+          onOk={requestApplication}>
+          <ApplicationRequest />
+        </Modal>
       </div>
     );
   }
@@ -328,6 +342,7 @@ const mapStateToProps = () =>
     pools: selectors.getPoolInfo(),
     approved: selectors.getApproved(),
     activeTopic: selectors.getActiveTopic(),
+    activeApplication: selectors.getActiveApplication(),
     activeModal: selectors.getActiveModal(),
     userSuggestions: selectors.getUserSuggestions(),
     liasion: selectors.getLiaison(),
@@ -341,6 +356,7 @@ const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
   updateSelectedAllocation: (allocation: HiveAllocation) => dispatch(actions.updateSelectedAllocation(allocation)),
 
   selectTopic: (topic: KafkaTopic) => dispatch(actions.setActiveTopic(topic)),
+  selectApplication: (application: Application) => dispatch(actions.setActiveApplication(application)),
 
   showTopicDialog: (e: React.MouseEvent) => {
     e.preventDefault();
@@ -353,6 +369,10 @@ const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
   showSimpleTopicMemberDialog: (e: React.MouseEvent) => {
     e.preventDefault();
     return dispatch(actions.setActiveModal('simpleTopicMember'));
+  },
+  showApplicationDialog: (e: React.MouseEvent) => {
+    e.preventDefault();
+    return dispatch(actions.setActiveModal('application'));
   },
 
   approveRisk: (e: React.MouseEvent) => {
@@ -369,6 +389,7 @@ const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
   simpleMemberRequest: (resource: string) => dispatch(actions.simpleMemberRequest(resource)),
   changeMemberRoleRequest: (distinguished_name: string, roleId: number, role: string, resource: string) =>
     dispatch(actions.changeMemberRoleRequest(distinguished_name, roleId, role, resource)),
+  requestApplication: () => dispatch(actions.requestApplication()),
   requestRefreshYarnApps: () => dispatch(actions.requestRefreshYarnApps()),
   requestRefreshHiveTables: () => dispatch(actions.requestRefreshHiveTables()),
   getUserSuggestions: (filter: string) => dispatch(actions.getUserSuggestions(filter)),
