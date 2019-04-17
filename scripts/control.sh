@@ -16,8 +16,17 @@ com.sun.security.jgss.krb5.initiate {
 
 echo $JAAS_CONFIGS > ${CONF_DIR}/jaas.conf
 
-# set a default java trust store if variable is unset
-JAVA_TRUST_STORE_LOCATION=${JAVA_TRUST_STORE_LOCATION:-"$JAVA_HOME/lib/security/jssecacerts"}
+JAVA_OPTS=""
+
+if [ ! -z "$JAVA_TRUST_STORE_LOCATION" ]; then
+    JAVA_OPTS="$JAVA_OPTS -Djavax.net.ssl.trustStore=$JAVA_TRUST_STORE_LOCATION"
+fi
+
+if [ ! -z $JAVA_TRUST_STORE_PASSWORD ]; then
+    JAVA_OPTS="$JAVA_OPTS -Djavax.net.ssl.trustStorePassword=$JAVA_TRUST_STORE_PASSWORD"
+fi
+
+echo "Using Java options: $JAVA_OPTS"
 
 case ${COMPONENT} in
     (api)
@@ -28,10 +37,9 @@ case ${COMPONENT} in
                 sed -i -E 's/([[:alpha:]\.]+)\="(true|false)"/\1\=\2/g' runtime.conf
                 sed -i -E 's/([[:alpha:]\.]+)\="[:digit:]+"/\1\=\2/g' runtime.conf
                 exec $JAVA_HOME/bin/java -Djavax.security.auth.useSubjectCredsOnly=false \
-                          -Djavax.net.ssl.trustStore="$JAVA_TRUST_STORE_LOCATION" \
-                          -Djavax.net.ssl.trustStorePassword="$JAVA_TRUST_STORE_PASSWORD" \
                           -Djava.security.auth.login.config=${CONF_DIR}/jaas.conf \
                           -Dconfig.resource=production.conf \
+                          $JAVA_OPTS \
                           $CSD_JAVA_OPTS \
                           -cp ${CONF_DIR}:/usr/share/java/mysql-connector-java.jar:/usr/share/cmf/common_jars/postgres*.jar:/opt/cloudera/parcels/CDH/jars/bcprov-jdk15-1.45.jar:/opt/cloudera/parcels/CDH/lib/hive/lib/hive-jdbc-standalone.jar:/opt/cloudera/parcels/CDH/lib/sentry/lib/*:`hadoop classpath`:$HEIMDALI_ADDITIONAL_CLASSPATH:$HEIMDALI_API_HOME/heimdali-api.jar \
                           com.heimdali.Server

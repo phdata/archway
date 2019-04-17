@@ -567,7 +567,6 @@
           "label": "Java truststore location",
           "description": "Java truststore location",
           "required": "false",
-          "default": "",
           "type": "string"
         },
         {
@@ -575,7 +574,6 @@
           "label": "Java truststore password",
           "description": "Password for the Java truststore",
           "required": "false",
-          "default": "changeit",
           "type": "password"
         }
       ],
@@ -592,11 +590,11 @@
         "args": [
           "api",
           "start"
-        ]
-      },
-      "environmentVariables": {
-        "JAVA_TRUST_STORE_LOCATION": "${heimdali.java.truststore.location}",
-        "JAVA_TRUST_STORE_PASSWORD": "${heimdali.java.truststore.password}"
+        ],
+        "environmentVariables": {
+          "JAVA_TRUST_STORE_LOCATION": "${heimdali.java.truststore.location}",
+          "JAVA_TRUST_STORE_PASSWORD": "${heimdali.java.truststore.password}"
+        }
       }
     }
   ]
