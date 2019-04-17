@@ -47,7 +47,7 @@ class WorkspaceController[F[_] : Sync : Timer](authService: AuthService[F],
           if (user.isSuperUser) {
             for {
               workspace <- workspaceService.find(id).value
-              provisionResult <- provisioningService.provision(workspace.get)
+              provisionResult <- provisioningService.provision(workspace.get, 0)
               response <- Created(provisionResult.asJson)
             } yield response
           }

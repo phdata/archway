@@ -116,7 +116,7 @@ class AccountServiceSpec extends FlatSpec with MockFactory with Matchers {
     workspaceService.create _ expects userWorkspace returning IO.pure(savedWorkspaceRequest)
     workspaceService.find _ expects id returning OptionT.some(savedWorkspaceRequest)
 
-    provisioningService.provision _ expects (savedWorkspaceRequest, 2) returning IO.pure(NonEmptyList.one(SimpleMessage(Some(1l), "")))
+    provisioningService.provision _ expects (savedWorkspaceRequest, 0) returning IO.pure(NonEmptyList.one(SimpleMessage(Some(1l), "")))
 
     val maybeWorkspace = accountService.createWorkspace(infraApproverUser).value.unsafeRunSync()
 

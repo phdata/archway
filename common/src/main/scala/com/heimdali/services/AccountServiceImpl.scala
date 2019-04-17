@@ -80,7 +80,7 @@ class AccountServiceImpl[F[_] : Sync : Timer](ldapClient: LDAPClient[F],
           time <- Clock[F].realTime(MILLISECONDS)
           workspace <- userTemplateService.workspaceFor(template).map(_.copy(requestDate = Instant.ofEpochMilli(time)))
           savedWorkspace <- workspaceService.create(workspace)
-          _ <- provisionService.provision(savedWorkspace)
+          _ <- provisionService.provision(savedWorkspace, 0)
           completed <- workspaceService.find(savedWorkspace.id.get).value
         } yield completed
     })

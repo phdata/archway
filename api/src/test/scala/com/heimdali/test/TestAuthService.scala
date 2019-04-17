@@ -2,12 +2,13 @@ package com.heimdali.test
 
 import cats.data.{EitherT, Kleisli}
 import cats.effect.IO
-import com.heimdali.models.{Token, User}
+import com.heimdali.models.{Token, User, UserPermissions}
 import com.heimdali.rest.AuthService
 import com.heimdali.test.fixtures.infraApproverUser
 import org.http4s.dsl.io._
 import org.http4s.server.AuthMiddleware
 import org.http4s.{AuthedService, Request}
+import cats.implicits._
 
 class TestAuthService(riskApprover: Boolean = false, platformApprover: Boolean = false)
   extends AuthService[IO] {
@@ -18,7 +19,9 @@ class TestAuthService(riskApprover: Boolean = false, platformApprover: Boolean =
     Kleisli[IO, Request[IO], Either[String, Token]](_ => EitherT.right(IO(Token("abc", "abc"))).value)
 
   val tokenValidator: Kleisli[IO, Request[IO], Either[String, User]] =
-    Kleisli[IO, Request[IO], Either[String, User]](_ => EitherT.right(IO(infraApproverUser)).value)
+    Kleisli[IO, Request[IO], Either[String, User]](_ =>
+      Right(infraApproverUser.copy(permissions = UserPermissions(riskApprover, platformApprover))).pure[IO]
+    )
 
   override def basicAuth: AuthMiddleware[IO, Token] =
     AuthMiddleware(basicValidator, failure)

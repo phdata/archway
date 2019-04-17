@@ -54,7 +54,7 @@ class AccountControllerSpec
 
   trait Context {
     val accountService: AccountService[IO] = mock[AccountService[IO]]
-    val authService: TestAuthService = new TestAuthService
+    val authService: TestAuthService = new TestAuthService(platformApprover = true)
 
     lazy val accountController: AccountController[IO] = new AccountController[IO](authService, accountService)
   }
