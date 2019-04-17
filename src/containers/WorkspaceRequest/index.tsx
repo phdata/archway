@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Row, Col, Button, Icon, Tabs, notification } from 'antd';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import { BehaviorPage, OverviewPage, CompliancePage, SummaryPage } from './components';
+import { BehaviorPage, OverviewPage, CompliancePage, SummaryPage, WorkspaceSummary } from './components';
 import * as actions from './actions';
 import * as selectors from './selectors';
 import {
@@ -24,7 +24,9 @@ interface Props {
   loading: boolean;
   error: string;
   nextStepEnabled: boolean;
+  advancedVisible: boolean;
 
+  setAdvancedVisible: (visible: boolean) => void;
   setBehavior: (behavior: string) => void;
   setRequest: (request: RequestInput) => void;
   gotoNextPage: () => void;
@@ -59,6 +61,8 @@ class WorkspaceRequest extends React.Component<Props> {
       loading,
       nextStepEnabled,
       currentPage,
+      advancedVisible,
+      setAdvancedVisible,
       setBehavior,
       setRequest,
       gotoNextPage,
@@ -98,7 +102,7 @@ class WorkspaceRequest extends React.Component<Props> {
             />
           </Tabs.TabPane>
         </Tabs>
-  
+
         <Row type="flex" justify="center" gutter={16}>
           <Col span={5}>
             <Button
@@ -132,6 +136,14 @@ class WorkspaceRequest extends React.Component<Props> {
             </Button>
           </Col>
         </Row>
+
+        {(currentPage === PAGE_REVIEW && !!workspace) && (
+          <WorkspaceSummary
+            workspace={workspace}
+            expanded={advancedVisible}
+            onToggleExpand={() => setAdvancedVisible(!advancedVisible)}
+          />
+        )}
       </div>
     );
   }
@@ -146,9 +158,11 @@ const mapStateToProps = () => createStructuredSelector({
   workspace: selectors.getGeneratedWorkspace(),
   currentPage: selectors.getCurrentPage(),
   nextStepEnabled: selectors.isNextStepEnabled(),
+  advancedVisible: selectors.isAdvancedVisible(),
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
+  setAdvancedVisible: (visible: boolean) => dispatch(actions.setAdvancedVisible(visible)),
   setBehavior: (behavior: string) => dispatch(actions.setBehavior(behavior)),
   setRequest: (request: RequestInput) => dispatch(actions.setRequest(request)),
   gotoNextPage: () => dispatch(actions.gotoNextPage()),

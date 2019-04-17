@@ -8,6 +8,7 @@ import {
   SET_CURRENT_PAGE,
   CREATE_WORKSPACE_REQUEST,
   CREATE_WORKSPACE_FAILURE,
+  SET_ADVANCED_VISIBLE,
   CLEAR_REQUEST,
 } from './actions';
 import { PAGE_BEHAVIOR } from './constants';
@@ -24,6 +25,7 @@ const initialState = fromJS({
   template: false,
   workspace: false,
   currentPage: PAGE_BEHAVIOR,
+  advancedVisible: false,
   error: '',
 });
 
@@ -62,6 +64,10 @@ const request = (state = initialState, action: any) => {
       return state
         .set('loading', false)
         .set('error', action.error);
+
+    case SET_ADVANCED_VISIBLE:
+      return state
+        .set('advancedVisible', action.visible);
 
     case CLEAR_REQUEST:
       return initialState;

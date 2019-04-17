@@ -76,3 +76,7 @@ export const getCurrentPage = () => createSelector(
   (requestState) => requestState.get('currentPage'),
 );
 
+export const isAdvancedVisible = () => createSelector(
+  selectors.requestSelector,
+  (requestState) => requestState.get('advancedVisible'),
+);

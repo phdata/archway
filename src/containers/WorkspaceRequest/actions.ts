@@ -74,6 +74,14 @@ export const createWorkspaceFailure = (error: string) => ({
   error,
 });
 
+export const SET_ADVANCED_VISIBLE = 'SET_ADVANCED_VISIBLE';
+export function setAdvancedVisible(visible: boolean) {
+  return {
+    type: SET_ADVANCED_VISIBLE,
+    visible,
+  };
+}
+
 export const CLEAR_REQUEST = 'CLEAR_REQUEST';
 export function clearRequest() {
   return {
