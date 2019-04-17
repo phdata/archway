@@ -96,6 +96,7 @@
       "name": "HEIMDALI_SERVICE",
       "label": "Heimdali API",
       "pluralLabel": "Heimdali APIs",
+      "jvmBased" : "true",
       "kerberosPrincipals": [
         {
           "name": "HEIMDALI_API_SERVICE_PRINCIPAL",
@@ -560,6 +561,22 @@
           "required": "true",
           "type": "string",
           "configurableInWizard": "true"
+        },
+        {
+          "name": "heimdali.java.truststore.location",
+          "label": "Java truststore location",
+          "description": "Java truststore location",
+          "required": "false",
+          "default": "",
+          "type": "string"
+        },
+        {
+          "name": "heimdali.java.truststore.password",
+          "label": "Java truststore password",
+          "description": "Password for the Java truststore",
+          "required": "false",
+          "default": "changeit",
+          "type": "password"
         }
       ],
       "configWriter": {
@@ -576,6 +593,10 @@
           "api",
           "start"
         ]
+      },
+      "environmentVariables": {
+        "JAVA_TRUST_STORE_LOCATION": "${heimdali.java.truststore.location}",
+        "JAVA_TRUST_STORE_PASSWORD": "${heimdali.java.truststore.password}"
       }
     }
   ]
