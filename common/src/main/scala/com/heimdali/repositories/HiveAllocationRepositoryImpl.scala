@@ -13,7 +13,7 @@ class HiveAllocationRepositoryImpl extends HiveAllocationRepository {
     HiveGrant(
       manager.name,
       manager.location,
-      ldap.copy(attributes = records.map(a => a.key -> a.value)),
+      ldap.copy(attributes = records.map(a => a.key -> a.value).distinct),
       role,
       manager.grantId,
       manager.locationAccess,
@@ -117,8 +117,8 @@ class HiveAllocationRepositoryImpl extends HiveAllocationRepository {
          m.role_created,
          m.group_associated,
 
-         ma.key,
-         ma.value,
+         ma.attr_key,
+         ma.attr_value,
 
          h.name,
          h.location,
@@ -135,8 +135,8 @@ class HiveAllocationRepositoryImpl extends HiveAllocationRepository {
          r.role_created,
          r.group_associated,
 
-         roa.key,
-         roa.value
+         roa.attr_key,
+         roa.attr_value
        from hive_database h
        inner join hive_grant mg on h.manager_group_id = mg.id
        inner join ldap_registration m on mg.ldap_registration_id = m.id

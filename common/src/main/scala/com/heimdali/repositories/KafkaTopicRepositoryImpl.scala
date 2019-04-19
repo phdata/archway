@@ -84,8 +84,8 @@ class KafkaTopicRepositoryImpl extends KafkaTopicRepository {
             ml.role_created,
             ml.group_associated,
 
-            ma.key,
-            ma.value,
+            ma.attr_key,
+            ma.attr_value,
 
             k.name,
             rg.actions,
@@ -100,8 +100,8 @@ class KafkaTopicRepositoryImpl extends KafkaTopicRepository {
             rl.role_created,
             rl.group_associated,
 
-            ra.key,
-            ra.value
+            ra.attr_key,
+            ra.attr_value
          from kafka_topic k
          inner join workspace_topic wt on wt.kafka_topic_id = k.id
 

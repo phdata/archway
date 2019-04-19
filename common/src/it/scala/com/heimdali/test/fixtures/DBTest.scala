@@ -10,7 +10,7 @@ trait DBTest extends BeforeAndAfterEach { this: Suite =>
 
   implicit val contextShift = IO.contextShift(ExecutionContext.global)
 
-  val transactor = Transactor.fromDriverManager[IO](
+  val transactor: Transactor[IO] = Transactor.fromDriverManager[IO](
     "org.postgresql.Driver",
     "jdbc:postgresql://localhost:5432/heimdali",
     "postgres",

@@ -69,8 +69,8 @@ class ApplicationRepositoryImpl extends ApplicationRepository {
               l.role_created,
               l.group_associated,
 
-              la.key,
-              la.value
+              la.attr_key,
+              la.attr_value
            from application a
            inner join workspace_application wa on wa.application_id = a.id
            inner join ldap_registration l on a.ldap_registration_id = l.id

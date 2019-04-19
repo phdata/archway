@@ -83,8 +83,8 @@ object LDAPRepositoryImpl {
          l.role_created,
          l.group_associated,
 
-         la.key,
-         la.value
+         la.attr_key,
+         la.attr_value
        from
          ldap_registration l
        inner join ldap_attribute la on la.ldap_registration_id = l.id
@@ -135,7 +135,7 @@ object LDAPRepositoryImpl {
 
     def insertAttribute(ldapRegistrationId: Long, key: String, value: String): Update0 =
       sql"""
-            insert into ldap_attribute (ldap_registration_id, `key`, value)
+            insert into ldap_attribute (ldap_registration_id, attr_key, attr_value)
             values ($ldapRegistrationId, $key, $value)
         """.update
 

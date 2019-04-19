@@ -2,15 +2,18 @@
 
 package com.heimdali.clients
 
-import cats.effect.IO
+import cats.effect.{ContextShift, IO}
 import com.heimdali.services.UGILoginContextProvider
 import com.heimdali.test.fixtures.HiveTest
 import doobie._
 import doobie.implicits._
 import org.scalatest.{BeforeAndAfterAll, FlatSpec, Matchers}
 
+import scala.concurrent.ExecutionContext
 
 class HiveClientImplIntegrationSpec extends FlatSpec with Matchers with HiveTest with BeforeAndAfterAll {
+
+  override implicit def contextShift: ContextShift[IO] = IO.contextShift(ExecutionContext.global)
 
   val FOO_DB_NAME = "hiveclientimplintegrationspec_database_with_comment"
 
