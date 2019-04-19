@@ -6,6 +6,7 @@ pipelines:
         script:
           - java -jar /usr/src/validator.jar -p $PWD/heimdali-meta/parcel.json
           - java -jar /usr/src/validator.jar -r $PWD/heimdali-meta/permissions.json
+          - java -jar /usr/src/validator.jar -p $PWD/custom-shell-meta/parcel.json
 
   tags:
     "*":
@@ -13,4 +14,5 @@ pipelines:
           name: "Package"
           script:
             - ./publish.sh prepare heimdali
+            - ./publish.sh prepare custom-shell
             - ./publish.sh ship

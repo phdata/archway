@@ -22,6 +22,9 @@ prepare()
     mv heimdali-api_${BITBUCKET_TAG}.jar $READY_DIR/usr/lib/heimdali-api/heimdali-api.jar
     tar xvf heimdali-ui_${BITBUCKET_TAG}.tar
     mv dist $READY_DIR/usr/lib/heimdali-ui
+  elif [ "$ARTIFACT" = "custom-shell" ]
+    curl -u$ARTIFACTORY_USER:$ARTIFACTORY_TOKEN -O https://repository.phdata.io/artifactory/binary-dev/com/heimdali/${BITBUCKET_TAG}/custom-shell_${BITBUCKET_TAG}.jar
+    mv custom-shell_${BITBUCKET_TAG}.jar $READY_DIR/usr/lib/heimdali-api/custom-shell.jar
   fi
 
   tar cvf $READY_DIR-el6.parcel $READY_DIR
@@ -43,6 +46,7 @@ ship()
   curl -u$ARTIFACTORY_USER:$ARTIFACTORY_TOKEN -T manifest.json https://repository.phdata.io/artifactory/parcels-release/com/heimdali/${BITBUCKET_TAG}/manifest.json
 
   push heimdali
+  push custom-shell
 }
 
 push()
