@@ -4,13 +4,14 @@ import CardHeader from './CardHeader';
 import { Member, KafkaTopic } from '../../../../models/Workspace';
 
 interface Props {
+  readonly: boolean;
   topic?: KafkaTopic;
   members?: Member[];
   onAddMember: (e: React.MouseEvent) => void;
   onChangeMemberRole: (member: Member, id: number, role: string) => void;
 }
 
-const renderRoleColumn = (onChangeMemberRole: (member: Member, id: number, role: string) => void) =>
+const renderRoleColumn = (onChangeMemberRole?: (member: Member, id: number, role: string) => void) =>
   ({ member, role, roleId }: { member: Member, role: string, roleId: number }) => {
     return (
       <Dropdown
@@ -18,7 +19,7 @@ const renderRoleColumn = (onChangeMemberRole: (member: Member, id: number, role:
         overlay={(
           <Menu
             onClick={({ key: newRole }) => {
-              if (newRole !== role) {
+              if (newRole !== role && onChangeMemberRole) {
                 onChangeMemberRole(member, roleId, role)
               }
             }}
@@ -38,7 +39,7 @@ const renderRoleColumn = (onChangeMemberRole: (member: Member, id: number, role:
     );
   };
 
-const TopicPermissionsCard = ({ topic, members, onAddMember, onChangeMemberRole }: Props) => {
+const TopicPermissionsCard = ({ readonly, topic, members, onAddMember, onChangeMemberRole }: Props) => {
   const dataSource = members && topic
     ? members.filter((member: Member) => !!member.topics[topic.name]).map((member: Member) => ({
       name: member.name,
@@ -54,7 +55,7 @@ const TopicPermissionsCard = ({ topic, members, onAddMember, onChangeMemberRole 
     <Card style={{ height: '100%' }} bordered>
       <CardHeader>
         Permissions
-        {!!topic && (
+        {!!topic && !readonly && (
           <Button style={{ marginLeft: 'auto' }} type="primary" onClick={onAddMember}>
             Add a Member
           </Button>
@@ -72,7 +73,7 @@ const TopicPermissionsCard = ({ topic, members, onAddMember, onChangeMemberRole 
         <Table.Column
           title="PERMISSIONS"
           dataIndex="permission"
-          render={renderRoleColumn(onChangeMemberRole)}
+          render={renderRoleColumn(readonly ? undefined : onChangeMemberRole)}
         />
       </Table>
     </Card>

@@ -9,6 +9,7 @@ describe('SummaryPage', () => {
     const profile: Profile = {
       name: '',
       username: '',
+      distinguished_name: '',
       permissions: {
         risk_management: false,
         platform_operations: false,

@@ -4,23 +4,25 @@ import CardHeader from './CardHeader';
 import { Member, HiveAllocation } from '../../../../models/Workspace';
 
 interface Props {
+  readonly: boolean;
   allocation: HiveAllocation;
   members?: Member[];
   onAddMember: (e: React.MouseEvent) => void;
   onChangeMemberRole: (member: Member, id: number, role: string) => void;
 }
 
-const renderRoleColumn = (key: string, onChangeMemberRole: (member: Member, role: string) => void) =>
+const renderRoleColumn = (key: string, onChangeMemberRole?: (member: Member, role: string) => void) =>
   (member: any) => {
     const memberRole = member.data[key] ? member.data[key].role : 'none';
 
     return (
       <Dropdown
         key={`${member.name}-${key}`}
+        disabled={!onChangeMemberRole}
         overlay={(
           <Menu
             onClick={({ key: role }) => {
-              if (memberRole !== role) {
+              if (memberRole !== role && onChangeMemberRole) {
                 onChangeMemberRole(member, role)
               }
             }}
@@ -40,13 +42,15 @@ const renderRoleColumn = (key: string, onChangeMemberRole: (member: Member, role
     );
   };
 
-const PermissionsCard = ({ allocation, members, onAddMember, onChangeMemberRole }: Props) => (
+const PermissionsCard = ({ readonly, allocation, members, onAddMember, onChangeMemberRole }: Props) => (
   <Card style={{ height: '100%' }} bordered>
     <CardHeader>
       Permissions
-      <Button style={{ marginLeft: 'auto' }} type="primary" onClick={onAddMember}>
-        Add a Member
-      </Button>
+      {!readonly && (
+        <Button style={{ marginLeft: 'auto' }} type="primary" onClick={onAddMember}>
+          Add a Member
+        </Button>
+      )}
     </CardHeader>
     <Table
       dataSource={members}
@@ -60,11 +64,10 @@ const PermissionsCard = ({ allocation, members, onAddMember, onChangeMemberRole 
       />
       <Table.Column
         title="Role"
-        render={renderRoleColumn(allocation.name, (member: Member, role: string) => {
+        render={renderRoleColumn(allocation.name, readonly ? undefined : (member: Member, role: string) => {
           onChangeMemberRole(member, allocation.id, role);
         })}
       />
-      ))}
     </Table>
   </Card>
 );

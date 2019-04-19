@@ -258,6 +258,7 @@ class WorkspaceDetails extends React.PureComponent<Props> {
           <Tabs.TabPane tab="DATA" key="data">
             <DataTab
               workspace={workspace}
+              profile={profile}
               cluster={cluster}
               infos={infos}
               members={members}
@@ -283,6 +284,7 @@ class WorkspaceDetails extends React.PureComponent<Props> {
           <Tabs.TabPane tab="MESSAGING" key="messaging">
             <MessagingTab
               workspace={workspace}
+              profile={profile}
               members={members}
               onAddTopic={showTopicDialog}
               onAddMember={showSimpleTopicMemberDialog}
