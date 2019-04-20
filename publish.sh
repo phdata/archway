@@ -25,6 +25,8 @@ prepare()
   elif [ "$ARTIFACT" = "custom-shell" ]
     curl -u$ARTIFACTORY_USER:$ARTIFACTORY_TOKEN -O https://repository.phdata.io/artifactory/binary-dev/com/heimdali/${BITBUCKET_TAG}/custom-shell_${BITBUCKET_TAG}.jar
     mv custom-shell_${BITBUCKET_TAG}.jar $READY_DIR/usr/lib/heimdali-api/custom-shell.jar
+  else
+    # intentionally empty
   fi
 
   tar cvf $READY_DIR-el6.parcel $READY_DIR
