@@ -2,7 +2,7 @@ package com.heimdali.clients
 
 import cats.effect._
 import com.heimdali.test.fixtures._
-import com.unboundid.ldap.sdk.{Modification, ModificationType}
+import com.unboundid.ldap.sdk.{Attribute, Modification, ModificationType}
 import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{FlatSpec, Matchers}
 
@@ -115,6 +115,21 @@ class LDAPClientImpIntegrationSpec
     val client = new LDAPClientImpl[IO](appConfig.ldap) with ActiveDirectoryClient[IO]
     val actual = client.groupRequest(groupDN, "user_benny", defaultLDAPAttributes(groupDN, "user_benny"))
     actual.value.unsafeRunSync().isRight shouldBe true
+  }
+
+  it should "generate only one attribute for multiple keys" in {
+    val input = List(
+      "objectClass" -> "group",
+      "objectClass" -> "top",
+      "cn" -> "user_johnny"
+    )
+    val expected = List(
+      new Attribute("objectClass", "group", "top"),
+      new Attribute("cn", "user_johnny")
+    )
+    val client = new LDAPClientImpl[IO](appConfig.ldap) with ActiveDirectoryClient[IO]
+    val actual = client.attributeConvert(input)
+    actual should contain theSameElementsAs expected
   }
 
 }

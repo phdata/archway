@@ -7,7 +7,6 @@ import com.heimdali.config._
 import com.typesafe.scalalogging.LazyLogging
 import com.unboundid.ldap.sdk._
 import com.unboundid.util.ssl.{SSLUtil, TrustAllTrustManager}
-import org.slf4j.MarkerFactory
 
 import scala.collection.JavaConverters._
 import scala.util.Try
@@ -39,7 +38,6 @@ trait LDAPClient[F[_]] {
 abstract class LDAPClientImpl[F[_] : Effect](val ldapConfig: LDAPConfig)
   extends LDAPClient[F]
     with LazyLogging {
-
 
   val ldapConnectionPool: LDAPConnectionPool = {
     val sslUtil = new SSLUtil(new TrustAllTrustManager)
@@ -123,10 +121,10 @@ abstract class LDAPClientImpl[F[_] : Effect](val ldapConfig: LDAPConfig)
         )
     )
 
-  def attribute(pair: (String, String)): Attribute =
-    pair match {
-      case (key, value) => new Attribute(key, value)
-    }
+  def attributeConvert(attributes: List[(String, String)]): List[Attribute] =
+    attributes.groupBy(_._1).map {
+      case (key, values) => new Attribute(key, values.map(_._2): _*)
+    }.toList
 
   // intentionally ignore deletes (especially due to generated attributes)
   def modificationsFor(existing: List[(String, String)], updated: List[(String, String)]): List[Modification] =
@@ -145,7 +143,7 @@ abstract class LDAPClientImpl[F[_] : Effect](val ldapConfig: LDAPConfig)
           val modifications = modificationsFor(existing, attributes)
           Right(new ModifyRequest(groupDN, modifications: _*))
         case None =>
-          Left(new AddRequest(groupDN, attributes.filterNot(_._1 == "dn").map(attribute): _*))
+          Left(new AddRequest(groupDN, attributeConvert(attributes.filterNot(_._1 == "dn")): _*))
       }
     })
 
