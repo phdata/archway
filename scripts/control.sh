@@ -41,7 +41,7 @@ case ${COMPONENT} in
                           -Dconfig.resource=production.conf \
                           $JAVA_OPTS \
                           $CSD_JAVA_OPTS \
-                          -cp ${CONF_DIR}:/usr/share/java/mysql-connector-java.jar:/usr/share/cmf/common_jars/postgres*.jar:/opt/cloudera/parcels/CDH/jars/bcprov-jdk15-1.45.jar:/opt/cloudera/parcels/CDH/lib/hive/lib/hive-jdbc-standalone.jar:/opt/cloudera/parcels/CDH/lib/sentry/lib/*:`hadoop classpath`:$HEIMDALI_ADDITIONAL_CLASSPATH:$HEIMDALI_API_HOME/heimdali-api.jar \
+                          -cp ${CONF_DIR}:/usr/share/java/mysql-connector-java.jar:/usr/share/cmf/common_jars/postgres*.jar:/opt/cloudera/parcels/CDH/jars/bcprov-jdk15-1.45.jar:/opt/cloudera/parcels/CDH/lib/hive/lib/*:/opt/cloudera/parcels/CDH/lib/sentry/lib/*:`hadoop classpath`:$HEIMDALI_ADDITIONAL_CLASSPATH:$HEIMDALI_API_HOME/heimdali-api.jar\
                           com.heimdali.Server
                 ;;
             (*)

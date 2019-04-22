@@ -575,6 +575,13 @@
           "description": "Password for the Java truststore",
           "required": "false",
           "type": "password"
+        },
+        {
+          "name": "heimdali.additional.classpath",
+          "label": "Heimdali additional classpath",
+          "description": "Classpath entries to inject into the Heimdali API",
+          "required": "false",
+          "type": "string"
         }
       ],
       "configWriter": {
@@ -593,7 +600,8 @@
         ],
         "environmentVariables": {
           "JAVA_TRUST_STORE_LOCATION": "${heimdali.java.truststore.location}",
-          "JAVA_TRUST_STORE_PASSWORD": "${heimdali.java.truststore.password}"
+          "JAVA_TRUST_STORE_PASSWORD": "${heimdali.java.truststore.password}",
+          "HEIMDALI_ADDITIONAL_CLASSPATH": "${heimdali.additional.classpath}"
         }
       }
     }
