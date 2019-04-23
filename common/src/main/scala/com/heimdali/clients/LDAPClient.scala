@@ -86,15 +86,10 @@ abstract class LDAPClientImpl[F[_] : Effect](val ldapConfig: LDAPConfig)
   override def findUser(distinguishedName: String): OptionT[F, LDAPUser] =
     getEntry(distinguishedName).map(ldapUser)
 
-  override def validateUser(
-                             username: String,
-                             password: String
-                           ): OptionT[F, LDAPUser] =
+  override def validateUser(username: String, password: String): OptionT[F, LDAPUser] =
     for {
-      bindResult <- OptionT(Sync[F].delay(Try(connectionFactory().bind(fullUsername(username), password)).toOption))
-      result <- if (bindResult.getResultCode == ResultCode.SUCCESS)
-        getUserEntry(username).map(ldapUser)
-      else OptionT[F, LDAPUser](Sync[F].pure(None))
+      result <- getUserEntry(username).map(ldapUser)
+      _ <- OptionT(Sync[F].delay(Try(connectionFactory().bind(result.distinguishedName, password)).toOption))
     } yield result
 
   val guidNumberDN =
