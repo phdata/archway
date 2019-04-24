@@ -1,0 +1,4 @@
+<%@ var workspace: com.heimdali.models.WorkspaceRequest %>
+{
+  "name": "${workspace.name}"
+}
