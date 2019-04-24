@@ -1,0 +1,173 @@
+package com.heimdali.clients
+
+import cats.data.OptionT
+import cats.effect.{Effect, Sync}
+import cats.implicits._
+import com.heimdali.config._
+import com.typesafe.scalalogging.LazyLogging
+import com.unboundid.ldap.sdk._
+import com.unboundid.util.ssl.{SSLUtil, TrustAllTrustManager}
+
+import scala.collection.JavaConverters._
+import scala.util.Try
+
+abstract class LDAPClientImpl[F[_] : Effect](val ldapConfig: LDAPConfig)
+  extends LDAPClient[F]
+    with LazyLogging {
+
+  def connectionPool(ldapBinding: LDAPBinding): LDAPConnectionPool = {
+    val sslUtil = new SSLUtil(new TrustAllTrustManager)
+    val sslSocketFactory = sslUtil.createSSLSocketFactory
+    val connection = new LDAPConnection(
+      sslSocketFactory,
+      ldapBinding.server,
+      ldapBinding.port,
+      ldapBinding.bindDN,
+      ldapBinding.bindPassword
+    )
+    new LDAPConnectionPool(connection, 10)
+  }
+
+  val readonlyPool: LDAPConnectionPool =
+    connectionPool(ldapConfig.readonlyBinding)
+
+  val adminPool: LDAPConnectionPool =
+    connectionPool(ldapConfig.adminBinding)
+
+  def searchQuery(username: String): String
+
+  def fullUsername(username: String): String
+
+  def ldapUser(searchResultEntry: SearchResultEntry): LDAPUser
+
+  def groupObjectClass: String
+
+  def getUserEntry(username: String): OptionT[F, SearchResultEntry] =
+    OptionT(Sync[F].delay {
+      val searchResult =
+        readonlyPool
+          .getConnection
+          .search(ldapConfig.baseDN, SearchScope.SUB, searchQuery(username))
+      searchResult.getSearchEntries.asScala.headOption
+    })
+
+  def getEntry(dn: String): OptionT[F, SearchResultEntry] =
+    OptionT(Sync[F].delay(
+      try {
+        logger.debug(s"getting info for $dn")
+        Option(readonlyPool.getConnection.getEntry(dn))
+      } catch {
+        case exc: Throwable =>
+          exc.printStackTrace()
+          None
+      }
+    ))
+
+  override def findUser(distinguishedName: String): OptionT[F, LDAPUser] =
+    getEntry(distinguishedName).map(ldapUser)
+
+  override def validateUser(username: String, password: String): OptionT[F, LDAPUser] =
+    for {
+      result <- getUserEntry(username).map(ldapUser)
+      _ <- OptionT(Sync[F].delay(Try(readonlyPool.getConnection.bind(result.distinguishedName, password)).toOption))
+    } yield result
+
+  def attributeConvert(attributes: List[(String, String)]): List[Attribute] =
+    attributes.groupBy(_._1).map {
+      case (key, values) => new Attribute(key, values.map(_._2): _*)
+    }.toList
+
+  // intentionally ignore deletes (especially due to generated attributes)
+  def modificationsFor(existing: List[(String, String)], updated: List[(String, String)]): List[Modification] =
+    (updated diff existing).map {
+      case (key, value) if existing.exists(a => a._1 == key) =>
+        new Modification(ModificationType.REPLACE, key, value)
+      case (key, value) =>
+        new Modification(ModificationType.ADD, key, value)
+    }
+
+  def groupRequest(groupDN: String, groupName: String, attributes: List[(String, String)]): F[_ <: LDAPRequest] =
+    Sync[F].delay {
+      Option(readonlyPool.getConnection.getEntry(groupDN)) match {
+        case Some(entry) =>
+          val existing = entry.getAttributes.asScala.map(a => a.getName -> a.getValue).toList
+          val modifications = modificationsFor(existing, attributes)
+          new ModifyRequest(groupDN, modifications: _*)
+        case None =>
+          new AddRequest(groupDN, attributeConvert(attributes.filterNot(_._1 == "dn")): _*)
+      }
+    }
+
+  def requestGroup(groupDN: String, groupName: String, attributes: List[(String, String)]): F[Unit] =
+    groupRequest(groupDN, groupName, attributes).map {
+      case request: AddRequest =>
+        adminPool.getConnection.add(request)
+      case request: ModifyRequest =>
+        adminPool.getConnection.modify(request)
+    }
+
+  override def createGroup(groupName: String, attributes: List[(String, String)]): F[Unit] =
+    for {
+      _ <- Sync[F].pure(logger.info("creating group {}", groupName))
+      groupDN = attributes.find(_._1 == "dn").get._2
+      rest = attributes.filterNot(_._1 == "dn")
+      _ <- requestGroup(groupDN, groupName, rest)
+      _ <- Sync[F].pure(logger.info("group {} created", groupName))
+    } yield ()
+
+  def createMemberAttribute(groupEntry: SearchResultEntry, newMember: String): OptionT[F, Unit] =
+    if (!groupEntry.hasAttribute("member") || !groupEntry
+      .getAttributeValues("member")
+      .contains(newMember))
+      OptionT.liftF(Effect[F]
+        .delay(
+          adminPool
+            .getConnection
+            .modify(
+              groupEntry.getDN,
+              new Modification(ModificationType.ADD, "member", newMember)
+            )
+        ).void)
+    else OptionT.none[F, Unit]
+
+  override def addUser(groupDN: String, distinguishedName: String): OptionT[F, String] =
+    for {
+      _ <- OptionT.liftF(Sync[F].pure(logger.info("getting group {}", groupDN)))
+      groupEntry <- getEntry(groupDN)
+      _ <- OptionT.liftF(Sync[F].pure(logger.info("found group {}", groupEntry)))
+      _ <- createMemberAttribute(groupEntry, distinguishedName)
+      _ <- OptionT.liftF(Sync[F].pure(logger.info("added {} to {}", distinguishedName, groupDN)))
+    } yield distinguishedName
+
+  override def groupMembers(groupDN: String): F[List[LDAPUser]] =
+    Sync[F].delay {
+      val searchResult =
+        readonlyPool
+          .getConnection
+          .search(
+            ldapConfig.baseDN,
+            SearchScope.SUB,
+            s"(&(objectClass=user)(memberOf=$groupDN))"
+          )
+      searchResult.getSearchEntries.asScala
+        .map(ldapUser)
+        .toList
+    }
+
+  override def removeUser(groupDN: String, memberDN: String): OptionT[F, String] =
+    OptionT(getEntry(groupDN).value.map {
+      case Some(group) if group.hasAttribute("member") && group.getAttributeValues("member").contains(memberDN) =>
+        adminPool
+          .getConnection
+          .modify(groupDN, new Modification(ModificationType.DELETE, "member", memberDN))
+        Some(memberDN)
+      case _ => Some(memberDN) //no-op
+    })
+
+  override def search(filter: String): F[List[SearchResultEntry]] =
+    Effect[F].delay(
+      readonlyPool
+        .getConnection
+        .search(ldapConfig.baseDN, SearchScope.SUB, s"(&(cn=*$filter*)(|(objectClass=user)(objectClass=group)))")
+        .getSearchEntries.asScala.toList)
+}

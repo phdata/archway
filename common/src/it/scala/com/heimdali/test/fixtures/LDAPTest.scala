@@ -10,10 +10,10 @@ trait LDAPTest {
     val sslSocketFactory = sslUtil.createSSLSocketFactory
     val connection = new LDAPConnection(
       sslSocketFactory,
-      appConfig.ldap.server,
-      appConfig.ldap.port,
-      appConfig.ldap.bindDN,
-      appConfig.ldap.bindPassword
+      appConfig.ldap.adminBinding.server,
+      appConfig.ldap.adminBinding.port,
+      appConfig.ldap.adminBinding.bindDN,
+      appConfig.ldap.adminBinding.bindPassword
     )
     new LDAPConnectionPool(connection, 10)
   }

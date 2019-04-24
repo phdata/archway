@@ -2,11 +2,11 @@ package com.heimdali.clients
 
 import cats.effect._
 import com.heimdali.test.fixtures._
-import com.unboundid.ldap.sdk.{Attribute, Modification, ModificationType}
+import com.unboundid.ldap.sdk._
 import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{FlatSpec, Matchers}
 
-class LDAPClientImpIntegrationSpec
+class LDAPClientImplIntegrationSpec
   extends FlatSpec
     with Matchers
     with MockitoSugar
@@ -107,14 +107,14 @@ class LDAPClientImpIntegrationSpec
     val groupDN = s"cn=absent_group,${appConfig.ldap.groupPath}"
     val client = new LDAPClientImpl[IO](appConfig.ldap) with ActiveDirectoryClient[IO]
     val actual = client.groupRequest(groupDN, "absent_group", defaultLDAPAttributes(groupDN, "absent_group"))
-    actual.value.unsafeRunSync().isLeft shouldBe true
+    actual.unsafeRunSync() shouldBe an [AddRequest]
   }
 
   it should "generate a modify request" in {
     val groupDN = s"CN=user_benny,OU=heimdali,DC=jotunn,DC=io"
     val client = new LDAPClientImpl[IO](appConfig.ldap) with ActiveDirectoryClient[IO]
     val actual = client.groupRequest(groupDN, "user_benny", defaultLDAPAttributes(groupDN, "user_benny"))
-    actual.value.unsafeRunSync().isRight shouldBe true
+    actual.unsafeRunSync() shouldBe a [ModifyRequest]
   }
 
   it should "generate only one attribute for multiple keys" in {

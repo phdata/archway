@@ -93,13 +93,13 @@ package object config {
 
   case class WorkspaceConfig(user: WorkspaceConfigItem, sharedWorkspace: WorkspaceConfigItem, dataset: WorkspaceConfigItem)
 
-  case class LDAPConfig(server: String,
-                        port: Int,
+  case class LDAPBinding(server: String, port: Int, bindDN: String, bindPassword: String)
+
+  case class LDAPConfig(adminBinding: LDAPBinding,
+                        readonlyBinding: LDAPBinding,
                         baseDN: String,
                         groupPath: String,
                         userPath: Option[String],
-                        bindDN: String,
-                        bindPassword: String,
                         domain: String,
                         realm: String)
 
@@ -166,6 +166,7 @@ package object config {
     implicit val approvalConfigDecoder: Decoder[ApprovalConfig] = deriveDecoder
     implicit val workspaceConfigItemDecoder: Decoder[WorkspaceConfigItem] = deriveDecoder
     implicit val workspaceConfigDecoder: Decoder[WorkspaceConfig] = deriveDecoder
+    implicit val ldapBindingDecoder: Decoder[LDAPBinding] = deriveDecoder
     implicit val lDAPConfigDecoder: Decoder[LDAPConfig] = deriveDecoder
     implicit val databaseConfigItemDecoder: Decoder[DatabaseConfigItem] = deriveDecoder
     implicit val databaseConfigDecoder: Decoder[DatabaseConfig] = deriveDecoder
