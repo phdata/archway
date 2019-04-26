@@ -109,6 +109,9 @@ const SimpleMemberRequest = ({
                 label: 'Read Only',
                 value: 'readonly'
               }, {
+                label: 'Read/Write',
+                value: 'readwrite'
+              }, {
                 label: 'None',
                 value: 'none'
               }]}

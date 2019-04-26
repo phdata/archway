@@ -27,6 +27,7 @@ const renderRoleColumn = (key: string, onChangeMemberRole: (member: Member, role
           >
             <Menu.Item key="none">none</Menu.Item>
             <Menu.Item key="readonly">readonly</Menu.Item>
+            <Menu.Item key="readwrite">read/write</Menu.Item>
             <Menu.Item key="manager">manager</Menu.Item>
           </Menu>
         )}

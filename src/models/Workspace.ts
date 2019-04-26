@@ -87,6 +87,7 @@ export interface SecurityGroup {
   group_created?: Date;
   role_created?: Date;
   role_associated?: Date;
+  attributes?: string[][];
 }
 
 export interface Compliance {
@@ -108,6 +109,7 @@ export interface HiveAllocation {
   size_in_gb: number;
   consumed_in_gb: number;
   managing_group: DatabaseGrant;
+  readwrite_group?: DatabaseGrant;
   readonly_group?: DatabaseGrant;
 }
 

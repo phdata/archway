@@ -31,6 +31,7 @@ describe('PersonalWorkspace', () => {
             common_name: '',
             distinguished_name: '',
             sentry_role: '',
+            attributes: [['','']]
           },
         },
       }],
