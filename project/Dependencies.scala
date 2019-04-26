@@ -82,7 +82,15 @@ object Dependencies {
   val hadoopVersion = s"2.6.0-$cdhVersion"
   val sentryVersion = s"1.5.1-$cdhVersion"
   val hadoop = Seq(
-    "org.apache.sentry" % "sentry-provider-db" % sentryVersion,
+    "org.apache.sentry" % "sentry-provider-db" % sentryVersion excludeAll(
+      ExclusionRule("org.apache.hive"),
+      ExclusionRule("org.eclipse.jetty.orbit"),
+      ExclusionRule("commons-beanutils", "commons-beanutils-core"),
+      ExclusionRule("org.datanucleus"),
+      ExclusionRule("commons-beanutils"),
+      ExclusionRule("org.apache.hadoop", "hadoop-yarn-common"),
+      ExclusionRule("org.slf4j")
+    ),
     "org.apache.hadoop" % "hadoop-client" % hadoopVersion % "provided",
     "org.apache.hive" % "hive-jdbc" % hiveVersion % "provided",
     "org.apache.kafka" %% "kafka" % "0.10.1.1" excludeAll ExclusionRule(organization = "org.slf4j"),
