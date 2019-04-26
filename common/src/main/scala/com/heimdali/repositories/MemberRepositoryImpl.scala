@@ -72,6 +72,21 @@ class MemberRepositoryImpl extends MemberRepository {
             m.distinguished_name,
             h.name,
             h.id as resourceId,
+            'readwrite' as role
+        from workspace_database wd
+        inner join hive_database h on wd.hive_database_id = h.id
+        inner join hive_grant hg on h.readwrite_group_id = hg.id
+        inner join member m on m.ldap_registration_id = hg.ldap_registration_id
+
+        union
+
+        select
+          m.id as memberId,
+          wd.workspace_request_id,
+          'data' as area,
+            m.distinguished_name,
+            h.name,
+            h.id as resourceId,
             'readonly' as role
         from workspace_database wd
         inner join hive_database h on wd.hive_database_id = h.id
