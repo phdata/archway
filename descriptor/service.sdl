@@ -394,20 +394,69 @@
           "configurableInWizard": "true"
         },
         {
-          "name": "heimdali.ldap.server",
-          "label": "LDAP Host",
+          "name": "heimdali.ldap.readonlyBinding.server",
+          "label": "Read Only LDAP Host",
           "description": "THe LDAP/AD host for users and groups",
           "required": "true",
           "type": "string",
           "configurableInWizard": "true"
         },
         {
-          "name": "heimdali.ldap.port",
-          "label": "LDAP Port",
+          "name": "heimdali.ldap.readonlyBinding.port",
+          "label": "Read Only LDAP Port",
           "description": "The LDAP/AD port for users and groups",
           "required": "true",
           "type": "port",
           "default": 389,
+          "configurableInWizard": "true"
+        },
+        {
+          "name": "heimdali.ldap.readonlyBinding.bindDN",
+          "label": "Read Only LDAP Admin DN",
+          "description": "The DN for the admin user",
+          "required": "true",
+          "type": "string",
+          "configurableInWizard": "true"
+        },
+        {
+          "name": "heimdali.ldap.readonlyBinding.bindPassword",
+          "label": "Read Only LDAP Admin Password",
+          "description": "The password for the admin user",
+          "required": "true",
+          "type": "password",
+          "configurableInWizard": "true"
+        },
+        {
+          "name": "heimdali.ldap.adminBinding.server",
+          "label": "Admin LDAP Host",
+          "description": "THe LDAP/AD host for users and groups",
+          "required": "true",
+          "type": "string",
+          "configurableInWizard": "true"
+        },
+        {
+          "name": "heimdali.ldap.adminBinding.port",
+          "label": "Admin LDAP Port",
+          "description": "The LDAP/AD port for users and groups",
+          "required": "true",
+          "type": "port",
+          "default": 389,
+          "configurableInWizard": "true"
+        },
+        {
+          "name": "heimdali.ldap.adminBinding.bindDN",
+          "label": "Admin LDAP Admin DN",
+          "description": "The DN for the admin user",
+          "required": "true",
+          "type": "string",
+          "configurableInWizard": "true"
+        },
+        {
+          "name": "heimdali.ldap.adminBinding.bindPassword",
+          "label": "Admin LDAP Admin Password",
+          "description": "The password for the admin user",
+          "required": "true",
+          "type": "password",
           "configurableInWizard": "true"
         },
         {
@@ -440,22 +489,6 @@
           "description": "The LDAP location for groups",
           "required": "true",
           "type": "string",
-          "configurableInWizard": "true"
-        },
-        {
-          "name": "heimdali.ldap.bindDN",
-          "label": "LDAP Admin DN",
-          "description": "The DN for the admin user",
-          "required": "true",
-          "type": "string",
-          "configurableInWizard": "true"
-        },
-        {
-          "name": "heimdali.ldap.bindPassword",
-          "label": "LDAP Admin Password",
-          "description": "The password for the admin user",
-          "required": "true",
-          "type": "password",
           "configurableInWizard": "true"
         },
         {
@@ -575,13 +608,6 @@
           "description": "Password for the Java truststore",
           "required": "false",
           "type": "password"
-        },
-        {
-          "name": "heimdali.additional.classpath",
-          "label": "Heimdali additional classpath",
-          "description": "Classpath entries to inject into the Heimdali API",
-          "required": "false",
-          "type": "string"
         }
       ],
       "configWriter": {
@@ -600,8 +626,7 @@
         ],
         "environmentVariables": {
           "JAVA_TRUST_STORE_LOCATION": "${heimdali.java.truststore.location}",
-          "JAVA_TRUST_STORE_PASSWORD": "${heimdali.java.truststore.password}",
-          "HEIMDALI_ADDITIONAL_CLASSPATH": "${heimdali.additional.classpath}"
+          "JAVA_TRUST_STORE_PASSWORD": "${heimdali.java.truststore.password}"
         }
       }
     }
