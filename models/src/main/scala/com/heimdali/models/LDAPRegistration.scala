@@ -22,9 +22,9 @@ object LDAPRegistration {
     Show.show(l => s"creating AD/LDAP group ${l.commonName}")
 
   implicit val encoder: Encoder[LDAPRegistration] =
-    Encoder.forProduct3("common_name", "distinguished_name", "sentry_role")(s => (s.commonName, s.distinguishedName, s.sentryRole))
+    Encoder.forProduct4("common_name", "distinguished_name", "sentry_role", "attributes")(s => (s.commonName, s.distinguishedName, s.sentryRole, s.attributes))
 
   implicit final val decoder: Decoder[LDAPRegistration] =
-    Decoder.forProduct3("common_name", "distinguished_name", "sentry_role")((cn: String, dn: String, role: String) => LDAPRegistration(dn, cn, role))
+    Decoder.forProduct4("common_name", "distinguished_name", "sentry_role", "attributes")((cn: String, dn: String, role: String, attributes: List[(String, String)]) => LDAPRegistration(dn, cn, role, attributes = attributes))
 
 }

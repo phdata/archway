@@ -27,6 +27,11 @@ class DefaultStructuredWorkspaceGenerator[F[_]](appConfig: AppConfig,
         s"cn=edh_${appConfig.cluster.environment}_${dataset}_$generatedName,${appConfig.ldap.groupPath}",
         s"role_${appConfig.cluster.environment}_${dataset}_$generatedName",
         workspaceRequest)
+      readwrite <- ldapGenerator.generate(
+        s"edh_${appConfig.cluster.environment}_${dataset}_${generatedName}_rw",
+        s"cn=edh_${appConfig.cluster.environment}_${dataset}_${generatedName}_rw,${appConfig.ldap.groupPath}",
+        s"role_${appConfig.cluster.environment}_${dataset}_${generatedName}_rw",
+        workspaceRequest)
       readonly <- ldapGenerator.generate(
         s"edh_${appConfig.cluster.environment}_${dataset}_${generatedName}_ro",
         s"cn=edh_${appConfig.cluster.environment}_${dataset}_${generatedName}_ro,${appConfig.ldap.groupPath}",
@@ -37,6 +42,7 @@ class DefaultStructuredWorkspaceGenerator[F[_]](appConfig: AppConfig,
       s"${appConfig.workspaces.dataset.root}/$dataset/$generatedName",
       structuredTemplate.disk.get,
       manager,
+      Some(readwrite),
       Some(readonly))
 
   override def workspaceFor(structuredTemplate: StructuredTemplate): F[WorkspaceRequest] = {

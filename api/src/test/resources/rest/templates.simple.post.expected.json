@@ -18,14 +18,123 @@
         "group": {
           "distinguished_name": "cn=edh_sw_sesame,ou=heimdali,dc=jotunn,dc=io",
           "common_name": "edh_sw_sesame",
-          "sentry_role": "role_sw_sesame"
+          "sentry_role": "role_sw_sesame",
+          "attributes" : [
+            [
+              "dn",
+              "cn=edh_sw_sesame,ou=heimdali,dc=jotunn,dc=io"
+            ],
+            [
+              "objectClass",
+              "group"
+            ],
+            [
+              "objectClass",
+              "top"
+            ],
+            [
+              "sAMAccountName",
+              "edh_sw_sesame"
+            ],
+            [
+              "cn",
+              "edh_sw_sesame"
+            ],
+            [
+              "msSFU30Name",
+              "edh_sw_sesame"
+            ],
+            [
+              "msSFU30NisDomain",
+              "jotunn.io"
+            ],
+            [
+              "gidNumber",
+              "123"
+            ]
+          ]
+        }
+      },
+      "readwrite_group": {
+        "group": {
+          "distinguished_name": "cn=edh_sw_sesame_rw,ou=heimdali,dc=jotunn,dc=io",
+          "common_name": "edh_sw_sesame_rw",
+          "sentry_role": "role_sw_sesame_rw",
+          "attributes" : [
+            [
+              "dn",
+              "cn=edh_sw_sesame_rw,ou=heimdali,dc=jotunn,dc=io"
+            ],
+            [
+              "objectClass",
+              "group"
+            ],
+            [
+              "objectClass",
+              "top"
+            ],
+            [
+              "sAMAccountName",
+              "edh_sw_sesame_rw"
+            ],
+            [
+              "cn",
+              "edh_sw_sesame_rw"
+            ],
+            [
+              "msSFU30Name",
+              "edh_sw_sesame_rw"
+            ],
+            [
+              "msSFU30NisDomain",
+              "jotunn.io"
+            ],
+            [
+              "gidNumber",
+              "123"
+            ]
+          ]
         }
       },
       "readonly_group" : {
         "group" : {
           "common_name" : "edh_sw_sesame_ro",
           "distinguished_name" : "cn=edh_sw_sesame_ro,ou=heimdali,dc=jotunn,dc=io",
-          "sentry_role" : "role_sw_sesame_ro"
+          "sentry_role" : "role_sw_sesame_ro",
+          "attributes" : [
+            [
+              "dn",
+              "cn=edh_sw_sesame_ro,ou=heimdali,dc=jotunn,dc=io"
+            ],
+            [
+              "objectClass",
+              "group"
+            ],
+            [
+              "objectClass",
+              "top"
+            ],
+            [
+              "sAMAccountName",
+              "edh_sw_sesame_ro"
+            ],
+            [
+              "cn",
+              "edh_sw_sesame_ro"
+            ],
+            [
+              "msSFU30Name",
+              "edh_sw_sesame_ro"
+            ],
+            [
+              "msSFU30NisDomain",
+              "jotunn.io"
+            ],
+            [
+              "gidNumber",
+              "123"
+            ]
+          ]
         }
       }
     }
@@ -44,7 +153,41 @@
       "group": {
         "distinguished_name": "cn=sesame_default_cg,ou=heimdali,dc=jotunn,dc=io",
         "common_name": "sesame_default_cg",
-        "sentry_role": "role_sesame_default_cg"
+        "sentry_role": "role_sesame_default_cg",
+        "attributes" : [
+          [
+            "dn",
+            "cn=sesame_default_cg,ou=heimdali,dc=jotunn,dc=io"
+          ],
+          [
+            "objectClass",
+            "group"
+          ],
+          [
+            "objectClass",
+            "top"
+          ],
+          [
+            "sAMAccountName",
+            "sesame_default_cg"
+          ],
+          [
+            "cn",
+            "sesame_default_cg"
+          ],
+          [
+            "msSFU30Name",
+            "sesame_default_cg"
+          ],
+          [
+            "msSFU30NisDomain",
+            "jotunn.io"
+          ],
+          [
+            "gidNumber",
+            "123"
+          ]
+        ]
       }
     }
   ],

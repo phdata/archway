@@ -4,7 +4,7 @@
 <configuration>
   <property>
     <name>sentry.service.server.principal</name>
-    <value>sentry/_HOST@JOTUNN.IO</value>
+    <value>sentry/_HOST@PHDATA.IO</value>
   </property>
   <property>
     <name>sentry.service.security.mode</name>
@@ -12,7 +12,7 @@
   </property>
   <property>
     <name>sentry.service.client.server.rpc-address</name>
-    <value>master1.jotunn.io</value>
+    <value>master3.valhalla.phdata.io</value>
   </property>
   <property>
     <name>sentry.service.client.server.rpc-port</name>
@@ -20,6 +20,6 @@
   </property>
   <property>
     <name>sentry.service.client.server.rpc-addresses</name>
-    <value>master1.jotunn.io:8038</value>
+    <value>master3.valhalla.phdata.io:8038</value>
   </property>
 </configuration>

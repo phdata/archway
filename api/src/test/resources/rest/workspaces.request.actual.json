@@ -17,7 +17,41 @@
         "group": {
           "distinguished_name": "cn=edh_sw_sesame,dn=groups,dc=jotunn,dc=io",
           "common_name": "edh_sw_sesame",
-          "sentry_role": "role_sesame"
+          "sentry_role": "role_sesame",
+          "attributes" : [
+            [
+              "dn",
+              "cn=edh_sw_sesame,ou=heimdali,dc=jotunn,dc=io"
+            ],
+            [
+              "objectClass",
+              "group"
+            ],
+            [
+              "objectClass",
+              "top"
+            ],
+            [
+              "sAMAccountName",
+              "edh_sw_sesame"
+            ],
+            [
+              "cn",
+              "edh_sw_sesame"
+            ],
+            [
+              "msSFU30Name",
+              "edh_sw_sesame"
+            ],
+            [
+              "msSFU30NisDomain",
+              "jotunn.io"
+            ],
+            [
+              "gidNumber",
+              "123"
+            ]
+          ]
         }
       }
     }
@@ -36,7 +70,41 @@
       "group": {
         "distinguished_name": "cn=sesame_default_cg,ou=heimdali,dc=jotunn,dc=io",
         "common_name": "sesame_default_cg",
-        "sentry_role": "role_sesame_default_cg"
+        "sentry_role": "role_sesame_default_cg",
+        "attributes" : [
+          [
+            "dn",
+            "cn=edh_sw_sesame,ou=heimdali,dc=jotunn,dc=io"
+          ],
+          [
+            "objectClass",
+            "group"
+          ],
+          [
+            "objectClass",
+            "top"
+          ],
+          [
+            "sAMAccountName",
+            "edh_sw_sesame"
+          ],
+          [
+            "cn",
+            "edh_sw_sesame"
+          ],
+          [
+            "msSFU30Name",
+            "edh_sw_sesame"
+          ],
+          [
+            "msSFU30NisDomain",
+            "jotunn.io"
+          ],
+          [
+            "gidNumber",
+            "123"
+          ]
+        ]
       }
     }
   ],

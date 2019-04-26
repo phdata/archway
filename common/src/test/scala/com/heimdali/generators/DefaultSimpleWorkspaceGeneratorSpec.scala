@@ -18,9 +18,9 @@ class DefaultSimpleWorkspaceGeneratorSpec extends FlatSpec with MockFactory with
   it should "shared templates should generate workspaces" in {
     val configService = mock[ConfigService[IO]]
     // twice for test objects
-    configService.getAndSetNextGid _ expects () returning 123L.pure[IO] twice()
+    configService.getAndSetNextGid _ expects () returning 123L.pure[IO] repeat 3 times()
     // twice for actual call
-    configService.getAndSetNextGid _ expects () returning 123L.pure[IO] twice()
+    configService.getAndSetNextGid _ expects () returning 123L.pure[IO] repeat 2 times()
 
     val ldapGenerator = new DefaultLDAPGroupGenerator[IO](appConfig, configService)
     val appGenerator = new DefaultApplicationGenerator[IO](appConfig, ldapGenerator)
@@ -41,6 +41,7 @@ class DefaultSimpleWorkspaceGeneratorSpec extends FlatSpec with MockFactory with
           "/data/shared_workspaces/open_sesame",
           250,
           LDAPRegistration("cn=edh_sw_open_sesame,ou=heimdali,dc=jotunn,dc=io", "edh_sw_open_sesame", "role_sw_open_sesame", attributes = defaultLDAPAttributes("cn=edh_sw_open_sesame,ou=heimdali,dc=jotunn,dc=io", "edh_sw_open_sesame")),
+          Some(LDAPRegistration("cn=edh_sw_open_sesame_rw,ou=heimdali,dc=jotunn,dc=io", "edh_sw_open_sesame_rw", "role_sw_open_sesame_rw", attributes = defaultLDAPAttributes("cn=edh_sw_open_sesame_rw,ou=heimdali,dc=jotunn,dc=io", "edh_sw_open_sesame_rw"))),
           Some(LDAPRegistration("cn=edh_sw_open_sesame_ro,ou=heimdali,dc=jotunn,dc=io", "edh_sw_open_sesame_ro", "role_sw_open_sesame_ro", attributes = defaultLDAPAttributes("cn=edh_sw_open_sesame_ro,ou=heimdali,dc=jotunn,dc=io", "edh_sw_open_sesame_ro"))))),
       processing = List(Yarn("root.sw_open_sesame", 4, 16)))
 

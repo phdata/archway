@@ -32,15 +32,18 @@ class WorkspaceServiceIntegrationSpec extends FlatSpec with HiveTest with DBTest
       for {
         ldap1 <- generator.generate(initialLDAP.commonName, initialLDAP.distinguishedName, initialLDAP.sentryRole, initialWorkspaceRequest)
         ldap2 <- generator.generate(initialLDAP.commonName, initialLDAP.distinguishedName, initialLDAP.sentryRole, initialWorkspaceRequest)
-        workspace = initialWorkspaceRequest.copy(data = List(initialHive.copy(managingGroup = initialGrant.copy(ldapRegistration = ldap1), readonlyGroup = Some(initialGrant.copy(ldapRegistration = ldap2)))))
+        ldap3 <- generator.generate(initialLDAP.commonName, initialLDAP.distinguishedName, initialLDAP.sentryRole, initialWorkspaceRequest)
+        workspace = initialWorkspaceRequest.copy(data = List(initialHive.copy(managingGroup = initialGrant.copy(ldapRegistration = ldap1), readonlyGroup = Some(initialGrant.copy(ldapRegistration = ldap2)), readWriteGroup = Some(initialGrant.copy(ldapRegistration = ldap3)))))
         newWorkspace <- service.create(workspace)
         result <- service.find(newWorkspace.id.get).value
       } yield result
     }.unsafeRunSync()
     val managerAttributes = endall.get.data.head.managingGroup.ldapRegistration.attributes
+    val readwriteAttributes = endall.get.data.head.readWriteGroup.get.ldapRegistration.attributes
     val readOnlyAttributes = endall.get.data.head.readonlyGroup.get.ldapRegistration.attributes
     
     managerAttributes.distinct.length shouldBe managerAttributes.length
+    readwriteAttributes.distinct.length shouldBe readwriteAttributes.length
     readOnlyAttributes.distinct.length shouldBe readOnlyAttributes.length
   }
 

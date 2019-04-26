@@ -56,11 +56,11 @@
   </property>
   <property>
     <name>mapreduce.client.submit.file.replication</name>
-    <value>1</value>
+    <value>2</value>
   </property>
   <property>
     <name>mapreduce.job.reduces</name>
-    <value>2</value>
+    <value>10</value>
   </property>
   <property>
     <name>mapreduce.task.io.sort.mb</name>
@@ -80,23 +80,23 @@
   </property>
   <property>
     <name>mapreduce.jobhistory.address</name>
-    <value>master1.jotunn.io:10020</value>
+    <value>master1.valhalla.phdata.io:10020</value>
   </property>
   <property>
     <name>mapreduce.jobhistory.webapp.address</name>
-    <value>master1.jotunn.io:19888</value>
+    <value>master1.valhalla.phdata.io:19888</value>
   </property>
   <property>
     <name>mapreduce.jobhistory.webapp.https.address</name>
-    <value>master1.jotunn.io:19890</value>
+    <value>master1.valhalla.phdata.io:19890</value>
   </property>
   <property>
     <name>mapreduce.jobhistory.admin.address</name>
-    <value>master1.jotunn.io:10033</value>
+    <value>master1.valhalla.phdata.io:10033</value>
   </property>
   <property>
     <name>mapreduce.jobhistory.principal</name>
-    <value>mapred/_HOST@JOTUNN.IO</value>
+    <value>mapred/_HOST@PHDATA.IO</value>
   </property>
   <property>
     <name>mapreduce.framework.name</name>
@@ -185,5 +185,14 @@
   <property>
     <name>mapreduce.cluster.acls.enabled</name>
     <value>false</value>
+  </property>
+  <property>
+    <name>mapreduce.shuffle.ssl.enabled</name>
+    <value>true</value>
+    <final>true</final>
+  </property>
+  <property>
+    <name>mapreduce.jobhistory.http.policy</name>
+    <value>HTTPS_ONLY</value>
   </property>
 </configuration>

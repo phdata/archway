@@ -4,7 +4,7 @@
 <configuration>
   <property>
     <name>hive.metastore.uris</name>
-    <value>thrift://master1.jotunn.io:9083</value>
+    <value>thrift://master3.valhalla.phdata.io:9083</value>
   </property>
   <property>
     <name>hive.metastore.client.socket.timeout</name>
@@ -140,7 +140,7 @@
   </property>
   <property>
     <name>spark.executor.memory</name>
-    <value>912680550</value>
+    <value>4876245401</value>
   </property>
   <property>
     <name>spark.driver.memory</name>
@@ -156,7 +156,7 @@
   </property>
   <property>
     <name>spark.yarn.executor.memoryOverhead</name>
-    <value>153</value>
+    <value>820</value>
   </property>
   <property>
     <name>spark.dynamicAllocation.enabled</name>
@@ -184,7 +184,7 @@
   </property>
   <property>
     <name>hive.zookeeper.quorum</name>
-    <value>master1.jotunn.io</value>
+    <value>master3.valhalla.phdata.io,master2.valhalla.phdata.io,master1.valhalla.phdata.io</value>
   </property>
   <property>
     <name>hive.zookeeper.client.port</name>
@@ -195,31 +195,71 @@
     <value>hive_zookeeper_namespace_hive</value>
   </property>
   <property>
+    <name>hbase.zookeeper.quorum</name>
+    <value>master3.valhalla.phdata.io,master2.valhalla.phdata.io,master1.valhalla.phdata.io</value>
+  </property>
+  <property>
+    <name>hbase.zookeeper.property.clientPort</name>
+    <value>2181</value>
+  </property>
+  <property>
     <name>hive.cluster.delegation.token.store.class</name>
     <value>org.apache.hadoop.hive.thrift.MemoryTokenStore</value>
   </property>
   <property>
     <name>hive.server2.enable.doAs</name>
-    <value>true</value>
+    <value>false</value>
   </property>
   <property>
     <name>hive.metastore.sasl.enabled</name>
     <value>true</value>
   </property>
   <property>
-    <name>hive.server2.authentication</name>
-    <value>kerberos</value>
-  </property>
-  <property>
     <name>hive.metastore.kerberos.principal</name>
-    <value>hive/_HOST@JOTUNN.IO</value>
+    <value>hive/_HOST@PHDATA.IO</value>
   </property>
   <property>
     <name>hive.server2.authentication.kerberos.principal</name>
-    <value>hive/_HOST@JOTUNN.IO</value>
+    <value>hive/_HOST@PHDATA.IO</value>
+  </property>
+  <property>
+    <name>hive.server2.use.SSL</name>
+    <value>true</value>
   </property>
   <property>
     <name>spark.shuffle.service.enabled</name>
     <value>true</value>
+  </property>
+  <property>
+    <name>hive.server2.authentication</name>
+    <value>LDAP</value>
+  </property>
+  <property>
+    <name>com.unraveldata.host</name>
+    <value>edge2.valhalla.phdata.io</value>
+  </property>
+  <property>
+    <name>com.unraveldata.hive.hook.tcp</name>
+    <value>true</value>
+  </property>
+  <property>
+    <name>com.unraveldata.hive.hdfs.dir</name>
+    <value>/user/unravel/HOOK_RESULT_DIR</value>
+  </property>
+  <property>
+    <name>hive.exec.driver.run.hooks</name>
+    <value>com.unraveldata.dataflow.hive.hook.HiveDriverHook</value>
+  </property>
+  <property>
+    <name>hive.exec.pre.hooks</name>
+    <value>com.unraveldata.dataflow.hive.hook.HivePreHook</value>
+  </property>
+  <property>
+    <name>hive.exec.post.hooks</name>
+    <value>com.unraveldata.dataflow.hive.hook.HivePostHook</value>
+  </property>
+  <property>
+    <name>hive.exec.failure.hooks</name>
+    <value>com.unraveldata.dataflow.hive.hook.HiveFailHook</value>
   </property>
 </configuration>

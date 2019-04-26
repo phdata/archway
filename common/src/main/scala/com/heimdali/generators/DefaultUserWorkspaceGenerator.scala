@@ -50,6 +50,7 @@ class DefaultUserWorkspaceGenerator[F[_]](appConfig: AppConfig,
         s"${appConfig.workspaces.user.root}/${template.username}/db",
         appConfig.workspaces.user.defaultSize,
         managerHive,
+        None,
         None
       )),
       kafkaTopics = List(topic)

@@ -10,6 +10,7 @@ object DatabaseRole {
   implicit val viewer: Show[DatabaseRole] =
     Show.show {
       case Manager => "manager"
+      case ReadWrite => "readwrite"
       case ReadOnly => "readonly"
     }
 
@@ -17,6 +18,7 @@ object DatabaseRole {
     role match {
       case _ if role matches "managers?" => Some(Manager)
       case "readonly" => Some(ReadOnly)
+      case "readwrite" => Some(ReadWrite)
       case _ => None
     }
 
@@ -25,3 +27,5 @@ object DatabaseRole {
 case object Manager extends DatabaseRole
 
 case object ReadOnly extends DatabaseRole
+
+case object ReadWrite extends DatabaseRole

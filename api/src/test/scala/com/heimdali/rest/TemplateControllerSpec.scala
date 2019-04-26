@@ -28,7 +28,7 @@ class TemplateControllerSpec
   it should "generate a simple workspace" in new Http4sClientDsl[IO] with Context {
     val request = fromResource("rest/templates.simple.post.json")
 
-    configService.getAndSetNextGid _ expects() returning 123L.pure[IO] repeat 3 times()
+    configService.getAndSetNextGid _ expects() returning 123L.pure[IO] repeat 4 times()
 
     val response = templateController.route.orNotFound.run(POST(request, Uri.uri("/simple")).unsafeRunSync())
 

@@ -168,14 +168,16 @@ package object fixtures {
        |        "group": {
        |          "common_name" : "${savedLDAP.commonName}",
        |          "distinguished_name" : "${savedLDAP.distinguishedName}",
-       |          "sentry_role" : "${savedLDAP.sentryRole}"
+       |          "sentry_role" : "${savedLDAP.sentryRole}",
+       |          "attributes" : [ ]
        |        }
        |      },
        |      "readonly_group" : {
        |        "group": {
        |          "common_name" : "${savedLDAP.commonName}",
        |          "distinguished_name" : "${savedLDAP.distinguishedName}",
-       |          "sentry_role" : "${savedLDAP.sentryRole}"
+       |          "sentry_role" : "${savedLDAP.sentryRole}",
+       |          "attributes" : [ ]
        |        }
        |      }
        |    }
@@ -188,7 +190,8 @@ package object fixtures {
        |      "group": {
        |          "common_name" : "${savedLDAP.commonName}",
        |          "distinguished_name" : "${savedLDAP.distinguishedName}",
-       |          "sentry_role" : "${savedLDAP.sentryRole}"
+       |          "sentry_role" : "${savedLDAP.sentryRole}",
+       |          "attributes" : [ ]
        |      }
        |    }
        |  ],

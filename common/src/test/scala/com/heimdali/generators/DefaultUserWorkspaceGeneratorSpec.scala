@@ -32,7 +32,20 @@ class DefaultUserWorkspaceGeneratorSpec extends FlatSpec with MockFactory with M
       timer.instant,
       Compliance(phiData = false, pciData = false, piiData = false),
       singleUser = true,
-      data = List(HiveAllocation(s"user_$standardUsername", s"/user/$standardUsername/db", 250, LDAPRegistration(s"cn=user_$standardUsername,ou=heimdali,dc=jotunn,dc=io", s"user_$standardUsername", s"role_user_$standardUsername", attributes = defaultLDAPAttributes(s"cn=user_$standardUsername,ou=heimdali,dc=jotunn,dc=io", s"user_$standardUsername")), None)),
+      data = List(
+        HiveAllocation(
+          s"user_$standardUsername",
+          s"/user/$standardUsername/db",
+          250,
+          LDAPRegistration(
+            s"cn=user_$standardUsername,ou=heimdali,dc=jotunn,dc=io",
+            s"user_$standardUsername",
+            s"role_user_$standardUsername",
+            attributes = defaultLDAPAttributes(s"cn=user_$standardUsername,ou=heimdali,dc=jotunn,dc=io", s"user_$standardUsername")
+          ),
+          None,
+          None
+        )),
       processing = List(Yarn(s"root.user.$standardUsername", 1, 1)))
 
     val expected = workspace.copy(

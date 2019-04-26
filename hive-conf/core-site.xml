@@ -4,7 +4,7 @@
 <configuration>
   <property>
     <name>fs.defaultFS</name>
-    <value>hdfs://master1.jotunn.io:8020</value>
+    <value>hdfs://valhalla</value>
   </property>
   <property>
     <name>fs.trash.interval</name>
@@ -27,8 +27,14 @@
     <value>authentication</value>
   </property>
   <property>
+    <name>hadoop.security.key.provider.path</name>
+    <value>kms://https@master1.valhalla.phdata.io;master2.valhalla.phdata.io;master3.valhalla.phdata.io:16000/kms</value>
+  </property>
+  <property>
     <name>hadoop.security.auth_to_local</name>
-    <value>DEFAULT</value>
+    <value>RULE:[1:$1]/L
+      RULE:[2:$1]/L
+      DEFAULT</value>
   </property>
   <property>
     <name>hadoop.proxyuser.oozie.hosts</name>
@@ -62,14 +68,8 @@
     <name>hadoop.proxyuser.HTTP.groups</name>
     <value>*</value>
   </property>
-  <property>
-    <name>hadoop.proxyuser.hive.hosts</name>
-    <value>*</value>
-  </property>
-  <property>
-    <name>hadoop.proxyuser.hive.groups</name>
-    <value>*</value>
-  </property>
+  <!--'hadoop.proxyuser.hive.hosts', originally set to '*' (non-final), is overridden below by a safety valve-->
+  <!--'hadoop.proxyuser.hive.groups', originally set to '*' (non-final), is overridden below by a safety valve-->
   <property>
     <name>hadoop.proxyuser.hue.hosts</name>
     <value>*</value>
@@ -120,7 +120,7 @@
   </property>
   <property>
     <name>hadoop.ssl.enabled</name>
-    <value>false</value>
+    <value>true</value>
   </property>
   <property>
     <name>hadoop.ssl.require.client.cert</name>
@@ -141,5 +141,81 @@
     <name>hadoop.ssl.client.conf</name>
     <value>ssl-client.xml</value>
     <final>true</final>
+  </property>
+  <property>
+    <name>hadoop.proxyuser.trifacta.hosts</name>
+    <value>*</value>
+  </property>
+  <property>
+    <name>hadoop.proxyuser.trifacta.groups</name>
+    <value>edh_user</value>
+  </property>
+  <property>
+    <name>hadoop.proxyuser.datarobot.hosts</name>
+    <value>*</value>
+  </property>
+  <property>
+    <name>hadoop.proxyuser.datarobot.groups</name>
+    <value>*</value>
+  </property>
+  <property>
+    <name>hadoop.proxyuser.sdc.hosts</name>
+    <value>*</value>
+  </property>
+  <property>
+    <name>hadoop.proxyuser.sdc.groups</name>
+    <value>*</value>
+  </property>
+  <property>
+    <name>hadoop.proxyuser.arcadia.hosts</name>
+    <value>*</value>
+  </property>
+  <property>
+    <name>hadoop.proxyuser.arcadia.groups</name>
+    <value>*</value>
+  </property>
+  <property>
+    <name>hadoop.proxyuser.bthompson.hosts</name>
+    <value>*</value>
+  </property>
+  <property>
+    <name>hadoop.proxyuser.bthompson.groups</name>
+    <value>*</value>
+  </property>
+  <property>
+    <name>hadoop.proxyuser.heimdali_api.groups</name>
+    <value>*</value>
+  </property>
+  <property>
+    <name>hadoop.proxyuser.heimdali_api.hosts</name>
+    <value>*</value>
+  </property>
+  <property>
+    <name>fs.s3a.server-side-encryption-algorithm</name>
+    <value>AES256</value>
+  </property>
+  <property>
+    <name>fs.s3.awsAccessKeyId</name>
+    <value>AKIAIZJ2WB33YBB7DR4A</value>
+  </property>
+  <property>
+    <name>fs.s3.awsSecretAccessKey</name>
+    <value>3vB200cCG8sc230sCd/V36oyTVhUKQaKqMCSwiFK</value>
+  </property>
+  <property>
+    <name>hadoop.proxyuser.http.hosts</name>
+    <value>*</value>
+  </property>
+  <property>
+    <name>hadoop.proxyuser.http.groups</name>
+    <value>*</value>
+  </property>
+  <property>
+    <name>hadoop.proxyuser.hive.groups</name>
+    <value>*</value>
+  </property>
+  <property>
+    <name>hadoop.proxyuser.hive.hosts</name>
+    <value>*</value>
   </property>
 </configuration>

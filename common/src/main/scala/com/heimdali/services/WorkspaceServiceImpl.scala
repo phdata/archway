@@ -73,6 +73,13 @@ class WorkspaceServiceImpl[F[_] : ConcurrentEffect : ContextShift](ldapClient: L
 
             _ <- memberRepository.create(workspace.requestedBy, managerLdap.id.get)
 
+            readwrite <- db.readWriteGroup.map { group =>
+              for {
+                ldap <- ldapRepository.create(group.ldapRegistration)
+                grant <- appConfig.databaseGrantRepository.create(ldap.id.get)
+              } yield group.copy(id = Some(grant), ldapRegistration = ldap)
+            }.sequence[ConnectionIO, HiveGrant]
+
             readonly <- db.readonlyGroup.map { group =>
               for {
                 ldap <- ldapRepository.create(group.ldapRegistration)
@@ -80,7 +87,7 @@ class WorkspaceServiceImpl[F[_] : ConcurrentEffect : ContextShift](ldapClient: L
               } yield group.copy(id = Some(grant), ldapRegistration = ldap)
             }.sequence[ConnectionIO, HiveGrant]
 
-            beforeCreate = db.copy(managingGroup = manager, readonlyGroup = readonly)
+            beforeCreate = db.copy(managingGroup = manager, readWriteGroup = readwrite, readonlyGroup = readonly)
             newHiveId <- hiveDatabaseRepository.create(beforeCreate)
             _ <- workspaceRepository.linkHive(newWorkspaceId, newHiveId)
           } yield beforeCreate.copy(id = Some(newHiveId))

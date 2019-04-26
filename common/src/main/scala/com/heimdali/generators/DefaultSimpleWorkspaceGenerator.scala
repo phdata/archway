@@ -54,6 +54,11 @@ class DefaultSimpleWorkspaceGenerator[F[_]](appConfig: AppConfig,
         s"cn=edh_sw_$generatedName,${appConfig.ldap.groupPath}",
         s"role_sw_$generatedName",
         workspace)
+      readwrite <- ldapGenerator.generate(
+        s"edh_sw_${generatedName}_rw",
+        s"cn=edh_sw_${generatedName}_rw,${appConfig.ldap.groupPath}",
+        s"role_sw_${generatedName}_rw",
+        workspace)
       readonly <- ldapGenerator.generate(
         s"edh_sw_${generatedName}_ro",
         s"cn=edh_sw_${generatedName}_ro,${appConfig.ldap.groupPath}",
@@ -67,6 +72,7 @@ class DefaultSimpleWorkspaceGenerator[F[_]](appConfig: AppConfig,
         s"${appConfig.workspaces.sharedWorkspace.root}/$generatedName",
         appConfig.workspaces.sharedWorkspace.defaultSize,
         manager,
+        Some(readwrite),
         Some(readonly))),
     )
   }

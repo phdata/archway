@@ -16,7 +16,9 @@ class LDAPRepositoryImpl extends LDAPRepository with LazyLogging {
 
   def insertRecord(ldapRegistration: LDAPRegistration): ConnectionIO[Long] =
     for {
+      _ <- logger.debug("{}", ldapRegistration.attributes).pure[ConnectionIO]
       id <- insert(ldapRegistration).withUniqueGeneratedKeys[Long]("id")
+      _ <- logger.debug("{}", id).pure[ConnectionIO]
       _ <- ldapRegistration.attributes.map(a => insertAttribute(id, a._1, a._2).run).toList.sequence
     } yield id
 

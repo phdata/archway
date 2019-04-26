@@ -9,38 +9,40 @@ import doobie.util.fragments.whereAnd
 
 class HiveAllocationRepositoryImpl extends HiveAllocationRepository {
 
-  def grant(role: DatabaseRole, manager: Statements.HiveRole, ldap: LDAPRegistration, records: List[LDAPAttribute]): HiveGrant =
+  def grant(role: DatabaseRole, hiveRole: Statements.HiveRole, ldap: LDAPRegistration, records: List[LDAPAttribute]): HiveGrant =
     HiveGrant(
-      manager.name,
-      manager.location,
+      hiveRole.name,
+      hiveRole.location,
       ldap.copy(attributes = records.map(a => a.key -> a.value).distinct),
       role,
-      manager.grantId,
-      manager.locationAccess,
-      manager.databaseAccess
+      hiveRole.grantId,
+      hiveRole.locationAccess,
+      hiveRole.databaseAccess
     )
 
   private def convertHiveResult(items: List[Statements.HiveResult]): List[HiveAllocation] =
-    items.groupBy(r => (r._1, r._2, r._3, r._5, r._6)).map {
-      case ((header, manager, managerLDAP, Some(readonly), Some(readonlyLDAP)), group) =>
+    items.groupBy(r => (r._1, r._2, r._3, r._5, r._6, r._8, r._9)).map {
+      case ((header, manager, managerLDAP, Some(readwrite), Some(readwriteLDAP), Some(readonly), Some(readonlyLDAP)), group) =>
         HiveAllocation(
           header.name,
           header.location,
-          header.size.toInt,
+          header.size,
           None,
           grant(Manager, manager, managerLDAP, group.map(_._4)),
+          Some(grant(ReadWrite, readwrite, readwriteLDAP, group.flatMap(_._7))),
           Some(grant(ReadOnly, readonly, readonlyLDAP, group.flatMap(_._7))),
           header.hiveId,
           header.directoryCreated,
           header.databaseCreated
         )
-      case ((header, manager, managerLDAP, _, _), group) =>
+      case ((header, manager, managerLDAP, _, _, _, _), group) =>
         HiveAllocation(
           header.name,
           header.location,
-          header.size.toInt,
+          header.size,
           None,
           grant(Manager, manager, managerLDAP, group.map(_._4)),
+          None,
           None,
           header.hiveId,
           header.directoryCreated,
@@ -90,7 +92,18 @@ class HiveAllocationRepositoryImpl extends HiveAllocationRepository {
                           directoryCreated: Option[Instant],
                           databaseCreated: Option[Instant])
 
-    type HiveResult = (HiveHeader, HiveRole, LDAPRecord, LDAPAttribute, Option[HiveRole], Option[LDAPRecord], Option[LDAPAttribute])
+    type HiveResult = (
+      HiveHeader,
+        HiveRole,
+        LDAPRecord,
+        LDAPAttribute,
+        Option[HiveRole],
+        Option[LDAPRecord],
+        Option[LDAPAttribute],
+        Option[HiveRole],
+        Option[LDAPRecord],
+        Option[LDAPAttribute]
+      )
 
     val selectQuery: Fragment =
       sql"""
@@ -122,6 +135,24 @@ class HiveAllocationRepositoryImpl extends HiveAllocationRepository {
 
          h.name,
          h.location,
+         CAST('readwrite' as CHAR(8)),
+         rwg.id,
+         rwg.location_access,
+         rwg.database_access,
+
+         rw.distinguished_name,
+         rw.common_name,
+         rw.sentry_role,
+         rw.id,
+         rw.group_created,
+         rw.role_created,
+         rw.group_associated,
+
+         rwa.attr_key,
+         rwa.attr_value,
+
+         h.name,
+         h.location,
          CAST('readonly' as CHAR(8)),
          rg.id,
          rg.location_access,
@@ -141,6 +172,9 @@ class HiveAllocationRepositoryImpl extends HiveAllocationRepository {
        inner join hive_grant mg on h.manager_group_id = mg.id
        inner join ldap_registration m on mg.ldap_registration_id = m.id
        inner join ldap_attribute ma on ma.ldap_registration_id = m.id
+       left join hive_grant rwg on h.readwrite_group_id = rwg.id
+       left join ldap_registration rw on rwg.ldap_registration_id = rw.id
+       left join ldap_attribute rwa on rwa.ldap_registration_id = rw.id
        left join hive_grant rg on h.readonly_group_id = rg.id
        left join ldap_registration r on rg.ldap_registration_id = r.id
        left join ldap_attribute roa on roa.ldap_registration_id = r.id
@@ -148,8 +182,8 @@ class HiveAllocationRepositoryImpl extends HiveAllocationRepository {
 
     def insert(hiveDatabase: HiveAllocation): Update0 =
       sql"""
-         insert into hive_database (name, location, size_in_gb, manager_group_id, readonly_group_id)
-         values (${hiveDatabase.name}, ${hiveDatabase.location}, ${hiveDatabase.sizeInGB}, ${hiveDatabase.managingGroup.id}, ${hiveDatabase.readonlyGroup.flatMap(_.id)})
+         insert into hive_database (name, location, size_in_gb, manager_group_id, readwrite_group_id, readonly_group_id)
+         values (${hiveDatabase.name}, ${hiveDatabase.location}, ${hiveDatabase.sizeInGB}, ${hiveDatabase.managingGroup.id}, ${hiveDatabase.readWriteGroup.flatMap(_.id)}, ${hiveDatabase.readonlyGroup.flatMap(_.id)})
          """.update
 
     def list(workspaceId: Long): Query0[HiveResult] =

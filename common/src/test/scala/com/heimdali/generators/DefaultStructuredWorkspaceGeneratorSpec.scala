@@ -24,6 +24,11 @@ class DefaultStructuredWorkspaceGeneratorSpec extends FlatSpec with MockFactory 
       "role_dev_raw_open_sesame",
       attributes = defaultLDAPAttributes("cn=edh_dev_raw_open_sesame,ou=heimdali,dc=jotunn,dc=io", "edh_dev_raw_open_sesame")),
     Some(LDAPRegistration(
+      "cn=edh_dev_raw_open_sesame_rw,ou=heimdali,dc=jotunn,dc=io",
+      "edh_dev_raw_open_sesame_rw",
+      "role_dev_raw_open_sesame_rw",
+      attributes = defaultLDAPAttributes("cn=edh_dev_raw_open_sesame_rw,ou=heimdali,dc=jotunn,dc=io", "edh_dev_raw_open_sesame_rw"))),
+    Some(LDAPRegistration(
       "cn=edh_dev_raw_open_sesame_ro,ou=heimdali,dc=jotunn,dc=io",
       "edh_dev_raw_open_sesame_ro",
       "role_dev_raw_open_sesame_ro",
@@ -38,6 +43,11 @@ class DefaultStructuredWorkspaceGeneratorSpec extends FlatSpec with MockFactory 
       "edh_dev_staging_open_sesame",
       "role_dev_staging_open_sesame",
       attributes = defaultLDAPAttributes("cn=edh_dev_staging_open_sesame,ou=heimdali,dc=jotunn,dc=io", "edh_dev_staging_open_sesame")),
+    Some(LDAPRegistration(
+      "cn=edh_dev_staging_open_sesame_rw,ou=heimdali,dc=jotunn,dc=io",
+      "edh_dev_staging_open_sesame_rw",
+      "role_dev_staging_open_sesame_rw",
+      attributes = defaultLDAPAttributes("cn=edh_dev_staging_open_sesame_rw,ou=heimdali,dc=jotunn,dc=io", "edh_dev_staging_open_sesame_rw"))),
     Some(LDAPRegistration(
       "cn=edh_dev_staging_open_sesame_ro,ou=heimdali,dc=jotunn,dc=io",
       "edh_dev_staging_open_sesame_ro",
@@ -54,6 +64,11 @@ class DefaultStructuredWorkspaceGeneratorSpec extends FlatSpec with MockFactory 
       "role_dev_modeled_open_sesame",
       attributes = defaultLDAPAttributes("cn=edh_dev_modeled_open_sesame,ou=heimdali,dc=jotunn,dc=io", "edh_dev_modeled_open_sesame")),
     Some(LDAPRegistration(
+      "cn=edh_dev_modeled_open_sesame_rw,ou=heimdali,dc=jotunn,dc=io",
+      "edh_dev_modeled_open_sesame_rw",
+      "role_dev_modeled_open_sesame_rw",
+      attributes = defaultLDAPAttributes("cn=edh_dev_modeled_open_sesame_rw,ou=heimdali,dc=jotunn,dc=io", "edh_dev_modeled_open_sesame_rw"))),
+    Some(LDAPRegistration(
       "cn=edh_dev_modeled_open_sesame_ro,ou=heimdali,dc=jotunn,dc=io",
       "edh_dev_modeled_open_sesame_ro",
       "role_dev_modeled_open_sesame_ro",
@@ -64,9 +79,9 @@ class DefaultStructuredWorkspaceGeneratorSpec extends FlatSpec with MockFactory 
   it should "governed templates should generate workspaces" in {
     val configService = mock[ConfigService[IO]]
     // for tests
-    configService.getAndSetNextGid _ expects() returning 123L.pure[IO] repeat 4 times()
+    configService.getAndSetNextGid _ expects() returning 123L.pure[IO] repeat 6 times()
     // for logic
-    configService.getAndSetNextGid _ expects() returning 123L.pure[IO] repeat 4 times()
+    configService.getAndSetNextGid _ expects() returning 123L.pure[IO] repeat 5 times()
     val ldapGenerator = new DefaultLDAPGroupGenerator[IO](appConfig, configService)
     val appGenerator = new DefaultApplicationGenerator[IO](appConfig, ldapGenerator)
     val topicGenerator = new DefaultTopicGenerator[IO](appConfig, ldapGenerator)

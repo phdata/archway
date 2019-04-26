@@ -35,8 +35,9 @@ package object provisioning {
         setDiskQuota <- SetDiskQuota(hive.id.get, hive.location, hive.sizeInGB).provision[F]
         createDatabase <- CreateHiveDatabase(hive.id.get, hive.name, hive.location).provision[F]
         managers <- hive.managingGroup.provision[F]
+        readwrite <- hive.readWriteGroup.map(_.provision[F]).getOrElse(Kleisli[F, WorkspaceContext[F], ProvisionResult](_ => Effect[F].liftIO(IO.pure(NoOp("hive database readwrite")))))
         readonly <- hive.readonlyGroup.map(_.provision[F]).getOrElse(Kleisli[F, WorkspaceContext[F], ProvisionResult](_ => Effect[F].liftIO(IO.pure(NoOp("hive database readonly")))))
-      } yield createDirectory |+| setDiskQuota |+| createDatabase |+| managers |+| readonly
+      } yield createDirectory |+| setDiskQuota |+| createDatabase |+| managers |+| readwrite |+| readonly
     }
 
   implicit def appProvisioner[F[_] : Effect : Timer]: ProvisionTask[F, Application] =
