@@ -60,6 +60,15 @@ const details: Workspace = {
                     common_name: 'edh_sw_social_media_aggregation',
                     distinguished_name: 'cn=edh_sw_social_media_aggregation,ou=heimdali,DC=jotunn,DC=io',
                     sentry_role: 'role_sw_social_media_aggregation',
+                    attributes: [['dn', 'cn=edh_sw_social_media_aggregation,ou=heimdali,DC=jotunn,DC=io']],
+                },
+            },
+            readwrite_group: {
+                group: {
+                    common_name: 'edh_sw_social_media_aggregation_rw',
+                    distinguished_name: 'cn=edh_sw_social_media_aggregation_rw,ou=heimdali,DC=jotunn,DC=io',
+                    sentry_role: 'role_sw_social_media_aggregation_rw',
+                    attributes: [['dn', 'cn=edh_sw_social_media_aggregation_rw,ou=heimdali,DC=jotunn,DC=io']],
                 },
             },
             readonly_group: {
@@ -67,6 +76,7 @@ const details: Workspace = {
                     common_name: 'edh_sw_social_media_aggregation_ro',
                     distinguished_name: 'cn=edh_sw_social_media_aggregation_ro,ou=heimdali,DC=jotunn,DC=io',
                     sentry_role: 'role_sw_social_media_aggregation_ro',
+                    attributes: [['dn', 'cn=edh_sw_social_media_aggregation_ro,ou=heimdali,DC=jotunn,DC=io']],
                 },
             },
         },
