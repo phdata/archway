@@ -100,7 +100,6 @@ package object config {
                         baseDN: String,
                         groupPath: String,
                         userPath: Option[String],
-                        domain: String,
                         realm: String)
 
   case class DatabaseConfigItem(driver: String, url: String, username: Option[String], password: Option[String]) {

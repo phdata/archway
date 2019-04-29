@@ -3,14 +3,12 @@ package com.heimdali.generators
 import cats._
 import cats.effect.{Clock, Sync}
 import cats.implicits._
-import com.heimdali.config.AppConfig
 import com.heimdali.models.WorkspaceRequest
 import com.heimdali.services.ConfigService
 
-class PioneerLDAPGroupGenerator[F[_] : Monad](appConfig: AppConfig,
-                                              configService: ConfigService[F])
+class PioneerLDAPGroupGenerator[F[_] : Monad](configService: ConfigService[F])
                                              (implicit clock: Clock[F], F: Sync[F])
-  extends DefaultLDAPGroupGenerator[F](appConfig, configService) {
+  extends DefaultLDAPGroupGenerator[F](configService) {
 
   def pioneerAttributes(cn: String, dn: String, role: String, workspace: WorkspaceRequest): F[List[(String, String)]] =
     List(

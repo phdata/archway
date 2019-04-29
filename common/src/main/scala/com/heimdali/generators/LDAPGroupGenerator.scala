@@ -19,7 +19,7 @@ object LDAPGroupGenerator {
       .forName(className(appConfig.generators))
       .getConstructors
       .head
-      .newInstance(appConfig, configService, clock, F)
+      .newInstance(configService, clock, F)
       .asInstanceOf[LDAPGroupGenerator[F]]
 
 }

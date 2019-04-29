@@ -82,7 +82,7 @@ class DefaultStructuredWorkspaceGeneratorSpec extends FlatSpec with MockFactory 
     configService.getAndSetNextGid _ expects() returning 123L.pure[IO] repeat 6 times()
     // for logic
     configService.getAndSetNextGid _ expects() returning 123L.pure[IO] repeat 5 times()
-    val ldapGenerator = new DefaultLDAPGroupGenerator[IO](appConfig, configService)
+    val ldapGenerator = new DefaultLDAPGroupGenerator[IO](configService)
     val appGenerator = new DefaultApplicationGenerator[IO](appConfig, ldapGenerator)
     val topicGenerator = new DefaultTopicGenerator[IO](appConfig, ldapGenerator)
     val templateService = new DefaultStructuredWorkspaceGenerator[IO](appConfig, ldapGenerator, appGenerator, topicGenerator)

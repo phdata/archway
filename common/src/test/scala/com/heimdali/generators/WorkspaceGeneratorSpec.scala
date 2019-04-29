@@ -31,7 +31,7 @@ class WorkspaceGeneratorSpec extends PropSpec with TableDrivenPropertyChecks wit
 
   property("instance") {
     val configService = mock[ConfigService[IO]]
-    val ldapGroupGenerator = new DefaultLDAPGroupGenerator[IO](appConfig, configService)
+    val ldapGroupGenerator = new DefaultLDAPGroupGenerator[IO](configService)
     val appGenerator = new DefaultApplicationGenerator[IO](appConfig, ldapGroupGenerator)
     val topicGenerator = new DefaultTopicGenerator[IO](appConfig, ldapGroupGenerator)
 

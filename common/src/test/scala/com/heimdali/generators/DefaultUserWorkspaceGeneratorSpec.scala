@@ -18,7 +18,7 @@ class DefaultUserWorkspaceGeneratorSpec extends FlatSpec with MockFactory with M
   it should "user templates should generate workspaces" in {
     val configService = mock[ConfigService[IO]]
     configService.getAndSetNextGid _ expects () returning 123L.pure[IO] repeat 5 times()
-    val ldapGenerator = new DefaultLDAPGroupGenerator[IO](appConfig, configService)
+    val ldapGenerator = new DefaultLDAPGroupGenerator[IO](configService)
     val appGenerator = new DefaultApplicationGenerator[IO](appConfig, ldapGenerator)
     val topicGenerator = new DefaultTopicGenerator[IO](appConfig, ldapGenerator)
     val templateService = new DefaultUserWorkspaceGenerator[IO](appConfig, ldapGenerator, appGenerator, topicGenerator)

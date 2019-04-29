@@ -11,7 +11,7 @@ class DefaultTopicGeneratorSpec extends FlatSpec with Matchers {
 
   it should "generate a topic" in {
     val configService = new TestConfigService()
-    val ldapGroupGenerator = new DefaultLDAPGroupGenerator[IO](appConfig, configService)
+    val ldapGroupGenerator = new DefaultLDAPGroupGenerator[IO](configService)
     val topicGenerator = new DefaultTopicGenerator[IO](appConfig, ldapGroupGenerator)
     val name = "sesame.topic_1"
     val groupName = "sesame_topic_1"

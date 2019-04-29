@@ -22,7 +22,7 @@ class DefaultSimpleWorkspaceGeneratorSpec extends FlatSpec with MockFactory with
     // twice for actual call
     configService.getAndSetNextGid _ expects () returning 123L.pure[IO] repeat 2 times()
 
-    val ldapGenerator = new DefaultLDAPGroupGenerator[IO](appConfig, configService)
+    val ldapGenerator = new DefaultLDAPGroupGenerator[IO](configService)
     val appGenerator = new DefaultApplicationGenerator[IO](appConfig, ldapGenerator)
     val topicGenerator = new DefaultTopicGenerator[IO](appConfig, ldapGenerator)
     val input = SimpleTemplate("Open Sesame", "A brief summary", "A longer description", standardUserDN, Compliance(phiData = false, pciData = false, piiData = false), Some(1), Some(1), Some(1))

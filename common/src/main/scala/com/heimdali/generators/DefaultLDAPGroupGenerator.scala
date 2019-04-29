@@ -1,13 +1,11 @@
 package com.heimdali.generators
 
-import cats.effect.{Clock, Sync, Timer}
+import cats.effect.{Clock, Sync}
 import cats.implicits._
-import com.heimdali.config.AppConfig
 import com.heimdali.models.{LDAPRegistration, WorkspaceRequest}
 import com.heimdali.services.ConfigService
 
-class DefaultLDAPGroupGenerator[F[_]](appConfig: AppConfig,
-                                      configService: ConfigService[F])
+class DefaultLDAPGroupGenerator[F[_]](configService: ConfigService[F])
                                      (implicit clock: Clock[F], F: Sync[F])
   extends LDAPGroupGenerator[F] {
 
@@ -20,7 +18,6 @@ class DefaultLDAPGroupGenerator[F[_]](appConfig: AppConfig,
         "sAMAccountName" -> cn,
         "cn" -> cn,
         "msSFU30Name" -> cn,
-        "msSFU30NisDomain" -> appConfig.ldap.domain,
         "gidNumber" -> gid.toString
       )
     }

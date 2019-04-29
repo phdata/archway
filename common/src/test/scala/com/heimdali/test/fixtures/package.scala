@@ -76,7 +76,6 @@ package object fixtures {
       "sAMAccountName" -> cn,
       "cn" -> cn,
       "msSFU30Name" -> cn,
-      "msSFU30NisDomain" -> "jotunn.io",
       "gidNumber" -> "123"
     )
 

@@ -44,7 +44,7 @@ class TemplateControllerSpec
   trait Context {
     val authService: TestAuthService = new TestAuthService
     val configService: ConfigService[IO] = mock[ConfigService[IO]]
-    val ldapGroupGenerator = new DefaultLDAPGroupGenerator[IO](appConfig, configService)
+    val ldapGroupGenerator = new DefaultLDAPGroupGenerator[IO](configService)
     val applicationGenerator: ApplicationGenerator[IO] = new DefaultApplicationGenerator[IO](appConfig, ldapGroupGenerator)
     val topicGenerator: TopicGenerator[IO] = new DefaultTopicGenerator[IO](appConfig, ldapGroupGenerator)
     val simpleTemplateService: WorkspaceGenerator[IO, SimpleTemplate] = new DefaultSimpleWorkspaceGenerator[IO](appConfig, ldapGroupGenerator, applicationGenerator, topicGenerator)

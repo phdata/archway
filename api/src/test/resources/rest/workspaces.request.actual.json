@@ -44,10 +44,6 @@
               "edh_sw_sesame"
             ],
             [
-              "msSFU30NisDomain",
-              "jotunn.io"
-            ],
-            [
               "gidNumber",
               "123"
             ]
@@ -95,10 +91,6 @@
           [
             "msSFU30Name",
             "edh_sw_sesame"
-          ],
-          [
-            "msSFU30NisDomain",
-            "jotunn.io"
           ],
           [
             "gidNumber",

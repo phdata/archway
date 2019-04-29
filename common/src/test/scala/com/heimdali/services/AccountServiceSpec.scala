@@ -136,7 +136,7 @@ class AccountServiceSpec extends FlatSpec with MockFactory with Matchers {
     val workspaceService = mock[WorkspaceService[IO]]
     val ldapClient = mock[LDAPClient[IO]]
     val configService = mock[ConfigService[IO]]
-    val ldapGenerator = new DefaultLDAPGroupGenerator[IO](appConfig, configService)
+    val ldapGenerator = new DefaultLDAPGroupGenerator[IO](configService)
     val appGenerator = new DefaultApplicationGenerator[IO](appConfig, ldapGenerator)
     val topicGenerator = new DefaultTopicGenerator[IO](appConfig, ldapGenerator)
     val templateService = new DefaultUserWorkspaceGenerator[IO](appConfig, ldapGenerator, appGenerator, topicGenerator)
