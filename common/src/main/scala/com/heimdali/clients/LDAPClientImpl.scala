@@ -18,14 +18,16 @@ abstract class LDAPClientImpl[F[_] : Effect](val ldapConfig: LDAPConfig)
   def connectionPool(ldapBinding: LDAPBinding): LDAPConnectionPool = {
     val sslUtil = new SSLUtil(new TrustAllTrustManager)
     val sslSocketFactory = sslUtil.createSSLSocketFactory
-    val connection = new LDAPConnection(
-      sslSocketFactory,
-      ldapBinding.server,
-      ldapBinding.port,
-      ldapBinding.bindDN,
-      ldapBinding.bindPassword
-    )
-    new LDAPConnectionPool(connection, 10)
+
+    val servers: Array[String] = ldapBinding.server.split(",")
+    val ports: Array[Int] = Array.fill(servers.length)(ldapBinding.port)
+
+    val failoverSet = new FailoverServerSet(servers, ports, sslSocketFactory)
+
+    val bindRequest: SimpleBindRequest =
+      new SimpleBindRequest(ldapBinding.bindDN, ldapBinding.bindPassword)
+
+    new LDAPConnectionPool(failoverSet, bindRequest, 10)
   }
 
   val readonlyPool: LDAPConnectionPool =
