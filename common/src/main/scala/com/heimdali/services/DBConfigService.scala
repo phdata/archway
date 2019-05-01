@@ -22,4 +22,5 @@ class DBConfigService[F[_] : Monad](appConfig: AppConfig,
       _ <- configRepository.setValue("nextgid", nextgid.toString)
     } yield currentgid).transact(transactor)
 
+  override def getTemplate(templateName: String): F[String] = ???
 }

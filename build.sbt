@@ -30,7 +30,9 @@ lazy val api = (project in file("api"))
     common % "test->it"
   )
 
-lazy val pioneer = (project in file("custom-pioneer"))
+lazy val templates = (project in file("templates"))
   .settings(Common.settings: _*)
-  .settings(Pioneer.settings: _*)
-  .dependsOn(common)
+  .dependsOn(
+    models,
+    common,
+  )

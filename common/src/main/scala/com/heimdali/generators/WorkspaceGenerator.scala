@@ -1,14 +1,58 @@
 package com.heimdali.generators
 
-import cats.effect.{Clock, Sync}
+import java.net.URI
+import java.time.Instant
+import java.util.concurrent.TimeUnit
+
+import cats.Monad
+import io.circe.syntax._
+import io.circe.Decoder
+import io.circe.generic.auto._
+import cats.implicits._
+import cats.effect.implicits._
+import cats.effect._
 import com.heimdali.config.{AppConfig, GeneratorConfig}
 import com.heimdali.models._
+import com.heimdali.services.ConfigService
+import org.apache.commons.io.FilenameUtils
+import org.fusesource.scalate.{Template, TemplateEngine, TemplateSource}
 
 trait WorkspaceGenerator[F[_], A] {
 
   def defaults(user: User): F[A]
 
   def workspaceFor(template: A): F[WorkspaceRequest]
+
+}
+
+class JSONWorkspaceGenerator[F[_]: Effect : Clock](appConfig: AppConfig,
+                                   configService: ConfigService[F])
+  extends WorkspaceGenerator[F, TemplateRequest] {
+
+  val templateEngine = new TemplateEngine()
+
+  override def defaults(user: User): F[TemplateRequest] = ???
+
+  private[generators] def generateJSON(template: TemplateRequest, templateContent: String): F[String] =
+    Sync[F].delay {
+      val templatePath = s"${template.templateName}.ssp"
+      val templateItem = templateEngine.load(TemplateSource.fromText(templatePath, templateContent))
+      templateEngine.layout(templatePath, templateItem, Map(
+        "templateName" -> template.templateName,
+        "appConfig" -> appConfig,
+        "nextGid" -> (() => configService.getAndSetNextGid.toIO.unsafeRunSync()),
+        "template" -> template
+      ))
+    }
+
+  override def workspaceFor(template: TemplateRequest): F[WorkspaceRequest] =
+    for {
+      templateContent <- configService.getTemplate(template.templateName)
+      workspaceText <- generateJSON(template, templateContent)
+      time <- Clock[F].realTime(TimeUnit.MILLISECONDS)
+      Right(json) = io.circe.parser.parse(workspaceText)
+      Right(result) = json.as[WorkspaceRequest](WorkspaceRequest.decoder(template.requester, Instant.ofEpochMilli(time)))
+    } yield result
 
 }
 
