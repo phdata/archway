@@ -60,6 +60,9 @@ class CDHClusterServiceSpec
     yarn.capabilities("node_manager").head.port shouldBe 9998
     yarn.capabilities("resource_manager").head.port shouldBe 9999
 
+    val mgmt = first.services.find(_.name == "mgmt").get
+    mgmt.capabilities("navigator").head.port shouldBe 7187
+
     first.id should be(name)
     first.name should be("Odin")
     first.distribution should be(CDH(version))

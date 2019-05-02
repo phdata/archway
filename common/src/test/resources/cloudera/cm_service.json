@@ -1,0 +1,68 @@
+{
+  "name": "mgmt",
+  "type": "MGMT",
+  "serviceUrl": "https://manager.valhalla.phdata.io:7183/cmf/serviceRedirect/mgmt",
+  "roleInstancesUrl": "https://manager.valhalla.phdata.io:7183/cmf/serviceRedirect/mgmt/instances",
+  "serviceState": "STARTED",
+  "healthSummary": "GOOD",
+  "healthChecks": [
+    {
+      "name": "MGMT_ALERT_PUBLISHER_HEALTH",
+      "summary": "GOOD",
+      "suppressed": false
+    },
+    {
+      "name": "MGMT_CLOCK_OFFSET_WITH_SMON",
+      "summary": "GOOD",
+      "suppressed": false
+    },
+    {
+      "name": "MGMT_COMMAND_STORAGE_DIRECTORY_FREE_SPACE",
+      "summary": "GOOD",
+      "suppressed": false
+    },
+    {
+      "name": "MGMT_EMBEDDED_DB_FREE_SPACE",
+      "summary": "DISABLED",
+      "suppressed": false
+    },
+    {
+      "name": "MGMT_EVENT_SERVER_HEALTH",
+      "summary": "GOOD",
+      "suppressed": false
+    },
+    {
+      "name": "MGMT_HOST_MONITOR_HEALTH",
+      "summary": "GOOD",
+      "suppressed": false
+    },
+    {
+      "name": "MGMT_NAVIGATORMETASERVER_HEALTH",
+      "summary": "GOOD",
+      "suppressed": false
+    },
+    {
+      "name": "MGMT_NAVIGATOR_HEALTH",
+      "summary": "GOOD",
+      "suppressed": false
+    },
+    {
+      "name": "MGMT_REPORTS_MANAGER_HEALTH",
+      "summary": "GOOD",
+      "suppressed": false
+    },
+    {
+      "name": "MGMT_SERVICE_MONITOR_HEALTH",
+      "summary": "GOOD",
+      "suppressed": false
+    }
+  ],
+  "configStalenessStatus": "STALE",
+  "clientConfigStalenessStatus": "FRESH",
+  "maintenanceMode": true,
+  "maintenanceOwners": [
+    "SERVICE"
+  ],
+  "displayName": "Cloudera Management Service",
+  "entityStatus": "GOOD_HEALTH"
+}

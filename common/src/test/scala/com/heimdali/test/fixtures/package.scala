@@ -205,6 +205,8 @@ package object fixtures {
     parsedJson
   }
 
+  object view extends QueryParamDecoderMatcher[String]("view")
+
   val testClient = Resource.make(IO.pure(Client.fromHttpApp(HttpRoutes.of[IO] {
     case GET -> Root / "api" / "v18" / "clusters" / "cluster name" =>
       Ok(fromResource("cloudera/clusters.cluster_name.actual.json"))
@@ -217,6 +219,16 @@ package object fixtures {
 
     case GET -> Root / "api" / "v18" / "clusters" / "cluster name" / "services" =>
       Ok(fromResource("cloudera/services.json"))
+
+    case GET -> Root / "api" / "v18" / "cm" / "service" =>
+      Ok(fromResource("cloudera/cm_service.json"))
+
+    case GET -> Root / "api" / "v18" / "cm" / "service" / "roles" =>
+      Ok(fromResource("cloudera/cm_service_roles.json"))
+
+    case GET -> Root / "api" / "v18" / "cm" / "service" / "roleConfigGroups" / "mgmt-NAVIGATORMETASERVER-BASE" / "config" :? view("full") =>
+      Ok(fromResource("cloudera/cm_service_roleConfig_navigatorMetaServer.json"))
+
   }.orNotFound)))(pool => IO.unit)
 
 

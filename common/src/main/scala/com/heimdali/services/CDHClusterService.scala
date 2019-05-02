@@ -34,6 +34,16 @@ class CDHClusterService[F[_]](http: HttpClient[F],
   def servicesRequest: F[Services] =
     http.request[Services](Request(Method.GET, Uri.fromString(clusterConfig.serviceListUrl).right.get))
 
+  def mgmtServicesRequest: F[ServiceInfo] =
+    http.request[ServiceInfo](Request(Method.GET, Uri.fromString(clusterConfig.mgmtServiceUrl).right.get))
+
+  def mgmtRoleListRequest: F[ListContainer[AppRole]] =
+    http.request[ListContainer[AppRole]](Request(Method.GET, Uri.fromString(clusterConfig.mgmtRoleListUrl).right.get))
+
+  def mgmtRoleConfigGroupsRequest(roleConfigGroupName: String): F[ListContainer[RoleConfigGroup]] =
+    http.request[ListContainer[RoleConfigGroup]](Request(
+      Method.GET, Uri.fromString(clusterConfig.mgmtRoleConfigGroups(roleConfigGroupName)).right.get))
+
   def hueApp(hue: ServiceInfo, hosts: ListContainer[HostInfo], hueLBRole: List[AppRole]): ClusterApp =
     clusterConfig.hueOverride match {
       case ServiceOverride(Some(host), port) =>
@@ -60,6 +70,11 @@ class CDHClusterService[F[_]](http: HttpClient[F],
       yarn = services.items.find(_.`type` == CDHClusterService.YARN_SERVICE_TYPE).get
       yarnRoles <- serviceRoleListRequest(yarn.name)
 
+      mgmt <- mgmtServicesRequest
+      mgmtNavigatorRole <- mgmtRoleListRequest.map(_.items.filter(_.`type` == CDHClusterService.MgmtNavigatorRole))
+      mgmtNavigatorMetaServerRole <-mgmtRoleListRequest.map(_.items.filter(_.`type` == CDHClusterService.MgmtNavigatorMetaServerRole))
+      mgmtRoleConfigGroups <- mgmtRoleConfigGroupsRequest(mgmtNavigatorMetaServerRole.head.roleConfigGroupRef.roleConfigGroupName)
+
       nodeManagerRoles = yarnRoles.items.filter(_.`type` == CDHClusterService.NodeManagerRole)
       resourceManagerRoles = yarnRoles.items.filter(_.`type` == CDHClusterService.ResourceManagerRole)
     } yield Cluster(
@@ -75,6 +90,10 @@ class CDHClusterService[F[_]](http: HttpClient[F],
         ClusterApp("yarn", yarn, hosts, Map(
           "node_manager" -> (hadoopConfiguration.get("yarn.nodemanager.webapp.address", "0.0.0.0:8042").split("\\s?:\\s?")(1).toInt, nodeManagerRoles),
           "resource_manager" -> (hadoopConfiguration.get("yarn.resourcemanager.webapp.address", "0.0.0.0:8088").split("\\s?:\\s?")(1).toInt, resourceManagerRoles))),
+        ClusterApp("mgmt", mgmt, hosts, Map("navigator" -> (
+          mgmtRoleConfigGroups.items.find(_.name == "navigator_server_port")
+            .map(p => p.value.getOrElse(p.default).toInt
+          ).getOrElse(7187), mgmtNavigatorRole)))
       ),
       CDH(details.fullVersion),
       details.status
@@ -98,4 +117,6 @@ object CDHClusterService {
   val HueLoadBalancerRole: String = "HUE_LOAD_BALANCER"
   val ResourceManagerRole: String = "RESOURCEMANAGER"
   val NodeManagerRole: String = "NODEMANAGER"
+  val MgmtNavigatorRole: String = "NAVIGATOR"
+  val MgmtNavigatorMetaServerRole: String = "NAVIGATORMETASERVER"
 }

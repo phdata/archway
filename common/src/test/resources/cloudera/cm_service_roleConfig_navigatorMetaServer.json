@@ -1,0 +1,184 @@
+{
+  "items": [
+    {
+      "name": "NAVIGATORMETASERVER_role_env_safety_valve",
+      "required": false,
+      "displayName": "Navigator Metadata Server Environment Advanced Configuration Snippet (Safety Valve)",
+      "description": "For advanced use only, key-value pairs (one on each line) to be inserted into a role's environment. Applies to configurations of this role except client configuration.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK",
+      "validationWarningsSuppressed": false
+    },
+    {
+      "name": "navigator_server_port",
+      "required": false,
+      "default": "7187",
+      "displayName": "Navigator Metadata Server Port",
+      "description": "The port where Navigator Metadata Server listens for requests",
+      "relatedName": "nav.http.port",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "role_config_suppression_nav_saml_oid_user",
+      "required": false,
+      "default": "false",
+      "displayName": "Suppress Parameter Validation: SAML Attribute Identifier for User ID",
+      "description": "Whether to suppress configuration warnings produced by the built-in parameter validation for the SAML Attribute Identifier for User ID parameter.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "role_config_suppression_nav_saml_role_map",
+      "required": false,
+      "default": "false",
+      "displayName": "Suppress Parameter Validation: SAML Attribute Values for Roles",
+      "description": "Whether to suppress configuration warnings produced by the built-in parameter validation for the SAML Attribute Values for Roles parameter.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "role_config_suppression_nav_saml_role_script",
+      "required": false,
+      "default": "false",
+      "displayName": "Suppress Parameter Validation: Path to SAML Role Assignment Script",
+      "description": "Whether to suppress configuration warnings produced by the built-in parameter validation for the Path to SAML Role Assignment Script parameter.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "role_config_suppression_nav_search_default_facets",
+      "required": false,
+      "default": "false",
+      "displayName": "Suppress Parameter Validation: Default Facets",
+      "description": "Whether to suppress configuration warnings produced by the built-in parameter validation for the Default Facets parameter.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "role_config_suppression_nav_telemetry_bucket_name",
+      "required": false,
+      "default": "false",
+      "displayName": "Suppress Parameter Validation: Cloudera Telemetry Publisher S3 Bucket",
+      "description": "Whether to suppress configuration warnings produced by the built-in parameter validation for the Cloudera Telemetry Publisher S3 Bucket parameter.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "role_config_suppression_navigator_audit_event_filter",
+      "required": false,
+      "default": "false",
+      "displayName": "Suppress Parameter Validation: Audit Event Filter",
+      "description": "Whether to suppress configuration warnings produced by the built-in parameter validation for the Audit Event Filter parameter.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "role_config_suppression_navigator_client_config_safety_valve",
+      "required": false,
+      "default": "false",
+      "displayName": "Suppress Parameter Validation: Navigator Metadata Server Client Advanced Configuration Snippet (Safety Valve) for navigator.client.properties",
+      "description": "Whether to suppress configuration warnings produced by the built-in parameter validation for the Navigator Metadata Server Client Advanced Configuration Snippet (Safety Valve) for navigator.client.properties parameter.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "role_config_suppression_navigator_java_opts",
+      "required": false,
+      "default": "false",
+      "displayName": "Suppress Parameter Validation: Java Configuration Options for Navigator Metadata Server",
+      "description": "Whether to suppress configuration warnings produced by the built-in parameter validation for the Java Configuration Options for Navigator Metadata Server parameter.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "role_config_suppression_navigator_safety_valve",
+      "required": false,
+      "default": "false",
+      "displayName": "Suppress Parameter Validation: Navigator Metadata Server Advanced Configuration Snippet (Safety Valve) for cloudera-navigator.properties",
+      "description": "Whether to suppress configuration warnings produced by the built-in parameter validation for the Navigator Metadata Server Advanced Configuration Snippet (Safety Valve) for cloudera-navigator.properties parameter.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "role_config_suppression_navigatormetaserver_role_env_safety_valve",
+      "required": false,
+      "default": "false",
+      "displayName": "Suppress Parameter Validation: Navigator Metadata Server Environment Advanced Configuration Snippet (Safety Valve)",
+      "description": "Whether to suppress configuration warnings produced by the built-in parameter validation for the Navigator Metadata Server Environment Advanced Configuration Snippet (Safety Valve) parameter.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "role_config_suppression_oom_heap_dump_dir",
+      "required": false,
+      "default": "false",
+      "displayName": "Suppress Parameter Validation: Heap Dump Directory",
+      "description": "Whether to suppress configuration warnings produced by the built-in parameter validation for the Heap Dump Directory parameter.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "role_config_suppression_role_triggers",
+      "required": false,
+      "default": "false",
+      "displayName": "Suppress Parameter Validation: Role Triggers",
+      "description": "Whether to suppress configuration warnings produced by the built-in parameter validation for the Role Triggers parameter.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "role_config_suppression_ssl_server_keystore_keypassword",
+      "required": false,
+      "default": "false",
+      "displayName": "Suppress Parameter Validation: TLS/SSL Keystore Key Password",
+      "description": "Whether to suppress configuration warnings produced by the built-in parameter validation for the TLS/SSL Keystore Key Password parameter.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "role_config_suppression_ssl_server_keystore_location",
+      "required": false,
+      "default": "false",
+      "displayName": "Suppress Parameter Validation: TLS/SSL Keystore File Location",
+      "description": "Whether to suppress configuration warnings produced by the built-in parameter validation for the TLS/SSL Keystore File Location parameter.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "role_config_suppression_ssl_server_keystore_password",
+      "required": false,
+      "default": "false",
+      "displayName": "Suppress Parameter Validation: TLS/SSL Keystore File Password",
+      "description": "Whether to suppress configuration warnings produced by the built-in parameter validation for the TLS/SSL Keystore File Password parameter.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "role_config_suppression_stacks_collection_directory",
+      "required": false,
+      "default": "false",
+      "displayName": "Suppress Parameter Validation: Stacks Collection Directory",
+      "description": "Whether to suppress configuration warnings produced by the built-in parameter validation for the Stacks Collection Directory parameter.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    }
+  ]
+}

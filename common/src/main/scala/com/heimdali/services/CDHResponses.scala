@@ -1,6 +1,6 @@
 package com.heimdali.services
 
-import io.circe.Decoder
+import io.circe.{Decoder, HCursor}
 
 object CDHResponses {
 
@@ -8,7 +8,9 @@ object CDHResponses {
 
   case class HostRef(hostId: String)
 
-  case class AppRole(name: String, `type`: String, hostRef: HostRef)
+  case class RoleConfigGroupRef(roleConfigGroupName: String)
+
+  case class AppRole(name: String, `type`: String, hostRef: HostRef, roleState: String, roleConfigGroupRef: RoleConfigGroupRef)
 
   case class Services(items: Seq[ServiceInfo])
 
@@ -17,6 +19,8 @@ object CDHResponses {
   case class HostInfo(hostId: String, hostname: String)
 
   case class ListContainer[A](items: List[A])
+
+  case class RoleConfigGroup(name: String, value: Option[String], default: String)
 
   implicit val decodeHosInfo: Decoder[HostInfo] =
     Decoder.forProduct2("hostId", "hostname")(HostInfo.apply)
@@ -27,9 +31,23 @@ object CDHResponses {
   implicit val decodeHostRef: Decoder[HostRef] =
     Decoder.forProduct1("hostId")(HostRef.apply)
 
+  implicit val decodeRoleConfigGroupRef: Decoder[RoleConfigGroupRef] =
+    Decoder.forProduct1("roleConfigGroupName")(RoleConfigGroupRef.apply)
+
   implicit val decodeImpalaItem: Decoder[AppRole] =
-    Decoder.forProduct3("name", "type", "hostRef")(AppRole.apply)
+    Decoder.forProduct5("name", "type", "hostRef", "roleState", "roleConfigGroupRef")(AppRole.apply)
 
   implicit val decodeClusterInfo: Decoder[ClusterInfo] =
     Decoder.forProduct4("name", "displayName", "fullVersion", "entityStatus")(ClusterInfo.apply)
+
+  implicit val decodeRoleConfigGroup: Decoder[RoleConfigGroup] = new Decoder[RoleConfigGroup] {
+    final def apply(c: HCursor): Decoder.Result[RoleConfigGroup] =
+      for {
+        name <- c.downField("name").as[String]
+        value <- c.downField("value").as[Option[String]]
+        default <- c.downField("default").as[Option[String]]
+      } yield {
+        new RoleConfigGroup(name, value, default.getOrElse(""))
+      }
+  }
 }

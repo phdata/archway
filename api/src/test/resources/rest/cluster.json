@@ -56,6 +56,16 @@
             "port": 8088
           }
         ]
+      },
+      "mgmt": {
+        "state": "STARTED",
+        "status": "GOOD_HEALTH",
+        "navigator": [
+          {
+            "host": "master1.jotunn.io",
+            "port": 7187
+          }
+        ]
       }
     },
     "distribution": {

@@ -13,6 +13,19 @@
       "numCores": 6,
       "numPhysicalCores": 6,
       "totalPhysMemBytes": 16826523648
+    },
+    {
+      "hostId": "0f374286-a085-451a-b0e5-15b535bfb94a",
+      "ipAddress": "10.0.2.3",
+      "hostname": "master3.valhalla.phdata.io",
+      "rackId": "/default",
+      "hostUrl": "https://manager.valhalla.phdata.io:7183/cmf/hostRedirect/0f374286-a085-451a-b0e5-15b535bfb94a",
+      "maintenanceMode": false,
+      "maintenanceOwners": [ ],
+      "commissionState": "COMMISSIONED",
+      "numCores": 8,
+      "numPhysicalCores": 4,
+      "totalPhysMemBytes": 33566638080
     }
   ]
 }

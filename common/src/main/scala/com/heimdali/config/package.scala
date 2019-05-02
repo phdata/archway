@@ -52,6 +52,13 @@ package object config {
 
     def serviceRoleUrl(service: String, roleId: String) = s"${serviceRoleListUrl(service)}/$roleId"
 
+    val mgmtServiceUrl = s"$url/api/v18/cm/service"
+
+    val mgmtRoleListUrl = s"$mgmtServiceUrl/roles"
+
+    def mgmtRoleConfigGroups(roleConfigGroupName: String) =
+      s"$mgmtServiceUrl/roleConfigGroups/$roleConfigGroupName/config?view=full"
+
     val refreshUrl = s"$clusterUrl/commands/poolsRefresh"
   }
 

@@ -1,0 +1,579 @@
+{
+  "items": [
+    {
+      "name": "mgmt-EVENTSERVER-3ec36fb4578a8c415ef7758b10450167",
+      "type": "EVENTSERVER",
+      "serviceRef": {
+        "serviceName": "mgmt"
+      },
+      "hostRef": {
+        "hostId": "0f374286-a085-451a-b0e5-15b535bfb94a"
+      },
+      "roleUrl": "https://manager.valhalla.phdata.io:7183/cmf/roleRedirect/mgmt-EVENTSERVER-3ec36fb4578a8c415ef7758b10450167",
+      "roleState": "STARTED",
+      "healthSummary": "GOOD",
+      "healthChecks": [
+        {
+          "name": "EVENT_SERVER_EVENT_STORE_SIZE",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "EVENT_SERVER_FILE_DESCRIPTOR",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "EVENT_SERVER_GC_DURATION",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "EVENT_SERVER_HEAP_DUMP_DIRECTORY_FREE_SPACE",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "EVENT_SERVER_HOST_HEALTH",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "EVENT_SERVER_INDEX_DIRECTORY_FREE_SPACE",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "EVENT_SERVER_LOG_DIRECTORY_FREE_SPACE",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "EVENT_SERVER_SCM_DESCRIPTOR_FETCH",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "EVENT_SERVER_SCM_HEALTH",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "EVENT_SERVER_SWAP_MEMORY_USAGE",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "EVENT_SERVER_UNEXPECTED_EXITS",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "EVENT_SERVER_WEB_METRIC_COLLECTION",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "EVENT_SERVER_WRITE_PIPELINE",
+          "summary": "GOOD",
+          "suppressed": false
+        }
+      ],
+      "configStalenessStatus": "FRESH",
+      "maintenanceMode": true,
+      "maintenanceOwners": [
+        "SERVICE"
+      ],
+      "commissionState": "COMMISSIONED",
+      "roleConfigGroupRef": {
+        "roleConfigGroupName": "mgmt-EVENTSERVER-BASE"
+      },
+      "entityStatus": "GOOD_HEALTH"
+    },
+    {
+      "name": "mgmt-HOSTMONITOR-21371cef7dc8164af461f1b7eb36136a",
+      "type": "HOSTMONITOR",
+      "serviceRef": {
+        "serviceName": "mgmt"
+      },
+      "hostRef": {
+        "hostId": "1983f0e4-2fa5-4e68-924b-3e478323d6f1"
+      },
+      "roleUrl": "https://manager.valhalla.phdata.io:7183/cmf/roleRedirect/mgmt-HOSTMONITOR-21371cef7dc8164af461f1b7eb36136a",
+      "roleState": "STARTED",
+      "healthSummary": "GOOD",
+      "healthChecks": [
+        {
+          "name": "HOST_MONITOR_AGGREGATION_RUN_DURATION",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "HOST_MONITOR_FILE_DESCRIPTOR",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "HOST_MONITOR_HEAP_DUMP_DIRECTORY_FREE_SPACE",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "HOST_MONITOR_HOST_HEALTH",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "HOST_MONITOR_HOST_PIPELINE",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "HOST_MONITOR_LOG_DIRECTORY_FREE_SPACE",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "HOST_MONITOR_METRIC_SCHEMA_FETCH",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "HOST_MONITOR_PAUSE_DURATION",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "HOST_MONITOR_SCM_DESCRIPTOR_FETCH",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "HOST_MONITOR_SCM_HEALTH",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "HOST_MONITOR_STORAGE_DIRECTORY_FREE_SPACE",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "HOST_MONITOR_SWAP_MEMORY_USAGE",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "HOST_MONITOR_UNEXPECTED_EXITS",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "HOST_MONITOR_WEB_METRIC_COLLECTION",
+          "summary": "GOOD",
+          "suppressed": false
+        }
+      ],
+      "configStalenessStatus": "FRESH",
+      "maintenanceMode": true,
+      "maintenanceOwners": [
+        "SERVICE"
+      ],
+      "commissionState": "COMMISSIONED",
+      "roleConfigGroupRef": {
+        "roleConfigGroupName": "mgmt-HOSTMONITOR-BASE"
+      },
+      "entityStatus": "GOOD_HEALTH"
+    },
+    {
+      "name": "mgmt-NAVIGATOR-3ec36fb4578a8c415ef7758b10450167",
+      "type": "NAVIGATOR",
+      "serviceRef": {
+        "serviceName": "mgmt"
+      },
+      "hostRef": {
+        "hostId": "0f374286-a085-451a-b0e5-15b535bfb94a"
+      },
+      "roleUrl": "https://manager.valhalla.phdata.io:7183/cmf/roleRedirect/mgmt-NAVIGATOR-3ec36fb4578a8c415ef7758b10450167",
+      "roleState": "STARTED",
+      "healthSummary": "GOOD",
+      "healthChecks": [
+        {
+          "name": "NAVIGATOR_FILE_DESCRIPTOR",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "NAVIGATOR_GC_DURATION",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "NAVIGATOR_HEAP_DUMP_DIRECTORY_FREE_SPACE",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "NAVIGATOR_HOST_HEALTH",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "NAVIGATOR_LOG_DIRECTORY_FREE_SPACE",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "NAVIGATOR_SCM_HEALTH",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "NAVIGATOR_SWAP_MEMORY_USAGE",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "NAVIGATOR_UNEXPECTED_EXITS",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "NAVIGATOR_WEB_METRIC_COLLECTION",
+          "summary": "GOOD",
+          "suppressed": false
+        }
+      ],
+      "configStalenessStatus": "FRESH",
+      "maintenanceMode": true,
+      "maintenanceOwners": [
+        "SERVICE"
+      ],
+      "commissionState": "COMMISSIONED",
+      "roleConfigGroupRef": {
+        "roleConfigGroupName": "mgmt-NAVIGATOR-BASE"
+      },
+      "entityStatus": "GOOD_HEALTH"
+    },
+    {
+      "name": "mgmt-ALERTPUBLISHER-3ec36fb4578a8c415ef7758b10450167",
+      "type": "ALERTPUBLISHER",
+      "serviceRef": {
+        "serviceName": "mgmt"
+      },
+      "hostRef": {
+        "hostId": "0f374286-a085-451a-b0e5-15b535bfb94a"
+      },
+      "roleUrl": "https://manager.valhalla.phdata.io:7183/cmf/roleRedirect/mgmt-ALERTPUBLISHER-3ec36fb4578a8c415ef7758b10450167",
+      "roleState": "STARTED",
+      "healthSummary": "GOOD",
+      "healthChecks": [
+        {
+          "name": "ALERT_PUBLISHER_FILE_DESCRIPTOR",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "ALERT_PUBLISHER_HEAP_DUMP_DIRECTORY_FREE_SPACE",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "ALERT_PUBLISHER_HOST_HEALTH",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "ALERT_PUBLISHER_LOG_DIRECTORY_FREE_SPACE",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "ALERT_PUBLISHER_SCM_HEALTH",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "ALERT_PUBLISHER_SWAP_MEMORY_USAGE",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "ALERT_PUBLISHER_UNEXPECTED_EXITS",
+          "summary": "GOOD",
+          "suppressed": false
+        }
+      ],
+      "configStalenessStatus": "FRESH",
+      "maintenanceMode": true,
+      "maintenanceOwners": [
+        "SERVICE"
+      ],
+      "commissionState": "COMMISSIONED",
+      "roleConfigGroupRef": {
+        "roleConfigGroupName": "mgmt-ALERTPUBLISHER-BASE"
+      },
+      "entityStatus": "GOOD_HEALTH"
+    },
+    {
+      "name": "mgmt-SERVICEMONITOR-2d8a639995d444f0d233fca0abb3146a",
+      "type": "SERVICEMONITOR",
+      "serviceRef": {
+        "serviceName": "mgmt"
+      },
+      "hostRef": {
+        "hostId": "55cff864-b09a-4d04-8ac6-6c43eb839583"
+      },
+      "roleUrl": "https://manager.valhalla.phdata.io:7183/cmf/roleRedirect/mgmt-SERVICEMONITOR-2d8a639995d444f0d233fca0abb3146a",
+      "roleState": "STARTED",
+      "healthSummary": "GOOD",
+      "healthChecks": [
+        {
+          "name": "SERVICE_MONITOR_AGGREGATION_RUN_DURATION",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "SERVICE_MONITOR_FILE_DESCRIPTOR",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "SERVICE_MONITOR_HEAP_DUMP_DIRECTORY_FREE_SPACE",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "SERVICE_MONITOR_HEAP_SIZE",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "SERVICE_MONITOR_HOST_HEALTH",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "SERVICE_MONITOR_LOG_DIRECTORY_FREE_SPACE",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "SERVICE_MONITOR_METRIC_SCHEMA_FETCH",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "SERVICE_MONITOR_PAUSE_DURATION",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "SERVICE_MONITOR_ROLE_PIPELINE",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "SERVICE_MONITOR_SCM_DESCRIPTOR_FETCH",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "SERVICE_MONITOR_SCM_HEALTH",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "SERVICE_MONITOR_STORAGE_DIRECTORY_FREE_SPACE",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "SERVICE_MONITOR_SWAP_MEMORY_USAGE",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "SERVICE_MONITOR_UNEXPECTED_EXITS",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "SERVICE_MONITOR_WEB_METRIC_COLLECTION",
+          "summary": "GOOD",
+          "suppressed": false
+        }
+      ],
+      "configStalenessStatus": "FRESH",
+      "maintenanceMode": true,
+      "maintenanceOwners": [
+        "SERVICE"
+      ],
+      "commissionState": "COMMISSIONED",
+      "roleConfigGroupRef": {
+        "roleConfigGroupName": "mgmt-SERVICEMONITOR-BASE"
+      },
+      "entityStatus": "GOOD_HEALTH"
+    },
+    {
+      "name": "mgmt-REPORTSMANAGER-21371cef7dc8164af461f1b7eb36136a",
+      "type": "REPORTSMANAGER",
+      "serviceRef": {
+        "serviceName": "mgmt"
+      },
+      "hostRef": {
+        "hostId": "1983f0e4-2fa5-4e68-924b-3e478323d6f1"
+      },
+      "roleUrl": "https://manager.valhalla.phdata.io:7183/cmf/roleRedirect/mgmt-REPORTSMANAGER-21371cef7dc8164af461f1b7eb36136a",
+      "roleState": "STARTED",
+      "healthSummary": "GOOD",
+      "healthChecks": [
+        {
+          "name": "REPORTS_MANAGER_FILE_DESCRIPTOR",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "REPORTS_MANAGER_HEAP_DUMP_DIRECTORY_FREE_SPACE",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "REPORTS_MANAGER_HOST_HEALTH",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "REPORTS_MANAGER_LOG_DIRECTORY_FREE_SPACE",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "REPORTS_MANAGER_PAUSE_DURATION",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "REPORTS_MANAGER_SCM_DESCRIPTOR_FETCH",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "REPORTS_MANAGER_SCM_HEALTH",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "REPORTS_MANAGER_SCRATCH_DIRECTORY_FREE_SPACE",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "REPORTS_MANAGER_SWAP_MEMORY_USAGE",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "REPORTS_MANAGER_UNEXPECTED_EXITS",
+          "summary": "GOOD",
+          "suppressed": false
+        }
+      ],
+      "configStalenessStatus": "FRESH",
+      "maintenanceMode": true,
+      "maintenanceOwners": [
+        "SERVICE"
+      ],
+      "commissionState": "COMMISSIONED",
+      "roleConfigGroupRef": {
+        "roleConfigGroupName": "mgmt-REPORTSMANAGER-BASE"
+      },
+      "entityStatus": "GOOD_HEALTH"
+    },
+    {
+      "name": "mgmt-NAVIGATORMETASERVER-21371cef7dc8164af461f1b7eb36136a",
+      "type": "NAVIGATORMETASERVER",
+      "serviceRef": {
+        "serviceName": "mgmt"
+      },
+      "hostRef": {
+        "hostId": "1983f0e4-2fa5-4e68-924b-3e478323d6f1"
+      },
+      "roleUrl": "https://manager.valhalla.phdata.io:7183/cmf/roleRedirect/mgmt-NAVIGATORMETASERVER-21371cef7dc8164af461f1b7eb36136a",
+      "roleState": "STARTED",
+      "healthSummary": "GOOD",
+      "healthChecks": [
+        {
+          "name": "NAVIGATORMETASERVER_AUDIT_EVENT_LOG_DIRECTORY_FREE_SPACE",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "NAVIGATORMETASERVER_AUDIT_HEALTH",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "NAVIGATORMETASERVER_DATA_DIRECTORY_FREE_SPACE",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "NAVIGATORMETASERVER_FILE_DESCRIPTOR",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "NAVIGATORMETASERVER_HEAP_DUMP_DIRECTORY_FREE_SPACE",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "NAVIGATORMETASERVER_HOST_HEALTH",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "NAVIGATORMETASERVER_LOG_DIRECTORY_FREE_SPACE",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "NAVIGATORMETASERVER_SCM_HEALTH",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "NAVIGATORMETASERVER_SWAP_MEMORY_USAGE",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "NAVIGATORMETASERVER_UNEXPECTED_EXITS",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "NMS_SOLR_ELEMENT_COUNT",
+          "summary": "GOOD",
+          "suppressed": false
+        },
+        {
+          "name": "NMS_SOLR_RELATION_COUNT",
+          "summary": "GOOD",
+          "suppressed": false
+        }
+      ],
+      "configStalenessStatus": "STALE",
+      "maintenanceMode": true,
+      "maintenanceOwners": [
+        "SERVICE"
+      ],
+      "commissionState": "COMMISSIONED",
+      "roleConfigGroupRef": {
+        "roleConfigGroupName": "mgmt-NAVIGATORMETASERVER-BASE"
+      },
+      "entityStatus": "GOOD_HEALTH"
+    }
+  ]
+}
