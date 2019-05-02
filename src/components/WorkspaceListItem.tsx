@@ -2,10 +2,10 @@ import * as React from 'react';
 import { Card, Icon, List } from 'antd';
 import { Doughnut } from 'react-chartjs-2';
 import Colors from './Colors';
-import { WorkspaceSearchResult } from '../models/Workspace';
+import { Workspace, WorkspaceSearchResult } from '../models/Workspace';
 
 interface Props {
-    workspace: WorkspaceSearchResult;
+    workspace: Workspace | WorkspaceSearchResult;
     onSelected: (id: number) => void;
 }
 
@@ -16,9 +16,19 @@ const WorkspaceListItem = ({ workspace, onSelected }: Props) => {
     status = '',
     behavior,
     summary,
-    total_disk_allocated_in_gb = 1,
-    total_disk_consumed_in_gb = 0,
   } = workspace;
+
+  let total_disk_allocated_in_gb;
+  let total_disk_consumed_in_gb;
+  const workspaceSearchResult = workspace as WorkspaceSearchResult;
+  const workspaceData = (workspace as Workspace).data;
+  if (workspaceSearchResult.total_disk_allocated_in_gb) {
+    total_disk_allocated_in_gb = workspaceSearchResult.total_disk_allocated_in_gb;
+    total_disk_consumed_in_gb = workspaceSearchResult.total_disk_consumed_in_gb;
+  } else if (workspaceData) {
+    total_disk_allocated_in_gb = workspaceData.reduce((acc, cur) => acc + cur.size_in_gb, 0);
+    total_disk_consumed_in_gb = workspaceData.reduce((acc, cur) => acc + cur.consumed_in_gb, 0);
+  }
 
   const onClick = () => onSelected(id);
 

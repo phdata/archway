@@ -2,22 +2,15 @@ import * as React from 'react';
 import { List } from 'antd';
 
 import WorkspaceListItem from '../../../components/WorkspaceListItem';
-import { WorkspaceSearchResult } from '../../../models/Workspace';
+import { Workspace } from '../../../models/Workspace';
 
 interface Props {
+  workspaces: Workspace[];
   onSelectWorkspace: (id: number) => void;
 }
 
-const RecentWorkspaces = ({ onSelectWorkspace }: Props) => {
-  const recentWorkspacesKey = 'recentWorkspaces';
-  let recentWorkspaces = [];
-  try {
-    const recentWorkspacesJson = localStorage.getItem(recentWorkspacesKey) || '[]';
-    recentWorkspaces = JSON.parse(recentWorkspacesJson);
-  } catch (e) {
-    //
-  }
-  const renderItem = (workspace: WorkspaceSearchResult) => (
+const RecentWorkspaces = ({ workspaces, onSelectWorkspace }: Props) => {
+  const renderItem = (workspace: Workspace) => (
     <WorkspaceListItem
       workspace={workspace}
       onSelected={() => onSelectWorkspace(workspace.id)}
@@ -27,11 +20,11 @@ const RecentWorkspaces = ({ onSelectWorkspace }: Props) => {
   return (
     <div style={{ padding: '0 12px' }}>
       <h3 style={{ paddingTop: '16px' }}>
-        {recentWorkspaces.length > 0 ? 'RECENT WORKSPACES' : 'NO RECENT WORKSPACES'}
+        {workspaces.length > 0 ? 'RECENT WORKSPACES' : 'NO RECENT WORKSPACES'}
       </h3>
       <List
         grid={{ gutter: 25, column: 1, lg: 2 }}
-        dataSource={recentWorkspaces}
+        dataSource={workspaces}
         renderItem={renderItem}
       />
     </div>

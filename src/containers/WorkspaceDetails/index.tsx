@@ -39,6 +39,7 @@ import {
 } from '../../models/Workspace';
 import * as actions from './actions';
 import * as selectors from './selectors';
+import { workspaceViewed } from '../WorkspaceListing/actions';
 
 interface DetailsRouteProps {
   id: any;
@@ -58,6 +59,7 @@ interface Props extends RouteComponentProps<DetailsRouteProps> {
     liasion?: Member;
     members?: Member[];
 
+    workspaceViewed: (w: Workspace) => void;
     clearDetails: () => void;
     getWorkspaceDetails: (id: number) => void;
     selectApplication: (application: Application) => void;
@@ -122,7 +124,7 @@ class WorkspaceDetails extends React.PureComponent<Props> {
       }
     }
     if (!this.props.workspace && nextProps.workspace) {
-      this.updateRecentWorkspaces(nextProps.workspace);
+      this.props.workspaceViewed(nextProps.workspace);
     }
   }
 
@@ -138,23 +140,6 @@ class WorkspaceDetails extends React.PureComponent<Props> {
         description: `Your ${type.toLowerCase()} approval failed due to the following error: ${error}`,
       });
     }
-  }
-
-  public updateRecentWorkspaces(workspace: Workspace) {
-    const recentWorkspacesKey = 'recentWorkspaces';
-    let recentWorkspaces = [];
-    try {
-      const recentWorkspacesJson = localStorage.getItem(recentWorkspacesKey) || '[]';
-      recentWorkspaces = JSON.parse(recentWorkspacesJson);
-    } catch (e) {
-      //
-    }
-
-    recentWorkspaces = [
-      workspace,
-      ...recentWorkspaces.filter((w: Workspace) => w.id !== workspace.id),
-    ].slice(0, 2);
-    localStorage.setItem(recentWorkspacesKey, JSON.stringify(recentWorkspaces));
   }
 
   public handleMemberSearch = (v: string) => {
@@ -352,6 +337,7 @@ const mapStateToProps = () =>
   });
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
+  workspaceViewed: (w: Workspace) => dispatch(workspaceViewed(w)),
   clearDetails: () => dispatch(actions.clearDetails()),
   getWorkspaceDetails: (id: number) => dispatch(actions.getWorkspace(id)),
 
