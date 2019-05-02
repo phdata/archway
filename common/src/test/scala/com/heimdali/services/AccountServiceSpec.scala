@@ -1,12 +1,12 @@
 package com.heimdali.services
 
 import cats.data._
-import cats.effect.{IO, Timer}
+import cats.effect.IO
 import cats.implicits._
 import com.heimdali.clients.{LDAPClient, LDAPUser}
 import com.heimdali.config.{ApprovalConfig, RestConfig, WorkspaceConfig, WorkspaceConfigItem}
-import com.heimdali.models.WorkspaceRequest
-import com.heimdali.generators.{DefaultApplicationGenerator, DefaultLDAPGroupGenerator, DefaultTopicGenerator, DefaultUserWorkspaceGenerator}
+import com.heimdali.generators.{DefaultApplicationGenerator, DefaultLDAPGroupGenerator, DefaultTopicGenerator}
+import com.heimdali.models.TemplateRequest
 import com.heimdali.provisioning.SimpleMessage
 import com.heimdali.test.fixtures._
 import io.circe.Json
@@ -102,21 +102,15 @@ class AccountServiceSpec extends FlatSpec with MockFactory with Matchers {
     maybeWorkspace shouldBe Some(savedWorkspaceRequest)
   }
 
-   it should "save and create a workspace" in new Context {
-    configService.getAndSetNextGid _ expects() returning 123L.pure[IO] repeat 6 times()
-
-    val service = new DefaultUserWorkspaceGenerator[IO](appConfig, ldapGenerator, appGenerator, topicGenerator)
-
-    val userWorkspace: WorkspaceRequest = (for {
-      template <- service.defaults(infraApproverUser)
-      result <- service.workspaceFor(template)
-    } yield result.copy(requestDate = timer.instant)).unsafeRunSync()
-
+  it should "save and create a workspace" in new Context {
+    val templateRequest = TemplateRequest(infraApproverUser.username, infraApproverUser.username, infraApproverUser.username, initialCompliance, infraApproverUser.distinguishedName)
+    templateService.defaults _ expects infraApproverUser returning templateRequest.pure[IO]
+    templateService.workspaceFor _ expects(templateRequest, "user") returning initialWorkspaceRequest.pure[IO]
     workspaceService.findByUsername _ expects standardUsername returning OptionT.none
-    workspaceService.create _ expects userWorkspace returning IO.pure(savedWorkspaceRequest)
+    workspaceService.create _ expects initialWorkspaceRequest returning IO.pure(savedWorkspaceRequest)
     workspaceService.find _ expects id returning OptionT.some(savedWorkspaceRequest)
 
-    provisioningService.provision _ expects (savedWorkspaceRequest, 0) returning IO.pure(NonEmptyList.one(SimpleMessage(Some(1l), "")))
+    provisioningService.provision _ expects(savedWorkspaceRequest, 0) returning IO.pure(NonEmptyList.one(SimpleMessage(Some(1l), "")))
 
     val maybeWorkspace = accountService.createWorkspace(infraApproverUser).value.unsafeRunSync()
 
@@ -135,12 +129,13 @@ class AccountServiceSpec extends FlatSpec with MockFactory with Matchers {
 
     val workspaceService = mock[WorkspaceService[IO]]
     val ldapClient = mock[LDAPClient[IO]]
-    val configService = mock[ConfigService[IO]]
+    val configService = new TestConfigService
     val ldapGenerator = new DefaultLDAPGroupGenerator[IO](configService)
     val appGenerator = new DefaultApplicationGenerator[IO](appConfig, ldapGenerator)
     val topicGenerator = new DefaultTopicGenerator[IO](appConfig, ldapGenerator)
-    val templateService = new DefaultUserWorkspaceGenerator[IO](appConfig, ldapGenerator, appGenerator, topicGenerator)
     val provisioningService = mock[ProvisioningService[IO]]
+    val fileReader = new DefaultFileReader[IO]()
+    val templateService = mock[TemplateService[IO]]
 
     lazy val accountService = new AccountServiceImpl[IO](ldapClient, restConfig, approvalConfig, workspaceConfig, workspaceService, templateService, provisioningService)
   }

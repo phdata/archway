@@ -8,12 +8,11 @@ import cats.implicits._
 import com.heimdali.models._
 import com.heimdali.clients._
 import com.heimdali.config.AppConfig
-import com.heimdali.generators.WorkspaceGenerator
 import com.heimdali.generators._
 import com.heimdali.provisioning.DefaultProvisioningService
 import com.heimdali.repositories._
 import com.heimdali.rest._
-import com.heimdali.services._
+import com.heimdali.services.{TemplateService, _}
 import com.heimdali.startup.{HeimdaliStartup, Provisioning, SessionMaintainer}
 import doobie.util.ExecutionContexts
 import org.apache.hadoop.conf.Configuration
@@ -57,6 +56,8 @@ object Server extends IOApp {
       metaXA <- config.db.meta.tx(dbConnectionEC, dbTransactionEC)
       hiveXA = config.db.hive.hiveTx
 
+      fileReader = new DefaultFileReader[F]()
+
       httpClient = new CMClient[F](h4Client, config.cluster)
       clusterService = new CDHClusterService[F](httpClient, config.cluster, hadoopConfiguration)
 
@@ -87,16 +88,14 @@ object Server extends IOApp {
 
       configService = new DBConfigService[F](config, configRepository, metaXA)
 
-      ldapGroupGenerator = LDAPGroupGenerator.instance(config, configService, _.ldapGroupGenerator)
-      applicationGenerator = ApplicationGenerator.instance(config, ldapGroupGenerator, _.applicationGenerator)
-      topicGenerator = TopicGenerator.instance(config, ldapGroupGenerator, _.topicGenerator)
-      userTemplateGenerator = WorkspaceGenerator.instance[F, WorkspaceGenerator[F, UserTemplate]](config, ldapGroupGenerator, applicationGenerator, topicGenerator, _.userGenerator)
-      simpleTemplateGenerator = WorkspaceGenerator.instance[F, WorkspaceGenerator[F, SimpleTemplate]](config, ldapGroupGenerator, applicationGenerator, topicGenerator, _.simpleGenerator)
-      structuredTemplateGenerator = WorkspaceGenerator.instance[F, WorkspaceGenerator[F, StructuredTemplate]](config, ldapGroupGenerator, applicationGenerator, topicGenerator, _.structuredGenerator)
+      ldapGroupGenerator = LDAPGroupGenerator.instance(config, configService, config.templates.ldapGroupGenerator)
+      applicationGenerator = ApplicationGenerator.instance(config, ldapGroupGenerator, config.templates.applicationGenerator)
+      topicGenerator = TopicGenerator.instance(config, ldapGroupGenerator, config.templates.topicGenerator)
+      templateService = new JSONTemplateService[F](config, fileReader, configService)
 
       provisionService = new DefaultProvisioningService[F](context, provisionEC)
       workspaceService = new WorkspaceServiceImpl[F](ldapClient, yarnRepository, hiveDatabaseRepository, ldapRepository, workspaceRepository, complianceRepository, approvalRepository, metaXA, memberRepository, topicRepository, applicationRepository, context, provisionService)
-      accountService = new AccountServiceImpl[F](ldapClient, config.rest, config.approvers, config.workspaces, workspaceService, userTemplateGenerator, provisionService)
+      accountService = new AccountServiceImpl[F](ldapClient, config.rest, config.approvers, config.workspaces, workspaceService, templateService, provisionService)
       authService = new AuthServiceImpl[F](accountService)
       memberService = new MemberServiceImpl[F](memberRepository, metaXA, ldapRepository, ldapClient)
       kafkaService = new KafkaServiceImpl[F](context, provisionService, topicGenerator)
@@ -104,7 +103,7 @@ object Server extends IOApp {
       emailService = new EmailServiceImpl[F](emailClient, config, workspaceService, ldapClient)
 
       accountController = new AccountController[F](authService, accountService)
-      templateController = new TemplateController[F](authService, simpleTemplateGenerator, structuredTemplateGenerator)
+      templateController = new TemplateController[F](authService, templateService)
       clusterController = new ClusterController[F](clusterService)
       workspaceController = new WorkspaceController[F](authService, workspaceService, memberService, kafkaService, applicationService, emailService, provisionService)
       memberController = new MemberController[F](authService, memberService)
@@ -112,13 +111,13 @@ object Server extends IOApp {
       opsController = new OpsController[F](authService, workspaceService)
 
       httpApp = Router(
-        "/token" -> accountController.openRoutes,
-        "/account" -> accountController.tokenizedRoutes,
-        "/templates" -> templateController.route,
-        "/clusters" -> clusterController.route,
-        "/workspaces" -> workspaceController.route,
-        "/members" -> memberController.route,
-        "/risk" -> riskController.route,
+      "/token" -> accountController.openRoutes,
+      "/account" -> accountController.tokenizedRoutes,
+      "/templates" -> templateController.route,
+      "/clusters" -> clusterController.route,
+      "/workspaces" -> workspaceController.route,
+      "/members" -> memberController.route,
+      "/risk" -> riskController.route,
         "/ops" -> opsController.route,
       ).orNotFound
 

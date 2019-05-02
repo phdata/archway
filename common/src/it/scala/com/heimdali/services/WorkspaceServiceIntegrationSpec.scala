@@ -8,8 +8,7 @@ import com.heimdali.AppContext
 import com.heimdali.clients._
 import com.heimdali.config.AppConfig
 import com.heimdali.test.fixtures._
-import com.heimdali.generators.{ApplicationGenerator, LDAPGroupGenerator, TopicGenerator, WorkspaceGenerator}
-import com.heimdali.models.{SimpleTemplate, StructuredTemplate, UserTemplate}
+import com.heimdali.generators.{ApplicationGenerator, LDAPGroupGenerator, TopicGenerator}
 import com.heimdali.repositories._
 
 import scala.concurrent.duration._
@@ -73,6 +72,8 @@ class WorkspaceServiceIntegrationSpec extends FlatSpec with HiveTest with DBTest
           .withResponseHeaderTimeout(5 minutes)
           .resource
 
+        fileReader = new DefaultFileReader[IO]()
+
         httpClient = new CMClient[IO](h4Client, config.cluster)
         clusterService = new CDHClusterService[IO](httpClient, config.cluster, hadoopConfiguration)
 
@@ -103,12 +104,10 @@ class WorkspaceServiceIntegrationSpec extends FlatSpec with HiveTest with DBTest
 
         configService = new DBConfigService[IO](config, configRepository, transactor)
 
-        ldapGroupGenerator = LDAPGroupGenerator.instance(config, configService, _.ldapGroupGenerator)
-        applicationGenerator = ApplicationGenerator.instance(config, ldapGroupGenerator, _.applicationGenerator)
-        topicGenerator = TopicGenerator.instance(config, ldapGroupGenerator, _.topicGenerator)
-        userTemplateGenerator = WorkspaceGenerator.instance[IO, WorkspaceGenerator[IO, UserTemplate]](config, ldapGroupGenerator, applicationGenerator, topicGenerator, _.userGenerator)
-        simpleTemplateGenerator = WorkspaceGenerator.instance[IO, WorkspaceGenerator[IO, SimpleTemplate]](config, ldapGroupGenerator, applicationGenerator, topicGenerator, _.simpleGenerator)
-        structuredTemplateGenerator = WorkspaceGenerator.instance[IO, WorkspaceGenerator[IO, StructuredTemplate]](config, ldapGroupGenerator, applicationGenerator, topicGenerator, _.structuredGenerator)
+        ldapGroupGenerator = LDAPGroupGenerator.instance(config, configService, config.templates.ldapGroupGenerator)
+        applicationGenerator = ApplicationGenerator.instance(config, ldapGroupGenerator, config.templates.applicationGenerator)
+        topicGenerator = TopicGenerator.instance(config, ldapGroupGenerator, config.templates.topicGenerator)
+        templateService = new JSONTemplateService[IO](appConfig, fileReader, configService)
 
         workspaceService = new WorkspaceServiceImpl[IO](ldapClient, yarnRepository, hiveDatabaseRepository, ldapRepository, workspaceRepository, complianceRepository, approvalRepository, transactor, memberRepository, topicRepository, applicationRepository, context, null)
       } yield (workspaceService, ldapGroupGenerator)

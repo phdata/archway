@@ -57,7 +57,7 @@ class WorkspaceController[F[_] : Sync : Timer](authService: AuthService[F],
         case req@POST -> Root as user =>
           /* explicit implicit declaration because of `user` variable */
           Clock[F].realTime(scala.concurrent.duration.MILLISECONDS).flatMap { time =>
-            implicit val decoder: Decoder[WorkspaceRequest] = WorkspaceRequest.decoder(user, Instant.ofEpochMilli(time))
+            implicit val decoder: Decoder[WorkspaceRequest] = WorkspaceRequest.decoder(user.distinguishedName, Instant.ofEpochMilli(time))
             implicit val workspaceRequestEntityDecoder: EntityDecoder[F, WorkspaceRequest] = jsonOf[F, WorkspaceRequest]
             for {
               workspaceRequest <- req.req.as[WorkspaceRequest]

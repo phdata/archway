@@ -7,7 +7,6 @@ import cats.effect._
 import cats.implicits._
 import com.heimdali.clients.{LDAPClient, LDAPUser}
 import com.heimdali.config.{ApprovalConfig, RestConfig, WorkspaceConfig}
-import com.heimdali.generators.WorkspaceGenerator
 import com.heimdali.models._
 import com.typesafe.scalalogging.LazyLogging
 import io.circe.Json
@@ -22,7 +21,7 @@ class AccountServiceImpl[F[_] : Sync : Timer](ldapClient: LDAPClient[F],
                                               approvalConfig: ApprovalConfig,
                                               workspaceConfig: WorkspaceConfig,
                                               workspaceService: WorkspaceService[F],
-                                              userTemplateService: WorkspaceGenerator[F, UserTemplate],
+                                              templateService: TemplateService[F],
                                               provisionService: ProvisioningService[F])
   extends AccountService[F]
     with LazyLogging {
@@ -76,9 +75,9 @@ class AccountServiceImpl[F[_] : Sync : Timer](ldapClient: LDAPClient[F],
       case Some(_) => Sync[F].pure(None)
       case None =>
         for {
-          template <- userTemplateService.defaults(user)
+          template <- templateService.defaults(user)
           time <- Clock[F].realTime(MILLISECONDS)
-          workspace <- userTemplateService.workspaceFor(template).map(_.copy(requestDate = Instant.ofEpochMilli(time)))
+          workspace <- templateService.workspaceFor(template, "user").map(_.copy(requestDate = Instant.ofEpochMilli(time)))
           savedWorkspace <- workspaceService.create(workspace)
           _ <- provisionService.provision(savedWorkspace, 0)
           completed <- workspaceService.find(savedWorkspace.id.get).value
