@@ -9,7 +9,7 @@ class JSONTemplateServiceSpec extends FlatSpec with Matchers {
 
   behavior of "JSON Workspace Generator"
 
-  it should "" in {
+  it should "generate valid json" in {
     val configService: ConfigService[IO] = new TestConfigService()
     val fileReader = new DefaultFileReader[IO]()
     val generator = new JSONTemplateService[IO](appConfig, fileReader, configService)

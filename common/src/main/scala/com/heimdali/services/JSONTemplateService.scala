@@ -40,7 +40,6 @@ class JSONTemplateService[F[_]: Effect : Clock](appConfig: AppConfig,
       workspaceText <- generateJSON(template, templateName, templateContent)
       time <- Clock[F].realTime(TimeUnit.MILLISECONDS)
       Right(json) = io.circe.parser.parse(workspaceText)
-      _ <- println(json.pretty(Printer.spaces2)).pure[F]
       Right(result) = json.as[WorkspaceRequest](WorkspaceRequest.decoder(template.requester, Instant.ofEpochMilli(time)))
     } yield result
 
