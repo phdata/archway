@@ -38,14 +38,6 @@
             [
               "cn",
               "edh_sw_sesame"
-            ],
-            [
-              "msSFU30Name",
-              "edh_sw_sesame"
-            ],
-            [
-              "gidNumber",
-              "123"
             ]
           ]
         }
@@ -87,14 +79,6 @@
           [
             "cn",
             "edh_sw_sesame"
-          ],
-          [
-            "msSFU30Name",
-            "edh_sw_sesame"
-          ],
-          [
-            "gidNumber",
-            "123"
           ]
         ]
       }

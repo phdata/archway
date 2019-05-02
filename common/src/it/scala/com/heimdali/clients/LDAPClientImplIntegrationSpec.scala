@@ -3,8 +3,10 @@ package com.heimdali.clients
 import cats.effect._
 import com.heimdali.test.fixtures._
 import com.unboundid.ldap.sdk._
+import com.unboundid.util.{Debug, DebugType}
 import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{FlatSpec, Matchers}
+import scala.collection.JavaConverters._
 
 class LDAPClientImplIntegrationSpec
   extends FlatSpec
@@ -22,8 +24,12 @@ class LDAPClientImplIntegrationSpec
 
   it should "create a group" in {
     val client = new LDAPClientImpl[IO](appConfig.ldap) with ActiveDirectoryClient[IO]
+    val attributes = defaultLDAPAttributes(s"cn=edh_sw_sesame,${appConfig.ldap.groupPath}", "edh_sw_sesame")
+    val updated = attributes.patch(attributes.length - 1, List("gidNumber" -> "124"), 1)
+    println(updated)
 
-    client.createGroup("edh_sw_sesame", defaultLDAPAttributes(s"cn=edh_sw_sesame,${appConfig.ldap.groupPath}", "edh_sw_sesame")).unsafeRunSync()
+    client.createGroup("edh_sw_sesame", attributes).unsafeRunSync()
+    client.createGroup("edh_sw_sesame", updated).unsafeRunSync()
 
     Option(ldapConnectionPool.getConnection.getEntry(s"cn=edh_sw_sesame,${appConfig.ldap.groupPath}")) shouldBe defined
     ldapConnectionPool.getConnection.delete(s"cn=edh_sw_sesame,${appConfig.ldap.groupPath}")
@@ -107,14 +113,22 @@ class LDAPClientImplIntegrationSpec
     val groupDN = s"cn=absent_group,${appConfig.ldap.groupPath}"
     val client = new LDAPClientImpl[IO](appConfig.ldap) with ActiveDirectoryClient[IO]
     val actual = client.groupRequest(groupDN, "absent_group", defaultLDAPAttributes(groupDN, "absent_group"))
-    actual.unsafeRunSync() shouldBe an [AddRequest]
+    actual.unsafeRunSync().get shouldBe an [AddRequest]
   }
 
   it should "generate a modify request" in {
     val groupDN = s"CN=user_benny,OU=heimdali,DC=jotunn,DC=io"
     val client = new LDAPClientImpl[IO](appConfig.ldap) with ActiveDirectoryClient[IO]
-    val actual = client.groupRequest(groupDN, "user_benny", defaultLDAPAttributes(groupDN, "user_benny"))
-    actual.unsafeRunSync() shouldBe a [ModifyRequest]
+    val attributes = defaultLDAPAttributes(groupDN, "user_benny")
+    val actual = client.groupRequest(groupDN, "user_benny", attributes.patch(attributes.length, List("something" -> "new"), 0))
+    actual.unsafeRunSync().get shouldBe a [ModifyRequest]
+  }
+
+  it should "not generate a request" in {
+    val groupDN = s"CN=user_benny,OU=heimdali,DC=jotunn,DC=io"
+    val client = new LDAPClientImpl[IO](appConfig.ldap) with ActiveDirectoryClient[IO]
+    val actual = client.groupRequest(groupDN, "user_benny", List())
+    actual.unsafeRunSync() should not be defined
   }
 
   it should "generate only one attribute for multiple keys" in {

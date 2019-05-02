@@ -50,6 +50,12 @@ class HiveAllocationRepositoryImpl extends HiveAllocationRepository {
         )
     }.toList
 
+  override def find(id: Long): ConnectionIO[Option[HiveAllocation]] =
+    Statements
+    .find(id)
+    .to[List]
+    .map(r => convertHiveResult(r).headOption)
+
   override def create(hiveDatabase: HiveAllocation): ConnectionIO[Long] =
     Statements
       .insert(hiveDatabase)
@@ -185,6 +191,9 @@ class HiveAllocationRepositoryImpl extends HiveAllocationRepository {
          insert into hive_database (name, location, size_in_gb, manager_group_id, readwrite_group_id, readonly_group_id)
          values (${hiveDatabase.name}, ${hiveDatabase.location}, ${hiveDatabase.sizeInGB}, ${hiveDatabase.managingGroup.id}, ${hiveDatabase.readWriteGroup.flatMap(_.id)}, ${hiveDatabase.readonlyGroup.flatMap(_.id)})
          """.update
+
+    def find(id: Long): Query0[HiveResult] =
+      (selectQuery ++ whereAnd(fr"h.id = $id")).query[HiveResult]
 
     def list(workspaceId: Long): Query0[HiveResult] =
       (selectQuery ++ fr"inner join workspace_database wd on wd.hive_database_id = h.id" ++ whereAnd(fr"wd.workspace_request_id = $workspaceId")).query[HiveResult]

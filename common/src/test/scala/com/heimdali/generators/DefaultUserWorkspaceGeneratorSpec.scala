@@ -16,37 +16,40 @@ class DefaultUserWorkspaceGeneratorSpec extends FlatSpec with MockFactory with M
   behavior of "DefaultUserWorkspaceGenerator"
 
   it should "user templates should generate workspaces" in {
+    val username = "john.doe-1"
+    val encodedUsername = WorkspaceGenerator.generateName(username)
+    val userDN = s"$username,${appConfig.ldap.baseDN}"
     val configService = mock[ConfigService[IO]]
     configService.getAndSetNextGid _ expects () returning 123L.pure[IO] repeat 5 times()
     val ldapGenerator = new DefaultLDAPGroupGenerator[IO](configService)
     val appGenerator = new DefaultApplicationGenerator[IO](appConfig, ldapGenerator)
     val topicGenerator = new DefaultTopicGenerator[IO](appConfig, ldapGenerator)
     val templateService = new DefaultUserWorkspaceGenerator[IO](appConfig, ldapGenerator, appGenerator, topicGenerator)
-    val input = UserTemplate(standardUserDN, standardUsername, Some(1), Some(1), Some(1))
+    val input = UserTemplate(userDN, username, Some(1), Some(1), Some(1))
     val workspace = WorkspaceRequest(
-      standardUsername,
-      standardUsername,
-      standardUsername,
+      username,
+      username,
+      username,
       "user",
-      standardUserDN,
+      userDN,
       timer.instant,
       Compliance(phiData = false, pciData = false, piiData = false),
       singleUser = true,
       data = List(
         HiveAllocation(
-          s"user_$standardUsername",
-          s"/user/$standardUsername/db",
+          s"user_$encodedUsername",
+          s"/user/$encodedUsername/db",
           250,
           LDAPRegistration(
-            s"cn=user_$standardUsername,ou=heimdali,dc=jotunn,dc=io",
-            s"user_$standardUsername",
-            s"role_user_$standardUsername",
-            attributes = defaultLDAPAttributes(s"cn=user_$standardUsername,ou=heimdali,dc=jotunn,dc=io", s"user_$standardUsername")
+            s"cn=user_$encodedUsername,ou=heimdali,dc=jotunn,dc=io",
+            s"user_$encodedUsername",
+            s"role_user_$encodedUsername",
+            attributes = defaultLDAPAttributes(s"cn=user_$encodedUsername,ou=heimdali,dc=jotunn,dc=io", s"user_$encodedUsername")
           ),
           None,
           None
         )),
-      processing = List(Yarn(s"root.user.$standardUsername", 1, 1)))
+      processing = List(Yarn(s"root.user.$encodedUsername", 1, 1)))
 
     val expected = workspace.copy(
       kafkaTopics = List(topicGenerator.topicFor("default", 1, 1, workspace).unsafeRunSync())

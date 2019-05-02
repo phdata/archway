@@ -81,29 +81,39 @@ abstract class LDAPClientImpl[F[_] : Effect](val ldapConfig: LDAPConfig)
   def modificationsFor(existing: List[(String, String)], updated: List[(String, String)]): List[Modification] =
     (updated diff existing).map {
       case (key, value) if existing.exists(a => a._1 == key) =>
+        logger.debug("changing existing value for {} with a value of {} to {}", key, existing.find(_._1 == key).get._2, value)
         new Modification(ModificationType.REPLACE, key, value)
       case (key, value) =>
+        logger.debug("adding value for {} with {}", key, value)
         new Modification(ModificationType.ADD, key, value)
     }
 
-  def groupRequest(groupDN: String, groupName: String, attributes: List[(String, String)]): F[_ <: LDAPRequest] =
+  def groupRequest(groupDN: String, groupName: String, attributes: List[(String, String)]): F[Option[_ <: LDAPRequest]] =
     Sync[F].delay {
       Option(readonlyPool.getConnection.getEntry(groupDN)) match {
         case Some(entry) =>
           val existing = entry.getAttributes.asScala.map(a => a.getName -> a.getValue).toList
-          val modifications = modificationsFor(existing, attributes)
-          new ModifyRequest(groupDN, modifications: _*)
+          val modifications = modificationsFor(existing, attributes).filterNot(_.getAttributeName == "objectClass")
+          if(modifications.isEmpty)
+            None
+          else
+            Some(new ModifyRequest(groupDN, modifications: _*))
         case None =>
-          new AddRequest(groupDN, attributeConvert(attributes.filterNot(_._1 == "dn")): _*)
+          Some(new AddRequest(groupDN, attributeConvert(attributes.filterNot(_._1 == "dn")): _*))
       }
     }
 
   def requestGroup(groupDN: String, groupName: String, attributes: List[(String, String)]): F[Unit] =
     groupRequest(groupDN, groupName, attributes).map {
-      case request: AddRequest =>
+      case Some(request: AddRequest) =>
+        logger.info("adding group with {}", request)
         adminPool.getConnection.add(request)
-      case request: ModifyRequest =>
+      case Some(request: ModifyRequest) =>
+        logger.info("updating group with {}", request)
         adminPool.getConnection.modify(request)
+      case None =>
+        logger.info("existing group had no changes")
+        ()
     }
 
   override def createGroup(groupName: String, attributes: List[(String, String)]): F[Unit] =

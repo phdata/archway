@@ -76,14 +76,14 @@ class SentryClientImpl[F[_]](transactor: Transactor[F],
 
   override def enableAccessToDB(database: String, role: String, databaseRole: DatabaseRole): F[Unit] =
     loginContextProvider.hadoopInteraction {
-       databaseRole match {
+      (databaseRole match {
         case Manager =>
-          (fr"GRANT ALL ON DATABASE" ++ Fragment.const(database) ++ fr"TO ROLE" ++ Fragment.const(role) ++ fr"WITH GRANT OPTION")
-            .update.run.transact(transactor).flatMap(_ => Sync[F].unit)
+          fr"GRANT ALL ON DATABASE" ++ Fragment.const(database) ++ fr"TO ROLE" ++ Fragment.const(role) ++ fr"WITH GRANT OPTION"
+        case ReadWrite =>
+          fr"GRANT ALL ON DATABASE" ++ Fragment.const(database) ++ fr"TO ROLE" ++ Fragment.const(role)
         case ReadOnly =>
-          (fr"GRANT SELECT ON DATABASE" ++ Fragment.const(database) ++ fr"TO ROLE" ++ Fragment.const(role))
-            .update.run.transact(transactor).flatMap(_ => Sync[F].unit)
-      }
+          fr"GRANT SELECT ON DATABASE" ++ Fragment.const(database) ++ fr"TO ROLE" ++ Fragment.const(role)
+      }).update.run.transact(transactor).flatMap(_ => Sync[F].unit)
     }
 
   override def enableAccessToLocation(location: String, role: String): F[Unit] =

@@ -74,9 +74,7 @@ package object fixtures {
       "objectClass" -> "group",
       "objectClass" -> "top",
       "sAMAccountName" -> cn,
-      "cn" -> cn,
-      "msSFU30Name" -> cn,
-      "gidNumber" -> "123"
+      "cn" -> cn
     )
 
   val savedWorkspaceRequest = WorkspaceRequest(

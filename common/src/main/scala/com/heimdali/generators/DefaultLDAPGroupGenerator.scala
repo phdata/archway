@@ -17,8 +17,6 @@ class DefaultLDAPGroupGenerator[F[_]](configService: ConfigService[F])
         "objectClass" -> "top",
         "sAMAccountName" -> cn,
         "cn" -> cn,
-        "msSFU30Name" -> cn,
-        "gidNumber" -> gid.toString
       )
     }
 

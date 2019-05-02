@@ -122,9 +122,9 @@ object Server extends IOApp {
         "/ops" -> opsController.route,
       ).orNotFound
 
-      provisioningJob =  new Provisioning[F](config.provisioning, provisionService)
+//      provisioningJob =  new Provisioning[F](config.provisioning, provisionService)
       sessionMaintainer = new SessionMaintainer[F](config.cluster, loginContextProvider)
-      startup = new HeimdaliStartup[F](provisioningJob, sessionMaintainer)(startupEC)
+      startup = new HeimdaliStartup[F](sessionMaintainer)(startupEC)
 
       _ <- Resource.liftF(startup.start())
 

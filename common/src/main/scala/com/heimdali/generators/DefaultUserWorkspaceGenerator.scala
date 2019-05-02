@@ -23,6 +23,8 @@ class DefaultUserWorkspaceGenerator[F[_]](appConfig: AppConfig,
     for {
       time <- clock.realTime(scala.concurrent.duration.MILLISECONDS)
 
+      generatedName = WorkspaceGenerator.generateName(template.username)
+
       workspace = WorkspaceRequest(
         template.username,
         template.username,
@@ -33,21 +35,21 @@ class DefaultUserWorkspaceGenerator[F[_]](appConfig: AppConfig,
         Compliance(phiData = false, pciData = false, piiData = false),
         singleUser = true,
         processing = List(Yarn(
-          s"${appConfig.workspaces.user.poolParents}.${template.username}",
+          s"${appConfig.workspaces.user.poolParents}.$generatedName",
           appConfig.workspaces.user.defaultCores,
           appConfig.workspaces.user.defaultMemory)))
 
       managerHive <- ldapGroupGenerator
         .generate(
-          s"user_${template.username}",
-          s"cn=user_${template.username},${appConfig.ldap.groupPath}",
-          s"role_user_${template.username}",
+          s"user_$generatedName",
+          s"cn=user_$generatedName,${appConfig.ldap.groupPath}",
+          s"role_user_$generatedName",
           workspace)
       topic <- topicGenerator.topicFor("default", 1, 1, workspace)
     } yield workspace.copy(
       data = List(HiveAllocation(
-        s"user_${template.username}",
-        s"${appConfig.workspaces.user.root}/${template.username}/db",
+        s"user_$generatedName",
+        s"${appConfig.workspaces.user.root}/$generatedName/db",
         appConfig.workspaces.user.defaultSize,
         managerHive,
         None,

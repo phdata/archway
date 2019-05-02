@@ -39,14 +39,6 @@
             [
               "cn",
               "edh_sw_sesame"
-            ],
-            [
-              "msSFU30Name",
-              "edh_sw_sesame"
-            ],
-            [
-              "gidNumber",
-              "123"
             ]
           ]
         }
@@ -76,14 +68,6 @@
             [
               "cn",
               "edh_sw_sesame_rw"
-            ],
-            [
-              "msSFU30Name",
-              "edh_sw_sesame_rw"
-            ],
-            [
-              "gidNumber",
-              "123"
             ]
           ]
         }
@@ -113,14 +97,6 @@
             [
               "cn",
               "edh_sw_sesame_ro"
-            ],
-            [
-              "msSFU30Name",
-              "edh_sw_sesame_ro"
-            ],
-            [
-              "gidNumber",
-              "123"
             ]
           ]
         }
@@ -162,14 +138,6 @@
           [
             "cn",
             "sesame_default_cg"
-          ],
-          [
-            "msSFU30Name",
-            "sesame_default_cg"
-          ],
-          [
-            "gidNumber",
-            "123"
           ]
         ]
       }

@@ -19,7 +19,7 @@ class KafkaTopicRepositoryImpl extends KafkaTopicRepository {
   private def grant(role: Statements.KafkaGrantHeader, ldap: LDAPRegistration, attributes: List[LDAPAttribute]) =
     TopicGrant(
       role.name,
-      ldap.copy(attributes = attributes.map(a => a.key -> a.value)),
+      ldap.copy(attributes = attributes.map(a => a.key -> a.value).distinct),
       role.actions,
       role.id,
       role.topicAccess

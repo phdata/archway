@@ -23,7 +23,7 @@ class ApplicationRepositoryImpl extends ApplicationRepository {
           Application(
             name,
             consumerGroup,
-            fromRecord(ldap).copy(attributes = group.map(g => g._3.key -> g._3.value)),
+            fromRecord(ldap).copy(attributes = group.map(g => g._3.key -> g._3.value).distinct),
             applicationType,
             logo,
             language,
