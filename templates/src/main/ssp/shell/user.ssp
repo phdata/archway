@@ -26,6 +26,7 @@
             [ "dn", "cn=sg_ts_${appConfig.cluster.environment.toLowerCase()(0)}_user_${template.generatedName},${appConfig.ldap.groupPath}" ],
             [ "objectClass", "group" ],
             [ "objectClass", "top" ],
+            [ "groupType", "-2147483640" ],
             [ "sAMAccountName", "sg_ts_${appConfig.cluster.environment.toLowerCase()(0)}_user_${template.generatedName}" ],
             [ "cn", "sg_ts_${appConfig.cluster.environment.toLowerCase()(0)}_user_${template.generatedName}" ]
           ]

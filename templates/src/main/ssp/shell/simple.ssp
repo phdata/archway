@@ -26,6 +26,7 @@
             [ "dn", "cn=sg_ts_${appConfig.cluster.environment.toLowerCase()(0)}_sw_${template.generatedName},${appConfig.ldap.groupPath}" ],
             [ "objectClass", "group" ],
             [ "objectClass", "top" ],
+            [ "groupType", "-2147483640" ],
             [ "sAMAccountName", "sg_ts_${appConfig.cluster.environment.toLowerCase()(0)}_sw_${template.generatedName}" ],
             [ "cn", "sg_ts_${appConfig.cluster.environment.toLowerCase()(0)}_sw_${template.generatedName}" ]
           ]
@@ -40,6 +41,7 @@
             [ "dn", "cn=sg_ts_${appConfig.cluster.environment.toLowerCase()(0)}_sw_${template.generatedName}_rw,${appConfig.ldap.groupPath}" ],
             [ "objectClass", "group" ],
             [ "objectClass", "top" ],
+            [ "groupType", "-2147483640" ],
             [ "sAMAccountName", "sg_ts_${appConfig.cluster.environment.toLowerCase()(0)}_sw_${template.generatedName}_rw" ],
             [ "cn", "sg_ts_${appConfig.cluster.environment.toLowerCase()(0)}_sw_${template.generatedName}_rw" ]
           ]
@@ -54,6 +56,7 @@
             [ "dn", "cn=sg_ts_${appConfig.cluster.environment.toLowerCase()(0)}_sw_${template.generatedName}_ro,${appConfig.ldap.groupPath}" ],
             [ "objectClass", "group" ],
             [ "objectClass", "top" ],
+            [ "groupType", "-2147483640" ],
             [ "sAMAccountName", "sg_ts_${appConfig.cluster.environment.toLowerCase()(0)}_sw_${template.generatedName}_ro" ],
             [ "cn", "sg_ts_${appConfig.cluster.environment.toLowerCase()(0)}_sw_${template.generatedName}_ro" ]
           ]

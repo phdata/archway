@@ -26,6 +26,7 @@
             [ "dn", "cn=sg_ts_${appConfig.cluster.environment.toLowerCase()(0)}_raw_${template.generatedName}_rwg,${appConfig.ldap.groupPath}" ],
             [ "objectClass", "group" ],
             [ "objectClass", "top" ],
+            [ "groupType", "-2147483640" ],
             [ "sAMAccountName", "sg_ts_${appConfig.cluster.environment.toLowerCase()(0)}_raw_${template.generatedName}_rwg" ],
             [ "cn", "sg_ts_${appConfig.cluster.environment.toLowerCase()(0)}_raw_${template.generatedName}_rwg" ]
           ]
@@ -40,6 +41,7 @@
             [ "dn", "cn=sg_ts_${appConfig.cluster.environment.toLowerCase()(0)}_raw_${template.generatedName}_rw,${appConfig.ldap.groupPath}" ],
             [ "objectClass", "group" ],
             [ "objectClass", "top" ],
+            [ "groupType", "-2147483640" ],
             [ "sAMAccountName", "sg_ts_${appConfig.cluster.environment.toLowerCase()(0)}_raw_${template.generatedName}_rw" ],
             [ "cn", "sg_ts_${appConfig.cluster.environment.toLowerCase()(0)}_raw_${template.generatedName}_rw" ]
           ]
@@ -54,6 +56,7 @@
             [ "dn", "cn=sg_ts_${appConfig.cluster.environment.toLowerCase()(0)}_raw_${template.generatedName}_ro,${appConfig.ldap.groupPath}" ],
             [ "objectClass", "group" ],
             [ "objectClass", "top" ],
+            [ "groupType", "-2147483640" ],
             [ "sAMAccountName", "sg_ts_${appConfig.cluster.environment.toLowerCase()(0)}_raw_${template.generatedName}_ro" ],
             [ "cn", "sg_ts_${appConfig.cluster.environment.toLowerCase()(0)}_raw_${template.generatedName}_ro" ]
           ]
@@ -73,6 +76,7 @@
             [ "dn", "cn=sg_ts_${appConfig.cluster.environment.toLowerCase()(0)}_trf_${template.generatedName}_rwg,${appConfig.ldap.groupPath}" ],
             [ "objectClass", "group" ],
             [ "objectClass", "top" ],
+            [ "groupType", "-2147483640" ],
             [ "sAMAccountName", "sg_ts_${appConfig.cluster.environment.toLowerCase()(0)}_trf_${template.generatedName}_rwg" ],
             [ "cn", "sg_ts_${appConfig.cluster.environment.toLowerCase()(0)}_trf_${template.generatedName}_rwg" ]
           ]
@@ -87,6 +91,7 @@
             [ "dn", "cn=sg_ts_${appConfig.cluster.environment.toLowerCase()(0)}_trf_${template.generatedName}_rw,${appConfig.ldap.groupPath}" ],
             [ "objectClass", "group" ],
             [ "objectClass", "top" ],
+            [ "groupType", "-2147483640" ],
             [ "sAMAccountName", "sg_ts_${appConfig.cluster.environment.toLowerCase()(0)}_trf_${template.generatedName}_rw" ],
             [ "cn", "sg_ts_${appConfig.cluster.environment.toLowerCase()(0)}_trf_${template.generatedName}_rw" ]
           ]
@@ -101,6 +106,7 @@
             [ "dn", "cn=sg_ts_${appConfig.cluster.environment.toLowerCase()(0)}_trf_${template.generatedName}_ro,${appConfig.ldap.groupPath}" ],
             [ "objectClass", "group" ],
             [ "objectClass", "top" ],
+            [ "groupType", "-2147483640" ],
             [ "sAMAccountName", "sg_ts_${appConfig.cluster.environment.toLowerCase()(0)}_trf_${template.generatedName}_ro" ],
             [ "cn", "sg_ts_${appConfig.cluster.environment.toLowerCase()(0)}_trf_${template.generatedName}_ro" ]
           ]
@@ -120,6 +126,7 @@
             [ "dn", "cn=sg_ts_${appConfig.cluster.environment.toLowerCase()(0)}_trf_${template.generatedName}_stage_rwg,${appConfig.ldap.groupPath}" ],
             [ "objectClass", "group" ],
             [ "objectClass", "top" ],
+            [ "groupType", "-2147483640" ],
             [ "sAMAccountName", "sg_ts_${appConfig.cluster.environment.toLowerCase()(0)}_trf_${template.generatedName}_stage_rwg" ],
             [ "cn", "sg_ts_${appConfig.cluster.environment.toLowerCase()(0)}_trf_${template.generatedName}_stage_rwg" ]
           ]
@@ -134,6 +141,7 @@
             [ "dn", "cn=sg_ts_${appConfig.cluster.environment.toLowerCase()(0)}_trf_${template.generatedName}_stage_rw,${appConfig.ldap.groupPath}" ],
             [ "objectClass", "group" ],
             [ "objectClass", "top" ],
+            [ "groupType", "-2147483640" ],
             [ "sAMAccountName", "sg_ts_${appConfig.cluster.environment.toLowerCase()(0)}_trf_${template.generatedName}_stage_rw" ],
             [ "cn", "sg_ts_${appConfig.cluster.environment.toLowerCase()(0)}_trf_${template.generatedName}_stage_rw" ]
           ]
@@ -148,6 +156,7 @@
             [ "dn", "cn=sg_ts_${appConfig.cluster.environment.toLowerCase()(0)}_trf_${template.generatedName}_stage_ro,${appConfig.ldap.groupPath}" ],
             [ "objectClass", "group" ],
             [ "objectClass", "top" ],
+            [ "groupType", "-2147483640" ],
             [ "sAMAccountName", "sg_ts_${appConfig.cluster.environment.toLowerCase()(0)}_trf_${template.generatedName}_stage_ro" ],
             [ "cn", "sg_ts_${appConfig.cluster.environment.toLowerCase()(0)}_trf_${template.generatedName}_stage_ro" ]
           ]
@@ -167,6 +176,7 @@
             [ "dn", "cn=sg_ts_${appConfig.cluster.environment.toLowerCase()(0)}_trf_${template.generatedName}_delta_rwg,${appConfig.ldap.groupPath}" ],
             [ "objectClass", "group" ],
             [ "objectClass", "top" ],
+            [ "groupType", "-2147483640" ],
             [ "sAMAccountName", "sg_ts_${appConfig.cluster.environment.toLowerCase()(0)}_trf_${template.generatedName}_delta_rwg" ],
             [ "cn", "sg_ts_${appConfig.cluster.environment.toLowerCase()(0)}_trf_${template.generatedName}_delta_rwg" ]
           ]
@@ -181,6 +191,7 @@
             [ "dn", "cn=sg_ts_${appConfig.cluster.environment.toLowerCase()(0)}_trf_${template.generatedName}_delta_rw,${appConfig.ldap.groupPath}" ],
             [ "objectClass", "group" ],
             [ "objectClass", "top" ],
+            [ "groupType", "-2147483640" ],
             [ "sAMAccountName", "sg_ts_${appConfig.cluster.environment.toLowerCase()(0)}_trf_${template.generatedName}_delta_rw" ],
             [ "cn", "sg_ts_${appConfig.cluster.environment.toLowerCase()(0)}_trf_${template.generatedName}_delta_rw" ]
           ]
@@ -195,6 +206,7 @@
             [ "dn", "cn=sg_ts_${appConfig.cluster.environment.toLowerCase()(0)}_trf_${template.generatedName}_delta_ro,${appConfig.ldap.groupPath}" ],
             [ "objectClass", "group" ],
             [ "objectClass", "top" ],
+            [ "groupType", "-2147483640" ],
             [ "sAMAccountName", "sg_ts_${appConfig.cluster.environment.toLowerCase()(0)}_trf_${template.generatedName}_delta_ro" ],
             [ "cn", "sg_ts_${appConfig.cluster.environment.toLowerCase()(0)}_trf_${template.generatedName}_delta_ro" ]
           ]
@@ -214,6 +226,7 @@
             [ "dn", "cn=sg_ts_${appConfig.cluster.environment.toLowerCase()(0)}_trf_${template.generatedName}_custom_rwg,${appConfig.ldap.groupPath}" ],
             [ "objectClass", "group" ],
             [ "objectClass", "top" ],
+            [ "groupType", "-2147483640" ],
             [ "sAMAccountName", "sg_ts_${appConfig.cluster.environment.toLowerCase()(0)}_trf_${template.generatedName}_custom_rwg" ],
             [ "cn", "sg_ts_${appConfig.cluster.environment.toLowerCase()(0)}_trf_${template.generatedName}_custom_rwg" ]
           ]
@@ -228,6 +241,7 @@
             [ "dn", "cn=sg_ts_${appConfig.cluster.environment.toLowerCase()(0)}_trf_${template.generatedName}_custom_rw,${appConfig.ldap.groupPath}" ],
             [ "objectClass", "group" ],
             [ "objectClass", "top" ],
+            [ "groupType", "-2147483640" ],
             [ "sAMAccountName", "sg_ts_${appConfig.cluster.environment.toLowerCase()(0)}_trf_${template.generatedName}_custom_rw" ],
             [ "cn", "sg_ts_${appConfig.cluster.environment.toLowerCase()(0)}_trf_${template.generatedName}_custom_rw" ]
           ]
@@ -242,6 +256,7 @@
             [ "dn", "cn=sg_ts_${appConfig.cluster.environment.toLowerCase()(0)}_trf_${template.generatedName}_custom_ro,${appConfig.ldap.groupPath}" ],
             [ "objectClass", "group" ],
             [ "objectClass", "top" ],
+            [ "groupType", "-2147483640" ],
             [ "sAMAccountName", "sg_ts_${appConfig.cluster.environment.toLowerCase()(0)}_trf_${template.generatedName}_custom_ro" ],
             [ "cn", "sg_ts_${appConfig.cluster.environment.toLowerCase()(0)}_trf_${template.generatedName}_custom_ro" ]
           ]
@@ -261,6 +276,7 @@
             [ "dn", "cn=sg_ts_${appConfig.cluster.environment.toLowerCase()(0)}_cns_${template.generatedName}_rwg,${appConfig.ldap.groupPath}" ],
             [ "objectClass", "group" ],
             [ "objectClass", "top" ],
+            [ "groupType", "-2147483640" ],
             [ "sAMAccountName", "sg_ts_${appConfig.cluster.environment.toLowerCase()(0)}_cns_${template.generatedName}_rwg" ],
             [ "cn", "sg_ts_${appConfig.cluster.environment.toLowerCase()(0)}_cns_${template.generatedName}_rwg" ]
           ]
@@ -275,6 +291,7 @@
             [ "dn", "cn=sg_ts_${appConfig.cluster.environment.toLowerCase()(0)}_cns_${template.generatedName}_rw,${appConfig.ldap.groupPath}" ],
             [ "objectClass", "group" ],
             [ "objectClass", "top" ],
+            [ "groupType", "-2147483640" ],
             [ "sAMAccountName", "sg_ts_${appConfig.cluster.environment.toLowerCase()(0)}_cns_${template.generatedName}_rw" ],
             [ "cn", "sg_ts_${appConfig.cluster.environment.toLowerCase()(0)}_cns_${template.generatedName}_rw" ]
           ]
@@ -289,6 +306,7 @@
             [ "dn", "cn=sg_ts_${appConfig.cluster.environment.toLowerCase()(0)}_cns_${template.generatedName}_ro,${appConfig.ldap.groupPath}" ],
             [ "objectClass", "group" ],
             [ "objectClass", "top" ],
+            [ "groupType", "-2147483640" ],
             [ "sAMAccountName", "sg_ts_${appConfig.cluster.environment.toLowerCase()(0)}_cns_${template.generatedName}_ro" ],
             [ "cn", "sg_ts_${appConfig.cluster.environment.toLowerCase()(0)}_cns_${template.generatedName}_ro" ]
           ]
