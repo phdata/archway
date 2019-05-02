@@ -580,7 +580,7 @@
           "configurableInWizard": "true"
         },
         {
-          "name": "heimdali.generators.ldapGroupGenerator",
+          "name": "heimdali.templates.ldapGroupGenerator",
           "label": "Group Generator Class",
           "description": "Full class name reference for the ldap generator to use.",
           "required": "false",
@@ -608,6 +608,13 @@
           "description": "Password for the Java truststore",
           "required": "false",
           "type": "password"
+        },
+        {
+          "name": "heimdali.templates.templateRoot",
+          "label": "Workspace template root directory",
+          "description": "Workspace template root directory",
+          "required": "true",
+          "type": "string"
         }
       ],
       "configWriter": {
