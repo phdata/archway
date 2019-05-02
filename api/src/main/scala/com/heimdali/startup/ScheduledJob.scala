@@ -2,21 +2,25 @@
 
 package com.heimdali.startup
 
-import cats.effect.{Sync, Timer}
+
+import cats.effect.{ContextShift, Sync, Timer}
+import com.typesafe.scalalogging.LazyLogging
 
 import scala.concurrent.duration.FiniteDuration
 
 trait ScheduledJob[F[_]] {
 
-  def start(): F[Unit]
+  def stream: fs2.Stream[F, Unit]
 
 }
 
-object ScheduledJob {
-  def onInterval[F[_] : Sync : Timer](job: () => F[Unit], interval: FiniteDuration): F[Unit] =
+object ScheduledJob extends LazyLogging {
+
+  def onInterval[F[_] : Sync : Timer : ContextShift](job: () => F[Unit], interval: FiniteDuration): fs2.Stream[F, Unit] =
     fs2.Stream.awakeEvery[F](interval)
-      .evalMap(_ => job())
-      .compile
-      .drain
+      .evalMap { _ =>
+        logger.info("running scheduled job: {}", job)
+        job()
+      }
 
 }

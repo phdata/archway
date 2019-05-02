@@ -33,8 +33,8 @@ class UGILoginContextProvider
       })
     }
 
-  override def kinit[F[_] : Sync](): F[Unit] =
-    Sync[F].delay {
+  override def kinit[F[_]]()(implicit sync: Sync[F]): F[Unit] =
+    sync.delay {
       logger.info("kiniting api service principal")
       try {
         UserGroupInformation.loginUserFromKeytab(sys.env("HEIMDALI_API_SERVICE_PRINCIPAL"), s"${sys.env("PWD")}/heimdali.keytab")
