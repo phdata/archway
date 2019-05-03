@@ -9,12 +9,15 @@ import org.apache.hadoop.yarn.conf.YarnConfiguration
 import org.http4s._
 
 class CDHClusterService[F[_]](http: HttpClient[F],
-                              clusterConfig: ClusterConfig,
-                              hadoopConfiguration: Configuration)
+                               clusterConfig: ClusterConfig,
+                               hadoopConfiguration: Configuration,
+                               cacheService: CacheService[F, Cluster])
                              (implicit val F: Effect[F])
   extends ClusterService[F] {
 
   val yarnConfiguration: YarnConfiguration = new YarnConfiguration(hadoopConfiguration)
+
+  cacheService.initialize(clusterDetails)
 
   import com.heimdali.services.CDHResponses._
   import io.circe.generic.auto._
@@ -99,10 +102,9 @@ class CDHClusterService[F[_]](http: HttpClient[F],
       details.status
     )
 
-  override def list: F[Seq[Cluster]] =
-    for {
-      details <- clusterDetails
-    } yield Seq(details)
+  override def list: F[Seq[Cluster]] = for {
+    details <- cacheService.getOrRun(clusterDetails)
+  } yield Seq(details)
 
 }
 

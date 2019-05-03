@@ -1,6 +1,7 @@
 package com.heimdali.services
 
 import java.io.File
+import java.util.concurrent.TimeUnit
 
 import cats.effect._
 import cats.effect.implicits._
@@ -75,7 +76,8 @@ class WorkspaceServiceIntegrationSpec extends FlatSpec with HiveTest with DBTest
         fileReader = new DefaultFileReader[IO]()
 
         httpClient = new CMClient[IO](h4Client, config.cluster)
-        clusterService = new CDHClusterService[IO](httpClient, config.cluster, hadoopConfiguration)
+        cacheService = new TimedCacheService[IO, Cluster](Duration.create(1000, TimeUnit.MILLISECONDS))
+        clusterService = new CDHClusterService[IO](httpClient, config.cluster, hadoopConfiguration, cacheService)
 
         loginContextProvider = new UGILoginContextProvider()
         sentryServiceClient = SentryGenericServiceClientFactory.create(hadoopConfiguration)

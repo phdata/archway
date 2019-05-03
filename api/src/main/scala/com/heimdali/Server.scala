@@ -1,6 +1,7 @@
 package com.heimdali
 
 import java.io.File
+import java.util.concurrent.TimeUnit
 
 import cats.effect.{ExitCode, IO, IOApp}
 import cats.effect._
@@ -59,7 +60,8 @@ object Server extends IOApp {
       fileReader = new DefaultFileReader[F]()
 
       httpClient = new CMClient[F](h4Client, config.cluster)
-      clusterService = new CDHClusterService[F](httpClient, config.cluster, hadoopConfiguration)
+      cacheService = new TimedCacheService[F, Cluster](Duration.create(1000, TimeUnit.MILLISECONDS))
+      clusterService = new CDHClusterService[F](httpClient, config.cluster, hadoopConfiguration, cacheService)
 
       loginContextProvider = new UGILoginContextProvider()
       sentryServiceClient = SentryGenericServiceClientFactory.create(hadoopConfiguration)
