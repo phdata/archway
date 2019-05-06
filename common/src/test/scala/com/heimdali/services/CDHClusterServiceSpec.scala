@@ -29,7 +29,7 @@ class CDHClusterServiceSpec
 
   it should "return a cluster" in {
     val url = ""
-    val name = "cluster name"
+    val name = "cluster"
     val version = "5.15.0"
 
     val username = "admin"

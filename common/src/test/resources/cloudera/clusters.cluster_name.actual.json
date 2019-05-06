@@ -1,13 +1,13 @@
 {
-  "name": "cluster name",
+  "name": "cluster",
   "displayName": "Odin",
   "version": "CDH5",
   "fullVersion": "5.15.0",
   "maintenanceMode": false,
   "maintenanceOwners": [
   ],
-  "clusterUrl": "http://master1.jotunn.io:7180/cmf/clusterRedirect/cluster name",
-  "hostsUrl": "http://master1.jotunn.io:7180/cmf/clusterRedirect/cluster name/hosts",
+  "clusterUrl": "http://master1.jotunn.io:7180/cmf/clusterRedirect/cluster",
+  "hostsUrl": "http://master1.jotunn.io:7180/cmf/clusterRedirect/cluster/hosts",
   "entityStatus": "GOOD_HEALTH",
   "uuid": "00a89c02-e0bb-47a7-a322-67dcaa154dd8"
 }

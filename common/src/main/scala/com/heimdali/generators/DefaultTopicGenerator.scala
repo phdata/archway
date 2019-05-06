@@ -4,6 +4,7 @@ import cats.effect.{Clock, Sync}
 import cats.implicits._
 import com.heimdali.config.AppConfig
 import com.heimdali.models._
+import com.heimdali.services.TemplateService
 
 class DefaultTopicGenerator[F[_]](appConfig: AppConfig,
                                   ldapGroupGenerator: LDAPGroupGenerator[F])
@@ -11,8 +12,8 @@ class DefaultTopicGenerator[F[_]](appConfig: AppConfig,
   extends TopicGenerator[F] {
 
   override def topicFor(name: String, partitions: Int, replicationFactor: Int, workspaceRequest: WorkspaceRequest): F[KafkaTopic] = {
-    val workspaceSystemName = WorkspaceGenerator.generateName(workspaceRequest.name)
-    val topicSystemName = WorkspaceGenerator.generateName(name)
+    val workspaceSystemName = TemplateRequest.generateName(workspaceRequest.name)
+    val topicSystemName = TemplateRequest.generateName(name)
     val registeredName = s"$workspaceSystemName.$topicSystemName"
     val managerName = s"${workspaceSystemName}_$topicSystemName"
     val readonlyName = s"${workspaceSystemName}_${topicSystemName}_ro"

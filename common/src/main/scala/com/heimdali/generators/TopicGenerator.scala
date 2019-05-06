@@ -1,7 +1,7 @@
 package com.heimdali.generators
 
 import cats.effect.{Clock, Sync}
-import com.heimdali.config.{AppConfig, GeneratorConfig}
+import com.heimdali.config.AppConfig
 import com.heimdali.models.{KafkaTopic, WorkspaceRequest}
 
 trait TopicGenerator[F[_]] {
@@ -12,10 +12,10 @@ trait TopicGenerator[F[_]] {
 
 object TopicGenerator {
 
-  def instance[F[_]](appConfig: AppConfig, ldapGroupGenerator: LDAPGroupGenerator[F], className: GeneratorConfig => String)
+  def instance[F[_]](appConfig: AppConfig, ldapGroupGenerator: LDAPGroupGenerator[F], className: String)
                     (implicit clock: Clock[F], F: Sync[F]): TopicGenerator[F] =
     Class
-      .forName(className(appConfig.generators))
+      .forName(className)
       .getConstructors
       .head
       .newInstance(appConfig, ldapGroupGenerator, clock, F)

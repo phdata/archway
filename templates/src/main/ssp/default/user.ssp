@@ -1,0 +1,88 @@
+<%@ var templateName: String %>
+<%@ var appConfig: com.heimdali.config.AppConfig %>
+<%@ var nextGid: Function0[Long] %>
+<%@ var template: com.heimdali.models.TemplateRequest %>
+{
+  "summary": "${template.summary}",
+  "description": "${template.description}",
+  "behavior": "${templateName}",
+  "name": "${template.name}",
+  "compliance": {
+    "phi_data": ${template.compliance.phiData},
+    "pci_data": ${template.compliance.pciData},
+    "pii_data": ${template.compliance.piiData}
+  },
+  "data": [
+    {
+      "name": "user_${template.generatedName}",
+      "location": "hdfs://${appConfig.cluster.name}/user/${template.generatedName}/db",
+      "size_in_gb": ${appConfig.workspaces.user.defaultSize.toString},
+      "managing_group": {
+        "group": {
+          "common_name": "user_${template.generatedName}",
+          "distinguished_name": "cn=user_${template.generatedName},${appConfig.ldap.groupPath}",
+          "sentry_role": "role_user_${template.generatedName}",
+          "attributes": [
+            [ "dn", "cn=user_${template.generatedName},${appConfig.ldap.groupPath}" ],
+            [ "objectClass", "group" ],
+            [ "objectClass", "top" ],
+            [ "sAMAccountName", "user_${template.generatedName}" ],
+            [ "cn", "user_${template.generatedName}" ],
+            [ "gidNumber", "${nextGid().toString}" ]
+          ]
+        }
+      }
+    }
+  ],
+  "processing": [
+    {
+      "pool_name": "root.users.${template.generatedName}",
+      "max_cores": ${appConfig.workspaces.user.defaultCores},
+      "max_memory_in_gb": ${appConfig.workspaces.user.defaultMemory.toString}
+    }
+  ],
+  "applications": [],
+  "topics": [
+    {
+      "name" : "${template.generatedName}.default",
+      "partitions" : 1,
+      "replication_factor" : 1,
+      "managing_role" : {
+        "name" : "${template.generatedName}.default",
+        "group" : {
+          "common_name" : "${template.generatedName}_default",
+          "distinguished_name" : "cn=${template.generatedName}_default,${appConfig.ldap.groupPath}",
+          "sentry_role" : "role_${template.generatedName}_default",
+          "attributes" : [
+            [ "dn", "cn=${template.generatedName}_default,${appConfig.ldap.groupPath}" ],
+            [ "objectClass", "group" ],
+            [ "objectClass", "top" ],
+            [ "sAMAccountName", "${template.generatedName}_default" ],
+            [ "cn", "${template.generatedName}_default" ],
+            [ "gidNumber", "${nextGid().toString}" ]
+          ]
+        },
+        "actions" : "read,describe"
+      },
+      "readonly_role" : {
+        "name" : "${template.generatedName}.default",
+        "group" : {
+          "common_name" : "${template.generatedName}_default_ro",
+          "distinguished_name" : "cn=${template.generatedName}_default_ro,${appConfig.ldap.groupPath}",
+          "sentry_role" : "role_${template.generatedName}_default_ro",
+          "attributes" : [
+            [ "dn", "cn=${template.generatedName}_default_ro,${appConfig.ldap.groupPath}" ],
+            [ "objectClass", "group" ],
+            [ "objectClass", "top" ],
+            [ "sAMAccountName", "${template.generatedName}_default_ro" ],
+            [ "cn", "${template.generatedName}_default_ro" ],
+            [ "gidNumber", "${nextGid().toString}" ]
+          ]
+        },
+        "actions" : "read"
+      }
+    }
+  ],
+  "single_user": true,
+  "requester": "${template.requester}"
+}

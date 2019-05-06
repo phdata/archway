@@ -6,9 +6,11 @@ import io.circe.Decoder
 case class MemberRequest(username: String)
 
 object MemberRequest {
-  import io.circe.generic.semiauto._
 
-  implicit val encoder: Encoder[MemberRequest] = deriveEncoder
-  implicit val decoder: Decoder[MemberRequest] = deriveDecoder
+  implicit val encoder: Encoder[MemberRequest] =
+    Encoder.forProduct1("username")(MemberRequest.unapply)
+
+  implicit val decoder: Decoder[MemberRequest] =
+    Decoder.forProduct1("username")(MemberRequest.apply)
 
 }

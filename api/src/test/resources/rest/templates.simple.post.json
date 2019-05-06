@@ -7,8 +7,5 @@
     "phi_data" : false,
     "pci_data" : false,
     "pii_data" : false
-  },
-  "disk" : 250,
-  "cores" : 4,
-  "memory" : 16
+  }
 }

@@ -63,7 +63,7 @@ package object fixtures {
   val searchResult = WorkspaceSearchResult(id, name, name, "simple", "Approved", piiCompliance, pciCompliance, phiCompliance, timer.instant, Some(timer.instant), 0, 0, 0)
 
   val yarnApp = ClusterApp("yarn", "yarn", "GOOD_HExALTH", "STARTED", Map())
-  val cluster = Cluster("cluster name", "Cluster", "", List(yarnApp), CDH(""), "GOOD_HEALTH")
+  val cluster = Cluster("cluster", "Cluster", "", List(yarnApp), CDH(""), "GOOD_HEALTH")
 
   def approval(instant: Instant = timer.instant) = Approval(Risk, standardUsername, instant)
   val Right(appConfig) = io.circe.config.parser.decodePath[AppConfig]("heimdali")
@@ -208,16 +208,16 @@ package object fixtures {
   object view extends QueryParamDecoderMatcher[String]("view")
 
   val testClient = Resource.make(IO.pure(Client.fromHttpApp(HttpRoutes.of[IO] {
-    case GET -> Root / "api" / "v18" / "clusters" / "cluster name" =>
+    case GET -> Root / "api" / "v18" / "clusters" / "cluster" =>
       Ok(fromResource("cloudera/clusters.cluster_name.actual.json"))
 
-    case GET -> Root / "api" / "v18" / "clusters" / "cluster name" / "services" / serviceName / "roles" =>
+    case GET -> Root / "api" / "v18" / "clusters" / "cluster" / "services" / serviceName / "roles" =>
       Ok(fromResource(s"cloudera/$serviceName.json"))
 
     case GET -> Root / "api" / "v18" / "hosts" =>
       Ok(fromResource("cloudera/hosts.json"))
 
-    case GET -> Root / "api" / "v18" / "clusters" / "cluster name" / "services" =>
+    case GET -> Root / "api" / "v18" / "clusters" / "cluster" / "services" =>
       Ok(fromResource("cloudera/services.json"))
 
     case GET -> Root / "api" / "v18" / "cm" / "service" =>

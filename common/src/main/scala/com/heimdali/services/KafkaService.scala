@@ -5,7 +5,7 @@ import cats.effect.Effect
 import cats.implicits._
 import com.heimdali.AppContext
 import com.heimdali.models._
-import com.heimdali.generators.{TopicGenerator, WorkspaceGenerator}
+import com.heimdali.generators.TopicGenerator
 import com.typesafe.scalalogging.LazyLogging
 import doobie.implicits._
 

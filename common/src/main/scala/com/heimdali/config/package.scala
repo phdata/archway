@@ -143,14 +143,12 @@ package object config {
 
   case class KafkaConfig(zookeeperConnect: String)
 
-  case class GeneratorConfig(userGenerator: String,
-                             simpleGenerator: String,
-                             structuredGenerator: String,
-                             topicGenerator: String,
-                             applicationGenerator: String,
-                             ldapGroupGenerator: String)
+  case class TemplateConfig(templateRoot: String,
+                            topicGenerator: String,
+                            applicationGenerator: String,
+                            ldapGroupGenerator: String)
 
-  case class AppConfig(generators: GeneratorConfig,
+  case class AppConfig(templates: TemplateConfig,
                        rest: RestConfig,
                        ui: UIConfig,
                        smtp: SMTPConfig,
@@ -177,7 +175,7 @@ package object config {
     implicit val databaseConfigItemDecoder: Decoder[DatabaseConfigItem] = deriveDecoder
     implicit val databaseConfigDecoder: Decoder[DatabaseConfig] = deriveDecoder
     implicit val kafkaConfigDecoder: Decoder[KafkaConfig] = deriveDecoder
-    implicit val generatorConfigDecoder: Decoder[GeneratorConfig] = deriveDecoder
+    implicit val generatorConfigDecoder: Decoder[TemplateConfig] = deriveDecoder
     implicit val provisioningConfigDecoder: Decoder[ProvisioningConfig] = ProvisioningConfig.decoder
     implicit val appConfigDecoder: Decoder[AppConfig] = deriveDecoder
 

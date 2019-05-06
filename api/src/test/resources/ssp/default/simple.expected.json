@@ -1,0 +1,93 @@
+{
+  "summary": "A test",
+  "description": "With details",
+  "behavior": "simple",
+  "name": "Sesame Test #1",
+  "compliance": {
+    "phi_data": false,
+    "pci_data": false,
+    "pii_data": false
+  },
+  "data": [
+    {
+      "name": "sw_sesame_test_1",
+      "location": "hdfs://cluster/data/shared_workspace/sesame_test_1",
+      "size_in_gb": 250,
+      "managing_group": {
+        "group": {
+          "common_name": "edh_sw_sesame_test_1",
+          "distinguished_name": "cn=edh_sw_sesame_test_1,ou=heimdali,dc=jotunn,dc=io",
+          "sentry_role": "role_sw_sesame_test_1",
+          "attributes": [
+            [ "dn", "cn=edh_sw_sesame_test_1,ou=heimdali,dc=jotunn,dc=io" ],
+            [ "objectClass", "group" ],
+            [ "objectClass", "top" ],
+            [ "sAMAccountName", "edh_sw_sesame_test_1" ],
+            [ "cn", "edh_sw_sesame_test_1" ],
+            [ "gidNumber", "123" ]
+          ]
+        }
+      },
+      "readwrite_group": {
+        "group": {
+          "common_name": "edh_sw_sesame_test_1_rw",
+          "distinguished_name": "cn=edh_sw_sesame_test_1_rw,ou=heimdali,dc=jotunn,dc=io",
+          "sentry_role": "role_sw_sesame_test_1_rw",
+          "attributes": [
+            [ "dn", "cn=edh_sw_sesame_test_1_rw,ou=heimdali,dc=jotunn,dc=io" ],
+            [ "objectClass", "group" ],
+            [ "objectClass", "top" ],
+            [ "sAMAccountName", "edh_sw_sesame_test_1_rw" ],
+            [ "cn", "edh_sw_sesame_test_1_rw" ],
+            [ "gidNumber", "123" ]
+          ]
+        }
+      },
+      "readonly_group": {
+        "group": {
+          "common_name": "edh_sw_sesame_test_1_ro",
+          "distinguished_name": "cn=edh_sw_sesame_test_1_ro,ou=heimdali,dc=jotunn,dc=io",
+          "sentry_role": "role_sw_sesame_test_1_ro",
+          "attributes": [
+            [ "dn", "cn=edh_sw_sesame_test_1_ro,ou=heimdali,dc=jotunn,dc=io" ],
+            [ "objectClass", "group" ],
+            [ "objectClass", "top" ],
+            [ "sAMAccountName", "edh_sw_sesame_test_1_ro" ],
+            [ "cn", "edh_sw_sesame_test_1_ro" ],
+            [ "gidNumber", "123" ]
+          ]
+        }
+      }
+    }
+  ],
+  "processing": [
+    {
+      "pool_name": "root.sw_sesame_test_1",
+      "max_cores": 4,
+      "max_memory_in_gb": 16
+    }
+  ],
+  "applications": [
+    {
+      "name": "default",
+      "consumer_group": "sesame_test_1_default_cg",
+      "group": {
+        "common_name": "sesame_test_1_default_cg",
+        "distinguished_name": "cn=sesame_test_1_default_cg,ou=heimdali,dc=jotunn,dc=io",
+        "sentry_role": "role_sesame_test_1_default_cg",
+        "attributes": [
+          [ "dn", "cn=sesame_test_1_default_cg,ou=heimdali,dc=jotunn,dc=io" ],
+          [ "objectClass", "group" ],
+          [ "objectClass", "top" ],
+          [ "sAMAccountName", "sesame_test_1_default_cg" ],
+          [ "cn", "sesame_test_1_default_cg" ],
+          [ "gidNumber", "123" ]
+        ]
+      }
+    }
+  ],
+  "topics": [],
+  "single_user": false,
+  "requester": "cn=john.doe,ou=hadoop,dc=example,dc=com",
+  "status": "Pending"
+}

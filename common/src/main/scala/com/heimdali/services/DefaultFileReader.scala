@@ -12,10 +12,10 @@ class DefaultFileReader[F[_]](implicit val F: Sync[F]) extends FileReader[F] {
 
   override def reader(file: String): Resource[F, BufferedReader] =
     Resource.fromAutoCloseable(F.delay {
-      Source.fromFile(Paths.get(System.getProperty("user.dir"), file).toFile).bufferedReader()
+      Source.fromFile(new File(file)).bufferedReader()
     })
 
   override def readLines(file: String): F[List[String]] =
-    reader(file).use(f => F.delay(f.lines().iterator().asScala.toList))
+    reader(file).use(file => F.delay(file.lines().iterator().asScala.toList))
 
 }

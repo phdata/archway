@@ -5,5 +5,8 @@ import cats.implicits._
 import com.heimdali.services.ConfigService
 
 class TestConfigService extends ConfigService[IO] {
-  override def getAndSetNextGid: IO[Long] = 123L.pure[IO]
+
+  override def getAndSetNextGid: IO[Long] =
+    123L.pure[IO]
+
 }

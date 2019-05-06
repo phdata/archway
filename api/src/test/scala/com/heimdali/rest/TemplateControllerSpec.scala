@@ -3,8 +3,8 @@ package com.heimdali.rest
 import cats.effect.IO
 import cats.implicits._
 import com.heimdali.generators._
-import com.heimdali.models.{SimpleTemplate, StructuredTemplate}
-import com.heimdali.services.ConfigService
+import com.heimdali.models.TemplateRequest
+import com.heimdali.services.{ConfigService, JSONTemplateService, TemplateService}
 import com.heimdali.test.TestAuthService
 import com.heimdali.test.fixtures._
 import io.circe.Json
@@ -12,45 +12,46 @@ import io.circe.java8.time._
 import io.circe.syntax._
 import org.http4s._
 import org.http4s.client.dsl.Http4sClientDsl
+import org.http4s.dsl.Http4sDsl
 import org.http4s.dsl.io._
 import org.http4s.implicits._
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.prop.TableDrivenPropertyChecks._
 
 class TemplateControllerSpec
   extends FlatSpec
     with Matchers
     with MockFactory
-    with HttpTest {
+    with HttpTest
+    with Http4sDsl[IO] {
 
   behavior of "Template controller"
 
-  it should "generate a simple workspace" in new Http4sClientDsl[IO] with Context {
-    val request = fromResource("rest/templates.simple.post.json")
+  it should "generate a simple workspace" in new Http4sClientDsl[IO] {
 
-    configService.getAndSetNextGid _ expects() returning 123L.pure[IO] repeat 4 times()
+    val table = Table(
+      ("name", "request"),
+      ("user", TemplateRequest(standardUsername, standardUsername, standardUsername, initialCompliance, standardUserDN)),
+      ("simple", TemplateRequest("Sesame Test #1", "A test", "With details", initialCompliance, standardUserDN)),
+      ("structured", TemplateRequest("Sesame Test #1", "A test", "With details", initialCompliance, standardUserDN)),
+    )
 
-    val response = templateController.route.orNotFound.run(POST(request, Uri.uri("/simple")).unsafeRunSync())
+    forAll(table) { (name, request) =>
+      val authService: TestAuthService = new TestAuthService
+      val configService: ConfigService[IO] = new TestConfigService
+      val ldapGroupGenerator = new DefaultLDAPGroupGenerator[IO](configService)
+      val applicationGenerator: ApplicationGenerator[IO] = new DefaultApplicationGenerator[IO](appConfig, ldapGroupGenerator)
+      val topicGenerator: TopicGenerator[IO] = new DefaultTopicGenerator[IO](appConfig, ldapGroupGenerator)
+      val templateService: TemplateService[IO] = new JSONTemplateService[IO](appConfig, configService)
 
-    val expected: Json =
-      fromResource("rest/templates.simple.post.expected.json")
-        .asObject
-        .get
-        .add("requested_date", timer.instant.asJson)
-        .asJson
-    check(response, Status.Ok, Some(expected))
-  }
+      val templateController: TemplateController[IO] = new TemplateController[IO](authService, templateService)
 
-  trait Context {
-    val authService: TestAuthService = new TestAuthService
-    val configService: ConfigService[IO] = mock[ConfigService[IO]]
-    val ldapGroupGenerator = new DefaultLDAPGroupGenerator[IO](configService)
-    val applicationGenerator: ApplicationGenerator[IO] = new DefaultApplicationGenerator[IO](appConfig, ldapGroupGenerator)
-    val topicGenerator: TopicGenerator[IO] = new DefaultTopicGenerator[IO](appConfig, ldapGroupGenerator)
-    val simpleTemplateService: WorkspaceGenerator[IO, SimpleTemplate] = new DefaultSimpleWorkspaceGenerator[IO](appConfig, ldapGroupGenerator, applicationGenerator, topicGenerator)
-    val structuredTemplateService: WorkspaceGenerator[IO, StructuredTemplate] = new DefaultStructuredWorkspaceGenerator[IO](appConfig, ldapGroupGenerator, applicationGenerator, topicGenerator)
+      val response = templateController.route.orNotFound.run(POST(request.asJson, Uri.unsafeFromString(s"/$name")).unsafeRunSync())
 
-    lazy val templateController: TemplateController[IO] = new TemplateController[IO](authService, simpleTemplateService, structuredTemplateService)
+      val expected: Json = fromResource(s"ssp/default/$name.expected.json")
+      check(response, Status.Ok, Some(expected.asObject.get.add("requested_date", timer.instant.asJson).asJson))
+    }
   }
 
 }

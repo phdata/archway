@@ -4,8 +4,8 @@ import cats.Monad
 import cats.effect.Clock
 import cats.implicits._
 import com.heimdali.config.AppConfig
-import com.heimdali.models.{Application, WorkspaceRequest}
-import com.heimdali.services.ApplicationRequest
+import com.heimdali.models.{Application, TemplateRequest, WorkspaceRequest}
+import com.heimdali.services.{ApplicationRequest, TemplateService}
 
 class DefaultApplicationGenerator[F[_]](appConfig: AppConfig,
                                         ldapGroupGenerator: LDAPGroupGenerator[F])
@@ -13,7 +13,7 @@ class DefaultApplicationGenerator[F[_]](appConfig: AppConfig,
   extends ApplicationGenerator[F] {
 
   override def applicationFor(application: ApplicationRequest, workspace: WorkspaceRequest): F[Application] = {
-    val consumerGroup = s"${WorkspaceGenerator.generateName(workspace.name)}_${application.name}_cg"
+    val consumerGroup = s"${TemplateRequest.generateName(workspace.name)}_${application.name}_cg"
     ldapGroupGenerator
       .generate(
         consumerGroup,

@@ -65,15 +65,15 @@ class CDHYarnClientSpec extends FlatSpec with MockFactory with Matchers with Htt
 
   trait HttpContext {
     val yarnClient = Resource.make(IO.pure(Client.fromHttpApp(HttpRoutes.of[IO] {
-      case GET -> Root / "api" / "v18" / "clusters" / "cluster name" =>
+      case GET -> Root / "api" / "v18" / "clusters" / "cluster" =>
         Ok(fromResource("cloudera/clusters.cluster_name.actual.json"))
-      case GET -> Root / "api" / "v18" / "clusters" / "cluster name" / "services" / yarnApp.id / "config" =>
+      case GET -> Root / "api" / "v18" / "clusters" / "cluster" / "services" / yarnApp.id / "config" =>
         Ok(fromResource("cloudera/config.json"))
-      case PUT -> Root / "api" / "v18" / "clusters" / "cluster name" / "services" / yarnApp.id / "config" =>
+      case PUT -> Root / "api" / "v18" / "clusters" / "cluster" / "services" / yarnApp.id / "config" =>
         Ok(fromResource("cloudera/config_update.json"))
-      case POST -> Root / "api" / "v18" / "clusters" / "cluster name" / "commands" / "poolsRefresh" =>
+      case POST -> Root / "api" / "v18" / "clusters" / "cluster" / "commands" / "poolsRefresh" =>
         Ok(fromResource("cloudera/commands.poolsRefresh.expected.json"))
-      case GET -> Root / "api" / "v18" / "clusters" / "cluster name" / "services" / yarnApp.id / "yarnApplications" =>
+      case GET -> Root / "api" / "v18" / "clusters" / "cluster" / "services" / yarnApp.id / "yarnApplications" =>
         Ok(fromResource("cloudera/clusters.cluster.services.yarn.yarnApplications.json"))
     }.orNotFound)))(_ => IO.unit)
   }
