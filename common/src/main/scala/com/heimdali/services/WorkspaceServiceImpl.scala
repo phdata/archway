@@ -2,9 +2,11 @@ package com.heimdali.services
 
 import java.util.concurrent.Executors
 
+import cats._
 import cats.data._
 import cats.effect._
 import cats.implicits._
+import cats.effect.implicits._
 import com.heimdali.clients._
 import com.heimdali.models._
 import com.heimdali.AppContext
@@ -14,6 +16,8 @@ import com.typesafe.scalalogging.LazyLogging
 import doobie._
 import doobie.implicits._
 import doobie.util.transactor.Transactor
+
+import scala.concurrent.ExecutionContext
 
 class WorkspaceServiceImpl[F[_] : ConcurrentEffect : ContextShift](ldapClient: LDAPClient[F],
                                                                    yarnRepository: YarnRepository,
@@ -131,17 +135,11 @@ class WorkspaceServiceImpl[F[_] : ConcurrentEffect : ContextShift](ldapClient: L
       .transact(transactor)
 
   override def approve(id: Long, approval: Approval): F[Approval] =
-    approvalRepository.create(id, approval).transact(transactor).flatMap { approval =>
-      find(id).value.flatMap { ws =>
-        ws match {
-          case Some(workspace) => provisioningService.provision(workspace)
-          case _ =>
-            val message = s"Workspace not found for id ${id}"
-            NonEmptyList.one[Message](ExceptionMessage(Some(id), message, new Exception(message))).pure[F]
-        }
-      }.map(_ => approval)
-    }
-
+    for {
+      approval <- approvalRepository.create(id, approval).transact(transactor)
+      maybeWorkspace <- find(id).value
+      _ <- maybeWorkspace.map(provisioningService.attemptProvision(_)).getOrElse(().pure[F])
+    } yield approval
 
   override def findByUsername(distinguishedName: String): OptionT[F, WorkspaceRequest] =
     OptionT(fill(workspaceRepository.findByUsername(distinguishedName)).value.transact(transactor))

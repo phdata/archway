@@ -1,12 +1,13 @@
 package com.heimdali.services
 
 import cats.data.NonEmptyList
+import cats.effect.Fiber
 import com.heimdali.models.{Application, KafkaTopic, WorkspaceRequest}
 import com.heimdali.provisioning.Message
 
 trait ProvisioningService[F[_]] {
 
-  def provision(workspace: WorkspaceRequest, requiredApprovals: Int = 2): F[NonEmptyList[Message]]
+  def attemptProvision(workspace: WorkspaceRequest, requiredApprovals: Int = 2): F[Fiber[F, NonEmptyList[Message]]]
 
   def findUnprovisioned(): F[List[WorkspaceRequest]]
 

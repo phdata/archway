@@ -7,7 +7,7 @@ import cats.effect._
 import cats.effect.implicits._
 import cats.implicits._
 import com.heimdali.models._
-import com.heimdali.provisioning.{NoOp, SimpleMessage}
+import com.heimdali.provisioning.{Message => OurMessage, SimpleMessage}
 import com.heimdali.services._
 import com.heimdali.test.TestAuthService
 import com.heimdali.test.fixtures._
@@ -21,6 +21,8 @@ import org.http4s.client.dsl.Http4sClientDsl
 import org.http4s.implicits._
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach, FlatSpec, Matchers}
+
+import scala.concurrent.ExecutionContext
 
 class WorkspaceControllerSpec
   extends FlatSpec
@@ -114,13 +116,14 @@ class WorkspaceControllerSpec
 
   it should "provision workspace" in new Http4sClientDsl[IO] with Context {
     workspaceService.find _ expects id returning OptionT.some(savedWorkspaceRequest)
-    provisioningService.provision _ expects(savedWorkspaceRequest, 0) returning NonEmptyList.one(SimpleMessage(Some(id), "nothing to see here")).pure[IO]
+    provisioningService.attemptProvision _ expects(savedWorkspaceRequest, 0) returning NonEmptyList.one(SimpleMessage(Some(id), "nothing to see here").asInstanceOf[OurMessage]).pure[IO].start(contextShift)
 
     val response = restApi.route.orNotFound.run(POST(Uri.uri("/123/provision")).unsafeRunSync())
     check(response, Status.Created, Some(Json.arr(Json.obj("message" -> "nothing to see here".asJson))))
   }
 
   trait Context {
+    val contextShift = IO.contextShift(ExecutionContext.global)
     val authService: TestAuthService = new TestAuthService(riskApprover = true, platformApprover = true)
     val memberService: MemberService[IO] = mock[MemberService[IO]]
     val kafkaService: KafkaService[IO] = mock[KafkaService[IO]]

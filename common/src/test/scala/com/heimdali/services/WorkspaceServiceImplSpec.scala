@@ -8,7 +8,7 @@ import cats.syntax.applicative._
 import com.heimdali.AppContext
 import com.heimdali.clients._
 import com.heimdali.models._
-import com.heimdali.provisioning.SimpleMessage
+import com.heimdali.provisioning.{Message, SimpleMessage}
 import com.heimdali.repositories.{MemberRepository, _}
 import com.heimdali.test.fixtures.{id, _}
 import doobie._
@@ -125,7 +125,8 @@ class WorkspaceServiceImplSpec
     foundWorkspace.get.processing should not be empty
   }
 
-  it should "approve the workspace" in new Context {
+  it should "approve the workspace" in new Context  {
+
     val instant = Instant.now()
     approvalRepository.create _ expects(id, approval(instant)) returning approval(instant).copy(id = Some(id)).pure[ConnectionIO]
 
@@ -135,32 +136,8 @@ class WorkspaceServiceImplSpec
     approvalRepository.findByWorkspaceId _ expects id returning List(approval()).pure[ConnectionIO]
     topicRepository.findByWorkspaceId _ expects id returning List(savedTopic).pure[ConnectionIO]
     applicationRepository.findByWorkspaceId _ expects id returning List(savedApplication).pure[ConnectionIO]
-    (provisioningService.provision(_: WorkspaceRequest, _: Int)) expects (*, 2) returning NonEmptyList.one(SimpleMessage(Some(1l), "")).pure[IO]
+    (provisioningService.attemptProvision(_: WorkspaceRequest, _: Int)) expects (*, 2) returning NonEmptyList.one(SimpleMessage(Some(1l), "").asInstanceOf[Message]).pure[IO].start(contextShift)
 
-    projectServiceImpl.approve(id, approval(instant)).unsafeRunSync()
-  }
-
-  it should "provision the workspace" in new Context {
-    val instant = Instant.now()
-    val firstApproval = approval(instant)
-    val secondApproval = approval(instant)
-    approvalRepository.create _ expects(id, firstApproval) returning firstApproval.copy(id = Some(id)).pure[ConnectionIO]
-    approvalRepository.create _ expects(id, secondApproval) returning secondApproval.copy(id = Some(id)).pure[ConnectionIO]
-
-    workspaceRepository.find _ expects id returning OptionT.some(savedWorkspaceRequest) twice()
-    hiveDatabaseRepository.findByWorkspace _ expects id returning List(savedHive).pure[ConnectionIO] twice()
-    yarnRepository.findByWorkspaceId _ expects id returning List(savedYarn).pure[ConnectionIO] twice()
-    topicRepository.findByWorkspaceId _ expects id returning List(savedTopic).pure[ConnectionIO] twice()
-    applicationRepository.findByWorkspaceId _ expects id returning List(savedApplication).pure[ConnectionIO] twice()
-
-    approvalRepository.findByWorkspaceId _ expects id returning List(firstApproval).pure[ConnectionIO]
-    approvalRepository.findByWorkspaceId _ expects id returning List(firstApproval, secondApproval).pure[ConnectionIO]
-
-    (provisioningService.provision(_: WorkspaceRequest, _ : Int)) expects (*, 2) returning NonEmptyList.one(SimpleMessage(Some(1l), "")).pure[IO]
-    (provisioningService.provision(_: WorkspaceRequest, _ : Int)) expects (*, 2) returning NonEmptyList.one(SimpleMessage(Some(1l), "")).pure[IO]
-
-
-    projectServiceImpl.approve(id, approval(instant)).unsafeRunSync()
     projectServiceImpl.approve(id, approval(instant)).unsafeRunSync()
   }
 

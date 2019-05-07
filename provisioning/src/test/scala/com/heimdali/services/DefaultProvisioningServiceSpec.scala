@@ -1,28 +1,65 @@
 package com.heimdali.services
 
 import cats.data.OptionT
-import cats.effect.{IO, Timer}
+import cats.effect.IO
 import cats.implicits._
 import com.heimdali.AppContext
 import com.heimdali.clients._
 import com.heimdali.models._
-import com.heimdali.test.fixtures._
 import com.heimdali.provisioning.DefaultProvisioningService
 import com.heimdali.repositories.{MemberRepository, _}
-import com.heimdali.test.fixtures.{TestTimer, id, maxCores, maxMemoryInGB, poolName, savedHive, savedLDAP, savedWorkspaceRequest, standardUserDN}
+import com.heimdali.test.fixtures.{id, maxCores, maxMemoryInGB, poolName, savedHive, savedLDAP, savedWorkspaceRequest, standardUserDN, _}
 import doobie._
 import doobie.implicits._
 import doobie.util.transactor.Strategy
 import org.apache.hadoop.fs.Path
 import org.apache.sentry.provider.db.generic.service.thrift.SentryGenericServiceClient
 import org.scalamock.scalatest.MockFactory
-import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.concurrent.TimeLimitedTests
+import org.scalatest.time.Span
+import org.scalatest._
+import org.scalatest.time.SpanSugar._
 
 import scala.concurrent.ExecutionContext
 
 class DefaultProvisioningServiceSpec extends FlatSpec with MockFactory with Matchers {
 
   behavior of "DefaultProvisioningServiceSpec"
+
+  it should "fire and forget" in new Context {
+    // make sure we actually call provisioning code, but take "too long"
+    (hdfsClient.createDirectory _)
+      .expects(savedHive.location, None)
+      .returning(IO {
+        println("I still run though")
+        Thread.sleep(1000)
+        new Path(savedHive.location)
+      })
+
+    val start = System.currentTimeMillis()
+    provisioningService.attemptProvision(savedWorkspaceRequest, 0).unsafeRunSync()
+    val end = System.currentTimeMillis()
+
+    Thread.sleep(500)
+
+    val actual: Long = end - start
+    actual should be < 1000L
+  }
+
+  it should "allow more than required approvals" in new Context {
+    // make sure we actually call provisioning code, but take "too long"
+    (hdfsClient.createDirectory _)
+      .expects(savedHive.location, None)
+      .returning(IO {
+        Thread.sleep(1000)
+        new Path(savedHive.location)
+      })
+    val singleApprovalWorkspace = savedWorkspaceRequest.copy(approvals = List(approval(timer.instant)))
+    val fabric = provisioningService.attemptProvision(singleApprovalWorkspace, 0).unsafeRunSync()
+    Thread.sleep(100)
+    fabric.cancel.unsafeRunSync()
+    Thread.sleep(500)
+  }
 
   it should "provision a workspace" in new Context {
     inSequence {
@@ -89,7 +126,12 @@ class DefaultProvisioningServiceSpec extends FlatSpec with MockFactory with Matc
       workspaceRepository.markProvisioned _ expects(id, *) returning 0.pure[ConnectionIO]
     }
 
-    provisioningService.provision(savedWorkspaceRequest, 0).unsafeRunSync().map(x => println(x.message))
+    provisioningService
+      .attemptProvision(savedWorkspaceRequest, 0)
+      .unsafeRunSync()
+      .join
+      .unsafeRunSync()
+      .map(x => println(x.message))
   }
 
   trait Context {

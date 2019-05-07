@@ -7,13 +7,15 @@ import com.heimdali.clients.{LDAPClient, LDAPUser}
 import com.heimdali.config.{ApprovalConfig, RestConfig, WorkspaceConfig, WorkspaceConfigItem}
 import com.heimdali.generators.{DefaultApplicationGenerator, DefaultLDAPGroupGenerator, DefaultTopicGenerator}
 import com.heimdali.models.TemplateRequest
-import com.heimdali.provisioning.SimpleMessage
+import com.heimdali.provisioning.{Message, SimpleMessage}
 import com.heimdali.test.fixtures._
 import io.circe.Json
 import io.circe.syntax._
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FlatSpec, Matchers}
 import pdi.jwt.{JwtAlgorithm, JwtCirce}
+
+import scala.concurrent.ExecutionContext
 
 class AccountServiceSpec extends FlatSpec with MockFactory with Matchers {
 
@@ -110,7 +112,7 @@ class AccountServiceSpec extends FlatSpec with MockFactory with Matchers {
     workspaceService.create _ expects initialWorkspaceRequest returning IO.pure(savedWorkspaceRequest)
     workspaceService.find _ expects id returning OptionT.some(savedWorkspaceRequest)
 
-    provisioningService.provision _ expects(savedWorkspaceRequest, 0) returning IO.pure(NonEmptyList.one(SimpleMessage(Some(1l), "")))
+    provisioningService.attemptProvision _ expects(savedWorkspaceRequest, 0) returning NonEmptyList.one(SimpleMessage(Some(1l), "").asInstanceOf[Message]).pure[IO].start(contextShift)
 
     val maybeWorkspace = accountService.createWorkspace(infraApproverUser).value.unsafeRunSync()
 
@@ -118,6 +120,7 @@ class AccountServiceSpec extends FlatSpec with MockFactory with Matchers {
   }
 
   trait Context {
+    val contextShift = IO.contextShift(ExecutionContext.global)
     val (name, wrongUsername, username, actualPassword, wrongPassword) = ("Dude Doe", "user", "username", "password", "passw0rd")
     val approvalConfig = ApprovalConfig("me@meail.com", "CN=foo,DC=jotunN,dc=io", "cN=bar,dc=JOTUNN,dc=io")
     val secret = "abc"

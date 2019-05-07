@@ -15,13 +15,13 @@ import com.heimdali.provisioning.ProvisionTask._
 import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext
 
-class DefaultProvisioningService[F[_] : ContextShift: ConcurrentEffect : Effect : Timer](appContext: AppContext[F], provisionContext: ExecutionContext)
+class DefaultProvisioningService[F[_] : ContextShift : ConcurrentEffect : Effect : Timer](appContext: AppContext[F], provisionContext: ExecutionContext)
   extends ProvisioningService[F] {
 
   override def provisionAll(): F[Unit] =
     for {
       workspaces <- findUnprovisioned()
-      _ <- ContextShift[F].evalOn(provisionContext)(workspaces.traverse(ws => provision(ws)))
+      _ <- ContextShift[F].evalOn(provisionContext)(workspaces.traverse(ws => attemptProvision(ws)))
     } yield ()
 
   private def provisionSteps(workspace: WorkspaceRequest): List[ReaderT[F, WorkspaceContext[F], ProvisionResult]] =
@@ -51,15 +51,18 @@ class DefaultProvisioningService[F[_] : ContextShift: ConcurrentEffect : Effect 
       workspaceId = workspace.id.get
       update = markProvisioned(workspaceId, instant)
       messagesF = messages.pure[F]
-      result <- if(provisionResult.isInstanceOf[Success]) Apply[F].productL(messagesF)(update) else messagesF
+      result <- if (provisionResult.isInstanceOf[Success]) Apply[F].productL(messagesF)(update) else messagesF
     } yield result
 
-  override def provision(workspace: WorkspaceRequest, requiredApprovals: Int = 2): F[NonEmptyList[Message]] =
-    if (workspace.approvals.lengthCompare(requiredApprovals) == 0) {
-      ContextShift[F].evalOn(provisionContext)(runProvisioning(workspace))
-    } else {
-      NonEmptyList.one[Message](SimpleMessage(workspace.id, s"Skipping workspace build. Workspace has ${workspace.approvals.length} but requires $requiredApprovals")).pure[F]
+  override def attemptProvision(workspace: WorkspaceRequest, requiredApprovals: Int = 2): F[Fiber[F, NonEmptyList[Message]]] = {
+    val provisioning: F[NonEmptyList[Message]] = workspace.approvals match {
+      case x if x.length >= requiredApprovals =>
+        ContextShift[F].evalOn(provisionContext)(runProvisioning(workspace))
+      case _ =>
+        NonEmptyList.one[Message](SimpleMessage(workspace.id, s"Skipping workspace build. Workspace has ${workspace.approvals.length} but requires $requiredApprovals")).pure[F]
     }
+    ConcurrentEffect[F].start(provisioning)
+  }
 
   override def findUnprovisioned(): F[List[WorkspaceRequest]] = {
     appContext.workspaceRequestRepository.findUnprovisioned().transact(appContext.transactor)
