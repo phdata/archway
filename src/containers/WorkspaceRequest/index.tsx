@@ -28,7 +28,7 @@ interface Props {
 
   setAdvancedVisible: (visible: boolean) => void;
   setBehavior: (behavior: string) => void;
-  setRequest: (request: RequestInput) => void;
+  setRequest: (request: boolean | RequestInput) => void;
   gotoNextPage: () => void;
   gotoPrevPage: () => void;
   clearRequest: () => void;
@@ -164,7 +164,7 @@ const mapStateToProps = () => createStructuredSelector({
 const mapDispatchToProps = (dispatch: any) => ({
   setAdvancedVisible: (visible: boolean) => dispatch(actions.setAdvancedVisible(visible)),
   setBehavior: (behavior: string) => dispatch(actions.setBehavior(behavior)),
-  setRequest: (request: RequestInput) => dispatch(actions.setRequest(request)),
+  setRequest: (request: boolean | RequestInput) => dispatch(actions.setRequest(request)),
   gotoNextPage: () => dispatch(actions.gotoNextPage()),
   gotoPrevPage: () => dispatch(actions.gotoPrevPage()),
   clearRequest: () => dispatch(actions.clearRequest()),

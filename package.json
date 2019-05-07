@@ -3,23 +3,32 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "antd": "^3.12.1",
+    "antd": "^3.16.6",
+    "babel-jest": "^24.7.1",
+    "babel-plugin-import": "^1.11.0",
+    "browserslist": "^4.5.6",
     "chart.js": "^2.7.3",
     "color": "^3.1.0",
     "connected-react-router": "^4.4.1",
+    "customize-cra": "^0.2.12",
     "formik": "^1.4.2",
     "fuse.js": "^3.3.0",
     "history": "latest",
+    "less": "^3.9.0",
+    "less-loader": "^5.0.0",
     "lodash": "^4.17.11",
     "moment": "^2.23.0",
-    "react": "^16.7.0",
+    "postcss-flexbugs-fixes": "^4.1.0",
+    "postcss-loader": "^3.0.0",
+    "react": "^16.8.6",
+    "react-app-rewired": "^2.1.3",
     "react-chartjs-2": "^2.7.4",
     "react-csv": "^1.0.19",
-    "react-dom": "^16.7.0",
+    "react-dom": "^16.8.6",
     "react-redux": "^5.0.7",
     "react-router": "4.2.0",
     "react-router-dom": "4.2.2",
-    "react-scripts-ts": "3.1.0",
+    "react-scripts": "3.0.0",
     "react-syntax-highlighter": "^10.1.2",
     "redux": "^3.7.2",
     "redux-form": "^8.1.0",
@@ -27,14 +36,9 @@
     "redux-immutable": "^4.0.0",
     "redux-saga": "^0.16.2",
     "reselect": "^3.0.1",
+    "style-loader": "^0.23.1",
     "timeago-react": "^2.0.1",
     "yup": "^0.26.6"
-  },
-  "scripts": {
-    "start": "REACT_APP_BASE_URL=${REACT_APP_BASE_URL:-https://master1.jotunn.io:8080} react-app-rewired start --scripts-version react-scripts-ts",
-    "build": "REACT_APP_BASE_URL=%%BASE_URL%% react-app-rewired build --scripts-version react-scripts-ts",
-    "test": "react-app-rewired test --env=jsdom --scripts-version react-scripts-ts",
-    "eject": "react-scripts-ts eject"
   },
   "devDependencies": {
     "@types/chart.js": "^2.7.42",
@@ -58,10 +62,25 @@
     "enzyme": "^3.8.0",
     "enzyme-adapter-react-16": "^1.7.1",
     "path": "^0.12.7",
-    "react-app-rewire-less": "^2.1.3",
-    "react-app-rewired": "^1.6.2",
-    "ts-import-plugin": "^1.5.5",
     "typescript": "^3.2.2"
+  },
+  "scripts": {
+    "start": "REACT_APP_BASE_URL=${REACT_APP_BASE_URL:-https://master1.jotunn.io:8080} react-app-rewired start",
+    "build": "REACT_APP_BASE_URL=%%BASE_URL%% react-app-rewired build",
+    "test": "react-app-rewired test --env=jsdom",
+    "eject": "react-scripts-ts eject"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   },
   "jest": {
     "setupFiles": [

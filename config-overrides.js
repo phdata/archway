@@ -1,33 +1,19 @@
 /* config-overrides.js */
+const {
+  override,
+  fixBabelImports,
+  addLessLoader,
+} = require("customize-cra");
 
 const path = require('path');
-const paths = require('react-scripts-ts/config/paths');
+const paths = require('react-scripts/config/paths');
 paths.appBuild = path.join(path.dirname(paths.appBuild), 'dist');
 
-const tsImportPluginFactory = require('ts-import-plugin')
-const { getLoader } = require("react-app-rewired");
-const rewireLess = require('react-app-rewire-less');
-
-module.exports = function override(config, env) {
-  const tsLoader = getLoader(
-    config.module.rules,
-    rule =>
-      rule.loader &&
-      typeof rule.loader === 'string' &&
-      rule.loader.includes('ts-loader')
-  );
-
-  tsLoader.options = {
-    getCustomTransformers: () => ({
-      before: [ tsImportPluginFactory({
-        libraryDirectory: 'es',
-        libraryName: 'antd',
-        style: true,
-      }) ]
-    })
-  };
-
-  config = rewireLess.withLoaderOptions({
+module.exports = override(
+  fixBabelImports("import", {
+    libraryName: "antd", libraryDirectory: "es", style: true // change importing css to less
+  }),
+  addLessLoader({
     javascriptEnabled: true,
     modifyVars: {
       "@font-family": "Roboto, sans-serif",
@@ -37,8 +23,6 @@ module.exports = function override(config, env) {
       "@primary-color": "#1DA57A",
       "@tabs-highlight-color": "#333333",
       "@tabs-ink-bar-color": "#333333"
-    },
-  })(config, env);
-    
-  return config;
-}
+    }
+  })
+);

@@ -3,7 +3,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import { createStructuredSelector } from 'reselect';
-import * as moment from 'moment';
+import moment from 'moment';
 import {
   Behavior,
   ListCardToggle,

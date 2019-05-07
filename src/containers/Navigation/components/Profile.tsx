@@ -12,7 +12,7 @@ interface Props {
     doLogout: () => void;
 }
 
-const Profile = ({ profile, doLogout }: Props) => {
+const ProfileComponent = ({ profile, doLogout }: Props) => {
   let name;
   if (profile && profile.name) {
     name = profile.name;
@@ -34,7 +34,7 @@ const Profile = ({ profile, doLogout }: Props) => {
         hey, {name}!
       </h3>
       <h6>
-        <a href="#" style={{ textTransform: 'uppercase', fontWeight: 200, color: 'white' }} onClick={doLogout}>
+        <a href="#" style={{ textTransform: 'uppercase', fontWeight: 200, color: 'white' }} onClick={doLogout}> {/* eslint-disable-line */}
           log out
         </a>
       </h6>
@@ -51,4 +51,4 @@ const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
   doLogout: () => dispatch(requestLogout()),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(Profile);
+export default connect(mapStateToProps, mapDispatchToProps)(ProfileComponent);

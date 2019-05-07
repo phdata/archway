@@ -41,6 +41,7 @@ interface SimpleMemberRequestProps {
   allocations: HiveAllocation[];
   suggestions?: UserSuggestions;
   onSearch?: (v: string) => void;
+  handleSubmit?: () => void;
 }
 
 const renderGroup = (group: any) => (

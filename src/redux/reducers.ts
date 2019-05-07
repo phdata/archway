@@ -8,7 +8,7 @@ import operations from '../containers/OpsListing/reducers';
 import request from '../containers/WorkspaceRequest/reducers';
 import { reducer as form } from 'redux-form/immutable';
 
-const reducers = combineReducers({
+const reducers = combineReducers<any>({
   login,
   listing,
   risk,

@@ -18,7 +18,7 @@ export function setBehavior(behavior: string) {
 }
 
 export const SET_REQUEST = 'SET_REQUEST';
-export function setRequest(request: RequestInput) {
+export function setRequest(request: boolean | RequestInput) {
   return {
     type: SET_REQUEST,
     request,

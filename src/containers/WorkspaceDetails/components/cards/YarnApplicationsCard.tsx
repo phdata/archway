@@ -45,7 +45,7 @@ const YarnApplicationsCard = ({ pools, rmURL, onRefreshPools }: Props) => {
           key="link"
           width={100}
           render={(link: string) => !!link && (
-            <a href={link} target="_blank">details</a>
+            <a href={link} target="_blank" rel="noopener noreferrer">details</a>
           )}
         />
       </Table>

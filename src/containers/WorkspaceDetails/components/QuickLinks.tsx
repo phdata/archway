@@ -19,6 +19,7 @@ const Link = ({ name, host }: { name: string, host: WebLocation }) => {
         style={{padding: 10}}
         key="action"
         target="_blank"
+        rel="noopener noreferrer"
         href={`//${location}/`}
       >
         {hint}

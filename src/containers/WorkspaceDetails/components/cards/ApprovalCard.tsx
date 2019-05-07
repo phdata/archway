@@ -49,7 +49,9 @@ const ApprovalCard = ({ data, children, onApprove }: Props) => {
                 style={{ fontSize: 16 }}
               />
             ) : !!onApprove && (
-              <a onClick={onApprove}>APPROVE</a>
+              <a onClick={onApprove}> {/* eslint-disable-line */}
+                APPROVE
+              </a>
             )
           )}
         </div>

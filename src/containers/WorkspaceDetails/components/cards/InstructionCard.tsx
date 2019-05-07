@@ -47,7 +47,7 @@ class InstructionCard extends React.Component<Props> {
             )}
             trigger={['click']}
           >
-            <a href="#">
+            <a href="#"> {/* eslint-disable-line */}
               {instructions[instruction]}
               <Icon type="caret-down" style={{ fontSize: 14, marginLeft: 4 }} />
             </a>

@@ -73,7 +73,7 @@ class DataTab extends React.Component<Props> {
                       </CardHeader>
                       <SyntaxHighlighter language="sql" style={{ overflow: 'auto', ...tomorrowNightEighties }}>
                         {`CREATE TABLE ${allocation.name}.new_data_landing
-LOCATION '${location}/new_data/landing'`}
+LOCATION '${allocation.location}/new_data/landing'`}
                       </SyntaxHighlighter>
                     </Card>
                   </Col>

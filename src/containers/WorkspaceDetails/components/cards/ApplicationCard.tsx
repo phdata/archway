@@ -8,7 +8,7 @@ interface Props {
 }
 
 const repoName = (repo: string): string => {
-  const parts = repo && repo.replace(/https?\:\/\//g, '').split('/') || [];
+  const parts = (repo && repo.replace(/https?:\/\//g, '').split('/')) || [];
   if(parts.length >= 2) {
     return `${parts[parts.length - 2]}/${parts[parts.length - 1]}`;
   } else {
@@ -21,6 +21,7 @@ const ApplicationCard = ({ application }: Props) => (
     <Row style={{ textAlign: 'center', height: 120 }} type="flex" align="middle">
       <Col span={24} style={{ paddingBottom: 8 }}>
         {application.logo && <img
+          alt="logo"
           src={application.logo}
           style={{ height: 64, objectFit: 'contain' }}
         />}

@@ -66,7 +66,7 @@ export interface YarnService extends Statusable {
 export abstract class ServiceLinks<T extends Statusable> {
     public service: T;
 
-    public links: JSX.Element[];
+    public links!: JSX.Element[];
 
     constructor(service: T) {
     this.service = service;
@@ -106,14 +106,14 @@ export class YarnServiceLinks extends ServiceLinks<YarnService> {
     public links: JSX.Element[] = [
     (
       <Dropdown overlay={<Menu>{this.nodeManagerLinks}</Menu>}>
-        <a href="#" className="ant-dropdown-link">
+        <a href="#" className="ant-dropdown-link"> {/* eslint-disable-line */}
           Node Manager UI <Icon type="down" />
         </a>
       </Dropdown>
     ),
     (
       <Dropdown overlay={<Menu>{this.resourceManagerLinks}</Menu>}>
-        <a href="#" className="ant-dropdown-link">
+        <a href="#" className="ant-dropdown-link"> {/* eslint-disable-line */}
           Resource Manager UI <Icon type="down" />
         </a>
       </Dropdown>

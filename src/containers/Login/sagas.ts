@@ -13,7 +13,7 @@ function* checkLogin() {
   }
 }
 
-function* tokenReady({ token }: {type: string, token: string}) {
+function* tokenReady({ token }: { token: string }) {
   const profile = yield call(Api.profile, token);
   yield put(actions.profileReady(profile));
 

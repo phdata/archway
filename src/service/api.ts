@@ -1,6 +1,7 @@
 import { Workspace } from '../models/Workspace';
 
-const BASE_URL = (window as any).config.baseUrl;
+const { config = {} } = (window as any);
+const BASE_URL = config.baseUrl || '';
 
 export function login(username: string, password: string) {
   return fetch(`${BASE_URL}/token`, {

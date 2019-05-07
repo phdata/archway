@@ -31,7 +31,7 @@ const renderRoleColumn = (onChangeMemberRole?: (member: Member, id: number, role
         )}
         trigger={['click']}
       >
-        <a style={{ fontSize: 12 }} href="#">
+        <a style={{ fontSize: 12 }} href="#"> {/* eslint-disable-line */}
           {role}
           <Icon style={{ marginLeft: 4 }} type="down" />
         </a>
