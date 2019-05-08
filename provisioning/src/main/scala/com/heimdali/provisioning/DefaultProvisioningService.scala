@@ -8,12 +8,12 @@ import cats.effect._
 import cats.implicits._
 import com.heimdali.AppContext
 import com.heimdali.models.{Application, KafkaTopic, WorkspaceRequest}
+import com.heimdali.provisioning.ProvisionTask._
 import com.heimdali.services.ProvisioningService
 import doobie.implicits._
-import com.heimdali.provisioning.ProvisionTask._
 
-import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext
+import scala.concurrent.duration._
 
 class DefaultProvisioningService[F[_] : ContextShift : ConcurrentEffect : Effect : Timer](appContext: AppContext[F], provisionContext: ExecutionContext)
   extends ProvisioningService[F] {
@@ -21,7 +21,7 @@ class DefaultProvisioningService[F[_] : ContextShift : ConcurrentEffect : Effect
   override def provisionAll(): F[Unit] =
     for {
       workspaces <- findUnprovisioned()
-      _ <- ContextShift[F].evalOn(provisionContext)(workspaces.traverse(ws => attemptProvision(ws)))
+      _ <- ContextShift[F].evalOn(provisionContext)(workspaces.traverse(ws => attemptProvision(ws, appContext.appConfig.approvers.required)))
     } yield ()
 
   private def provisionSteps(workspace: WorkspaceRequest): List[ReaderT[F, WorkspaceContext[F], ProvisionResult]] =
@@ -54,7 +54,7 @@ class DefaultProvisioningService[F[_] : ContextShift : ConcurrentEffect : Effect
       result <- if (provisionResult.isInstanceOf[Success]) Apply[F].productL(messagesF)(update) else messagesF
     } yield result
 
-  override def attemptProvision(workspace: WorkspaceRequest, requiredApprovals: Int = 2): F[Fiber[F, NonEmptyList[Message]]] = {
+  override def attemptProvision(workspace: WorkspaceRequest, requiredApprovals: Int): F[Fiber[F, NonEmptyList[Message]]] = {
     val provisioning: F[NonEmptyList[Message]] = workspace.approvals match {
       case x if x.length >= requiredApprovals =>
         ContextShift[F].evalOn(provisionContext)(runProvisioning(workspace))

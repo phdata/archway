@@ -94,7 +94,9 @@ package object config {
 
   case class SMTPConfig(fromEmail: String, host: String, port: Int, auth: Boolean, user: Option[String], pass: Option[String], ssl: Boolean)
 
-  case class ApprovalConfig(notificationEmail: String, infrastructure: String, risk: String)
+  case class ApprovalConfig(notificationEmail: String, infrastructure: Option[String], risk: Option[String]) {
+    val required: Int = List(infrastructure, risk).flatten.length
+  }
 
   case class WorkspaceConfigItem(root: String, defaultSize: Int, defaultCores: Int, defaultMemory: Int, poolParents: String)
 

@@ -29,19 +29,17 @@ class AccountServiceImpl[F[_] : Sync : Timer](ldapClient: LDAPClient[F],
   private val algo: JwtAlgorithm.HS512.type = JwtAlgorithm.HS512
 
   implicit def convertUser(ldapUser: LDAPUser): User = {
+    def memberOf(check: ApprovalConfig => Option[String]) =
+      check(approvalConfig)
+        .map(r => ldapUser.memberships.map(_.toLowerCase()).contains(r.toLowerCase()))
+        .getOrElse(false)
     User(ldapUser.name,
       ldapUser.username,
       ldapUser.distinguishedName,
-      UserPermissions(riskManagement =
-        ldapUser
-          .memberships
-          .map(_.toLowerCase())
-          .contains(approvalConfig.risk.toLowerCase()),
-        platformOperations =
-          ldapUser
-            .memberships
-            .map(_.toLowerCase())
-            .contains(approvalConfig.infrastructure.toLowerCase())))
+      UserPermissions(
+        riskManagement = memberOf(_.risk),
+        platformOperations = memberOf(_.infrastructure)
+      ))
   }
 
   private def decode(token: String, secret: String, algo: JwtHmacAlgorithm): Either[Throwable, Json] =

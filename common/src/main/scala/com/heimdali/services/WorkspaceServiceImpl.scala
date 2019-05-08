@@ -30,7 +30,7 @@ class WorkspaceServiceImpl[F[_] : ConcurrentEffect : ContextShift](ldapClient: L
                                                                    memberRepository: MemberRepository,
                                                                    topicRepository: KafkaTopicRepository,
                                                                    applicationRepository: ApplicationRepository,
-                                                                   appConfig: AppContext[F],
+                                                                   context: AppContext[F],
                                                                    provisioningService: ProvisioningService[F])
   extends WorkspaceService[F]
     with LazyLogging {
@@ -38,7 +38,7 @@ class WorkspaceServiceImpl[F[_] : ConcurrentEffect : ContextShift](ldapClient: L
   def fillHive(dbs: List[HiveAllocation]): F[List[HiveAllocation]] =
     dbs.map {
       case hive if hive.directoryCreated.isDefined =>
-        appConfig
+        context
           .hdfsClient
           .getConsumption(hive.location)
           .map(consumed => hive.copy(consumedInGB = Some(consumed)))
@@ -72,7 +72,7 @@ class WorkspaceServiceImpl[F[_] : ConcurrentEffect : ContextShift](ldapClient: L
         db =>
           for {
             managerLdap <- ldapRepository.create(db.managingGroup.ldapRegistration)
-            managerId <- appConfig.databaseGrantRepository.create(managerLdap.id.get)
+            managerId <- context.databaseGrantRepository.create(managerLdap.id.get)
             manager = db.managingGroup.copy(id = Some(managerId), ldapRegistration = managerLdap)
 
             _ <- memberRepository.create(workspace.requestedBy, managerLdap.id.get)
@@ -80,14 +80,14 @@ class WorkspaceServiceImpl[F[_] : ConcurrentEffect : ContextShift](ldapClient: L
             readwrite <- db.readWriteGroup.map { group =>
               for {
                 ldap <- ldapRepository.create(group.ldapRegistration)
-                grant <- appConfig.databaseGrantRepository.create(ldap.id.get)
+                grant <- context.databaseGrantRepository.create(ldap.id.get)
               } yield group.copy(id = Some(grant), ldapRegistration = ldap)
             }.sequence[ConnectionIO, HiveGrant]
 
             readonly <- db.readonlyGroup.map { group =>
               for {
                 ldap <- ldapRepository.create(group.ldapRegistration)
-                grant <- appConfig.databaseGrantRepository.create(ldap.id.get)
+                grant <- context.databaseGrantRepository.create(ldap.id.get)
               } yield group.copy(id = Some(grant), ldapRegistration = ldap)
             }.sequence[ConnectionIO, HiveGrant]
 
@@ -117,13 +117,13 @@ class WorkspaceServiceImpl[F[_] : ConcurrentEffect : ContextShift](ldapClient: L
       insertedTopics <- workspace.kafkaTopics.traverse[ConnectionIO, KafkaTopic] { topic =>
         for {
           managerLdap <- ldapRepository.create(topic.managingRole.ldapRegistration)
-          managerId <- appConfig.topicGrantRepository.create(topic.managingRole.copy(ldapRegistration = managerLdap))
+          managerId <- context.topicGrantRepository.create(topic.managingRole.copy(ldapRegistration = managerLdap))
           manager = topic.managingRole.copy(id = Some(managerId), ldapRegistration = managerLdap)
 
           _ <- memberRepository.create(workspace.requestedBy, managerLdap.id.get)
 
           readonlyLdap <- ldapRepository.create(topic.readonlyRole.ldapRegistration)
-          readonlyId <- appConfig.topicGrantRepository.create(topic.readonlyRole.copy(ldapRegistration = readonlyLdap))
+          readonlyId <- context.topicGrantRepository.create(topic.readonlyRole.copy(ldapRegistration = readonlyLdap))
           readonly = topic.readonlyRole.copy(id = Some(readonlyId), ldapRegistration = readonlyLdap)
 
           beforeCreate = topic.copy(managingRole = manager, readonlyRole = readonly)
@@ -138,7 +138,7 @@ class WorkspaceServiceImpl[F[_] : ConcurrentEffect : ContextShift](ldapClient: L
     for {
       approval <- approvalRepository.create(id, approval).transact(transactor)
       maybeWorkspace <- find(id).value
-      _ <- maybeWorkspace.map(provisioningService.attemptProvision(_)).getOrElse(().pure[F])
+      _ <- maybeWorkspace.map(provisioningService.attemptProvision(_, context.appConfig.approvers.required)).getOrElse(().pure[F])
     } yield approval
 
   override def findByUsername(distinguishedName: String): OptionT[F, WorkspaceRequest] =
@@ -147,14 +147,14 @@ class WorkspaceServiceImpl[F[_] : ConcurrentEffect : ContextShift](ldapClient: L
 
   override def yarnInfo(id: Long): F[List[YarnInfo]] =
     yarnRepository.findByWorkspaceId(id).transact(transactor).flatMap(_.map { yarn =>
-      appConfig.yarnClient.applications(yarn.poolName).map(apps => YarnInfo(yarn.poolName, apps))
+      context.yarnClient.applications(yarn.poolName).map(apps => YarnInfo(yarn.poolName, apps))
     }.sequence)
 
   override def hiveDetails(id: Long): F[List[HiveDatabase]] =
     for {
       datas <- hiveDatabaseRepository.findByWorkspace(id).transact(transactor)
       result <- datas.map {
-        case h if h.databaseCreated.isDefined => OptionT.liftF(appConfig.hiveClient.describeDatabase(h.name))
+        case h if h.databaseCreated.isDefined => OptionT.liftF(context.hiveClient.describeDatabase(h.name))
         case _ => OptionT.none[F, HiveDatabase]
       }.traverse(_.value).map(_.flatten)
     } yield result

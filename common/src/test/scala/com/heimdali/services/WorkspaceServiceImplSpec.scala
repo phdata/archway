@@ -213,8 +213,8 @@ class WorkspaceServiceImplSpec
 
     val transactor = Transactor.fromConnection[IO](null, ExecutionContext.global).copy(strategy0 = Strategy(FC.unit, FC.unit, FC.unit, FC.unit))
 
-    lazy val appConfig: AppContext[IO] = AppContext(
-      null,
+    lazy val context: AppContext[IO] = AppContext(
+      appConfig,
       sentryClient,
       hiveClient,
       ldapClient,
@@ -246,7 +246,7 @@ class WorkspaceServiceImplSpec
         memberRepository,
         topicRepository,
         applicationRepository,
-        appConfig,
+        context,
         provisioningService
       )
   }

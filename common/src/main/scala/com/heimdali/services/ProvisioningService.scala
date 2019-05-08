@@ -7,7 +7,7 @@ import com.heimdali.provisioning.Message
 
 trait ProvisioningService[F[_]] {
 
-  def attemptProvision(workspace: WorkspaceRequest, requiredApprovals: Int = 2): F[Fiber[F, NonEmptyList[Message]]]
+  def attemptProvision(workspace: WorkspaceRequest, requiredApprovals: Int): F[Fiber[F, NonEmptyList[Message]]]
 
   def findUnprovisioned(): F[List[WorkspaceRequest]]
 
