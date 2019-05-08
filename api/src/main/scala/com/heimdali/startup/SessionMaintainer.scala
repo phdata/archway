@@ -4,20 +4,19 @@ import cats.effect._
 import cats.implicits._
 import com.heimdali.config.ClusterConfig
 import com.heimdali.services.LoginContextProvider
+import com.typesafe.scalalogging.LazyLogging
 
-import scala.concurrent.duration.FiniteDuration
+class SessionMaintainer[F[_] : Sync : Timer : ContextShift](clusterConfig: ClusterConfig,
+                                                            loginContextProvider: LoginContextProvider)
+  extends ScheduledJob[F] with LazyLogging {
 
-class SessionMaintainer[F[_] : Sync](clusterConfig: ClusterConfig,
-                                     loginContextProvider: LoginContextProvider)
-                                    (implicit timer: Timer[F])
-  extends ScheduledJob[F] {
-
-  override def start: F[Unit] =
-    loginContextProvider.kinit().flatMap { _ =>
-      ScheduledJob.onInterval(
-        loginContextProvider.kinit[F],
-        clusterConfig.sessionRefresh.asInstanceOf[FiniteDuration]
-      )
-    }
+  override def work: F[Unit] =
+    for {
+      _ <- logger.info("refreshing kerberos ticket").pure[F]
+      _ <- loginContextProvider.kinit[F]()
+      _ <- logger.info("session refresher going to sleep for {}", clusterConfig.sessionRefresh).pure[F]
+      _ <- Timer[F].sleep(clusterConfig.sessionRefresh)
+      _ <- work
+    } yield ()
 
 }

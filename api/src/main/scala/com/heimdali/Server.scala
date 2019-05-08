@@ -45,7 +45,7 @@ object Server extends IOApp {
       dbConnectionEC <- ExecutionContexts.fixedThreadPool(10)
       dbTransactionEC <- ExecutionContexts.cachedThreadPool
       emailEC <- ExecutionContexts.fixedThreadPool(10)
-      provisionEC <-   ExecutionContexts.fixedThreadPool(config.provisioning.threadPoolSize)
+      provisionEC <- ExecutionContexts.fixedThreadPool(config.provisioning.threadPoolSize)
       startupEC <- ExecutionContexts.fixedThreadPool(1)
 
       h4Client = BlazeClientBuilder[F](httpEC)
@@ -111,21 +111,21 @@ object Server extends IOApp {
       opsController = new OpsController[F](authService, workspaceService)
 
       httpApp = Router(
-      "/token" -> accountController.openRoutes,
-      "/account" -> accountController.tokenizedRoutes,
-      "/templates" -> templateController.route,
-      "/clusters" -> clusterController.route,
-      "/workspaces" -> workspaceController.route,
-      "/members" -> memberController.route,
-      "/risk" -> riskController.route,
+        "/token" -> accountController.openRoutes,
+        "/account" -> accountController.tokenizedRoutes,
+        "/templates" -> templateController.route,
+        "/clusters" -> clusterController.route,
+        "/workspaces" -> workspaceController.route,
+        "/members" -> memberController.route,
+        "/risk" -> riskController.route,
         "/ops" -> opsController.route,
       ).orNotFound
 
-//      provisioningJob =  new Provisioning[F](config.provisioning, provisionService)
+      provisioningJob = new Provisioning[F](config.provisioning, provisionService)
       sessionMaintainer = new SessionMaintainer[F](config.cluster, loginContextProvider)
-      startup = new HeimdaliStartup[F](sessionMaintainer)(startupEC)
+      startup = new HeimdaliStartup[F](sessionMaintainer, provisioningJob)(startupEC)
 
-      _ <- Resource.liftF(startup.start())
+      _ <- Resource.liftF(startup.begin())
 
       server <-
         BlazeServerBuilder[F]

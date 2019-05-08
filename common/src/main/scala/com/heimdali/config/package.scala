@@ -24,7 +24,7 @@ package object config {
 
   case class ServiceOverride(host: Option[String], port: Int)
 
-  case class ClusterConfig(sessionRefresh: Duration,
+  case class ClusterConfig(sessionRefresh: FiniteDuration,
                            url: String,
                            name: String,
                            environment: String,
@@ -71,7 +71,7 @@ package object config {
 
     implicit val decoder: Decoder[ClusterConfig] = Decoder.instance { cursor =>
       for {
-        sessionRefresh <- cursor.downField("sessionRefresh").as[String].map(Duration.apply)
+        sessionRefresh <- cursor.downField("sessionRefresh").as[String].map(Duration.apply(_).asInstanceOf[FiniteDuration])
         url <- cursor.downField("url").as[String]
         name <- cursor.downField("name").as[String]
         environment <- cursor.downField("environment").as[String]
