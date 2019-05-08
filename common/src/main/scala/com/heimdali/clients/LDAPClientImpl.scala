@@ -9,7 +9,7 @@ import com.unboundid.ldap.sdk._
 import com.unboundid.util.ssl.{SSLUtil, TrustAllTrustManager}
 
 import scala.collection.JavaConverters._
-import scala.util.Try
+import scala.util.{Failure, Success, Try}
 
 abstract class LDAPClientImpl[F[_] : Effect](val ldapConfig: LDAPConfig)
   extends LDAPClient[F]
@@ -27,7 +27,13 @@ abstract class LDAPClientImpl[F[_] : Effect](val ldapConfig: LDAPConfig)
     val bindRequest: SimpleBindRequest =
       new SimpleBindRequest(ldapBinding.bindDN, ldapBinding.bindPassword)
 
-    new LDAPConnectionPool(failoverSet, bindRequest, 10)
+    Try(new LDAPConnectionPool(failoverSet, bindRequest, 10)) match {
+      case Success(value) => value
+      case Failure(exception) => {
+        logger.warn("Creation of LDAPConnectionPool failed ", exception)
+        throw exception
+      }
+    }
   }
 
   val readonlyPool: LDAPConnectionPool =
