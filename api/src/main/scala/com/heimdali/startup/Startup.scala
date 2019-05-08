@@ -8,7 +8,7 @@ import cats.implicits._
 import scala.concurrent.ExecutionContext
 
 trait Startup[F[_]] {
-  def begin(): F[Unit]
+  def begin(): F[NonEmptyList[Fiber[F, Unit]]]
 }
 
 class HeimdaliStartup[F[_] : ConcurrentEffect : ContextShift](jobs: ScheduledJob[F]*)
@@ -18,7 +18,7 @@ class HeimdaliStartup[F[_] : ConcurrentEffect : ContextShift](jobs: ScheduledJob
   val work: NonEmptyList[F[Unit]] =
     NonEmptyList.fromListUnsafe(jobs.toList.map(_.work))
 
-  def begin(): F[Unit] =
-    ContextShift[F].evalOn(executionContext)(work.traverse(_.start)).void
+  def begin(): F[NonEmptyList[Fiber[F, Unit]]] =
+    ContextShift[F].evalOn(executionContext)(work.traverse(_.start))
 
 }
