@@ -1,12 +1,17 @@
 package com.heimdali.services
 
-import cats.effect.IO
-import cats.implicits._
+import java.util.concurrent.Executors
+
+import cats.effect.concurrent.MVar
+import cats.effect.{ContextShift, IO, Timer}
+import com.heimdali.caching.CacheEntry
 import com.heimdali.config.ServiceOverride
 import com.heimdali.test.fixtures.{HttpTest, _}
 import org.apache.hadoop.conf.Configuration
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FlatSpec, Matchers}
+
+import scala.concurrent.ExecutionContext
 
 class CDHClusterServiceSpec
   extends FlatSpec
@@ -16,21 +21,19 @@ class CDHClusterServiceSpec
 
   behavior of "CDH Cluster service"
 
-  it should "use hue override" in {
+  it should "use hue override" in new Context {
     val configuration = new Configuration()
-
     val newConfig = appConfig.cluster.copy(hueOverride = ServiceOverride(Some("abc"), 8088))
+    val timedCacheService = new TimedCacheService()
+    val clusterCache = MVar.of[IO, CacheEntry[Seq[Cluster]]]((1000, Seq.empty)).unsafeRunSync
 
-    val timedCacheService = mock[CacheService[IO, Cluster]]
-    (timedCacheService.initialize _).expects(*).returns(().pure[IO])
-
-    val service = new CDHClusterService(httpClient, newConfig, configuration, timedCacheService)
+    val service = new CDHClusterService(httpClient, newConfig, configuration, timedCacheService, clusterCache)
 
     val ClusterApp(_, _, _, _, actual) = service.hueApp(null, null, null)
     actual.head._2.head shouldBe AppLocation("abc", 8088)
   }
 
-  it should "return a cluster" in {
+  it should "return a cluster" in new Context {
     val url = ""
     val name = "cluster"
     val version = "5.15.0"
@@ -43,62 +46,50 @@ class CDHClusterServiceSpec
     configuration.set("yarn.nodemanager.webapp.address", "0.0.0.0:9998")
     configuration.set("yarn.resourcemanager.webapp.address", "0.0.0.0:9999")
 
-    val timedCacheService = mock[CacheService[IO, Cluster]]
-    (timedCacheService.initialize _).expects(*).returns(().pure[IO])
+    val timedCacheService = new TimedCacheService()
+    val clusterCache = MVar.of[IO, CacheEntry[Seq[Cluster]]]((1000, Seq.empty)).unsafeRunSync
 
-    val service = new CDHClusterService(httpClient, appConfig.cluster, configuration, timedCacheService)
-    val list = service.clusterDetails.unsafeRunSync()
+    val service = new CDHClusterService(httpClient, appConfig.cluster, configuration, timedCacheService, clusterCache)
+    val details = service.clusterDetails.unsafeRunSync.head
 
-
-    val impala = list.services.find(_.name == "impala").get
+    val impala = details.services.find(_.name == "impala").get
     impala.capabilities("beeswax").head.port shouldBe 21000
     impala.capabilities("hiveServer2").head.port shouldBe 21050
 
-    val hive = list.services.find(_.name == "hive").get
+    val hive = details.services.find(_.name == "hive").get
     hive.capabilities("thrift").head.port shouldBe 888
 
-    val hue = list.services.find(_.name == "hue").get
+    val hue = details.services.find(_.name == "hue").get
     hue.capabilities("load_balancer").head.port shouldBe 8088
 
-    val yarn = list.services.find(_.name == "yarn").get
+    val yarn = details.services.find(_.name == "yarn").get
     yarn.capabilities("node_manager").head.port shouldBe 9998
     yarn.capabilities("resource_manager").head.port shouldBe 9999
 
-    val mgmt = list.services.find(_.name == "mgmt").get
+    val mgmt = details.services.find(_.name == "mgmt").get
     mgmt.capabilities("navigator").head.port shouldBe 7187
 
-    list.id should be(name)
-    list.name should be("Odin")
-    list.distribution should be(CDH(version))
-    list.status should be("GOOD_HEALTH")
+    details.id should be(name)
+    details.name should be("Odin")
+    details.distribution should be(CDH(version))
+    details.status should be("GOOD_HEALTH")
   }
 
-  it should "use the cache service" in {
-    val url = ""
-    val name = "cluster name"
-    val version = "5.15.0"
-
-    val username = "admin"
-    val password = "admin"
-
+  it should "use the cache service" in new Context {
     val configuration = new Configuration()
-    configuration.set("hive.server2.thrift.port", "888")
-    configuration.set("yarn.nodemanager.webapp.address", "0.0.0.0:9998")
-    configuration.set("yarn.resourcemanager.webapp.address", "0.0.0.0:9999")
+    val timedCacheService = new TimedCacheService()
+    val clusterCache = MVar.of[IO, CacheEntry[Seq[Cluster]]]((1000, Seq(cluster))).unsafeRunSync
 
-    val timedCacheService = mock[CacheService[IO, Cluster]]
-    (timedCacheService.initialize _).expects(*).returns(().pure[IO])
-    (timedCacheService.getOrRun _).expects(*).returns(cluster.pure[IO])
+    val service = new CDHClusterService(httpClient, appConfig.cluster, configuration, timedCacheService, clusterCache)
+    val list = service.list.unsafeRunSync
 
-    val service = new CDHClusterService(httpClient, appConfig.cluster, configuration, timedCacheService)
-    val list = service.list.unsafeRunSync()
-    list should have length 1
+    list should be (Seq(cluster))
+  }
 
-    val first = list.head
+  trait Context {
 
-    first.id should be("cluster name")
-    first.name should be("Cluster")
-    first.services.size should be(1)
-    first.status should be ("GOOD_HEALTH")
+    val executor: ExecutionContext = ExecutionContext.fromExecutor(Executors.newFixedThreadPool(1))
+    implicit val timer: Timer[IO] = IO.timer(executor)
+    implicit val contextShift: ContextShift[IO] = IO.contextShift(executor)
   }
 }

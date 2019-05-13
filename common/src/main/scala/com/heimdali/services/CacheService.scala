@@ -1,9 +1,16 @@
 package com.heimdali.services
 
-trait CacheService[F[_], A] {
+import cats.effect.{Clock, Concurrent}
+import com.heimdali.caching.{CacheEntry, Cached}
 
-  def initialize(work: F[A]) : F[Unit]
+import scala.concurrent.duration.FiniteDuration
 
-  def getOrRun(work: F[A]) : F[A]
+trait CacheService {
+
+  def initial[F[_] : Concurrent, A]: F[Cached[F, A]]
+
+  def run[F[_] : Concurrent : Clock, A](work: F[A]): F[CacheEntry[A]]
+
+  def getOrRun[F[_] : Concurrent : Clock, A](expiration: FiniteDuration, work: F[A], cache: Cached[F, A]): F[A]
 }
 

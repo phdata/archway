@@ -2,22 +2,25 @@ package com.heimdali.services
 
 import cats.effect._
 import cats.implicits._
+import com.heimdali.caching.Cached
 import com.heimdali.clients.HttpClient
 import com.heimdali.config.{ClusterConfig, ServiceOverride}
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.yarn.conf.YarnConfiguration
 import org.http4s._
 
-class CDHClusterService[F[_]](http: HttpClient[F],
-                               clusterConfig: ClusterConfig,
-                               hadoopConfiguration: Configuration,
-                               cacheService: CacheService[F, Cluster])
-                             (implicit val F: Effect[F])
+import scala.concurrent.duration._
+
+class CDHClusterService[F[_] : ConcurrentEffect : Clock](http: HttpClient[F],
+                                                            clusterConfig: ClusterConfig,
+                                                            hadoopConfiguration: Configuration,
+                                                            cacheService: CacheService,
+                                                            clusterCache: Cached[F, Seq[Cluster]])
   extends ClusterService[F] {
 
   val yarnConfiguration: YarnConfiguration = new YarnConfiguration(hadoopConfiguration)
 
-  cacheService.initialize(clusterDetails)
+  cacheService.run(clusterDetails)
 
   import com.heimdali.services.CDHResponses._
   import io.circe.generic.auto._
@@ -55,7 +58,7 @@ class CDHClusterService[F[_]](http: HttpClient[F],
         ClusterApp("hue", hue, hosts, Map("load_balancer" -> (clusterConfig.hueOverride.port, hueLBRole)))
     }
 
-  lazy val clusterDetails: F[Cluster] =
+  lazy val clusterDetails: F[Seq[Cluster]] =
     for {
       details <- clusterDetailsRequest
       services <- servicesRequest
@@ -100,11 +103,10 @@ class CDHClusterService[F[_]](http: HttpClient[F],
       ),
       CDH(details.fullVersion),
       details.status
-    )
+    ):: Nil
 
-  override def list: F[Seq[Cluster]] = for {
-    details <- cacheService.getOrRun(clusterDetails)
-  } yield Seq(details)
+  override def list: F[Seq[Cluster]] =
+    cacheService.getOrRun[F, Seq[Cluster]](1 second, clusterDetails, clusterCache)
 
 }
 

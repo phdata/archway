@@ -1,15 +1,13 @@
 package com.heimdali
 
 import java.io.File
-import java.util.concurrent.TimeUnit
 
-import cats.effect.{ExitCode, IO, IOApp}
-import cats.effect._
+import cats.effect.{ExitCode, IO, IOApp, _}
 import cats.implicits._
-import com.heimdali.models._
 import com.heimdali.clients._
 import com.heimdali.config.AppConfig
 import com.heimdali.generators._
+import com.heimdali.models._
 import com.heimdali.provisioning.DefaultProvisioningService
 import com.heimdali.repositories._
 import com.heimdali.rest._
@@ -21,9 +19,9 @@ import org.apache.sentry.provider.db.generic.service.thrift.SentryGenericService
 import org.http4s.client.blaze.BlazeClientBuilder
 import org.http4s.implicits._
 import org.http4s.server.SSLKeyStoreSupport.StoreInfo
-import org.http4s.server.{Router, Server => H4Server}
 import org.http4s.server.blaze._
 import org.http4s.server.middleware.CORS
+import org.http4s.server.{Router, Server => H4Server}
 
 import scala.concurrent.duration._
 
@@ -60,8 +58,10 @@ object Server extends IOApp {
       fileReader = new DefaultFileReader[F]()
 
       httpClient = new CMClient[F](h4Client, config.cluster)
-      cacheService = new TimedCacheService[F, Cluster](Duration.create(1000, TimeUnit.MILLISECONDS))
-      clusterService = new CDHClusterService[F](httpClient, config.cluster, hadoopConfiguration, cacheService)
+
+      cacheService = new TimedCacheService()
+      clusterCache <- Resource.liftF(cacheService.initial[F, Seq[Cluster]])
+      clusterService = new CDHClusterService[F](httpClient, config.cluster, hadoopConfiguration, cacheService, clusterCache)
 
       loginContextProvider = new UGILoginContextProvider()
       sentryServiceClient = SentryGenericServiceClientFactory.create(hadoopConfiguration)

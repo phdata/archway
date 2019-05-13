@@ -1,19 +1,14 @@
 package com.heimdali.services
 
 import java.io.File
-import java.util.concurrent.TimeUnit
 
 import cats.effect._
-import cats.effect.implicits._
 import com.heimdali.AppContext
 import com.heimdali.clients._
 import com.heimdali.config.AppConfig
-import com.heimdali.test.fixtures._
-import com.heimdali.generators.{ApplicationGenerator, LDAPGroupGenerator, TopicGenerator}
+import com.heimdali.generators._
 import com.heimdali.repositories._
-
-import scala.concurrent.duration._
-import com.heimdali.test.fixtures.DBTest
+import com.heimdali.test.fixtures.{DBTest, _}
 import doobie.util.ExecutionContexts
 import org.apache.hadoop.conf.Configuration
 import org.apache.sentry.provider.db.generic.service.thrift.SentryGenericServiceClientFactory
@@ -21,6 +16,7 @@ import org.http4s.client.blaze.BlazeClientBuilder
 import org.scalatest.{FlatSpec, Matchers}
 
 import scala.concurrent.ExecutionContext
+import scala.concurrent.duration._
 
 class WorkspaceServiceIntegrationSpec extends FlatSpec with HiveTest with DBTest with Matchers {
 
@@ -76,8 +72,10 @@ class WorkspaceServiceIntegrationSpec extends FlatSpec with HiveTest with DBTest
         fileReader = new DefaultFileReader[IO]()
 
         httpClient = new CMClient[IO](h4Client, config.cluster)
-        cacheService = new TimedCacheService[IO, Cluster](Duration.create(1000, TimeUnit.MILLISECONDS))
-        clusterService = new CDHClusterService[IO](httpClient, config.cluster, hadoopConfiguration, cacheService)
+
+        cacheService = new TimedCacheService()
+        clusterCache <- Resource.liftF(cacheService.initial[IO, Seq[Cluster]])
+        clusterService = new CDHClusterService[IO](httpClient, config.cluster, hadoopConfiguration, cacheService, clusterCache)
 
         loginContextProvider = new UGILoginContextProvider()
         sentryServiceClient = SentryGenericServiceClientFactory.create(hadoopConfiguration)

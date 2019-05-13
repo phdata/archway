@@ -2,44 +2,37 @@ package com.heimdali.services
 
 import java.util.concurrent.TimeUnit
 
+import cats.Monad
 import cats.effect.concurrent.MVar
-import cats.effect.{Clock, ConcurrentEffect}
+import cats.effect.{Clock, Concurrent}
 import cats.implicits._
+import com.heimdali.caching._
 
-import scala.concurrent.duration.Duration
+import scala.concurrent.duration.FiniteDuration
 
-class TimedCacheService[F[_]: ConcurrentEffect, A](cacheDuration: Duration)(implicit clock: Clock[F])
-    extends CacheService[F, A] {
+class TimedCacheService
+  extends CacheService{
 
-  val cache: F[MVar[F, (Long, A)]] = MVar[F].empty[(Long, A)]
+  override def initial[F[_] : Concurrent, A]: F[Cached[F, A]] =
+    MVar[F].empty[CacheEntry[A]]
 
-  override def initialize(work: F[A]): F[Unit] =
-    for {
-      cacheStore <- cache
-      readyToCache <- work
-      time <- Clock[F].realTime(TimeUnit.MILLISECONDS)
-      _ <- cacheStore.put(time, readyToCache)
-    } yield ()
-
-  def cacheIsValid(cachedMillis: Long): F[Boolean] =
+  def cacheIsValid[F[_] : Monad : Clock](expiration: FiniteDuration, cachedMillis: Long): F[Boolean] =
     Clock[F].realTime(TimeUnit.MILLISECONDS).map { time =>
-      time - cacheDuration.toMillis > cachedMillis
+      time - expiration.toMillis > cachedMillis
     }
 
-  def fetch(work: F[A]): F[(Long, A)] = {
+  override def run[F[_] : Concurrent : Clock, A](work: F[A]): F[CacheEntry[A]] =
     for {
       time <- Clock[F].realTime(TimeUnit.MILLISECONDS)
       readyToCache <- work
     } yield (time, readyToCache)
-  }
 
-  override def getOrRun(work: F[A]): F[A] =
+  override def getOrRun[F[_] : Concurrent : Clock, A](expiration: FiniteDuration, work: F[A], cache: Cached[F, A]): F[A] =
     for {
-      cacheStore <- cache
-      existingCache <- cacheStore.take
-      valid <- cacheIsValid(existingCache._1)
-      newValue <- if (valid) (existingCache._1, existingCache._2).pure[F] else fetch(work)
-      _ <- cacheStore.put(newValue)
+      existingCache <- cache.take
+      valid <- cacheIsValid[F](expiration, existingCache._1)
+      newValue <- if (valid) (existingCache._1, existingCache._2).pure[F] else run(work)
+      _ <- cache.put(newValue)
     } yield newValue._2
 
 }
