@@ -16,9 +16,9 @@ class TimedCacheService
   override def initial[F[_] : Concurrent, A]: F[Cached[F, A]] =
     MVar[F].empty[CacheEntry[A]]
 
-  def cacheIsValid[F[_] : Monad : Clock](expiration: FiniteDuration, cachedMillis: Long): F[Boolean] =
-    Clock[F].realTime(TimeUnit.MILLISECONDS).map { time =>
-      time - expiration.toMillis > cachedMillis
+  def cacheIsValid[F[_] : Monad : Clock](cacheDuration: FiniteDuration, timeWhenCached: Long): F[Boolean] =
+    Clock[F].realTime(TimeUnit.MILLISECONDS).map { currentTime =>
+      currentTime - cacheDuration.toMillis < timeWhenCached
     }
 
   def run[F[_] : Concurrent : Clock, A](work: F[A]): F[CacheEntry[A]] =
@@ -27,10 +27,10 @@ class TimedCacheService
       readyToCache <- work
     } yield CacheEntry(time, readyToCache)
 
-  override def getOrRun[F[_] : Concurrent : Clock, A](expiration: FiniteDuration, work: F[A], cache: Cached[F, A]): F[A] =
+  override def getOrRun[F[_] : Concurrent : Clock, A](cacheDuration: FiniteDuration, work: F[A], cache: Cached[F, A]): F[A] =
     for {
       existingCache <- cache.take
-      valid <- cacheIsValid[F](expiration, existingCache.cachedTime)
+      valid <- cacheIsValid[F](cacheDuration, existingCache.cachedTime)
       newValue <- if (valid) CacheEntry(existingCache.cachedTime, existingCache.entry).pure[F] else run(work)
       _ <- cache.put(newValue)
     } yield newValue.entry

@@ -125,7 +125,7 @@ object Server extends IOApp {
 
       provisioningJob = new Provisioning[F](config.provisioning, provisionService)
       sessionMaintainer = new SessionMaintainer[F](config.cluster, loginContextProvider)
-      cacheInitializer = new CacheInitializer[F](clusterService)
+      cacheInitializer = new CacheInitializer[F](clusterCache)
       startup = new HeimdaliStartup[F](cacheInitializer, sessionMaintainer, provisioningJob)(startupEC)
 
       _ <- Resource.liftF(startup.begin())
