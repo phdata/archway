@@ -31,7 +31,7 @@ class TimedCacheServiceSpec extends FlatSpec with Matchers{
 
   it should "return cached value when cache is valid" in new Context {
     val cachedValue = MVar.of[IO, (Long, Int)](1000, 1).unsafeRunSync
-    val actual = service.getOrRun[IO, Int](System.currentTimeMillis - 1000 milli, 2.pure[IO], cachedValue).unsafeRunSync
+    val actual = service.getOrRun[IO, Int](System.currentTimeMillis - 10000 milli, 2.pure[IO], cachedValue).unsafeRunSync
 
     actual should be (1)
   }
