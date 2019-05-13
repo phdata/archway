@@ -11,7 +11,7 @@ import com.heimdali.caching._
 import scala.concurrent.duration.FiniteDuration
 
 class TimedCacheService
-  extends CacheService{
+  extends CacheService {
 
   override def initial[F[_] : Concurrent, A]: F[Cached[F, A]] =
     MVar[F].empty[CacheEntry[A]]
@@ -21,18 +21,18 @@ class TimedCacheService
       time - expiration.toMillis > cachedMillis
     }
 
-  override def run[F[_] : Concurrent : Clock, A](work: F[A]): F[CacheEntry[A]] =
+  def run[F[_] : Concurrent : Clock, A](work: F[A]): F[CacheEntry[A]] =
     for {
       time <- Clock[F].realTime(TimeUnit.MILLISECONDS)
       readyToCache <- work
-    } yield (time, readyToCache)
+    } yield CacheEntry(time, readyToCache)
 
   override def getOrRun[F[_] : Concurrent : Clock, A](expiration: FiniteDuration, work: F[A], cache: Cached[F, A]): F[A] =
     for {
       existingCache <- cache.take
-      valid <- cacheIsValid[F](expiration, existingCache._1)
-      newValue <- if (valid) (existingCache._1, existingCache._2).pure[F] else run(work)
+      valid <- cacheIsValid[F](expiration, existingCache.cachedTime)
+      newValue <- if (valid) CacheEntry(existingCache.cachedTime, existingCache.entry).pure[F] else run(work)
       _ <- cache.put(newValue)
-    } yield newValue._2
+    } yield newValue.entry
 
 }

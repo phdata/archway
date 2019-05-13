@@ -4,7 +4,7 @@ import cats.effect.concurrent.MVar
 
 package object caching {
 
-  type CacheEntry[A] = (Long, A)
+  case class CacheEntry[A](cachedTime: Long, entry: A)
 
   type Cached[F[_], A] = MVar[F, CacheEntry[A]]
 

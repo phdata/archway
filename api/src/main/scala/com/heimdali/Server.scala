@@ -12,7 +12,7 @@ import com.heimdali.provisioning.DefaultProvisioningService
 import com.heimdali.repositories._
 import com.heimdali.rest._
 import com.heimdali.services.{TemplateService, _}
-import com.heimdali.startup.{HeimdaliStartup, Provisioning, SessionMaintainer}
+import com.heimdali.startup.{CacheInitializer, HeimdaliStartup, Provisioning, SessionMaintainer}
 import doobie.util.ExecutionContexts
 import org.apache.hadoop.conf.Configuration
 import org.apache.sentry.provider.db.generic.service.thrift.SentryGenericServiceClientFactory
@@ -125,7 +125,8 @@ object Server extends IOApp {
 
       provisioningJob = new Provisioning[F](config.provisioning, provisionService)
       sessionMaintainer = new SessionMaintainer[F](config.cluster, loginContextProvider)
-      startup = new HeimdaliStartup[F](sessionMaintainer, provisioningJob)(startupEC)
+      cacheInitializer = new CacheInitializer[F](clusterService)
+      startup = new HeimdaliStartup[F](cacheInitializer, sessionMaintainer, provisioningJob)(startupEC)
 
       _ <- Resource.liftF(startup.begin())
 

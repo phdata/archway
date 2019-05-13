@@ -12,15 +12,13 @@ import org.http4s._
 import scala.concurrent.duration._
 
 class CDHClusterService[F[_] : ConcurrentEffect : Clock](http: HttpClient[F],
-                                                            clusterConfig: ClusterConfig,
-                                                            hadoopConfiguration: Configuration,
-                                                            cacheService: CacheService,
-                                                            clusterCache: Cached[F, Seq[Cluster]])
+                                                         clusterConfig: ClusterConfig,
+                                                         hadoopConfiguration: Configuration,
+                                                         cacheService: CacheService,
+                                                         clusterCache: Cached[F, Seq[Cluster]])
   extends ClusterService[F] {
 
   val yarnConfiguration: YarnConfiguration = new YarnConfiguration(hadoopConfiguration)
-
-  cacheService.run(clusterDetails)
 
   import com.heimdali.services.CDHResponses._
   import io.circe.generic.auto._
@@ -78,7 +76,7 @@ class CDHClusterService[F[_] : ConcurrentEffect : Clock](http: HttpClient[F],
 
       mgmt <- mgmtServicesRequest
       mgmtNavigatorRole <- mgmtRoleListRequest.map(_.items.filter(_.`type` == CDHClusterService.MgmtNavigatorRole))
-      mgmtNavigatorMetaServerRole <-mgmtRoleListRequest.map(_.items.filter(_.`type` == CDHClusterService.MgmtNavigatorMetaServerRole))
+      mgmtNavigatorMetaServerRole <- mgmtRoleListRequest.map(_.items.filter(_.`type` == CDHClusterService.MgmtNavigatorMetaServerRole))
       mgmtRoleConfigGroups <- mgmtRoleConfigGroupsRequest(mgmtNavigatorMetaServerRole.head.roleConfigGroupRef.roleConfigGroupName)
 
       nodeManagerRoles = yarnRoles.items.filter(_.`type` == CDHClusterService.NodeManagerRole)
@@ -99,11 +97,11 @@ class CDHClusterService[F[_] : ConcurrentEffect : Clock](http: HttpClient[F],
         ClusterApp("mgmt", mgmt, hosts, Map("navigator" -> (
           mgmtRoleConfigGroups.items.find(_.name == "navigator_server_port")
             .map(p => p.value.getOrElse(p.default).toInt
-          ).getOrElse(7187), mgmtNavigatorRole)))
+            ).getOrElse(7187), mgmtNavigatorRole)))
       ),
       CDH(details.fullVersion),
       details.status
-    ):: Nil
+    ) :: Nil
 
   override def list: F[Seq[Cluster]] =
     cacheService.getOrRun[F, Seq[Cluster]](1 second, clusterDetails, clusterCache)

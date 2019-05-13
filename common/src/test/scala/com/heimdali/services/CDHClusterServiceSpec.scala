@@ -4,7 +4,7 @@ import java.util.concurrent.Executors
 
 import cats.effect.concurrent.MVar
 import cats.effect.{ContextShift, IO, Timer}
-import com.heimdali.caching.CacheEntry
+import com.heimdali.caching.{CacheEntry, Cached}
 import com.heimdali.config.ServiceOverride
 import com.heimdali.test.fixtures.{HttpTest, _}
 import org.apache.hadoop.conf.Configuration
@@ -25,7 +25,7 @@ class CDHClusterServiceSpec
     val configuration = new Configuration()
     val newConfig = appConfig.cluster.copy(hueOverride = ServiceOverride(Some("abc"), 8088))
     val timedCacheService = new TimedCacheService()
-    val clusterCache = MVar.of[IO, CacheEntry[Seq[Cluster]]]((1000, Seq.empty)).unsafeRunSync
+    val clusterCache: Cached[IO, Seq[Cluster]] = MVar[IO].of(CacheEntry(1000, Seq.empty[Cluster])).unsafeRunSync
 
     val service = new CDHClusterService(httpClient, newConfig, configuration, timedCacheService, clusterCache)
 
@@ -47,7 +47,7 @@ class CDHClusterServiceSpec
     configuration.set("yarn.resourcemanager.webapp.address", "0.0.0.0:9999")
 
     val timedCacheService = new TimedCacheService()
-    val clusterCache = MVar.of[IO, CacheEntry[Seq[Cluster]]]((1000, Seq.empty)).unsafeRunSync
+    val clusterCache: Cached[IO, Seq[Cluster]] = MVar[IO].of(CacheEntry(1000, Seq.empty[Cluster])).unsafeRunSync
 
     val service = new CDHClusterService(httpClient, appConfig.cluster, configuration, timedCacheService, clusterCache)
     val details = service.clusterDetails.unsafeRunSync.head
@@ -78,7 +78,7 @@ class CDHClusterServiceSpec
   it should "use the cache service" in new Context {
     val configuration = new Configuration()
     val timedCacheService = new TimedCacheService()
-    val clusterCache = MVar.of[IO, CacheEntry[Seq[Cluster]]]((1000, Seq(cluster))).unsafeRunSync
+    val clusterCache = MVar[IO].of(CacheEntry(1000, Seq(cluster))).unsafeRunSync
 
     val service = new CDHClusterService(httpClient, appConfig.cluster, configuration, timedCacheService, clusterCache)
     val list = service.list.unsafeRunSync
