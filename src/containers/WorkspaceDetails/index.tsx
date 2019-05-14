@@ -180,7 +180,13 @@ class WorkspaceDetails extends React.PureComponent<Props> {
       liasion,
     } = this.props;
 
-    if (!workspace) { return <Spin />; }
+    if (!workspace) {
+      return (
+        <div style={{ textAlign: 'center', padding: 24 }}>
+          <Spin />
+        </div>
+      );
+    }
 
     return (
       <div style={{ height: '100%' }}>

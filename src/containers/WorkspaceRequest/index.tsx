@@ -71,7 +71,7 @@ class WorkspaceRequest extends React.Component<Props> {
 
     return (
       <div style={{ textAlign: 'center', color: 'black' }}>
-        <h1 style={{ paddingTop: 16 }}>New Workspace Request</h1>
+        <h1 style={{ padding: 24, margin: 0 }}>New Workspace Request</h1>
   
         <Tabs tabBarStyle={{ textAlign: 'center' }} activeKey={currentPage}>
           <Tabs.TabPane tab="Behavior" key={PAGE_BEHAVIOR}>

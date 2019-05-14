@@ -118,7 +118,7 @@ class WorkspaceList extends React.PureComponent<Props> {
 
     return (
       <div>
-        <h1 style={{ textAlign: 'center' }}>Workspaces</h1>
+        <h1 style={{ textAlign: 'center', margin: 0, padding: 24 }}>Workspaces</h1>
         <Row type="flex">
           <Col span={24} xxl={{ span: 12, offset: 6 }}>
             <Card>
