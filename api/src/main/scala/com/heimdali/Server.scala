@@ -7,13 +7,15 @@ import cats.implicits._
 import com.heimdali.clients._
 import com.heimdali.config.AppConfig
 import com.heimdali.generators._
-import com.heimdali.models._
 import com.heimdali.provisioning.DefaultProvisioningService
 import com.heimdali.repositories._
 import com.heimdali.rest._
-import com.heimdali.services.{TemplateService, _}
+import com.heimdali.services._
 import com.heimdali.startup.{CacheInitializer, HeimdaliStartup, Provisioning, SessionMaintainer}
+import com.typesafe.scalalogging.LazyLogging
 import doobie.util.ExecutionContexts
+import io.circe.Printer
+import io.circe.syntax._
 import org.apache.hadoop.conf.Configuration
 import org.apache.sentry.provider.db.generic.service.thrift.SentryGenericServiceClientFactory
 import org.http4s.client.blaze.BlazeClientBuilder
@@ -25,7 +27,7 @@ import org.http4s.server.{Router, Server => H4Server}
 
 import scala.concurrent.duration._
 
-object Server extends IOApp {
+object Server extends IOApp with LazyLogging {
 
   val hadoopConfiguration = {
     val conf = new Configuration()
@@ -39,6 +41,9 @@ object Server extends IOApp {
   def createServer[F[_] : ConcurrentEffect : ContextShift : Timer]: Resource[F, H4Server[F]] =
     for {
       config <- Resource.liftF(io.circe.config.parser.decodePathF[F, AppConfig]("heimdali"))
+      _ <- Resource.liftF(
+        logger.debug("Config as been read as:\n{}",
+        config.asJson.pretty(Printer.spaces2)).pure[F])
 
       httpEC <- ExecutionContexts.fixedThreadPool(10)
       dbConnectionEC <- ExecutionContexts.fixedThreadPool(10)
@@ -87,6 +92,7 @@ object Server extends IOApp {
       configRepository = new ConfigRepositoryImpl
 
       context = AppContext[F](config, sentryClient, hiveClient, ldapClient, hdfsClient, yarnClient, kafkaClient, metaXA, hiveDatabaseRepository, hiveGrantRepository, ldapRepository, memberRepository, yarnRepository, complianceRepository, workspaceRepository, topicRepository, topicGrantRepository, applicationRepository)
+      _ <- Resource.liftF(logger.debug("AppContext has been generated").pure[F])
 
       configService = new DBConfigService[F](config, configRepository, metaXA)
 
@@ -108,6 +114,8 @@ object Server extends IOApp {
       templateController = new TemplateController[F](authService, templateService)
       clusterController = new ClusterController[F](clusterService)
       workspaceController = new WorkspaceController[F](authService, workspaceService, memberService, kafkaService, applicationService, emailService, provisionService)
+      _ <- Resource.liftF(logger.debug("Workspace Controller has been initialized").pure[F])
+
       memberController = new MemberController[F](authService, memberService)
       riskController = new RiskController[F](authService, workspaceService)
       opsController = new OpsController[F](authService, workspaceService)
@@ -126,9 +134,11 @@ object Server extends IOApp {
       provisioningJob = new Provisioning[F](config.provisioning, provisionService)
       sessionMaintainer = new SessionMaintainer[F](config.cluster, loginContextProvider)
       cacheInitializer = new CacheInitializer[F](clusterCache)
+      _ <- Resource.liftF(logger.debug("Initializing HeimdaliStartup class").pure[F])
       startup = new HeimdaliStartup[F](cacheInitializer, sessionMaintainer, provisioningJob)(startupEC)
 
       _ <- Resource.liftF(startup.begin())
+      _ <- Resource.liftF(logger.debug("Class HeimdaliStartup has started").pure[F])
 
       server <-
         BlazeServerBuilder[F]
@@ -138,8 +148,13 @@ object Server extends IOApp {
           .withResponseHeaderTimeout(10 minutes)
           .withSSL(StoreInfo(config.rest.sslStore.get, config.rest.sslStorePassword.get), config.rest.sslKeyManagerPassword.get)
           .resource
+
+      _ <- Resource.liftF(logger.debug("Server has started").pure[F])
     } yield server
 
-  override def run(args: List[String]): IO[ExitCode] =
+  override def run(args: List[String]): IO[ExitCode] = {
+    logger.debug("Server is starting")
     createServer[IO].use(_ => IO.never).as(ExitCode.Success)
+  }
+
 }

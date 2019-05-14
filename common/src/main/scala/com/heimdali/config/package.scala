@@ -6,7 +6,12 @@ import cats.effect.{Async, ContextShift, Resource}
 import doobie._
 import doobie.hikari.HikariTransactor
 import doobie.util.transactor.Strategy
-import io.circe.{Decoder, HCursor}
+import io.circe.syntax._
+import io.circe.{Decoder, Encoder, HCursor, _}
+import io.circe.syntax._
+import cats.syntax.functor._
+import io.circe.{ Decoder, Encoder }, io.circe.generic.auto._
+import io.circe.syntax._
 
 import scala.concurrent.ExecutionContext
 import scala.concurrent.duration.{Duration, FiniteDuration}
@@ -82,6 +87,22 @@ package object config {
       } yield ClusterConfig(sessionRefresh, url, name, environment, beeswaxPort, hiveServer2Port, admin, hueOverride)
     }
 
+    implicit val credentialsConfigEncoder: Encoder[CredentialsConfig] = deriveEncoder
+    implicit val serviceOverrideEncoder: Encoder[ServiceOverride] = deriveEncoder
+
+    implicit val encoder: Encoder[ClusterConfig] = new Encoder[ClusterConfig] {
+      override def apply(a: ClusterConfig): Json = Json.obj(
+        ("sessionRefresh", a.sessionRefresh.toString().asJson),
+        ("url", a.url.asJson),
+        ("name", a.name.asJson),
+        ("environment", a.environment.asJson),
+        ("beeswaxPort", a.beeswaxPort.asJson),
+        ("hiveServer2Port", a.hiveServer2Port.asJson),
+        ("admin", a.admin.asJson),
+        ("hueOverride", a.hueOverride.asJson)
+      )
+    }
+
   }
 
   case class RestConfig(port: Int,
@@ -139,6 +160,13 @@ package object config {
         threadpoolSize <- cursor.downField("threadPoolSize").as[Int]
       } yield ProvisioningConfig(threadpoolSize, provisionInterval)
     }
+
+    implicit val encoder: Encoder[ProvisioningConfig] = new Encoder[ProvisioningConfig] {
+      override final def apply(a: ProvisioningConfig): Json = Json.obj(
+        ("threadPoolSize", a.threadPoolSize.asJson),
+        ("provisionInterval", Json.fromString(a.provisionInterval.toString))
+      )
+    }
   }
 
   case class DatabaseConfig(meta: DatabaseConfigItem, hive: DatabaseConfigItem)
@@ -181,6 +209,20 @@ package object config {
     implicit val provisioningConfigDecoder: Decoder[ProvisioningConfig] = ProvisioningConfig.decoder
     implicit val appConfigDecoder: Decoder[AppConfig] = deriveDecoder
 
+    implicit val restConfigEncoder: Encoder[RestConfig] = deriveEncoder
+    implicit val uIConfigEncoder: Encoder[UIConfig] = deriveEncoder
+    implicit val sMTPConfigEncoder: Encoder[SMTPConfig] = deriveEncoder
+    implicit val approvalConfigEncoder: Encoder[ApprovalConfig] = deriveEncoder
+    implicit val workspaceConfigItemEncoder: Encoder[WorkspaceConfigItem] = deriveEncoder
+    implicit val workspaceConfigEncoder: Encoder[WorkspaceConfig] = deriveEncoder
+    implicit val ldapBindingEncoder: Encoder[LDAPBinding] = deriveEncoder
+    implicit val lDAPConfigEncoder: Encoder[LDAPConfig] = deriveEncoder
+    implicit val databaseConfigItemEncoder: Encoder[DatabaseConfigItem] = deriveEncoder
+    implicit val databaseConfigEncoder: Encoder[DatabaseConfig] = deriveEncoder
+    implicit val kafkaConfigEncoder: Encoder[KafkaConfig] = deriveEncoder
+    implicit val generatorConfigEncoder: Encoder[TemplateConfig] = deriveEncoder
+    implicit val provisioningConfigEncoder: Encoder[ProvisioningConfig] = ProvisioningConfig.encoder
+    implicit val appConfigEncoder: Encoder[AppConfig] = deriveEncoder
   }
 
 }
