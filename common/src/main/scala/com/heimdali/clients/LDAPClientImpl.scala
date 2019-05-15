@@ -98,7 +98,7 @@ class LDAPClientImpl[F[_] : Effect](ldapConfig: LDAPConfig, binding: LDAPConfig 
         case Some(entry) =>
           val existing = entry.getAttributes.asScala.map(a => a.getName -> a.getValue).toList
           val modifications = modificationsFor(existing, attributes).filterNot(_.getAttributeName == "objectClass")
-          if(modifications.isEmpty)
+          if (modifications.isEmpty)
             None
           else
             Some(new ModifyRequest(groupDN, modifications: _*))
@@ -179,9 +179,18 @@ class LDAPClientImpl[F[_] : Effect](ldapConfig: LDAPConfig, binding: LDAPConfig 
     })
 
   override def search(filter: String): F[List[SearchResultEntry]] =
-    Effect[F].delay(
+    Effect[F].delay {
+      val request: SearchRequest = new SearchRequest(
+        ldapConfig.baseDN,
+        SearchScope.SUB,
+        DereferencePolicy.NEVER,
+        100,
+        0,
+        false,
+        s"(&(sAMAccountName=*$filter*)(|(objectClass=user)(objectClass=group)))")
       connectionPool
         .getConnection
-        .search(ldapConfig.baseDN, SearchScope.SUB, s"(&(cn=*$filter*)(|(objectClass=user)(objectClass=group)))")
-        .getSearchEntries.asScala.toList)
+        .search(request)
+        .getSearchEntries.asScala.toList
+    }
 }
