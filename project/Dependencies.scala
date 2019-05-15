@@ -165,5 +165,11 @@ object Dependencies {
   val provisioningDependencies =
     (coreTest ++ hadoop)
       .map(exclusions)
-  
+
+  val systemTestsDependencies =
+    (logging ++ unbound ++
+      Seq(
+        "org.scalacheck" %% "scalacheck" % scalacheckVersion,
+        "org.scalamock" %% "scalamock-scalatest-support" % "3.6.0")
+      ).map(exclusions) 
 }
