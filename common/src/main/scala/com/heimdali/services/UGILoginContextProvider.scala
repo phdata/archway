@@ -5,12 +5,13 @@ import java.security.{PrivilegedAction, PrivilegedExceptionAction}
 import cats._
 import cats.effect._
 import cats.implicits._
+import com.heimdali.config.AppConfig
 import com.typesafe.scalalogging.LazyLogging
 import org.apache.hadoop.security.UserGroupInformation
 
 import scala.concurrent.ExecutionContext
 
-class UGILoginContextProvider
+class UGILoginContextProvider(appConfig: AppConfig)
   extends LoginContextProvider with LazyLogging {
 
   override def elevate[F[_] : Async, A](user: String)(block: () => A): F[A] =
@@ -37,7 +38,7 @@ class UGILoginContextProvider
     Sync[F].delay {
       logger.info("kiniting api service principal")
       try {
-        UserGroupInformation.loginUserFromKeytab(sys.env("HEIMDALI_API_SERVICE_PRINCIPAL"), s"${sys.env("PWD")}/heimdali.keytab")
+        UserGroupInformation.loginUserFromKeytab(appConfig.rest.principal, appConfig.rest.keytab)
         ()
       } catch {
         case exc: Throwable =>

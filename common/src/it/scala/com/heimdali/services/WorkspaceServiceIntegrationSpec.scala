@@ -82,7 +82,7 @@ class WorkspaceServiceIntegrationSpec extends FlatSpec with HiveTest with DBTest
         clusterCache <- Resource.liftF(cacheService.initial[IO, Seq[Cluster]])
         clusterService = new CDHClusterService[IO](httpClient, config.cluster, hadoopConfiguration, cacheService, clusterCache)
 
-        loginContextProvider = new UGILoginContextProvider()
+        loginContextProvider = new UGILoginContextProvider(config)
         sentryServiceClient = SentryGenericServiceClientFactory.create(hadoopConfiguration)
         sentryClient = new SentryClientImpl[IO](hiveTransactor, sentryServiceClient, loginContextProvider)
         hiveClient = new HiveClientImpl[IO](loginContextProvider, hiveTransactor)

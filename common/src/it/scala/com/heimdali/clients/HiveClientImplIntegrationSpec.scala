@@ -4,7 +4,7 @@ package com.heimdali.clients
 
 import cats.effect.{ContextShift, IO}
 import com.heimdali.services.UGILoginContextProvider
-import com.heimdali.test.fixtures.HiveTest
+import com.heimdali.test.fixtures._
 import doobie._
 import doobie.implicits._
 import org.scalatest.{BeforeAndAfterAll, FlatSpec, Matchers}
@@ -17,7 +17,7 @@ class HiveClientImplIntegrationSpec extends FlatSpec with Matchers with HiveTest
 
   val FOO_DB_NAME = "hiveclientimplintegrationspec_database_with_comment"
 
-  val hiveClient = new HiveClientImpl[IO](new UGILoginContextProvider(), hiveTransactor)
+  val hiveClient = new HiveClientImpl[IO](new UGILoginContextProvider(appConfig), hiveTransactor)
 
   override def beforeAll(): Unit = {
     super.beforeAll()

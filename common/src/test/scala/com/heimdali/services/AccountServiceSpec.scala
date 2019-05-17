@@ -4,7 +4,7 @@ import cats.data._
 import cats.effect.{IO, Timer}
 import cats.implicits._
 import com.heimdali.clients.{LDAPClient, LDAPUser}
-import com.heimdali.config.{ApprovalConfig, RestConfig, WorkspaceConfig, WorkspaceConfigItem}
+import com.heimdali.config.{ApprovalConfig, WorkspaceConfig, WorkspaceConfigItem}
 import com.heimdali.generators.{DefaultApplicationGenerator, DefaultLDAPGroupGenerator, DefaultTopicGenerator}
 import com.heimdali.models.TemplateRequest
 import com.heimdali.provisioning.{Message, SimpleMessage}
@@ -125,7 +125,6 @@ class AccountServiceSpec extends FlatSpec with MockFactory with Matchers {
     val (name, wrongUsername, username, actualPassword, wrongPassword) = ("Dude Doe", "user", "username", "password", "passw0rd")
     val approvalConfig = ApprovalConfig("me@meail.com", Some("CN=foo,DC=jotunN,dc=io"), Some("cN=bar,dc=JOTUNN,dc=io"))
     val secret = "abc"
-    val restConfig = RestConfig(1234, secret)
     val ldapUser = LDAPUser(personName, standardUsername, standardUserDN, Seq("cn=foo,dc=jotunn,dc=io"), Some("dude@email.com"))
     val workspaceConfigItem = WorkspaceConfigItem("root.user", 1, 1, 1, "root.user")
     val workspaceConfig = WorkspaceConfig(workspaceConfigItem, workspaceConfigItem, workspaceConfigItem)
@@ -141,7 +140,7 @@ class AccountServiceSpec extends FlatSpec with MockFactory with Matchers {
     val fileReader = new DefaultFileReader[IO]()
     val templateService = mock[TemplateService[IO]]
 
-    lazy val accountService = new AccountServiceImpl[IO](ldapClient, restConfig, approvalConfig, workspaceConfig, workspaceService, templateService, provisioningService)
+    lazy val accountService = new AccountServiceImpl[IO](ldapClient, appConfig.rest, approvalConfig, workspaceConfig, workspaceService, templateService, provisioningService)
   }
 
 }

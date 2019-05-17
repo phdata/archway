@@ -11,6 +11,7 @@ import org.apache.hadoop.fs.{FileSystem, Path}
 import org.apache.hadoop.hdfs.client.HdfsAdmin
 import org.apache.hadoop.security.UserGroupInformation
 import org.scalatest._
+import com.heimdali.test.fixtures._
 import org.scalatest.mockito.MockitoSugar
 
 import scala.concurrent.ExecutionContext
@@ -80,7 +81,7 @@ class HDFSClientImplIntegrationSpec extends FlatSpec with Matchers with MockitoS
     val userLocation = "/user/benny/db"
     val hdfsUri = new URI(configuration.get("fs.defaultFS"))
     val admin = () => new HdfsAdmin(hdfsUri, configuration)
-    val context = new UGILoginContextProvider()
+    val context = new UGILoginContextProvider(appConfig)
     val elevatedFS = context.elevate[IO, FileSystem]("hdfs"){ () => fileSystem() }.unsafeRunSync()
 
     val client = new HDFSClientImpl[IO](configuration, context)

@@ -1,6 +1,7 @@
 package com.heimdali.services
 
 import cats.effect.IO
+import com.heimdali.test.fixtures._
 import org.apache.hadoop.security.UserGroupInformation
 import org.scalatest.{BeforeAndAfterAll, FlatSpec, Matchers}
 
@@ -14,7 +15,7 @@ class UGILoginContextProviderSpec extends FlatSpec with Matchers with BeforeAndA
 
   it should "log in as another user" in {
 
-    val provider = new UGILoginContextProvider
+    val provider = new UGILoginContextProvider(appConfig)
     val result = provider.elevate[IO, String]("hdfs"){ () =>
       UserGroupInformation.getCurrentUser.getUserName
     }

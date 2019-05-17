@@ -68,7 +68,7 @@ object Server extends IOApp with LazyLogging {
       clusterCache <- Resource.liftF(cacheService.initial[F, Seq[Cluster]])
       clusterService = new CDHClusterService[F](httpClient, config.cluster, hadoopConfiguration, cacheService, clusterCache)
 
-      loginContextProvider = new UGILoginContextProvider()
+      loginContextProvider = new UGILoginContextProvider(config)
       sentryServiceClient = SentryGenericServiceClientFactory.create(hadoopConfiguration)
       sentryClient = new SentryClientImpl[F](hiveXA, sentryServiceClient, loginContextProvider)
       hiveClient = new HiveClientImpl[F](loginContextProvider, hiveXA)
