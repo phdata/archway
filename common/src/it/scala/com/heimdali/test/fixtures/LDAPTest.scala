@@ -8,14 +8,20 @@ trait LDAPTest {
   val ldapConnectionPool: LDAPConnectionPool = {
     val sslUtil = new SSLUtil(new TrustAllTrustManager)
     val sslSocketFactory = sslUtil.createSSLSocketFactory
-    val connection = new LDAPConnection(
-      sslSocketFactory,
-      appConfig.ldap.adminBinding.server,
-      appConfig.ldap.adminBinding.port,
-      appConfig.ldap.adminBinding.bindDN,
-      appConfig.ldap.adminBinding.bindPassword
-    )
-    new LDAPConnectionPool(connection, 10)
+
+    val servers: Array[String] = appConfig.ldap.lookupBinding.server.split(",")
+    val ports: Array[Int] = Array.fill(servers.length)(appConfig.ldap.provisioningBinding.port)
+
+    val failoverSet = new FailoverServerSet(
+      servers,
+      ports,
+      sslSocketFactory)
+
+    val bindRequest: SimpleBindRequest =
+      new SimpleBindRequest(appConfig.ldap.lookupBinding.bindDN,
+                            appConfig.ldap.lookupBinding.bindPassword)
+
+    new LDAPConnectionPool(failoverSet, bindRequest, 10)
   }
 
   val existingUser = "benny"

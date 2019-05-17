@@ -81,7 +81,7 @@ class WorkspaceServiceIntegrationSpec extends FlatSpec with HiveTest with DBTest
         sentryServiceClient = SentryGenericServiceClientFactory.create(hadoopConfiguration)
         sentryClient = new SentryClientImpl[IO](hiveTransactor, sentryServiceClient, loginContextProvider)
         hiveClient = new HiveClientImpl[IO](loginContextProvider, hiveTransactor)
-        ldapClient = new LDAPClientImpl[IO](config.ldap) with ActiveDirectoryClient[IO]
+        ldapClient = new LDAPClientImpl[IO](config.ldap, _.provisioningBinding)
         hdfsClient = new HDFSClientImpl[IO](hadoopConfiguration, loginContextProvider)
         yarnClient = new CDHYarnClient[IO](httpClient, config.cluster, clusterService)
         kafkaClient = new KafkaClientImpl[IO](config)

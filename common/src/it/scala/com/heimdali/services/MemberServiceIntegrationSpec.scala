@@ -20,7 +20,7 @@ class MemberServiceIntegrationSpec extends FlatSpec with Matchers with DBTest wi
   it should "list members" in new Context {
     val dataPermissions = MemberRightsRecord("data", standardUsername, systemName, id, Manager)
     memberRepository.list _ expects id returning List(dataPermissions).pure[ConnectionIO]
-    ldapClient.findUser _ expects standardUsername returning OptionT.some(LDAPUser(personName, standardUsername, standardUserDN, Seq.empty, None))
+    lookupClient.findUser _ expects standardUsername returning OptionT.some(LDAPUser(personName, standardUsername, standardUserDN, Seq.empty, None))
 
     val members = memberService.members(id).unsafeRunSync()
 
@@ -28,7 +28,7 @@ class MemberServiceIntegrationSpec extends FlatSpec with Matchers with DBTest wi
   }
 
   it should "find members" in new Context {
-    ldapClient.search _ expects "joh" returning IO.pure(List(
+    lookupClient.search _ expects "joh" returning IO.pure(List(
       new SearchResultEntry("cn=John,dc=example,dc=io", Array(new Attribute("cn", "John"), new Attribute("objectClass", "user")))
     ))
 
@@ -41,10 +41,10 @@ class MemberServiceIntegrationSpec extends FlatSpec with Matchers with DBTest wi
     val newMember = s"cn=username,${appConfig.ldap.userPath.get}"
     ldapRepository.find _ expects("data", id, "manager") returning OptionT[ConnectionIO, LDAPRegistration](Option(savedLDAP).pure[ConnectionIO])
     memberRepository.create _ expects(newMember, id) returning id.pure[ConnectionIO]
-    ldapClient.addUser _ expects(savedLDAP.distinguishedName, newMember) returning OptionT.some(newMember)
+    provisioningClient.addUser _ expects(savedLDAP.distinguishedName, newMember) returning OptionT.some(newMember)
     memberRepository.complete _ expects(id, newMember) returning id.toInt.pure[ConnectionIO]
     memberRepository.get _ expects id returning List(MemberRightsRecord("data", newMember, savedHive.name, id, Manager)).pure[ConnectionIO]
-    ldapClient.findUser _ expects newMember returning OptionT.some(LDAPUser(personName, "username", newMember, Seq.empty, Some("username@phdata.io")))
+    lookupClient.findUser _ expects newMember returning OptionT.some(LDAPUser(personName, "username", newMember, Seq.empty, Some("username@phdata.io")))
 
     memberService.addMember(123, MemberRoleRequest(newMember, "data", 123, Some(Manager))).value.unsafeRunSync()
   }
@@ -53,7 +53,8 @@ class MemberServiceIntegrationSpec extends FlatSpec with Matchers with DBTest wi
 
     val memberRepository = mock[MemberRepository]
     val ldapRepository = mock[LDAPRepository]
-    val ldapClient = mock[LDAPClient[IO]]
+    val lookupClient = mock[LDAPClient[IO]]
+    val provisioningClient = mock[LDAPClient[IO]]
     val emailService = mock[EmailService[IO]]
     val workspaceRepository = mock[WorkspaceRequestRepository]
 
@@ -62,7 +63,8 @@ class MemberServiceIntegrationSpec extends FlatSpec with Matchers with DBTest wi
         memberRepository,
         transactor,
         ldapRepository,
-        ldapClient
+        lookupClient,
+        provisioningClient,
       )
 
   }

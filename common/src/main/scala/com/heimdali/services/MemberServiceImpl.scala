@@ -16,7 +16,8 @@ import doobie.util.transactor.Transactor
 class MemberServiceImpl[F[_]](memberRepository: MemberRepository,
                               transactor: Transactor[F],
                               ldapRepository: LDAPRepository,
-                              ldapClient: LDAPClient[F],
+                              lookupClient: LDAPClient[F],
+                              provisioningClient: LDAPClient[F],
                              )(implicit val F: Effect[F])
   extends MemberService[F]
     with LazyLogging {
@@ -31,7 +32,7 @@ class MemberServiceImpl[F[_]](memberRepository: MemberRepository,
     memberRightsRecord
       .groupBy(_.distinguishedName)
       .map { e =>
-        ldapClient.findUser(e._1).map { user =>
+        lookupClient.findUser(e._1).map { user =>
           WorkspaceMemberEntry(
             e._1,
             user.name,
@@ -63,7 +64,7 @@ class MemberServiceImpl[F[_]](memberRepository: MemberRepository,
 
       _ <- OptionT.some[F](logger.info(s"adding ${memberRequest.distinguishedName} to ${registration.commonName} in ldap"))
 
-      _ <- ldapClient.addUser(registration.distinguishedName, memberRequest.distinguishedName)
+      _ <- provisioningClient.addUser(registration.distinguishedName, memberRequest.distinguishedName)
 
       _ <- OptionT.some[F](logger.info(s"completing ${memberRequest.distinguishedName}"))
 
@@ -90,7 +91,7 @@ class MemberServiceImpl[F[_]](memberRepository: MemberRepository,
 
       _ <- OptionT.some[F](logger.info(s"[REMOVING MEMBER] found the following members: ${member.map(_.distinguishedName).mkString(", ")}"))
 
-      _ <- OptionT.liftF(registration.map(reg => ldapClient.removeUser(reg.distinguishedName, memberRequest.distinguishedName).value).sequence)
+      _ <- OptionT.liftF(registration.map(reg => provisioningClient.removeUser(reg.distinguishedName, memberRequest.distinguishedName).value).sequence)
 
       _ <- OptionT.some[F](logger.info(s"[REMOVING MEMBER] removed ${memberRequest.distinguishedName} from ${registration.map(_.commonName)}"))
 
@@ -105,7 +106,7 @@ class MemberServiceImpl[F[_]](memberRepository: MemberRepository,
     MemberSearchResultItem(searchResultEntry.getAttributeValue("cn"), searchResultEntry.getDN)
 
   override def availableMembers(filter: String): F[MemberSearchResult] =
-    ldapClient.search(filter).map { res =>
+    lookupClient.search(filter).map { res =>
       MemberSearchResult(
         res.filter(_.getObjectClassValues.exists(_ == "user")).map(toResult),
         res.filter(_.getObjectClassValues.exists(_ == "group")).map(toResult)
