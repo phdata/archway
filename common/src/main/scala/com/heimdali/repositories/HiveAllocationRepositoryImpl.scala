@@ -30,7 +30,7 @@ class HiveAllocationRepositoryImpl extends HiveAllocationRepository {
           None,
           grant(Manager, manager, managerLDAP, group.map(_._4)),
           Some(grant(ReadWrite, readwrite, readwriteLDAP, group.flatMap(_._7))),
-          Some(grant(ReadOnly, readonly, readonlyLDAP, group.flatMap(_._7))),
+          Some(grant(ReadOnly, readonly, readonlyLDAP, group.flatMap(_._10))),
           header.hiveId,
           header.directoryCreated,
           header.databaseCreated
