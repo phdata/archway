@@ -195,6 +195,14 @@ package object config {
 
     import io.circe.generic.semiauto._
 
+    implicit val myBooleanDecoder: Decoder[Boolean] = Decoder.decodeBoolean.or(
+      Decoder.decodeString.emap {
+        case "true" => Right(true)
+        case "false" => Right(false)
+        case _ => Left("Boolean")
+      }
+    )
+
     implicit val restConfigDecoder: Decoder[RestConfig] = deriveDecoder
     implicit val uIConfigDecoder: Decoder[UIConfig] = deriveDecoder
     implicit val sMTPConfigDecoder: Decoder[SMTPConfig] = deriveDecoder

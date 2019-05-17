@@ -121,6 +121,17 @@ object Server extends IOApp with LazyLogging {
       riskController = new RiskController[F](authService, workspaceService)
       opsController = new OpsController[F](authService, workspaceService)
 
+      provisioningJob = new Provisioning[F](config.provisioning, provisionService)
+      sessionMaintainer = new SessionMaintainer[F](config.cluster, loginContextProvider)
+      cacheInitializer = new CacheInitializer[F](clusterCache)
+      _ <- Resource.liftF(logger.debug("Initializing HeimdaliStartup class").pure[F])
+      startup = new HeimdaliStartup[F](cacheInitializer, sessionMaintainer, provisioningJob)(startupEC)
+
+      _ <- Resource.liftF(startup.begin())
+      _ <- Resource.liftF(logger.debug("Class HeimdaliStartup has started").pure[F])
+
+
+
       httpApp = Router(
         "/token" -> accountController.openRoutes,
         "/account" -> accountController.tokenizedRoutes,
@@ -131,15 +142,6 @@ object Server extends IOApp with LazyLogging {
         "/risk" -> riskController.route,
         "/ops" -> opsController.route,
       ).orNotFound
-
-      provisioningJob = new Provisioning[F](config.provisioning, provisionService)
-      sessionMaintainer = new SessionMaintainer[F](config.cluster, loginContextProvider)
-      cacheInitializer = new CacheInitializer[F](clusterCache)
-      _ <- Resource.liftF(logger.debug("Initializing HeimdaliStartup class").pure[F])
-      startup = new HeimdaliStartup[F](cacheInitializer, sessionMaintainer, provisioningJob)(startupEC)
-
-      _ <- Resource.liftF(startup.begin())
-      _ <- Resource.liftF(logger.debug("Class HeimdaliStartup has started").pure[F])
 
       server <-
         BlazeServerBuilder[F]

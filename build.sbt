@@ -36,3 +36,10 @@ lazy val templates = (project in file("templates"))
     models,
     common,
   )
+
+lazy val `system-tests` = (project in file("system-tests"))
+  .settings(SystemTests.settings: _*)
+  .dependsOn(
+    common,
+    models
+  )
