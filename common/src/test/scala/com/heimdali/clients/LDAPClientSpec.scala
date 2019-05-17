@@ -1,15 +1,15 @@
 package com.heimdali.clients
 
-import cats.Id
 import cats.effect.IO
-import org.scalatest.{FlatSpec, Matchers}
 import com.heimdali.test.fixtures._
 import com.unboundid.ldap.sdk.{Attribute, SearchResultEntry}
+import org.scalatest.{FlatSpec, Matchers}
+
 import scala.collection.JavaConverters._
 
-class ActiveDirectoryClientSpec extends FlatSpec with Matchers {
+class LDAPClientSpec extends FlatSpec with Matchers {
 
-  behavior of "ActiveDirectoryClientSpec"
+  behavior of "LDAPClientSpec"
 
   it should "fullUsername" in new Context {
     val expected = "johndoe@JOTUNN.IO"
@@ -51,7 +51,7 @@ class ActiveDirectoryClientSpec extends FlatSpec with Matchers {
 
   trait Context {
 
-    val client = new LDAPClientImpl[IO](appConfig.ldap) with ActiveDirectoryClient[IO]
+    val client = new LDAPClientImpl[IO](appConfig.ldap, _.lookupBinding)
 
   }
 

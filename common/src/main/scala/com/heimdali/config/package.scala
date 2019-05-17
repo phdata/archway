@@ -125,8 +125,8 @@ package object config {
 
   case class LDAPBinding(server: String, port: Int, bindDN: String, bindPassword: String)
 
-  case class LDAPConfig(adminBinding: LDAPBinding,
-                        readonlyBinding: LDAPBinding,
+  case class LDAPConfig(lookupBinding: LDAPBinding,
+                        provisioningBinding: LDAPBinding,
                         baseDN: String,
                         groupPath: String,
                         userPath: Option[String],

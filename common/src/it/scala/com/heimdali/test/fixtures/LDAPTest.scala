@@ -13,8 +13,8 @@ trait LDAPTest {
     val sslUtil = new SSLUtil(new TrustAllTrustManager)
     val sslSocketFactory = sslUtil.createSSLSocketFactory
 
-    val servers: Array[String] = appConfig.ldap.adminBinding.server.split(",")
-    val ports: Array[Int] = Array.fill(servers.length)(appConfig.ldap.adminBinding.port)
+    val servers: Array[String] = appConfig.ldap.lookupBinding.server.split(",")
+    val ports: Array[Int] = Array.fill(servers.length)(appConfig.ldap.provisioningBinding.port)
 
     val failoverSet = new FailoverServerSet(
       servers,
@@ -22,8 +22,8 @@ trait LDAPTest {
       sslSocketFactory)
 
     val bindRequest: SimpleBindRequest =
-      new SimpleBindRequest(appConfig.ldap.adminBinding.bindDN,
-                            appConfig.ldap.adminBinding.bindPassword)
+      new SimpleBindRequest(appConfig.ldap.lookupBinding.bindDN,
+                            appConfig.ldap.lookupBinding.bindPassword)
 
     new LDAPConnectionPool(failoverSet, bindRequest, 10)
   }

@@ -72,7 +72,8 @@ object Server extends IOApp with LazyLogging {
       sentryServiceClient = SentryGenericServiceClientFactory.create(hadoopConfiguration)
       sentryClient = new SentryClientImpl[F](hiveXA, sentryServiceClient, loginContextProvider)
       hiveClient = new HiveClientImpl[F](loginContextProvider, hiveXA)
-      ldapClient = new LDAPClientImpl[F](config.ldap) with ActiveDirectoryClient[F]
+      lookupLDAPClient = new LDAPClientImpl[F](config.ldap, _.lookupBinding)
+      provisioningLDAPClient = new LDAPClientImpl[F](config.ldap, _.provisioningBinding)
       hdfsClient = new HDFSClientImpl[F](hadoopConfiguration, loginContextProvider)
       yarnClient = new CDHYarnClient[F](httpClient, config.cluster, clusterService)
       kafkaClient = new KafkaClientImpl[F](config)
@@ -91,7 +92,7 @@ object Server extends IOApp with LazyLogging {
       applicationRepository = new ApplicationRepositoryImpl
       configRepository = new ConfigRepositoryImpl
 
-      context = AppContext[F](config, sentryClient, hiveClient, ldapClient, hdfsClient, yarnClient, kafkaClient, metaXA, hiveDatabaseRepository, hiveGrantRepository, ldapRepository, memberRepository, yarnRepository, complianceRepository, workspaceRepository, topicRepository, topicGrantRepository, applicationRepository)
+      context = AppContext[F](config, sentryClient, hiveClient, provisioningLDAPClient, hdfsClient, yarnClient, kafkaClient, metaXA, hiveDatabaseRepository, hiveGrantRepository, ldapRepository, memberRepository, yarnRepository, complianceRepository, workspaceRepository, topicRepository, topicGrantRepository, applicationRepository)
       _ <- Resource.liftF(logger.debug("AppContext has been generated").pure[F])
 
       configService = new DBConfigService[F](config, configRepository, metaXA)
@@ -102,13 +103,13 @@ object Server extends IOApp with LazyLogging {
       templateService = new JSONTemplateService[F](config, configService)
 
       provisionService = new DefaultProvisioningService[F](context, provisionEC)
-      workspaceService = new WorkspaceServiceImpl[F](ldapClient, yarnRepository, hiveDatabaseRepository, ldapRepository, workspaceRepository, complianceRepository, approvalRepository, metaXA, memberRepository, topicRepository, applicationRepository, context, provisionService)
-      accountService = new AccountServiceImpl[F](ldapClient, config.rest, config.approvers, config.workspaces, workspaceService, templateService, provisionService)
+      workspaceService = new WorkspaceServiceImpl[F](provisioningLDAPClient, yarnRepository, hiveDatabaseRepository, ldapRepository, workspaceRepository, complianceRepository, approvalRepository, metaXA, memberRepository, topicRepository, applicationRepository, context, provisionService)
+      accountService = new AccountServiceImpl[F](lookupLDAPClient, config.rest, config.approvers, config.workspaces, workspaceService, templateService, provisionService)
       authService = new AuthServiceImpl[F](accountService)
-      memberService = new MemberServiceImpl[F](memberRepository, metaXA, ldapRepository, ldapClient)
+      memberService = new MemberServiceImpl[F](memberRepository, metaXA, ldapRepository, lookupLDAPClient, provisioningLDAPClient)
       kafkaService = new KafkaServiceImpl[F](context, provisionService, topicGenerator)
       applicationService = new ApplicationServiceImpl[F](context, provisionService, applicationGenerator)
-      emailService = new EmailServiceImpl[F](emailClient, config, workspaceService, ldapClient)
+      emailService = new EmailServiceImpl[F](emailClient, config, workspaceService, lookupLDAPClient)
 
       accountController = new AccountController[F](authService, accountService)
       templateController = new TemplateController[F](authService, templateService)
