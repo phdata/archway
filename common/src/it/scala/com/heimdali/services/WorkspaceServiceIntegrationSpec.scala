@@ -26,10 +26,10 @@ class WorkspaceServiceIntegrationSpec extends FlatSpec with HiveTest with DBTest
     implicit val timer = IO.timer(ExecutionContext.global)
     val endall = createService.use { case (service, generator) =>
       for {
-        ldap1 <- generator.generate(initialLDAP.commonName, initialLDAP.distinguishedName, initialLDAP.sentryRole, initialWorkspaceRequest)
-        ldap2 <- generator.generate(initialLDAP.commonName, initialLDAP.distinguishedName, initialLDAP.sentryRole, initialWorkspaceRequest)
-        ldap3 <- generator.generate(initialLDAP.commonName, initialLDAP.distinguishedName, initialLDAP.sentryRole, initialWorkspaceRequest)
-        workspace = initialWorkspaceRequest.copy(data = List(initialHive.copy(managingGroup = initialGrant.copy(ldapRegistration = ldap1), readonlyGroup = Some(initialGrant.copy(ldapRegistration = ldap2)), readWriteGroup = Some(initialGrant.copy(ldapRegistration = ldap3)))))
+        mgr <- generator.generate("edh_sw_mgr", s"edh_sw_mgr,$ldapDn", "role_edh_sw_mgr", initialWorkspaceRequest)
+        rw <- generator.generate("edh_sw_rw", s"edh_sw_rw,$ldapDn", "role_edh_sw_rw", initialWorkspaceRequest)
+        ro <- generator.generate("edh_sw_ro", s"edh_sw_ro,$ldapDn", "role_edh_sw_ro", initialWorkspaceRequest)
+        workspace = initialWorkspaceRequest.copy(data = List(initialHive.copy(managingGroup = initialGrant.copy(ldapRegistration = mgr), readonlyGroup = Some(initialGrant.copy(ldapRegistration = ro)), readWriteGroup = Some(initialGrant.copy(ldapRegistration = rw)))))
         newWorkspace <- service.create(workspace)
         result <- service.find(newWorkspace.id.get).value
       } yield result
@@ -39,8 +39,13 @@ class WorkspaceServiceIntegrationSpec extends FlatSpec with HiveTest with DBTest
     val readOnlyAttributes = endall.get.data.head.readonlyGroup.get.ldapRegistration.attributes
     
     managerAttributes.distinct.length shouldBe managerAttributes.length
+    managerAttributes.map(_._2.replace("edh_sw_", "")) should contain noneOf ("rw", "ro")
+
     readwriteAttributes.distinct.length shouldBe readwriteAttributes.length
+    readwriteAttributes.map(_._2.replace("edh_sw_", "")) should contain noneOf ("mgr", "ro")
+
     readOnlyAttributes.distinct.length shouldBe readOnlyAttributes.length
+    readOnlyAttributes.map(_._2.replace("edh_sw_", "")) should contain noneOf ("rw", "mgr")
   }
 
   trait Context {
