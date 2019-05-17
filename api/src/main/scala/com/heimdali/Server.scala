@@ -14,6 +14,7 @@ import com.heimdali.repositories._
 import com.heimdali.rest._
 import com.heimdali.services.{TemplateService, _}
 import com.heimdali.startup.{HeimdaliStartup, Provisioning, SessionMaintainer}
+import com.typesafe.scalalogging.LazyLogging
 import doobie.util.ExecutionContexts
 import org.apache.hadoop.conf.Configuration
 import org.apache.sentry.provider.db.generic.service.thrift.SentryGenericServiceClientFactory
@@ -86,7 +87,6 @@ object Server extends IOApp {
       configRepository = new ConfigRepositoryImpl
 
       context = AppContext[F](config, sentryClient, hiveClient, provisioningLDAPClient, hdfsClient, yarnClient, kafkaClient, metaXA, hiveDatabaseRepository, hiveGrantRepository, ldapRepository, memberRepository, yarnRepository, complianceRepository, workspaceRepository, topicRepository, topicGrantRepository, applicationRepository)
-      _ <- Resource.liftF(logger.debug("AppContext has been generated").pure[F])
 
       configService = new DBConfigService[F](config, configRepository, metaXA)
 
