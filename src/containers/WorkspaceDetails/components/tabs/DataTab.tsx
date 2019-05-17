@@ -51,14 +51,12 @@ class DataTab extends React.Component<Props> {
       <div style={{ padding: 16 }}>
         <Tabs>
           {workspace.data.map((allocation: HiveAllocation, index: number) => {
-            const isDefault = workspace.data.length === 1;
-            const name = isDefault ? 'Default' : allocation.name.split('_')[0];
             const roleData = currentMember && currentMember.data[allocation.name];
             const roleValue = roleData && roleData.role;
             const hasPermission = isLiaison || (roleValue === 'manager');
 
             return (
-              <Tabs.TabPane tab={name} key={allocation.id.toString()}>
+              <Tabs.TabPane tab={allocation.name} key={allocation.id.toString()}>
                 <Row gutter={16} type="flex" justify="center" style={{ marginBottom: 16 }}>
                   <Col span={6}>
                     <HiveDatabase
