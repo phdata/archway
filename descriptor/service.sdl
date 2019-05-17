@@ -394,16 +394,16 @@
           "configurableInWizard": "true"
         },
         {
-          "name": "heimdali.ldap.readonlyBinding.server",
-          "label": "Read Only LDAP Host",
+          "name": "heimdali.ldap.lookupBinding.server",
+          "label": "Lookup LDAP Host",
           "description": "THe LDAP/AD host for users and groups",
           "required": "true",
           "type": "string",
           "configurableInWizard": "true"
         },
         {
-          "name": "heimdali.ldap.readonlyBinding.port",
-          "label": "Read Only LDAP Port",
+          "name": "heimdali.ldap.lookupBinding.port",
+          "label": "Lookup LDAP Port",
           "description": "The LDAP/AD port for users and groups",
           "required": "true",
           "type": "port",
@@ -411,32 +411,32 @@
           "configurableInWizard": "true"
         },
         {
-          "name": "heimdali.ldap.readonlyBinding.bindDN",
-          "label": "Read Only LDAP Admin DN",
+          "name": "heimdali.ldap.lookupBinding.bindDN",
+          "label": "Lookup LDAP Admin DN",
           "description": "The DN for the admin user",
           "required": "true",
           "type": "string",
           "configurableInWizard": "true"
         },
         {
-          "name": "heimdali.ldap.readonlyBinding.bindPassword",
-          "label": "Read Only LDAP Admin Password",
+          "name": "heimdali.ldap.lookupBinding.bindPassword",
+          "label": "Lookup LDAP Admin Password",
           "description": "The password for the admin user",
           "required": "true",
           "type": "password",
           "configurableInWizard": "true"
         },
         {
-          "name": "heimdali.ldap.adminBinding.server",
-          "label": "Admin LDAP Host",
+          "name": "heimdali.ldap.provisioningBinding.server",
+          "label": "Provisioning LDAP Host",
           "description": "THe LDAP/AD host for users and groups",
           "required": "true",
           "type": "string",
           "configurableInWizard": "true"
         },
         {
-          "name": "heimdali.ldap.adminBinding.port",
-          "label": "Admin LDAP Port",
+          "name": "heimdali.ldap.provisioningBinding.port",
+          "label": "Provisioning LDAP Port",
           "description": "The LDAP/AD port for users and groups",
           "required": "true",
           "type": "port",
@@ -444,16 +444,16 @@
           "configurableInWizard": "true"
         },
         {
-          "name": "heimdali.ldap.adminBinding.bindDN",
-          "label": "Admin LDAP Admin DN",
+          "name": "heimdali.ldap.provisioningBinding.bindDN",
+          "label": "Provisioning LDAP Admin DN",
           "description": "The DN for the admin user",
           "required": "true",
           "type": "string",
           "configurableInWizard": "true"
         },
         {
-          "name": "heimdali.ldap.adminBinding.bindPassword",
-          "label": "Admin LDAP Admin Password",
+          "name": "heimdali.ldap.provisioningBinding.bindPassword",
+          "label": "Provisioning LDAP Admin Password",
           "description": "The password for the admin user",
           "required": "true",
           "type": "password",
