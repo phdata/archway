@@ -1,12 +1,14 @@
 package com.heimdali.ci
 
+import cats.effect.{ExitCode, IO, IOApp}
+import cats.implicits._
 import com.heimdali.ci.provisioning.ProvisioningSpec
 
-object CITest {
+object CITest extends IOApp {
 
-  def main(args: Array[String]): Unit = {
+  def run(args: List[String]): IO[ExitCode] = {
     (new ProvisioningSpec).execute()
 
-    println("CI testing")
+    IO(println("CI testing")).as(ExitCode.Success)
   }
 }
