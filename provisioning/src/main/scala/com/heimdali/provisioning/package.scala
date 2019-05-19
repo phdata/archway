@@ -49,13 +49,30 @@ package object provisioning {
     }
 
   implicit def topicProvisioner[F[_] : Effect : Timer]: ProvisionTask[F, KafkaTopic] =
-    ProvisionTask.instance(topic =>
+    ProvisionTask.instance { topic =>
+      val noop: Kleisli[F, WorkspaceContext[F], ProvisionResult] =
+        Kleisli[F, WorkspaceContext[F], ProvisionResult] { _ => NoOp("topic grant").asInstanceOf[ProvisionResult].pure[F] }
+
+      val check: Kleisli[F, WorkspaceContext[F], Boolean] =
+        Kleisli[F, WorkspaceContext[F], Boolean](_._2.appConfig.kafka.secureTopics.pure[F])
+
+      val secure: Kleisli[F, WorkspaceContext[F], ProvisionResult] =
+        for {
+          managingRole <- topic.managingRole.provision
+          readonlyRole <- topic.readonlyRole.provision
+        } yield managingRole |+| readonlyRole
+
+      val grants: Kleisli[F, WorkspaceContext[F], ProvisionResult] =
+        check.flatMap {
+          case true => secure
+          case false => noop
+        }
+
       for {
-        create <- CreateKafkaTopic(topic.id.get, topic.name, topic.partitions, topic.replicationFactor).provision
-        managingRole <- topic.managingRole.provision
-        readonlyRole <- topic.readonlyRole.provision
-      } yield create |+| managingRole |+| readonlyRole /* |+| manager */
-    )
+        newTopic <- CreateKafkaTopic(topic.id.get, topic.name, topic.partitions, topic.replicationFactor).provision
+        securityCheck <- grants
+      } yield newTopic |+| securityCheck
+    }
 
   implicit def topicGrantProvisioner[F[_] : Effect : Timer]: ProvisionTask[F, TopicGrant] =
     ProvisionTask.instance { grant =>

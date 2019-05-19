@@ -22,4 +22,5 @@ case class AppContext[F[_]](appConfig: AppConfig,
                             workspaceRequestRepository: WorkspaceRequestRepository,
                             kafkaRepository: KafkaTopicRepository,
                             topicGrantRepository: TopicGrantRepository,
-                            applicationRepository: ApplicationRepository)
+                            applicationRepository: ApplicationRepository,
+                            approvalRepository: ApprovalRepository)

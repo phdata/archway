@@ -7,6 +7,7 @@ import cats.effect.{IO, _}
 import cats.implicits._
 import com.heimdali.caching.CacheEntry
 import org.scalatest.{FlatSpec, Matchers}
+import com.heimdali.test.fixtures._
 
 import scala.concurrent.ExecutionContext
 import scala.concurrent.duration._
@@ -23,12 +24,12 @@ class TimedCacheServiceSpec extends FlatSpec with Matchers {
   }
 
   it should "calculate new cache value" in {
-    import com.heimdali.test.fixtures._
+    implicit val timer: Timer[IO] = testTimer
     implicit val contextShift: ContextShift[IO] = IO.contextShift(ExecutionContext.global)
     val service = new TimedCacheService
     val newCacheValue = service.run[IO, Int](1.pure[IO]).unsafeRunSync
 
-    newCacheValue.cachedTime should be(timer.instant.toEpochMilli)
+    newCacheValue.cachedTime should be(testTimer.instant.toEpochMilli)
     newCacheValue.entry should be(1)
   }
 

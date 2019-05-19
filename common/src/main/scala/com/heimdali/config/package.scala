@@ -171,7 +171,8 @@ package object config {
 
   case class DatabaseConfig(meta: DatabaseConfigItem, hive: DatabaseConfigItem)
 
-  case class KafkaConfig(zookeeperConnect: String)
+  case class KafkaConfig(zookeeperConnect: String,
+                         secureTopics: Boolean)
 
   case class TemplateConfig(templateRoot: String,
                             topicGenerator: String,

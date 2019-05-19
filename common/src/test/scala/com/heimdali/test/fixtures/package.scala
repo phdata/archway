@@ -28,8 +28,6 @@ package object fixtures {
   val basicUserToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJuYW1lIjoiRHVkZSBEb2UiLCJ1c2VybmFtZSI6InVzZXJuYW1lIiwicGVybWlzc2lvbnMiOnsicmlza19tYW5hZ2VtZW50IjpmYWxzZSwicGxhdGZvcm1fb3BlcmF0aW9ucyI6ZmFsc2V9fQ.ltGXxBh4S7gwmIbcKz22IFWpGI2-zxad2XYOoxuGm734L8GlzfwvLRWIs-ZVKn7T8w3RJy5bKZWZoPj8951Qug"
   val basicUser = User(personName, standardUsername, standardUserDN, UserPermissions(riskManagement = false, platformOperations = false))
 
-  implicit val timer = new TestTimer
-
   val id = 123L
   val name = "Sesame"
   val purpose = "World Peace"
@@ -60,12 +58,13 @@ package object fixtures {
   val initialTopic = savedTopic.copy(id = None, managingRole = savedTopic.managingRole.copy(id = None, ldapRegistration = initialLDAP), readonlyRole = savedTopic.readonlyRole.copy(id = None, ldapRegistration = initialLDAP))
   val savedApplication = Application("Tiller", s"${systemName}_cg", savedLDAP, None, None, None, None, Some(id))
   val initialApplication = savedApplication.copy(id = None, group = initialLDAP)
-  val searchResult = WorkspaceSearchResult(id, name, name, "simple", "Approved", piiCompliance, pciCompliance, phiCompliance, timer.instant, Some(timer.instant), 0, 0, 0)
+  val testTimer = new TestTimer
+  val searchResult = WorkspaceSearchResult(id, name, name, "simple", "Approved", piiCompliance, pciCompliance, phiCompliance, testTimer.instant, Some(testTimer.instant), 0, 0, 0)
 
   val yarnApp = ClusterApp("yarn", "yarn", "GOOD_HExALTH", "STARTED", Map())
   val cluster = Cluster("cluster", "Cluster", "", List(yarnApp), CDH(""), "GOOD_HEALTH")
 
-  def approval(instant: Instant = timer.instant) = Approval(Risk, standardUsername, instant)
+  def approval(instant: Instant = testTimer.instant) = Approval(Risk, standardUsername, instant)
   val Right(appConfig) = io.circe.config.parser.decodePath[AppConfig]("heimdali")
 
   def defaultLDAPAttributes(dn: String, cn: String): List[(String, String)] =
@@ -83,7 +82,7 @@ package object fixtures {
     name,
     "simple",
     standardUserDN,
-    timer.instant,
+    testTimer.instant,
     savedCompliance,
     singleUser = false,
     id = Some(id),
@@ -124,8 +123,8 @@ package object fixtures {
        |    "pii_data": $piiCompliance,
        |    "pci_data": $pciCompliance,
        |    "phi_data": $phiCompliance,
-       |    "date_requested" : "${timer.instant.toString}",
-       |    "date_fully_approved" : "${timer.instant.toString}",
+       |    "date_requested" : "${testTimer.instant.toString}",
+       |    "date_fully_approved" : "${testTimer.instant.toString}",
        |    "total_disk_allocated_in_gb" : 0,
        |    "total_max_cores" : 0,
        |    "total_max_memory_in_gb" : 0
@@ -195,7 +194,7 @@ package object fixtures {
        |  "topics": [],
        |  "single_user": false,
        |  "requester": "$standardUserDN",
-       |  "requested_date": "${timer.instant}"
+       |  "requested_date": "${testTimer.instant}"
        |}
        """.stripMargin)
 

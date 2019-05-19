@@ -58,7 +58,7 @@ class WorkspaceServiceIntegrationSpec extends FlatSpec with HiveTest with DBTest
       conf
     }
 
-    def createService: Resource[IO, (WorkspaceService[IO], LDAPGroupGenerator[IO])] =
+    def createService(implicit timer: Timer[IO]): Resource[IO, (WorkspaceService[IO], LDAPGroupGenerator[IO])] =
       for {
         config <- Resource.liftF(io.circe.config.parser.decodePathF[IO, AppConfig]("heimdali"))
 
@@ -105,7 +105,7 @@ class WorkspaceServiceIntegrationSpec extends FlatSpec with HiveTest with DBTest
         applicationRepository = new ApplicationRepositoryImpl
         configRepository = new ConfigRepositoryImpl
 
-        context = AppContext[IO](config, sentryClient, hiveClient, ldapClient, hdfsClient, yarnClient, kafkaClient, transactor, hiveDatabaseRepository, hiveGrantRepository, ldapRepository, memberRepository, yarnRepository, complianceRepository, workspaceRepository, topicRepository, topicGrantRepository, applicationRepository)
+        context = AppContext[IO](config, sentryClient, hiveClient, ldapClient, hdfsClient, yarnClient, kafkaClient, transactor, hiveDatabaseRepository, hiveGrantRepository, ldapRepository, memberRepository, yarnRepository, complianceRepository, workspaceRepository, topicRepository, topicGrantRepository, applicationRepository, approvalRepository)
 
         configService = new DBConfigService[IO](config, configRepository, transactor)
 
@@ -114,7 +114,7 @@ class WorkspaceServiceIntegrationSpec extends FlatSpec with HiveTest with DBTest
         topicGenerator = TopicGenerator.instance(config, ldapGroupGenerator, config.templates.topicGenerator)
         templateService = new JSONTemplateService[IO](appConfig, configService)
 
-        workspaceService = new WorkspaceServiceImpl[IO](ldapClient, yarnRepository, hiveDatabaseRepository, ldapRepository, workspaceRepository, complianceRepository, approvalRepository, transactor, memberRepository, topicRepository, applicationRepository, context, null)
+        workspaceService = new WorkspaceServiceImpl[IO](null, context)
       } yield (workspaceService, ldapGroupGenerator)
   }
 

@@ -1,7 +1,7 @@
 package com.heimdali.services
 
 import cats.data._
-import cats.effect.IO
+import cats.effect.{IO, Timer}
 import cats.implicits._
 import com.heimdali.clients.{LDAPClient, LDAPUser}
 import com.heimdali.config.{ApprovalConfig, RestConfig, WorkspaceConfig, WorkspaceConfigItem}
@@ -120,6 +120,7 @@ class AccountServiceSpec extends FlatSpec with MockFactory with Matchers {
   }
 
   trait Context {
+    implicit val timer: Timer[IO] = testTimer
     val contextShift = IO.contextShift(ExecutionContext.global)
     val (name, wrongUsername, username, actualPassword, wrongPassword) = ("Dude Doe", "user", "username", "password", "passw0rd")
     val approvalConfig = ApprovalConfig("me@meail.com", Some("CN=foo,DC=jotunN,dc=io"), Some("cN=bar,dc=JOTUNN,dc=io"))

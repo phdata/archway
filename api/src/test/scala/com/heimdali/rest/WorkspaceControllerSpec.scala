@@ -74,11 +74,11 @@ class WorkspaceControllerSpec
     import io.circe.java8.time._
 
     (workspaceService.approve _)
-      .expects(id, Approval(Infra, standardUsername, timer.instant))
-      .returning(IO.pure(approval(timer.instant).copy(id = Some(id))))
+      .expects(id, Approval(Infra, standardUsername, testTimer.instant))
+      .returning(IO.pure(approval(testTimer.instant).copy(id = Some(id))))
 
     val response = restApi.route.orNotFound.run(POST(Json.obj("role" -> "infra".asJson), Uri.uri("/123/approve")).unsafeRunSync())
-    check(response, Created, Some(Json.obj("risk" -> Json.obj("approver" -> standardUsername.asJson, "approval_time" -> timer.instant.asJson))))
+    check(response, Created, Some(Json.obj("risk" -> Json.obj("approver" -> standardUsername.asJson, "approval_time" -> testTimer.instant.asJson))))
   }
 
   it should "list yarn applications" in new Http4sClientDsl[IO] with Context {
@@ -123,6 +123,7 @@ class WorkspaceControllerSpec
   }
 
   trait Context {
+    implicit val timer: Timer[IO] = testTimer
     val contextShift = IO.contextShift(ExecutionContext.global)
     val authService: TestAuthService = new TestAuthService(riskApprover = true, platformApprover = true)
     val memberService: MemberService[IO] = mock[MemberService[IO]]

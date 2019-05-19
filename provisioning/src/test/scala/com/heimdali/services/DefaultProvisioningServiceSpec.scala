@@ -1,129 +1,139 @@
 package com.heimdali.services
 
+import java.util.concurrent.TimeUnit
+
 import cats.data.OptionT
-import cats.effect.IO
+import cats.effect.{ContextShift, IO, Timer}
 import cats.implicits._
 import com.heimdali.AppContext
 import com.heimdali.clients._
 import com.heimdali.models._
 import com.heimdali.provisioning.DefaultProvisioningService
-import com.heimdali.repositories.{MemberRepository, _}
-import com.heimdali.test.fixtures.{id, maxCores, maxMemoryInGB, poolName, savedHive, savedLDAP, savedWorkspaceRequest, standardUserDN, _}
+import com.heimdali.test.fixtures._
 import doobie._
 import doobie.implicits._
-import doobie.util.transactor.Strategy
 import org.apache.hadoop.fs.Path
-import org.apache.sentry.provider.db.generic.service.thrift.SentryGenericServiceClient
 import org.scalamock.scalatest.MockFactory
-import org.scalatest.concurrent.TimeLimitedTests
-import org.scalatest.time.Span
-import org.scalatest._
-import org.scalatest.time.SpanSugar._
+import scala.concurrent.duration._
+import org.scalatest.{FlatSpec, Matchers}
 
 import scala.concurrent.ExecutionContext
 
-class DefaultProvisioningServiceSpec extends FlatSpec with MockFactory with Matchers {
+class DefaultProvisioningServiceSpec
+  extends FlatSpec
+    with MockFactory
+    with Matchers
+    with AppContextProvider {
+
+  implicit val contextShift: ContextShift[IO] = IO.contextShift(ExecutionContext.global)
 
   behavior of "DefaultProvisioningServiceSpec"
 
   it should "fire and forget" in new Context {
     // make sure we actually call provisioning code, but take "too long"
-    (hdfsClient.createDirectory _)
+    (context.hdfsClient.createDirectory _)
       .expects(savedHive.location, None)
-      .returning(IO {
-        println("I still run though")
-        Thread.sleep(1000)
-        new Path(savedHive.location)
-      })
+      .returning(
+        for {
+          _ <- IO(println("I still run though"))
+          _ <- actualTimer.sleep(1 second)
+          path <- IO(new Path(savedHive.location))
+        } yield path
+      )
 
-    val start = System.currentTimeMillis()
-    provisioningService.attemptProvision(savedWorkspaceRequest, 0).unsafeRunSync()
-    val end = System.currentTimeMillis()
+    val actual: IO[Long] = for {
+      start <- actualTimer.clock.realTime(TimeUnit.MILLISECONDS)
+      _ <- provisioningService.attemptProvision(savedWorkspaceRequest, 0)
+      end <- actualTimer.clock.realTime(TimeUnit.MILLISECONDS)
+      _ <- actualTimer.sleep(500 millis)
+    } yield end - start
 
-    Thread.sleep(500)
-
-    val actual: Long = end - start
-    actual should be < 1000L
+    actual.unsafeRunSync() should be < 1000L
   }
 
   it should "allow more than required approvals" in new Context {
     // make sure we actually call provisioning code, but take "too long"
-    (hdfsClient.createDirectory _)
+    (context.hdfsClient.createDirectory _)
       .expects(savedHive.location, None)
-      .returning(IO {
-        Thread.sleep(1000)
-        new Path(savedHive.location)
-      })
-    val singleApprovalWorkspace = savedWorkspaceRequest.copy(approvals = List(approval(timer.instant)))
-    val fabric = provisioningService.attemptProvision(singleApprovalWorkspace, 0).unsafeRunSync()
-    Thread.sleep(100)
-    fabric.cancel.unsafeRunSync()
-    Thread.sleep(500)
+      .returning(
+        for {
+          _ <- actualTimer.sleep(1 second)
+          path <- IO(new Path(savedHive.location))
+        } yield path
+      )
+    val singleApprovalWorkspace = savedWorkspaceRequest.copy(approvals = List(approval(testTimer.instant)))
+
+    (for {
+      fabric <- provisioningService.attemptProvision(singleApprovalWorkspace, 0)
+      _ <- actualTimer.sleep(100 millis)
+      _ <- fabric.cancel
+      _ <- actualTimer.sleep(100 millis)
+    } yield ()).unsafeRunSync()
   }
 
   it should "provision a workspace" in new Context {
     inSequence {
       inSequence {
-        hdfsClient.createDirectory _ expects(savedHive.location, None) returning IO
+        context.hdfsClient.createDirectory _ expects(savedHive.location, None) returning IO
           .pure(new Path(savedHive.location))
-        hiveDatabaseRepository.directoryCreated _ expects(id, timer.instant) returning 0.pure[ConnectionIO]
-        hdfsClient.setQuota _ expects(savedHive.location, savedHive.sizeInGB) returning IO
+        context.databaseRepository.directoryCreated _ expects(id, testTimer.instant) returning 0.pure[ConnectionIO]
+        context.hdfsClient.setQuota _ expects(savedHive.location, savedHive.sizeInGB) returning IO
           .pure(HDFSAllocation(savedHive.location, savedHive.sizeInGB))
-        hiveDatabaseRepository.quotaSet _ expects(id, timer.instant) returning 0.pure[ConnectionIO]
-        workspaceRepository.find _ expects (id) returning OptionT.some(savedWorkspaceRequest)
-        hiveClient.createDatabase _ expects(savedHive.name, savedHive.location, "Sesame", Map("phi_data" -> "false", "pci_data" -> "false", "pii_data" -> "false")) returning IO.unit
-        hiveDatabaseRepository.databaseCreated _ expects(id, timer.instant) returning 0.pure[ConnectionIO]
+        context.databaseRepository.quotaSet _ expects(id, testTimer.instant) returning 0.pure[ConnectionIO]
+        context.workspaceRequestRepository.find _ expects id returning OptionT.some(savedWorkspaceRequest)
+        context.hiveClient.createDatabase _ expects(savedHive.name, savedHive.location, "Sesame", Map("phi_data" -> "false", "pci_data" -> "false", "pii_data" -> "false")) returning IO.unit
+        context.databaseRepository.databaseCreated _ expects(id, testTimer.instant) returning 0.pure[ConnectionIO]
 
-        ldapClient.createGroup _ expects(savedLDAP.commonName, *) returning IO.unit
-        ldapRepository.groupCreated _ expects(id, timer.instant) returning 0.pure[ConnectionIO]
-        sentryClient.createRole _ expects savedLDAP.sentryRole returning IO.unit
-        ldapRepository.roleCreated _ expects(id, timer.instant) returning 0.pure[ConnectionIO]
-        sentryClient.grantGroup _ expects(savedLDAP.commonName, savedLDAP.sentryRole) returning IO.unit
-        ldapRepository.groupAssociated _ expects(id, timer.instant) returning 0.pure[ConnectionIO]
-        sentryClient.enableAccessToDB _ expects(savedHive.name, savedLDAP.sentryRole, Manager) returning IO.unit
-        grantRepository.databaseGranted _ expects(id, timer.instant) returning 0.pure[ConnectionIO]
-        sentryClient.enableAccessToLocation _ expects(savedHive.location, savedLDAP.sentryRole) returning IO.unit
-        grantRepository.locationGranted _ expects(id, timer.instant) returning 0.pure[ConnectionIO]
+        context.ldapClient.createGroup _ expects(savedLDAP.commonName, *) returning IO.unit
+        context.ldapRepository.groupCreated _ expects(id, testTimer.instant) returning 0.pure[ConnectionIO]
+        context.sentryClient.createRole _ expects savedLDAP.sentryRole returning IO.unit
+        context.ldapRepository.roleCreated _ expects(id, testTimer.instant) returning 0.pure[ConnectionIO]
+        context.sentryClient.grantGroup _ expects(savedLDAP.commonName, savedLDAP.sentryRole) returning IO.unit
+        context.ldapRepository.groupAssociated _ expects(id, testTimer.instant) returning 0.pure[ConnectionIO]
+        context.sentryClient.enableAccessToDB _ expects(savedHive.name, savedLDAP.sentryRole, Manager) returning IO.unit
+        context.databaseGrantRepository.databaseGranted _ expects(id, testTimer.instant) returning 0.pure[ConnectionIO]
+        context.sentryClient.enableAccessToLocation _ expects(savedHive.location, savedLDAP.sentryRole) returning IO.unit
+        context.databaseGrantRepository.locationGranted _ expects(id, testTimer.instant) returning 0.pure[ConnectionIO]
 
-        ldapClient.createGroup _ expects(savedLDAP.commonName, *) returning IO.unit
-        ldapRepository.groupCreated _ expects(id, timer.instant) returning 0.pure[ConnectionIO]
-        sentryClient.createRole _ expects savedLDAP.sentryRole returning IO.unit
-        ldapRepository.roleCreated _ expects(id, timer.instant) returning 0.pure[ConnectionIO]
-        sentryClient.grantGroup _ expects(savedLDAP.commonName, savedLDAP.sentryRole) returning IO.unit
-        ldapRepository.groupAssociated _ expects(id, timer.instant) returning 0.pure[ConnectionIO]
-        sentryClient.enableAccessToDB _ expects(savedHive.name, savedLDAP.sentryRole, ReadOnly) returning IO.unit
-        grantRepository.databaseGranted _ expects(id, timer.instant) returning 0.pure[ConnectionIO]
-        sentryClient.enableAccessToLocation _ expects(savedHive.location, savedLDAP.sentryRole) returning IO.unit
-        grantRepository.locationGranted _ expects(id, timer.instant) returning 0.pure[ConnectionIO]
+        context.ldapClient.createGroup _ expects(savedLDAP.commonName, *) returning IO.unit
+        context.ldapRepository.groupCreated _ expects(id, testTimer.instant) returning 0.pure[ConnectionIO]
+        context.sentryClient.createRole _ expects savedLDAP.sentryRole returning IO.unit
+        context.ldapRepository.roleCreated _ expects(id, testTimer.instant) returning 0.pure[ConnectionIO]
+        context.sentryClient.grantGroup _ expects(savedLDAP.commonName, savedLDAP.sentryRole) returning IO.unit
+        context.ldapRepository.groupAssociated _ expects(id, testTimer.instant) returning 0.pure[ConnectionIO]
+        context.sentryClient.enableAccessToDB _ expects(savedHive.name, savedLDAP.sentryRole, ReadOnly) returning IO.unit
+        context.databaseGrantRepository.databaseGranted _ expects(id, testTimer.instant) returning 0.pure[ConnectionIO]
+        context.sentryClient.enableAccessToLocation _ expects(savedHive.location, savedLDAP.sentryRole) returning IO.unit
+        context.databaseGrantRepository.locationGranted _ expects(id, testTimer.instant) returning 0.pure[ConnectionIO]
       }
 
       inSequence {
-        ldapClient.addUser _ expects(savedLDAP.distinguishedName, standardUserDN) returning OptionT.some(standardUserDN)
-        memberRepository.complete _ expects(id, standardUserDN) returning 0.pure[ConnectionIO]
+        context.ldapClient.addUser _ expects(savedLDAP.distinguishedName, standardUserDN) returning OptionT.some(standardUserDN)
+        context.memberRepository.complete _ expects(id, standardUserDN) returning 0.pure[ConnectionIO]
       }
 
       inSequence {
-        yarnClient.createPool _ expects(poolName, maxCores, maxMemoryInGB) returning IO.unit
-        yarnRepository.complete _ expects(id, timer.instant) returning 0.pure[ConnectionIO]
+        context.yarnClient.createPool _ expects(poolName, maxCores, maxMemoryInGB) returning IO.unit
+        context.yarnRepository.complete _ expects(id, testTimer.instant) returning 0.pure[ConnectionIO]
       }
 
       inSequence {
-        ldapClient.createGroup _ expects(savedLDAP.commonName, *) returning IO.unit
-        ldapRepository.groupCreated _ expects(id, timer.instant) returning 0.pure[ConnectionIO]
-        sentryClient.createRole _ expects savedLDAP.sentryRole returning IO.unit
-        ldapRepository.roleCreated _ expects(id, timer.instant) returning 0.pure[ConnectionIO]
-        sentryClient.grantGroup _ expects(savedLDAP.commonName, savedLDAP.sentryRole) returning IO.unit
-        ldapRepository.groupAssociated _ expects(id, timer.instant) returning 0.pure[ConnectionIO]
-        sentryClient.grantPrivilege _ expects(*, *, *) returning IO.unit
-        applicationRepository.consumerGroupAccess _ expects(id, timer.instant) returning 0.pure[ConnectionIO]
+        context.ldapClient.createGroup _ expects(savedLDAP.commonName, *) returning IO.unit
+        context.ldapRepository.groupCreated _ expects(id, testTimer.instant) returning 0.pure[ConnectionIO]
+        context.sentryClient.createRole _ expects savedLDAP.sentryRole returning IO.unit
+        context.ldapRepository.roleCreated _ expects(id, testTimer.instant) returning 0.pure[ConnectionIO]
+        context.sentryClient.grantGroup _ expects(savedLDAP.commonName, savedLDAP.sentryRole) returning IO.unit
+        context.ldapRepository.groupAssociated _ expects(id, testTimer.instant) returning 0.pure[ConnectionIO]
+        context.sentryClient.grantPrivilege _ expects(*, *, *) returning IO.unit
+        context.applicationRepository.consumerGroupAccess _ expects(id, testTimer.instant) returning 0.pure[ConnectionIO]
       }
 
       inSequence {
-        ldapClient.addUser _ expects(savedLDAP.distinguishedName, standardUserDN) returning OptionT.some(standardUserDN)
-        memberRepository.complete _ expects(id, standardUserDN) returning 0.pure[ConnectionIO]
+        context.ldapClient.addUser _ expects(savedLDAP.distinguishedName, standardUserDN) returning OptionT.some(standardUserDN)
+        context.memberRepository.complete _ expects(id, standardUserDN) returning 0.pure[ConnectionIO]
       }
 
-      workspaceRepository.markProvisioned _ expects(id, *) returning 0.pure[ConnectionIO]
+      context.workspaceRequestRepository.markProvisioned _ expects(id, *) returning 0.pure[ConnectionIO]
     }
 
     provisioningService
@@ -135,53 +145,12 @@ class DefaultProvisioningServiceSpec extends FlatSpec with MockFactory with Matc
   }
 
   trait Context {
-    val ldapClient: LDAPClient[IO] = mock[LDAPClient[IO]]
-    val hdfsClient: HDFSClient[IO] = mock[HDFSClient[IO]]
-    val sentryClient: SentryClient[IO] = mock[SentryClient[IO]]
-    val hiveClient: HiveClient[IO] = mock[HiveClient[IO]]
-    val yarnClient: YarnClient[IO] = mock[YarnClient[IO]]
-    val kafkaClient: KafkaClient[IO] = mock[KafkaClient[IO]]
-    val sentryRawClient: SentryGenericServiceClient = mock[SentryGenericServiceClient]
+    implicit val timer: Timer[IO] = testTimer
+    val actualTimer = IO.timer(ExecutionContext.global)
 
-    val workspaceRepository: WorkspaceRequestRepository =
-      mock[WorkspaceRequestRepository]
-    val complianceRepository: ComplianceRepository = mock[ComplianceRepository]
-    val yarnRepository: YarnRepository = mock[YarnRepository]
-    val hiveDatabaseRepository: HiveAllocationRepository =
-      mock[HiveAllocationRepository]
-    val ldapRepository: LDAPRepository = mock[LDAPRepository]
-    val approvalRepository: ApprovalRepository = mock[ApprovalRepository]
-    val contextProvider: LoginContextProvider = mock[LoginContextProvider]
-    val memberRepository: MemberRepository = mock[MemberRepository]
-    val grantRepository: HiveGrantRepository = mock[HiveGrantRepository]
-    val topicRepository: KafkaTopicRepository = mock[KafkaTopicRepository]
-    val topicGrantRepository: TopicGrantRepository = mock[TopicGrantRepository]
-    val applicationRepository: ApplicationRepository = mock[ApplicationRepository]
+    val context: AppContext[IO] = genMockContext()
 
-    implicit val cs = IO.contextShift(ExecutionContext.global)
-    val transactor = Transactor.fromConnection[IO](null, ExecutionContext.global).copy(strategy0 = Strategy(FC.unit, FC.unit, FC.unit, FC.unit))
-
-    lazy val appContext: AppContext[IO] = AppContext(
-      null,
-      sentryClient,
-      hiveClient,
-      ldapClient,
-      hdfsClient,
-      yarnClient,
-      kafkaClient,
-      transactor,
-      hiveDatabaseRepository,
-      grantRepository,
-      ldapRepository,
-      memberRepository,
-      yarnRepository,
-      complianceRepository,
-      workspaceRepository,
-      topicRepository,
-      topicGrantRepository,
-      applicationRepository)
-
-    lazy val provisioningService = new DefaultProvisioningService[IO](appContext, ExecutionContext.global)
+    lazy val provisioningService = new DefaultProvisioningService[IO](context, ExecutionContext.global)
   }
 
 }

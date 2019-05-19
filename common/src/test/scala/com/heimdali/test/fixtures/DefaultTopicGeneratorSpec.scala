@@ -10,6 +10,7 @@ class DefaultTopicGeneratorSpec extends FlatSpec with Matchers {
   behavior of "DefaultTopicGeneratorSpec"
 
   it should "generate a topic" in {
+    implicit val timer: Timer[IO] = testTimer
     val configService = new TestConfigService()
     val ldapGroupGenerator = new DefaultLDAPGroupGenerator[IO](configService)
     val topicGenerator = new DefaultTopicGenerator[IO](appConfig, ldapGroupGenerator)

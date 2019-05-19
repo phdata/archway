@@ -1,6 +1,6 @@
 package com.heimdali.rest
 
-import cats.effect.IO
+import cats.effect.{IO, Timer}
 import cats.implicits._
 import com.heimdali.generators._
 import com.heimdali.models.TemplateRequest
@@ -19,6 +19,8 @@ import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FlatSpec, Matchers}
 import org.scalatest.prop.TableDrivenPropertyChecks._
 
+import scala.concurrent.ExecutionContext
+
 class TemplateControllerSpec
   extends FlatSpec
     with Matchers
@@ -29,6 +31,7 @@ class TemplateControllerSpec
   behavior of "Template controller"
 
   it should "generate a simple workspace" in new Http4sClientDsl[IO] {
+    implicit val timer: Timer[IO] = testTimer
 
     val table = Table(
       ("name", "request"),
@@ -50,7 +53,7 @@ class TemplateControllerSpec
       val response = templateController.route.orNotFound.run(POST(request.asJson, Uri.unsafeFromString(s"/$name")).unsafeRunSync())
 
       val expected: Json = fromResource(s"ssp/default/$name.expected.json")
-      check(response, Status.Ok, Some(expected.asObject.get.add("requested_date", timer.instant.asJson).asJson))
+      check(response, Status.Ok, Some(expected.asObject.get.add("requested_date", testTimer.instant.asJson).asJson))
     }
   }
 

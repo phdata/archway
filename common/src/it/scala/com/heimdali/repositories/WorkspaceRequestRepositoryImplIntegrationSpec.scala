@@ -14,6 +14,6 @@ class WorkspaceRequestRepositoryImplIntegrationSpec extends FunSuite with Matche
   test("pending") { check(WorkspaceRequestRepositoryImpl.Statements.pending(Risk)) }
   test("infra") { check(WorkspaceRequestRepositoryImpl.Statements.pending(Infra)) }
   test("unprovisioned") { check(WorkspaceRequestRepositoryImpl.Statements.findUnprovisioned())}
-  test("markProvisioned") { check(WorkspaceRequestRepositoryImpl.Statements.markProvisioned(1L, timer.instant))}
+  test("markProvisioned") { check(WorkspaceRequestRepositoryImpl.Statements.markProvisioned(1L, testTimer.instant))}
 
 }

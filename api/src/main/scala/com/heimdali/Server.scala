@@ -92,7 +92,7 @@ object Server extends IOApp with LazyLogging {
       applicationRepository = new ApplicationRepositoryImpl
       configRepository = new ConfigRepositoryImpl
 
-      context = AppContext[F](config, sentryClient, hiveClient, provisioningLDAPClient, hdfsClient, yarnClient, kafkaClient, metaXA, hiveDatabaseRepository, hiveGrantRepository, ldapRepository, memberRepository, yarnRepository, complianceRepository, workspaceRepository, topicRepository, topicGrantRepository, applicationRepository)
+      context = AppContext[F](config, sentryClient, hiveClient, provisioningLDAPClient, hdfsClient, yarnClient, kafkaClient, metaXA, hiveDatabaseRepository, hiveGrantRepository, ldapRepository, memberRepository, yarnRepository, complianceRepository, workspaceRepository, topicRepository, topicGrantRepository, applicationRepository, approvalRepository)
       _ <- Resource.liftF(logger.debug("AppContext has been generated").pure[F])
 
       configService = new DBConfigService[F](config, configRepository, metaXA)
@@ -103,7 +103,7 @@ object Server extends IOApp with LazyLogging {
       templateService = new JSONTemplateService[F](config, configService)
 
       provisionService = new DefaultProvisioningService[F](context, provisionEC)
-      workspaceService = new WorkspaceServiceImpl[F](provisioningLDAPClient, yarnRepository, hiveDatabaseRepository, ldapRepository, workspaceRepository, complianceRepository, approvalRepository, metaXA, memberRepository, topicRepository, applicationRepository, context, provisionService)
+      workspaceService = new WorkspaceServiceImpl[F](provisionService, context)
       accountService = new AccountServiceImpl[F](lookupLDAPClient, config.rest, config.approvers, config.workspaces, workspaceService, templateService, provisionService)
       authService = new AuthServiceImpl[F](accountService)
       memberService = new MemberServiceImpl[F](memberRepository, metaXA, ldapRepository, lookupLDAPClient, provisioningLDAPClient)
