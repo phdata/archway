@@ -18,3 +18,4 @@ object SmokeTest extends LazyLogging {
     new LDAPImplSmokeTest(appConfig).execute()
   }
 }
+
