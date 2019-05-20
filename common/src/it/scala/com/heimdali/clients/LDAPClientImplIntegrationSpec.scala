@@ -3,10 +3,8 @@ package com.heimdali.clients
 import cats.effect._
 import com.heimdali.test.fixtures._
 import com.unboundid.ldap.sdk._
-import com.unboundid.util.{Debug, DebugType}
 import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{FlatSpec, Matchers}
-import scala.collection.JavaConverters._
 
 class LDAPClientImplIntegrationSpec
   extends FlatSpec
@@ -33,6 +31,17 @@ class LDAPClientImplIntegrationSpec
 
     Option(ldapConnectionPool.getConnection.getEntry(s"cn=edh_sw_sesame,${appConfig.ldap.groupPath}")) shouldBe defined
     ldapConnectionPool.getConnection.delete(s"cn=edh_sw_sesame,${appConfig.ldap.groupPath}")
+  }
+
+  it should "delete a group" in {
+    val client = new LDAPClientImpl[IO](appConfig.ldap, _.provisioningBinding)
+    val attributes = defaultLDAPAttributes(s"cn=edh_sw_sesame,${appConfig.ldap.groupPath}", "edh_sw_sesame")
+
+    client.createGroup("edh_sw_sesame", attributes).unsafeRunSync()
+    Option(ldapConnectionPool.getConnection.getEntry(s"cn=edh_sw_sesame,${appConfig.ldap.groupPath}")) shouldBe defined
+
+    client.deleteGroup(s"cn=edh_sw_sesame,${appConfig.ldap.groupPath}").value.unsafeRunSync()
+    Option(ldapConnectionPool.getConnection.getEntry(s"cn=edh_sw_sesame,${appConfig.ldap.groupPath}")) shouldBe None
   }
 
   it should "update a group's attributes" in {

@@ -201,4 +201,12 @@ class LDAPClientImpl[F[_] : Effect](ldapConfig: LDAPConfig, binding: LDAPConfig 
         .search(request)
         .getSearchEntries.asScala.toList
     }
+
+  override def deleteGroup(groupDN: String): OptionT[F, String] =
+    OptionT(getEntry(groupDN).value.map {
+      case Some(_) =>
+        connectionPool.getConnection.delete(groupDN)
+        Some(groupDN)
+      case _ => Some(groupDN)
+    })
 }

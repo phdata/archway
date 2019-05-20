@@ -25,4 +25,6 @@ trait LDAPClient[F[_]] {
   def groupMembers(groupDN: String): F[List[LDAPUser]]
 
   def search(filter: String): F[List[SearchResultEntry]]
+
+  def deleteGroup(groupDN: String): OptionT[F, String]
 }
