@@ -94,9 +94,6 @@ const SimpleTopicMemberRequest = ({
         }, {
           label: 'Read Only',
           value: 'readonly'
-        }, {
-          label: 'None',
-          value: 'none'
         }]}
         component={RadioField} />
     </Row>

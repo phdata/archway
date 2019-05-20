@@ -63,66 +63,59 @@ const SimpleMemberRequest = ({
   onSearch,
   handleSubmit,
 }: InjectedFormProps<SimpleMemberForm, {}> & SimpleMemberRequestProps) => (
-  <form style={{  }} onSubmit={handleSubmit}>
-    <FieldLabel>member</FieldLabel>
-    <Field
-      name="username"
-      dataSource={suggestions ? [
-        renderGroup({
-          title: 'Users',
-          children: suggestions.users.map((item: UserSuggestion) => ({
-            text: `${item.display} (${item.display})`,
-            value: item.distinguished_name,
-          })),
-        }),
-        renderGroup({
-          title: 'Groups',
-          children: suggestions.groups.map((item: UserSuggestion) => ({
-            text: `${item.display} (${item.display})`,
-            value: item.distinguished_name,
-          })),
-        }),
-      ] : []}
-      onSearch={onSearch}
-      component={ReduxAutoComplete}
-      style={{ marginBottom: 0 }}
-    />
-    {allocations.map((allocation: HiveAllocation) => {
-      const roleColumns = {
-        raw_loan_mecca: 'Raw',
-        staging_loan_mecca: 'Staging',
-        modeled_loan_mecca: 'Modeled',
-      };
-      const fieldName = allocation.name;
-      const fieldLabel = roleColumns[fieldName] || 'Default';
-
-      return (
-        <div key={fieldName}>
-          <FieldLabel>{fieldLabel}</FieldLabel>
-          <Row type="flex" align="middle" justify="center" style={{ marginBottom: 0 }}>
-            <Field
-              defaultValue="readonly"
-              name={`roles.${fieldName}`}
-              options={[{
-                label: 'Manager',
-                value: 'manager'
-              }, {
-                label: 'Read Only',
-                value: 'readonly'
-              }, {
-                label: 'Read/Write',
-                value: 'readwrite'
-              }, {
-                label: 'None',
-                value: 'none'
-              }]}
-              component={RadioField} />
-          </Row>
-        </div>
-      );
-    })}
-  </form>
-);
+    <form style={{}} onSubmit={handleSubmit}>
+      <FieldLabel>member</FieldLabel>
+      <Field
+        name="username"
+        dataSource={suggestions ? [
+          renderGroup({
+            title: 'Users',
+            children: suggestions.users.map((item: UserSuggestion) => ({
+              text: `${item.display} (${item.display})`,
+              value: item.distinguished_name,
+            })),
+          }),
+          renderGroup({
+            title: 'Groups',
+            children: suggestions.groups.map((item: UserSuggestion) => ({
+              text: `${item.display} (${item.display})`,
+              value: item.distinguished_name,
+            })),
+          }),
+        ] : []}
+        onSearch={onSearch}
+        component={ReduxAutoComplete}
+        style={{ marginBottom: 0 }}
+      />
+      {allocations.map((allocation: HiveAllocation) => {
+        return (
+          <div key={allocation.name}>
+            <FieldLabel>{allocation.name}</FieldLabel>
+            <Row type="flex" align="middle" justify="center" style={{ marginBottom: 0 }}>
+              <Field
+                defaultValue="readonly"
+                name={`roles.${allocation.name}`}
+                options={[{
+                  label: 'Manager',
+                  value: 'manager'
+                }, {
+                  label: 'Read Only',
+                  value: 'readonly'
+                }, {
+                  label: 'Read/Write',
+                  value: 'readwrite'
+                },
+                ...(allocations.length > 1 ? [{
+                  label: 'None',
+                  value: 'none'
+                }] : [])]}
+                component={RadioField} />
+            </Row>
+          </div>
+        );
+      })}
+    </form>
+  );
 
 export default reduxForm<SimpleMemberForm, SimpleMemberRequestProps>({
   form: 'simpleMemberRequest',

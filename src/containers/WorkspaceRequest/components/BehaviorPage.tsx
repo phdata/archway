@@ -35,7 +35,7 @@ const BehaviorPage = ({ selected, onChange }: Props) => (
           onChange={(behavior, checked) => checked && onChange(behavior)}
           icon="deployment-unit"
           title="Structured"
-          description={`Data moves through three steps: raw, staging, modeled. Each step represents a more "structured" version of the data.`}
+          description={`Data moves through various stages. Each stage represents a more "structured" version of the data.`}
           useCases={['publishings', 'data assets', 'external interfacing']} />
       </Col>
     </Row>
