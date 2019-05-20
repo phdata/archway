@@ -1,14 +1,14 @@
 package com.heimdali.smoke
 
-import cats.effect.{ExitCode, IO, IOApp}
-import cats.implicits._
 import com.heimdali.smoke.ldap.LDAPSpec
 
-object SmokeTest extends IOApp {
+object SmokeTest {
 
-  def run(args: List[String]): IO[ExitCode] = {
+  def main(args: Array[String]): Unit = {
     (new LDAPSpec).execute()
 
-    IO(println("Smoke testing")).as(ExitCode.Success)
+    println("Smoke testing")
   }
+
+
 }
