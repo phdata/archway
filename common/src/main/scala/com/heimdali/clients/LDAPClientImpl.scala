@@ -203,10 +203,8 @@ class LDAPClientImpl[F[_] : Effect](ldapConfig: LDAPConfig, binding: LDAPConfig 
     }
 
   override def deleteGroup(groupDN: String): OptionT[F, String] =
-    OptionT(getEntry(groupDN).value.map {
-      case Some(_) =>
-        connectionPool.getConnection.delete(groupDN)
-        Some(groupDN)
-      case _ => Some(groupDN)
-    })
+    for {
+      _ <- getEntry(groupDN)
+      _ <- OptionT(Option(connectionPool.getConnection.delete(groupDN)).pure[F])
+    } yield groupDN
 }
