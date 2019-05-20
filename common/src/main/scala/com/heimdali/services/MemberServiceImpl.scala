@@ -103,7 +103,10 @@ class MemberServiceImpl[F[_]](memberRepository: MemberRepository,
     } yield result
 
   def toResult(searchResultEntry: SearchResultEntry): MemberSearchResultItem =
-    MemberSearchResultItem(searchResultEntry.getAttributeValue("cn"), searchResultEntry.getDN)
+    MemberSearchResultItem(
+      searchResultEntry.getAttributeValue("sAMAccountName"),
+      searchResultEntry.getDN
+    )
 
   override def availableMembers(filter: String): F[MemberSearchResult] =
     lookupClient.search(filter).map { res =>
