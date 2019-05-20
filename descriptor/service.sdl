@@ -615,6 +615,14 @@
           "description": "Workspace template root directory",
           "required": "true",
           "type": "string"
+        },
+        {
+          "name": "heimdali.kafka.secureTopics",
+          "label": "Secure Kafka Topics",
+          "description": "Creates appropriate security groups and grants for Kafka topics",
+          "required": "false",
+          "type": "boolean",
+          "default": true
         }
       ],
       "configWriter": {
