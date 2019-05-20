@@ -195,7 +195,7 @@ package object config {
 
     import io.circe.generic.semiauto._
 
-    implicit val myBooleanDecoder: Decoder[Boolean] = Decoder.decodeBoolean.or(
+    implicit val booleanDecoder: Decoder[Boolean] = Decoder.decodeBoolean.or(
       Decoder.decodeString.emap {
         case "true" => Right(true)
         case "false" => Right(false)

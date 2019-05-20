@@ -8,3 +8,5 @@ build
 Heimdali.mwb.bak
 src/main/resources/krb5.conf
 *.log
+*.iml
+/system-tests/src/main/resources/*.properties

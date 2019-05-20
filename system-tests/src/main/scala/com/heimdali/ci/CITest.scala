@@ -1,14 +1,13 @@
 package com.heimdali.ci
 
-import cats.effect.{ExitCode, IO, IOApp}
-import cats.implicits._
 import com.heimdali.ci.provisioning.ProvisioningSpec
+import com.typesafe.scalalogging.LazyLogging
 
-object CITest extends IOApp {
+object CITest extends LazyLogging {
 
-  def run(args: List[String]): IO[ExitCode] = {
+  def main(args: Array[String]): Unit = {
     (new ProvisioningSpec).execute()
 
-    IO(println("CI testing")).as(ExitCode.Success)
+    logger.info("CI testing")
   }
 }
