@@ -195,7 +195,7 @@ class LDAPClientImpl[F[_] : Effect](ldapConfig: LDAPConfig, binding: LDAPConfig 
         100,
         0,
         false,
-        s"(&(sAMAccountName=*$filter*)(|(objectClass=user)(objectClass=group)))")
+        s"(&(sAMAccountName=$filter*)(|(objectClass=user)(objectClass=group)))")
       connectionPool
         .getConnection
         .search(request)
