@@ -27,25 +27,3 @@
   src: url('/fonts/PlayfairDisplay/PlayfairDisplay-Regular.ttf') format('ttf');
   font-weight: 400;
 }
-
-h1, h2 {
-  font-weight: 200;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-}
-
-tbody {
-  background-color: white;
-}
-
-.ant-tabs-tab {
-  color: #1DA57A !important;
-  font-size: 18px;
-  font-weight: 300 !important;
-  padding: 8px 0 4px 0 !important;
-  margin: 0 32px !important;
-}
-
-.ant-tabs-ink-bar {
-  background-color: #1DA57A;
-}

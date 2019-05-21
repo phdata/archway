@@ -22,7 +22,7 @@ const PoolsSummary = ({ workspace }: Props) => {
     <div style={{ textAlign: 'left', paddingLeft: 24, paddingRight: 24, paddingTop: 24 }}>
       <h2>Resource Pools</h2>
       {workspace.processing.map((pool: ResourcePool) => (
-        <div>
+        <div key={pool.id}>
           <h3>{pool.pool_name}</h3>
           <Table
             pagination={false}

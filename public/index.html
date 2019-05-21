@@ -8,11 +8,11 @@
       manifest.json provides metadata used when your web app is added to the
       homescreen on Android. See https://developers.google.com/web/fundamentals/engage-and-retain/web-app-manifest/
     -->
-    <link rel="manifest" href="%PUBLIC_URL%/manifest.json">
-    <link rel="shortcut icon" href="%PUBLIC_URL%/images/logo.png">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="shortcut icon" href="/images/logo.png">
     <script>
       window.config = {
-        baseUrl: "%REACT_APP_BASE_URL%"
+        baseUrl: "<%= htmlWebpackPlugin.options.baseUrl %>"
       };
     </script>
     <!--
@@ -25,17 +25,6 @@
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
     <title>Heimdali</title>
-    <style>
-      h1 {
-        font-size: 1.7rem;
-      }
-      h2 {
-        font-size: 1.5rem;
-      }
-      .ant-form-item-children > div {
-        display: inline;
-      }
-    </style>
   </head>
   <body>
     <noscript>

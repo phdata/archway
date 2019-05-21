@@ -24,7 +24,7 @@ const ApplicationsSummary = ({ workspace }: Props) => {
     <div style={{ textAlign: 'left', paddingLeft: 24, paddingRight: 24, paddingTop: 24 }}>
       <h2>Applications</h2>
       {workspace.applications.map((application: Application) => (
-        <div>
+        <div key={application.id}>
           <h3>{application.name}</h3>
           <Table
             pagination={false}

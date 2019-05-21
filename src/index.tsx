@@ -4,7 +4,8 @@ import * as ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import App from './containers/App';
 import store from './redux';
-import './index.css';
+import './fonts.css';
+import './index.less';
 
 const history = createHashHistory();
 

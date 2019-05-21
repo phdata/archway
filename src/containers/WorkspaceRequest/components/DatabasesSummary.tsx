@@ -32,7 +32,7 @@ const DatabasesSummary = ({ workspace }: Props) => {
     <div style={{ textAlign: 'left', paddingLeft: 24, paddingRight: 24, paddingTop: 24 }}>
       <h2>Databases</h2>
       {workspace.data.map((database: HiveAllocation) => (
-        <div>
+        <div key={database.id}>
           <h3>{database.name}</h3>
           <Table
             pagination={false}

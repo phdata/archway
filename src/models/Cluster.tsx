@@ -76,7 +76,7 @@ export abstract class ServiceLinks<T extends Statusable> {
 export class HueServiceLinks extends ServiceLinks<HueService> {
     public links: JSX.Element[] =
     this.service && this.service.load_balancer.map((location: WebLocation) => (
-      <a target="_blank" rel="noreferrer noopener" href={`https://${location.host}:${location.port}`}>Hue UI</a>
+      <a key={location.host} target="_blank" rel="noreferrer noopener" href={`https://${location.host}:${location.port}`}>Hue UI</a>
     ));
 }
 
