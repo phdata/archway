@@ -1,0 +1,127 @@
+import * as React from 'react';
+import { Card, Icon, List } from 'antd';
+import { Doughnut } from 'react-chartjs-2';
+import Colors from './Colors';
+import { Workspace, WorkspaceSearchResult } from '../models/Workspace';
+
+interface Props {
+    workspace: Workspace | WorkspaceSearchResult;
+    onSelected: (id: number) => void;
+}
+
+const WorkspaceListItem = ({ workspace, onSelected }: Props) => {
+  const {
+    id,
+    name,
+    status = '',
+    behavior,
+    summary,
+  } = workspace;
+
+  let total_disk_allocated_in_gb;
+  let total_disk_consumed_in_gb;
+  const workspaceSearchResult = workspace as WorkspaceSearchResult;
+  const workspaceData = (workspace as Workspace).data;
+  if (workspaceSearchResult.total_disk_allocated_in_gb) {
+    total_disk_allocated_in_gb = workspaceSearchResult.total_disk_allocated_in_gb;
+    total_disk_consumed_in_gb = workspaceSearchResult.total_disk_consumed_in_gb;
+  } else if (workspaceData) {
+    total_disk_allocated_in_gb = workspaceData.reduce((acc, cur) => acc + cur.size_in_gb, 0);
+    total_disk_consumed_in_gb = workspaceData.reduce((acc, cur) => acc + cur.consumed_in_gb, 0);
+  }
+
+  const onClick = () => onSelected(id);
+
+  const ApprovalMessage = () => {
+    let color = '';
+    switch (status.toLowerCase()) {
+      case 'pending':
+        color = '#CFB2B0';
+        break;
+      case 'rejected':
+        color = '#7B2D26';
+        break;
+      case 'approved':
+        color = '#0B7A75';
+        break;
+      default:
+    }
+
+    return (
+      <div
+        style={{
+            textTransform: 'uppercase',
+            fontSize: 10,
+            fontWeight: 300,
+            color,
+          }}>
+        {status}
+      </div>
+    );
+  };
+
+  const allocated = total_disk_allocated_in_gb || 1;
+  const consumed = total_disk_consumed_in_gb || 0;
+  const sizeData = {
+    labels: ['Available (GB)', 'Consumed (GB)'],
+    datasets: [
+      {
+        label: false,
+        data: [allocated - consumed, consumed],
+        backgroundColor: [
+          total_disk_consumed_in_gb ? Colors.Green.string() : Colors.LightGray.string(),
+          total_disk_consumed_in_gb ? Colors.Green.lighten(.5).string() : Colors.LightGray.lighten(.5).string(),
+        ],
+      },
+    ],
+  };
+
+  return (
+    <List.Item>
+      <Card
+        bordered={true}
+        onClick={onClick}
+        hoverable={true}
+        bodyStyle={{ padding: '20px' }}
+      >
+        <ApprovalMessage />
+        <div style={{ display: 'flex', alignItems: 'center', padding: '28px 0 40px' }}>
+          <div style={{ fontSize: '12px', color: 'rgba(0, 0, 0, 0.65)', flex: 7 }}>
+            <div style={{ fontSize: '22px', lineHeight: '30px', textTransform: 'uppercase' }}>
+              {name}
+            </div>
+            <div>{summary}</div>
+            <Icon type={behavior === 'simple' ? 'team' : 'deployment-unit'} />&nbsp;
+            <div style={{ textTransform: 'uppercase', display: 'inline-block' }}>{behavior} dataset</div>
+            <div style={{ color: '#0B7A75', lineHeight: '24px' }}>DETAILS ></div>
+          </div>
+          <div style={{ flex: 3 }}>
+            <div style={{
+              textAlign: 'center',
+              display: 'flex',
+              flexDirection: 'column',
+              flex: 1,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+              <Doughnut
+                height={52}
+                width={52}
+                // @ts-ignore
+                data={sizeData}
+                redraw={false}
+                // @ts-ignore
+                options={{ legend: false, title: false, maintainAspectRatio: false }}
+              />
+            </div>
+            <div style={{ letterSpacing: 1, textAlign: 'center' }}>
+              {`${(allocated - consumed).toFixed(1)}GB/${allocated}GB`}
+            </div>
+          </div>
+        </div>
+      </Card>
+    </List.Item>
+  );
+};
+
+export default WorkspaceListItem;

@@ -1,0 +1,51 @@
+@font-face {
+  font-family: FontAwesome;
+  src: url('/fonts/LineAwesomeline-awesome.woff') format('woff');
+}
+@font-face {
+  font-family: 'Roboto';
+  src: url('/fonts/Roboto/Roboto-Medium.ttf') format('ttf');
+  font-weight: 500;
+}
+@font-face {
+  font-family: 'Roboto';
+  src: url('/fonts/Roboto/Roboto-Regular.ttf') format('ttf');
+  font-weight: 400;
+}
+@font-face {
+  font-family: 'Roboto';
+  src: url('/fonts/Roboto/Roboto-Light.ttf') format('ttf');
+  font-weight: 300;
+}
+@font-face {
+  font-family: 'Roboto';
+  src: url('/fonts/Roboto/Roboto-Thin.ttf') format('ttf');
+  font-weight: 100;
+}
+@font-face {
+  font-family: 'Playfair Display';
+  src: url('/fonts/PlayfairDisplay/PlayfairDisplay-Regular.ttf') format('ttf');
+  font-weight: 400;
+}
+
+h1, h2 {
+  font-weight: 200;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+tbody {
+  background-color: white;
+}
+
+.ant-tabs-tab {
+  color: #1DA57A !important;
+  font-size: 18px;
+  font-weight: 300 !important;
+  padding: 8px 0 4px 0 !important;
+  margin: 0 32px !important;
+}
+
+.ant-tabs-ink-bar {
+  background-color: #1DA57A;
+}

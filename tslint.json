@@ -1,0 +1,21 @@
+{
+  "defaultSeverity": "warning",
+  "extends": ["tslint:recommended", "tslint-react", "tslint-config-prettier"],
+  "rules": {
+    "ordered-imports": false,
+    "object-literal-sort-keys": false,
+    "interface-name": false,
+    "jsx-no-lambda": false,
+    "jsx-boolean-value": false,
+    "quotemark": [true, "single", "jsx-double"],
+    "variable-name": [true, "check-format", "allow-pascal-case", "allow-snake-case"],
+    "max-classes-per-file": false
+  },
+  "linterOptions": {
+    "exclude": [
+      "config/**/*.js",
+      "node_modules/**/*.ts",
+      "coverage/lcov-report/*.js"
+    ]
+  }
+}

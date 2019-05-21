@@ -1,9 +1,8 @@
-image: openjdk:8-jdk
-
 pipelines:
   default:
     - step:
-        name: "Build and Test"
+        image: openjdk:8-jdk
+        name: "Build and Test API"
         services:
           - postgres
         caches:
@@ -13,6 +12,15 @@ pipelines:
           - './flyway/flyway migrate -url="jdbc:postgresql://localhost:5432/heimdali" -user=postgres -password=postgres'
           - ./sbt test
           - ./sbt it:test
+    - step:
+        image: node:9
+        name: "Build and Test UI"
+        caches:
+          - node
+        script:
+          - npm i -g typescript
+          - npm i
+          - npm run-script build
 
   tags:
     "*":
@@ -26,10 +34,22 @@ pipelines:
           script:
             - ./sbt "set every test in assembly := {}" api/assembly
       - step:
+          image: node:9
+          caches:
+            - node
+          artifacts:
+            - dist/**
+          script:
+            - npm i -g typescript
+            - npm i
+            - npm run-script build
+      - step:
           name: "Deploy"
           script:
             - mv api/target/scala-2.12/heimdali-api.jar heimdali-api_${BITBUCKET_TAG}.jar
             - curl -u$ARTIFACTORY_USER:$ARTIFACTORY_TOKEN -T heimdali-api_${BITBUCKET_TAG}.jar "https://repository.phdata.io/artifactory/binary-dev/com/heimdali/${BITBUCKET_TAG}/heimdali-api_${BITBUCKET_TAG}.jar"
+            - tar cvf heimdali-ui_${BITBUCKET_TAG}.tar dist
+            - curl -u$ARTIFACTORY_USER:$ARTIFACTORY_TOKEN -T heimdali-ui_${BITBUCKET_TAG}.tar "https://repository.phdata.io/artifactory/binary-dev/com/heimdali/${BITBUCKET_TAG}/heimdali-ui_${BITBUCKET_TAG}.tar"
 
 definitions:
   services:
