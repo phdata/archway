@@ -1,0 +1,12 @@
+{
+  "usr/lib/heimdali-ui": {
+    "user":  "heimdali_api",
+    "group": "heimdali_api",
+    "permissions": "0755"
+  },
+  "usr/lib/heimdali-ui/index.html": {
+    "user":  "heimdali_api",
+    "group": "heimdali_api",
+    "permissions": "0644"
+  }
+}
