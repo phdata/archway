@@ -1,0 +1,649 @@
+{
+  "name": "HEIMDALI",
+  "label": "Heimdali",
+  "description": "The Heimdali service",
+  "version": "1.3.13",
+  "runAs": {
+    "user": "heimdali_api",
+    "group": "heimdali_api",
+    "principal": "heimdali_api"
+  },
+  "rolesWithExternalLinks": [
+    "HEIMDALI_UI"
+  ],
+  "icon": "images/favicon_symbol.png",
+  "parcel": {
+    "requiredTags": [
+      "heimdali-api",
+      "heimdali-ui"
+    ]
+  },
+  "serviceDependencies": [
+    {
+      "name": "SENTRY",
+      "required": "true"
+    },
+    {
+      "name": "HIVE",
+      "required": "true"
+    },
+    {
+      "name": "IMPALA",
+      "required": "true"
+    }
+  ],
+  "parameters": [
+    {
+      "name": "heimdali.rest.port",
+      "label": "REST API Port",
+      "description": "Heimdali REST API Port",
+      "required": "true",
+      "type": "port",
+      "default": 8080,
+      "configurableInWizard": "true"
+    }
+  ],
+  "roles": [
+    {
+      "name": "HEIMDALI_UI",
+      "label": "Heimdali UI",
+      "pluralLabel": "Heimdali UIs",
+      "kerberosPrincipals": [
+        {
+          "name": "HEIMDALI_UI_PRINCIPAL",
+          "primary": "heimdali_ui",
+          "instance": "${host}"
+        }
+      ],
+      "externalLink": {
+        "name": "heimdali_web_ui",
+        "label": "Heimdali UI",
+        "url": "https://${host}:${heimdali_ui_port}"
+      },
+      "sslServer": {
+        "keystoreFormat": "pem",
+        "enabledConfigName": "heimdali_ui.ssl.enabled",
+        "certificateLocationConfigName": "heimdali_ui.ssl.certificate.location",
+        "privateKeyLocationConfigName": "heimdali_ui.ssl.privatekey.location",
+        "privateKeyPasswordConfigName": "heimdali_ui.ssl.privatekey.password"
+      },
+      "parameters": [
+        {
+          "name": "heimdali_ui_port",
+          "label": "REST UI Port",
+          "description": "Heimdali UI Port",
+          "required": "true",
+          "type": "port",
+          "default": 8181
+        }
+      ],
+      "startRunner": {
+        "program": "scripts/control.sh",
+        "args": [
+          "ui",
+          "start"
+        ],
+        "environmentVariables": {
+          "HEIMDALI_SSL_CERT_LOCATION": "${ssl_server_certificate_location}",
+          "HEIMDALI_SSL_KEY_LOCATION": "${ssl_server_privatekey_location}",
+          "HEIMDALI_SSL_KEY_PASSWORD": "${ssl_server_privatekey_password}",
+          "HEIMDALI_UI_PORT": "${heimdali_ui_port}",
+          "HEIMDALI_REST_PORT": "${heimdali.rest.port}"
+        }
+      }
+    },
+    {
+      "name": "HEIMDALI_SERVICE",
+      "label": "Heimdali API",
+      "pluralLabel": "Heimdali APIs",
+      "jvmBased" : "true",
+      "kerberosPrincipals": [
+        {
+          "name": "HEIMDALI_API_SERVICE_PRINCIPAL",
+          "primary": "heimdali_api",
+          "instance": "${host}"
+        }
+      ],
+      "logging": {
+        "dir": "/var/log/heimdali-api",
+        "filename": "heimdali-api.log",
+        "modifiable": true,
+        "configName": "log.dir",
+        "loggingType": "log4j"
+      },
+      "sslServer": {
+        "keyIdentifier": "heimdali_api",
+        "enabledConfigName": "heimdali_api.ssl.enabled",
+        "keystoreLocationConfigName": "heimdali.rest.sslStore",
+        "keystorePasswordConfigName": "heimdali.rest.sslStorePassword",
+        "keystoreKeyPasswordConfigName": "heimdali.rest.sslKeyManagerPassword",
+        "keyPasswordOptionality": "required"
+      },
+      "parameters": [
+        {
+          "name": "heimdali.rest.secret",
+          "label": "REST API Secret",
+          "description": "Heimdali REST API Secret for hashing tokens",
+          "required": "true",
+          "type": "string",
+          "configurableInWizard": "true"
+        },
+        {
+          "name": "heimdali.cluster.sessionRefresh",
+          "label": "Kerberos Refresh Interval",
+          "description": "Interval between refreshing kerberos cache (eg. 1h, 30m, etc)",
+          "required": "true",
+          "type": "string",
+          "default": "1h"
+        },
+        {
+          "name": "heimdali.cluster.url",
+          "label": "Cloudera Manager Base URL",
+          "description": "The base URL for CM API (eg. https://manager.valhalla.phdata.io:7183/api/v14)",
+          "required": "true",
+          "type": "string",
+          "configurableInWizard": "true"
+        },
+        {
+          "name": "heimdali.cluster.admin.username",
+          "label": "Heimdali CM User",
+          "description": "The username for the CM user",
+          "required": "true",
+          "type": "string",
+          "configurableInWizard": "true"
+        },
+        {
+          "name": "heimdali.cluster.admin.password",
+          "label": "Heimdali CM Password",
+          "description": "The password for the CM user",
+          "required": "true",
+          "type": "password",
+          "configurableInWizard": "true"
+        },
+        {
+          "name": "heimdali.cluster.name",
+          "label": "Cluster Name",
+          "description": "The name of the cluster to manage",
+          "required": "true",
+          "type": "string",
+          "configurableInWizard": "true"
+        },
+        {
+          "name": "heimdali.cluster.environment",
+          "label": "Cluster Environment",
+          "description": "The environment the cluster represents, such as dev, qa, prod, etc. Should be lowercase, no spaces or special chars",
+          "required": "true",
+          "type": "string",
+          "configurableInWizard": "true"
+        },
+        {
+          "name": "heimdali.cluster.hueOverride.host",
+          "label": "Hue Override Host",
+          "description": "Optionally specify the host for Hue's alternative location",
+          "required": "false",
+          "type": "string",
+          "configurableInWizard": "true"
+        },
+        {
+          "name": "heimdali.cluster.hueOverride.port",
+          "label": "Hue Override Port",
+          "description": "Optionally specify the port for Hue's alternative location",
+          "required": "false",
+          "type": "port",
+          "configurableInWizard": "true"
+        },
+        {
+          "name": "heimdali.cluster.beeswaxPort",
+          "label": "Impala Beeswax Port",
+          "description": "The port for Impala's beeswax port used by impala-shell",
+          "required": "false",
+          "type": "port",
+          "configurableInWizard": "true"
+        },
+        {
+          "name": "heimdali.cluster.hiveServer2Port",
+          "label": "Impala HiveServer2 Port",
+          "description": "The port for Impala's hiveserver2 port used by clients",
+          "required": "false",
+          "type": "port",
+          "configurableInWizard": "true"
+        },
+        {
+          "name": "heimdali.workspaces.user.root",
+          "label": "User HDFS Path",
+          "description": "The HDFS location for users",
+          "required": "true",
+          "type": "string",
+          "configurableInWizard": "true",
+          "default": "/user"
+        },
+        {
+          "name": "heimdali.workspaces.user.defaultSize",
+          "label": "Default User Workspace Quota Size",
+          "description": "The default size for user workspaces",
+          "required": "true",
+          "type": "long",
+          "unit": "gigabytes",
+          "configurableInWizard": "true",
+          "default": "250"
+        },
+        {
+          "name": "heimdali.workspaces.user.defaultCores",
+          "label": "Default User YARN Cores",
+          "description": "The default user workspace number of cores",
+          "type": "long",
+          "required": "true",
+          "configurableInWizard": "true",
+          "default": "5"
+        },
+        {
+          "name": "heimdali.workspaces.user.defaultMemory",
+          "label": "User Default YARN Memory",
+          "description": "Default amount of memory for user workspaces",
+          "type": "long",
+          "required": "true",
+          "configurableInWizard": "true",
+          "default": "20",
+          "unit": "gigabytes"
+        },
+        {
+          "name": "heimdali.workspaces.user.poolParents",
+          "label": "User YARN Pool Parents",
+          "description": "Default parent pools for user workspaces (eg. \"root\")",
+          "type": "string",
+          "required": "true",
+          "configurableInWizard": "true",
+          "default": "root.users"
+        },
+        {
+          "name": "heimdali.workspaces.sharedWorkspace.root",
+          "label": "Shared Workspace HDFS Path",
+          "description": "The HDFS location for shared workspaces",
+          "required": "true",
+          "type": "string",
+          "configurableInWizard": "true",
+          "default": "/data/shared_workspace"
+        },
+        {
+          "name": "heimdali.workspaces.sharedWorkspace.defaultSize",
+          "label": "Default Shared Workspace Quota Size",
+          "description": "The default size for shared workspaces",
+          "required": "true",
+          "type": "long",
+          "unit": "gigabytes",
+          "configurableInWizard": "true",
+          "default": "1000"
+        },
+        {
+          "name": "heimdali.workspaces.sharedWorkspace.defaultCores",
+          "label": "Default Shared YARN Cores",
+          "description": "The default shared workspace number of cores",
+          "type": "long",
+          "required": "true",
+          "configurableInWizard": "true",
+          "default": "25"
+        },
+        {
+          "name": "heimdali.workspaces.sharedWorkspace.defaultMemory",
+          "label": "Shared Default YARN Memory",
+          "description": "Default amount of memory for shared workspaces",
+          "type": "long",
+          "required": "true",
+          "configurableInWizard": "true",
+          "default": "100",
+          "unit": "gigabytes"
+        },
+        {
+          "name": "heimdali.workspaces.sharedWorkspace.poolParents",
+          "label": "Shared YARN Pool Parents",
+          "description": "Default parent pools for shared workspaces (eg. \"root\"",
+          "type": "string",
+          "required": "true",
+          "configurableInWizard": "true",
+          "default": "root"
+        },
+        {
+          "name": "heimdali.workspaces.dataset.root",
+          "label": "Governed Dataset HDFS Path",
+          "description": "The HDFS location for governed datasets",
+          "required": "true",
+          "type": "string",
+          "configurableInWizard": "true",
+          "default": "/data/governed"
+        },
+        {
+          "name": "heimdali.workspaces.dataset.defaultSize",
+          "label": "Default Governed Dataset Quota Size",
+          "description": "The default size for governed datasets",
+          "required": "true",
+          "type": "long",
+          "unit": "gigabytes",
+          "configurableInWizard": "true",
+          "default": "4000"
+        },
+        {
+          "name": "heimdali.workspaces.dataset.defaultCores",
+          "label": "Default Dataset YARN Cores",
+          "description": "The default dataset workspace number of cores",
+          "type": "long",
+          "required": "true",
+          "configurableInWizard": "true",
+          "default": "25"
+        },
+        {
+          "name": "heimdali.workspaces.dataset.defaultMemory",
+          "label": "Datase Default YARN Memory",
+          "description": "Default amount of memory for dataset workspaces",
+          "type": "long",
+          "required": "true",
+          "configurableInWizard": "true",
+          "default": "100",
+          "unit": "gigabytes"
+        },
+        {
+          "name": "heimdali.workspaces.dataset.poolParents",
+          "label": "Dataset YARN Pool Parents",
+          "description": "Default parent pools for dataset workspaces (eg. \"root\"",
+          "type": "string",
+          "required": "true",
+          "configurableInWizard": "true",
+          "default": "root"
+        },
+        {
+          "name": "heimdali.db.meta.driver",
+          "label": "db_driver",
+          "description": "The database driver to use for storage",
+          "required": "true",
+          "type": "string_enum",
+          "validValues": [
+            "org.postgresql.Driver",
+            "com.mysql.jdbc.Driver"
+          ],
+          "configurableInWizard": "true"
+        },
+        {
+          "name": "heimdali.db.meta.url",
+          "label": "JDBC string",
+          "description": "The JDBC string to the Heimdali database",
+          "required": "true",
+          "type": "string",
+          "configurableInWizard": "true"
+        },
+        {
+          "name": "heimdali.db.meta.username",
+          "label": "Database Username",
+          "description": "User with insert permissions",
+          "required": "true",
+          "type": "string",
+          "configurableInWizard": "true"
+        },
+        {
+          "name": "heimdali.db.meta.password",
+          "label": "Database Password",
+          "description": "Password for the user with insert permissions",
+          "required": "true",
+          "type": "password",
+          "configurableInWizard": "true"
+        },
+        {
+          "name": "heimdali.db.hive.url",
+          "label": "Hive URL",
+          "description": "The URL for connecting to Hive",
+          "required": "true",
+          "type": "string",
+          "configurableInWizard": "true"
+        },
+        {
+          "name": "heimdali.ldap.lookupBinding.server",
+          "label": "Lookup LDAP Host",
+          "description": "THe LDAP/AD host for users and groups",
+          "required": "true",
+          "type": "string",
+          "configurableInWizard": "true"
+        },
+        {
+          "name": "heimdali.ldap.lookupBinding.port",
+          "label": "Lookup LDAP Port",
+          "description": "The LDAP/AD port for users and groups",
+          "required": "true",
+          "type": "port",
+          "default": 389,
+          "configurableInWizard": "true"
+        },
+        {
+          "name": "heimdali.ldap.lookupBinding.bindDN",
+          "label": "Lookup LDAP Admin DN",
+          "description": "The DN for the admin user",
+          "required": "true",
+          "type": "string",
+          "configurableInWizard": "true"
+        },
+        {
+          "name": "heimdali.ldap.lookupBinding.bindPassword",
+          "label": "Lookup LDAP Admin Password",
+          "description": "The password for the admin user",
+          "required": "true",
+          "type": "password",
+          "configurableInWizard": "true"
+        },
+        {
+          "name": "heimdali.ldap.provisioningBinding.server",
+          "label": "Provisioning LDAP Host",
+          "description": "THe LDAP/AD host for users and groups",
+          "required": "true",
+          "type": "string",
+          "configurableInWizard": "true"
+        },
+        {
+          "name": "heimdali.ldap.provisioningBinding.port",
+          "label": "Provisioning LDAP Port",
+          "description": "The LDAP/AD port for users and groups",
+          "required": "true",
+          "type": "port",
+          "default": 389,
+          "configurableInWizard": "true"
+        },
+        {
+          "name": "heimdali.ldap.provisioningBinding.bindDN",
+          "label": "Provisioning LDAP Admin DN",
+          "description": "The DN for the admin user",
+          "required": "true",
+          "type": "string",
+          "configurableInWizard": "true"
+        },
+        {
+          "name": "heimdali.ldap.provisioningBinding.bindPassword",
+          "label": "Provisioning LDAP Admin Password",
+          "description": "The password for the admin user",
+          "required": "true",
+          "type": "password",
+          "configurableInWizard": "true"
+        },
+        {
+          "name": "heimdali.ldap.baseDN",
+          "label": "Base DN",
+          "description": "The base DN Heimdali will manage",
+          "required": "true",
+          "type": "string",
+          "configurableInWizard": "true"
+        },
+        {
+          "name": "heimdali.ldap.domain",
+          "label": "AD Realm",
+          "description": "The realm to use when looking up users (eg. EXAMPLE.COM)",
+          "required": "true",
+          "type": "string",
+          "configurableInWizard": "true"
+        },
+        {
+          "name": "heimdali.ldap.realm",
+          "label": "NIS Realm",
+          "description": "The NIS domain for Linux attributes (eg. \"example\")",
+          "required": "true",
+          "type": "string",
+          "configurableInWizard": "true"
+        },
+        {
+          "name": "heimdali.ldap.groupPath",
+          "label": "Group DN",
+          "description": "The LDAP location for groups",
+          "required": "true",
+          "type": "string",
+          "configurableInWizard": "true"
+        },
+        {
+          "name": "heimdali.approvers.notificationEmail",
+          "label": "Notification Email Address",
+          "description": "The email address to send notification emails to",
+          "required": "true",
+          "type": "string",
+          "configurableInWizard": "true"
+        },
+        {
+          "name": "heimdali.approvers.infrastructure",
+          "label": "Operations Group DN",
+          "description": "Group DN for Platform Operations",
+          "required": "true",
+          "type": "string",
+          "configurableInWizard": "true"
+        },
+        {
+          "name": "heimdali.approvers.risk",
+          "label": "Risk Group DN",
+          "description": "Group DN for Risk",
+          "required": "true",
+          "type": "string",
+          "configurableInWizard": "true"
+        },
+        {
+          "name": "heimdali.ui.url",
+          "label": "Heimdali UI",
+          "description": "Full url for Heimdali UI",
+          "required": "true",
+          "type": "string",
+          "configurableInWizard": "true"
+        },
+        {
+          "name": "heimdali.smtp.fromEmail",
+          "label": "Notification Email Sender",
+          "description": "The email address to send notification emails as",
+          "required": "true",
+          "type": "string",
+          "configurableInWizard": "true"
+        },
+        {
+          "name": "heimdali.smtp.host",
+          "label": "SMTP Host",
+          "description": "SMTP Host",
+          "required": "true",
+          "type": "string",
+          "configurableInWizard": "true"
+        },
+        {
+          "name": "heimdali.smtp.port",
+          "label": "SMTP Port",
+          "description": "SMTP Port",
+          "required": "true",
+          "type": "port",
+          "configurableInWizard": "true"
+        },
+        {
+          "name": "heimdali.smtp.ssl",
+          "label": "Enable SMTP SSL",
+          "description": "Enable SMTP SSL",
+          "required": "true",
+          "type": "boolean",
+          "configurableInWizard": "true"
+        },
+        {
+          "name": "heimdali.smtp.auth",
+          "label": "SMTP Auth",
+          "description": "SMTP Auth Required?",
+          "required": "true",
+          "type": "boolean",
+          "configurableInWizard": "true"
+        },
+        {
+          "name": "heimdali.smtp.user",
+          "label": "Username for SMTP",
+          "description": "Username for SMTP",
+          "required": "true",
+          "type": "string",
+          "configurableInWizard": "true"
+        },
+        {
+          "name": "heimdali.smtp.pass",
+          "label": "Password for SMTP",
+          "description": "Pssword for SMTP",
+          "required": "true",
+          "type": "password",
+          "configurableInWizard": "true"
+        },
+        {
+          "name": "heimdali.templates.ldapGroupGenerator",
+          "label": "Group Generator Class",
+          "description": "Full class name reference for the ldap generator to use.",
+          "required": "false",
+          "type": "string",
+          "configurableInWizard": "true"
+        },
+        {
+          "name": "heimdali.kafka.zookeeperConnect",
+          "label": "Kafka Zookeeper Connect String",
+          "description": "The Kakfa zookeeper quorum connect string.",
+          "required": "true",
+          "type": "string",
+          "configurableInWizard": "true"
+        },
+        {
+          "name": "heimdali.java.truststore.location",
+          "label": "Java truststore location",
+          "description": "Java truststore location",
+          "required": "false",
+          "type": "string"
+        },
+        {
+          "name": "heimdali.java.truststore.password",
+          "label": "Java truststore password",
+          "description": "Password for the Java truststore",
+          "required": "false",
+          "type": "password"
+        },
+        {
+          "name": "heimdali.templates.templateRoot",
+          "label": "Workspace template root directory",
+          "description": "Workspace template root directory",
+          "required": "true",
+          "type": "string"
+        },
+        {
+          "name": "heimdali.kafka.secureTopics",
+          "label": "Secure Kafka Topics",
+          "description": "Creates appropriate security groups and grants for Kafka topics",
+          "required": "false",
+          "type": "boolean",
+          "default": true
+        }
+      ],
+      "configWriter": {
+        "generators": [
+          {
+            "filename": "generated.conf",
+            "configFormat": "properties"
+          }
+        ]
+      },
+      "startRunner": {
+        "program": "scripts/control.sh",
+        "args": [
+          "api",
+          "start"
+        ],
+        "environmentVariables": {
+          "JAVA_TRUST_STORE_LOCATION": "${heimdali.java.truststore.location}",
+          "JAVA_TRUST_STORE_PASSWORD": "${heimdali.java.truststore.password}"
+        }
+      }
+    }
+  ]
+}
