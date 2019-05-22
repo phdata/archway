@@ -1,4 +1,38 @@
 # Heimdali
+
+## Running Locally
+*NOTE* Make sure you have `npm` and IntelliJ installed.
+
+### Configuration
+In order to run the API locally, you'll need to prepare your development environment.
+
+* Copy `api/src/main/resources/application.local.conf` to `api/src/main/resources/application.conf`
+* Update `api/src/main/resources/application.conf` by adding the following lines and specify passwords (you can obtain these passwords by asking in #heimdali-dev):
+
+```
+heimdali.cluster.admin.password: ""
+heimdali.db.meta.password: ""
+heimdali.ldap.provisioningBinding.bindPassword: ""
+heimdali.ldap.lookupBinding.bindPassword: ""
+heimdali.rest.sslKeyManagerPassword: ""
+heimdali.rest.sslStorePassword: ""
+heimdali.smtp.pass: ""
+```
+
+### Run The App (API-focused development)
+* Open the project in IntelliJ
+* Open `com.heimdali.Server` and click the green "play" button next to the `object` definition
+* Open the "Terminal" tab
+* Run `npm i` which will install the npm dependencies
+* Run `npm start` which will spin up the UI
+
+### Run The App (UI-focused development)
+* Open the project in VS Code or your preferred editor
+* In the terminal tab, run `./sbt compile "runMain com.heimdali.Server"`
+* In another terminal tab, run `npm i` which will install the npm dependencies
+* Run `npm start` which will spin up the UI
+* Once the UI has started you can start editing and the UI will refresh based on your changes
+
 ## Heimdali API
 Heimdali API is the REST interface primally enabling functionality to it's UI counterpart but also a means for automation.
 
@@ -55,48 +89,6 @@ Heimdali UI is a web application for managing resources.
 * [Lodash](https://lodash.com/) for using various utility functions.
 * [Node](https://nodejs.org) Version 8.x
 * [NPM](https://npmjs.com) Version 5.x
-
-
-### Getting Started
-In order to get started developing, you'll need to do a few things first.
-
-1. Install all of the `node_modules` required for the package. Depending on your computer's configuration, you may need to prefix this command with a `sudo`.
-
-```
-npm install
-```
-
-2. Make sure you are using correct API endpoint url. Replace the base url if needed.
-
-```
-window.config = {
-  baseUrl: "http://master1.jotunn.io:8080" //%%BASE_URL%%"
-};
-```
-
-3. Lastly, run the start command to get the project off the ground. This command will build your JS files using the Webpack `dev-server`.
-
-```
-npm start
-```
-
-4. Head over to [http://localhost:3000](http://localhost:3000) to see your app live!
-
-5. Run tests.
-
-```
-npm run test
-```
-when you need to update snapshots, you need to add `-u` flag.
-```
-npm run test -u
-```
-
-6. Create a production-ready build.
-
-```
-npm run build
-```
 
 ### File Structure
 
