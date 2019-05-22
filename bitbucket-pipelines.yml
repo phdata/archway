@@ -1,8 +1,8 @@
 pipelines:
   default:
     - step:
-        image: openjdk:8-jdk
         name: "Build and Test API"
+        image: openjdk:8-jdk
         services:
           - postgres
         caches:
@@ -13,8 +13,8 @@ pipelines:
           - ./sbt test
           - ./sbt it:test
     - step:
-        image: node:9
         name: "Build and Test UI"
+        image: node:9
         caches:
           - node
         script:
@@ -22,23 +22,19 @@ pipelines:
           - npm i
           - npm run-script prepare
     - step:
+        name: "Validate Parcel and CSD"
         image: jotunn/cm-validator
-        name: "Validate Parcel"
         script:
           - java -jar /usr/src/validator.jar -p $PWD/cloudera-integration/parcel/heimdali-meta/parcel.json
           - java -jar /usr/src/validator.jar -r $PWD/cloudera-integration/parcel/heimdali-meta/permissions.json
           - java -jar /usr/src/validator.jar -p $PWD/cloudera-integration/parcel/custom-shell-meta/parcel.json
-    - step:
-        image: jotunn/cm-validator
-        name: "Validate CSD"
-        script:
           - java -jar /usr/src/validator.jar -s $PWD/descriptor/service.sdl
 
   tags:
     "*":
       - step:
-          image: openjdk:8-jdk
           name: "Package API"
+          image: openjdk:8-jdk
           caches:
             - sbt
             - ivy2
@@ -58,18 +54,11 @@ pipelines:
             - npm i
             - npm run-script prepare
       - step:
-        image: openjdk:8-jdk
-          name: "Build Parcel"
+          name: "Build Parcel and CSD"
+          image: jotunn/cm-validator
           script:
             - ./publish.sh prepare heimdali
             - ./publish.sh ship
-      - step:
-        image: openjdk:8-jdk
-          name: "Build CSD"
-          script:
-            - sed -i -e "s/0.1.0/${BITBUCKET_TAG}/g" descriptor/service.sdl
-            - jar cvf HEIMDALI-${BITBUCKET_TAG}.jar `find . -mindepth 1 -not -path "./.git*"`
-            - curl -u$ARTIFACTORY_USER:$ARTIFACTORY_TOKEN -T HEIMDALI-${BITBUCKET_TAG}.jar https://repository.phdata.io/artifactory/parcels-release/com/heimdali/${BITBUCKET_TAG}/HEIMDALI-${BITBUCKET_TAG}.jar
 
 definitions:
   services:
