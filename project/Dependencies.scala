@@ -91,8 +91,8 @@ object Dependencies {
       ExclusionRule("org.apache.hadoop", "hadoop-yarn-common"),
       ExclusionRule("org.slf4j")
     ),
-    "org.apache.hadoop" % "hadoop-client" % hadoopVersion % "provided",
-    "org.apache.hive" % "hive-jdbc" % hiveVersion % "provided",
+    "org.apache.hadoop" % "hadoop-client" % hadoopVersion, // % "provided",
+    "org.apache.hive" % "hive-jdbc" % hiveVersion, // % "provided",
     "org.apache.kafka" %% "kafka" % "0.10.1.1" excludeAll ExclusionRule(organization = "org.slf4j"),
     "org.apache.hadoop" % "hadoop-hdfs" % hadoopVersion % "test" classifier "" classifier "tests",
     "org.apache.hadoop" % "hadoop-common" % hadoopVersion % "test" classifier "" classifier "tests",
@@ -117,7 +117,7 @@ object Dependencies {
   )
 
   val bouncy = Seq(
-    "org.bouncycastle" % "bcpkix-jdk15on" % "1.57" % "provided"
+    "org.bouncycastle" % "bcpkix-jdk15on" % "1.57", // % "provided"
   )
 
   val logging = Seq(
@@ -131,8 +131,8 @@ object Dependencies {
 
   val dbCore = Seq(
     "org.flywaydb" % "flyway-core" % "4.2.0",
-    "postgresql" % "postgresql" % "9.0-801.jdbc4" % "provided",
-    "mysql" % "mysql-connector-java" % "6.0.6" % "provided"
+    "postgresql" % "postgresql" % "9.0-801.jdbc4", // % "provided",
+    "mysql" % "mysql-connector-java" % "6.0.6", // % "provided"
   )
 
   val iniVersion = "0.5.1"

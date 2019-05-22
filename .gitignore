@@ -6,10 +6,10 @@ src/main/resources/log4j.xml
 build
 **/.DS_Store
 Heimdali.mwb.bak
-src/main/resources/krb5.conf
 *.log
-src/main/resources/application.conf
 *.iml
+/api/src/main/resources/krb5.conf
+/api/src/main/resources/application.conf
 /system-tests/src/main/resources/*.properties
 
 # See https://help.github.com/ignore-files/ for more about ignoring files.
@@ -33,3 +33,6 @@ src/main/resources/application.conf
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+/ui/**/*.js
+/ui/**/*.map

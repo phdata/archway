@@ -6,7 +6,7 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 module.exports = {
   mode: 'production',
-  context: resolve(__dirname, 'src'),
+  context: resolve(__dirname, 'ui'),
   entry: './index.tsx',
   output: {
     filename: 'hotloader.js',
@@ -37,7 +37,8 @@ module.exports = {
               }
             },
           },
-        ]
+        ],
+        exclude: [resolve(__dirname, "node_modules")],
       },
       { enforce: "pre", test: /\.js$/, loader: "source-map-loader" },
       {

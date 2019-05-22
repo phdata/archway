@@ -7,7 +7,7 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 module.exports = {
   mode: 'development',
-  context: resolve(__dirname, 'src'),
+  context: resolve(__dirname, 'ui'),
   entry: [
     'webpack-dev-server/client?http://localhost:3000',
     // bundle the client for webpack-dev-server
@@ -111,7 +111,7 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: resolve(__dirname, 'public/index.html'),
       inject: 'body',
-      baseUrl: process.env.BASE_URL || "http://master1.jotunn.io:8080"
+      baseUrl: process.env.BASE_URL || "https://localhost:8080"
     }),
     // inject <script> in html file. 
     new OpenBrowserPlugin({ url: 'http://localhost:3000' }),

@@ -21,6 +21,18 @@ pipelines:
           - npm i -g typescript
           - npm i
           - npm run-script prepare
+    - step:
+        image: jotunn/cm-validator
+        name: "Validate Parcel"
+        script:
+          - java -jar /usr/src/validator.jar -p $PWD/cloudera-integration/parcel/heimdali-meta/parcel.json
+          - java -jar /usr/src/validator.jar -r $PWD/cloudera-integration/parcel/heimdali-meta/permissions.json
+          - java -jar /usr/src/validator.jar -p $PWD/cloudera-integration/parcel/custom-shell-meta/parcel.json
+    - step:
+        image: jotunn/cm-validator
+        name: "Validate CSD"
+        script:
+          - java -jar /usr/src/validator.jar -s $PWD/descriptor/service.sdl
 
   tags:
     "*":
@@ -35,7 +47,7 @@ pipelines:
           script:
             - ./sbt "set every test in assembly := {}" api/assembly
       - step:
-          name: "Package API"
+          name: "Package UI"
           image: node:9
           caches:
             - node
@@ -47,12 +59,17 @@ pipelines:
             - npm run-script prepare
       - step:
         image: openjdk:8-jdk
-          name: "Deploy"
+          name: "Build Parcel"
           script:
-            - mv api/target/scala-2.12/heimdali-api.jar heimdali-api_${BITBUCKET_TAG}.jar
-            - curl -u$ARTIFACTORY_USER:$ARTIFACTORY_TOKEN -T heimdali-api_${BITBUCKET_TAG}.jar "https://repository.phdata.io/artifactory/binary-dev/com/heimdali/${BITBUCKET_TAG}/heimdali-api_${BITBUCKET_TAG}.jar"
-            - tar cvf heimdali-ui_${BITBUCKET_TAG}.tar dist
-            - curl -u$ARTIFACTORY_USER:$ARTIFACTORY_TOKEN -T heimdali-ui_${BITBUCKET_TAG}.tar "https://repository.phdata.io/artifactory/binary-dev/com/heimdali/${BITBUCKET_TAG}/heimdali-ui_${BITBUCKET_TAG}.tar"
+            - ./publish.sh prepare heimdali
+            - ./publish.sh ship
+      - step:
+        image: openjdk:8-jdk
+          name: "Build CSD"
+          script:
+            - sed -i -e "s/0.1.0/${BITBUCKET_TAG}/g" descriptor/service.sdl
+            - jar cvf HEIMDALI-${BITBUCKET_TAG}.jar `find . -mindepth 1 -not -path "./.git*"`
+            - curl -u$ARTIFACTORY_USER:$ARTIFACTORY_TOKEN -T HEIMDALI-${BITBUCKET_TAG}.jar https://repository.phdata.io/artifactory/parcels-release/com/heimdali/${BITBUCKET_TAG}/HEIMDALI-${BITBUCKET_TAG}.jar
 
 definitions:
   services:
