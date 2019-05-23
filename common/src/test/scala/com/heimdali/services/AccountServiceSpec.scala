@@ -56,7 +56,9 @@ class AccountServiceSpec extends FlatSpec with MockFactory with Matchers {
 
   it should "generate a token" in new Context {
     val newToken = accountService.refresh(infraApproverUser).unsafeRunSync()
+    println(newToken.accessToken)
     val accessToken = JwtCirce.decodeJson(newToken.accessToken, secret, Seq(JwtAlgorithm.HS512))
+    println(accessToken)
     accessToken.toOption shouldBe defined
     accessToken.get shouldBe Json.obj(
       "name" -> infraApproverUser.name.asJson,

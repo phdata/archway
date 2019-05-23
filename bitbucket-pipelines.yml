@@ -57,7 +57,9 @@ pipelines:
           name: "Build Parcel and CSD"
           image: jotunn/cm-validator
           script:
-            - ./publish.sh prepare heimdali
+            - ./publish.sh parcel heimdali
+            - ./publish.sh manifest
+            - ./publish.sh csd
             - ./publish.sh ship
 
 definitions:

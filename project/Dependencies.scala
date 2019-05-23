@@ -69,7 +69,7 @@ object Dependencies {
     "io.circe" %% "circe-config" % circeConfigVersion
   )
 
-  val jwtVersion = "2.0.0"
+  val jwtVersion = "2.1.0"
   val jwt = Seq(
     ("com.pauldijou" %% "jwt-core" % jwtVersion)
       .exclude("org.bouncycastle", "bcpkix-jdk15on"),

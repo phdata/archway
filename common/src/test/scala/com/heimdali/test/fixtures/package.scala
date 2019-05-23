@@ -7,6 +7,7 @@ import com.heimdali.clients.CMClient
 import com.heimdali.config.AppConfig
 import com.heimdali.models.{Manager, ReadOnly, _}
 import com.heimdali.services.{CDH, Cluster, ClusterApp}
+import com.typesafe.config.{Config, ConfigFactory}
 import io.circe._
 import io.circe.parser._
 import org.http4s.HttpRoutes
@@ -65,7 +66,8 @@ package object fixtures {
   val cluster = Cluster("cluster", "Cluster", "", List(yarnApp), CDH(""), "GOOD_HEALTH")
 
   def approval(instant: Instant = testTimer.instant) = Approval(Risk, standardUsername, instant)
-  val Right(appConfig) = io.circe.config.parser.decodePath[AppConfig]("heimdali")
+  val config = ConfigFactory.parseResources("application.test.conf")
+  val Right(appConfig) = io.circe.config.parser.decodePath[AppConfig](config.resolve(), "heimdali")
 
   def defaultLDAPAttributes(dn: String, cn: String): List[(String, String)] =
     List(

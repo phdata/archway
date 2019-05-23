@@ -10,6 +10,7 @@ Heimdali.mwb.bak
 *.iml
 /api/src/main/resources/krb5.conf
 /api/src/main/resources/application.conf
+/api/src/main/resources/runtime.conf
 /system-tests/src/main/resources/*.properties
 
 # See https://help.github.com/ignore-files/ for more about ignoring files.

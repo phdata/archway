@@ -7,6 +7,7 @@
 In order to run the API locally, you'll need to prepare your development environment.
 
 * Copy `api/src/main/resources/application.local.conf` to `api/src/main/resources/application.conf`
+* Copy `api/src/main/resources/runtime.local.conf` to `api/src/main/resources/runtime.conf`
 * Update `api/src/main/resources/application.conf` by adding the following lines and specify passwords (you can obtain these passwords by asking in #heimdali-dev):
 
 ```
