@@ -28,7 +28,7 @@ pipelines:
           - java -jar /usr/src/validator.jar -p $PWD/cloudera-integration/parcel/heimdali-meta/parcel.json
           - java -jar /usr/src/validator.jar -r $PWD/cloudera-integration/parcel/heimdali-meta/permissions.json
           - java -jar /usr/src/validator.jar -p $PWD/cloudera-integration/parcel/custom-shell-meta/parcel.json
-          - java -jar /usr/src/validator.jar -s $PWD/descriptor/service.sdl
+          - java -jar /usr/src/validator.jar -s $PWD/cloudera-integration/csd/descriptor/service.sdl
 
   tags:
     "*":
