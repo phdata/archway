@@ -60,13 +60,11 @@ class WorkspaceServiceIntegrationSpec extends FlatSpec with HiveTest with DBTest
 
     def createService(implicit timer: Timer[IO]): Resource[IO, (WorkspaceService[IO], LDAPGroupGenerator[IO])] =
       for {
-        config <- Resource.liftF(io.circe.config.parser.decodePathF[IO, AppConfig]("heimdali"))
-
         httpEC <- ExecutionContexts.fixedThreadPool[IO](10)
         dbConnectionEC <- ExecutionContexts.fixedThreadPool[IO](10)
         dbTransactionEC <- ExecutionContexts.cachedThreadPool[IO]
         emailEC <- ExecutionContexts.fixedThreadPool[IO](10)
-        provisionEC <- ExecutionContexts.fixedThreadPool[IO](config.provisioning.threadPoolSize)
+        provisionEC <- ExecutionContexts.fixedThreadPool[IO](appConfig.provisioning.threadPoolSize)
         startupEC <- ExecutionContexts.fixedThreadPool[IO](1)
 
         h4Client = BlazeClientBuilder[IO](httpEC)
@@ -76,21 +74,21 @@ class WorkspaceServiceIntegrationSpec extends FlatSpec with HiveTest with DBTest
 
         fileReader = new DefaultFileReader[IO]()
 
-        httpClient = new CMClient[IO](h4Client, config.cluster)
+        httpClient = new CMClient[IO](h4Client, appConfig.cluster)
 
         cacheService = new TimedCacheService()
         clusterCache <- Resource.liftF(cacheService.initial[IO, Seq[Cluster]])
-        clusterService = new CDHClusterService[IO](httpClient, config.cluster, hadoopConfiguration, cacheService, clusterCache)
+        clusterService = new CDHClusterService[IO](httpClient, appConfig.cluster, hadoopConfiguration, cacheService, clusterCache)
 
-        loginContextProvider = new UGILoginContextProvider(config)
+        loginContextProvider = new UGILoginContextProvider(appConfig)
         sentryServiceClient = SentryGenericServiceClientFactory.create(hadoopConfiguration)
         sentryClient = new SentryClientImpl[IO](hiveTransactor, sentryServiceClient, loginContextProvider)
         hiveClient = new HiveClientImpl[IO](loginContextProvider, hiveTransactor)
-        ldapClient = new LDAPClientImpl[IO](config.ldap, _.provisioningBinding)
+        ldapClient = new LDAPClientImpl[IO](appConfig.ldap, _.provisioningBinding)
         hdfsClient = new HDFSClientImpl[IO](hadoopConfiguration, loginContextProvider)
-        yarnClient = new CDHYarnClient[IO](httpClient, config.cluster, clusterService)
-        kafkaClient = new KafkaClientImpl[IO](config)
-        emailClient = new EmailClientImpl[IO](config, emailEC)
+        yarnClient = new CDHYarnClient[IO](httpClient, appConfig.cluster, clusterService)
+        kafkaClient = new KafkaClientImpl[IO](appConfig)
+        emailClient = new EmailClientImpl[IO](appConfig, emailEC)
 
         complianceRepository = new ComplianceRepositoryImpl
         ldapRepository = new LDAPRepositoryImpl
@@ -105,13 +103,13 @@ class WorkspaceServiceIntegrationSpec extends FlatSpec with HiveTest with DBTest
         applicationRepository = new ApplicationRepositoryImpl
         configRepository = new ConfigRepositoryImpl
 
-        context = AppContext[IO](config, sentryClient, hiveClient, ldapClient, hdfsClient, yarnClient, kafkaClient, transactor, hiveDatabaseRepository, hiveGrantRepository, ldapRepository, memberRepository, yarnRepository, complianceRepository, workspaceRepository, topicRepository, topicGrantRepository, applicationRepository, approvalRepository)
+        context = AppContext[IO](appConfig, sentryClient, hiveClient, ldapClient, hdfsClient, yarnClient, kafkaClient, transactor, hiveDatabaseRepository, hiveGrantRepository, ldapRepository, memberRepository, yarnRepository, complianceRepository, workspaceRepository, topicRepository, topicGrantRepository, applicationRepository, approvalRepository)
 
-        configService = new DBConfigService[IO](config, configRepository, transactor)
+        configService = new DBConfigService[IO](appConfig, configRepository, transactor)
 
-        ldapGroupGenerator = LDAPGroupGenerator.instance(config, configService, config.templates.ldapGroupGenerator)
-        applicationGenerator = ApplicationGenerator.instance(config, ldapGroupGenerator, config.templates.applicationGenerator)
-        topicGenerator = TopicGenerator.instance(config, ldapGroupGenerator, config.templates.topicGenerator)
+        ldapGroupGenerator = LDAPGroupGenerator.instance(appConfig, configService, appConfig.templates.ldapGroupGenerator)
+        applicationGenerator = ApplicationGenerator.instance(appConfig, ldapGroupGenerator, appConfig.templates.applicationGenerator)
+        topicGenerator = TopicGenerator.instance(appConfig, ldapGroupGenerator, appConfig.templates.topicGenerator)
         templateService = new JSONTemplateService[IO](appConfig, configService)
 
         workspaceService = new WorkspaceServiceImpl[IO](null, context)
