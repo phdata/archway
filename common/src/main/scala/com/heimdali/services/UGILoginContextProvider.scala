@@ -36,7 +36,7 @@ class UGILoginContextProvider(appConfig: AppConfig)
 
   override def kinit[F[_] : Sync](): F[Unit] =
     Sync[F].delay {
-      logger.info("kiniting api service principal")
+      logger.info("kiniting api service principal ({})", appConfig.rest.principal)
       try {
         UserGroupInformation.loginUserFromKeytab(appConfig.rest.principal, appConfig.rest.keytab)
         ()
