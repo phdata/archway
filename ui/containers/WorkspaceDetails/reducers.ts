@@ -26,7 +26,10 @@ import {
   REFRESH_HIVE_TABLES_SUCCESS,
   REFRESH_HIVE_TABLES_FAILURE,
 } from './actions';
-import { Member } from '../../models/Workspace';
+
+import { 
+  Member,
+} from '../../models/Workspace';
 
 const initialState = fromJS({
   fetching: false,

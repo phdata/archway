@@ -7,6 +7,7 @@ import risk from '../containers/RiskListing/reducers';
 import operations from '../containers/OpsListing/reducers';
 import request from '../containers/WorkspaceRequest/reducers';
 import { reducer as form } from 'redux-form/immutable';
+import home from '../containers/Home/reducers';
 
 const reducers = combineReducers<any>({
   login,
@@ -17,6 +18,7 @@ const reducers = combineReducers<any>({
   cluster,
   details,
   form,
+  home,
 });
 
 export default reducers;

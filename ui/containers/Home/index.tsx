@@ -2,7 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import * as actions from '../Login/actions';
-import { refreshRecentWorkspaces } from '../WorkspaceListing/actions';
+import { refreshRecentWorkspaces } from './actions';
 import { Workspace } from '../../models/Workspace';
 import {
   Cluster,

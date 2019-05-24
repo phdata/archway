@@ -39,7 +39,6 @@ import {
 } from '../../models/Workspace';
 import * as actions from './actions';
 import * as selectors from './selectors';
-import { workspaceViewed } from '../WorkspaceListing/actions';
 
 interface DetailsRouteProps {
   id: any;
@@ -59,7 +58,6 @@ interface Props extends RouteComponentProps<DetailsRouteProps> {
     liasion?: Member;
     members?: Member[];
 
-    workspaceViewed: (w: Workspace) => void;
     clearDetails: () => void;
     getWorkspaceDetails: (id: number) => void;
     selectApplication: (application: Application) => void;
@@ -122,9 +120,6 @@ class WorkspaceDetails extends React.PureComponent<Props> {
       if (newInfraStatus && (newInfraStatus.success === true || newInfraStatus.success === false)) {
         this.showApprovalNotification('Infra', newInfraStatus.error);
       }
-    }
-    if (!this.props.workspace && nextProps.workspace) {
-      this.props.workspaceViewed(nextProps.workspace);
     }
   }
 
@@ -343,7 +338,6 @@ const mapStateToProps = () =>
   });
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
-  workspaceViewed: (w: Workspace) => dispatch(workspaceViewed(w)),
   clearDetails: () => dispatch(actions.clearDetails()),
   getWorkspaceDetails: (id: number) => dispatch(actions.getWorkspace(id)),
 

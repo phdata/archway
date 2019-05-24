@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect';
-import { authSelector, clusterSelector, workspaceListSelector } from '../../redux/selectors';
+import { authSelector, clusterSelector, homeSelector } from '../../redux/selectors';
 import { Cluster } from '../../models/Cluster';
 import { Workspace } from '../../models/Workspace';
 
@@ -14,7 +14,7 @@ export const getPersonalWorkspace = () => createSelector(
 );
 
 export const getRecentWorkspaces = () => createSelector(
-  workspaceListSelector,
+  homeSelector,
   (listState) => listState.get('recent') && listState.get('recent').toJS() as Workspace[],
 );
 

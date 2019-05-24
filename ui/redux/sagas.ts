@@ -6,6 +6,7 @@ import listing from '../containers/WorkspaceListing/sagas';
 import risk from '../containers/RiskListing/sagas';
 import operations from '../containers/OpsListing/sagas';
 import request from '../containers/WorkspaceRequest/sagas';
+import home from '../containers/Home/sagas';
 
 const sagas = [
   login,
@@ -15,6 +16,7 @@ const sagas = [
   listing,
   risk,
   operations,
+  home,
 ];
 
 export const CANCEL_SAGAS_HMR = 'CANCEL_SAGAS_HMR';

@@ -12,12 +12,12 @@ import {
 import * as Api from '../../../service/api';
 import {
     simpleMemberRequested,
-    tokenExtractor,
     detailExtractor,
     memberRequestFormExtractor,
     removeMemberRequested,
 } from '../sagas';
 import { Workspace } from '../../../models/Workspace';
+import { TOKEN_EXTRACTOR } from '../../../constants';
 
 const details: Workspace = {
     id: 1,
@@ -88,7 +88,7 @@ describe('new member flow', () => {
 
     test('add user success', () => {
         const clone = generator.clone();
-        expect(clone.next().value).toEqual(select(tokenExtractor));
+        expect(clone.next().value).toEqual(select(TOKEN_EXTRACTOR));
         expect(clone.next('abc').value).toEqual(select(detailExtractor));
         expect(clone.next(Map(details)).value).toEqual(select(memberRequestFormExtractor));
         expect(clone.next(Map({ username: 'username', role: 'readonly' })).value)
@@ -109,7 +109,7 @@ describe('remove member flow', () => {
 
     test('remove member success', () => {
         const clone = generator.clone();
-        expect(clone.next().value).toEqual(select(tokenExtractor));
+        expect(clone.next().value).toEqual(select(TOKEN_EXTRACTOR));
         expect(clone.next('abc').value).toEqual(select(detailExtractor));
         expect(clone.next(Map(details)).value)
             .toEqual(all([call(Api.removeWorkspaceMember, 'abc', 1, 'data', 2, 'readonly', 'username')]));

@@ -38,14 +38,22 @@ import {
   setActiveModal,
 } from './actions';
 
-export const tokenExtractor = (s: any) => s.getIn(['login', 'token']);
+import {
+  RECENT_WORKSPACES_KEY,
+  TOKEN_EXTRACTOR,
+} from '../../constants'
+
+import { 
+  Workspace,
+} from '../../models/Workspace';
+
 export const detailExtractor = (s: any) => s.getIn(['details', 'details']);
 export const memberRequestFormExtractor = (s: any) => s.getIn(['form', 'simpleMemberRequest', 'values']);
 export const topicMemberRequestFormExtractor = (s: any) => s.getIn(['form', 'simpleTopicMemberRequest', 'values']);
 export const activeTopicExtractor = (s: any) => s.getIn(['details', 'activeTopic']);
 
 function* fetchUserSuggestions({ filter }: { type: string, filter: string }) {
-  const token = yield select((s: any) => s.get('login').get('token'));
+  const token = yield select(TOKEN_EXTRACTOR);
   try {
     const suggestions = yield call(Api.getUserSuggestions, token, filter);
     yield put(setUserSuggestions(filter, suggestions));
@@ -59,9 +67,16 @@ function* userSuggestionsRequest() {
 }
 
 function* fetchWorkspace({ id }: { type: string, id: number }) {
-  const token = yield select((s: any) => s.get('login').get('token'));
+  const token = yield select(TOKEN_EXTRACTOR);
+  const recent = (yield select((s: any) => s.getIn(['home', 'recent']))).toJS();
   const workspace = yield call(Api.getWorkspace, token, id);
   yield put(setWorkspace(workspace));
+
+  const recentWorkspaces = [
+    workspace,
+    ...recent.filter((w: Workspace) => w.id !== workspace.id),
+  ];
+  localStorage.setItem(RECENT_WORKSPACES_KEY, JSON.stringify(recentWorkspaces.slice(0, 2)));
 
   const { members, resourcePools, infos } = yield all({
     members: call(Api.getMembers, token, id),
@@ -88,7 +103,7 @@ function* workspaceRequest() {
 }
 
 function* approvalRequested({ approvalType }: ApprovalRequestAction) {
-  const token = yield select((s: any) => s.get('login').get('token'));
+  const token = yield select(TOKEN_EXTRACTOR);
   const { id } = yield select((s: any) => s.get('details').get('details').toJS());
   try {
     const approval = yield call(Api.approveWorkspace, token, id, approvalType);
@@ -103,7 +118,7 @@ function* approvalRequestedListener() {
 }
 
 function* topicRequested() {
-  const token = yield select((s: any) => s.get('login').get('token'));
+  const token = yield select(TOKEN_EXTRACTOR);
   const { id } = yield select((s: any) => s.get('details').get('details').toJS());
   const { name } = yield select((s: any) => s.getIn(['form', 'topicRequest', 'values']).toJS());
   yield call(Api.requestTopic, token, id, name, 1, 1);
@@ -116,7 +131,7 @@ function* topicRequestedListener() {
 }
 
 function* applicationRequested() {
-  const token = yield select((s: any) => s.get('login').get('token'));
+  const token = yield select(TOKEN_EXTRACTOR);
   const { id } = yield select((s: any) => s.get('details').get('details').toJS());
   const {
     name,
@@ -140,7 +155,7 @@ function* applicationRequestedListener() {
 }
 
 export function* simpleMemberRequested({ resource }: SimpleMemberRequestAction) {
-  const token = yield select(tokenExtractor);
+  const token = yield select(TOKEN_EXTRACTOR);
   const workspace = (yield select(detailExtractor)).toJS();
   try {
     if (resource === 'data') {
@@ -170,7 +185,7 @@ function* simpleMemberRequestedListener() {
 }
 
 export function* changeMemberRoleRequested({ distinguished_name, roleId, role, resource }: ChangeMemberRoleRequestAction) {
-  const token = yield select(tokenExtractor);
+  const token = yield select(TOKEN_EXTRACTOR);
   const workspace = (yield select(detailExtractor)).toJS();
   yield call(Api.removeWorkspaceMember, token, workspace.id, resource, roleId, 'none', distinguished_name);
   yield call(Api.newWorkspaceMember, token, workspace.id, resource, roleId, role, distinguished_name);
@@ -185,7 +200,7 @@ function* changeMemberRoleRequestedListener() {
 }
 
 export function* removeMemberRequested({ distinguished_name, roleId, resource }: RemoveMemberRequestAction) {
-  const token = yield select(tokenExtractor);
+  const token = yield select(TOKEN_EXTRACTOR);
   const workspace = (yield select(detailExtractor)).toJS();
   try {
     yield call(Api.removeWorkspaceMember, token, workspace.id, resource, roleId, 'none', distinguished_name);
@@ -202,7 +217,7 @@ function* removeMemberRequestedListener() {
 }
 
 function* refreshYarnAppsRequested() {
-  const token = yield select((s: any) => s.get('login').get('token'));
+  const token = yield select(TOKEN_EXTRACTOR);
   const { id } = yield select((s: any) => s.get('details').get('details').toJS());
   try {
     const apps = yield call(Api.getYarnApplications, token, id);
@@ -217,7 +232,7 @@ function* refreshYarnAppsRequestedListener() {
 }
 
 function* refreshHiveTablesRequested() {
-  const token = yield select((s: any) => s.get('login').get('token'));
+  const token = yield select(TOKEN_EXTRACTOR);
   const { id } = yield select((s: any) => s.get('details').get('details').toJS());
   try {
     const apps = yield call(Api.getHiveTables, token, id);

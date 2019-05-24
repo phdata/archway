@@ -8,6 +8,7 @@ export const workspaceSelector = (state: any) => state.get('details');
 export const workspaceListSelector = (state: any) => state.get('listing');
 export const riskSelector = (state: any) => state.get('risk');
 export const opsSelector = (state: any) => state.get('operations');
+export const homeSelector = (state: any) => state.get('home');
 
 export const isLoading = () => createSelector(
     authSelector,
