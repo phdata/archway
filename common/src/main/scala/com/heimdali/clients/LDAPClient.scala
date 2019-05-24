@@ -1,6 +1,7 @@
 package com.heimdali.clients
 
 import cats.data.OptionT
+import com.heimdali.services.MemberSearchResult
 import com.unboundid.ldap.sdk._
 
 sealed trait GroupCreationError
@@ -24,7 +25,7 @@ trait LDAPClient[F[_]] {
 
   def groupMembers(groupDN: String): F[List[LDAPUser]]
 
-  def search(filter: String): F[List[SearchResultEntry]]
+  def search(filter: String): F[MemberSearchResult]
 
   def deleteGroup(groupDN: String): OptionT[F, String]
 }

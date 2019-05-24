@@ -155,4 +155,11 @@ class LDAPClientImplIntegrationSpec
     actual should contain theSameElementsAs expected
   }
 
+  it should "search" in {
+    val client = new LDAPClientImpl[IO](appConfig.ldap, _.provisioningBinding)
+    val results = client.search("benny").unsafeRunSync()
+    results.users.length should be > 0
+    results.users.foreach(println)
+  }
+
 }

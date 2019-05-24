@@ -71,14 +71,14 @@ const SimpleMemberRequest = ({
           renderGroup({
             title: 'Users',
             children: suggestions.users.map((item: UserSuggestion) => ({
-              text: `${item.display} (${item.display})`,
+              text: item.display,
               value: item.distinguished_name,
             })),
           }),
           renderGroup({
             title: 'Groups',
             children: suggestions.groups.map((item: UserSuggestion) => ({
-              text: `${item.display} (${item.display})`,
+              text: item.display,
               value: item.distinguished_name,
             })),
           }),

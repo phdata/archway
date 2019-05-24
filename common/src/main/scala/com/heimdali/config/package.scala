@@ -129,6 +129,8 @@ package object config {
 
   case class LDAPConfig(lookupBinding: LDAPBinding,
                         provisioningBinding: LDAPBinding,
+                        filterTemplate: String,
+                        memberDisplayTemplate: String,
                         baseDN: String,
                         groupPath: String,
                         userPath: Option[String],

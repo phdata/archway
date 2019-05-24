@@ -37,10 +37,10 @@ class LDAPClientSpec extends FlatSpec with Matchers {
 
   it should "ldapUser" in new Context {
     val dn = "cn=john,dc=example,dc=com"
-    val expected = LDAPUser("john", "johndoe", dn, Seq.empty, None)
+    val expected = LDAPUser("john (johndoe)", "johndoe", dn, Seq.empty, None)
 
     val user = new SearchResultEntry(dn, Seq(
-      new Attribute("cn", "john"),
+      new Attribute("name", "john"),
       new Attribute("sAMAccountName", "johndoe")
     ).asJava)
 

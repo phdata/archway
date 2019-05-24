@@ -4,9 +4,11 @@ import cats.data.OptionT
 import cats.effect.{Effect, Sync}
 import cats.implicits._
 import com.heimdali.config._
+import com.heimdali.services.{MemberSearchResult, MemberSearchResultItem}
 import com.typesafe.scalalogging.LazyLogging
 import com.unboundid.ldap.sdk._
 import com.unboundid.util.ssl.{SSLUtil, TrustAllTrustManager}
+import org.fusesource.scalate.{Template, TemplateEngine}
 
 import scala.collection.JavaConverters._
 import scala.util.{Failure, Success, Try}
@@ -14,6 +16,10 @@ import scala.util.{Failure, Success, Try}
 class LDAPClientImpl[F[_] : Effect](ldapConfig: LDAPConfig, binding: LDAPConfig => LDAPBinding)
   extends LDAPClient[F]
     with LazyLogging {
+
+  val templateEngine: TemplateEngine = new TemplateEngine()
+  val filterTemplate: Template = templateEngine.compileText("mustache", ldapConfig.filterTemplate)
+  val displayTemplate: Template = templateEngine.compileText("mustache", ldapConfig.memberDisplayTemplate)
 
   val ldapBinding: LDAPBinding = binding(ldapConfig)
 
@@ -45,7 +51,7 @@ class LDAPClientImpl[F[_] : Effect](ldapConfig: LDAPConfig, binding: LDAPConfig 
     s"$username@${ldapConfig.realm}"
 
   def ldapUser(searchResultEntry: SearchResultEntry) =
-    LDAPUser(s"${searchResultEntry.getAttributeValue("cn")}",
+    LDAPUser(genDisplay(searchResultEntry),
       searchResultEntry.getAttributeValue("sAMAccountName"),
       searchResultEntry.getDN,
       Option(searchResultEntry.getAttributeValues("memberOf")).map(_.toSeq).getOrElse(Seq.empty),
@@ -186,20 +192,30 @@ class LDAPClientImpl[F[_] : Effect](ldapConfig: LDAPConfig, binding: LDAPConfig 
       case _ => Some(memberDN) //no-op
     })
 
-  override def search(filter: String): F[List[SearchResultEntry]] =
+  def lookup(filter: String): F[List[SearchResultEntry]] =
     Effect[F].delay {
-      val request: SearchRequest = new SearchRequest(
-        ldapConfig.baseDN,
-        SearchScope.SUB,
-        DereferencePolicy.NEVER,
-        100,
-        0,
-        false,
-        s"(&(sAMAccountName=$filter*)(|(objectClass=user)(objectClass=group)))")
+      val filterText = templateEngine.layout(filterTemplate.source, Map("filter" -> filter))
+      logger.debug("looking up users with \"{}\"", filterText)
       connectionPool
         .getConnection
-        .search(request)
+        .search(ldapConfig.baseDN, SearchScope.SUB, filterText)
         .getSearchEntries.asScala.toList
+    }
+
+  def genDisplay(searchResultEntry: SearchResultEntry): String = {
+    val attributes = searchResultEntry.getAttributes.asScala.map(e => e.getName -> e.getValue).toMap
+    templateEngine.layout(displayTemplate.source, attributes)
+  }
+
+  def generateSearchResult(searchResultEntry: SearchResultEntry): MemberSearchResultItem =
+    MemberSearchResultItem(genDisplay(searchResultEntry), searchResultEntry.getDN)
+
+  override def search(filter: String): F[MemberSearchResult] =
+    lookup(filter).map { results =>
+      MemberSearchResult(
+        results.filter(_.getObjectClassValues.exists(_ == "user")).map(generateSearchResult),
+        results.filter(_.getObjectClassValues.exists(_ == "group")).map(generateSearchResult)
+      )
     }
 
   override def deleteGroup(groupDN: String): OptionT[F, String] =

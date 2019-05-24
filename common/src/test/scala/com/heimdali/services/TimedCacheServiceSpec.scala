@@ -38,8 +38,8 @@ class TimedCacheServiceSpec extends FlatSpec with Matchers {
       (for {
         time <- timer.clock.realTime(TimeUnit.MILLISECONDS)
         cachedValue <- MVar.of[IO, CacheEntry[Int]](CacheEntry(time, 1))
-        _ <- timer.sleep(50 millis)
-        result <- service.getOrRun[IO, Int](200 millis, 2.pure[IO], cachedValue)
+        _ <- timer.sleep(200 millis)
+        result <- service.getOrRun[IO, Int](500 millis, 2.pure[IO], cachedValue)
       } yield result).unsafeRunSync
 
     actual should be(1)

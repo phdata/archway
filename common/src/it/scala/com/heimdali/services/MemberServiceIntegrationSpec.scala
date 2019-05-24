@@ -28,13 +28,9 @@ class MemberServiceIntegrationSpec extends FlatSpec with Matchers with DBTest wi
   }
 
   it should "find members" in new Context {
-    lookupClient.search _ expects "joh" returning IO.pure(List(
-      new SearchResultEntry("cn=John,dc=example,dc=io", Array(new Attribute("sAMAccountName", "John"), new Attribute("objectClass", "user")))
-    ))
+    lookupClient.search _ expects "joh" returning MemberSearchResult(List(MemberSearchResultItem("John", "cn=John,dc=example,dc=io")), List.empty).pure[IO]
 
-    val members = memberService.availableMembers("joh").unsafeRunSync()
-
-    members shouldBe MemberSearchResult(List(MemberSearchResultItem("John", "cn=John,dc=example,dc=io")), List.empty)
+    memberService.availableMembers("joh").unsafeRunSync()
   }
 
   it should "add a member" in new Context {

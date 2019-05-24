@@ -102,17 +102,6 @@ class MemberServiceImpl[F[_]](memberRepository: MemberRepository,
       result <- OptionT(convertRecord(member).map(_.headOption))
     } yield result
 
-  def toResult(searchResultEntry: SearchResultEntry): MemberSearchResultItem =
-    MemberSearchResultItem(
-      searchResultEntry.getAttributeValue("sAMAccountName"),
-      searchResultEntry.getDN
-    )
-
   override def availableMembers(filter: String): F[MemberSearchResult] =
-    lookupClient.search(filter).map { res =>
-      MemberSearchResult(
-        res.filter(_.getObjectClassValues.exists(_ == "user")).map(toResult),
-        res.filter(_.getObjectClassValues.exists(_ == "group")).map(toResult)
-      )
-    }
+    lookupClient.search(filter)
 }

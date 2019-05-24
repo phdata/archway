@@ -623,6 +623,22 @@
           "required": "false",
           "type": "boolean",
           "default": true
+        },
+        {
+          "name": "heimdali.ldap.filterTemplate",
+          "label": "LDAP Filter Template",
+          "description": "The Mustache template used for finding new members",
+          "required": "false",
+          "type": "string",
+          "default": "(&(sAMAccountName={{ filter }}*)(|(objectClass=user)(objectClass=group)))"
+        },
+        {
+          "name": "heimdali.ldap.memberDisplayTemplate",
+          "label": "Member Display Template",
+          "description": "The Mustache template used for displaying members when adding and showing existing members",
+          "required": "false",
+          "type": "string",
+          "default": "{{ name }} ({{ sAMAccountName }})"
         }
       ],
       "configWriter": {
