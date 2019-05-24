@@ -189,12 +189,14 @@ export const REQUEST_REMOVE_MEMBER = 'REQUEST_REMOVE_MEMBER';
 export interface RemoveMemberRequestAction {
   type: typeof REQUEST_REMOVE_MEMBER;
   distinguished_name: string;
-  role: string;
+  roleId: number;
+  resource: string;
 }
-export const requestRemoveMember = (distinguished_name: string, role: string) => ({
+export const requestRemoveMember = (distinguished_name: string, roleId: number, resource: string) => ({
   type: REQUEST_REMOVE_MEMBER,
   distinguished_name,
-  role,
+  roleId,
+  resource,
 });
 
 export const REMOVE_MEMBER_SUCCESS = 'REMOVE_MEMBER_SUCCESS';

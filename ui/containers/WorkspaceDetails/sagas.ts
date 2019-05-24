@@ -172,19 +172,9 @@ function* simpleMemberRequestedListener() {
 export function* changeMemberRoleRequested({ distinguished_name, roleId, role, resource }: ChangeMemberRoleRequestAction) {
   const token = yield select(tokenExtractor);
   const workspace = (yield select(detailExtractor)).toJS();
-  try {
-    yield call(Api.removeWorkspaceMember, token, workspace.id, resource, roleId, 'none', distinguished_name);
-  } catch (e) {
-    //
-  }
-
-  if (role !== 'none') {
-    try {
-      yield call(Api.newWorkspaceMember, token, workspace.id, resource, roleId, role, distinguished_name);
-    } catch (e) {
-      //
-    }
-  }
+  yield call(Api.removeWorkspaceMember, token, workspace.id, resource, roleId, 'none', distinguished_name);
+  yield call(Api.newWorkspaceMember, token, workspace.id, resource, roleId, role, distinguished_name);
+  
   yield put(changeMemberRoleRequestComplete());
   const members = yield call(Api.getMembers, token, workspace.id);
   yield put(setMembers(members));
@@ -194,15 +184,11 @@ function* changeMemberRoleRequestedListener() {
   yield takeLatest(CHANGE_MEMBER_ROLE_REQUESTED, changeMemberRoleRequested);
 }
 
-export function* removeMemberRequested({ distinguished_name, role }: RemoveMemberRequestAction) {
+export function* removeMemberRequested({ distinguished_name, roleId, resource }: RemoveMemberRequestAction) {
   const token = yield select(tokenExtractor);
   const workspace = (yield select(detailExtractor)).toJS();
   try {
-    yield all(
-      workspace.data.map(({ id }: { id: number }) => (
-        call(Api.removeWorkspaceMember, token, workspace.id, 'data', id, role, distinguished_name)
-      )),
-    );
+    yield call(Api.removeWorkspaceMember, token, workspace.id, resource, roleId, 'none', distinguished_name);
     yield put(removeMemberSuccess(distinguished_name));
     const members = yield call(Api.getMembers, token, workspace.id);
     yield put(setMembers(members));

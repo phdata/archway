@@ -103,7 +103,8 @@ describe('remove member flow', () => {
     const generator = cloneableGenerator(removeMemberRequested)({
         type: REQUEST_REMOVE_MEMBER,
         distinguished_name: 'username',
-        role: 'readonly',
+        roleId: 1,
+        resource: 'data',
     });
 
     test('remove member success', () => {

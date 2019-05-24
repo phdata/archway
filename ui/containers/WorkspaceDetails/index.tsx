@@ -78,7 +78,7 @@ interface Props extends RouteComponentProps<DetailsRouteProps> {
     requestRefreshYarnApps: () => void;
     requestRefreshHiveTables: () => void;
     getUserSuggestions: (filter: string) => void;
-    removeMember: (distinguished_name: string, database_role: string) => void;
+    removeMember: (distinguished_name: string, roleId: number, resource: string) => void;
 }
 
 class WorkspaceDetails extends React.PureComponent<Props> {
@@ -388,7 +388,7 @@ const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
   requestRefreshHiveTables: () => dispatch(actions.requestRefreshHiveTables()),
   getUserSuggestions: (filter: string) => dispatch(actions.getUserSuggestions(filter)),
 
-  removeMember: (distinguished_name: string, role: string) => dispatch(actions.requestRemoveMember(distinguished_name, role)),
+  removeMember: (distinguished_name: string, roleId: number, resource: string) => dispatch(actions.requestRemoveMember(distinguished_name, roleId, resource)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(withRouter(WorkspaceDetails));

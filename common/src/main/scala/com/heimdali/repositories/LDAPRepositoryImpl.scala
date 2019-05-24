@@ -110,7 +110,7 @@ object LDAPRepositoryImpl {
         .query[LDAPRow]
 
     def findAllData(resourceId: Long): doobie.Query0[LDAPRow] =
-      (select ++ fr"inner join hive_grant hg on hg.ldap_registration_id = l.id inner join hive_database h on hg.id IN (h.readonly_group_id, h.manager_group_id)" ++ whereAnd(fr"h.id = $resourceId"))
+      (select ++ fr"inner join hive_grant hg on hg.ldap_registration_id = l.id inner join hive_database h on hg.id IN (h.readonly_group_id, h.readwrite_group_id, h.manager_group_id)" ++ whereAnd(fr"h.id = $resourceId"))
         .query[LDAPRow]
 
     def findApplications(resourceId: Long, role: String): doobie.Query0[LDAPRow] =

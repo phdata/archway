@@ -45,23 +45,30 @@ const get = (path: string, token?: string) =>
       }
     });
 
-const withBody = (path: string, token: string, data?: any, method = 'POST', allow404 = false) =>
+const withBody = (path: string, token: string, data?: any, method = 'POST', allow404 = false, parseResponse = true) =>
   fetch(`${BASE_URL}${path}`, {
     ...headers(token),
     method,
     body: JSON.stringify(data),
   })
     .then((response) => {
-      const json = response.json();
+      let result;
+      if (parseResponse) {
+        result = response.json();
+      }
+      else {
+        result = response.text();
+      }
+
       if (response.status >= 200 && response.status < 300) {
-        return json;
+        return result;
       } else if (response.status === 404 && allow404) {
-        return json;
+        return result;
       } else {
         if (response.status === 401) {
           logout();
         }
-        return json.then(Promise.reject.bind(Promise));
+        return result.then(Promise.reject.bind(Promise));
       }
     });
 
@@ -95,7 +102,7 @@ export const newWorkspaceMember =
 
 export const removeWorkspaceMember =
   (token: string, id: number, resource: string, resource_id: number, role: string, distinguished_name: string) =>
-    withBody(`/workspaces/${id}/members`, token, { distinguished_name, resource, resource_id, role }, 'DELETE', true);
+    withBody(`/workspaces/${id}/members`, token, { distinguished_name, resource, resource_id, role }, 'DELETE', true, false);
 
 export const getTemplate =
   (token: string, type: string) =>

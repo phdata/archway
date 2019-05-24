@@ -31,7 +31,7 @@ const ProfileComponent = ({ profile, doLogout }: Props) => {
       }}>
       <Avatar shape="circle" size="large" icon="user" style={{ backgroundColor: 'transparent', color: 'white' }} />
       <h3 style={{ color: 'white', textTransform: 'uppercase' }}>
-        hey, {name}!
+        {name}
       </h3>
       <h6>
         <a href="#" style={{ textTransform: 'uppercase', fontWeight: 200, color: 'white' }} onClick={doLogout}> {/* eslint-disable-line */}

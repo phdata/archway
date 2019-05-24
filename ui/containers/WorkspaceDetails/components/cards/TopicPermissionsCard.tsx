@@ -9,6 +9,7 @@ interface Props {
   members?: Member[];
   onAddMember: (e: React.MouseEvent) => void;
   onChangeMemberRole: (member: Member, id: number, role: string) => void;
+  removeMember: (distinguished_name: string, roleId: number, resource: string) => void;
 }
 
 const renderRoleColumn = (onChangeMemberRole?: (member: Member, id: number, role: string) => void) =>
@@ -24,7 +25,6 @@ const renderRoleColumn = (onChangeMemberRole?: (member: Member, id: number, role
               }
             }}
           >
-            <Menu.Item key="none">none</Menu.Item>
             <Menu.Item key="readonly">readonly</Menu.Item>
             <Menu.Item key="manager">manager</Menu.Item>
           </Menu>
@@ -39,7 +39,7 @@ const renderRoleColumn = (onChangeMemberRole?: (member: Member, id: number, role
     );
   };
 
-const TopicPermissionsCard = ({ readonly, topic, members, onAddMember, onChangeMemberRole }: Props) => {
+const TopicPermissionsCard = ({ readonly, topic, members, onAddMember, onChangeMemberRole, removeMember }: Props) => {
   const dataSource = members && topic
     ? members.filter((member: Member) => !!member.topics[topic.name]).map((member: Member) => ({
       name: member.name,
@@ -74,6 +74,10 @@ const TopicPermissionsCard = ({ readonly, topic, members, onAddMember, onChangeM
           title="PERMISSIONS"
           dataIndex="permission"
           render={renderRoleColumn(readonly ? undefined : onChangeMemberRole)}
+        />
+        <Table.Column
+          title="Remove"
+          render={member => (readonly ? <span /> : <Button type="danger" shape="circle" icon="delete" onClick={_ => removeMember(member.distinguished_name, topic!.id, 'topic')} />)}
         />
       </Table>
     </Card>

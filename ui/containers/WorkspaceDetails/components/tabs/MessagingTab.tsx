@@ -13,7 +13,7 @@ interface Props {
   onAddTopic: (e: React.MouseEvent) => void;
   onAddMember: (e: React.MouseEvent) => void;
   onChangeMemberRole: (distinguished_name: string, roleId: number, role: string, resource: string) => void;
-  removeMember: (distinguished_name: string, database_role: string) => void;
+  removeMember: (distinguished_name: string, roleId: number, resource: string) => void;
 }
 
 class MessagingTab extends React.Component<Props> {
@@ -25,6 +25,7 @@ class MessagingTab extends React.Component<Props> {
       onAddTopic,
       onAddMember,
       onChangeMemberRole,
+      removeMember,
     } = this.props;
 
     if (!workspace) {
@@ -67,6 +68,7 @@ class MessagingTab extends React.Component<Props> {
                       onChangeMemberRole={(member, id, role) => {
                         onChangeMemberRole(member.distinguished_name, id, role, 'topics');
                       }}
+                      removeMember={removeMember}
                     />
                   </Col>
                 </Row>
