@@ -36,7 +36,7 @@ class DefaultProvisioningServiceSpec
       .returning(
         for {
           _ <- IO(println("I still run though"))
-          _ <- actualTimer.sleep(1 second)
+          _ <- actualTimer.sleep(2 second)
           path <- IO(new Path(savedHive.location))
         } yield path
       )
@@ -45,10 +45,10 @@ class DefaultProvisioningServiceSpec
       start <- actualTimer.clock.realTime(TimeUnit.MILLISECONDS)
       _ <- provisioningService.attemptProvision(savedWorkspaceRequest, 0)
       end <- actualTimer.clock.realTime(TimeUnit.MILLISECONDS)
-      _ <- actualTimer.sleep(500 millis)
+      _ <- actualTimer.sleep(1 second)
     } yield end - start
 
-    actual.unsafeRunSync() should be < 1000L
+    actual.unsafeRunSync() should be < 2000L
   }
 
   it should "allow more than required approvals" in new Context {
