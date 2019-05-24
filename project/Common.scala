@@ -36,7 +36,9 @@ object Common {
     organization := "io.phdata",
     version := "2018.08.01",
     resolvers ++= customResolvers,
-    scalacOptions := compilerOptions
+    scalacOptions := compilerOptions,
+    run in Compile := Defaults.runTask(fullClasspath in Compile, mainClass in (Compile, run), runner in (Compile, run)).evaluated,
+    runMain in Compile := Defaults.runMainTask(fullClasspath in Compile, runner in(Compile, run)).evaluated
   )
 
   val commonSettings = scalateOptions ++ Seq(

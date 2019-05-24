@@ -23,13 +23,17 @@ heimdali.smtp.pass: ""
 ### Run The App (API-focused development)
 * Open the project in IntelliJ
 * Open `com.heimdali.Server` and click the green "play" button next to the `object` definition
+* The first run won't work, because we need to change the newly created run configuration
+* Open the run configuration drop down and click "Edit Configurations..."
+* Select the "Server" configuration and enable "Include dependencies with 'Provided' scope"
+* Restart the app
 * Open the "Terminal" tab
 * Run `npm i` which will install the npm dependencies
 * Run `npm start` which will spin up the UI
 
 ### Run The App (UI-focused development)
 * Open the project in VS Code or your preferred editor
-* In the terminal tab, run `./sbt compile "runMain com.heimdali.Server"`
+* In the terminal tab, run `./sbt compile "api/runMain com.heimdali.Server"`
 * In another terminal tab, run `npm i` which will install the npm dependencies
 * Run `npm start` which will spin up the UI
 * Once the UI has started you can start editing and the UI will refresh based on your changes
