@@ -50,7 +50,7 @@ const PermissionsCard = ({ readonly, allocation, members, onAddMember, onChangeM
       )}
     </CardHeader>
     <Table
-      dataSource={members}
+      dataSource={members && members.filter(m => m.data.hasOwnProperty(allocation.name))}
       pagination={false}
       rowKey="distinguished_name"
     >
