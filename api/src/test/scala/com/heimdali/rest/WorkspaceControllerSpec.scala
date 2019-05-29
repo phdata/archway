@@ -102,7 +102,7 @@ class WorkspaceControllerSpec
       .returning(OptionT.some(
         WorkspaceMemberEntry(standardUserDN, name, Some("johndoe@phdata.io"), List.empty, List.empty, List.empty, List.empty)
       ))
-    (emailService.newMemberEmail _).expects(id, memberRequest).returning(OptionT.some(IO.unit))
+//    (emailService.newMemberEmail _).expects(id, memberRequest).returning(OptionT.some(IO.unit))
 
     val request = Json.obj(
       "distinguished_name" -> standardUserDN.asJson,

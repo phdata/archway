@@ -92,7 +92,7 @@ class WorkspaceController[F[_] : Sync : Timer](authService: AuthService[F],
           for {
             memberRequest <- req.req.as[MemberRoleRequest]
             newMember <- memberService.addMember(id, memberRequest).value
-            _ <- emailService.newMemberEmail(id, memberRequest).value
+//            _ <- emailService.newMemberEmail(id, memberRequest).value
             response <- newMember.fold(NotFound())(member => Created(member.asJson))
           } yield response
 
