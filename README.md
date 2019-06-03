@@ -32,8 +32,8 @@ heimdali.smtp.pass: ""
 * Run `npm start` which will spin up the UI
 
 ### Run The App (UI-focused development)
-* Open the project in VS Code or your preferred editor
-* In the terminal tab, run `./sbt compile "api/runMain com.heimdali.Server"`
+
+* In the terminal tab, run `./sbt -Djavax.net.ssl.trustStore=<truststore> compile "api/runMain com.heimdali.Server"`
 * In another terminal tab, run `npm i` which will install the npm dependencies
 * Run `npm start` which will spin up the UI
 * Once the UI has started you can start editing and the UI will refresh based on your changes
@@ -128,3 +128,48 @@ Global reducers and sagas of the application stays here.
 ###### service/
 
 Here resides the code for making api calls.
+
+
+## Building a CSD and Parcel locally
+
+Set the parcel/csd version
+
+```
+export HEIMDALI_VERSION=1.5.15.6
+```
+
+```
+make dist
+```
+
+## Creating a release
+
+### Versioning
+Heimdail follows [Semantic Versioning](https://semver.org/). Given a version like 1.1.1, with the parts called
+<major>.<minor>.<patch>
+
+- Major versions will increment if there are breaking API changes
+- Minor versions will increment if there is new functionality
+- Patch versions will increment if there are fixes to existing functionality
+
+We also add a 'release candidate' version to the end of the semver version so we can test and track versions internally
+before they are released to the public, for example `1.1.0-rc1` for release candiate '1'.
+
+### Tagging
+New releases can be created by tagging a release with a new version `git tag 1.1.1-rc1`. All release candidates go into
+the Artifactory repository `parcels-dev` when a tagged branch completes a build.
+
+### Promoting a release
+After a release candidate has been tested and approved for release the release candidate can be promoted to the `parcels-release`
+repository using the `promote-release` script:
+
+```
+export ARTIFACTORY_USER=<user>
+export ARTIFACTORY_TOKEN=<token>
+export SOURCE_VERSION=1.1.0-rc1
+export TARGET_VERSION=1.1.0
+
+build-support/bin/promote-release
+```
+
+By default `SOURCE_REPO=parcels-def` and `TARGET_REPO=parcels-release`, so you don't need to set these during a normal release workflow.
