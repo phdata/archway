@@ -38,7 +38,11 @@ function* requestLogin({ login }: any) {
     yield put(actions.tokenExtracted(access_token));
     yield put(actions.loginSuccess(access_token));
   } catch (error) {
-    yield put(actions.loginError('Invalid credentials, please try again.'));
+    if (error.message.includes('NetworkError')) {
+      yield put(actions.loginError('Error connecting to server.'));
+    } else {
+      yield put(actions.loginError('Invalid credentials, please try again.'));
+    }
   }
 }
 
