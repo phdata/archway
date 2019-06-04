@@ -15,6 +15,8 @@ trait HiveClient[F[_]] {
 
   def showDatabases(): F[Seq[String]]
 
+  def dropDatabase(name: String): F[Int]
+
 }
 
 class HiveClientImpl[F[_]](loginContextProvider: LoginContextProvider,
@@ -45,6 +47,10 @@ class HiveClientImpl[F[_]](loginContextProvider: LoginContextProvider,
         HiveDatabase(name, tables.map(HiveTable.apply))
       }
     }
+
+  override def dropDatabase(name: String): F[Int] = {
+    (sql"""DROP DATABASE IF EXISTS """ ++ Fragment.const(name)).update.run.transact(transactor)
+  }
 
   private[clients] def createDatabaseStatement(name: String, location: String, comment: String, dbProperties: Map[String, String]): Fragment = {
     fr"CREATE DATABASE" ++ Fragment.const(name) ++ Fragment.const(" COMMENT ") ++

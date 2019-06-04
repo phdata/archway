@@ -27,7 +27,4 @@ trait LDAPTest {
 
     new LDAPConnectionPool(failoverSet, bindRequest, 10)
   }
-
-  val existingUser = "benny"
-  val existingPassword = "Jotunn321!"
 }

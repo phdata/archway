@@ -16,7 +16,7 @@ class LDAPClientImplIntegrationSpec
 
   it should "validate a user" in {
     val client = new LDAPClientImpl[IO](appConfig.ldap, _.lookupBinding)
-    val maybeUser = client.validateUser(existingUser, existingPassword).value.unsafeRunSync()
+    val maybeUser = client.validateUser(systemTestConfig.existingUser, systemTestConfig.existingPassword).value.unsafeRunSync()
     maybeUser shouldBe defined
   }
 
@@ -63,7 +63,7 @@ class LDAPClientImplIntegrationSpec
 
   it should "add a user" in {
     val groupDN = s"cn=edh_sw_sesame,${appConfig.ldap.groupPath}"
-    val userDN = s"cn=$existingUser,${appConfig.ldap.userPath.get}"
+    val userDN = s"cn=${systemTestConfig.existingUser},${appConfig.ldap.userPath.get}"
 
     val client = new LDAPClientImpl[IO](appConfig.ldap, _.provisioningBinding)
 
@@ -74,7 +74,7 @@ class LDAPClientImplIntegrationSpec
   }
 
   it should "find a user" in {
-    val userDN = s"cn=$existingUser,${appConfig.ldap.userPath.get}"
+    val userDN = s"cn=${systemTestConfig.existingUser},${appConfig.ldap.userPath.get}"
     val client = new LDAPClientImpl[IO](appConfig.ldap, _.lookupBinding)
     val maybeUser = client.findUser(userDN).value.unsafeRunSync()
     maybeUser shouldBe defined

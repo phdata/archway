@@ -5,7 +5,6 @@ import java.io.File
 import cats.effect._
 import com.heimdali.AppContext
 import com.heimdali.clients._
-import com.heimdali.config.AppConfig
 import com.heimdali.generators._
 import com.heimdali.repositories._
 import com.heimdali.test.fixtures.{DBTest, _}

@@ -3,8 +3,8 @@
 package com.heimdali.test.fixtures
 
 import cats.effect.{ContextShift, IO}
-import doobie.util.transactor.{Strategy, Transactor}
-import doobie.{FC, LogHandler}
+import doobie.LogHandler
+import doobie.util.transactor.Transactor
 import org.apache.hadoop.security.UserGroupInformation
 
 trait HiveTest {
@@ -13,12 +13,9 @@ trait HiveTest {
 
   implicit def contextShift: ContextShift[IO]
 
-  val hiveTransactor: Transactor[IO] = {
-    System.setProperty("java.security.krb5.conf", getClass.getResource("/krb5.conf").getPath)
-    UserGroupInformation.loginUserFromKeytab("benny@JOTUNN.IO", getClass.getResource("/heimdali.keytab").getPath)
-    val initialHiveTransactor = Transactor.fromDriverManager[IO]("org.apache.hive.jdbc.HiveDriver", "jdbc:hive2://master1.jotunn.io:10000/default;principal=hive/_HOST@JOTUNN.IO", "", "")
-    val strategy = Strategy.void.copy(always = FC.close)
-    Transactor.strategy.set(initialHiveTransactor, strategy)
-  }
+  val hiveTransactor: Transactor[IO] = appConfig.db.hive.hiveTx
+
+  System.setProperty("java.security.krb5.conf", getClass.getResource(systemTestConfig.krb5FilePath).getPath)
+  UserGroupInformation.loginUserFromKeytab(appConfig.rest.principal, getClass.getResource(appConfig.rest.keytab).getPath)
 
 }
