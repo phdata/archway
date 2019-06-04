@@ -7,13 +7,12 @@ import java.util.concurrent.TimeUnit
 import cats.effect._
 import cats.effect.implicits._
 import cats.implicits._
-import com.heimdali.config.AppConfig
+import com.heimdali.AppContext
 import com.heimdali.models.{Compliance, TemplateRequest, User, WorkspaceRequest}
 import com.typesafe.scalalogging.LazyLogging
-import io.circe.Printer
-import org.fusesource.scalate.{TemplateEngine, TemplateSource}
+import org.fusesource.scalate.TemplateEngine
 
-class JSONTemplateService[F[_] : Effect : Clock](appConfig: AppConfig,
+class JSONTemplateService[F[_] : Effect : Clock](context: AppContext[F],
                                                  configService: ConfigService[F])
   extends TemplateService[F] with LazyLogging {
 
@@ -27,14 +26,14 @@ class JSONTemplateService[F[_] : Effect : Clock](appConfig: AppConfig,
       logger.info("Using template path {}", templatePath)
       templateEngine.layout(templatePath, Map(
         "templateName" -> templateName,
-        "appConfig" -> appConfig,
+        "appConfig" -> context.appConfig,
         "nextGid" -> (() => configService.getAndSetNextGid.toIO.unsafeRunSync()),
         "template" -> template
       ))
     }
 
   override def workspaceFor(template: TemplateRequest, templateName: String): F[WorkspaceRequest] = {
-    val templatePath = Paths.get(appConfig.templates.templateRoot, s"$templateName.ssp").toString
+    val templatePath = Paths.get(context.appConfig.templates.templateRoot, s"$templateName.ssp").toString
     logger.info("generating {} from {}", templateName, templatePath)
     for {
       workspaceText <- generateJSON(template, templatePath, templateName)

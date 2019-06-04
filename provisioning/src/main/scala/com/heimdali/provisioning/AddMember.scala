@@ -19,7 +19,7 @@ object AddMember {
     ProvisionTask.instance { add =>
       Kleisli[F, WorkspaceContext[F], ProvisionResult] { case (id, context) =>
         context
-          .ldapClient
+          .provisioningLDAPClient
           .addUser(add.groupDN, add.distinguishedName)
           .value
           .attempt

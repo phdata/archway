@@ -30,91 +30,35 @@ import scala.concurrent.duration._
 
 object Server extends IOApp with LazyLogging {
 
-  val hadoopConfiguration = {
-    val conf = new Configuration()
-    conf.addResource(new File("./hive-conf/core-site.xml").toURI.toURL)
-    conf.addResource(new File("./hive-conf/hdfs-site.xml").toURI.toURL)
-    conf.addResource(new File("./hive-conf/hive-site.xml").toURI.toURL)
-    conf.addResource(new File("./sentry-conf/sentry-site.xml").toURI.toURL)
-    conf
-  }
-
   def createServer[F[_] : ConcurrentEffect : ContextShift : Timer]: Resource[F, H4Server[F]] =
     for {
-      config <- Resource.liftF(io.circe.config.parser.decodePathF[F, AppConfig]("heimdali"))
+      context <- AppContext.default[F]()
       _ <- Resource.liftF(
         logger.debug("Config as been read as:\n{}",
-        config.asJson.pretty(Printer.spaces2)).pure[F])
-
-      httpEC <- ExecutionContexts.fixedThreadPool(10)
-      dbConnectionEC <- ExecutionContexts.fixedThreadPool(10)
-      dbTransactionEC <- ExecutionContexts.cachedThreadPool
-      emailEC <- ExecutionContexts.fixedThreadPool(10)
-      provisionEC <- ExecutionContexts.fixedThreadPool(config.provisioning.threadPoolSize)
+          context.appConfig.asJson.pretty(Printer.spaces2)).pure[F])
+      provisionEC <- ExecutionContexts.fixedThreadPool(context.appConfig.provisioning.threadPoolSize)
       startupEC <- ExecutionContexts.fixedThreadPool(1)
-
-      h4Client = BlazeClientBuilder[F](httpEC)
-        .withRequestTimeout(5 minutes)
-        .withResponseHeaderTimeout(5 minutes)
-        .resource
-
-      metaXA <- config.db.meta.tx(dbConnectionEC, dbTransactionEC)
-      hiveXA = config.db.hive.hiveTx
-
-      fileReader = new DefaultFileReader[F]()
-
-      httpClient = new CMClient[F](h4Client, config.cluster)
-
-      cacheService = new TimedCacheService()
-      clusterCache <- Resource.liftF(cacheService.initial[F, Seq[Cluster]])
-      clusterService = new CDHClusterService[F](httpClient, config.cluster, hadoopConfiguration, cacheService, clusterCache)
-
-      loginContextProvider = new UGILoginContextProvider(config)
-      sentryServiceClient = SentryGenericServiceClientFactory.create(hadoopConfiguration)
-      sentryClient = new SentryClientImpl[F](hiveXA, sentryServiceClient, loginContextProvider)
-      hiveClient = new HiveClientImpl[F](loginContextProvider, hiveXA)
-      lookupLDAPClient = new LDAPClientImpl[F](config.ldap, _.lookupBinding)
-      provisioningLDAPClient = new LDAPClientImpl[F](config.ldap, _.provisioningBinding)
-      hdfsClient = new HDFSClientImpl[F](hadoopConfiguration, loginContextProvider)
-      yarnClient = new CDHYarnClient[F](httpClient, config.cluster, clusterService)
-      kafkaClient = new KafkaClientImpl[F](config)
-      emailClient = new EmailClientImpl[F](config, emailEC)
-
-      complianceRepository = new ComplianceRepositoryImpl
-      ldapRepository = new LDAPRepositoryImpl
-      hiveDatabaseRepository = new HiveAllocationRepositoryImpl
-      yarnRepository = new YarnRepositoryImpl
-      workspaceRepository = new WorkspaceRequestRepositoryImpl
-      approvalRepository = new ApprovalRepositoryImpl
-      memberRepository = new MemberRepositoryImpl
-      hiveGrantRepository = new HiveGrantRepositoryImpl
-      topicRepository = new KafkaTopicRepositoryImpl
-      topicGrantRepository = new TopicGrantRepositoryImpl
-      applicationRepository = new ApplicationRepositoryImpl
-      configRepository = new ConfigRepositoryImpl
-
-      context = AppContext[F](config, sentryClient, hiveClient, provisioningLDAPClient, hdfsClient, yarnClient, kafkaClient, metaXA, hiveDatabaseRepository, hiveGrantRepository, ldapRepository, memberRepository, yarnRepository, complianceRepository, workspaceRepository, topicRepository, topicGrantRepository, applicationRepository, approvalRepository)
       _ <- Resource.liftF(logger.debug("AppContext has been generated").pure[F])
 
-      configService = new DBConfigService[F](config, configRepository, metaXA)
+      configService = new DBConfigService[F](context)
 
-      ldapGroupGenerator = LDAPGroupGenerator.instance(config, configService, config.templates.ldapGroupGenerator)
-      applicationGenerator = ApplicationGenerator.instance(config, ldapGroupGenerator, config.templates.applicationGenerator)
-      topicGenerator = TopicGenerator.instance(config, ldapGroupGenerator, config.templates.topicGenerator)
-      templateService = new JSONTemplateService[F](config, configService)
+      ldapGroupGenerator = LDAPGroupGenerator.instance(context.appConfig, configService, context.appConfig.templates.ldapGroupGenerator)
+      applicationGenerator = ApplicationGenerator.instance(context.appConfig, ldapGroupGenerator, context.appConfig.templates.applicationGenerator)
+      topicGenerator = TopicGenerator.instance(context.appConfig, ldapGroupGenerator, context.appConfig.templates.topicGenerator)
+      templateService = new JSONTemplateService[F](context, configService)
 
       provisionService = new DefaultProvisioningService[F](context, provisionEC)
       workspaceService = new WorkspaceServiceImpl[F](provisionService, context)
-      accountService = new AccountServiceImpl[F](lookupLDAPClient, config.rest, config.approvers, config.workspaces, workspaceService, templateService, provisionService)
-      authService = new AuthServiceImpl[F](accountService)
-      memberService = new MemberServiceImpl[F](memberRepository, metaXA, ldapRepository, lookupLDAPClient, provisioningLDAPClient)
+      accountService = new AccountServiceImpl[F](context, workspaceService, templateService, provisionService)
+      memberService = new MemberServiceImpl[F](context)
       kafkaService = new KafkaServiceImpl[F](context, provisionService, topicGenerator)
       applicationService = new ApplicationServiceImpl[F](context, provisionService, applicationGenerator)
-      emailService = new EmailServiceImpl[F](emailClient, config, workspaceService, lookupLDAPClient)
+      emailService = new EmailServiceImpl[F](context, workspaceService)
 
+      authService = new AuthServiceImpl[F](accountService)
       accountController = new AccountController[F](authService, accountService)
       templateController = new TemplateController[F](authService, templateService)
-      clusterController = new ClusterController[F](clusterService)
+      clusterController = new ClusterController[F](context)
       workspaceController = new WorkspaceController[F](authService, workspaceService, memberService, kafkaService, applicationService, emailService, provisionService)
       _ <- Resource.liftF(logger.debug("Workspace Controller has been initialized").pure[F])
 
@@ -133,9 +77,9 @@ object Server extends IOApp with LazyLogging {
         "/ops" -> opsController.route,
       ).orNotFound
 
-      provisioningJob = new Provisioning[F](config.provisioning, provisionService)
-      sessionMaintainer = new SessionMaintainer[F](config.cluster, loginContextProvider)
-      cacheInitializer = new CacheInitializer[F](clusterCache)
+      provisioningJob = new Provisioning[F](context, provisionService)
+      sessionMaintainer = new SessionMaintainer[F](context)
+      cacheInitializer = new CacheInitializer[F](context)
       _ <- Resource.liftF(logger.debug("Initializing HeimdaliStartup class").pure[F])
       startup = new HeimdaliStartup[F](cacheInitializer, sessionMaintainer, provisioningJob)(startupEC)
 
@@ -144,11 +88,11 @@ object Server extends IOApp with LazyLogging {
 
       server <-
         BlazeServerBuilder[F]
-          .bindHttp(config.rest.port, "0.0.0.0")
+          .bindHttp(context.appConfig.rest.port, "0.0.0.0")
           .withHttpApp(CORS(httpApp))
           .withIdleTimeout(10 minutes)
           .withResponseHeaderTimeout(10 minutes)
-          .withSSL(StoreInfo(config.rest.sslStore.get, config.rest.sslStorePassword.get), config.rest.sslKeyManagerPassword.get)
+          .withSSL(StoreInfo(context.appConfig.rest.sslStore.get, context.appConfig.rest.sslStorePassword.get), context.appConfig.rest.sslKeyManagerPassword.get)
           .resource
 
       _ <- Resource.liftF(logger.debug("Server has started").pure[F])

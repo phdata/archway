@@ -84,7 +84,7 @@ class DefaultProvisioningServiceSpec
         context.hiveClient.createDatabase _ expects(savedHive.name, savedHive.location, "Sesame", Map("phi_data" -> "false", "pci_data" -> "false", "pii_data" -> "false")) returning IO.unit
         context.databaseRepository.databaseCreated _ expects(id, testTimer.instant) returning 0.pure[ConnectionIO]
 
-        context.ldapClient.createGroup _ expects(savedLDAP.commonName, *) returning IO.unit
+        context.provisioningLDAPClient.createGroup _ expects(savedLDAP.commonName, *) returning IO.unit
         context.ldapRepository.groupCreated _ expects(id, testTimer.instant) returning 0.pure[ConnectionIO]
         context.sentryClient.createRole _ expects savedLDAP.sentryRole returning IO.unit
         context.ldapRepository.roleCreated _ expects(id, testTimer.instant) returning 0.pure[ConnectionIO]
@@ -95,7 +95,7 @@ class DefaultProvisioningServiceSpec
         context.sentryClient.enableAccessToLocation _ expects(savedHive.location, savedLDAP.sentryRole) returning IO.unit
         context.databaseGrantRepository.locationGranted _ expects(id, testTimer.instant) returning 0.pure[ConnectionIO]
 
-        context.ldapClient.createGroup _ expects(savedLDAP.commonName, *) returning IO.unit
+        context.provisioningLDAPClient.createGroup _ expects(savedLDAP.commonName, *) returning IO.unit
         context.ldapRepository.groupCreated _ expects(id, testTimer.instant) returning 0.pure[ConnectionIO]
         context.sentryClient.createRole _ expects savedLDAP.sentryRole returning IO.unit
         context.ldapRepository.roleCreated _ expects(id, testTimer.instant) returning 0.pure[ConnectionIO]
@@ -108,7 +108,7 @@ class DefaultProvisioningServiceSpec
       }
 
       inSequence {
-        context.ldapClient.addUser _ expects(savedLDAP.distinguishedName, standardUserDN) returning OptionT.some(standardUserDN)
+        context.provisioningLDAPClient.addUser _ expects(savedLDAP.distinguishedName, standardUserDN) returning OptionT.some(standardUserDN)
         context.memberRepository.complete _ expects(id, standardUserDN) returning 0.pure[ConnectionIO]
       }
 
@@ -118,7 +118,7 @@ class DefaultProvisioningServiceSpec
       }
 
       inSequence {
-        context.ldapClient.createGroup _ expects(savedLDAP.commonName, *) returning IO.unit
+        context.provisioningLDAPClient.createGroup _ expects(savedLDAP.commonName, *) returning IO.unit
         context.ldapRepository.groupCreated _ expects(id, testTimer.instant) returning 0.pure[ConnectionIO]
         context.sentryClient.createRole _ expects savedLDAP.sentryRole returning IO.unit
         context.ldapRepository.roleCreated _ expects(id, testTimer.instant) returning 0.pure[ConnectionIO]
@@ -129,7 +129,7 @@ class DefaultProvisioningServiceSpec
       }
 
       inSequence {
-        context.ldapClient.addUser _ expects(savedLDAP.distinguishedName, standardUserDN) returning OptionT.some(standardUserDN)
+        context.provisioningLDAPClient.addUser _ expects(savedLDAP.distinguishedName, standardUserDN) returning OptionT.some(standardUserDN)
         context.memberRepository.complete _ expects(id, standardUserDN) returning 0.pure[ConnectionIO]
       }
 

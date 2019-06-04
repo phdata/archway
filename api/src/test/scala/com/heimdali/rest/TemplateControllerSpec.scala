@@ -1,7 +1,8 @@
 package com.heimdali.rest
 
-import cats.effect.{IO, Timer}
+import cats.effect.{ContextShift, IO, Timer}
 import cats.implicits._
+import com.heimdali.AppContext
 import com.heimdali.generators._
 import com.heimdali.models.TemplateRequest
 import com.heimdali.services.{ConfigService, JSONTemplateService, TemplateService}
@@ -26,7 +27,10 @@ class TemplateControllerSpec
     with Matchers
     with MockFactory
     with HttpTest
-    with Http4sDsl[IO] {
+    with Http4sDsl[IO]
+    with AppContextProvider {
+
+  override implicit def contextShift: ContextShift[IO] = IO.contextShift(ExecutionContext.global)
 
   behavior of "Template controller"
 
@@ -41,12 +45,13 @@ class TemplateControllerSpec
     )
 
     forAll(table) { (name, request) =>
+      val context: AppContext[IO] = genMockContext()
       val authService: TestAuthService = new TestAuthService
       val configService: ConfigService[IO] = new TestConfigService
       val ldapGroupGenerator = new DefaultLDAPGroupGenerator[IO](configService)
       val applicationGenerator: ApplicationGenerator[IO] = new DefaultApplicationGenerator[IO](appConfig, ldapGroupGenerator)
       val topicGenerator: TopicGenerator[IO] = new DefaultTopicGenerator[IO](appConfig, ldapGroupGenerator)
-      val templateService: TemplateService[IO] = new JSONTemplateService[IO](appConfig, configService)
+      val templateService: TemplateService[IO] = new JSONTemplateService[IO](context, configService)
 
       val templateController: TemplateController[IO] = new TemplateController[IO](authService, templateService)
 

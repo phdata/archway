@@ -3,19 +3,21 @@ package com.heimdali.startup
 import java.util.concurrent.Executors
 
 import cats.effect._
-import cats.implicits._
-import com.heimdali.services.{LoginContextProvider, ProvisioningService}
-import com.heimdali.test.fixtures.{TestTimer, _}
+import com.heimdali.AppContext
+import com.heimdali.services.ProvisioningService
+import com.heimdali.test.fixtures._
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FlatSpec, Matchers}
 
 import scala.concurrent.ExecutionContext
 import scala.concurrent.duration._
 
-class HeimdaliStartupSpec extends FlatSpec with Matchers with MockFactory {
+class HeimdaliStartupSpec extends FlatSpec with Matchers with MockFactory with AppContextProvider {
+
+  override implicit def contextShift: ContextShift[IO] = IO.contextShift(ExecutionContext.global)
 
   it should "run two startup jobs" in new Context {
-    (loginContextProvider.kinit[IO]()(_: Sync[IO])).expects(*).returning(timer.sleep(100 millis)).atLeastTwice()
+    (context.loginContextProvider.kinit[IO]()(_: Sync[IO])).expects(*).returning(timer.sleep(100 millis)).atLeastTwice()
     (provisioningService.provisionAll _).expects().returning(timer.sleep(100 millis)).atLeastTwice()
 
     (for {
@@ -34,15 +36,18 @@ class HeimdaliStartupSpec extends FlatSpec with Matchers with MockFactory {
     implicit val contextShift: ContextShift[IO] =
       IO.contextShift(executor)
 
-    val loginContextProvider: LoginContextProvider =
-      mock[LoginContextProvider]
     val provisioningService: ProvisioningService[IO] =
       mock[ProvisioningService[IO]]
 
+    val context: AppContext[IO] = genMockContext(
+      appConfig = appConfig.copy(
+        provisioning = appConfig.provisioning.copy(provisionInterval = 100 millis),
+        cluster = appConfig.cluster.copy(sessionRefresh = 100 millis)))
+
     val provisioningJob: Provisioning[IO] =
-      new Provisioning[IO](appConfig.provisioning.copy(provisionInterval = 100 millis), provisioningService)
+      new Provisioning[IO](context, provisioningService)
     val sessionMaintainer: SessionMaintainer[IO] =
-      new SessionMaintainer[IO](appConfig.cluster.copy(sessionRefresh = 100 millis), loginContextProvider)
+      new SessionMaintainer[IO](context)
     lazy val startup: HeimdaliStartup[IO] = new HeimdaliStartup[IO](provisioningJob, sessionMaintainer)(executor)
   }
 

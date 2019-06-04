@@ -1,11 +1,13 @@
 package com.heimdali.test.fixtures
 
+import cats.effect.concurrent.MVar
 import cats.effect.{ContextShift, IO}
 import com.heimdali.AppContext
+import com.heimdali.caching.{CacheEntry, Cached}
 import com.heimdali.clients._
 import com.heimdali.config.AppConfig
-import com.heimdali.repositories.{ApplicationRepository, ApprovalRepository, ComplianceRepository, HiveAllocationRepository, HiveGrantRepository, KafkaTopicRepository, LDAPRepository, MemberRepository, TopicGrantRepository, WorkspaceRequestRepository, YarnRepository}
-import com.heimdali.services.{LoginContextProvider, ProvisioningService}
+import com.heimdali.repositories.{ApplicationRepository, ApprovalRepository, ComplianceRepository, ConfigRepository, HiveAllocationRepository, HiveGrantRepository, KafkaTopicRepository, LDAPRepository, MemberRepository, TopicGrantRepository, WorkspaceRequestRepository, YarnRepository}
+import com.heimdali.services.{Cluster, ClusterService, LoginContextProvider, ProvisioningService}
 import doobie.util.transactor.Strategy
 import doobie.{FC, Transactor}
 import org.apache.sentry.provider.db.generic.service.thrift.SentryGenericServiceClient
@@ -21,14 +23,19 @@ trait AppContextProvider {
 
   val emptyTransactor = Transactor.fromConnection[IO](null, ExecutionContext.global).copy(strategy0 = Strategy(FC.unit, FC.unit, FC.unit, FC.unit))
 
-  def genMockContext(transactor: Transactor[IO] = emptyTransactor,
+  def genMockContext(clusterCache: Cached[IO, Seq[Cluster]] = MVar[IO].empty[CacheEntry[Seq[Cluster]]].unsafeRunSync(),
+                     loginContextProvider: LoginContextProvider = mock[LoginContextProvider],
+                     transactor: Transactor[IO] = emptyTransactor,
                      appConfig: AppConfig = appConfig,
-                     ldapClient: LDAPClient[IO] = mock[LDAPClient[IO]],
+                     provisioningLDAPClient: LDAPClient[IO] = mock[LDAPClient[IO]],
+                     lookupLDAPClient: LDAPClient[IO] = mock[LDAPClient[IO]],
                      hdfsClient: HDFSClient[IO] = mock[HDFSClient[IO]],
                      sentryClient: SentryClient[IO] = mock[SentryClient[IO]],
                      hiveClient: HiveClient[IO] = mock[HiveClient[IO]],
                      yarnClient: YarnClient[IO] = mock[YarnClient[IO]],
                      kafkaClient: KafkaClient[IO] = mock[KafkaClient[IO]],
+                     emailClient: EmailClient[IO] = mock[EmailClient[IO]],
+                     clusterService: ClusterService[IO] = mock[ClusterService[IO]],
                      sentryRawClient: SentryGenericServiceClient = mock[SentryGenericServiceClient],
                      workspaceRepository: WorkspaceRequestRepository = mock[WorkspaceRequestRepository],
                      complianceRepository: ComplianceRepository = mock[ComplianceRepository],
@@ -42,15 +49,21 @@ trait AppContextProvider {
                      topicGrantRepository: TopicGrantRepository = mock[TopicGrantRepository],
                      applicationRepository: ApplicationRepository = mock[ApplicationRepository],
                      provisioningService: ProvisioningService[IO] = mock[ProvisioningService[IO]],
-                     approvalRepository: ApprovalRepository = mock[ApprovalRepository]): AppContext[IO] =
+                     approvalRepository: ApprovalRepository = mock[ApprovalRepository],
+                     configRepository: ConfigRepository = mock[ConfigRepository]): AppContext[IO] =
     AppContext(
       appConfig,
+      clusterCache,
+      loginContextProvider,
       sentryClient,
       hiveClient,
-      ldapClient,
+      provisioningLDAPClient,
+      lookupLDAPClient,
       hdfsClient,
       yarnClient,
       kafkaClient,
+      emailClient,
+      clusterService,
       transactor,
       hiveDatabaseRepository,
       grantRepository,
@@ -62,5 +75,6 @@ trait AppContextProvider {
       topicRepository,
       topicGrantRepository,
       applicationRepository,
-      approvalRepository)
+      approvalRepository,
+      configRepository)
 }

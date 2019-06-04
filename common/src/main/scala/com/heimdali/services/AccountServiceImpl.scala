@@ -5,8 +5,9 @@ import java.time.Instant
 import cats.data._
 import cats.effect._
 import cats.implicits._
-import com.heimdali.clients.{LDAPClient, LDAPUser}
-import com.heimdali.config.{ApprovalConfig, RestConfig, WorkspaceConfig}
+import com.heimdali.AppContext
+import com.heimdali.clients.LDAPUser
+import com.heimdali.config.{ApprovalConfig, RestConfig}
 import com.heimdali.models._
 import com.typesafe.scalalogging.LazyLogging
 import io.circe.Json
@@ -16,15 +17,15 @@ import pdi.jwt.{JwtAlgorithm, JwtCirce}
 
 import scala.concurrent.duration._
 
-class AccountServiceImpl[F[_] : Sync : Timer](ldapClient: LDAPClient[F],
-                                              restConfig: RestConfig,
-                                              approvalConfig: ApprovalConfig,
-                                              workspaceConfig: WorkspaceConfig,
+class AccountServiceImpl[F[_] : Sync : Timer](context: AppContext[F],
                                               workspaceService: WorkspaceService[F],
                                               templateService: TemplateService[F],
                                               provisionService: ProvisioningService[F])
   extends AccountService[F]
     with LazyLogging {
+
+  val approvalConfig: ApprovalConfig = context.appConfig.approvers
+  val restConfig: RestConfig = context.appConfig.rest
 
   private val algo: JwtAlgorithm.HS512.type = JwtAlgorithm.HS512
 
@@ -50,7 +51,7 @@ class AccountServiceImpl[F[_] : Sync : Timer](ldapClient: LDAPClient[F],
 
   override def login(username: String, password: String): OptionT[F, Token] =
     for {
-      user <- ldapClient.validateUser(username, password)
+      user <- context.lookupLDAPClient.validateUser(username, password)
       token <- OptionT.liftF(refresh(user))
     } yield token
 
@@ -64,7 +65,7 @@ class AccountServiceImpl[F[_] : Sync : Timer](ldapClient: LDAPClient[F],
     for {
       maybeToken <- EitherT.fromEither[F](decode(token, restConfig.secret, algo))
       user <- EitherT.fromEither[F](maybeToken.as[User])
-      result <- EitherT.fromOptionF(ldapClient.findUser(user.distinguishedName).value, new Throwable())
+      result <- EitherT.fromOptionF(context.lookupLDAPClient.findUser(user.distinguishedName).value, new Throwable())
     } yield convertUser(result)
   }
 

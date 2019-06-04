@@ -1,8 +1,9 @@
 package com.heimdali.services
 
 import cats.data._
-import cats.effect.{IO, Timer}
+import cats.effect.{ContextShift, IO, Timer}
 import cats.implicits._
+import com.heimdali.AppContext
 import com.heimdali.clients.{LDAPClient, LDAPUser}
 import com.heimdali.config.{ApprovalConfig, WorkspaceConfig, WorkspaceConfigItem}
 import com.heimdali.generators.{DefaultApplicationGenerator, DefaultLDAPGroupGenerator, DefaultTopicGenerator}
@@ -17,7 +18,7 @@ import pdi.jwt.{JwtAlgorithm, JwtCirce}
 
 import scala.concurrent.ExecutionContext
 
-class AccountServiceSpec extends FlatSpec with MockFactory with Matchers {
+class AccountServiceSpec extends FlatSpec with MockFactory with Matchers with AppContextProvider {
 
   behavior of "Account Service"
 
@@ -34,21 +35,21 @@ class AccountServiceSpec extends FlatSpec with MockFactory with Matchers {
   }
 
   it should "return a user if one is found and password matches" in new Context {
-    ldapClient.validateUser _ expects(username, actualPassword) returning OptionT.some(ldapUser)
+    context.lookupLDAPClient.validateUser _ expects(username, actualPassword) returning OptionT.some(ldapUser)
 
     val maybeUser = accountService.login(username, actualPassword).value.unsafeRunSync()
     maybeUser shouldBe defined
   }
 
   it should "return nothing if a user is found but the password doesn't match" in new Context {
-    ldapClient.validateUser _ expects(username, wrongPassword) returning OptionT.none
+    context.lookupLDAPClient.validateUser _ expects(username, wrongPassword) returning OptionT.none
 
     val maybeUser = accountService.login(username, wrongPassword).value.unsafeRunSync()
     maybeUser should not be defined
   }
 
   it should "return nothing if a user is not found" in new Context {
-    ldapClient.validateUser _ expects(wrongUsername, actualPassword) returning OptionT.none
+    context.lookupLDAPClient.validateUser _ expects(wrongUsername, actualPassword) returning OptionT.none
 
     val maybeUser = accountService.login(wrongUsername, actualPassword).value.unsafeRunSync()
     maybeUser should not be defined
@@ -82,14 +83,14 @@ class AccountServiceSpec extends FlatSpec with MockFactory with Matchers {
   }
 
   it should "validate a valid token" in new Context {
-    ldapClient.findUser _ expects standardUserDN returning OptionT.some(ldapUser)
+    context.lookupLDAPClient.findUser _ expects standardUserDN returning OptionT.some(ldapUser)
     val maybeUser = accountService.validate(infraApproverToken).value.unsafeRunSync()
     maybeUser.isRight shouldBe true
     maybeUser.right.get should be(infraApproverUser)
   }
 
   it should "returns approver roles" in new Context {
-    ldapClient.validateUser _ expects(username, actualPassword) returning OptionT.some(ldapUser)
+    context.lookupLDAPClient.validateUser _ expects(username, actualPassword) returning OptionT.some(ldapUser)
 
     val maybeUser = accountService.login(username, actualPassword).value.unsafeRunSync()
 
@@ -119,28 +120,26 @@ class AccountServiceSpec extends FlatSpec with MockFactory with Matchers {
     maybeWorkspace shouldBe Some(savedWorkspaceRequest)
   }
 
+  override implicit def contextShift: ContextShift[IO] = IO.contextShift(ExecutionContext.global)
+
   trait Context {
     implicit val timer: Timer[IO] = testTimer
-    val contextShift = IO.contextShift(ExecutionContext.global)
     val (name, wrongUsername, username, actualPassword, wrongPassword) = ("Dude Doe", "user", "username", "password", "passw0rd")
-    val approvalConfig = ApprovalConfig("me@meail.com", Some("CN=foo,DC=jotunN,dc=io"), Some("cN=bar,dc=JOTUNN,dc=io"))
     val secret = "abc"
     val ldapUser = LDAPUser(personName, standardUsername, standardUserDN, Seq("cn=foo,dc=jotunn,dc=io"), Some("dude@email.com"))
-    val workspaceConfigItem = WorkspaceConfigItem("root.user", 1, 1, 1, "root.user")
-    val workspaceConfig = WorkspaceConfig(workspaceConfigItem, workspaceConfigItem, workspaceConfigItem)
     val token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJuYW1lIjoiRHVkZSBEb2UiLCJ1c2VybmFtZSI6InVzZXJuYW1lIiwicGVybWlzc2lvbnMiOnsicmlza19tYW5hZ2VtZW50IjpmYWxzZSwicGxhdGZvcm1fb3BlcmF0aW9ucyI6ZmFsc2V9fQ.ltGXxBh4S7gwmIbcKz22IFWpGI2-zxad2XYOoxuGm734L8GlzfwvLRWIs-ZVKn7T8w3RJy5bKZWZoPj8951Qug"
 
     val workspaceService = mock[WorkspaceService[IO]]
-    val ldapClient = mock[LDAPClient[IO]]
-    val configService = new TestConfigService
-    val ldapGenerator = new DefaultLDAPGroupGenerator[IO](configService)
-    val appGenerator = new DefaultApplicationGenerator[IO](appConfig, ldapGenerator)
-    val topicGenerator = new DefaultTopicGenerator[IO](appConfig, ldapGenerator)
     val provisioningService = mock[ProvisioningService[IO]]
-    val fileReader = new DefaultFileReader[IO]()
     val templateService = mock[TemplateService[IO]]
 
-    lazy val accountService = new AccountServiceImpl[IO](ldapClient, appConfig.rest, approvalConfig, workspaceConfig, workspaceService, templateService, provisioningService)
+    val context: AppContext[IO] = genMockContext(
+      appConfig = appConfig.copy(
+        approvers = ApprovalConfig("me@meail.com", Some("CN=foo,DC=jotunN,dc=io"), Some("cN=bar,dc=JOTUNN,dc=io"))
+      )
+    )
+
+    lazy val accountService = new AccountServiceImpl[IO](context, workspaceService, templateService, provisioningService)
   }
 
 }

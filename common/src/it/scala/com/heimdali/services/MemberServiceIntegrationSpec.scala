@@ -3,24 +3,24 @@ package com.heimdali.services
 import cats.data.OptionT
 import cats.effect.IO
 import cats.implicits._
-import com.heimdali.clients.{LDAPClient, LDAPUser}
+import com.heimdali.AppContext
+import com.heimdali.clients.LDAPUser
 import com.heimdali.models._
 import com.heimdali.repositories._
 import com.heimdali.test.fixtures._
-import com.unboundid.ldap.sdk.{Attribute, SearchResultEntry}
 import doobie._
 import doobie.implicits._
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FlatSpec, Matchers}
 
-class MemberServiceIntegrationSpec extends FlatSpec with Matchers with DBTest with MockFactory {
+class MemberServiceIntegrationSpec extends FlatSpec with Matchers with DBTest with MockFactory with AppContextProvider {
 
   behavior of "Member Service"
 
   it should "list members" in new Context {
     val dataPermissions = MemberRightsRecord("data", standardUsername, systemName, id, Manager)
-    memberRepository.list _ expects id returning List(dataPermissions).pure[ConnectionIO]
-    lookupClient.findUser _ expects standardUsername returning OptionT.some(LDAPUser(personName, standardUsername, standardUserDN, Seq.empty, None))
+    context.memberRepository.list _ expects id returning List(dataPermissions).pure[ConnectionIO]
+    context.lookupLDAPClient.findUser _ expects standardUsername returning OptionT.some(LDAPUser(personName, standardUsername, standardUserDN, Seq.empty, None))
 
     val members = memberService.members(id).unsafeRunSync()
 
@@ -28,40 +28,28 @@ class MemberServiceIntegrationSpec extends FlatSpec with Matchers with DBTest wi
   }
 
   it should "find members" in new Context {
-    lookupClient.search _ expects "joh" returning MemberSearchResult(List(MemberSearchResultItem("John", "cn=John,dc=example,dc=io")), List.empty).pure[IO]
+    context.lookupLDAPClient.search _ expects "joh" returning MemberSearchResult(List(MemberSearchResultItem("John", "cn=John,dc=example,dc=io")), List.empty).pure[IO]
 
     memberService.availableMembers("joh").unsafeRunSync()
   }
 
   it should "add a member" in new Context {
     val newMember = s"cn=username,${appConfig.ldap.userPath.get}"
-    ldapRepository.find _ expects("data", id, "manager") returning OptionT[ConnectionIO, LDAPRegistration](Option(savedLDAP).pure[ConnectionIO])
-    memberRepository.create _ expects(newMember, id) returning id.pure[ConnectionIO]
-    provisioningClient.addUser _ expects(savedLDAP.distinguishedName, newMember) returning OptionT.some(newMember)
-    memberRepository.complete _ expects(id, newMember) returning id.toInt.pure[ConnectionIO]
-    memberRepository.get _ expects id returning List(MemberRightsRecord("data", newMember, savedHive.name, id, Manager)).pure[ConnectionIO]
-    lookupClient.findUser _ expects newMember returning OptionT.some(LDAPUser(personName, "username", newMember, Seq.empty, Some("username@phdata.io")))
+    context.ldapRepository.find _ expects("data", id, "manager") returning OptionT[ConnectionIO, LDAPRegistration](Option(savedLDAP).pure[ConnectionIO])
+    context.memberRepository.create _ expects(newMember, id) returning id.pure[ConnectionIO]
+    context.provisioningLDAPClient.addUser _ expects(savedLDAP.distinguishedName, newMember) returning OptionT.some(newMember)
+    context.memberRepository.complete _ expects(id, newMember) returning id.toInt.pure[ConnectionIO]
+    context.memberRepository.get _ expects id returning List(MemberRightsRecord("data", newMember, savedHive.name, id, Manager)).pure[ConnectionIO]
+    context.lookupLDAPClient.findUser _ expects newMember returning OptionT.some(LDAPUser(personName, "username", newMember, Seq.empty, Some("username@phdata.io")))
 
     memberService.addMember(123, MemberRoleRequest(newMember, "data", 123, Some(Manager))).value.unsafeRunSync()
   }
 
   trait Context {
 
-    val memberRepository = mock[MemberRepository]
-    val ldapRepository = mock[LDAPRepository]
-    val lookupClient = mock[LDAPClient[IO]]
-    val provisioningClient = mock[LDAPClient[IO]]
-    val emailService = mock[EmailService[IO]]
-    val workspaceRepository = mock[WorkspaceRequestRepository]
+    val context: AppContext[IO] = genMockContext()
 
-    val memberService =
-      new MemberServiceImpl[IO](
-        memberRepository,
-        transactor,
-        ldapRepository,
-        lookupClient,
-        provisioningClient,
-      )
+    val memberService = new MemberServiceImpl[IO](context)
 
   }
 

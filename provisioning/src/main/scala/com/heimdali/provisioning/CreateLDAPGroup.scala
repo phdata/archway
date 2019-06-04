@@ -20,7 +20,7 @@ object CreateLDAPGroup {
     ProvisionTask.instance[F, CreateLDAPGroup] { create =>
       Kleisli[F, WorkspaceContext[F], ProvisionResult] { case (id, context) =>
         context
-          .ldapClient
+          .provisioningLDAPClient
           .createGroup(create.commonName, create.attributes)
           .attempt
           .flatMap {
