@@ -116,7 +116,7 @@ class WorkspaceControllerSpec
 
   it should "provision workspace" in new Http4sClientDsl[IO] with Context {
     workspaceService.find _ expects id returning OptionT.some(savedWorkspaceRequest)
-    provisioningService.attemptProvision _ expects(savedWorkspaceRequest, 0) returning NonEmptyList.one(SimpleMessage(Some(id), "nothing to see here").asInstanceOf[OurMessage]).pure[IO].start(contextShift)
+    provisioningService.attemptProvision _ expects(savedWorkspaceRequest, 0) returning NonEmptyList.one(SimpleMessage(id, "nothing to see here").asInstanceOf[OurMessage]).pure[IO].start(contextShift)
 
     val response = restApi.route.orNotFound.run(POST(Uri.uri("/123/provision")).unsafeRunSync())
     check(response, Status.Created, Some(Json.arr(Json.obj("message" -> "nothing to see here".asJson))))

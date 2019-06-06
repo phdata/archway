@@ -1,5 +1,6 @@
 package com.heimdali.models
 
+import cats.Show
 import io.circe._
 import io.circe.syntax._
 
@@ -11,6 +12,9 @@ case class KafkaTopic(name: String,
                       id: Option[Long] = None)
 
 object KafkaTopic {
+
+  implicit val show: Show[KafkaTopic] =
+    Show.show(k => s"${k.name} (p: ${k.partitions}, rf: ${k.replicationFactor}")
 
   implicit val encoder: Encoder[KafkaTopic] =
     Encoder.instance { t =>

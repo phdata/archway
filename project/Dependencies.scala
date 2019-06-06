@@ -71,10 +71,8 @@ object Dependencies {
 
   val jwtVersion = "2.1.0"
   val jwt = Seq(
-    ("com.pauldijou" %% "jwt-core" % jwtVersion)
-      .exclude("org.bouncycastle", "bcpkix-jdk15on"),
-    ("com.pauldijou" %% "jwt-circe" % jwtVersion)
-      .exclude("org.bouncycastle", "bcpkix-jdk15on")
+    "com.pauldijou" %% "jwt-core" % jwtVersion,
+    "com.pauldijou" %% "jwt-circe" % jwtVersion
   )
 
   val cdhVersion = "cdh5.13.0"
@@ -140,6 +138,11 @@ object Dependencies {
     "org.ini4j" % "ini4j" % iniVersion
   )
 
+  val simulacrumVersion = "0.17.0"
+  val simulacrum = Seq(
+    "com.github.mpilquist" %% "simulacrum" % simulacrumVersion
+  )
+
   def exclusions(module: ModuleID): ModuleID =
     module.excludeAll(
       ExclusionRule(organization = "com.sun.jdmk"),
@@ -163,7 +166,7 @@ object Dependencies {
       .map(exclusions)
 
   val provisioningDependencies =
-    (coreTest ++ hadoop)
+    (coreTest ++ hadoop ++ simulacrum)
       .map(exclusions)
 
   val systemTestsDependencies =
@@ -171,5 +174,6 @@ object Dependencies {
       Seq(
         "org.scalacheck" %% "scalacheck" % scalacheckVersion,
         "org.scalamock" %% "scalamock-scalatest-support" % "3.6.0")
-      ).map(exclusions) 
+      ).map(exclusions)
+
 }

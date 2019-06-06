@@ -141,7 +141,7 @@ class WorkspaceServiceImplSpec
     context.kafkaRepository.findByWorkspaceId _ expects id returning List(savedTopic).pure[ConnectionIO]
     context.applicationRepository.findByWorkspaceId _ expects id returning List(savedApplication).pure[ConnectionIO]
 
-    (provisioningService.attemptProvision(_: WorkspaceRequest, _: Int)) expects(*, 2) returning NonEmptyList.one(SimpleMessage(Some(1l), "").asInstanceOf[Message]).pure[IO].start(contextShift)
+    (provisioningService.attemptProvision(_: WorkspaceRequest, _: Int)) expects(*, 2) returning NonEmptyList.one(SimpleMessage(1l, "").asInstanceOf[Message]).pure[IO].start(contextShift)
 
     projectServiceImpl.approve(id, approval(instant)).unsafeRunSync()
   }

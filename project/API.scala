@@ -16,6 +16,10 @@ object API {
 
   val assemblySettings = Seq(
     assemblyJarName in assembly := "heimdali-api.jar",
+    assemblyExcludedJars in assembly := {
+      val cp = (fullClasspath in assembly).value
+      cp filter {_.data.getPath.contains("bouncycastle")}
+    },
     assemblyMergeStrategy in assembly := {
       case PathList(ps@_*) if ps.last endsWith "-site.xml" => MergeStrategy.discard
       case x =>

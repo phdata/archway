@@ -3,10 +3,8 @@ package com.heimdali.provisioning
 import java.time.Instant
 
 import cats.Show
-import cats.data.Kleisli
-import cats.effect.{Effect, Timer}
+import cats.effect.{Clock, Sync}
 import cats.implicits._
-import com.heimdali.AppContext
 import doobie.implicits._
 
 case class GrantLocationAccess(id: Long, roleName: String, location: String)
@@ -16,25 +14,22 @@ object GrantLocationAccess {
   implicit val show: Show[GrantLocationAccess] =
     Show.show(g => s"granting role ${g.roleName} rights to location ${g.location}")
 
-  implicit def provisioner[F[_] : Effect : Timer]: ProvisionTask[F, GrantLocationAccess] =
-    ProvisionTask.instance { grant =>
-      Kleisli[F, WorkspaceContext[F], ProvisionResult] { case (id, context) =>
-        context
-          .sentryClient
-          .enableAccessToLocation(grant.location, grant.roleName)
-          .attempt
-          .flatMap {
-            case Left(exception) => Effect[F].pure(Error(id, grant, exception))
-            case Right(_) =>
-              for {
-                time <- Timer[F].clock.realTime(scala.concurrent.duration.MILLISECONDS)
-                _ <- context
-                  .databaseGrantRepository
-                  .locationGranted(grant.id, Instant.ofEpochMilli(time))
-                  .transact(context.transactor)
-              } yield Success(id, grant)
-          }
-      }
-    }
+  implicit object GrantLocationAccessCompletionTask extends CompletionTask[GrantLocationAccess] {
+
+
+    override def apply[F[_] : Sync](grantLocationAccess: GrantLocationAccess, instant: Instant, workspaceContext: WorkspaceContext[F]): F[Unit] =
+      workspaceContext.context.databaseGrantRepository.locationGranted(grantLocationAccess.id, instant)
+        .transact(workspaceContext.context.transactor).void
+
+  }
+
+  implicit object GrantLocationAccessProvisioningTask extends ProvisioningTask[GrantLocationAccess] {
+
+    override def apply[F[_] : Sync : Clock](grantLocationAccess: GrantLocationAccess, workspaceContext: WorkspaceContext[F]): F[Unit] =
+      workspaceContext.context.sentryClient.enableAccessToLocation(grantLocationAccess.location, grantLocationAccess.roleName)
+
+  }
+
+  implicit val provisionable: Provisionable[GrantLocationAccess] = Provisionable.deriveProvisionable
 
 }

@@ -1,5 +1,6 @@
 package com.heimdali.models
 
+import cats.Show
 import io.circe._
 import io.circe.syntax._
 
@@ -13,6 +14,9 @@ case class Application(name: String,
                        id: Option[Long] = None)
 
 object Application {
+
+  implicit val show: Show[Application] =
+    Show.show(a => s"${a.name} - ${a.applicationType} (${a.language})")
 
   implicit val encoder: Encoder[Application] = Encoder.instance { application =>
     Json.obj(

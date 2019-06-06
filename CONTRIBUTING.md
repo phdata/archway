@@ -55,3 +55,30 @@ Current Primary Dependencies:
 - Scalate -- templating
 - Http4s -- HTTP Server & Client
 - Hadoop -- Hadoop ;)
+
+## Provisioning
+
+## Creating New Provisioning Actions
+Using the following template for IntelliJ, adding a new provisioning task is quite simple:
+```scala
+implicit object $PROV_TYPE$CompletionTask extends CompletionTask[$PROV_TYPE$] {
+
+override def apply[F[_] : Sync](createDatabaseDirectory: CreateDatabaseDirectory, instant: Instant, workspaceContext: WorkspaceContext[F]): F[Unit] =
+  workspaceContext.context.$COMPLETE_METHOD$
+    .transact(workspaceContext.context.transactor).void
+
+}
+
+implicit object $PROV_TYPE$ProvisioningTask extends ProvisioningTask[$PROV_TYPE$] {
+
+override def apply[F[_] : Sync : Clock](createDatabaseDirectory: CreateDatabaseDirectory, workspaceContext: WorkspaceContext[F]): F[Unit] =
+  workspaceContext.context.$PROVISION_METHOD$.void
+
+}
+
+implicit val provisionable: Provisionable[$PROV_TYPE$] = Provisionable.deriveProvisionable
+```
+
+You can add it by going to "IntelliJ IDEA" > "Preferences..." > "Editor/Live Templates" then simply copy and paste the above into a new template.
+
+You can then call it by using the name you gave it in the dialog.

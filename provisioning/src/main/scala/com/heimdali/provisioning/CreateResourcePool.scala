@@ -3,9 +3,9 @@ package com.heimdali.provisioning
 import java.time.Instant
 
 import cats.Show
-import cats.data.Kleisli
-import cats.effect.{Effect, Timer}
+import cats.effect.{Clock, Effect, Sync}
 import cats.implicits._
+import doobie.Transactor
 import doobie.implicits._
 
 case class CreateResourcePool(id: Long, name: String, cores: Int, memory: Int)
@@ -15,25 +15,21 @@ object CreateResourcePool {
   implicit val show: Show[CreateResourcePool] =
     Show.show(c => s"creating resource pool ${c.name} with ${c.cores} cores and ${c.memory} memory")
 
-  implicit def provisioner[F[_] : Effect : Timer]: ProvisionTask[F, CreateResourcePool] =
-    ProvisionTask.instance { create =>
-      Kleisli[F, WorkspaceContext[F], ProvisionResult] { case (id, context) =>
-        context
-          .yarnClient
-          .createPool(create.name, create.cores, create.memory)
-          .attempt
-          .flatMap {
-            case Left(exception) => Effect[F].pure(Error(id, create, exception))
-            case Right(_) =>
-              for {
-                time <- Timer[F].clock.realTime(scala.concurrent.duration.MILLISECONDS)
-                _ <- context
-                  .yarnRepository
-                  .complete(create.id, Instant.ofEpochMilli(time))
-                  .transact(context.transactor)
-              } yield Success(id, create)
-          }
-      }
-    }
+  implicit object CreateResourcePoolCompletionTask extends CompletionTask[CreateResourcePool] {
+
+    override def apply[F[_] : Sync](createResourcePool: CreateResourcePool, instant: Instant, workspaceContext: WorkspaceContext[F]): F[Unit] =
+      workspaceContext.context.yarnRepository.complete(createResourcePool.id, instant)
+        .transact(workspaceContext.context.transactor).void
+
+  }
+
+  implicit object CreateResourcePoolProvisioningTask extends ProvisioningTask[CreateResourcePool] {
+
+    override def apply[F[_] : Sync : Clock](createResourcePool: CreateResourcePool, workspaceContext: WorkspaceContext[F]): F[Unit] =
+      workspaceContext.context.yarnClient.createPool(createResourcePool.name, createResourcePool.cores, createResourcePool.memory)
+
+  }
+
+  implicit val provisionable: Provisionable[CreateResourcePool] = Provisionable.deriveProvisionable
 
 }

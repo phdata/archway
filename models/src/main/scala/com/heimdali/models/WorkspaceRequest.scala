@@ -2,6 +2,7 @@ package com.heimdali.models
 
 import java.time.Instant
 
+import cats.Show
 import cats.effect.Clock
 import cats.implicits._
 import cats.effect.implicits._
@@ -31,6 +32,9 @@ case class WorkspaceRequest(name: String,
 }
 
 object WorkspaceRequest {
+
+  implicit val show: Show[WorkspaceRequest] =
+    Show.show(a => s"""Workspace "${a.name}" (${a.id.getOrElse("[unsaved]")})""")
 
   implicit val encoder: Encoder[WorkspaceRequest] = Encoder.instance { request =>
     request.approvals.foldLeft(

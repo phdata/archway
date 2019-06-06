@@ -3,7 +3,6 @@ package com.heimdali.provisioning
 import java.time.Instant
 
 import cats._
-import cats.data._
 import cats.effect._
 import cats.implicits._
 import com.heimdali.clients.Kafka
@@ -19,30 +18,26 @@ object GrantRoleToConsumerGroup {
   implicit val viewer: Show[GrantRoleToConsumerGroup] =
     Show.show(g => s"granting role ${g.roleName} rights to consumer group ${g.consumerGroup}")
 
-  implicit def provisioner[F[_] : Effect : Timer]: ProvisionTask[F, GrantRoleToConsumerGroup] =
-    ProvisionTask.instance { grant =>
-      Kleisli { case (id, context) =>
-        Effect[F].delay {
-          context
-            .sentryClient
-            .grantPrivilege(
-              grant.roleName,
-              Kafka,
-              s"ConsumerGroup=${grant.consumerGroup}->action=ALL"
-            )
-        }.attempt
-          .flatMap {
-            case Left(exception) => Effect[F].pure(Error(id, grant, exception))
-            case Right(_) =>
-              for {
-                time <- Timer[F].clock.realTime(scala.concurrent.duration.MILLISECONDS)
-                _ <- context
-                  .applicationRepository
-                  .consumerGroupAccess(grant.applicationId, Instant.ofEpochMilli(time))
-                  .transact(context.transactor)
-              } yield Success(id, grant)
-          }
-      }
-    }
+  implicit object GrantRoleToConsumerGroupCompletionTask extends CompletionTask[GrantRoleToConsumerGroup] {
+
+    override def apply[F[_] : Sync](grantRoleToConsumerGroup: GrantRoleToConsumerGroup, instant: Instant, workspaceContext: WorkspaceContext[F]): F[Unit] =
+      workspaceContext.context.applicationRepository.consumerGroupAccess(grantRoleToConsumerGroup.applicationId, instant)
+        .transact(workspaceContext.context.transactor).void
+
+  }
+
+  implicit object GrantRoleToConsumerGroupProvisioningTask extends ProvisioningTask[GrantRoleToConsumerGroup] {
+
+    override def apply[F[_] : Sync : Clock](grantRoleToConsumerGroup: GrantRoleToConsumerGroup, workspaceContext: WorkspaceContext[F]): F[Unit] =
+      workspaceContext
+        .context
+        .sentryClient
+        .grantPrivilege(grantRoleToConsumerGroup.roleName,
+          Kafka,
+          s"ConsumerGroup=${grantRoleToConsumerGroup.consumerGroup}->action=ALL")
+
+  }
+
+  implicit val provisionable: Provisionable[GrantRoleToConsumerGroup] = Provisionable.deriveProvisionable
 
 }

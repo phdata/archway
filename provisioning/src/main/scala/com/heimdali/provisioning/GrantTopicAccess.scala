@@ -9,37 +9,30 @@ import cats.implicits._
 import com.heimdali.clients.Kafka
 import doobie.implicits._
 
-case class GrantTopicAccess(id: Long, name: String, sentryRole: String, actions: NonEmptyList[String]) {
-
-}
+case class GrantTopicAccess(id: Long, name: String, sentryRole: String, actions: NonEmptyList[String])
 
 object GrantTopicAccess {
 
   implicit val show: Show[GrantTopicAccess] =
-    Show.show(s => "")
+    Show.show(s => s"granting ${s.actions.mkString_(",")} on ${s.name} to ${s.sentryRole}")
 
-  implicit def provisioner[F[_] : Effect : Timer]: ProvisionTask[F, GrantTopicAccess] =
-    ProvisionTask.instance(grant =>
-      Kleisli { case (id, context) =>
-        grant.actions.traverse[F, Either[Throwable, Unit]] { action =>
-          context
-            .sentryClient
-            .grantPrivilege(grant.sentryRole, Kafka, s"Topic=${grant.name}->action=$action")
-            .attempt
-        }
-          .map(_.combineAll)
-          .flatMap {
-            case Left(exception) => Effect[F].pure(Error(id, grant, exception))
-            case Right(_) =>
-              for {
-                time <- Timer[F].clock.realTime(scala.concurrent.duration.MILLISECONDS)
-                _ <- context
-                  .topicGrantRepository
-                  .topicAccess(grant.id, Instant.ofEpochMilli(time))
-                  .transact(context.transactor)
-              } yield Success(id, grant)
-          }
-      }
-    )
+  implicit object GrantTopicAccessCompletionTask extends CompletionTask[GrantTopicAccess] {
+
+    override def apply[F[_] : Sync](grantTopicAccess: GrantTopicAccess, instant: Instant, workspaceContext: WorkspaceContext[F]): F[Unit] =
+      workspaceContext.context.topicGrantRepository.topicAccess(grantTopicAccess.id, instant)
+        .transact(workspaceContext.context.transactor).void
+
+  }
+
+  implicit object GrantTopicAccessProvisioningTask extends ProvisioningTask[GrantTopicAccess] {
+
+    override def apply[F[_] : Sync : Clock](grantTopicAccess: GrantTopicAccess, workspaceContext: WorkspaceContext[F]): F[Unit] =
+      grantTopicAccess.actions.traverse[F, Unit] { action =>
+        workspaceContext.context.sentryClient.grantPrivilege(grantTopicAccess.sentryRole, Kafka, s"Topic=${grantTopicAccess.name}->action=$action")
+      }.map(_.combineAll)
+
+  }
+
+  implicit val provisionable: Provisionable[GrantTopicAccess] = Provisionable.deriveProvisionable
 
 }

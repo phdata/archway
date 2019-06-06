@@ -2,20 +2,19 @@ package com.heimdali.provisioning
 
 import java.time.Instant
 
-import cats.Apply
 import cats.data._
 import cats.effect._
+import cats.effect.implicits._
 import cats.implicits._
 import com.heimdali.AppContext
 import com.heimdali.models.{Application, KafkaTopic, WorkspaceRequest}
-import com.heimdali.provisioning.ProvisionTask._
+import com.heimdali.provisioning.Provisionable.ops._
 import com.heimdali.services.ProvisioningService
 import doobie.implicits._
 
 import scala.concurrent.ExecutionContext
-import scala.concurrent.duration._
 
-class DefaultProvisioningService[F[_] : ContextShift : ConcurrentEffect : Effect : Timer](appContext: AppContext[F], provisionContext: ExecutionContext)
+class DefaultProvisioningService[F[_] : ContextShift : ConcurrentEffect : Timer](appContext: AppContext[F], provisionContext: ExecutionContext)
   extends ProvisioningService[F] {
 
   override def provisionAll(): F[Unit] =
@@ -24,42 +23,12 @@ class DefaultProvisioningService[F[_] : ContextShift : ConcurrentEffect : Effect
       _ <- ContextShift[F].evalOn(provisionContext)(workspaces.traverse(ws => attemptProvision(ws, appContext.appConfig.approvers.required)))
     } yield ()
 
-  private def provisionSteps(workspace: WorkspaceRequest): List[ReaderT[F, WorkspaceContext[F], ProvisionResult]] =
-    for {
-      datas <- workspace.data.map(_.provision)
-      dbLiasion <- workspace.data.map(d => AddMember(d.id.get, d.managingGroup.ldapRegistration.distinguishedName, workspace.requestedBy).provision)
-      yarns <- if (workspace.processing.isEmpty) List(Kleisli[F, WorkspaceContext[F], ProvisionResult](_ => Effect[F].pure(NoOp("resource pool")))) else workspace.processing.map(_.provision)
-      apps <- if (workspace.applications.isEmpty) List(Kleisli[F, WorkspaceContext[F], ProvisionResult](_ => Effect[F].pure(NoOp("application")))) else workspace.applications.map(_.provision)
-      appLiasion <- if (workspace.applications.isEmpty) List(Kleisli[F, WorkspaceContext[F], ProvisionResult](_ => Effect[F].pure(NoOp("application liasion")))) else workspace.applications.map(d => AddMember(d.id.get, d.group.distinguishedName, workspace.requestedBy).provision)
-      topics <- if (workspace.kafkaTopics.isEmpty) List(Kleisli[F, WorkspaceContext[F], ProvisionResult](_ => Effect[F].pure(NoOp("kafka topic")))) else workspace.kafkaTopics.map(_.provision)
-      topicLiaison <- if (workspace.kafkaTopics.isEmpty) List(Kleisli[F, WorkspaceContext[F], ProvisionResult](_ => Effect[F].pure(NoOp("application liaison")))) else workspace.kafkaTopics.map(d => AddMember(d.id.get, d.managingRole.ldapRegistration.distinguishedName, workspace.requestedBy).provision)
-    } yield (datas, dbLiasion, yarns, apps, appLiasion, topics, topicLiaison).mapN(_ |+| _ |+| _ |+| _ |+| _ |+| _ |+| _)
-
-  private def markProvisioned(workspaceId: Long, time: Instant): F[Int] =
-    appContext
-      .workspaceRequestRepository
-      .markProvisioned(workspaceId, time)
-      .transact(appContext.transactor)
-
-  private def runProvisioning(workspace: WorkspaceRequest) =
-    for {
-      time <- Timer[F].clock.realTime(MILLISECONDS)
-      workspaceContext = (workspace.id, appContext)
-      provisionResult <- provisionSteps(workspace).sequence.map(_.combineAll).apply(workspaceContext)
-      messages = provisionResult.messages
-      instant = Instant.ofEpochMilli(time)
-      workspaceId = workspace.id.get
-      update = markProvisioned(workspaceId, instant)
-      messagesF = messages.pure[F]
-      result <- if (provisionResult.isInstanceOf[Success]) Apply[F].productL(messagesF)(update) else messagesF
-    } yield result
-
   override def attemptProvision(workspace: WorkspaceRequest, requiredApprovals: Int): F[Fiber[F, NonEmptyList[Message]]] = {
     val provisioning: F[NonEmptyList[Message]] = workspace.approvals match {
       case x if x.length >= requiredApprovals =>
-        ContextShift[F].evalOn(provisionContext)(runProvisioning(workspace))
+        ContextShift[F].evalOn(provisionContext)(workspace.provision[F](WorkspaceContext(workspace.id.get, appContext)).run.map(_._1))
       case _ =>
-        NonEmptyList.one[Message](SimpleMessage(workspace.id, s"Skipping workspace build. Workspace has ${workspace.approvals.length} but requires $requiredApprovals")).pure[F]
+        NonEmptyList.one[Message](SimpleMessage(workspace.id.get, s"Skipping workspace build. Workspace has ${workspace.approvals.length} but requires $requiredApprovals")).pure[F]
     }
     ConcurrentEffect[F].start(provisioning)
   }
@@ -69,8 +38,8 @@ class DefaultProvisioningService[F[_] : ContextShift : ConcurrentEffect : Effect
   }
 
   override def provisionApplication(workspaceId: Long, application: Application): F[Unit] =
-    application.provision.apply((Some(workspaceId), appContext)).void
+    application.provision[F](WorkspaceContext(workspaceId, appContext)).run.void
 
   override def provisionTopic(workspaceId: Long, topic: KafkaTopic): F[Unit] =
-    topic.provision.apply((Some(workspaceId), appContext)).void
+    topic.provision[F](WorkspaceContext(workspaceId, appContext)).run.void
 }

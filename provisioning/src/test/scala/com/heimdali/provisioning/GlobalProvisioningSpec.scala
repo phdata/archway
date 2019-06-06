@@ -1,10 +1,9 @@
 package com.heimdali.provisioning
 
-import cats._
-import cats.implicits._
 import cats.effect.{ContextShift, IO, Timer}
+import cats.implicits._
 import com.heimdali.clients.Kafka
-import com.heimdali.provisioning.ProvisionTask._
+import com.heimdali.provisioning.Provisionable.ops._
 import com.heimdali.test.fixtures.{AppContextProvider, _}
 import doobie._
 import doobie.implicits._
@@ -32,9 +31,9 @@ class GlobalProvisioningSpec extends FlatSpec with MockFactory with AppContextPr
     context.sentryClient.grantPrivilege _ expects(savedLDAP.sentryRole, Kafka, "Topic=sesame.incoming->action=read") returning IO.unit
     context.topicGrantRepository.topicAccess _ expects(id, testTimer.instant) returning 123.pure[ConnectionIO] twice()
 
-    val result = savedTopic.provision[IO].run((Some(123L), context)).unsafeRunSync()
+    val (_, result) = savedTopic.provision[IO](WorkspaceContext(123L, context)).run.unsafeRunSync()
 
-    result shouldBe a [Success]
+    result shouldBe Success
   }
 
   it should "create but skip securing topics" in {
@@ -42,9 +41,9 @@ class GlobalProvisioningSpec extends FlatSpec with MockFactory with AppContextPr
     context.kafkaClient.createTopic _ expects("sesame.incoming", 1, 1) returning IO.unit
     context.kafkaRepository.topicCreated _ expects(id, testTimer.instant) returning 123.pure[ConnectionIO]
 
-    val result = savedTopic.provision[IO].run((Some(123L), context)).unsafeRunSync()
+    val (_, result) = savedTopic.provision[IO](WorkspaceContext(123L, context)).run.unsafeRunSync()
 
-    result shouldBe a [Success]
+    result shouldBe Success
   }
 
 }

@@ -113,7 +113,7 @@ class AccountServiceSpec extends FlatSpec with MockFactory with Matchers with Ap
     workspaceService.create _ expects initialWorkspaceRequest returning IO.pure(savedWorkspaceRequest)
     workspaceService.find _ expects id returning OptionT.some(savedWorkspaceRequest)
 
-    provisioningService.attemptProvision _ expects(savedWorkspaceRequest, 0) returning NonEmptyList.one(SimpleMessage(Some(1l), "").asInstanceOf[Message]).pure[IO].start(contextShift)
+    provisioningService.attemptProvision _ expects(savedWorkspaceRequest, 0) returning NonEmptyList.one(SimpleMessage(1l, "").asInstanceOf[Message]).pure[IO].start(contextShift)
 
     val maybeWorkspace = accountService.createWorkspace(infraApproverUser).value.unsafeRunSync()
 

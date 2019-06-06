@@ -3,69 +3,44 @@ package com.heimdali.provisioning
 import cats._
 import cats.data._
 
-sealed trait ProvisionResult {
-  def messages: NonEmptyList[Message] }
+sealed trait ProvisionResult
+
+case object Unknown extends ProvisionResult {
+  def message(workspaceId: Long): NonEmptyList[Message] =
+    NonEmptyList.one(SimpleMessage(workspaceId, s"Undetermined provisioning result"))
+}
+
+case object NoOp extends ProvisionResult {
+  def message(workspaceId: Long, provisionType: String): NonEmptyList[Message] =
+    NonEmptyList.one(SimpleMessage(workspaceId, s"Nothing to do for $provisionType"))
+}
+
+case object Error extends ProvisionResult {
+  def message[A](resource: A, workspaceId: Long, exception: Exception)(implicit show: Show[A]): NonEmptyList[Message] =
+    NonEmptyList.one(
+      ExceptionMessage(workspaceId, s"""${show.show(resource)} for workspace $workspaceId FAILED due to ${exception.getMessage}""", exception)
+    )
+}
+
+case object Success extends ProvisionResult {
+  def message[A](resource: A, workspaceId: Long)(implicit show: Show[A]): NonEmptyList[Message] =
+    NonEmptyList.of(
+      SimpleMessage(workspaceId, s"${show.show(resource)} for workspace $workspaceId SUCCEEDED"))
+}
 
 object ProvisionResult {
 
   implicit def resultSemigroup: Monoid[ProvisionResult] = new Monoid[ProvisionResult] {
     def combine(result1: ProvisionResult, result2: ProvisionResult): ProvisionResult =
       (result1, result2) match {
-        case (Success(messages1), Success(messages2)) => Success(messages1.concatNel(messages2))
-        case (_ @ (NoOp(_) | Unknown), Unknown) => Unknown
-        case (_ @ (NoOp(_) | Unknown), out) => out
-        case (out, _ @ (NoOp(_) | Unknown)) => out
-        case (out1, out2) => Error(out1.messages.concatNel(out2.messages))
+        case (Success, Success) => Success // Success + Success = Success
+        case (_@(NoOp | Unknown), Unknown) => Unknown // NoOp and Unknown are passive, so just keep using Unknown
+        case (_@(NoOp | Unknown), out) => out // NoOp and Unknown are passive, so just use whatever new result we have
+        case (out, _@(NoOp | Unknown)) => out // NoOp and Unknown are passive, so just keep what we started with
+        case (_, _) => Error // There has been an error or is a new error, so we have an Error
       }
+
     def empty: ProvisionResult = Unknown
-  }
-
-}
-
-case object Unknown extends ProvisionResult {
-  override def messages: NonEmptyList[Message] = NonEmptyList.one(SimpleMessage(None, s"Undetermined provisioning result"))
-}
-
-case class NoOp(provisionType: String) extends ProvisionResult {
-  override def messages: NonEmptyList[Message] = NonEmptyList.one(SimpleMessage(None, s"Nothing to do for $provisionType"))
-}
-
-case class Error(messages: NonEmptyList[Message]) extends ProvisionResult
-
-object Error {
-
-  def apply[A](workspaceId: Option[Long], a: A, exception: Throwable)(implicit show: Show[A]): Error = {
-    exception.printStackTrace()
-    val workspaceString = workspaceId.map(_.toString).getOrElse("unknown")
-    val message = s"""${show.show(a)} for workspace $workspaceString FAILED due to ${exception.getMessage}"""
-    apply(NonEmptyList.of(
-      ExceptionMessage(workspaceId, message, exception)
-    ))
-  }
-
-  def apply[A](workspaceId: Long, a: A, exception: Throwable)(implicit show: Show[A]): Error = {
-    apply(Some(workspaceId), a, exception)
-  }
-
-}
-
-case class Success(messages: NonEmptyList[Message]) extends ProvisionResult
-
-object Success {
-
-  def apply[A](workspaceId: Option[Long], a: A, message: String)(implicit show: Show[A]): Success = {
-    val workspaceString = workspaceId.map(_.toString).getOrElse("unknown")
-
-    apply(NonEmptyList.of(
-      SimpleMessage(workspaceId, s"${show.show(a)} for workspace $workspaceString SUCCEEDED, $message")))
-  }
-
-  def apply[A](workspaceId: Option[Long], a: A)(implicit show: Show[A]): Success = {
-    val workspaceString = workspaceId.map(_.toString).getOrElse("unknown")
-
-    apply(NonEmptyList.one(
-      SimpleMessage(workspaceId: Option[Long], s"${show.show(a)} for workspace $workspaceString SUCCEEDED")
-    ))
   }
 
 }

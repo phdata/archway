@@ -1,9 +1,10 @@
 package com.heimdali.provisioning
 
+import java.time.Instant
+
 import cats.Show
-import cats.data.Kleisli
-import cats.effect.Effect
-import com.heimdali.AppContext
+import cats.effect.{Clock, Sync}
+import cats.implicits._
 
 case class RemoveMember(groupDN: String, userDN: String)
 
@@ -12,15 +13,20 @@ object RemoveMember {
   implicit val show: Show[RemoveMember] =
     Show.show(r => s"""removing "${r.userDN}" from "${r.groupDN}""")
 
-  implicit def provisioner[F[_]](implicit F: Effect[F]): ProvisionTask[F, RemoveMember] =
-    ProvisionTask.instance { remove =>
-      Kleisli[F, WorkspaceContext[F], ProvisionResult] { case (id, context) =>
-        F.map(F.attempt(context.provisioningLDAPClient.removeUser(remove.groupDN, remove.userDN).value)) {
-          case Left(exception) => Error(id, remove, exception)
-          case Right(Some(_)) => Success(id, remove)
-          case Right(None) => Success(id, remove, s"${remove.userDN} wasn't a member of ${remove.groupDN}")
-        }
-      }
-    }
+  implicit object RemoveMemberCompletionTask extends CompletionTask[RemoveMember] {
+
+    override def apply[F[_] : Sync](removeMember: RemoveMember, instant: Instant, workspaceContext: WorkspaceContext[F]): F[Unit] =
+      Sync[F].unit
+
+  }
+
+  implicit object RemoveMemberProvisioningTask extends ProvisioningTask[RemoveMember] {
+
+    override def apply[F[_] : Sync : Clock](removeMember: RemoveMember, workspaceContext: WorkspaceContext[F]): F[Unit] =
+      workspaceContext.context.provisioningLDAPClient.removeUser(removeMember.groupDN, removeMember.userDN).value.void
+
+  }
+
+  implicit val provisionable: Provisionable[RemoveMember] = Provisionable.deriveProvisionable
 
 }
