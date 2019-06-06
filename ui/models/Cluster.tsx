@@ -4,8 +4,8 @@ import * as React from 'react';
 import { Colors } from '../components';
 
 export interface WebLocation {
-    host: string;
-    port: number;
+  host: string;
+  port: number;
 }
 
 export interface Statusable {
@@ -13,13 +13,13 @@ export interface Statusable {
 }
 
 export class Status<T extends Statusable> {
-    public statusable: T;
+  public statusable: T;
 
-    constructor(statusable: T) {
+  constructor(statusable: T) {
     this.statusable = statusable;
   }
 
-    public statusColor = (): Color => {
+  public statusColor = (): Color => {
     switch (this.statusable.status) {
       case 'GOOD_HEALTH':
         return Colors.Green;
@@ -30,9 +30,9 @@ export class Status<T extends Statusable> {
       default:
         return Colors.Gray;
     }
-  }
+  };
 
-    public statusText = () => {
+  public statusText = () => {
     switch (this.statusable.status) {
       case 'GOOD_HEALTH':
         return '"good"';
@@ -43,10 +43,12 @@ export class Status<T extends Statusable> {
       default:
         return 'unknown';
     }
-  }
+  };
 
-    public glowColorText = () =>
-    `0 0 5px 2px ${this.statusColor().hsl().string()}`
+  public glowColorText = () =>
+    `0 0 5px 2px ${this.statusColor()
+      .hsl()
+      .string()}`;
 }
 
 export interface HueService extends Statusable {
@@ -59,24 +61,36 @@ export interface HiveService extends Statusable {
 }
 
 export interface YarnService extends Statusable {
-    resource_manager: WebLocation[];
-    node_manager: WebLocation[];
+  resource_manager: WebLocation[];
+  node_manager: WebLocation[];
+}
+
+export interface NavigatorService extends Statusable {
+  navigator: WebLocation[];
 }
 
 export abstract class ServiceLinks<T extends Statusable> {
-    public service: T;
+  public service: T;
 
-    public links!: JSX.Element[];
+  public links!: JSX.Element[];
 
-    constructor(service: T) {
+  constructor(service: T) {
     this.service = service;
   }
 }
 
 export class HueServiceLinks extends ServiceLinks<HueService> {
-    public links: JSX.Element[] =
-    this.service && this.service.load_balancer.map((location: WebLocation) => (
-      <a key={location.host} target="_blank" rel="noreferrer noopener" href={`https://${location.host}:${location.port}`}>Hue UI</a>
+  public links: JSX.Element[] =
+    this.service &&
+    this.service.load_balancer.map((location: WebLocation) => (
+      <a
+        key={location.host}
+        target="_blank"
+        rel="noreferrer noopener"
+        href={`https://${location.host}:${location.port}`}
+      >
+        Hue UI
+      </a>
     ));
 }
 
@@ -85,8 +99,9 @@ export class HiveServiceLinks extends ServiceLinks<HiveService> {
 }
 
 export class YarnServiceLinks extends ServiceLinks<YarnService> {
-    public resourceManagerLinks: JSX.Element[] =
-    this.service && this.service.resource_manager.map((location) => (
+  public resourceManagerLinks: JSX.Element[] =
+    this.service &&
+    this.service.resource_manager.map(location => (
       <Menu.Item key={location.host}>
         <a target="_blank" rel="noreferrer noopener" href={`https://${location.host}:${location.port}`}>
           {location.host}
@@ -94,8 +109,9 @@ export class YarnServiceLinks extends ServiceLinks<YarnService> {
       </Menu.Item>
     ));
 
-    public nodeManagerLinks: JSX.Element[] =
-    this.service && this.service.node_manager.map((location) => (
+  public nodeManagerLinks: JSX.Element[] =
+    this.service &&
+    this.service.node_manager.map(location => (
       <Menu.Item key={location.host}>
         <a target="_blank" rel="noreferrer noopener" href={`https://${location.host}:${location.port}`}>
           {location.host}
@@ -103,30 +119,48 @@ export class YarnServiceLinks extends ServiceLinks<YarnService> {
       </Menu.Item>
     ));
 
-    public links: JSX.Element[] = [
-    (
-      <Dropdown overlay={<Menu>{this.nodeManagerLinks}</Menu>}>
-        <a href="#" className="ant-dropdown-link"> {/* eslint-disable-line */}
-          Node Manager UI <Icon type="down" />
-        </a>
-      </Dropdown>
-    ),
-    (
-      <Dropdown overlay={<Menu>{this.resourceManagerLinks}</Menu>}>
-        <a href="#" className="ant-dropdown-link"> {/* eslint-disable-line */}
-          Resource Manager UI <Icon type="down" />
-        </a>
-      </Dropdown>
-    ),
+  public links: JSX.Element[] = [
+    // tslint:disable-next-line: jsx-key
+    <Dropdown overlay={<Menu>{this.nodeManagerLinks}</Menu>}>
+      <a href="#" className="ant-dropdown-link">
+        {' '}
+        {/* eslint-disable-line */}
+        Node Manager UI <Icon type="down" />
+      </a>
+    </Dropdown>,
+    // tslint:disable-next-line: jsx-key
+    <Dropdown overlay={<Menu>{this.resourceManagerLinks}</Menu>}>
+      <a href="#" className="ant-dropdown-link">
+        {' '}
+        {/* eslint-disable-line */}
+        Resource Manager UI <Icon type="down" />
+      </a>
+    </Dropdown>
   ];
 }
 
+export class NavigatorServiceLinks extends ServiceLinks<NavigatorService> {
+  public links: JSX.Element[] =
+    this.service &&
+    this.service.navigator.map((location: WebLocation) => (
+      <a
+        key={location.host}
+        target="_blank"
+        rel="noreferrer noopener"
+        href={`https://${location.host}:${location.port}`}
+      >
+        Navigator UI
+      </a>
+    ));
+}
+
 export interface Cluster extends Statusable {
-    name: string;
-    cm_url: string;
-    services: {
-      hive: HiveService
-      hue: HueService
-      yarn: YarnService,
+  name: string;
+  cm_url: string;
+  services: {
+    hive: HiveService;
+    hue: HueService;
+    yarn: YarnService;
+    mgmt: NavigatorService;
   };
 }
