@@ -1,8 +1,13 @@
-package-api: 
+api-jar: 
 	sbt "set every test in assembly := {}" api/assembly
 
-package-ui:
+ui:
 	npm run-script prepare
+
+test-jar:
+	sbt -mem 4096 "set every test in assembly := {}" integration-test/assembly
+	sbt -mem 4096 integration-test/test:package
+	sbt -mem 4096 common/test:package
 
 test: 
 	sbt test
@@ -40,7 +45,7 @@ csd:
 
 repo: parcel csd
 
-dist: package-api package-ui repo
+dist: api-jar test-jar ui repo
 
 ship:
 	echo "using HEIMDALI_VERSION: $${HEIMDALI_VERSION:?}"

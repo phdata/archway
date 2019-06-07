@@ -1,12 +1,8 @@
-lazy val IntegrationTest = config("it") extend (Test)
-
 lazy val models = (project in file("models"))
   .settings(Common.settings: _*)
   .settings(Models.modelsSettings: _*)
 
 lazy val common = (project in file("common"))
-  .configs(IntegrationTest)
-  .settings(Defaults.itSettings: _*)
   .settings(Common.settings: _*)
   .settings(Common.commonSettings: _*)
   .dependsOn(models)
@@ -17,7 +13,7 @@ lazy val provisioning = (project in file("provisioning"))
   .dependsOn(
     models, 
     common,
-    common % "test->it"
+    `integration-test` % "test->test"
   )
 
 lazy val api = (project in file("api"))
@@ -27,7 +23,7 @@ lazy val api = (project in file("api"))
     models,
     common,
     provisioning,
-    common % "test->it"
+    `integration-test` % "test->test"
   )
 
 lazy val templates = (project in file("templates"))
@@ -37,9 +33,10 @@ lazy val templates = (project in file("templates"))
     common,
   )
 
-lazy val `system-tests` = (project in file("system-tests"))
-  .settings(SystemTests.settings: _*)
+lazy val `integration-test` = (project in file("integration-test"))
+  .settings(IntegrationTest.settings: _*)
   .dependsOn(
     common,
+    common % "test->test",
     models
   )

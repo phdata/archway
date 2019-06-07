@@ -25,8 +25,13 @@ package()
   sed -i "s/0.1.5/${HEIMDALI_VERSION}/g" "${READY_DIR}/meta/parcel.json"
 
   mkdir -p ${READY_DIR}/usr/lib/heimdali-api
+  mkdir -p ${READY_DIR}/usr/lib/heimdali-api-tests
 
-  cp api/target/scala-2.12/heimdali-api.jar ${READY_DIR}/usr/lib/heimdali-api/heimdali-api.jar
+  cp api/target/scala-2.12/heimdali-api.jar ${READY_DIR}/usr/lib/heimdali-api/
+  cp integration-test/target/scala-2.12/heimdali-integration-tests.jar ${READY_DIR}/usr/lib/heimdali-api-tests/
+  cp integration-test/target/scala-2.12/heimdali-test-dependencies.jar ${READY_DIR}/usr/lib/heimdali-api-tests/
+  cp common/target/scala-2.12/heimdali-common-tests.jar ${READY_DIR}/usr/lib/heimdali-api-tests/
+
   cp -r dist ${READY_DIR}/usr/lib/heimdali-ui
   cp -R public/images ${READY_DIR}/usr/lib/heimdali-ui/
   cp -R public/fonts ${READY_DIR}/usr/lib/heimdali-ui/

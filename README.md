@@ -73,6 +73,29 @@ All workspaces can contain a collection of topics, applications, databases, and 
 #### Configuration
 ![](config.png)
 
+### Integration test package
+
+An integration test jar is included in the parcel at $PARCELS_ROOT/HEIMDALI/usr/lib/heimdali-api/heimdali-test.jar
+
+Run tests by adding your application.conf to the classpath and choosing a test:
+
+```bash
+java -cp "/path/to/application.conf:cloudera-integration/build/HEIMDALI-1.5.1/usr/lib/heimdali-api/*:cloudera-integration/build/HEIMDALI-1.5.1/usr/lib/heimdali-api-tests/*" org.scalatest.tools.Runner -o -R cloudera-integration/build/HEIMDALI-1.5.1/usr/lib/heimdali-api-tests/heimdali-integration-tests.jar -q Spec```bash
+
+When run in a dev environment this looks like:
+
+```bash
+java -cp "common/src/test/resources/application.test.conf:integration-test/target/scala-2.12/heimdali-test.jar" org.scalatest.run com.heimdali.clients.LDAPClientImplIntegrationSpec
+```
+
+Build the test jar locally with
+
+```bash
+make package-tests
+```
+
+Create integration tests with `make package-tests`.
+
 ### Contributing
 Pull requests are welcome. For major changes, please start the discussion on [#heimdali-dev](https://phdata.slack.com/app_redirect?channel=heimdali-dev).
 

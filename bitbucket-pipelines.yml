@@ -11,7 +11,6 @@ pipelines:
         script:
           - './flyway/flyway migrate -url="jdbc:postgresql://localhost:5432/heimdali" -user=postgres -password=postgres'
           - ./sbt test
-          - ./sbt it:test
     - step:
         name: "Build and Test UI"
         image: node:9
@@ -42,6 +41,10 @@ pipelines:
             - api/target/scala-2.12/*
           script:
             - ./sbt "set every test in assembly := {}" api/assembly
+            - ./sbt "set every test in assembly := {}" integration-test/assembly
+            - ./sbt -mem 4096 integration-test/test:package
+            - ./sbt -mem 4096 common/test:package
+
       - step:
           name: "Package UI"
           image: node:9

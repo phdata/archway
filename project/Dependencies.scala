@@ -92,7 +92,6 @@ object Dependencies {
     "org.apache.hadoop" % "hadoop-client" % hadoopVersion % "provided",
     "org.apache.hive" % "hive-jdbc" % hiveVersion % "provided",
     "org.apache.kafka" %% "kafka" % "0.10.1.1" excludeAll ExclusionRule(organization = "org.slf4j"),
-    "org.apache.hadoop" % "hadoop-hdfs" % hadoopVersion % "test" classifier "" classifier "tests",
     "org.apache.hadoop" % "hadoop-common" % hadoopVersion % "test" classifier "" classifier "tests",
     "org.apache.hadoop" % "hadoop-client" % hadoopVersion % "test" classifier "" classifier "tests",
     "org.apache.hadoop" % "hadoop-minicluster" % hadoopVersion % "test"
@@ -147,7 +146,8 @@ object Dependencies {
     module.excludeAll(
       ExclusionRule(organization = "com.sun.jdmk"),
       ExclusionRule(organization = "com.sun.jmx"),
-      ExclusionRule(organization = "javax.jms")
+      ExclusionRule(organization = "javax.jms"),
+      ExclusionRule(organization = "commons-beanutils")
     )
 
   val modelsDependencies =
@@ -168,12 +168,13 @@ object Dependencies {
   val provisioningDependencies =
     (coreTest ++ hadoop ++ simulacrum)
       .map(exclusions)
-
-  val systemTestsDependencies =
-    (logging ++ unbound ++ circeConfig ++ circe ++ iniConfig ++
-      Seq(
+  
+  val integrationTestDependencies = 
+    Seq("org.tpolecat" %% "doobie-scalatest" % doobieVersion,
         "org.scalacheck" %% "scalacheck" % scalacheckVersion,
-        "org.scalamock" %% "scalamock-scalatest-support" % "3.6.0")
-      ).map(exclusions)
-
+        "org.mockito" % "mockito-core" % "2.18.3" % "test",
+        "org.scalamock" %% "scalamock-scalatest-support" % "3.6.0",
+        "org.powermock" % "powermock-core" % "1.7.4",
+        "org.scalacheck" %% "scalacheck" % scalacheckVersion,
+        "org.apache.hive" % "hive-jdbc" % hiveVersion % "provided").map(exclusions)
 }
