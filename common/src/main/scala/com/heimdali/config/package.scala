@@ -32,6 +32,7 @@ package object config {
   case class ClusterConfig(sessionRefresh: FiniteDuration,
                            url: String,
                            name: String,
+                           nameservice: String,
                            environment: String,
                            beeswaxPort: Int,
                            hiveServer2Port: Int,
@@ -79,12 +80,13 @@ package object config {
         sessionRefresh <- cursor.downField("sessionRefresh").as[String].map(Duration.apply(_).asInstanceOf[FiniteDuration])
         url <- cursor.downField("url").as[String]
         name <- cursor.downField("name").as[String]
+        nameservice <- cursor.downField("nameservice").as[String]
         environment <- cursor.downField("environment").as[String]
         beeswaxPort <- cursor.downField("beeswaxPort").as[Int]
         hiveServer2Port <- cursor.downField("hiveServer2Port").as[Int]
         admin <- cursor.downField("admin").as[CredentialsConfig]
         hueOverride <- cursor.downField("hueOverride").as[ServiceOverride]
-      } yield ClusterConfig(sessionRefresh, url, name, environment, beeswaxPort, hiveServer2Port, admin, hueOverride)
+      } yield ClusterConfig(sessionRefresh, url, name, nameservice, environment, beeswaxPort, hiveServer2Port, admin, hueOverride)
     }
 
     implicit val credentialsConfigEncoder: Encoder[CredentialsConfig] = deriveEncoder

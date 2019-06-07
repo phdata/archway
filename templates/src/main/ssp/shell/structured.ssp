@@ -15,7 +15,7 @@
   "data": [
     {
       "name": "${appConfig.cluster.environment.toLowerCase()(0)}_raw_${template.generatedName}",
-      "location": "hdfs://${appConfig.cluster.name}/${appConfig.cluster.environment.toLowerCase()(0)}/data/governed/raw/${template.generatedName}",
+      "location": "hdfs://${appConfig.cluster.nameservice}/${appConfig.cluster.environment.toLowerCase()(0)}/data/governed/raw/${template.generatedName}",
       "size_in_gb": ${appConfig.workspaces.dataset.defaultSize.toString},
       "managing_group": {
         "group": {
@@ -65,7 +65,7 @@
     },
     {
       "name": "${appConfig.cluster.environment.toLowerCase()(0)}_trf_${template.generatedName}",
-      "location": "hdfs://${appConfig.cluster.name}/${appConfig.cluster.environment.toLowerCase()(0)}/data/governed/trf/${template.generatedName}",
+      "location": "hdfs://${appConfig.cluster.nameservice}/${appConfig.cluster.environment.toLowerCase()(0)}/data/governed/trf/${template.generatedName}",
       "size_in_gb": ${appConfig.workspaces.dataset.defaultSize.toString},
       "managing_group": {
         "group": {
@@ -115,7 +115,7 @@
     },
     {
       "name": "${appConfig.cluster.environment.toLowerCase()(0)}_trf_${template.generatedName}_stage",
-      "location": "hdfs://${appConfig.cluster.name}/${appConfig.cluster.environment.toLowerCase()(0)}/data/governed/trf/${template.generatedName}_stage",
+      "location": "hdfs://${appConfig.cluster.nameservice}/${appConfig.cluster.environment.toLowerCase()(0)}/data/governed/trf/${template.generatedName}_stage",
       "size_in_gb": ${appConfig.workspaces.dataset.defaultSize.toString},
       "managing_group": {
         "group": {
@@ -165,7 +165,7 @@
     },
     {
       "name": "${appConfig.cluster.environment.toLowerCase()(0)}_trf_${template.generatedName}_delta",
-      "location": "hdfs://${appConfig.cluster.name}/${appConfig.cluster.environment.toLowerCase()(0)}/data/governed/trf/${template.generatedName}_delta",
+      "location": "hdfs://${appConfig.cluster.nameservice}/${appConfig.cluster.environment.toLowerCase()(0)}/data/governed/trf/${template.generatedName}_delta",
       "size_in_gb": ${appConfig.workspaces.dataset.defaultSize.toString},
       "managing_group": {
         "group": {
@@ -215,7 +215,7 @@
     },
     {
       "name": "${appConfig.cluster.environment.toLowerCase()(0)}_trf_${template.generatedName}_custom",
-      "location": "hdfs://${appConfig.cluster.name}/${appConfig.cluster.environment.toLowerCase()(0)}/data/governed/trf/${template.generatedName}_custom",
+      "location": "hdfs://${appConfig.cluster.nameservice}/${appConfig.cluster.environment.toLowerCase()(0)}/data/governed/trf/${template.generatedName}_custom",
       "size_in_gb": ${appConfig.workspaces.dataset.defaultSize.toString},
       "managing_group": {
         "group": {
@@ -265,7 +265,7 @@
     },
     {
       "name": "${appConfig.cluster.environment.toLowerCase()(0)}_cns_${template.generatedName}",
-      "location": "hdfs://${appConfig.cluster.name}/${appConfig.cluster.environment.toLowerCase()(0)}/data/governed/cns/${template.generatedName}",
+      "location": "hdfs://${appConfig.cluster.nameservice}/${appConfig.cluster.environment.toLowerCase()(0)}/data/governed/cns/${template.generatedName}",
       "size_in_gb": ${appConfig.workspaces.dataset.defaultSize.toString},
       "managing_group": {
         "group": {

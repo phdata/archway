@@ -15,7 +15,7 @@
   "data": [
     {
       "name": "user_${template.generatedName}",
-      "location": "hdfs://${appConfig.cluster.name}/user/${template.generatedName}/db",
+      "location": "hdfs://${appConfig.cluster.nameservice}/user/${template.generatedName}/db",
       "size_in_gb": ${appConfig.workspaces.user.defaultSize.toString},
       "managing_group": {
         "group": {

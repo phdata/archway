@@ -15,7 +15,7 @@
   "data": [
     {
       "name": "sw_${template.generatedName}",
-      "location": "hdfs://${appConfig.cluster.name}/data/shared_workspace/${template.generatedName}",
+      "location": "hdfs://${appConfig.cluster.nameservice}/data/shared_workspace/${template.generatedName}",
       "size_in_gb": ${appConfig.workspaces.sharedWorkspace.defaultSize.toString},
       "managing_group": {
         "group": {

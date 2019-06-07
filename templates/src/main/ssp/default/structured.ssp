@@ -15,7 +15,7 @@
   "data": [
     {
       "name": "raw_${template.generatedName}",
-      "location": "hdfs://${appConfig.cluster.name}/data/governed/raw/${template.generatedName}",
+      "location": "hdfs://${appConfig.cluster.nameservice}/data/governed/raw/${template.generatedName}",
       "size_in_gb": 1,
       "managing_group": {
         "group": {
@@ -65,7 +65,7 @@
     },
     {
       "name": "staging_${template.generatedName}",
-      "location": "hdfs://${appConfig.cluster.name}/data/governed/staging/${template.generatedName}",
+      "location": "hdfs://${appConfig.cluster.nameservice}/data/governed/staging/${template.generatedName}",
       "size_in_gb": 1,
       "managing_group": {
         "group": {
@@ -115,7 +115,7 @@
     },
     {
       "name": "modeled_${template.generatedName}",
-      "location": "hdfs://${appConfig.cluster.name}/data/governed/modeled/${template.generatedName}",
+      "location": "hdfs://${appConfig.cluster.nameservice}/data/governed/modeled/${template.generatedName}",
       "size_in_gb": 1,
       "managing_group": {
         "group": {
