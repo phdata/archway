@@ -80,22 +80,33 @@ export abstract class ServiceLinks<T extends Statusable> {
 }
 
 export class HueServiceLinks extends ServiceLinks<HueService> {
-  public links: JSX.Element[] =
+  public hueServiceLinks: JSX.Element[] =
     this.service &&
-    this.service.load_balancer.map((location: WebLocation) => (
-      <a
-        key={location.host}
-        target="_blank"
-        rel="noreferrer noopener"
-        href={`https://${location.host}:${location.port}`}
-      >
-        Hue UI
-      </a>
+    this.service.load_balancer.map(location => (
+      <Menu.Item key={location.host}>
+        <a target="_blank" rel="noreferrer noopener" href={`https://${location.host}:${location.port}`}>
+          Hue UI
+        </a>
+      </Menu.Item>
     ));
+
+  public links: JSX.Element[] = [
+    // tslint:disable-next-line: jsx-key
+    <Dropdown overlay={<Menu>{this.hueServiceLinks}</Menu>}>
+      <a href="#" className="ant-dropdown-link">
+        {/* eslint-disable-line */}
+        Quick Links <Icon type="down" />
+      </a>
+    </Dropdown>,
+  ];
 }
 
 export class HiveServiceLinks extends ServiceLinks<HiveService> {
-  public links: JSX.Element[] = [];
+  public links: JSX.Element[] = [0].map(index => (
+    <h4 key={index} style={{ cursor: 'not-allowed', color: 'rgb(0,0,0,.45)', margin: 0 }}>
+      (no links)
+    </h4>
+  ));
 }
 
 export class YarnServiceLinks extends ServiceLinks<YarnService> {
@@ -104,7 +115,7 @@ export class YarnServiceLinks extends ServiceLinks<YarnService> {
     this.service.resource_manager.map(location => (
       <Menu.Item key={location.host}>
         <a target="_blank" rel="noreferrer noopener" href={`https://${location.host}:${location.port}`}>
-          {location.host}
+          Resource Manager UI ({location.host})
         </a>
       </Menu.Item>
     ));
@@ -114,44 +125,49 @@ export class YarnServiceLinks extends ServiceLinks<YarnService> {
     this.service.node_manager.map(location => (
       <Menu.Item key={location.host}>
         <a target="_blank" rel="noreferrer noopener" href={`https://${location.host}:${location.port}`}>
-          {location.host}
+          Node Manager UI ({location.host})
         </a>
       </Menu.Item>
     ));
 
   public links: JSX.Element[] = [
     // tslint:disable-next-line: jsx-key
-    <Dropdown overlay={<Menu>{this.nodeManagerLinks}</Menu>}>
+    <Dropdown
+      overlay={
+        <Menu>
+          {this.resourceManagerLinks}
+          {this.nodeManagerLinks}
+        </Menu>
+      }
+    >
       <a href="#" className="ant-dropdown-link">
-        {' '}
         {/* eslint-disable-line */}
-        Node Manager UI <Icon type="down" />
+        Quick Links <Icon type="down" />
       </a>
     </Dropdown>,
-    // tslint:disable-next-line: jsx-key
-    <Dropdown overlay={<Menu>{this.resourceManagerLinks}</Menu>}>
-      <a href="#" className="ant-dropdown-link">
-        {' '}
-        {/* eslint-disable-line */}
-        Resource Manager UI <Icon type="down" />
-      </a>
-    </Dropdown>
   ];
 }
 
 export class NavigatorServiceLinks extends ServiceLinks<NavigatorService> {
-  public links: JSX.Element[] =
+  public navigatorServiceLinks: JSX.Element[] =
     this.service &&
-    this.service.navigator.map((location: WebLocation) => (
-      <a
-        key={location.host}
-        target="_blank"
-        rel="noreferrer noopener"
-        href={`https://${location.host}:${location.port}`}
-      >
-        Navigator UI
-      </a>
+    this.service.navigator.map(location => (
+      <Menu.Item key={location.host}>
+        <a target="_blank" rel="noreferrer noopener" href={`https://${location.host}:${location.port}`}>
+          Navigator UI
+        </a>
+      </Menu.Item>
     ));
+
+  public links: JSX.Element[] = [
+    // tslint:disable-next-line: jsx-key
+    <Dropdown overlay={<Menu>{this.navigatorServiceLinks}</Menu>}>
+      <a href="#" className="ant-dropdown-link">
+        {/* eslint-disable-line */}
+        Quick Links <Icon type="down" />
+      </a>
+    </Dropdown>,
+  ];
 }
 
 export interface Cluster extends Statusable {
