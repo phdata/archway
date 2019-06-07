@@ -124,7 +124,7 @@ CREATE TABLE IF NOT EXISTS `approval` (
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `member` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
-  `username` VARCHAR(255) NOT NULL,
+  `distinguished_name` VARCHAR(255) NOT NULL,
   `ldap_registration_id` BIGINT NOT NULL,
   `created` TIMESTAMP NULL,
   PRIMARY KEY (`id`),
