@@ -4,7 +4,8 @@ import java.io.{File, InputStream, OutputStream}
 import java.net.URI
 import java.text.DecimalFormat
 
-import cats.effect.{Async, IO, Sync}
+import cats.effect.{Async, Sync}
+import cats.implicits._
 import com.heimdali.services.LoginContextProvider
 import com.typesafe.scalalogging.LazyLogging
 import org.apache.hadoop.conf.Configuration
@@ -18,6 +19,8 @@ trait HDFSClient[F[_]] {
 
   def createDirectory(location: String, onBehalfOf: Option[String]): F[Path]
 
+  def deleteDirectory(location: String): F[Unit]
+
   def changeOwner(location: String, user: String): F[Path]
 
   def setQuota(path: String, maxSizeInGB: Double): F[HDFSAllocation]
@@ -25,6 +28,8 @@ trait HDFSClient[F[_]] {
   def getQuota(path: Path): F[Double]
 
   def getConsumption(location: String): F[Double]
+
+  def removeQuota(path: String): F[Unit]
 }
 
 class HDFSClientImpl[F[_] : Async](hadoopConfiguration: Configuration,
@@ -52,6 +57,11 @@ class HDFSClientImpl[F[_] : Async](hadoopConfiguration: Configuration,
   override def createDirectory(location: String, onBehalfOf: Option[String] = None): F[Path] =
     loginContextProvider.elevate(onBehalfOf.getOrElse("hdfs")) { () =>
       createDirectory(location)
+    }
+
+  override def deleteDirectory(location: String): F[Unit] =
+    loginContextProvider.elevate("hdfs") { () =>
+      fileSystem.delete(location)
     }
 
   override def changeOwner(location: String, user: String): F[Path] =
@@ -87,4 +97,9 @@ class HDFSClientImpl[F[_] : Async](hadoopConfiguration: Configuration,
     loginContextProvider.elevate("hdfs") { () =>
       ((fileSystem.getContentSummary(new Path(location)).getSpaceConsumed / 1024.0) / 1024.0) / 1024.0
     }
+
+  override def removeQuota(path: String): F[Unit] =
+    loginContextProvider.elevate("hdfs") { () =>
+      hdfsAdmin.clearQuota(new Path(path))
+    }.void
 }

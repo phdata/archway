@@ -45,6 +45,16 @@ trait SentryClient[F[_]] {
   def enableAccessToLocation(location: String, role: String): F[Unit]
 
   def grantPrivilege(role: String, component: Component, grantString: String): F[Unit]
+
+  def dropRole(role: String): F[Unit]
+
+  def removeAccessToDB(database: String, role: String, databaseRole: DatabaseRole): F[Unit]
+
+  def revokeGroup(group: String, role: String): F[Unit]
+
+  def removeAccessToLocation(location: String, role: String): F[Unit]
+
+  def removePrivilege(role: String, component: Component, grantString: String): F[Unit]
 }
 
 class SentryClientImpl[F[_]](transactor: Transactor[F],
@@ -103,4 +113,45 @@ class SentryClientImpl[F[_]](transactor: Transactor[F],
       ).void
     }
 
+  override def dropRole(role: String): F[Unit] =
+    loginContextProvider.hadoopInteraction {
+      roles.flatMap {
+        case roles if roles.contains(role) =>
+          (fr"DROP ROLE" ++ Fragment.const(role)).update.run.transact(transactor).void
+        case _ =>
+          Sync[F].unit
+      }
+    }
+
+  override def removeAccessToDB(database: String, role: String, databaseRole: DatabaseRole): F[Unit] =
+    loginContextProvider.hadoopInteraction {
+      (databaseRole match {
+        case Manager | ReadWrite =>
+          fr"REVOKE ALL ON DATABASE" ++ Fragment.const(database) ++ fr"FROM ROLE" ++ Fragment.const(role)
+        case ReadOnly =>
+          fr"REVOKE SELECT ON DATABASE" ++ Fragment.const(database) ++ fr"FROM ROLE" ++ Fragment.const(role)
+      }).update.run.transact(transactor).flatMap(_ => Sync[F].unit)
+    }
+
+  override def revokeGroup(group: String, role: String): F[Unit] =
+    loginContextProvider.hadoopInteraction {
+      (fr"REVOKE ROLE" ++ Fragment.const(role) ++ fr"FROM GROUP" ++ Fragment.const(group))
+        .update.run.transact(transactor).flatMap(_ => Sync[F].unit)
+    }
+
+  override def removeAccessToLocation(location: String, role: String): F[Unit] =
+    loginContextProvider.hadoopInteraction {
+      (fr"REVOKE ALL ON URI '" ++ Fragment.const(location) ++ fr"' FROM ROLE" ++ Fragment.const(role))
+        .update.run.transact(transactor).flatMap(_ => Sync[F].unit)
+    }
+
+  override def removePrivilege(role: String, component: Component, grantString: String): F[Unit] =
+    loginContextProvider.hadoopInteraction {
+      F.delay(
+        client.dropPrivilege(
+          "heimdali_api",
+          component.name,
+          component.privilege(grantString))
+      ).void
+    }
 }

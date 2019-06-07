@@ -19,4 +19,15 @@ class KafkaClientImplIntegrationSpec extends FlatSpec with Matchers {
     AdminUtils.deleteTopic(client.zkUtils, KAFKA_TEST_TOPIC)
     AdminUtils.topicExists(client.zkUtils, KAFKA_TEST_TOPIC) shouldBe false
   }
+
+  it should "delete Kafka topic" in {
+    val client = new KafkaClientImpl[IO](appConfig) {}
+    val KAFKA_TEST_TOPIC = "heimdali_test_kafka_topic"
+
+    client.createTopic(KAFKA_TEST_TOPIC, 10, 1).unsafeRunSync()
+    AdminUtils.topicExists(client.zkUtils, KAFKA_TEST_TOPIC) shouldBe true
+
+    client.deleteTopic(KAFKA_TEST_TOPIC).unsafeRunSync()
+    AdminUtils.topicExists(client.zkUtils, KAFKA_TEST_TOPIC) shouldBe false
+  }
 }

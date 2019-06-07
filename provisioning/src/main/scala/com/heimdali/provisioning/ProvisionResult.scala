@@ -7,25 +7,25 @@ sealed trait ProvisionResult
 
 case object Unknown extends ProvisionResult {
   def message(workspaceId: Long): NonEmptyList[Message] =
-    NonEmptyList.one(SimpleMessage(workspaceId, s"Undetermined provisioning result"))
+    NonEmptyList.one(SimpleMessage(workspaceId, s"UNKNOWN: Undetermined provisioning result"))
 }
 
 case object NoOp extends ProvisionResult {
   def message(workspaceId: Long, provisionType: String): NonEmptyList[Message] =
-    NonEmptyList.one(SimpleMessage(workspaceId, s"Nothing to do for $provisionType"))
+    NonEmptyList.one(SimpleMessage(workspaceId, s"NO OP: Nothing to do for $provisionType"))
 }
 
 case object Error extends ProvisionResult {
   def message[A](resource: A, workspaceId: Long, exception: Exception)(implicit show: Show[A]): NonEmptyList[Message] =
     NonEmptyList.one(
-      ExceptionMessage(workspaceId, s"""${show.show(resource)} for workspace $workspaceId FAILED due to ${exception.getMessage}""", exception)
+      ExceptionMessage(workspaceId, s"""FAILED: ${show.show(resource)} for workspace $workspaceId due to ${exception.getMessage}""", exception)
     )
 }
 
 case object Success extends ProvisionResult {
   def message[A](resource: A, workspaceId: Long)(implicit show: Show[A]): NonEmptyList[Message] =
     NonEmptyList.of(
-      SimpleMessage(workspaceId, s"${show.show(resource)} for workspace $workspaceId SUCCEEDED"))
+      SimpleMessage(workspaceId, s"SUCCESS: ${show.show(resource)} for workspace $workspaceId"))
 }
 
 object ProvisionResult {

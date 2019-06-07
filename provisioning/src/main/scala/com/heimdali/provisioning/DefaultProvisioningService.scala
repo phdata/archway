@@ -1,10 +1,7 @@
 package com.heimdali.provisioning
 
-import java.time.Instant
-
 import cats.data._
 import cats.effect._
-import cats.effect.implicits._
 import cats.implicits._
 import com.heimdali.AppContext
 import com.heimdali.models.{Application, KafkaTopic, WorkspaceRequest}
@@ -30,6 +27,12 @@ class DefaultProvisioningService[F[_] : ContextShift : ConcurrentEffect : Timer]
       case _ =>
         NonEmptyList.one[Message](SimpleMessage(workspace.id.get, s"Skipping workspace build. Workspace has ${workspace.approvals.length} but requires $requiredApprovals")).pure[F]
     }
+    ConcurrentEffect[F].start(provisioning)
+  }
+
+  override def attemptDeprovision(workspace: WorkspaceRequest): F[Fiber[F, NonEmptyList[Message]]] = {
+    val provisioning: F[NonEmptyList[Message]] =
+      ContextShift[F].evalOn(provisionContext)(workspace.deprovision[F](WorkspaceContext(workspace.id.get, appContext)).run.map(_._1))
     ConcurrentEffect[F].start(provisioning)
   }
 

@@ -55,6 +55,18 @@ class WorkspaceController[F[_] : Sync : Timer](authService: AuthService[F],
           else
             Forbidden()
 
+        case POST -> Root / LongVar(id) / "deprovision" as user =>
+          if (user.isSuperUser) {
+            for {
+              workspace <- workspaceService.find(id).value
+              provisionFiber <- provisioningService.attemptDeprovision(workspace.get)
+              provisionResult <- provisionFiber.join
+              response <- Created(provisionResult.asJson)
+            } yield response
+          }
+          else
+            Forbidden()
+
         case req@POST -> Root as user =>
           /* explicit implicit declaration because of `user` variable */
           Clock[F].realTime(scala.concurrent.duration.MILLISECONDS).flatMap { time =>

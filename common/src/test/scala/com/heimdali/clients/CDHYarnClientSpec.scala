@@ -46,6 +46,16 @@ class CDHYarnClientSpec extends FlatSpec with MockFactory with Matchers with Htt
     result should be(expected)
   }
 
+  it should "strip json" in {
+    val Right(input) = parse(Source.fromResource("cloudera/pool_after.json").getLines().mkString)
+    val Right(expected) = parse(Source.fromResource("cloudera/pool.json").getLines().mkString)
+
+    val clusterService = new TestClusterService()
+    val client = new CDHYarnClient(null, appConfig.cluster, clusterService)
+    val result = client.strip(input, "test", Queue("root"))
+    result should be(expected)
+  }
+
   it should "find correct queue" in {
     val Right(json) = parse(Source.fromResource("cloudera/pool.json").getLines().mkString)
     val clusterService = new TestClusterService()

@@ -12,6 +12,8 @@ trait KafkaClient[F[_]] {
 
   def createTopic(name: String, partitions: Int, replicationFactor: Int): F[Unit]
 
+  def deleteTopic(name: String): F[Unit]
+
 }
 
 class KafkaClientImpl[F[_] : Sync](appConfig: AppConfig) extends KafkaClient[F] with LazyLogging {
@@ -25,5 +27,8 @@ class KafkaClientImpl[F[_] : Sync](appConfig: AppConfig) extends KafkaClient[F] 
     logger.warn("creating {} via {}", name, zkUtils)
     Sync[F].delay(AdminUtils.createTopic(zkUtils, name, partitions, replicationFactor))
   }
+
+  override def deleteTopic(name: String): F[Unit] =
+    Sync[F].delay(AdminUtils.deleteTopic(zkUtils, name))
 
 }

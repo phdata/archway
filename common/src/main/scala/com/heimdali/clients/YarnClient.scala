@@ -23,6 +23,8 @@ trait YarnClient[F[_]] {
 
   def applications(poolName: String): F[List[YarnApplication]]
 
+  def deletePool(poolName: String): F[Unit]
+
 }
 
 class CDHYarnClient[F[_] : Sync](http: HttpClient[F],
@@ -81,6 +83,12 @@ class CDHYarnClient[F[_] : Sync](http: HttpClient[F],
       .downField("queues")
       .withFocus(_.withArray(arr => Json.arr(arr :+ config(poolName, cores, memory): _*)))
       .top.get
+
+  def strip(existing: Json, poolName: String, parents: Queue[String]) =
+    dig(existing.hcursor, parents)
+    .downField("queues")
+    .withFocus(_.withArray(arr => Json.arr(arr.filterNot(_.hcursor.downField("name").as[String].toOption.get == poolName): _*)))
+    .top.get
 
   def prepare(container: Json, newConfig: Json): Json = {
     import io.circe.optics.JsonPath._
@@ -159,4 +167,15 @@ class CDHYarnClient[F[_] : Sync](http: HttpClient[F],
       result <- http.request[YarnApplicationList](Request[F](Method.GET, Uri.unsafeFromString(url)))
     } yield result.applications
 
+  override def deletePool(poolName: String): F[Unit] =
+    for {
+      parentPools <- getParents(poolName)
+      config <- yarnConfig
+      poolConfig <- poolConfiguration(config)
+      configJson <- Sync[F].delay(parse((poolConfig \\ "value").head.asString.get).right)
+      updatedJson <- Sync[F].delay(strip(configJson.get, poolName, parentPools))
+      preparedJson <- Sync[F].delay(prepare(config, updatedJson))
+      _ <- yarnConfigUpdate(preparedJson)
+      _ <- yarnConfigRefresh
+    } yield ()
 }

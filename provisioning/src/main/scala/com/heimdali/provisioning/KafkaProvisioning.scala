@@ -1,35 +1,37 @@
 package com.heimdali.provisioning
 
-import cats.Show
-import cats.data.{NonEmptyList, WriterT}
-import cats.effect.{Clock, Sync}
-import cats.implicits._
-import com.heimdali.models.{KafkaTopic, TopicGrant}
-import com.heimdali.provisioning.Provisionable.ops._
+import cats.data.NonEmptyList
+import com.heimdali.models.{KafkaTopic, LDAPRegistration, TopicGrant}
 
 trait KafkaProvisioning {
 
-  implicit object KafkaTopicProvisionable extends Provisionable[KafkaTopic] {
-
-    override def provision[F[_] : Clock : Sync](kafkaTopic: KafkaTopic, workspaceContext: WorkspaceContext[F])(implicit show: Show[KafkaTopic]): WriterT[F, NonEmptyList[Message], ProvisionResult] = {
-      if (workspaceContext.context.appConfig.kafka.secureTopics)
-        for {
-          newTopic <- CreateKafkaTopic(kafkaTopic.id.get, kafkaTopic.name, kafkaTopic.partitions, kafkaTopic.replicationFactor).provision[F](workspaceContext)
-          managingRole <- kafkaTopic.managingRole.provision[F](workspaceContext)
-          readonlyRole <- kafkaTopic.readonlyRole.provision[F](workspaceContext)
-        } yield newTopic |+| managingRole |+| readonlyRole
-      else
-        CreateKafkaTopic(kafkaTopic.id.get, kafkaTopic.name, kafkaTopic.partitions, kafkaTopic.replicationFactor).provision[F](workspaceContext)
+  implicit val KafkaTopicProvisionable: Provisionable[KafkaTopic] =
+    Provisionable.deriveFromSteps { (kafkaTopic, config) =>
+      NonEmptyList.one(
+        TypeWith[Provisionable, KafkaTopicRegistration](
+          KafkaTopicRegistration(kafkaTopic.id.get, kafkaTopic.name, kafkaTopic.partitions, kafkaTopic.replicationFactor)
+        )
+      ) ++
+        List(
+          TypeWith[Provisionable, TopicGrant](
+            kafkaTopic.managingRole
+          ),
+          TypeWith[Provisionable, TopicGrant](
+            kafkaTopic.readonlyRole
+          ),
+        ).filter(_ => config.kafka.secureTopics)
     }
-  }
 
-  implicit object TopicGrantProvisionable extends Provisionable[TopicGrant] {
-
-    override def provision[F[_] : Clock : Sync](topicGrant: TopicGrant, workspaceContext: WorkspaceContext[F])(implicit show: Show[TopicGrant]): WriterT[F, NonEmptyList[Message], ProvisionResult] =
-      for {
-        ldap <- topicGrant.ldapRegistration.provision(workspaceContext)
-        access <- GrantTopicAccess(topicGrant.id.get, topicGrant.name, topicGrant.ldapRegistration.sentryRole, NonEmptyList.fromListUnsafe(topicGrant.actions.split(",").toList)).provision[F](workspaceContext)
-      } yield access |+| ldap
-  }
+  implicit val TopicGrantProvisionable: Provisionable[TopicGrant] =
+    Provisionable.deriveFromSteps { (topicGrant, _) =>
+      NonEmptyList.of(
+        TypeWith[Provisionable, LDAPRegistration](
+          topicGrant.ldapRegistration
+        ),
+        TypeWith[Provisionable, KafkaTopicGrant](
+          KafkaTopicGrant(topicGrant.id.get, topicGrant.name, topicGrant.ldapRegistration.sentryRole, NonEmptyList.fromListUnsafe(topicGrant.actions.split(",").toList))
+        )
+      )
+    }
 
 }
