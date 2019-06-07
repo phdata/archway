@@ -32,6 +32,7 @@ pipelines:
   custom:
     nightly-build:
       - step:
+          size: 2x # Double resources available for this step.
           name: "Build, Test and Package API"
           image: openjdk:8-jdk
           services:
