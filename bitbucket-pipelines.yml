@@ -10,7 +10,8 @@ pipelines:
           - ivy2
         script:
           - './flyway/flyway migrate -url="jdbc:postgresql://localhost:5432/heimdali" -user=postgres -password=postgres'
-          - ./sbt test
+          - ./sbt common/test
+          - ./sbt api/test
     - step:
         name: "Build and Test UI"
         image: node:9
@@ -42,11 +43,17 @@ pipelines:
             - ivy2
           artifacts:
             - api/target/scala-2.12/*
+            - integration-test/target/scala-2.12/*
+            - common/target/scala-2.12/*
+
           script:
             - './flyway/flyway migrate -url="jdbc:postgresql://localhost:5432/heimdali" -user=postgres -password=postgres'
-            - ./sbt test
-            - ./sbt it:test
+            - ./sbt common/test
+            - ./sbt api/test
             - ./sbt "set every test in assembly := {}" api/assembly
+            - ./sbt "set every test in assembly := {}" integration-test/assembly
+            - ./sbt integration-test/test:package
+            - ./sbt common/test:package
       - step:
           name: "Build, Test and Package UI"
           image: node:9
@@ -59,10 +66,10 @@ pipelines:
             - npm i
             - npm run-script prepare
       - step:
-          name: "Validate and Build Parcel and CSD"
+          name: "Validate, Build, Deploy Parcel and CSD"
           image: jotunn/cm-validator
           script:
-            - export HEIMDALI_VERSION=$(date +%Y-%m-%d)_$BITBUCKET_COMMIT
+            - export HEIMDALI_VERSION=$(date +%Y-%m-%d)
             - java -jar /usr/src/validator.jar -p $PWD/cloudera-integration/parcel/heimdali-meta/parcel.json
             - java -jar /usr/src/validator.jar -r $PWD/cloudera-integration/parcel/heimdali-meta/permissions.json
             - java -jar /usr/src/validator.jar -p $PWD/cloudera-integration/parcel/custom-shell-meta/parcel.json
@@ -82,11 +89,13 @@ pipelines:
             - ivy2
           artifacts:
             - api/target/scala-2.12/*
+            - integration-test/target/scala-2.12/*
+            - common/target/scala-2.12/*
           script:
             - ./sbt "set every test in assembly := {}" api/assembly
             - ./sbt "set every test in assembly := {}" integration-test/assembly
-            - ./sbt -mem 4096 integration-test/test:package
-            - ./sbt -mem 4096 common/test:package
+            - ./sbt integration-test/test:package
+            - ./sbt common/test:package
 
       - step:
           name: "Package UI"
