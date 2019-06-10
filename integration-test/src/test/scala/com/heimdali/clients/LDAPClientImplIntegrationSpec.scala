@@ -1,16 +1,18 @@
 package com.heimdali.clients
 
 import cats.effect._
+import com.heimdali.common.IntegrationTest
 import com.heimdali.test.fixtures._
 import com.unboundid.ldap.sdk._
-import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.mockito.MockitoSugar
 
 class LDAPClientImplIntegrationSpec
   extends FlatSpec
     with Matchers
     with MockitoSugar
-    with LDAPTest {
+    with LDAPTest
+    with IntegrationTest {
 
   behavior of "LDAPClientImpl"
 

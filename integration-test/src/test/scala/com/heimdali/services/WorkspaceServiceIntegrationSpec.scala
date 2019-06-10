@@ -1,24 +1,16 @@
 package com.heimdali.services
 
-import java.io.File
-
 import cats.effect._
 import com.heimdali.AppContext
-import com.heimdali.clients._
+import com.heimdali.common.IntegrationTest
 import com.heimdali.generators._
-import com.heimdali.repositories._
 import com.heimdali.test.fixtures.{DBTest, _}
 import com.typesafe.config.ConfigFactory
-import doobie.util.ExecutionContexts
-import org.apache.hadoop.conf.Configuration
-import org.apache.sentry.provider.db.generic.service.thrift.SentryGenericServiceClientFactory
-import org.http4s.client.blaze.BlazeClientBuilder
 import org.scalatest.{FlatSpec, Matchers}
 
 import scala.concurrent.ExecutionContext
-import scala.concurrent.duration._
 
-class WorkspaceServiceIntegrationSpec extends FlatSpec with HiveTest with DBTest with Matchers {
+class WorkspaceServiceIntegrationSpec extends FlatSpec with HiveTest with DBTest with Matchers with IntegrationTest {
 
   behavior of "Workspace integration spec"
 

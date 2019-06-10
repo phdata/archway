@@ -1,9 +1,10 @@
 package com.heimdali.repositories
 
+import com.heimdali.common.IntegrationTest
 import com.heimdali.test.fixtures._
 import org.scalatest.{FlatSpec, Matchers}
 
-class ComplianceRepositoryImplIntegrationSpec extends FlatSpec with Matchers with DBTest {
+class ComplianceRepositoryImplIntegrationSpec extends FlatSpec with Matchers with DBTest with IntegrationTest {
 
   behavior of "ComplianceRepositoryImplIntegrationSpec"
 

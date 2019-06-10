@@ -2,10 +2,12 @@
 
 package com.heimdali.common
 
-import org.scalatest.FlatSpec
+import org.scalatest.TestSuite
+import org.scalatest.concurrent.TimeLimitedTests
+import org.scalatest.time.SpanSugar._
 
-class IntegrationTest extends FlatSpec {
-  it should "run an integration test" in new {
-    assert(true)
-  }
+trait IntegrationTest extends TestSuite with TimeLimitedTests {
+
+  val timeLimit = 60000 millis
 }
+

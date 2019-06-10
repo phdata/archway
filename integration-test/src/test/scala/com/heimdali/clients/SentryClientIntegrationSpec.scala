@@ -1,13 +1,14 @@
 package com.heimdali.clients
 
 import cats.effect.{ContextShift, IO}
+import com.heimdali.common.IntegrationTest
 import com.heimdali.services.UGILoginContextProvider
 import com.heimdali.test.fixtures._
 import org.scalatest.{FlatSpec, Matchers}
 
 import scala.concurrent.ExecutionContext
 
-class SentryClientIntegrationSpec extends FlatSpec with Matchers with HiveTest {
+class SentryClientIntegrationSpec extends FlatSpec with Matchers with HiveTest with IntegrationTest {
 
   override implicit def contextShift: ContextShift[IO] = IO.contextShift(ExecutionContext.global)
 

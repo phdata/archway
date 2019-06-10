@@ -5,6 +5,7 @@ import cats.effect.IO
 import cats.implicits._
 import com.heimdali.AppContext
 import com.heimdali.clients.LDAPUser
+import com.heimdali.common.IntegrationTest
 import com.heimdali.models._
 import com.heimdali.repositories._
 import com.heimdali.test.fixtures._
@@ -13,7 +14,13 @@ import doobie.implicits._
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FlatSpec, Matchers}
 
-class MemberServiceIntegrationSpec extends FlatSpec with Matchers with DBTest with MockFactory with AppContextProvider {
+class MemberServiceIntegrationSpec
+  extends FlatSpec
+    with Matchers
+    with DBTest
+    with MockFactory
+    with AppContextProvider
+    with IntegrationTest {
 
   behavior of "Member Service"
 

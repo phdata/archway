@@ -5,6 +5,7 @@ package com.heimdali.clients
 import java.util.UUID
 
 import cats.effect.{ContextShift, IO}
+import com.heimdali.common.IntegrationTest
 import com.heimdali.services.UGILoginContextProvider
 import com.heimdali.test.fixtures._
 import doobie._
@@ -13,7 +14,12 @@ import org.scalatest.{BeforeAndAfterAll, FlatSpec, Matchers}
 
 import scala.concurrent.ExecutionContext
 
-class HiveClientImplIntegrationSpec extends FlatSpec with Matchers with HiveTest with BeforeAndAfterAll {
+class HiveClientImplIntegrationSpec
+  extends FlatSpec
+    with Matchers
+    with HiveTest
+    with BeforeAndAfterAll
+    with IntegrationTest {
 
   override implicit def contextShift: ContextShift[IO] = IO.contextShift(ExecutionContext.global)
 

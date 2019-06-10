@@ -3,11 +3,12 @@ package com.heimdali.clients
 import java.util.UUID
 
 import cats.effect.IO
+import com.heimdali.common.IntegrationTest
+import com.heimdali.test.fixtures.appConfig
 import kafka.admin.AdminUtils
 import org.scalatest.{FlatSpec, Matchers}
-import com.heimdali.test.fixtures.appConfig
 
-class KafkaClientImplIntegrationSpec extends FlatSpec with Matchers {
+class KafkaClientImplIntegrationSpec extends FlatSpec with Matchers with IntegrationTest {
 
   behavior of "KafkaImplCiTest"
 

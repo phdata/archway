@@ -4,20 +4,23 @@ package com.heimdali.clients
 import java.net.URI
 
 import cats.effect.IO
+import com.heimdali.common.IntegrationTest
 import com.heimdali.services.UGILoginContextProvider
+import com.heimdali.test.fixtures._
 import com.sun.xml.internal.messaging.saaj.util.ByteInputStream
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.fs.{FileSystem, Path}
 import org.apache.hadoop.hdfs.client.HdfsAdmin
 import org.apache.hadoop.security.UserGroupInformation
 import org.scalatest._
-import com.heimdali.test.fixtures._
 import org.scalatest.mockito.MockitoSugar
 
-import scala.concurrent.ExecutionContext
-import scala.io.Source
-
-class HDFSClientImplIntegrationSpec extends FlatSpec with Matchers with MockitoSugar with BeforeAndAfterAll {
+class HDFSClientImplIntegrationSpec
+    extends FlatSpec
+    with Matchers
+    with MockitoSugar
+    with BeforeAndAfterAll
+    with IntegrationTest {
 
   behavior of "HDFS Client"
 
