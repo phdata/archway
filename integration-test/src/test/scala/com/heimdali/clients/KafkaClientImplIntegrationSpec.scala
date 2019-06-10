@@ -1,5 +1,7 @@
 package com.heimdali.clients
 
+import java.util.UUID
+
 import cats.effect.IO
 import kafka.admin.AdminUtils
 import org.scalatest.{FlatSpec, Matchers}
@@ -11,7 +13,7 @@ class KafkaClientImplIntegrationSpec extends FlatSpec with Matchers {
 
   it should "create Kafka topic" in {
     val client = new KafkaClientImpl[IO](appConfig) {}
-    val KAFKA_TEST_TOPIC = "heimdali_test_kafka_topic"
+    val KAFKA_TEST_TOPIC = s"heimdali_test_kafka_topic_${UUID.randomUUID().toString.take(8)}"
 
     client.createTopic(KAFKA_TEST_TOPIC, 10, 1).unsafeRunSync()
 
@@ -22,7 +24,7 @@ class KafkaClientImplIntegrationSpec extends FlatSpec with Matchers {
 
   it should "delete Kafka topic" in {
     val client = new KafkaClientImpl[IO](appConfig) {}
-    val KAFKA_TEST_TOPIC = "heimdali_test_kafka_topic"
+    val KAFKA_TEST_TOPIC = s"heimdali_test_kafka_topic_${UUID.randomUUID().toString.take(8)}"
 
     client.createTopic(KAFKA_TEST_TOPIC, 10, 1).unsafeRunSync()
     AdminUtils.topicExists(client.zkUtils, KAFKA_TEST_TOPIC) shouldBe true
