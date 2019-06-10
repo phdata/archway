@@ -21,8 +21,11 @@ object GroupMember {
         .transact(workspaceContext.context.transactor).void
 
     override def run[F[_] : Sync : Clock](groupMember: GroupMember, workspaceContext: WorkspaceContext[F]): F[Unit] =
-      workspaceContext.context.provisioningLDAPClient.addUser(groupMember.groupDN, groupMember.distinguishedName)
+      for {
+        _ <- workspaceContext.context.hdfsClient.createUserDirectory(groupMember.distinguishedName)
+        _ <- workspaceContext.context.provisioningLDAPClient.addUser(groupMember.groupDN, groupMember.distinguishedName)
         .value.void
+      } yield ()
   }
 
   implicit object NewMemberDeprovisioningTask extends DeprovisioningTask[GroupMember] {

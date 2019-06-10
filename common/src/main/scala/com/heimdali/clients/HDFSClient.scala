@@ -21,6 +21,8 @@ trait HDFSClient[F[_]] {
 
   def deleteDirectory(location: String): F[Unit]
 
+  def createUserDirectory(userName: String): F[Path]
+
   def changeOwner(location: String, user: String): F[Path]
 
   def setQuota(path: String, maxSizeInGB: Double): F[HDFSAllocation]
@@ -48,7 +50,7 @@ class HDFSClientImpl[F[_] : Async](hadoopConfiguration: Configuration,
   implicit def locationToPath(location: String): Path =
     new Path(location)
 
-  def createDirectory(location: String): Path = {
+  private def createHDFSDirectory(location: String): Path = {
     logger.info(s"Creating $location in $fileSystem")
     fileSystem.mkdirs(location)
     location
@@ -56,8 +58,18 @@ class HDFSClientImpl[F[_] : Async](hadoopConfiguration: Configuration,
 
   override def createDirectory(location: String, onBehalfOf: Option[String] = None): F[Path] =
     loginContextProvider.elevate(onBehalfOf.getOrElse("hdfs")) { () =>
-      createDirectory(location)
+      createHDFSDirectory(location)
     }
+
+  override def createUserDirectory(userName: String): F[Path] = {
+    Sync[F].delay{
+      if(fileSystem.exists(s"/user/$userName")){
+        fileSystem.getFileStatus(s"/user/$userName").getPath
+      } else {
+        createHDFSDirectory(s"/user/$userName")
+      }
+    }
+  }
 
   override def deleteDirectory(location: String): F[Unit] =
     loginContextProvider.elevate("hdfs") { () =>
