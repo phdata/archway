@@ -87,8 +87,18 @@ class LDAPClientImpl[F[_] : Effect](ldapConfig: LDAPConfig, binding: LDAPConfig 
   override def validateUser(username: String, password: String): OptionT[F, LDAPUser] =
     for {
       result <- getUserEntry(username).map(ldapUser)
-      _ <- OptionT(Sync[F].delay(Try(connectionPool.getConnection.bind(result.distinguishedName, password)).toOption))
+      _ <- OptionT(Sync[F].delay(ldapBindingAsOption(result.distinguishedName, password, username)))
     } yield result
+
+  private def ldapBindingAsOption(distinguishedName: String, password: String, userName: String): Option[BindResult] = {
+    Try(connectionPool.getConnection.bind(distinguishedName, password)) match {
+      case Success(value) => Some(value)
+      case Failure(exception) => {
+        logger.warn(s"Bind process failed for user $userName", exception)
+        None
+      }
+    }
+  }
 
   def attributeConvert(attributes: List[(String, String)]): List[Attribute] =
     attributes.groupBy(_._1).map {
