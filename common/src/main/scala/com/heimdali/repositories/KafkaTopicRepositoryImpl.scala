@@ -8,6 +8,8 @@ import doobie.implicits._
 
 class KafkaTopicRepositoryImpl extends KafkaTopicRepository {
 
+  implicit val han: LogHandler = CustomLogHandler.logHandler(this.getClass)
+
   override def create(kafkaTopic: KafkaTopic): ConnectionIO[Long] =
     Statements.create(kafkaTopic).withUniqueGeneratedKeys("id")
 

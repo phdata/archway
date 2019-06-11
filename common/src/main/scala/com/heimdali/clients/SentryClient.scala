@@ -12,6 +12,7 @@ import doobie.implicits._
 import org.apache.hadoop.security.UserGroupInformation
 import org.apache.sentry.provider.db.generic.service.thrift.{SentryGenericServiceClient, TSentryPrivilege}
 import org.apache.sentry.provider.db.generic.tools.KafkaTSentryPrivilegeConverter
+import com.heimdali.repositories.CustomLogHandler
 
 sealed trait Component {
 
@@ -64,7 +65,7 @@ class SentryClientImpl[F[_]](transactor: Transactor[F],
   extends SentryClient[F]
     with LazyLogging {
 
-  implicit val han: LogHandler = LogHandler.jdkLogHandler
+  implicit val han: LogHandler = CustomLogHandler.logHandler(this.getClass)
 
   def roles: F[Seq[String]] = sql"""SHOW ROLES""".query[String].to[Seq].transact(transactor)
 

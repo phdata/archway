@@ -3,13 +3,10 @@
 package com.heimdali.test.fixtures
 
 import cats.effect.{ContextShift, IO}
-import doobie.LogHandler
 import doobie.util.transactor.Transactor
 import org.apache.hadoop.security.UserGroupInformation
 
 trait HiveTest {
-
-  implicit val logHandler = LogHandler.jdkLogHandler
 
   implicit def contextShift: ContextShift[IO]
 

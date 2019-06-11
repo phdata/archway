@@ -11,6 +11,8 @@ import doobie.util.fragments.whereAnd
 
 class YarnRepositoryImpl extends YarnRepository {
 
+  implicit val han: LogHandler = CustomLogHandler.logHandler(this.getClass)
+
   override def complete(id: Long, time: Instant): ConnectionIO[Int] =
     Statements
       .complete(id, time)

@@ -9,6 +9,8 @@ import doobie.util.fragments.whereAnd
 
 class HiveAllocationRepositoryImpl extends HiveAllocationRepository {
 
+  implicit val han: LogHandler = CustomLogHandler.logHandler(this.getClass)
+
   def grant(role: DatabaseRole, hiveRole: Statements.HiveRole, ldap: LDAPRegistration, records: List[LDAPAttribute]): HiveGrant =
     HiveGrant(
       hiveRole.name,

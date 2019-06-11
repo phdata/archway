@@ -7,6 +7,8 @@ import doobie.implicits._
 
 class HiveGrantRepositoryImpl extends HiveGrantRepository {
 
+  implicit val han: LogHandler = CustomLogHandler.logHandler(this.getClass)
+
   override def create(ldapRegistrationId: Long): ConnectionIO[Long] =
     Statements
       .insert(ldapRegistrationId)

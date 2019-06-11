@@ -8,6 +8,8 @@ class ConfigRepositoryImpl extends ConfigRepository {
 
   import Statements._
 
+  implicit val han: LogHandler = CustomLogHandler.logHandler(this.getClass)
+
   override def getValue(key: String): ConnectionIO[String] =
     select(key).unique
 

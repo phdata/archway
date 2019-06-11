@@ -3,6 +3,7 @@ package com.heimdali.clients
 import cats.effect.{Effect, Sync}
 import cats.implicits._
 import com.heimdali.models.{HiveDatabase, HiveTable}
+import com.heimdali.repositories.CustomLogHandler
 import com.heimdali.services.LoginContextProvider
 import doobie._
 import doobie.implicits._
@@ -24,7 +25,7 @@ class HiveClientImpl[F[_]](loginContextProvider: LoginContextProvider,
                           (implicit val F: Effect[F])
   extends HiveClient[F] {
 
-  implicit val logHandler = LogHandler.jdkLogHandler
+  implicit val logHandler = CustomLogHandler.logHandler(this.getClass)
 
   override def createDatabase(name: String, location: String, comment: String, dbProperties: Map[String, String]): F[Unit] =
     loginContextProvider.hadoopInteraction {

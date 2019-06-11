@@ -14,6 +14,8 @@ class LDAPRepositoryImpl extends LDAPRepository with LazyLogging {
 
   import LDAPRepositoryImpl.Statements._
 
+  implicit val han: LogHandler = CustomLogHandler.logHandler(this.getClass)
+
   def insertRecord(ldapRegistration: LDAPRegistration): ConnectionIO[Long] =
     for {
       _ <- logger.debug("{}", ldapRegistration.attributes).pure[ConnectionIO]

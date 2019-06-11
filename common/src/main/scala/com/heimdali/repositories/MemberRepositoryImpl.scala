@@ -7,7 +7,7 @@ import doobie.implicits._
 import doobie.util.fragments.whereAnd
 
 class MemberRepositoryImpl extends MemberRepository {
-  implicit val han = LogHandler.jdkLogHandler
+  implicit val han = CustomLogHandler.logHandler(this.getClass)
 
   override def create(distinguishedName: String, ldapRegistrationId: Long): ConnectionIO[Long] =
     Statements

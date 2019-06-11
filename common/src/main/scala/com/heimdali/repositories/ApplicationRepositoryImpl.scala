@@ -8,6 +8,8 @@ import doobie.implicits._
 
 class ApplicationRepositoryImpl extends ApplicationRepository {
 
+  implicit val han: LogHandler = CustomLogHandler.logHandler(this.getClass)
+
   override def create(application: Application): doobie.ConnectionIO[Long] =
     Statements.insert(application).withUniqueGeneratedKeys("id")
 

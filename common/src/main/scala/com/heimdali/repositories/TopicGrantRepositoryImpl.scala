@@ -3,9 +3,12 @@ package com.heimdali.repositories
 import java.time.Instant
 
 import com.heimdali.models.TopicGrant
+import doobie.LogHandler
 import doobie.imports._
 
 class TopicGrantRepositoryImpl extends TopicGrantRepository {
+
+  implicit val han: LogHandler = CustomLogHandler.logHandler(this.getClass)
 
   override def create(topicGrant: TopicGrant): ConnectionIO[Long] =
     Statements.create(topicGrant).withUniqueGeneratedKeys("id")
