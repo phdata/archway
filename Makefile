@@ -1,6 +1,7 @@
 api-jar: 
 	sbt "set every test in assembly := {}" api/assembly
 
+.PHONY: ui
 ui:
 	npm run-script prepare
 
