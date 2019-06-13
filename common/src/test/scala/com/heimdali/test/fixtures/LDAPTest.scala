@@ -1,10 +1,6 @@
 package com.heimdali.test.fixtures
 
-import com.unboundid.ldap.sdk.{
-  FailoverServerSet,
-  LDAPConnectionPool,
-  SimpleBindRequest
-}
+import com.unboundid.ldap.sdk.{FailoverServerSet, LDAPConnectionPool, SimpleBindRequest}
 import com.unboundid.util.ssl.{SSLUtil, TrustAllTrustManager}
 
 trait LDAPTest {

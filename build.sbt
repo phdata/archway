@@ -11,9 +11,9 @@ lazy val provisioning = (project in file("provisioning"))
   .settings(Common.settings: _*)
   .settings(Provisioning.provisioningSettings: _*)
   .dependsOn(
-    models, 
+    models,
     common,
-    `integration-test` % "test->test"
+    common % "test->test"
   )
 
 lazy val api = (project in file("api"))
@@ -22,8 +22,8 @@ lazy val api = (project in file("api"))
   .dependsOn(
     models,
     common,
-    provisioning,
-    `integration-test` % "test->test"
+    common % "test->test",
+    provisioning
   )
 
 lazy val templates = (project in file("templates"))
@@ -36,7 +36,8 @@ lazy val templates = (project in file("templates"))
 lazy val `integration-test` = (project in file("integration-test"))
   .settings(IntegrationTest.settings: _*)
   .dependsOn(
-    common,
-    common % "test->test",
+    api,
+    provisioning,
+    common % "test->test", 
     models
   )
