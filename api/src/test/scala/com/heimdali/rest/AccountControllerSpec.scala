@@ -1,9 +1,9 @@
 package com.heimdali.rest
 
 import cats.data._
-import cats.effect.IO
+import cats.effect.{ContextShift, IO}
 import com.heimdali.services.AccountService
-import com.heimdali.test.TestAuthService
+import com.heimdali.test.{TestAuthService, TestClusterService}
 import com.heimdali.test.fixtures.{HttpTest, _}
 import org.http4s._
 import org.http4s.circe._
@@ -13,17 +13,27 @@ import org.http4s.implicits._
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FlatSpec, Matchers}
 
+import scala.concurrent.ExecutionContext
+
 class AccountControllerSpec
   extends FlatSpec
     with Matchers
     with MockFactory
-    with HttpTest {
+    with HttpTest
+    with AppContextProvider {
+
+  override implicit def contextShift: ContextShift[IO] = IO.contextShift(ExecutionContext.global)
 
   behavior of "AccountController"
 
   it should "get a token" in new Context {
     val response: IO[Response[IO]] = accountController.openRoutes.orNotFound.run(Request(uri = Uri.uri("/")))
     check(response, Status.Ok, Some(fromResource("rest/token.expected.json")))(jsonDecoder)
+  }
+
+  it should "get a auth-type" in new Context {
+    val response: IO[Response[IO]] = accountController.openRoutes.orNotFound.run(Request(uri = Uri.uri("/auth-type")))
+    check(response, Status.Ok, Some(fromResource("rest/auth-type.expected.json")))(jsonDecoder)
   }
 
   it should "get a profile" in new Context {
@@ -55,8 +65,9 @@ class AccountControllerSpec
   trait Context {
     val accountService: AccountService[IO] = mock[AccountService[IO]]
     val authService: TestAuthService = new TestAuthService(platformApprover = true)
+    val context = genMockContext(clusterService = new TestClusterService())
 
-    lazy val accountController: AccountController[IO] = new AccountController[IO](authService, accountService)
+    lazy val accountController: AccountController[IO] = new AccountController[IO](authService, accountService, context.appConfig)
   }
 
 }

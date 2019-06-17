@@ -56,7 +56,7 @@ object Server extends IOApp with LazyLogging {
       emailService = new EmailServiceImpl[F](context, workspaceService)
 
       authService = new AuthServiceImpl[F](accountService)
-      accountController = new AccountController[F](authService, accountService)
+      accountController = new AccountController[F](authService, accountService, context.appConfig)
       templateController = new TemplateController[F](authService, templateService)
       clusterController = new ClusterController[F](context)
       workspaceController = new WorkspaceController[F](authService, workspaceService, memberService, kafkaService, applicationService, emailService, provisionService)

@@ -8,10 +8,6 @@ import doobie.hikari.HikariTransactor
 import doobie.util.transactor.Strategy
 import io.circe.syntax._
 import io.circe.{Decoder, Encoder, HCursor, _}
-import io.circe.syntax._
-import cats.syntax.functor._
-import io.circe.{Decoder, Encoder}, io.circe.generic.auto._
-import io.circe.syntax._
 
 import scala.concurrent.ExecutionContext
 import scala.concurrent.duration.{Duration, FiniteDuration}
@@ -109,7 +105,9 @@ package object config {
 
   case class RestConfig(port: Int,
                         secret: String,
+                        authType: String,
                         principal: String,
+                        httpPrincipal: String,
                         keytab: String,
                         sslStore: Option[String] = None,
                         sslStorePassword: Option[String] = None,

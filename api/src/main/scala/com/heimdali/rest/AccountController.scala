@@ -2,6 +2,7 @@ package com.heimdali.rest
 
 import cats.effect._
 import cats.implicits._
+import com.heimdali.config.AppConfig
 import com.heimdali.models.{Token, User}
 import com.heimdali.services.AccountService
 import io.circe.syntax._
@@ -9,16 +10,22 @@ import org.http4s._
 import org.http4s.dsl.Http4sDsl
 
 class AccountController[F[_] : Sync](authService: AuthService[F],
-                                     accountService: AccountService[F])
+                                     accountService: AccountService[F],
+                                     appConfig: AppConfig)
   extends Http4sDsl[F] {
 
-  val openRoutes: HttpRoutes[F] =
+  val openRoutes: HttpRoutes[F] = {
     authService.basicAuth {
       AuthedService[Token, F] {
         case GET -> Root as token =>
           Ok(token.asJson)
       }
     }
+    HttpRoutes.of[F] {
+      case GET -> Root / "auth-type" =>
+        Ok(Map("authType" -> appConfig.rest.authType).asJson)
+    }
+  }
 
   val tokenizedRoutes: HttpRoutes[F] =
     authService.tokenAuth {
