@@ -126,6 +126,8 @@ export const getHiveTables = (token: string, id: number) => get(`/workspaces/${i
 
 export const getYarnApplications = (token: string, id: number) => get(`/workspaces/${id}/yarn`, token);
 
+export const getAuthtype = () => get('/account/auth-type');
+
 export const requestTopic = (token: string, id: number, name: string, partitions: number, replication_factor: number) =>
   withBody(`/workspaces/${id}/topics`, token, { name, partitions, replication_factor });
 

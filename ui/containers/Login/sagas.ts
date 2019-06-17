@@ -2,6 +2,7 @@ import { all, takeLatest, call, fork, put, select } from 'redux-saga/effects';
 import { delay } from 'redux-saga';
 import * as Api from '../../service/api';
 import * as actions from './actions';
+import { SPNEGO } from '../../constants';
 
 function* checkLogin() {
   const requestToken = localStorage.getItem('requestToken');
@@ -10,6 +11,7 @@ function* checkLogin() {
     yield fork(tokenReady, { token: requestToken });
   } else {
     yield put(actions.tokenNotAvailalbe());
+    yield call(isSpnego);
   }
 }
 
@@ -24,6 +26,21 @@ function* tokenReady({ token }: { token: string }) {
     /* tslint:disable:non-empty */
   } finally {
     yield put(actions.profileLoading(false));
+  }
+}
+
+function* isSpnego() {
+  try {
+    const { authType } = yield call(Api.getAuthtype);
+    if (authType === SPNEGO) {
+      yield call(requestLogin, { username: '', password: '' });
+    } else {
+      // tslint:disable-next-line: no-console
+      console.log('AuthType is not "spnego"');
+    }
+  } catch {
+    // tslint:disable-next-line: no-console
+    console.error('No Api Endpoint for AuthType');
   }
 }
 
