@@ -9,13 +9,10 @@
     "jsx-boolean-value": false,
     "quotemark": [true, "single", "jsx-double"],
     "variable-name": [true, "check-format", "allow-pascal-case", "allow-snake-case"],
-    "max-classes-per-file": false
+    "max-classes-per-file": false,
+    "no-console": false
   },
   "linterOptions": {
-    "exclude": [
-      "config/**/*.js",
-      "node_modules/**/*.ts",
-      "coverage/lcov-report/*.js"
-    ]
+    "exclude": ["config/**/*.js", "node_modules/**/*.ts", "coverage/lcov-report/*.js"]
   }
 }

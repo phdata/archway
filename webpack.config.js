@@ -3,7 +3,7 @@ const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const OpenBrowserPlugin = require('open-browser-webpack-plugin');
 const tsImportPluginFactory = require('ts-import-plugin');
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
   mode: 'development',
@@ -15,20 +15,20 @@ module.exports = {
     'webpack/hot/only-dev-server',
     // bundle the client for hot reloading
     // only- means to only hot reload for successful updates
-    './index.tsx'
+    './index.tsx',
     // the entry point of our app
   ],
   output: {
     filename: 'hotloader.js',
     // the output bundle
     path: resolve(__dirname, 'dist'),
-    publicPath: '/'
+    publicPath: '/',
     // necessary for HMR to know where to load the hot update chunks
   },
   devtool: 'inline-source-map',
   resolve: {
     // Add '.ts' and '.tsx' as resolvable extensions.
-    extensions: [".ts", ".tsx", ".js", ".json", ".less"]
+    extensions: ['.ts', '.tsx', '.js', '.json', '.less'],
   },
   devServer: {
     port: '3000',
@@ -40,16 +40,16 @@ module.exports = {
     // minimize the output to terminal.
     contentBase: resolve(__dirname, 'public'),
     // match the output path
-    publicPath: '/'
+    publicPath: '/',
     // match the output `publicPath`
   },
   module: {
     rules: [
       {
-        enforce: "pre",
+        enforce: 'pre',
         test: /\.(ts|tsx)?$/,
         loader: 'tslint-loader',
-        exclude: [resolve(__dirname, "node_modules")],
+        exclude: [resolve(__dirname, 'node_modules')],
       },
       {
         test: /\.(ts|tsx)?$/,
@@ -59,50 +59,61 @@ module.exports = {
             options: {
               transpileOnly: true,
               getCustomTransformers: () => ({
-                before: [tsImportPluginFactory({
-                  libraryName: 'antd',
-                  libraryDirectory: 'es',
-                  style: 'css',
-                })]
+                before: [
+                  tsImportPluginFactory({
+                    libraryName: 'antd',
+                    libraryDirectory: 'es',
+                    style: 'css',
+                  }),
+                ],
               }),
               compilerOptions: {
-                module: 'es2015'
-              }
+                module: 'es2015',
+              },
             },
           },
         ],
-        exclude: [resolve(__dirname, "node_modules")],
+        exclude: [resolve(__dirname, 'node_modules')],
       },
-      { enforce: "pre", test: /\.js$/, loader: "source-map-loader", exclude: [ resolve(__dirname, 'node_modules/mutationobserver-shim') ] },
+      {
+        enforce: 'pre',
+        test: /\.js$/,
+        loader: 'source-map-loader',
+        exclude: [resolve(__dirname, 'node_modules/mutationobserver-shim')],
+      },
       {
         test: /\.css$/,
-        use: [MiniCssExtractPlugin.loader, "css-loader"]
+        use: [MiniCssExtractPlugin.loader, 'css-loader'],
       },
       {
         test: /\.less$/,
-        use: [{
-          loader: 'style-loader',
-        }, {
-          loader: 'css-loader', // translates CSS into CommonJS
-        }, {
-          loader: 'less-loader', // compiles Less to CSS
-          options: {
-            javascriptEnabled: true,
-          }
-        }]
+        use: [
+          {
+            loader: 'style-loader',
+          },
+          {
+            loader: 'css-loader', // translates CSS into CommonJS
+          },
+          {
+            loader: 'less-loader', // compiles Less to CSS
+            options: {
+              javascriptEnabled: true,
+            },
+          },
+        ],
       },
-      { test: /\.png$/, loader: "url-loader?limit=100000" },
-      { test: /\.jpg$/, loader: "file-loader" },
+      { test: /\.png$/, loader: 'url-loader?limit=100000' },
+      { test: /\.jpg$/, loader: 'file-loader' },
       { test: /\.(woff|woff2)(\?v=\d+\.\d+\.\d+)?$/, loader: 'url-loader?limit=10000&mimetype=application/font-woff' },
       { test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/, loader: 'url-loader?limit=10000&mimetype=application/octet-stream' },
       { test: /\.eot(\?v=\d+\.\d+\.\d+)?$/, loader: 'file-loader' },
-      { test: /\.svg(\?v=\d+\.\d+\.\d+)?$/, loader: 'url-loader?limit=10000&mimetype=image/svg+xml' }
-    ]
+      { test: /\.svg(\?v=\d+\.\d+\.\d+)?$/, loader: 'url-loader?limit=10000&mimetype=image/svg+xml' },
+    ],
   },
   plugins: [
     new MiniCssExtractPlugin({
-      filename: "style.css",
-      chunkFilename: "[id].css"
+      filename: 'style.css',
+      chunkFilename: '[id].css',
     }),
     new webpack.HotModuleReplacementPlugin(),
     // enable HMR globally
@@ -111,9 +122,10 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: resolve(__dirname, 'public/index.html'),
       inject: 'body',
-      baseUrl: process.env.BASE_URL || "https://localhost:8080"
+      baseUrl: process.env.BASE_URL || 'https://localhost:8080',
+      isDevMode: process.argv[1].endsWith('webpack-dev-server'),
     }),
-    // inject <script> in html file. 
+    // inject <script> in html file.
     new OpenBrowserPlugin({ url: 'http://localhost:3000' }),
   ],
 };
