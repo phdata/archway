@@ -67,8 +67,9 @@ object Server extends IOApp with LazyLogging {
       opsController = new OpsController[F](authService, workspaceService)
 
       httpApp = Router(
-        "/token" -> accountController.openRoutes,
+        "/token" -> accountController.basicAuthRoutes,
         "/account" -> accountController.tokenizedRoutes,
+        "/auth-type" -> accountController.noAuthRoutes,
         "/templates" -> templateController.route,
         "/clusters" -> clusterController.route,
         "/workspaces" -> workspaceController.route,

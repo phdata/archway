@@ -14,15 +14,18 @@ class AccountController[F[_] : Sync](authService: AuthService[F],
                                      appConfig: AppConfig)
   extends Http4sDsl[F] {
 
-  val openRoutes: HttpRoutes[F] = {
+  val basicAuthRoutes: HttpRoutes[F] = {
     authService.basicAuth {
       AuthedService[Token, F] {
         case GET -> Root as token =>
           Ok(token.asJson)
       }
     }
+  }
+
+  val noAuthRoutes: HttpRoutes[F] = {
     HttpRoutes.of[F] {
-      case GET -> Root / "auth-type" =>
+      case GET -> Root =>
         Ok(Map("authType" -> appConfig.rest.authType).asJson)
     }
   }

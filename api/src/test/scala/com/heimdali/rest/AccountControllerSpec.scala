@@ -27,12 +27,12 @@ class AccountControllerSpec
   behavior of "AccountController"
 
   it should "get a token" in new Context {
-    val response: IO[Response[IO]] = accountController.openRoutes.orNotFound.run(Request(uri = Uri.uri("/")))
+    val response: IO[Response[IO]] = accountController.basicAuthRoutes.orNotFound.run(Request(uri = Uri.uri("/")))
     check(response, Status.Ok, Some(fromResource("rest/token.expected.json")))(jsonDecoder)
   }
 
-  it should "get a auth-type" in new Context {
-    val response: IO[Response[IO]] = accountController.openRoutes.orNotFound.run(Request(uri = Uri.uri("/auth-type")))
+  it should "get an auth-type" in new Context {
+    val response: IO[Response[IO]] = accountController.noAuthRoutes.orNotFound.run(Request(uri = Uri.uri("/")))
     check(response, Status.Ok, Some(fromResource("rest/auth-type.expected.json")))(jsonDecoder)
   }
 
