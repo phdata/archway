@@ -5,12 +5,7 @@ import { createStructuredSelector } from 'reselect';
 import { BehaviorPage, OverviewPage, CompliancePage, SummaryPage, WorkspaceSummary } from './components';
 import * as actions from './actions';
 import * as selectors from './selectors';
-import {
-  PAGE_BEHAVIOR,
-  PAGE_DETAILS,
-  PAGE_COMPLIANCE,
-  PAGE_REVIEW,
-} from './constants';
+import { PAGE_BEHAVIOR, PAGE_DETAILS, PAGE_COMPLIANCE, PAGE_REVIEW } from './constants';
 import { RequestInput } from '../../models/RequestInput';
 import { Workspace } from '../../models/Workspace';
 import { Profile } from '../../models/Profile';
@@ -32,6 +27,8 @@ interface Props {
   gotoNextPage: () => void;
   gotoPrevPage: () => void;
   clearRequest: () => void;
+  setWorkspace: (workspace: Workspace) => void;
+  setCurrentPage: (page: string) => void;
 }
 
 class WorkspaceRequest extends React.Component<Props> {
@@ -51,6 +48,11 @@ class WorkspaceRequest extends React.Component<Props> {
       description: `The request to create a personal workspace failed due to the following error: ${error}`,
     });
   }
+
+  public importData = (jsonData: Workspace): void => {
+    this.props.setWorkspace(jsonData);
+    this.props.setCurrentPage(PAGE_REVIEW);
+  };
 
   public render() {
     const {
@@ -72,34 +74,22 @@ class WorkspaceRequest extends React.Component<Props> {
     return (
       <div style={{ textAlign: 'center', color: 'black' }}>
         <h1 style={{ padding: 24, margin: 0 }}>New Workspace Request</h1>
-  
+
         <Tabs tabBarStyle={{ textAlign: 'center' }} activeKey={currentPage}>
           <Tabs.TabPane tab="Behavior" key={PAGE_BEHAVIOR}>
-            <BehaviorPage
-              selected={behavior}
-              onChange={setBehavior}
-            />
+            <BehaviorPage selected={behavior} onChange={setBehavior} importData={this.importData} />
           </Tabs.TabPane>
 
           <Tabs.TabPane tab="Details" key={PAGE_DETAILS}>
-            <OverviewPage
-              request={request}
-              setRequest={setRequest}
-            />
+            <OverviewPage request={request} setRequest={setRequest} />
           </Tabs.TabPane>
-  
+
           <Tabs.TabPane tab="Compliance" key={PAGE_COMPLIANCE}>
-            <CompliancePage
-              request={request}
-              setRequest={setRequest}
-            />
+            <CompliancePage request={request} setRequest={setRequest} />
           </Tabs.TabPane>
 
           <Tabs.TabPane tab="Review" key={PAGE_REVIEW}>
-            <SummaryPage
-              workspace={workspace}
-              profile={profile}
-            />
+            <SummaryPage workspace={workspace} profile={profile} />
           </Tabs.TabPane>
         </Tabs>
 
@@ -109,7 +99,7 @@ class WorkspaceRequest extends React.Component<Props> {
               size="large"
               type="primary"
               block
-              disabled={loading || (currentPage === PAGE_BEHAVIOR)}
+              disabled={loading || currentPage === PAGE_BEHAVIOR}
               onClick={gotoPrevPage}
             >
               <Icon type="left" />
@@ -117,27 +107,27 @@ class WorkspaceRequest extends React.Component<Props> {
             </Button>
           </Col>
           <Col span={5}>
-            <Button
-              size="large"
-              type="primary"
-              block
-              disabled={!nextStepEnabled}
-              onClick={gotoNextPage}
-            >
-              {(currentPage === PAGE_REVIEW) ? (
+            <Button size="large" type="primary" block disabled={!nextStepEnabled} onClick={gotoNextPage}>
+              {currentPage === PAGE_REVIEW ? (
                 loading ? (
                   <Icon type="loading" spin style={{ color: 'white' }} />
                 ) : (
-                  <span><Icon type="inbox" />Request</span>
+                  <span>
+                    <Icon type="inbox" />
+                    Request
+                  </span>
                 )
               ) : (
-                <span>Next<Icon type="right" /></span>
+                <span>
+                  Next
+                  <Icon type="right" />
+                </span>
               )}
             </Button>
           </Col>
         </Row>
 
-        {(currentPage === PAGE_REVIEW && !!workspace) && (
+        {currentPage === PAGE_REVIEW && !!workspace && (
           <WorkspaceSummary
             workspace={workspace}
             expanded={advancedVisible}
@@ -149,17 +139,18 @@ class WorkspaceRequest extends React.Component<Props> {
   }
 }
 
-const mapStateToProps = () => createStructuredSelector({
-  profile: selectors.getProfile(),
-  loading: selectors.getLoading(),
-  error: selectors.getError(),
-  behavior: selectors.getBehavior(),
-  request: selectors.getRequest(),
-  workspace: selectors.getGeneratedWorkspace(),
-  currentPage: selectors.getCurrentPage(),
-  nextStepEnabled: selectors.isNextStepEnabled(),
-  advancedVisible: selectors.isAdvancedVisible(),
-});
+const mapStateToProps = () =>
+  createStructuredSelector({
+    profile: selectors.getProfile(),
+    loading: selectors.getLoading(),
+    error: selectors.getError(),
+    behavior: selectors.getBehavior(),
+    request: selectors.getRequest(),
+    workspace: selectors.getGeneratedWorkspace(),
+    currentPage: selectors.getCurrentPage(),
+    nextStepEnabled: selectors.isNextStepEnabled(),
+    advancedVisible: selectors.isAdvancedVisible(),
+  });
 
 const mapDispatchToProps = (dispatch: any) => ({
   setAdvancedVisible: (visible: boolean) => dispatch(actions.setAdvancedVisible(visible)),
@@ -168,6 +159,11 @@ const mapDispatchToProps = (dispatch: any) => ({
   gotoNextPage: () => dispatch(actions.gotoNextPage()),
   gotoPrevPage: () => dispatch(actions.gotoPrevPage()),
   clearRequest: () => dispatch(actions.clearRequest()),
+  setWorkspace: (workspace: Workspace) => dispatch(actions.setWorkspace(workspace)),
+  setCurrentPage: (page: string) => dispatch(actions.setCurrentPage(page)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(WorkspaceRequest);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(WorkspaceRequest);

@@ -1,10 +1,5 @@
 import * as React from 'react';
-import {
-  Spin,
-  Tabs,
-  Modal,
-  notification,
-} from 'antd';
+import { Button, Spin, Tabs, Modal, Tooltip, notification } from 'antd';
 import { connect } from 'react-redux';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { Dispatch } from 'redux';
@@ -45,42 +40,41 @@ interface DetailsRouteProps {
 }
 
 interface Props extends RouteComponentProps<DetailsRouteProps> {
-    workspace?: Workspace;
-    cluster: Cluster;
-    profile: Profile;
-    pools?: ResourcePoolsInfo;
-    infos?: NamespaceInfoList;
-    approved: boolean;
-    activeApplication?: Application;
-    activeModal?: string;
-    selectedAllocation?: HiveAllocation;
-    userSuggestions?: UserSuggestions;
-    liasion?: Member;
-    members?: Member[];
+  workspace?: Workspace;
+  cluster: Cluster;
+  profile: Profile;
+  pools?: ResourcePoolsInfo;
+  infos?: NamespaceInfoList;
+  approved: boolean;
+  activeApplication?: Application;
+  activeModal?: string;
+  selectedAllocation?: HiveAllocation;
+  userSuggestions?: UserSuggestions;
+  liasion?: Member;
+  members?: Member[];
 
-    clearDetails: () => void;
-    getWorkspaceDetails: (id: number) => void;
-    selectApplication: (application: Application) => void;
-    showTopicDialog: (e: React.MouseEvent) => void;
-    showSimpleMemberDialog: (e: React.MouseEvent) => void;
-    showSimpleTopicMemberDialog: (e: React.MouseEvent) => void;
-    showApplicationDialog: (e: React.MouseEvent) => void;
-    clearModal: () => void;
-    approveRisk: (e: React.MouseEvent) => void;
-    approveOperations: (e: React.MouseEvent) => void;
-    requestTopic: () => void;
-    simpleMemberRequest: (resource: string) => void;
-    changeMemberRoleRequest: (distinguished_name: string, roleId: number, role: string, resource: string) => void;
-    requestApplication: () => void;
-    updateSelectedAllocation: (allocation: HiveAllocation) => void;
-    requestRefreshYarnApps: () => void;
-    requestRefreshHiveTables: () => void;
-    getUserSuggestions: (filter: string) => void;
-    removeMember: (distinguished_name: string, roleId: number, resource: string) => void;
+  clearDetails: () => void;
+  getWorkspaceDetails: (id: number) => void;
+  selectApplication: (application: Application) => void;
+  showTopicDialog: (e: React.MouseEvent) => void;
+  showSimpleMemberDialog: (e: React.MouseEvent) => void;
+  showSimpleTopicMemberDialog: (e: React.MouseEvent) => void;
+  showApplicationDialog: (e: React.MouseEvent) => void;
+  clearModal: () => void;
+  approveRisk: (e: React.MouseEvent) => void;
+  approveOperations: (e: React.MouseEvent) => void;
+  requestTopic: () => void;
+  simpleMemberRequest: (resource: string) => void;
+  changeMemberRoleRequest: (distinguished_name: string, roleId: number, role: string, resource: string) => void;
+  requestApplication: () => void;
+  updateSelectedAllocation: (allocation: HiveAllocation) => void;
+  requestRefreshYarnApps: () => void;
+  requestRefreshHiveTables: () => void;
+  getUserSuggestions: (filter: string) => void;
+  removeMember: (distinguished_name: string, roleId: number, resource: string) => void;
 }
 
 class WorkspaceDetails extends React.PureComponent<Props> {
-
   public delayedFetchUsers = throttle((v: string) => {
     this.props.getUserSuggestions(v);
   }, 2000);
@@ -89,13 +83,25 @@ class WorkspaceDetails extends React.PureComponent<Props> {
     // clear previous details data
     this.props.clearDetails();
 
-    const { match: { params: { id } } } = this.props;
+    const {
+      match: {
+        params: { id },
+      },
+    } = this.props;
     this.props.getWorkspaceDetails(id);
   }
 
   public componentWillReceiveProps(nextProps: Props) {
-    const { match: { params: { id: oldId } } } = this.props;
-    const { match: { params: { id } } } = nextProps;
+    const {
+      match: {
+        params: { id: oldId },
+      },
+    } = this.props;
+    const {
+      match: {
+        params: { id },
+      },
+    } = nextProps;
     if (oldId !== id) {
       this.props.clearDetails();
       this.props.getWorkspaceDetails(id);
@@ -103,14 +109,13 @@ class WorkspaceDetails extends React.PureComponent<Props> {
 
     const { workspace } = this.props;
     const { workspace: newWorkspace } = nextProps;
-    const riskStatus = workspace && workspace.approvals
-      && workspace.approvals.risk && workspace.approvals.risk.status;
-    const infraStatus = workspace && workspace.approvals
-      && workspace.approvals.infra && workspace.approvals.infra.status;
-    const newRiskStatus = newWorkspace && newWorkspace.approvals
-      && newWorkspace.approvals.risk && newWorkspace.approvals.risk.status;
-    const newInfraStatus = newWorkspace && newWorkspace.approvals
-      && newWorkspace.approvals.infra && newWorkspace.approvals.infra.status;
+    const riskStatus = workspace && workspace.approvals && workspace.approvals.risk && workspace.approvals.risk.status;
+    const infraStatus =
+      workspace && workspace.approvals && workspace.approvals.infra && workspace.approvals.infra.status;
+    const newRiskStatus =
+      newWorkspace && newWorkspace.approvals && newWorkspace.approvals.risk && newWorkspace.approvals.risk.status;
+    const newInfraStatus =
+      newWorkspace && newWorkspace.approvals && newWorkspace.approvals.infra && newWorkspace.approvals.infra.status;
     if (riskStatus && riskStatus.loading) {
       if (newRiskStatus && (newRiskStatus.success === true || newRiskStatus.success === false)) {
         this.showApprovalNotification('Risk', newRiskStatus.error);
@@ -141,7 +146,13 @@ class WorkspaceDetails extends React.PureComponent<Props> {
     if (v.length >= 3) {
       this.delayedFetchUsers(v);
     }
-  }
+  };
+
+  public convertJSONtoBase64 = (): string => {
+    const { workspace } = this.props;
+    const base64Workspace = btoa(JSON.stringify(workspace, null, 4));
+    return base64Workspace;
+  };
 
   public render() {
     const {
@@ -185,7 +196,6 @@ class WorkspaceDetails extends React.PureComponent<Props> {
 
     return (
       <div style={{ height: '100%' }}>
-
         <div
           style={{
             display: 'flex',
@@ -194,44 +204,44 @@ class WorkspaceDetails extends React.PureComponent<Props> {
             padding: 16,
           }}
         >
-          <Status
-            ready={approved}
-            createdAt={workspace.requested_date}
-          />
-          <Liaison
-            data={liasion}
-          />
+          <Status ready={approved} createdAt={workspace.requested_date} />
+          <Liaison data={liasion} />
         </div>
 
         <div style={{ backgroundColor: 'white', padding: '16px 0' }}>
-          <Info
-            behavior={workspace.behavior}
-            name={workspace.name}
-            summary={workspace.summary}
-          />
+          <Info behavior={workspace.behavior} name={workspace.name} summary={workspace.summary} />
           <Compliance
             pii={workspace.compliance.pii_data}
             pci={workspace.compliance.pci_data}
             phi={workspace.compliance.phi_data}
           />
         </div>
-
+        <Tooltip placement="topLeft" title="Download Workspace JSON data" arrowPointAtCenter>
+          <Button
+            shape="circle"
+            icon="cloud-download"
+            style={{ marginLeft: '15px', marginTop: '10px', zIndex: 2, border: 'none' }}
+            href={`data:application/octet-stream;charset=utf-16le;base64,${this.convertJSONtoBase64()}`}
+            download={`${workspace.name}`}
+          />
+        </Tooltip>
         <Tabs
           tabBarStyle={{
             textAlign: 'center',
             margin: 0,
             padding: '0 16px 0 156px',
             height: 56,
-            backgroundColor: 'white'
+            backgroundColor: 'white',
           }}
           defaultActiveKey="overview"
-          tabBarExtraContent={(
+          tabBarExtraContent={
             <QuickLinks
               hue={cluster.services && cluster.services.hue}
               yarn={cluster.services && cluster.services.yarn}
               selectedAllocation={selectedAllocation}
             />
-          )}
+          }
+          style={{ marginTop: '-42px' }}
         >
           <Tabs.TabPane tab="OVERVIEW" key="overview">
             <OverviewTab
@@ -283,7 +293,8 @@ class WorkspaceDetails extends React.PureComponent<Props> {
           visible={activeModal === 'simpleMember'}
           title="Add A Member"
           onCancel={clearModal}
-          onOk={() => simpleMemberRequest('data')}>
+          onOk={() => simpleMemberRequest('data')}
+        >
           <SimpleMemberRequest
             allocations={workspace.data}
             suggestions={userSuggestions}
@@ -294,30 +305,24 @@ class WorkspaceDetails extends React.PureComponent<Props> {
           visible={activeModal === 'simpleTopicMember'}
           title="Add A Member"
           onCancel={clearModal}
-          onOk={() => simpleMemberRequest('topics')}>
-          <SimpleTopicMemberRequest
-            suggestions={userSuggestions}
-            onSearch={this.handleMemberSearch}
-          />
+          onOk={() => simpleMemberRequest('topics')}
+        >
+          <SimpleTopicMemberRequest suggestions={userSuggestions} onSearch={this.handleMemberSearch} />
         </Modal>
-        <Modal
-          visible={activeModal === 'kafka'}
-          title="New Topic"
-          onCancel={clearModal}
-          onOk={requestTopic}>
+        <Modal visible={activeModal === 'kafka'} title="New Topic" onCancel={clearModal} onOk={requestTopic}>
           <KafkaTopicRequest />
         </Modal>
         <Modal
           visible={activeModal === 'application'}
           title="New Application"
           onCancel={clearModal}
-          onOk={requestApplication}>
+          onOk={requestApplication}
+        >
           <ApplicationRequest />
         </Modal>
       </div>
     );
   }
-
 }
 
 const mapStateToProps = () =>
@@ -382,7 +387,11 @@ const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
   requestRefreshHiveTables: () => dispatch(actions.requestRefreshHiveTables()),
   getUserSuggestions: (filter: string) => dispatch(actions.getUserSuggestions(filter)),
 
-  removeMember: (distinguished_name: string, roleId: number, resource: string) => dispatch(actions.requestRemoveMember(distinguished_name, roleId, resource)),
+  removeMember: (distinguished_name: string, roleId: number, resource: string) =>
+    dispatch(actions.requestRemoveMember(distinguished_name, roleId, resource)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(withRouter(WorkspaceDetails));
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withRouter(WorkspaceDetails));

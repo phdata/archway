@@ -5,7 +5,7 @@ import BehaviorPage from '../BehaviorPage';
 
 describe('BehaviorPage', () => {
   it('renders correctly', () => {
-    const wrapper = shallow(<BehaviorPage onChange={() => null} />);
+    const wrapper = shallow(<BehaviorPage onChange={() => null} importData={() => null} />);
     expect(wrapper).toMatchSnapshot();
   });
 });
