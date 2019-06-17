@@ -34,22 +34,9 @@ const DatabasesSummary = ({ workspace }: Props) => {
       {workspace.data.map((database: HiveAllocation) => (
         <div key={database.id}>
           <h3>{database.name}</h3>
-          <Table
-            pagination={false}
-            dataSource={tableDataForDatabase(database)}
-          >
-            <Table.Column
-              title="Attribute"
-              dataIndex="title"
-              key="title"
-              width="50%"
-            />
-            <Table.Column
-              title="Value"
-              dataIndex="value"
-              key="value"
-              width="50%"
-            />
+          <Table pagination={false} dataSource={tableDataForDatabase(database)}>
+            <Table.Column title="Attribute" dataIndex="title" key="title" width="50%" />
+            <Table.Column title="Value" dataIndex="value" key="value" width="50%" />
           </Table>
         </div>
       ))}

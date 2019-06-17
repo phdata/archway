@@ -10,9 +10,7 @@ interface Props {
 const YarnResourceCard = ({ resource }: Props) => (
   <Card bordered bodyStyle={{ padding: 8 }}>
     <Row style={{ textAlign: 'center', height: 120 }} type="flex" align="middle">
-      <Col span={24}>
-        YARN RESOURCES
-      </Col>
+      <Col span={24}>YARN RESOURCES</Col>
       <Col span={24}>
         <b style={{ fontSize: 12 }}>{resource.pool_name}</b>
         <br />

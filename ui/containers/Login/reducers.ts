@@ -21,34 +21,21 @@ const initialAuthState = fromJS({
 const login = (state = initialAuthState, action: any) => {
   switch (action.type) {
     case LOGIN_REQUEST:
-      return state
-        .set('loggingIn', true)
-        .set('error', false);
+      return state.set('loggingIn', true).set('error', false);
     case LOGIN_SUCCESS:
-      return state
-        .set('loggingIn', false)
-        .set('token', action.token);
+      return state.set('loggingIn', false).set('token', action.token);
     case LOGIN_FAILURE:
-      return state
-        .set('loggingIn', false)
-        .set('error', action.error);
+      return state.set('loggingIn', false).set('error', action.error);
     case TOKEN_EXTRACTED:
-      return state
-        .set('loading', false)
-        .set('token', action.token);
+      return state.set('loading', false).set('token', action.token);
     case TOKEN_NOT_AVAILABLE:
-      return state
-        .set('loading', false)
-        .set('token', false);
+      return state.set('loading', false).set('token', false);
     case PROFILE_READY:
-      return state
-        .set('profile', action.profile);
+      return state.set('profile', action.profile);
     case 'WORKSPACE_AVAILABLE':
-      return state
-        .set('workspace', fromJS(action.workspace));
+      return state.set('workspace', fromJS(action.workspace));
     case 'PROFILE_LOADED':
-      return state
-        .set('profileLoading', action.loading);
+      return state.set('profileLoading', action.loading);
     default:
       return state;
   }

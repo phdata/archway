@@ -20,7 +20,7 @@ const HiveDatabase = ({ data, isDefault }: Props) => {
       {
         label: false,
         data: [allocated - consumed, consumed],
-        backgroundColor: [Colors.Green.string(), Colors.Green.lighten(.5).string()],
+        backgroundColor: [Colors.Green.string(), Colors.Green.lighten(0.5).string()],
       },
     ],
   };
@@ -46,6 +46,6 @@ const HiveDatabase = ({ data, isDefault }: Props) => {
       </div>
     </Card>
   );
-}
+};
 
 export default HiveDatabase;

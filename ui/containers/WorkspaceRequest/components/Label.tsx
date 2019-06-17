@@ -1,8 +1,8 @@
 import * as React from 'react';
 
 interface Props {
-    style?: React.CSSProperties;
-    children: any;
+  style?: React.CSSProperties;
+  children: any;
 }
 
 const Label = ({ style, children }: Props) => (
@@ -16,7 +16,8 @@ const Label = ({ style, children }: Props) => (
       alignItems: 'center',
       justifyContent: 'center',
       ...style,
-    }}>
+    }}
+  >
     {children}
   </div>
 );

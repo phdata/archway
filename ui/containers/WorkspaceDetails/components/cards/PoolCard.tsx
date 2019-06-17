@@ -20,9 +20,13 @@ const PoolCard = ({ data }: Props) => (
         alignItems: 'center',
       }}
     >
-      {(data && data.length > 0) ? data.map((pool: ResourcePool, index: number) => (
-        <div key={index} style={{ fontSize: 12 }}>{pool.pool_name}</div>
-      )) : (
+      {data && data.length > 0 ? (
+        data.map((pool: ResourcePool, index: number) => (
+          <div key={index} style={{ fontSize: 12 }}>
+            {pool.pool_name}
+          </div>
+        ))
+      ) : (
         <div style={{ fontSize: 12 }}>No pools.</div>
       )}
     </div>

@@ -163,7 +163,12 @@ export interface ChangeMemberRoleRequestAction {
   role: string;
   resource: string;
 }
-export const changeMemberRoleRequest = (distinguished_name: string, roleId: number, role: string, resource: string) => ({
+export const changeMemberRoleRequest = (
+  distinguished_name: string,
+  roleId: number,
+  role: string,
+  resource: string
+) => ({
   type: CHANGE_MEMBER_ROLE_REQUESTED,
   distinguished_name,
   roleId,

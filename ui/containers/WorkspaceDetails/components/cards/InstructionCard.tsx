@@ -36,32 +36,32 @@ class InstructionCard extends React.Component<Props> {
         <CardHeader>
           HOW WOULD I... &nbsp;
           <Dropdown
-            overlay={(
-              <Menu
-                onClick={({ key }) => this.handleChangeInstruction(key)}
-              >
+            overlay={
+              <Menu onClick={({ key }) => this.handleChangeInstruction(key)}>
                 <Menu.Item key="create_table">CREATE A TABLE</Menu.Item>
                 <Menu.Item key="create_app">CREATE AN APPLICATION</Menu.Item>
                 <Menu.Item key="run_app">RUN APPLICATION</Menu.Item>
               </Menu>
-            )}
+            }
             trigger={['click']}
           >
-            <a href="#"> {/* eslint-disable-line */}
+            <a href="#">
+              {' '}
+              {/* eslint-disable-line */}
               {instructions[instruction]}
               <Icon type="caret-down" style={{ fontSize: 14, marginLeft: 4 }} />
             </a>
           </Dropdown>
         </CardHeader>
-        {(instruction === 'create_table') && !!location && !!namespace && (
+        {instruction === 'create_table' && !!location && !!namespace && (
           <SyntaxHighlighter language="sql" style={{ overflow: 'auto', ...tomorrowNightEighties }}>
-              {`CREATE TABLE ${namespace}.new_data_landing
+            {`CREATE TABLE ${namespace}.new_data_landing
   LOCATION '${location}/new_data/landing'`}
           </SyntaxHighlighter>
         )}
-        {(instruction === 'create_app') && !!host && !!port && (
+        {instruction === 'create_app' && !!host && !!port && (
           <SyntaxHighlighter language="python" style={tomorrowNightEighties}>
-          {`from impala.dbapi
+            {`from impala.dbapi
   import connect
   conn = connect(
   host = '${host}',
@@ -74,9 +74,9 @@ class InstructionCard extends React.Component<Props> {
   results = cursor.fetchall()`}
           </SyntaxHighlighter>
         )}
-        {(instruction === 'run_app') && !!queue && (
+        {instruction === 'run_app' && !!queue && (
           <SyntaxHighlighter language="shell" style={tomorrowNightEighties}>
-              {`$ spark-submit --class org.apache.spark.examples.SparkPi \\
+            {`$ spark-submit --class org.apache.spark.examples.SparkPi \\
     --master yarn \\
     --deploy-mode cluster \\
     --queue ${queue} \\

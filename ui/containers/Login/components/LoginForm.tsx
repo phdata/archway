@@ -11,12 +11,13 @@ interface Props {
 
 class LoginForm extends React.PureComponent<InjectedFormikProps<Props, Login>> {
   public render() {
-    const { handleSubmit, handleChange, values: { username, password } } = this.props;
+    const {
+      handleSubmit,
+      handleChange,
+      values: { username, password },
+    } = this.props;
     return (
-      <Form
-        onSubmit={handleSubmit}
-        className="LoginForm"
-        layout="vertical">
+      <Form onSubmit={handleSubmit} className="LoginForm" layout="vertical">
         <Form.Item>
           <Input
             name="username"
@@ -24,7 +25,8 @@ class LoginForm extends React.PureComponent<InjectedFormikProps<Props, Login>> {
             size="large"
             value={username}
             prefix={<Icon type="user" />}
-            placeholder="username" />
+            placeholder="username"
+          />
         </Form.Item>
         <Form.Item>
           <Input
@@ -34,13 +36,11 @@ class LoginForm extends React.PureComponent<InjectedFormikProps<Props, Login>> {
             value={password}
             prefix={<Icon type="lock" />}
             placeholder="password"
-            type="password" />
+            type="password"
+          />
         </Form.Item>
         <Form.Item>
-          <Button
-            type="primary"
-            size="large"
-            htmlType="submit">
+          <Button type="primary" size="large" htmlType="submit">
             Log In
           </Button>
         </Form.Item>
@@ -50,7 +50,7 @@ class LoginForm extends React.PureComponent<InjectedFormikProps<Props, Login>> {
 }
 
 const LoginFormRender = withFormik<Props, Login>({
-handleSubmit: (values, { props }) => props.onSubmit(values),
+  handleSubmit: (values, { props }) => props.onSubmit(values),
 })(LoginForm);
 
 export default LoginFormRender;

@@ -27,9 +27,15 @@ interface Props {
 
 const Compliance = ({ pci, phi, pii }: Props) => (
   <div style={{ display: 'flex', justifyContent: 'center', paddingTop: 8 }}>
-    <ComplianceItem checked={pci} icon="bank">PCI</ComplianceItem>
-    <ComplianceItem checked={phi} icon="medicine-box">PHI</ComplianceItem>
-    <ComplianceItem checked={pii} icon="idcard">PII</ComplianceItem>
+    <ComplianceItem checked={pci} icon="bank">
+      PCI
+    </ComplianceItem>
+    <ComplianceItem checked={phi} icon="medicine-box">
+      PHI
+    </ComplianceItem>
+    <ComplianceItem checked={pii} icon="idcard">
+      PII
+    </ComplianceItem>
   </div>
 );
 

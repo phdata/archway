@@ -1,11 +1,6 @@
 import * as React from 'react';
 import { Row, Col } from 'antd';
-import {
-  ApprovalCard,
-  HDFSCard,
-  HiveCard,
-  PoolCard,
-} from '../cards';
+import { ApprovalCard, HDFSCard, HiveCard, PoolCard } from '../cards';
 import { Workspace } from '../../../../models/Workspace';
 import { Profile } from '../../../../models/Profile';
 
@@ -18,12 +13,7 @@ interface Props {
 
 class OverviewTab extends React.Component<Props> {
   public render() {
-    const {
-      workspace,
-      profile,
-      approveRisk,
-      approveOperations,
-    } = this.props;
+    const { workspace, profile, approveRisk, approveOperations } = this.props;
 
     return (
       <div style={{ padding: 16 }}>
@@ -31,9 +21,7 @@ class OverviewTab extends React.Component<Props> {
           <Col span={12}>
             <ApprovalCard
               data={workspace.approvals && workspace.approvals.risk}
-              onApprove={
-                (profile.permissions && profile.permissions.risk_management) ? approveRisk : undefined
-              }
+              onApprove={profile.permissions && profile.permissions.risk_management ? approveRisk : undefined}
             >
               COMPLIANCE
             </ApprovalCard>
@@ -41,9 +29,7 @@ class OverviewTab extends React.Component<Props> {
           <Col span={12}>
             <ApprovalCard
               data={workspace.approvals && workspace.approvals.infra}
-              onApprove={
-                (profile.permissions && profile.permissions.platform_operations) ? approveOperations : undefined
-              }
+              onApprove={profile.permissions && profile.permissions.platform_operations ? approveOperations : undefined}
             >
               PLATFORM OPERATIONS
             </ApprovalCard>

@@ -18,15 +18,7 @@ interface Props {
 
 class MessagingTab extends React.Component<Props> {
   public render() {
-    const {
-      workspace,
-      profile,
-      members,
-      onAddTopic,
-      onAddMember,
-      onChangeMemberRole,
-      removeMember,
-    } = this.props;
+    const { workspace, profile, members, onAddTopic, onAddMember, onChangeMemberRole, removeMember } = this.props;
 
     if (!workspace) {
       return null;
@@ -34,8 +26,8 @@ class MessagingTab extends React.Component<Props> {
 
     const isLiaison = workspace.requester === profile.distinguished_name;
     let currentMember: Member;
-    const filteredMembers = members && members.filter((member: Member) =>
-      member.distinguished_name === profile.distinguished_name);
+    const filteredMembers =
+      members && members.filter((member: Member) => member.distinguished_name === profile.distinguished_name);
     if (filteredMembers && filteredMembers.length > 0) {
       currentMember = filteredMembers[0];
     }
@@ -49,7 +41,7 @@ class MessagingTab extends React.Component<Props> {
           {workspace.topics.map((topic: KafkaTopic) => {
             const roleData = currentMember && currentMember.topics[topic.name];
             const roleValue = roleData && roleData.role;
-            const hasPermission = isLiaison || (roleValue === 'manager');
+            const hasPermission = isLiaison || roleValue === 'manager';
 
             return (
               <Tabs.TabPane tab={topic.name} key={topic.id.toString()}>

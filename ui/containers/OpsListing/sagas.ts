@@ -17,7 +17,5 @@ function* opsWorkspaceListListener() {
 }
 
 export default function* root() {
-  yield all([
-    fork(opsWorkspaceListListener),
-  ]);
+  yield all([fork(opsWorkspaceListListener)]);
 }

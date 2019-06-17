@@ -28,25 +28,29 @@ const YarnApplicationsCard = ({ pools, rmURL, onRefreshPools }: Props) => {
         />
       </CardHeader>
       <Table
-        dataSource={pools && pools.data && pools.data[0].applications.map((yarnApplication: YarnApplication) => ({
-          name: yarnApplication.name,
-          link: rmURL && `${rmURL}/cluster/app/${yarnApplication.id}/`,
-        }))}
+        dataSource={
+          pools &&
+          pools.data &&
+          pools.data[0].applications.map((yarnApplication: YarnApplication) => ({
+            name: yarnApplication.name,
+            link: rmURL && `${rmURL}/cluster/app/${yarnApplication.id}/`,
+          }))
+        }
         pagination={false}
       >
-        <Table.Column
-          title="Name"
-          dataIndex="name"
-          key="name"
-        />
+        <Table.Column title="Name" dataIndex="name" key="name" />
         <Table.Column
           title="Logs Link"
           dataIndex="link"
           key="link"
           width={100}
-          render={(link: string) => !!link && (
-            <a href={link} target="_blank" rel="noopener noreferrer">details</a>
-          )}
+          render={(link: string) =>
+            !!link && (
+              <a href={link} target="_blank" rel="noopener noreferrer">
+                details
+              </a>
+            )
+          }
         />
       </Table>
     </Card>

@@ -7,70 +7,89 @@ const complianceData = {
   pci: {
     icon: 'bank',
     label: 'Payment Card Industry [Data Security Standard]',
-    values: [{
-      key: 'card',
-      label: 'Full or partial credit card numbers?',
-    }, {
-      key: 'bank',
-      label: 'Full or partial bank account numbers?',
-    }, {
-      key: 'other',
-      label: 'Any other combination of data that can be used to make purchases?',
-    }],
+    values: [
+      {
+        key: 'card',
+        label: 'Full or partial credit card numbers?',
+      },
+      {
+        key: 'bank',
+        label: 'Full or partial bank account numbers?',
+      },
+      {
+        key: 'other',
+        label: 'Any other combination of data that can be used to make purchases?',
+      },
+    ],
   },
   pii: {
     icon: 'idcard',
     label: 'Personally Identifiable Information',
-    values: [{
-      key: 'name',
-      label: 'Full name',
-    }, {
-      key: 'address',
-      label: 'Home address',
-    }, {
-      key: 'email',
-      label: 'Email address',
-    }, {
-      key: 'ssn',
-      label: 'Social security number',
-    }, {
-      key: 'passport',
-      label: 'Passport number',
-    }, {
-      key: 'driver_license',
-      label: 'Driver\'s license number',
-    }, {
-      key: 'credit_card',
-      label: 'Credit card number',
-    }, {
-      key: 'dob',
-      label: 'Date of birth',
-    }, {
-      key: 'phone',
-      label: 'Telephone number',
-    }, {
-      key: 'credentials',
-      label: 'Software credentials',
-    }],
+    values: [
+      {
+        key: 'name',
+        label: 'Full name',
+      },
+      {
+        key: 'address',
+        label: 'Home address',
+      },
+      {
+        key: 'email',
+        label: 'Email address',
+      },
+      {
+        key: 'ssn',
+        label: 'Social security number',
+      },
+      {
+        key: 'passport',
+        label: 'Passport number',
+      },
+      {
+        key: 'driver_license',
+        label: "Driver's license number",
+      },
+      {
+        key: 'credit_card',
+        label: 'Credit card number',
+      },
+      {
+        key: 'dob',
+        label: 'Date of birth',
+      },
+      {
+        key: 'phone',
+        label: 'Telephone number',
+      },
+      {
+        key: 'credentials',
+        label: 'Software credentials',
+      },
+    ],
   },
   phi: {
     icon: 'medicine-box',
     label: 'Protected Health Information',
-    values: [{
-      key: 'status',
-      label: 'Health status',
-    }, {
-      key: 'provision',
-      label: 'Provision of health care',
-    }, {
-      key: 'payment',
-      label: 'Payment for health care',
-    }],
+    values: [
+      {
+        key: 'status',
+        label: 'Health status',
+      },
+      {
+        key: 'provision',
+        label: 'Provision of health care',
+      },
+      {
+        key: 'payment',
+        label: 'Payment for health care',
+      },
+    ],
   },
 };
 
 interface Props {
-  request: RequestInput,
+  request: RequestInput;
   setRequest: (request: RequestInput | boolean) => void;
 }
 
@@ -123,7 +142,7 @@ class CompliancePage extends React.Component<Props, State> {
         compliance: {
           ...request.compliance,
           [typeKey]: this.getBooleanFromData(newData),
-        }
+        },
       });
     }
   }
@@ -133,9 +152,7 @@ class CompliancePage extends React.Component<Props, State> {
 
     return (
       <div>
-        <h3>
-          Help us be proactive in addressing risk-related data needs
-        </h3>
+        <h3>Help us be proactive in addressing risk-related data needs</h3>
         <Row type="flex" gutter={25} style={{ marginTop: 25, marginBottom: 25 }}>
           <Col span={8}>
             <ComplianceCard

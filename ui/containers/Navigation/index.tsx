@@ -35,11 +35,16 @@ const Navigation = ({ location, profile }: Props) => (
   <Layout.Sider width={250} style={{ overflow: 'auto', height: '100vh', position: 'fixed', left: 0 }}>
     <img src="images/white_logo_transparent.png" style={{ padding: 25, width: '100%' }} alt="Heimdali Logo" />
     <ClusterInfo />
-    <Menu style={{
-      marginTop: 25,
-      letterSpacing: 1,
-      textTransform: 'uppercase',
-    }} selectedKeys={[getKeyFromPath(location.pathname)]} theme="dark" mode="inline">
+    <Menu
+      style={{
+        marginTop: 25,
+        letterSpacing: 1,
+        textTransform: 'uppercase',
+      }}
+      selectedKeys={[getKeyFromPath(location.pathname)]}
+      theme="dark"
+      mode="inline"
+    >
       <Menu.Item key="home">
         <NavLink to="/">
           <Icon type="home" style={{ fontSize: 18 }} /> Overview
@@ -47,26 +52,26 @@ const Navigation = ({ location, profile }: Props) => (
       </Menu.Item>
       <Menu.Item key="workspaces">
         <NavLink to="/workspaces">
-        <Icon type="gift" style={{ fontSize: 18 }} /> Your Workspaces
+          <Icon type="gift" style={{ fontSize: 18 }} /> Your Workspaces
         </NavLink>
       </Menu.Item>
       {profile && profile.permissions.risk_management && (
         <Menu.Item key="risks">
           <NavLink to="/risks">
-          <Icon type="audit" style={{ fontSize: 18 }} /> Risk/Compliance
+            <Icon type="audit" style={{ fontSize: 18 }} /> Risk/Compliance
           </NavLink>
         </Menu.Item>
       )}
       {profile && profile.permissions.platform_operations && (
         <Menu.Item key="operations">
           <NavLink to="/operations">
-          <Icon type="cloud" style={{ fontSize: 18 }} /> Platform Operations
+            <Icon type="cloud" style={{ fontSize: 18 }} /> Platform Operations
           </NavLink>
         </Menu.Item>
       )}
       <Menu.Item key="request">
         <NavLink to="/request">
-        <Icon type="plus" style={{ fontSize: 18 }} /> New Workspace
+          <Icon type="plus" style={{ fontSize: 18 }} /> New Workspace
         </NavLink>
       </Menu.Item>
     </Menu>

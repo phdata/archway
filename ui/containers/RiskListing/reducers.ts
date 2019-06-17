@@ -15,7 +15,6 @@ const initialState = fromJS({
 
 const listing = (state = initialState, action: any) => {
   switch (action.type) {
-
     case RISK_WORKSPACES_UPDATED:
       return state
         .set('fetching', false)
@@ -23,9 +22,7 @@ const listing = (state = initialState, action: any) => {
         .set('workspaces', action.workspaces);
 
     case LIST_RISK_WORKSPACES_FAILURE:
-      return state
-        .set('fetching', false)
-        .set('error', action.error);
+      return state.set('fetching', false).set('error', action.error);
 
     case LIST_RISK_WORKSPACES:
       return state
@@ -35,12 +32,10 @@ const listing = (state = initialState, action: any) => {
 
     case SET_LISTING_MODE:
       localStorage.setItem('workspaceListingMode', action.mode);
-      return state
-        .set('listingMode', action.mode);
+      return state.set('listingMode', action.mode);
 
     default:
       return state;
-
   }
 };
 

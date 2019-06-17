@@ -31,43 +31,31 @@ const initialState = fromJS({
 
 const request = (state = initialState, action: any) => {
   switch (action.type) {
-
     case SET_LOADING:
-      return state
-        .set('loading', action.loading);
+      return state.set('loading', action.loading);
     case SET_BEHAVIOR:
-      return state
-        .set('behavior', action.behavior);
+      return state.set('behavior', action.behavior);
 
     case SET_REQUEST:
-      return state
-        .set('request', fromJS(action.request));
+      return state.set('request', fromJS(action.request));
 
     case SET_TEMPLATE:
-      return state
-        .set('template', action.template);
+      return state.set('template', action.template);
 
     case SET_WORKSPACE:
-      return state
-        .set('workspace', fromJS(action.workspace));
+      return state.set('workspace', fromJS(action.workspace));
 
     case SET_CURRENT_PAGE:
-      return state
-        .set('currentPage', action.page);
+      return state.set('currentPage', action.page);
 
     case CREATE_WORKSPACE_REQUEST:
-      return state
-        .set('loading', true)
-        .set('error', '');
+      return state.set('loading', true).set('error', '');
 
     case CREATE_WORKSPACE_FAILURE:
-      return state
-        .set('loading', false)
-        .set('error', action.error);
+      return state.set('loading', false).set('error', action.error);
 
     case SET_ADVANCED_VISIBLE:
-      return state
-        .set('advancedVisible', action.visible);
+      return state.set('advancedVisible', action.visible);
 
     case CLEAR_REQUEST:
       return initialState;

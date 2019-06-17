@@ -24,27 +24,24 @@ const ApplicationsTab = ({ workspace, selectedApplication, yarn, pools, onAddApp
         Add an Application
       </Button>
       <Tabs>
-        {!!workspace && workspace.applications.map((application) => (
-          <Tabs.TabPane tab={application.name} key={application.id.toString()}>
-            <Row gutter={16} type="flex" justify="center">
-              <Col key="application" span={12} style={{ marginBottom: 12 }}>
-                <ApplicationCard application={application} />
-              </Col>
-              <Col key="resource" span={12} style={{ marginBottom: 12 }}>
-                <YarnResourceCard resource={workspace.processing[0]} />
-              </Col>
-            </Row>
-            <Row gutter={16} type="flex" justify="center">
-              <Col span={24}>
-                <YarnApplicationsCard
-                  pools={pools}
-                  rmURL={rmURL}
-                  onRefreshPools={onRefreshPools}
-                />
-              </Col>
-            </Row>
-          </Tabs.TabPane>
-        ))}
+        {!!workspace &&
+          workspace.applications.map(application => (
+            <Tabs.TabPane tab={application.name} key={application.id.toString()}>
+              <Row gutter={16} type="flex" justify="center">
+                <Col key="application" span={12} style={{ marginBottom: 12 }}>
+                  <ApplicationCard application={application} />
+                </Col>
+                <Col key="resource" span={12} style={{ marginBottom: 12 }}>
+                  <YarnResourceCard resource={workspace.processing[0]} />
+                </Col>
+              </Row>
+              <Row gutter={16} type="flex" justify="center">
+                <Col span={24}>
+                  <YarnApplicationsCard pools={pools} rmURL={rmURL} onRefreshPools={onRefreshPools} />
+                </Col>
+              </Row>
+            </Tabs.TabPane>
+          ))}
       </Tabs>
     </div>
   );

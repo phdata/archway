@@ -5,14 +5,7 @@ import Behavior from '../Behavior';
 
 describe('Behavior', () => {
   it('renders correctly', () => {
-    const wrapper = shallow(
-      <Behavior
-        behaviorKey=""
-        icon=""
-        title=""
-        onChange={() => null}
-      />,
-    );
+    const wrapper = shallow(<Behavior behaviorKey="" icon="" title="" onChange={() => null} />);
     expect(wrapper).toMatchSnapshot();
   });
 });

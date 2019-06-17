@@ -12,12 +12,7 @@ import {
   createWorkspaceRequest,
   createWorkspaceFailure,
 } from './actions';
-import {
-  PAGE_BEHAVIOR,
-  PAGE_DETAILS,
-  PAGE_COMPLIANCE,
-  PAGE_REVIEW,
-} from './constants';
+import { PAGE_BEHAVIOR, PAGE_DETAILS, PAGE_COMPLIANCE, PAGE_REVIEW } from './constants';
 
 /* tslint:disable:no-var-requires */
 const router = require('connected-react-router/immutable');
@@ -41,7 +36,12 @@ function* nextPageListener() {
   } else if (currentPage === PAGE_DETAILS) {
     yield put(setCurrentPage(PAGE_COMPLIANCE));
   } else if (currentPage === PAGE_COMPLIANCE) {
-    const request = yield select((s: any) => s.get('request').get('request').toJS());
+    const request = yield select((s: any) =>
+      s
+        .get('request')
+        .get('request')
+        .toJS()
+    );
     if (request) {
       yield put(setLoading(true));
       const token = yield select((s: any) => s.get('login').get('token'));
@@ -87,9 +87,5 @@ function* prevPage() {
 }
 
 export default function* root() {
-  yield all([
-    fork(behaviorChanged),
-    fork(nextPage),
-    fork(prevPage),
-  ]);
+  yield all([fork(behaviorChanged), fork(nextPage), fork(prevPage)]);
 }

@@ -9,16 +9,20 @@ interface Props {
   namespace: string;
 }
 
-const SetupHelp = ({host, port, namespace}: Props) => (
+const SetupHelp = ({ host, port, namespace }: Props) => (
   <div style={{ padding: '4px' }}>
     <Label>step 2. create</Label>
-    <p style={{
-      marginBottom: '0.5em',
-      fontSize: '12px',
-      textAlign: 'center',
-    }}>create an app that interacts with your workspace</p>
+    <p
+      style={{
+        marginBottom: '0.5em',
+        fontSize: '12px',
+        textAlign: 'center',
+      }}
+    >
+      create an app that interacts with your workspace
+    </p>
     <SyntaxHighlighter language="python" style={tomorrowNightEighties}>
-        {`from impala.dbapi
+      {`from impala.dbapi
 import connect
 conn = connect(
   host = '${host || 'worker1.example.com'}',

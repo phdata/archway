@@ -23,9 +23,7 @@ const TopicCard = ({ topic }: Props) => (
     <CardHeader>
       <div style={{ flex: 1, textAlign: 'center' }}>
         {getTopicHeading(topic)}
-        <div style={{ fontSize: 12, textTransform: 'none' }}>
-          {topic.name}
-        </div>
+        <div style={{ fontSize: 12, textTransform: 'none' }}>{topic.name}</div>
       </div>
     </CardHeader>
     <div style={{ display: 'flex', textAlign: 'center' }}>

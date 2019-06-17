@@ -25,15 +25,8 @@ const TablesCard = ({ info, onRefreshHiveTables }: Props) => {
           }}
         />
       </CardHeader>
-      <Table
-        dataSource={(info && info.data && info.data.length > 0) ? info.data[0].tables : []}
-        pagination={false}
-      >
-        <Table.Column
-          title="Name"
-          dataIndex="name"
-          key="name"
-        />
+      <Table dataSource={info && info.data && info.data.length > 0 ? info.data[0].tables : []} pagination={false}>
+        <Table.Column title="Name" dataIndex="name" key="name" />
       </Table>
     </Card>
   );

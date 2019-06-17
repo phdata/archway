@@ -20,27 +20,31 @@ describe('PersonalWorkspace', () => {
         pci_data: false,
         pii_data: false,
       },
-      data: [{
-        id: 1,
-        name: '',
-        location: '',
-        size_in_gb: 0,
-        consumed_in_gb: 0,
-        managing_group: {
-          group: {
-            common_name: '',
-            distinguished_name: '',
-            sentry_role: '',
-            attributes: [['','']]
+      data: [
+        {
+          id: 1,
+          name: '',
+          location: '',
+          size_in_gb: 0,
+          consumed_in_gb: 0,
+          managing_group: {
+            group: {
+              common_name: '',
+              distinguished_name: '',
+              sentry_role: '',
+              attributes: [['', '']],
+            },
           },
         },
-      }],
-      processing: [{
-        id: 0,
-        pool_name: '',
-        max_cores: 0,
-        max_memory_in_gb: 0,
-      }],
+      ],
+      processing: [
+        {
+          id: 0,
+          pool_name: '',
+          max_cores: 0,
+          max_memory_in_gb: 0,
+        },
+      ],
       topics: [],
       applications: [],
     };
@@ -52,21 +56,14 @@ describe('PersonalWorkspace', () => {
         //
       },
       hive: {
-        thrift: [
-          { host: '', port: '' },
-        ],
+        thrift: [{ host: '', port: '' }],
       },
       impala: {
         //
       },
     };
     const wrapper = shallow(
-      <PersonalWorkspace
-        workspace={workspace}
-        services={services}
-        loading={false}
-        requestWorkspace={() => null}
-      />,
+      <PersonalWorkspace workspace={workspace} services={services} loading={false} requestWorkspace={() => null} />
     );
     expect(wrapper).toMatchSnapshot();
   });

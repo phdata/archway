@@ -5,18 +5,12 @@ import Colors from './Colors';
 import { Workspace, WorkspaceSearchResult } from '../models/Workspace';
 
 interface Props {
-    workspace: Workspace | WorkspaceSearchResult;
-    onSelected: (id: number) => void;
+  workspace: Workspace | WorkspaceSearchResult;
+  onSelected: (id: number) => void;
 }
 
 const WorkspaceListItem = ({ workspace, onSelected }: Props) => {
-  const {
-    id,
-    name,
-    status = '',
-    behavior,
-    summary,
-  } = workspace;
+  const { id, name, status = '', behavior, summary } = workspace;
 
   let total_disk_allocated_in_gb;
   let total_disk_consumed_in_gb;
@@ -50,11 +44,12 @@ const WorkspaceListItem = ({ workspace, onSelected }: Props) => {
     return (
       <div
         style={{
-            textTransform: 'uppercase',
-            fontSize: 10,
-            fontWeight: 300,
-            color,
-          }}>
+          textTransform: 'uppercase',
+          fontSize: 10,
+          fontWeight: 300,
+          color,
+        }}
+      >
         {status}
       </div>
     );
@@ -70,7 +65,7 @@ const WorkspaceListItem = ({ workspace, onSelected }: Props) => {
         data: [allocated - consumed, consumed],
         backgroundColor: [
           total_disk_consumed_in_gb ? Colors.Green.string() : Colors.LightGray.string(),
-          total_disk_consumed_in_gb ? Colors.Green.lighten(.5).string() : Colors.LightGray.lighten(.5).string(),
+          total_disk_consumed_in_gb ? Colors.Green.lighten(0.5).string() : Colors.LightGray.lighten(0.5).string(),
         ],
       },
     ],
@@ -78,32 +73,28 @@ const WorkspaceListItem = ({ workspace, onSelected }: Props) => {
 
   return (
     <List.Item>
-      <Card
-        bordered={true}
-        onClick={onClick}
-        hoverable={true}
-        bodyStyle={{ padding: '20px' }}
-      >
+      <Card bordered={true} onClick={onClick} hoverable={true} bodyStyle={{ padding: '20px' }}>
         <ApprovalMessage />
         <div style={{ display: 'flex', alignItems: 'center', padding: '28px 0 40px' }}>
           <div style={{ fontSize: '12px', color: 'rgba(0, 0, 0, 0.65)', flex: 7 }}>
-            <div style={{ fontSize: '22px', lineHeight: '30px', textTransform: 'uppercase' }}>
-              {name}
-            </div>
+            <div style={{ fontSize: '22px', lineHeight: '30px', textTransform: 'uppercase' }}>{name}</div>
             <div>{summary}</div>
-            <Icon type={behavior === 'simple' ? 'team' : 'deployment-unit'} />&nbsp;
+            <Icon type={behavior === 'simple' ? 'team' : 'deployment-unit'} />
+            &nbsp;
             <div style={{ textTransform: 'uppercase', display: 'inline-block' }}>{behavior} dataset</div>
             <div style={{ color: '#0B7A75', lineHeight: '24px' }}>DETAILS ></div>
           </div>
           <div style={{ flex: 3 }}>
-            <div style={{
-              textAlign: 'center',
-              display: 'flex',
-              flexDirection: 'column',
-              flex: 1,
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}>
+            <div
+              style={{
+                textAlign: 'center',
+                display: 'flex',
+                flexDirection: 'column',
+                flex: 1,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
               <Doughnut
                 height={52}
                 width={52}

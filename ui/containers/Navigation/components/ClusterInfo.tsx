@@ -15,7 +15,8 @@ const ClusterInfo = ({ cluster }: Props) => {
       <Spin
         style={{ color: 'white' }}
         tip="fetching cluster"
-        indicator={<Icon type="loading" spin={true} style={{ color: 'white' }} />} />
+        indicator={<Icon type="loading" spin={true} style={{ color: 'white' }} />}
+      />
     );
   }
 
@@ -23,12 +24,14 @@ const ClusterInfo = ({ cluster }: Props) => {
 
   return (
     <Tooltip placement="right" title={`${cluster.name}'s status is currently ${status.statusText()}`}>
-      <div style={{
-        padding: 10,
-        color: 'white',
-        backgroundColor: status.statusColor().string(),
-        textAlign: 'center',
-      }}>
+      <div
+        style={{
+          padding: 10,
+          color: 'white',
+          backgroundColor: status.statusColor().string(),
+          textAlign: 'center',
+        }}
+      >
         {cluster.name} is {status.statusText()}
       </div>
     </Tooltip>
@@ -42,4 +45,7 @@ const mapStateToProps = () =>
 
 const mapDispatchToProps = {};
 
-export default connect(mapStateToProps, mapDispatchToProps)(ClusterInfo);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(ClusterInfo);

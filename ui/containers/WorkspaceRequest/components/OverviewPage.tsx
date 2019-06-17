@@ -4,7 +4,7 @@ import { FieldLabel } from '../../../components';
 import { RequestInput } from '../../../models/RequestInput';
 
 interface Props {
-  request: RequestInput,
+  request: RequestInput;
   setRequest: (request: RequestInput | boolean) => void;
 }
 
@@ -15,7 +15,7 @@ export default class OverviewPage extends React.Component<Props> {
       ...request,
       [key]: e.target.value,
     });
-  }
+  };
 
   public render() {
     const { request } = this.props;
@@ -23,8 +23,7 @@ export default class OverviewPage extends React.Component<Props> {
     return (
       <Col span={12} offset={6}>
         <Form layout="vertical">
-          <Form.Item
-            label={<FieldLabel>Workspace Name</FieldLabel>}>
+          <Form.Item label={<FieldLabel>Workspace Name</FieldLabel>}>
             <Input
               size="large"
               name="name"
@@ -33,8 +32,7 @@ export default class OverviewPage extends React.Component<Props> {
               onChange={this.onChangeValue('name')}
             />
           </Form.Item>
-          <Form.Item
-            label={<FieldLabel>Summary</FieldLabel>}>
+          <Form.Item label={<FieldLabel>Summary</FieldLabel>}>
             <Input
               size="large"
               name="summary"
@@ -43,8 +41,7 @@ export default class OverviewPage extends React.Component<Props> {
               onChange={this.onChangeValue('summary')}
             />
           </Form.Item>
-          <Form.Item
-            label={<FieldLabel>Purpose for workspace</FieldLabel>}>
+          <Form.Item label={<FieldLabel>Purpose for workspace</FieldLabel>}>
             <Input.TextArea
               name="description"
               /* tslint:disable:max-line-length */

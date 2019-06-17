@@ -1,8 +1,6 @@
 import { fromJS } from 'immutable';
 
-import { 
-  SET_RECENT_WORKSPACES,
-} from './actions';
+import { SET_RECENT_WORKSPACES } from './actions';
 
 const initialState = fromJS({
   recent: [],
@@ -11,8 +9,7 @@ const initialState = fromJS({
 function cluster(state = initialState, action: any) {
   switch (action.type) {
     case SET_RECENT_WORKSPACES:
-      return state
-        .set('recent', fromJS(action.workspaces));
+      return state.set('recent', fromJS(action.workspaces));
     default:
       return state;
   }

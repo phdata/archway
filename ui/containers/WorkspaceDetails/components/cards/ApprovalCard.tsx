@@ -17,9 +17,7 @@ const ApprovalCard = ({ data, children, onApprove }: Props) => {
 
   return (
     <Card style={{ height: '100%' }} bordered>
-      <div style={{ textAlign: 'center', fontSize: 17 }}>
-        {children}
-      </div>
+      <div style={{ textAlign: 'center', fontSize: 17 }}>{children}</div>
       <div
         style={{
           display: 'flex',
@@ -41,23 +39,22 @@ const ApprovalCard = ({ data, children, onApprove }: Props) => {
               <TimeAgo datetime={approvedAt} />
             </div>
           )}
-          {!approvedAt && (
-            loading ? (
-              <Icon
-                theme="outlined"
-                type="loading"
-                style={{ fontSize: 16 }}
-              />
-            ) : !!onApprove && (
-              <a onClick={onApprove}> {/* eslint-disable-line */}
-                APPROVE
-              </a>
-            )
-          )}
+          {!approvedAt &&
+            (loading ? (
+              <Icon theme="outlined" type="loading" style={{ fontSize: 16 }} />
+            ) : (
+              !!onApprove && (
+                <a onClick={onApprove}>
+                  {' '}
+                  {/* eslint-disable-line */}
+                  APPROVE
+                </a>
+              )
+            ))}
         </div>
       </div>
     </Card>
   );
-}
+};
 
 export default ApprovalCard;

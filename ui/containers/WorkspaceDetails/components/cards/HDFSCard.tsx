@@ -19,9 +19,13 @@ const HDFSCard = ({ data }: Props) => (
         alignItems: 'center',
       }}
     >
-      {(data && data.length > 0) ? data.map((allocation: HiveAllocation, index: number) => (
-        <div key={index} style={{ fontSize: 12 }}>{allocation.location}</div>
-      )) : (
+      {data && data.length > 0 ? (
+        data.map((allocation: HiveAllocation, index: number) => (
+          <div key={index} style={{ fontSize: 12 }}>
+            {allocation.location}
+          </div>
+        ))
+      ) : (
         <div style={{ fontSize: 12 }}>No locations.</div>
       )}
     </div>

@@ -17,7 +17,5 @@ function* riskWorkspaceListListener() {
 }
 
 export default function* root() {
-  yield all([
-    fork(riskWorkspaceListListener),
-  ]);
+  yield all([fork(riskWorkspaceListListener)]);
 }

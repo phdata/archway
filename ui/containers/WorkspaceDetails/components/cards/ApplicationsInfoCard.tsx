@@ -5,7 +5,7 @@ import CardHeader from './CardHeader';
 import { Application } from '../../../../models/Workspace';
 
 interface Props {
-  application: Application
+  application: Application;
 }
 
 const ApplicationsInfoCard = ({ application }: Props) => (
@@ -16,9 +16,7 @@ const ApplicationsInfoCard = ({ application }: Props) => (
           <Icon style={{ fontSize: 36, marginRight: 12 }} type="rocket" />
           <div>
             {application.name}
-            <div style={{ fontSize: 12, textTransform: 'none' }}>
-              {application.consumer_group}
-            </div>
+            <div style={{ fontSize: 12, textTransform: 'none' }}>{application.consumer_group}</div>
           </div>
         </CardHeader>
         <div style={{ display: 'flex' }}>

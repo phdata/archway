@@ -26,16 +26,11 @@ class RiskListing extends React.PureComponent<Props> {
   }
 
   public render() {
-    const {
-      fetching,
-      workspaceList,
-      openWorkspace,
-      listingMode,
-      setListingMode,
-    } = this.props;
+    const { fetching, workspaceList, openWorkspace, listingMode, setListingMode } = this.props;
     const emptyText = 'No workspaces found';
-    const renderItem = (workspace: WorkspaceSearchResult) =>
-      <WorkspaceListItem workspace={workspace} onSelected={openWorkspace} />;
+    const renderItem = (workspace: WorkspaceSearchResult) => (
+      <WorkspaceListItem workspace={workspace} onSelected={openWorkspace} />
+    );
 
     const pending = workspaceList.length;
     const pci = workspaceList.filter(({ pci_data }) => pci_data).length;
@@ -66,7 +61,7 @@ class RiskListing extends React.PureComponent<Props> {
         <ListCardToggle
           style={{ margin: '12px 0' }}
           selectedMode={listingMode}
-          onSelect={(mode) => setListingMode(mode)}
+          onSelect={mode => setListingMode(mode)}
         />
         {listingMode === 'cards' && (
           <Row style={{ marginTop: 12 }}>
@@ -85,7 +80,7 @@ class RiskListing extends React.PureComponent<Props> {
           <Table
             columns={workspaceColumns}
             dataSource={workspaceList}
-            onRow={(record) => ({
+            onRow={record => ({
               onClick: () => openWorkspace(record.id),
             })}
           />
@@ -108,4 +103,7 @@ const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
   setListingMode: (mode: string) => dispatch(actions.setListingMode(mode)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(RiskListing);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(RiskListing);

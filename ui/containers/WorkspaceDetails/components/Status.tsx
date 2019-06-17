@@ -12,15 +12,9 @@ interface Props {
 
 const Status = ({ ready, createdAt }: Props) => (
   <div style={{ display: 'flex', alignItems: 'center' }}>
-    <Icon
-      style={{ fontSize: 32 }}
-      type={ready ? 'check-circle' : 'close-circle'}
-      theme="twoTone"
-    />
+    <Icon style={{ fontSize: 32 }} type={ready ? 'check-circle' : 'close-circle'} theme="twoTone" />
     <div style={{ textTransform: 'uppercase', marginLeft: 8 }}>
-      <div style={{ fontSize: 18 }}>
-        {ready ? 'READY' : 'PENDING'}
-      </div>
+      <div style={{ fontSize: 18 }}>{ready ? 'READY' : 'PENDING'}</div>
       <div style={{ fontSize: 10, color: Colors.Gray.string(), textTransform: 'uppercase' }}>
         created <TimeAgo datetime={createdAt} />
       </div>

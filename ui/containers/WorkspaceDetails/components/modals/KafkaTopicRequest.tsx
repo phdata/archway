@@ -12,7 +12,7 @@ interface KafkaForm {
 }
 
 const KafkaTopicRequest = ({ handleSubmit }: InjectedFormProps<KafkaForm, {}>) => (
-  <form style={{  }} onSubmit={handleSubmit}>
+  <form style={{}} onSubmit={handleSubmit}>
     <FieldLabel>Topic Name</FieldLabel>
     <Field name="name" component={TextField} style={{ marginBottom: 0 }} />
   </form>

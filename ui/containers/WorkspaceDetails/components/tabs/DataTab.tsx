@@ -42,8 +42,8 @@ class DataTab extends React.Component<Props> {
 
     const isLiaison = workspace.requester === profile.distinguished_name;
     let currentMember: Member;
-    const filteredMembers = members && members.filter((member: Member) =>
-      member.distinguished_name === profile.distinguished_name);
+    const filteredMembers =
+      members && members.filter((member: Member) => member.distinguished_name === profile.distinguished_name);
     if (filteredMembers && filteredMembers.length > 0) {
       currentMember = filteredMembers[0];
     }
@@ -54,22 +54,17 @@ class DataTab extends React.Component<Props> {
           {workspace.data.map((allocation: HiveAllocation, index: number) => {
             const roleData = currentMember && currentMember.data[allocation.name];
             const roleValue = roleData && roleData.role;
-            const hasPermission = isLiaison || (roleValue === 'manager');
+            const hasPermission = isLiaison || roleValue === 'manager';
 
             return (
               <Tabs.TabPane tab={allocation.name} key={allocation.id.toString()}>
                 <Row gutter={16} type="flex" justify="center" style={{ marginBottom: 16 }}>
                   <Col span={6}>
-                    <HiveDatabase
-                      data={allocation}
-                      isDefault
-                    />
+                    <HiveDatabase data={allocation} isDefault />
                   </Col>
                   <Col span={18}>
                     <Card style={{ height: '100%' }}>
-                      <CardHeader>
-                        Example
-                      </CardHeader>
+                      <CardHeader>Example</CardHeader>
                       <SyntaxHighlighter language="sql" style={{ overflow: 'auto', ...tomorrowNightEighties }}>
                         {`CREATE TABLE ${allocation.name}.new_data_landing
 LOCATION '${allocation.location}/new_data/landing'`}
@@ -79,10 +74,7 @@ LOCATION '${allocation.location}/new_data/landing'`}
                 </Row>
                 <Row gutter={16} type="flex" justify="center">
                   <Col span={12}>
-                    <TablesCard
-                      info={infos}
-                      onRefreshHiveTables={requestRefreshHiveTables}
-                    />
+                    <TablesCard info={infos} onRefreshHiveTables={requestRefreshHiveTables} />
                   </Col>
                   <Col span={12}>
                     <PermissionsCard

@@ -12,7 +12,5 @@ function* clusterStatus() {
 }
 
 export default function* root() {
-  yield all([
-    fork(clusterStatus),
-  ]);
+  yield all([fork(clusterStatus)]);
 }

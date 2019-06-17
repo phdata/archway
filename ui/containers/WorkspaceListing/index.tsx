@@ -4,14 +4,7 @@ import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import { createStructuredSelector } from 'reselect';
 import moment from 'moment';
-import {
-  Behavior,
-  ListCardToggle,
-  WorkspaceListItem,
-  Colors,
-  FieldLabel,
-  workspaceColumns,
-} from '../../components';
+import { Behavior, ListCardToggle, WorkspaceListItem, Colors, FieldLabel, workspaceColumns } from '../../components';
 import { WorkspaceSearchResult } from '../../models/Workspace';
 import { Profile } from '../../models/Profile';
 import { Cluster } from '../../models/Cluster';
@@ -27,7 +20,7 @@ interface Props {
   fetching: boolean;
   listingMode: string;
   workspaceList: WorkspaceSearchResult[];
-  filters: { filter: string, behaviors: string[], statuses: string[] };
+  filters: { filter: string; behaviors: string[]; statuses: string[] };
   profile: Profile;
   cluster: Cluster;
   updateFilter: (filter: string, behavior: string[], statuses: string[]) => void;
@@ -45,11 +38,7 @@ class WorkspaceList extends React.PureComponent<Props> {
   }
 
   public filterUpdated(event: React.ChangeEvent<HTMLInputElement>) {
-    this.props.updateFilter(
-      event.target.value,
-      this.props.filters.behaviors,
-      this.props.filters.statuses,
-    );
+    this.props.updateFilter(event.target.value, this.props.filters.behaviors, this.props.filters.statuses);
   }
 
   public behaviorChanged(behavior: string, checked: boolean) {
@@ -60,11 +49,7 @@ class WorkspaceList extends React.PureComponent<Props> {
       behaviors.splice(behaviors.indexOf(behavior), 1);
     }
 
-    this.props.updateFilter(
-      this.props.filters.filter,
-      this.props.filters.behaviors,
-      this.props.filters.statuses,
-    );
+    this.props.updateFilter(this.props.filters.filter, this.props.filters.behaviors, this.props.filters.statuses);
   }
 
   public statusChanged(status: string, checked: boolean) {
@@ -75,11 +60,7 @@ class WorkspaceList extends React.PureComponent<Props> {
       statuses.splice(statuses.indexOf(status), 1);
     }
 
-    this.props.updateFilter(
-      this.props.filters.filter,
-      this.props.filters.behaviors,
-      this.props.filters.statuses,
-    );
+    this.props.updateFilter(this.props.filters.filter, this.props.filters.behaviors, this.props.filters.statuses);
   }
 
   public componentDidMount() {
@@ -87,15 +68,15 @@ class WorkspaceList extends React.PureComponent<Props> {
   }
 
   public generateCSV(workspaceList: WorkspaceSearchResult[]) {
-    return workspaceList.map((workspace) => ({
-        'Name': workspace.name,
-        'Status': workspace.status,
-        'Date Requested': moment(workspace.date_requested).format('YYYY-MM-DD'),
-        'Date Fully Approved': moment(workspace.date_fully_approved).format('YYYY-MM-DD'),
-        'Disk Allocated': workspace.total_disk_allocated_in_gb,
-        'Max Cores': workspace.total_max_cores,
-        'Max Memory': workspace.total_max_memory_in_gb,
-      }));
+    return workspaceList.map(workspace => ({
+      Name: workspace.name,
+      Status: workspace.status,
+      'Date Requested': moment(workspace.date_requested).format('YYYY-MM-DD'),
+      'Date Fully Approved': moment(workspace.date_fully_approved).format('YYYY-MM-DD'),
+      'Disk Allocated': workspace.total_disk_allocated_in_gb,
+      'Max Cores': workspace.total_max_cores,
+      'Max Memory': workspace.total_max_memory_in_gb,
+    }));
   }
 
   public render() {
@@ -110,11 +91,13 @@ class WorkspaceList extends React.PureComponent<Props> {
       cluster,
     } = this.props;
     const allStatuses: string[] = ['approved', 'pending', 'rejected'];
-    const emptyText = (!filter && behaviors.length === 2 && statuses.length === 3)
-      ? 'No workspaces yet. Create one from the link on the left.'
-      : 'No workspaces found';
-    const renderItem = (workspace: WorkspaceSearchResult) =>
-      <WorkspaceListItem workspace={workspace} onSelected={openWorkspace} />;
+    const emptyText =
+      !filter && behaviors.length === 2 && statuses.length === 3
+        ? 'No workspaces yet. Create one from the link on the left.'
+        : 'No workspaces found';
+    const renderItem = (workspace: WorkspaceSearchResult) => (
+      <WorkspaceListItem workspace={workspace} onSelected={openWorkspace} />
+    );
 
     return (
       <div>
@@ -127,18 +110,15 @@ class WorkspaceList extends React.PureComponent<Props> {
                   span={24}
                   lg={12}
                   style={{
-                      display: 'flex',
-                      flex: 1,
-                      flexDirection: 'column',
-                      justifyContent: 'space-around',
-                    }}>
+                    display: 'flex',
+                    flex: 1,
+                    flexDirection: 'column',
+                    justifyContent: 'space-around',
+                  }}
+                >
                   <div>
                     <FieldLabel>FILTER</FieldLabel>
-                    <Input.Search
-                      value={filter}
-                      onChange={this.filterUpdated}
-                      placeholder="find a workspace..."
-                    />
+                    <Input.Search value={filter} onChange={this.filterUpdated} placeholder="find a workspace..." />
                   </div>
                   <div>
                     <FieldLabel>STATUS</FieldLabel>
@@ -167,15 +147,17 @@ class WorkspaceList extends React.PureComponent<Props> {
                         selected={behaviors.indexOf('structured') >= 0}
                         onChange={this.behaviorChanged}
                         icon="deployment-unit"
-                        title="Structured" />
-                        </Col>
+                        title="Structured"
+                      />
+                    </Col>
                     <Col span={12}>
                       <Behavior
                         behaviorKey="simple"
                         selected={behaviors.indexOf('simple') >= 0}
                         onChange={this.behaviorChanged}
                         icon="team"
-                        title="Simple" />
+                        title="Simple"
+                      />
                     </Col>
                   </Row>
                 </Col>
@@ -183,17 +165,12 @@ class WorkspaceList extends React.PureComponent<Props> {
             </Card>
           </Col>
         </Row>
-        {workspaceList && workspaceList.length > 0 &&
-          profile.permissions && profile.permissions.platform_operations && (
+        {workspaceList && workspaceList.length > 0 && profile.permissions && profile.permissions.platform_operations && (
           <Row type="flex" style={{ marginTop: 12, fontSize: 12 }} justify="center">
             <Col>
               <CSVLink data={this.generateCSV(workspaceList)} filename={`${cluster.name} - Workspaces.csv`}>
-                <Icon
-                  style={{ fontSize: 16 }}
-                  type="file-excel"
-                  theme="twoTone"
-                  twoToneColor={Colors.Green.string()} />
-                {' '}DOWNLOAD AS REPORT
+                <Icon style={{ fontSize: 16 }} type="file-excel" theme="twoTone" twoToneColor={Colors.Green.string()} />{' '}
+                DOWNLOAD AS REPORT
               </CSVLink>
             </Col>
           </Row>
@@ -201,7 +178,7 @@ class WorkspaceList extends React.PureComponent<Props> {
         <ListCardToggle
           style={{ margin: '12px 0' }}
           selectedMode={listingMode}
-          onSelect={(mode) => setListingMode(mode)}
+          onSelect={mode => setListingMode(mode)}
         />
         {listingMode === 'cards' && (
           <Row>
@@ -220,7 +197,7 @@ class WorkspaceList extends React.PureComponent<Props> {
           <Table
             columns={workspaceColumns}
             dataSource={workspaceList}
-            onRow={(record) => ({
+            onRow={record => ({
               onClick: () => openWorkspace(record.id),
             })}
           />
@@ -242,13 +219,13 @@ const mapStateToProps = () =>
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
   openWorkspace: (id: number) => dispatch(router.push(`/workspaces/${id}`)),
-  updateFilter: (
-    filter: string,
-    behavior: string[],
-    statuses: string[],
-  ) => dispatch(actions.filterWorkspaces(filter, behavior, statuses)),
+  updateFilter: (filter: string, behavior: string[], statuses: string[]) =>
+    dispatch(actions.filterWorkspaces(filter, behavior, statuses)),
   listWorkspaces: () => dispatch(actions.listAllWorkspaces()),
   setListingMode: (mode: string) => dispatch(actions.setListingMode(mode)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(WorkspaceList);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(WorkspaceList);

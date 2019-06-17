@@ -10,9 +10,9 @@ const initialState = fromJS({
       hue: false,
       hive: false,
       yarn: false,
-      mgmt: false
-    }
-  }
+      mgmt: false,
+    },
+  },
 });
 
 function cluster(state = initialState, action: any) {

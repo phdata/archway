@@ -26,22 +26,9 @@ const ApplicationsSummary = ({ workspace }: Props) => {
       {workspace.applications.map((application: Application) => (
         <div key={application.id}>
           <h3>{application.name}</h3>
-          <Table
-            pagination={false}
-            dataSource={tableDataForApplication(application)}
-          >
-            <Table.Column
-              title="Attribute"
-              dataIndex="title"
-              key="title"
-              width="50%"
-            />
-            <Table.Column
-              title="Value"
-              dataIndex="value"
-              key="value"
-              width="50%"
-            />
+          <Table pagination={false} dataSource={tableDataForApplication(application)}>
+            <Table.Column title="Attribute" dataIndex="title" key="title" width="50%" />
+            <Table.Column title="Value" dataIndex="value" key="value" width="50%" />
           </Table>
         </div>
       ))}

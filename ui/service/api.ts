@@ -1,6 +1,6 @@
 import { Workspace } from '../models/Workspace';
 
-const { config = {} } = (window as any);
+const { config = {} } = window as any;
 const BASE_URL = config.baseUrl || '';
 
 export function login(username: string, password: string) {
@@ -8,7 +8,7 @@ export function login(username: string, password: string) {
     headers: {
       Authorization: `Basic ${btoa(`${username}:${password}`)}`,
     },
-  }).then((response) => response.json());
+  }).then(response => response.json());
 }
 
 export function logout() {
@@ -17,10 +17,7 @@ export function logout() {
 }
 
 const headers = (token?: string): RequestInit => {
-  const result: string[][] = [
-    ['Accept', 'application/json'],
-    ['Content-Type', 'application/json'],
-  ];
+  const result: string[][] = [['Accept', 'application/json'], ['Content-Type', 'application/json']];
 
   if (token) {
     result.push(['Authorization', token!]);
@@ -32,128 +29,119 @@ const headers = (token?: string): RequestInit => {
 };
 
 const get = (path: string, token?: string) =>
-  fetch(`${BASE_URL}${path}`, headers(token))
-    .then((response: Response) => {
-      const json = response.json();
-      if (response.status >= 200 && response.status < 300) {
-        return json;
-      } else {
-        if (response.status === 401) {
-          logout();
-        }
-        return json.then(Promise.reject.bind(Promise));
+  fetch(`${BASE_URL}${path}`, headers(token)).then((response: Response) => {
+    const json = response.json();
+    if (response.status >= 200 && response.status < 300) {
+      return json;
+    } else {
+      if (response.status === 401) {
+        logout();
       }
-    });
+      return json.then(Promise.reject.bind(Promise));
+    }
+  });
 
 const withBody = (path: string, token: string, data?: any, method = 'POST', allow404 = false, parseResponse = true) =>
   fetch(`${BASE_URL}${path}`, {
     ...headers(token),
     method,
     body: JSON.stringify(data),
-  })
-    .then((response) => {
-      let result;
-      if (parseResponse) {
-        result = response.json();
+  }).then(response => {
+    let result;
+    if (parseResponse) {
+      result = response.json();
+    } else {
+      result = response.text();
+    }
+
+    if (response.status >= 200 && response.status < 300) {
+      return result;
+    } else if (response.status === 404 && allow404) {
+      return result;
+    } else {
+      if (response.status === 401) {
+        logout();
       }
-      else {
-        result = response.text();
-      }
+      return result.then(Promise.reject.bind(Promise));
+    }
+  });
 
-      if (response.status >= 200 && response.status < 300) {
-        return result;
-      } else if (response.status === 404 && allow404) {
-        return result;
-      } else {
-        if (response.status === 401) {
-          logout();
-        }
-        return result.then(Promise.reject.bind(Promise));
-      }
-    });
+export const cluster = () => get('/clusters');
 
-export const cluster =
-  () =>
-    get('/clusters');
+export const profile = (token: string) => get('/account/profile', token);
 
-export const profile =
-  (token: string) =>
-    get('/account/profile', token);
+export const getPersonalWorkspace = (token: string) => get(`/account/workspace`, token);
 
-export const getPersonalWorkspace =
-  (token: string) =>
-    get(`/account/workspace`, token);
+export const getUserSuggestions = (token: string, filter: string) => get(`/members/${filter}`, token);
 
-export const getUserSuggestions =
-  (token: string, filter: string) =>
-    get(`/members/${filter}`, token);
+export const createWorkspace = (token: string) => withBody(`/account/workspace`, token);
 
-export const createWorkspace =
-  (token: string) =>
-    withBody(`/account/workspace`, token);
+export const requestWorkspace = (token: string, workspace: Workspace) => withBody('/workspaces', token, workspace);
 
-export const requestWorkspace =
-  (token: string, workspace: Workspace) =>
-    withBody('/workspaces', token, workspace);
+export const newWorkspaceMember = (
+  token: string,
+  id: number,
+  resource: string,
+  resource_id: number,
+  role: string,
+  distinguished_name: string
+) => withBody(`/workspaces/${id}/members`, token, { distinguished_name, resource, resource_id, role }, 'POST', true);
 
-export const newWorkspaceMember =
-  (token: string, id: number, resource: string, resource_id: number, role: string, distinguished_name: string) =>
-    withBody(`/workspaces/${id}/members`, token, { distinguished_name, resource, resource_id, role }, 'POST', true);
+export const removeWorkspaceMember = (
+  token: string,
+  id: number,
+  resource: string,
+  resource_id: number,
+  role: string,
+  distinguished_name: string
+) =>
+  withBody(
+    `/workspaces/${id}/members`,
+    token,
+    { distinguished_name, resource, resource_id, role },
+    'DELETE',
+    true,
+    false
+  );
 
-export const removeWorkspaceMember =
-  (token: string, id: number, resource: string, resource_id: number, role: string, distinguished_name: string) =>
-    withBody(`/workspaces/${id}/members`, token, { distinguished_name, resource, resource_id, role }, 'DELETE', true, false);
+export const getTemplate = (token: string, type: string) => get(`/templates/${type}`, token);
 
-export const getTemplate =
-  (token: string, type: string) =>
-    get(`/templates/${type}`, token);
+export const processTemplate = (token: string, type: string, input = {}) =>
+  withBody(`/templates/${type}`, token, input);
 
-export const processTemplate =
-  (token: string, type: string, input = {}) =>
-    withBody(`/templates/${type}`, token, input);
+export const listWorkspaces = (token: string) => get('/workspaces', token);
 
-export const listWorkspaces =
-  (token: string) =>
-    get('/workspaces', token);
+export const listRiskWorkspaces = (token: string) => get('/risk/workspaces', token);
 
-export const listRiskWorkspaces =
-  (token: string) =>
-    get('/risk/workspaces', token);
+export const listOpsWorkspaces = (token: string) => get('/ops/workspaces', token);
 
-export const listOpsWorkspaces =
-  (token: string) =>
-    get('/ops/workspaces', token);
+export const getWorkspace = (token: string, id: number) => get(`/workspaces/${id}`, token);
 
-export const getWorkspace =
-  (token: string, id: number) =>
-    get(`/workspaces/${id}`, token);
+export const approveWorkspace = (token: string, id: number, role: string) =>
+  withBody(`/workspaces/${id}/approve`, token, { role });
 
-export const approveWorkspace =
-  (token: string, id: number, role: string) =>
-    withBody(`/workspaces/${id}/approve`, token, { role });
+export const getMembers = (token: string, id: number) => get(`/workspaces/${id}/members`, token);
 
-export const getMembers =
-  (token: string, id: number) =>
-    get(`/workspaces/${id}/members`, token);
+export const getHiveTables = (token: string, id: number) => get(`/workspaces/${id}/hive`, token);
 
-export const getHiveTables =
-  (token: string, id: number) =>
-    get(`/workspaces/${id}/hive`, token);
+export const getYarnApplications = (token: string, id: number) => get(`/workspaces/${id}/yarn`, token);
 
-export const getYarnApplications =
-  (token: string, id: number) =>
-    get(`/workspaces/${id}/yarn`, token);
+export const requestTopic = (token: string, id: number, name: string, partitions: number, replication_factor: number) =>
+  withBody(`/workspaces/${id}/topics`, token, { name, partitions, replication_factor });
 
-export const requestTopic =
-  (token: string, id: number, name: string, partitions: number, replication_factor: number) =>
-    withBody(`/workspaces/${id}/topics`, token, { name, partitions, replication_factor });
-
-export const requestApplication =
-  (token: string, id: number, name: string, application_type: string, logo: string, language: string, repository: string) =>
-    withBody(`/workspaces/${id}/applications`, token, {
-      name,
-      application_type,
-      logo,
-      language,
-      repository,
-    });
+export const requestApplication = (
+  token: string,
+  id: number,
+  name: string,
+  application_type: string,
+  logo: string,
+  language: string,
+  repository: string
+) =>
+  withBody(`/workspaces/${id}/applications`, token, {
+    name,
+    application_type,
+    logo,
+    language,
+    repository,
+  });

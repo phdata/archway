@@ -10,13 +10,17 @@ interface Props {
 const RunHelp = ({ queue }: Props) => (
   <div style={{ padding: '4px' }}>
     <Label>step 3. run</Label>
-    <p style={{
-      marginBottom: '0.5em',
-      fontSize: '12px',
-      textAlign: 'center',
-    }}>run your application using your own resource pool</p>
+    <p
+      style={{
+        marginBottom: '0.5em',
+        fontSize: '12px',
+        textAlign: 'center',
+      }}
+    >
+      run your application using your own resource pool
+    </p>
     <SyntaxHighlighter language="shell" style={tomorrowNightEighties}>
-        {`$ spark-submit --class org.apache.spark.examples.SparkPi \\
+      {`$ spark-submit --class org.apache.spark.examples.SparkPi \\
   --master yarn \\
   --deploy-mode cluster \\
   --queue ${queue} \\

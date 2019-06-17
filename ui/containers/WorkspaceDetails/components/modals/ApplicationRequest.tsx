@@ -12,7 +12,7 @@ interface KafkaForm {
 }
 
 const ApplicationRequest = ({ handleSubmit }: InjectedFormProps<KafkaForm, {}>) => (
-  <form style={{  }} onSubmit={handleSubmit}>
+  <form style={{}} onSubmit={handleSubmit}>
     <FieldLabel>Application Name</FieldLabel>
     <Field name="name" component={TextField} />
     <FieldLabel>Application Type</FieldLabel>
@@ -20,19 +20,24 @@ const ApplicationRequest = ({ handleSubmit }: InjectedFormProps<KafkaForm, {}>) 
       name="application_type"
       placeholder="Select Application Type"
       component={SelectField}
-      options={[{
-        value: 'Spark',
-        label: 'Spark',
-      }, {
-        value: 'Impala',
-        label: 'Impala',
-      }, {
-        value: 'Kudu',
-        label: 'Kudu',
-      }, {
-        value: 'Other',
-        label: 'Other',
-      }]}
+      options={[
+        {
+          value: 'Spark',
+          label: 'Spark',
+        },
+        {
+          value: 'Impala',
+          label: 'Impala',
+        },
+        {
+          value: 'Kudu',
+          label: 'Kudu',
+        },
+        {
+          value: 'Other',
+          label: 'Other',
+        },
+      ]}
     />
     <FieldLabel>Logo URL</FieldLabel>
     <Field name="logo" component={TextField} />
@@ -41,19 +46,24 @@ const ApplicationRequest = ({ handleSubmit }: InjectedFormProps<KafkaForm, {}>) 
       name="language"
       placeholder="Select Language"
       component={SelectField}
-      options={[{
-        value: 'Java',
-        label: 'Java',
-      }, {
-        value: 'Scala',
-        label: 'Scala',
-      }, {
-        value: 'Python',
-        label: 'Python',
-      }, {
-        value: 'Other',
-        label: 'Other',
-      }]}
+      options={[
+        {
+          value: 'Java',
+          label: 'Java',
+        },
+        {
+          value: 'Scala',
+          label: 'Scala',
+        },
+        {
+          value: 'Python',
+          label: 'Python',
+        },
+        {
+          value: 'Other',
+          label: 'Other',
+        },
+      ]}
     />
     <FieldLabel>Repository</FieldLabel>
     <Field name="repository" component={TextField} />

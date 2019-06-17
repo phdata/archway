@@ -8,16 +8,7 @@ import operations from '../containers/OpsListing/sagas';
 import request from '../containers/WorkspaceRequest/sagas';
 import home from '../containers/Home/sagas';
 
-const sagas = [
-  login,
-  cluster,
-  request,
-  workspace,
-  listing,
-  risk,
-  operations,
-  home,
-];
+const sagas = [login, cluster, request, workspace, listing, risk, operations, home];
 
 export const CANCEL_SAGAS_HMR = 'CANCEL_SAGAS_HMR';
 
@@ -33,9 +24,9 @@ const createAbortableSaga = (saga: any) => {
   return saga;
 };
 
-const SagaManager = ({
+const SagaManager = {
   startSagas: (sagaMiddleware: any) => {
-    sagas.map(createAbortableSaga).forEach((saga) => sagaMiddleware.run(saga));
+    sagas.map(createAbortableSaga).forEach(saga => sagaMiddleware.run(saga));
   },
 
   cancelSagas: (store: any) => {
@@ -43,6 +34,6 @@ const SagaManager = ({
       type: CANCEL_SAGAS_HMR,
     });
   },
-});
+};
 
 export default SagaManager;

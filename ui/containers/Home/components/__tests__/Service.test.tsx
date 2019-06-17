@@ -13,14 +13,7 @@ describe('Service', () => {
       status: '',
       thrift: [],
     });
-    const wrapper = shallow(
-      <Service
-        name=""
-        status={status}
-        links={links}
-        index={0}
-      />,
-    );
+    const wrapper = shallow(<Service name="" status={status} links={links} index={0} />);
     expect(wrapper).toMatchSnapshot();
   });
 });

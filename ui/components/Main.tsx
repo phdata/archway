@@ -28,9 +28,7 @@ const Main = () => (
           </Switch>
         </div>
       </Content>
-      <Footer style={{ textAlign: 'center' }}>
-        Heimdali &copy;2018 Created by phData
-      </Footer>
+      <Footer style={{ textAlign: 'center' }}>Heimdali &copy;2018 Created by phData</Footer>
     </Layout>
   </Layout>
 );

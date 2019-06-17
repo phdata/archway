@@ -1,12 +1,12 @@
 import Color from 'color';
 
 export interface Colors {
-    Green: Color;
-    Blue: Color;
-    Red: Color;
-    Orange: Color;
-    Gray: Color;
-    LightGray: Color;
+  Green: Color;
+  Blue: Color;
+  Red: Color;
+  Orange: Color;
+  Gray: Color;
+  LightGray: Color;
 }
 
 export default {

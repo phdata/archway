@@ -14,7 +14,7 @@ import {
   YarnService,
   YarnServiceLinks,
   NavigatorService,
-  NavigatorServiceLinks
+  NavigatorServiceLinks,
 } from '../../models/Cluster';
 
 import { PersonalWorkspace, RecentWorkspaces, Service as ServiceDisplay } from './components';
@@ -45,7 +45,7 @@ class Home extends React.Component<Props> {
       recentWorkspaces,
       profileLoading,
       requestWorkspace,
-      openWorkspace
+      openWorkspace,
     } = this.props;
 
     if (!cluster) {
@@ -63,7 +63,7 @@ class Home extends React.Component<Props> {
             <span
               style={{
                 fontWeight: 'bold',
-                color: clusterStatus.statusColor().string()
+                color: clusterStatus.statusColor().string(),
               }}
             >
               {clusterStatus.statusText()}
@@ -118,13 +118,13 @@ const mapStateToProps = () =>
     cluster: getClusterInfo(),
     personalWorkspace: getPersonalWorkspace(),
     profileLoading: isProfileLoading(),
-    recentWorkspaces: getRecentWorkspaces()
+    recentWorkspaces: getRecentWorkspaces(),
   });
 
 const mapDispatchToProps = (dispatch: any) => ({
   refreshRecentWorkspaces: () => dispatch(refreshRecentWorkspaces()),
   requestWorkspace: () => dispatch(actions.requestWorkspace()),
-  openWorkspace: (id: number) => dispatch(router.push(`/workspaces/${id}`))
+  openWorkspace: (id: number) => dispatch(router.push(`/workspaces/${id}`)),
 });
 
 export default connect(

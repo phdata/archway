@@ -6,9 +6,9 @@ import PoolsSummary from './PoolsSummary';
 import { Workspace } from '../../../models/Workspace';
 
 interface Props {
-    workspace?: Workspace;
-    expanded?: boolean;
-    onToggleExpand?: () => void;
+  workspace?: Workspace;
+  expanded?: boolean;
+  onToggleExpand?: () => void;
 }
 
 const WorkspaceSummary = ({ workspace, expanded, onToggleExpand }: Props) => {
@@ -19,13 +19,7 @@ const WorkspaceSummary = ({ workspace, expanded, onToggleExpand }: Props) => {
   return (
     <Row type="flex" justify="center" gutter={16}>
       <Col span={5}>
-        <Button
-          style={{ marginTop: 16, marginBottom: 16 }}
-          type="primary"
-          ghost
-          block
-          onClick={onToggleExpand}
-        >
+        <Button style={{ marginTop: 16, marginBottom: 16 }} type="primary" ghost block onClick={onToggleExpand}>
           Full IA Details
         </Button>
       </Col>

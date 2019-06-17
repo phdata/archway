@@ -12,44 +12,56 @@ interface Props {
   removeMember: (distinguished_name: string, roleId: number, resource: string) => void;
 }
 
-const renderRoleColumn = (onChangeMemberRole?: (member: Member, id: number, role: string) => void) =>
-  ({ member, role, roleId }: { member: Member, role: string, roleId: number }) => {
-    return (
-      <Dropdown
-        key={member.distinguished_name}
-        overlay={(
-          <Menu
-            onClick={({ key: newRole }) => {
-              if (newRole !== role && onChangeMemberRole) {
-                onChangeMemberRole(member, roleId, role)
-              }
-            }}
-          >
-            <Menu.Item key="readonly">readonly</Menu.Item>
-            <Menu.Item key="manager">manager</Menu.Item>
-          </Menu>
-        )}
-        trigger={['click']}
-      >
-        <a style={{ fontSize: 12 }} href="#"> {/* eslint-disable-line */}
-          {role}
-          <Icon style={{ marginLeft: 4 }} type="down" />
-        </a>
-      </Dropdown>
-    );
-  };
+const renderRoleColumn = (onChangeMemberRole?: (member: Member, id: number, role: string) => void) => ({
+  member,
+  role,
+  roleId,
+}: {
+  member: Member;
+  role: string;
+  roleId: number;
+}) => {
+  return (
+    <Dropdown
+      key={member.distinguished_name}
+      overlay={
+        <Menu
+          onClick={({ key: newRole }) => {
+            if (newRole !== role && onChangeMemberRole) {
+              onChangeMemberRole(member, roleId, role);
+            }
+          }}
+        >
+          <Menu.Item key="readonly">readonly</Menu.Item>
+          <Menu.Item key="manager">manager</Menu.Item>
+        </Menu>
+      }
+      trigger={['click']}
+    >
+      <a style={{ fontSize: 12 }} href="#">
+        {' '}
+        {/* eslint-disable-line */}
+        {role}
+        <Icon style={{ marginLeft: 4 }} type="down" />
+      </a>
+    </Dropdown>
+  );
+};
 
 const TopicPermissionsCard = ({ readonly, topic, members, onAddMember, onChangeMemberRole, removeMember }: Props) => {
-  const dataSource = members && topic
-    ? members.filter((member: Member) => !!member.topics[topic.name]).map((member: Member) => ({
-      name: member.name,
-      permission: {
-        member,
-        role: member.topics[topic.name].role,
-        roleId: member.topics[topic.name].id,
-      },
-    }))
-    : [];
+  const dataSource =
+    members && topic
+      ? members
+          .filter((member: Member) => !!member.topics[topic.name])
+          .map((member: Member) => ({
+            name: member.name,
+            permission: {
+              member,
+              role: member.topics[topic.name].role,
+              roleId: member.topics[topic.name].id,
+            },
+          }))
+      : [];
 
   return (
     <Card style={{ height: '100%' }} bordered>
@@ -61,15 +73,8 @@ const TopicPermissionsCard = ({ readonly, topic, members, onAddMember, onChangeM
           </Button>
         )}
       </CardHeader>
-      <Table
-        dataSource={dataSource}
-        pagination={false}
-      >
-        <Table.Column
-          title="Name"
-          dataIndex="name"
-          key="name"
-        />
+      <Table dataSource={dataSource} pagination={false}>
+        <Table.Column title="Name" dataIndex="name" key="name" />
         <Table.Column
           title="PERMISSIONS"
           dataIndex="permission"
@@ -77,7 +82,18 @@ const TopicPermissionsCard = ({ readonly, topic, members, onAddMember, onChangeM
         />
         <Table.Column
           title="Remove"
-          render={member => (readonly ? <span /> : <Button type="danger" shape="circle" icon="delete" onClick={_ => removeMember(member.distinguished_name, topic!.id, 'topic')} />)}
+          render={member =>
+            readonly ? (
+              <span />
+            ) : (
+              <Button
+                type="danger"
+                shape="circle"
+                icon="delete"
+                onClick={_ => removeMember(member.distinguished_name, topic!.id, 'topic')}
+              />
+            )
+          }
         />
       </Table>
     </Card>

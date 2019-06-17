@@ -13,15 +13,7 @@ interface Props {
 
 const UseCase = (item: string) => <div>{item}</div>;
 
-const Behavior = ({
-  behaviorKey,
-  icon,
-  title,
-  description,
-  useCases,
-  selected,
-  onChange,
-}: Props) => (
+const Behavior = ({ behaviorKey, icon, title, description, useCases, selected, onChange }: Props) => (
   <Card
     onClick={() => onChange(behaviorKey, !selected)}
     hoverable={true}
@@ -40,19 +32,12 @@ const Behavior = ({
       <Icon type="check" style={{ fontSize: 14 }} />
     </div>
     <Icon type={icon} style={{ fontSize: 42 }} />
-    <div style={{ fontSize: 14, textTransform: 'uppercase' }}>
-      {title}
-    </div>
+    <div style={{ fontSize: 14, textTransform: 'uppercase' }}>{title}</div>
     {description && <p>{description}</p>}
     {useCases && (
       <div>
-        <div style={{ textTransform: 'uppercase', fontSize: 12 }}>
-          example use cases
-        </div>
-        <List
-          dataSource={useCases}
-          renderItem={UseCase}
-        />
+        <div style={{ textTransform: 'uppercase', fontSize: 12 }}>example use cases</div>
+        <List dataSource={useCases} renderItem={UseCase} />
       </div>
     )}
   </Card>

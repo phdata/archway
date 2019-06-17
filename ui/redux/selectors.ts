@@ -10,17 +10,20 @@ export const riskSelector = (state: any) => state.get('risk');
 export const opsSelector = (state: any) => state.get('operations');
 export const homeSelector = (state: any) => state.get('home');
 
-export const isLoading = () => createSelector(
+export const isLoading = () =>
+  createSelector(
     authSelector,
-    (authState) => authState.get('loading'),
-);
+    authState => authState.get('loading')
+  );
 
-export const getToken = () => createSelector(
-  authSelector,
-  (authState) => authState.get('token'),
-);
+export const getToken = () =>
+  createSelector(
+    authSelector,
+    authState => authState.get('token')
+  );
 
-export const getProfile = () => createSelector(
-  authSelector,
-  (authState) => authState.get('profile') as Profile,
-);
+export const getProfile = () =>
+  createSelector(
+    authSelector,
+    authState => authState.get('profile') as Profile
+  );
