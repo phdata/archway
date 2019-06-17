@@ -38,7 +38,7 @@ object Server extends IOApp with LazyLogging {
           context.appConfig.asJson.pretty(Printer.spaces2)).pure[F])
       provisionEC <- ExecutionContexts.fixedThreadPool(context.appConfig.provisioning.threadPoolSize)
       startupEC <- ExecutionContexts.fixedThreadPool(1)
-      _ <- Resource.liftF(logger.debug("AppContext has been generated").pure[F])
+      _ <- Resource.liftF(logger.info("AppContext has been generated").pure[F])
 
       configService = new DBConfigService[F](context)
 
@@ -60,7 +60,7 @@ object Server extends IOApp with LazyLogging {
       templateController = new TemplateController[F](authService, templateService)
       clusterController = new ClusterController[F](context)
       workspaceController = new WorkspaceController[F](authService, workspaceService, memberService, kafkaService, applicationService, emailService, provisionService)
-      _ <- Resource.liftF(logger.debug("Workspace Controller has been initialized").pure[F])
+      _ <- Resource.liftF(logger.info("Workspace Controller has been initialized").pure[F])
 
       memberController = new MemberController[F](authService, memberService)
       riskController = new RiskController[F](authService, workspaceService)
@@ -80,11 +80,11 @@ object Server extends IOApp with LazyLogging {
       provisioningJob = new Provisioning[F](context, provisionService)
       sessionMaintainer = new SessionMaintainer[F](context)
       cacheInitializer = new CacheInitializer[F](context)
-      _ <- Resource.liftF(logger.debug("Initializing HeimdaliStartup class").pure[F])
+      _ <- Resource.liftF(logger.info("Initializing HeimdaliStartup class").pure[F])
       startup = new HeimdaliStartup[F](cacheInitializer, sessionMaintainer, provisioningJob)(startupEC)
 
       _ <- Resource.liftF(startup.begin())
-      _ <- Resource.liftF(logger.debug("Class HeimdaliStartup has started").pure[F])
+      _ <- Resource.liftF(logger.info("Class HeimdaliStartup has started").pure[F])
 
       server <-
         BlazeServerBuilder[F]
@@ -95,11 +95,11 @@ object Server extends IOApp with LazyLogging {
           .withSSL(StoreInfo(context.appConfig.rest.sslStore.get, context.appConfig.rest.sslStorePassword.get), context.appConfig.rest.sslKeyManagerPassword.get)
           .resource
 
-      _ <- Resource.liftF(logger.debug("Server has started").pure[F])
+      _ <- Resource.liftF(logger.info("Server has started").pure[F])
     } yield server
 
   override def run(args: List[String]): IO[ExitCode] = {
-    logger.debug("Server is starting")
+    logger.info("Server is starting")
     createServer[IO].use(_ => IO.never).as(ExitCode.Success)
   }
 
