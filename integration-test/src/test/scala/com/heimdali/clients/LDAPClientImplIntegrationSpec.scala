@@ -6,52 +6,50 @@ import com.heimdali.test.fixtures._
 import com.unboundid.ldap.sdk._
 import org.scalatest.{FlatSpec, Matchers}
 import org.scalatest.mockito.MockitoSugar
+import scala.collection.JavaConverters._
 
 class LDAPClientImplIntegrationSpec
   extends FlatSpec
     with Matchers
     with MockitoSugar
     with LDAPTest
+
     with IntegrationTest {
 
   behavior of "LDAPClientImpl"
 
-  it should "validate a user" in {
-    val client = new LDAPClientImpl[IO](appConfig.ldap, _.lookupBinding)
-    val maybeUser = client.validateUser(systemTestConfig.existingUser, systemTestConfig.existingPassword).value.unsafeRunSync()
+  it should "validate a user" in new Context {
+    val maybeUser = lookupClient.validateUser(systemTestConfig.existingUser, systemTestConfig.existingPassword).value.unsafeRunSync()
     maybeUser shouldBe defined
   }
 
-  it should "create a group" in {
-    val client = new LDAPClientImpl[IO](appConfig.ldap, _.provisioningBinding)
+  it should "create a group" in new Context {
     val attributes = defaultLDAPAttributes(s"cn=edh_sw_sesame,${appConfig.ldap.groupPath}", "edh_sw_sesame")
     val updated = attributes.patch(attributes.length - 1, List("gidNumber" -> "124"), 1)
     println(updated)
 
-    client.createGroup("edh_sw_sesame", attributes).unsafeRunSync()
-    client.createGroup("edh_sw_sesame", updated).unsafeRunSync()
+    provisioningClient.createGroup("edh_sw_sesame", attributes).unsafeRunSync()
+    provisioningClient.createGroup("edh_sw_sesame", updated).unsafeRunSync()
 
     Option(ldapConnectionPool.getConnection.getEntry(s"cn=edh_sw_sesame,${appConfig.ldap.groupPath}")) shouldBe defined
     ldapConnectionPool.getConnection.delete(s"cn=edh_sw_sesame,${appConfig.ldap.groupPath}")
   }
 
-  it should "delete a group" in {
-    val client = new LDAPClientImpl[IO](appConfig.ldap, _.provisioningBinding)
+  it should "delete a group" in new Context {
     val attributes = defaultLDAPAttributes(s"cn=edh_sw_sesame,${appConfig.ldap.groupPath}", "edh_sw_sesame")
 
-    client.createGroup("edh_sw_sesame", attributes).unsafeRunSync()
+    provisioningClient.createGroup("edh_sw_sesame", attributes).unsafeRunSync()
     Option(ldapConnectionPool.getConnection.getEntry(s"cn=edh_sw_sesame,${appConfig.ldap.groupPath}")) shouldBe defined
 
-    client.deleteGroup(s"cn=edh_sw_sesame,${appConfig.ldap.groupPath}").value.unsafeRunSync()
+    provisioningClient.deleteGroup(s"cn=edh_sw_sesame,${appConfig.ldap.groupPath}").value.unsafeRunSync()
     Option(ldapConnectionPool.getConnection.getEntry(s"cn=edh_sw_sesame,${appConfig.ldap.groupPath}")) shouldBe None
   }
 
-  it should "update a group's attributes" in {
-    val client = new LDAPClientImpl[IO](appConfig.ldap, _.provisioningBinding)
+  it should "update a group's attributes" in new Context {
 
     val attributes = defaultLDAPAttributes(s"cn=edh_sw_sesame,${appConfig.ldap.groupPath}", "edh_sw_sesame")
-    client.createGroup("edh_sw_sesame", attributes).unsafeRunSync()
-    client.createGroup("edh_sw_sesame", attributes :+ ("description" -> "lorem ipsum")).unsafeRunSync()
+    provisioningClient.createGroup("edh_sw_sesame", attributes).unsafeRunSync()
+    provisioningClient.createGroup("edh_sw_sesame", attributes :+ ("description" -> "lorem ipsum")).unsafeRunSync()
 
     val entry = Option(ldapConnectionPool.getConnection.getEntry(s"cn=edh_sw_sesame,${appConfig.ldap.groupPath}"))
 
@@ -63,35 +61,31 @@ class LDAPClientImplIntegrationSpec
     attribute.get.getValue shouldBe "lorem ipsum"
   }
 
-  it should "add a user" in {
+  it should "add a user" in new Context {
     val groupDN = s"cn=edh_sw_sesame,${appConfig.ldap.groupPath}"
     val userDN = s"cn=${systemTestConfig.existingUser},${appConfig.ldap.userPath.get}"
 
-    val client = new LDAPClientImpl[IO](appConfig.ldap, _.provisioningBinding)
-
-    client.createGroup("edh_sw_sesame", defaultLDAPAttributes(groupDN, "edh_sw_sesame")).unsafeRunSync()
-    client.addUser(groupDN, userDN).value.unsafeRunSync()
+    provisioningClient.createGroup("edh_sw_sesame", defaultLDAPAttributes(groupDN, "edh_sw_sesame")).unsafeRunSync()
+    provisioningClient.addUser(groupDN, userDN).value.unsafeRunSync()
 
     ldapConnectionPool.getConnection.delete(s"cn=edh_sw_sesame,${appConfig.ldap.groupPath}")
   }
 
-  it should "find a user" in {
+  it should "find a user" in new Context {
     val userDN = s"cn=${systemTestConfig.existingUser},${appConfig.ldap.userPath.get}"
-    val client = new LDAPClientImpl[IO](appConfig.ldap, _.lookupBinding)
-    val maybeUser = client.findUser(userDN).value.unsafeRunSync()
+    val maybeUser = lookupClient.findUser(userDN).value.unsafeRunSync()
     maybeUser shouldBe defined
   }
 
-  it should "find all users" in {
+  it should "find all users" in new Context {
     val groupDN = s"cn=edh_sw_sesame,${appConfig.ldap.groupPath}"
     def userDN(username: String) = s"cn=$username,${appConfig.ldap.userPath.get}"
-    val client = new LDAPClientImpl[IO](appConfig.ldap, _.lookupBinding)
 
-    client.createGroup("edh_sw_sesame", defaultLDAPAttributes(groupDN, "edh_sw_sesame")).unsafeRunSync()
-    client.addUser(groupDN, userDN("benny")).value.unsafeRunSync()
-    client.addUser(groupDN, userDN("John Doe")).value.unsafeRunSync()
+    lookupClient.createGroup("edh_sw_sesame", defaultLDAPAttributes(groupDN, "edh_sw_sesame")).unsafeRunSync()
+    lookupClient.addUser(groupDN, userDN("benny")).value.unsafeRunSync()
+    lookupClient.addUser(groupDN, userDN("John Doe")).value.unsafeRunSync()
 
-    val result = client.groupMembers(groupDN).unsafeRunSync()
+    val result = lookupClient.groupMembers(groupDN).unsafeRunSync()
 
     ldapConnectionPool.getConnection.delete(s"cn=edh_sw_sesame,${appConfig.ldap.groupPath}")
 
@@ -135,14 +129,13 @@ class LDAPClientImplIntegrationSpec
     actual.unsafeRunSync().get shouldBe a [ModifyRequest]
   }
 
-  it should "not generate a request" in {
+  it should "not generate a request" in new Context {
     val groupDN = s"CN=user_benny,OU=heimdali,DC=jotunn,DC=io"
-    val client = new LDAPClientImpl[IO](appConfig.ldap, _.provisioningBinding)
-    val actual = client.groupRequest(groupDN, "user_benny", List())
+    val actual = provisioningClient.groupRequest(groupDN, "user_benny", List())
     actual.unsafeRunSync() should not be defined
   }
 
-  it should "generate only one attribute for multiple keys" in {
+  it should "generate only one attribute for multiple keys" in new Context {
     val input = List(
       "objectClass" -> "group",
       "objectClass" -> "top",
@@ -152,16 +145,57 @@ class LDAPClientImplIntegrationSpec
       new Attribute("objectClass", "group", "top"),
       new Attribute("cn", "user_johnny")
     )
-    val client = new LDAPClientImpl[IO](appConfig.ldap, _.provisioningBinding)
-    val actual = client.attributeConvert(input)
+    val actual = provisioningClient.attributeConvert(input)
     actual should contain theSameElementsAs expected
   }
 
-  it should "search" in {
-    val client = new LDAPClientImpl[IO](appConfig.ldap, _.provisioningBinding)
-    val results = client.search("benny").unsafeRunSync()
+  it should "search" in new Context {
+    val results = provisioningClient.search("benny").unsafeRunSync()
     results.users.length should be > 0
     results.users.foreach(println)
+  }
+
+  it should "fullUsername" in new Context {
+    val expected = "johndoe@JOTUNN.IO"
+
+    val actual = lookupClient.fullUsername("johndoe")
+
+    actual shouldBe expected
+  }
+
+  it should "searchQuery" in new Context {
+    val expected = "(sAMAccountName=johndoe)"
+
+    val actual = lookupClient.searchQuery("johndoe")
+
+    actual shouldBe expected
+  }
+
+  it should "groupObjectClass" in new Context {
+    val expected = "group"
+
+    val actual = lookupClient.groupObjectClass
+
+    actual shouldBe expected
+  }
+
+  it should "ldapUser" in new Context {
+    val dn = "cn=john,dc=example,dc=com"
+    val expected = LDAPUser("john (johndoe)", "johndoe", dn, Seq.empty, None)
+
+    val user = new SearchResultEntry(dn, Seq(
+      new Attribute("name", "john"),
+      new Attribute("sAMAccountName", "johndoe")
+    ).asJava)
+
+    val actual = lookupClient.ldapUser(user)
+
+    actual shouldBe expected
+  }
+
+  trait Context {
+    val lookupClient = new LDAPClientImpl[IO](appConfig.ldap, _.lookupBinding)
+    val provisioningClient = new LDAPClientImpl[IO](appConfig.ldap, _.provisioningBinding)
   }
 
 }
