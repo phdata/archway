@@ -129,6 +129,18 @@
           "configurableInWizard": "true"
         },
         {
+          "name": "heimdali.rest.authType",
+          "label": "REST Authentication Type",
+          "description": "Valid auth types are 'ldap'",
+          "required": "true",
+          "type": "string_enum",
+          "validValues": [
+            "ldap",
+            "spnego"
+          ],
+          "default": "spnego"
+        },
+        {
           "name": "heimdali.cluster.sessionRefresh",
           "label": "Kerberos Refresh Interval",
           "description": "Interval between refreshing kerberos cache (eg. 1h, 30m, etc)",

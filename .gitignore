@@ -4,6 +4,7 @@ src/main/resources/log4j.xml
 .idea
 .ensime*
 build
+.make*
 **/.DS_Store
 Heimdali.mwb.bak
 *.log
