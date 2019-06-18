@@ -5,7 +5,7 @@ import java.util.concurrent.Executors
 import cats.effect._
 import com.heimdali.AppContext
 import com.heimdali.services.ProvisioningService
-import com.heimdali.test.fixtures._
+import com.heimdali.test.fixtures.{AppContextProvider, _}
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FlatSpec, Matchers}
 

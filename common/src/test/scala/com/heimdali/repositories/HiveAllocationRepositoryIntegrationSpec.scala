@@ -1,6 +1,5 @@
 package com.heimdali.repositories
 
-import com.heimdali.common.IntegrationTest
 import com.heimdali.models.HiveAllocation
 import com.heimdali.test.fixtures._
 import doobie._
@@ -12,8 +11,7 @@ class HiveAllocationRepositoryIntegrationSpec
   extends FunSuite
     with Matchers
     with DBTest
-    with IOChecker
-    with IntegrationTest {
+    with IOChecker {
 
   val repo = new HiveAllocationRepositoryImpl()
 

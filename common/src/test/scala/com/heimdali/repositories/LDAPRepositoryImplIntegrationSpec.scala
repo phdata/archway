@@ -2,7 +2,6 @@ package com.heimdali.repositories
 
 import java.time.Instant
 
-import com.heimdali.common.IntegrationTest
 import com.heimdali.test.fixtures._
 import doobie.scalatest.IOChecker
 import org.scalatest.{FunSuite, Matchers}
@@ -11,8 +10,7 @@ class LDAPRepositoryImplIntegrationSpec
   extends FunSuite
     with Matchers
     with DBTest
-    with IOChecker
-    with IntegrationTest {
+    with IOChecker {
 
   test("groupAssociated") { check(LDAPRepositoryImpl.Statements.groupAssociated(123, Instant.now)) }
   test("roleCreated") { check(LDAPRepositoryImpl.Statements.roleCreated(123, Instant.now)) }

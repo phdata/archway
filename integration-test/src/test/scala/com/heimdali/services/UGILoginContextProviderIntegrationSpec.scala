@@ -1,17 +1,13 @@
 package com.heimdali.services
 
 import cats.effect.IO
+import com.heimdali.itest.fixtures.KerberosTest
 import com.heimdali.test.fixtures._
 import org.apache.hadoop.security.UserGroupInformation
 import org.scalatest.{BeforeAndAfterAll, FlatSpec, Matchers}
 
-class UGILoginContextProviderSpec extends FlatSpec with Matchers with BeforeAndAfterAll {
+class UGILoginContextProviderIntegrationSpec extends FlatSpec with Matchers with BeforeAndAfterAll with KerberosTest {
   behavior of "UGILoginContextProvider"
-
-  override def beforeAll(): Unit = {
-    super.beforeAll()
-    System.setProperty("java.security.krb5.conf", getClass.getResource("/krb5.conf").getPath)
-  }
 
   it should "log in as another user" in {
 
