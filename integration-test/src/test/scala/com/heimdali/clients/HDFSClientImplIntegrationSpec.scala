@@ -1,5 +1,6 @@
 package com.heimdali.clients
 
+import java.io.File
 import java.net.URI
 
 import cats.effect.IO
@@ -93,6 +94,11 @@ class HDFSClientImplIntegrationSpec
 
   trait Context {
     val configuration = new Configuration()
+    configuration.addResource(new File("./hive-conf/core-site.xml").toURI.toURL)
+    configuration.addResource(new File("./hive-conf/hdfs-site.xml").toURI.toURL)
+    configuration.addResource(new File("./hive-conf/hive-site.xml").toURI.toURL)
+    configuration.addResource(new File("./sentry-conf/sentry-site.xml").toURI.toURL)
+
     private val fileSystem = () => FileSystem.get(configuration)
     val tmpLocation = "/tmp/heimdali_test_dir"
     val hdfsUri = new URI(configuration.get("fs.defaultFS"))
