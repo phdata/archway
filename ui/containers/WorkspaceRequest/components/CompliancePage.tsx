@@ -48,7 +48,8 @@ const complianceData = {
       },
       {
         key: 'driver_license',
-        label: "Driver's license number",
+        // prettier-ignore
+        label: 'Driver\'s license number'
       },
       {
         key: 'credit_card',

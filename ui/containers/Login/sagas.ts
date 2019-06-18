@@ -4,6 +4,9 @@ import * as Api from '../../service/api';
 import * as actions from './actions';
 import { SPNEGO } from '../../constants';
 
+const { config = {} } = window as any;
+const isDevMode = config.isDevMode === 'true';
+
 function* checkLogin() {
   const requestToken = localStorage.getItem('requestToken');
   if (requestToken) {
@@ -35,12 +38,12 @@ function* isSpnego() {
     if (authType === SPNEGO) {
       yield call(requestLogin, { username: '', password: '' });
     } else {
-      // tslint:disable-next-line: no-console
-      console.log('AuthType is not "spnego"');
+      // tslint:disable-next-line: no-unused-expression
+      isDevMode && console.log('AuthType is not "spnego"');
     }
   } catch {
-    // tslint:disable-next-line: no-console
-    console.error('No Api Endpoint for AuthType');
+    // tslint:disable-next-line: no-unused-expression
+    isDevMode && console.error('No Api Endpoint for AuthType');
   }
 }
 
