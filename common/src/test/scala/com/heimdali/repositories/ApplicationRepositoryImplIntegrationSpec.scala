@@ -1,6 +1,5 @@
 package com.heimdali.repositories
 
-import com.heimdali.common.IntegrationTest
 import com.heimdali.test.fixtures._
 import doobie.scalatest.IOChecker
 import org.scalatest.{FunSuite, Matchers}
@@ -9,8 +8,7 @@ class ApplicationRepositoryImplIntegrationSpec
   extends FunSuite
     with Matchers
     with DBTest
-    with IOChecker
-    with IntegrationTest {
+    with IOChecker {
 
   val repo = new ApplicationRepositoryImpl()
 

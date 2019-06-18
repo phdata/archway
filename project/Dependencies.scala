@@ -168,7 +168,8 @@ object Dependencies {
     (coreTest ++ hadoop ++ simulacrum)
       .map(exclusions)
   
-  val integrationTestDependencies = 
+  val integrationTestDependencies =
+    dbCore ++
     Seq("org.tpolecat" %% "doobie-scalatest" % doobieVersion,
         "org.scalacheck" %% "scalacheck" % scalacheckVersion,
         "org.mockito" % "mockito-core" % "2.18.3" % "test",

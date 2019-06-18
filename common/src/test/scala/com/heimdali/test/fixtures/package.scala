@@ -68,16 +68,6 @@ package object fixtures {
   def approval(instant: Instant = testTimer.instant) = Approval(Risk, standardUsername, instant)
   val config = ConfigFactory.parseResources(sys.env.getOrElse("TEST_CONFIG_FILE", "application.test.conf"))
   val Right(appConfig) = io.circe.config.parser.decodePath[AppConfig](config.resolve(), "heimdali")
-  val sysConfig = ConfigFactory.parseResources(sys.env.getOrElse("SYSTEM_TEST_CONFIG_FILE", "system-test.conf"))
-  val Right(systemTestConfig) = io.circe.config.parser.decode[SystemTestConfig](sysConfig.resolve())
-
-  case class SystemTestConfig(existingUser: String, existingPassword: String, krb5FilePath: String)
-
-  object SystemTestConfig {
-    import io.circe.generic.semiauto._
-
-    implicit val systemTestConf: Decoder[SystemTestConfig] = deriveDecoder
-  }
 
   def defaultLDAPAttributes(dn: String, cn: String): List[(String, String)] =
     List(

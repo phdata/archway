@@ -1,6 +1,6 @@
 /* Copyright 2018 phData Inc. */
 
-package com.heimdali.common
+package com.heimdali.itest.fixtures
 
 import org.scalatest.TestSuite
 import org.scalatest.concurrent.TimeLimitedTests
