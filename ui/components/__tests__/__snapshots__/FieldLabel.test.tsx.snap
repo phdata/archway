@@ -1,3 +1,14 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`FieldLabel renders correctly 1`] = `ShallowWrapper {}`;
+exports[`FieldLabel renders correctly 1`] = `
+<div
+  style={
+    Object {
+      "color": "rgba(0, 0, 0, .5)",
+      "fontSize": 10,
+      "textAlign": "center",
+      "textTransform": "uppercase",
+    }
+  }
+/>
+`;

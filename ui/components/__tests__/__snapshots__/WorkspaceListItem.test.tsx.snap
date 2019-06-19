@@ -1,3 +1,137 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`WorkspaceListItem renders correctly 1`] = `ShallowWrapper {}`;
+exports[`WorkspaceListItem renders correctly 1`] = `
+<Item>
+  <Card
+    bodyStyle={
+      Object {
+        "padding": "20px",
+      }
+    }
+    bordered={true}
+    hoverable={true}
+    onClick={[Function]}
+  >
+    <ApprovalMessage />
+    <div
+      style={
+        Object {
+          "alignItems": "center",
+          "display": "flex",
+          "padding": "28px 0 40px",
+        }
+      }
+    >
+      <div
+        style={
+          Object {
+            "color": "rgba(0, 0, 0, 0.65)",
+            "flex": 7,
+            "fontSize": "12px",
+          }
+        }
+      >
+        <div
+          style={
+            Object {
+              "fontSize": "22px",
+              "lineHeight": "30px",
+              "textTransform": "uppercase",
+            }
+          }
+        />
+        <div />
+        <Icon
+          type="team"
+        />
+         
+        <div
+          style={
+            Object {
+              "display": "inline-block",
+              "textTransform": "uppercase",
+            }
+          }
+        >
+          simple
+           dataset
+        </div>
+        <div
+          style={
+            Object {
+              "color": "#0B7A75",
+              "lineHeight": "24px",
+            }
+          }
+        >
+          DETAILS &gt;
+        </div>
+      </div>
+      <div
+        style={
+          Object {
+            "flex": 3,
+          }
+        }
+      >
+        <div
+          style={
+            Object {
+              "alignItems": "center",
+              "display": "flex",
+              "flex": 1,
+              "flexDirection": "column",
+              "justifyContent": "center",
+              "textAlign": "center",
+            }
+          }
+        >
+          <Doughnut
+            data={
+              Object {
+                "datasets": Array [
+                  Object {
+                    "backgroundColor": Array [
+                      "rgb(240, 243, 245)",
+                      "hsl(204, 20%, 100%)",
+                    ],
+                    "data": Array [
+                      1,
+                      0,
+                    ],
+                    "label": false,
+                  },
+                ],
+                "labels": Array [
+                  "Available (GB)",
+                  "Consumed (GB)",
+                ],
+              }
+            }
+            height={52}
+            options={
+              Object {
+                "legend": false,
+                "maintainAspectRatio": false,
+                "title": false,
+              }
+            }
+            redraw={false}
+            width={52}
+          />
+        </div>
+        <div
+          style={
+            Object {
+              "letterSpacing": 1,
+              "textAlign": "center",
+            }
+          }
+        >
+          1.0GB/1GB
+        </div>
+      </div>
+    </div>
+  </Card>
+</Item>
+`;

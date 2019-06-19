@@ -1,3 +1,168 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`SummaryPage renders correctly 1`] = `ShallowWrapper {}`;
+exports[`SummaryPage renders correctly 1`] = `
+<div>
+  <h3>
+    Here's a preview of what we'll request. Take a look and submit your request when you're ready!
+  </h3>
+  <Row
+    gutter={0}
+    justify="center"
+    style={
+      Object {
+        "marginBottom": 25,
+        "marginTop": 25,
+      }
+    }
+    type="flex"
+  >
+    <Col
+      span={8}
+    >
+      <Card>
+        <Icon
+          style={
+            Object {
+              "fontSize": 42,
+            }
+          }
+          type="crown"
+        />
+        <Label>
+          You will be the liason for this project
+        </Label>
+        <h4 />
+      </Card>
+    </Col>
+  </Row>
+  <Row
+    gutter={25}
+    justify="center"
+    style={
+      Object {
+        "marginBottom": 25,
+        "marginTop": 25,
+      }
+    }
+    type="flex"
+  >
+    <Col
+      span={6}
+      style={
+        Object {
+          "display": "flex",
+          "flex": 1,
+        }
+      }
+    >
+      <Card
+        style={
+          Object {
+            "display": "flex",
+            "flex": 1,
+            "justifyContent": "center",
+          }
+        }
+      >
+        <Icon
+          style={
+            Object {
+              "fontSize": 42,
+            }
+          }
+          type="database"
+        />
+        <Label>
+          The following hive databases will be created for you
+        </Label>
+        <List
+          bordered={false}
+          dataSource={Array []}
+          loading={false}
+          pagination={false}
+          renderItem={[Function]}
+          split={true}
+        />
+      </Card>
+    </Col>
+    <Col
+      span={6}
+      style={
+        Object {
+          "display": "flex",
+          "flex": 1,
+        }
+      }
+    >
+      <Card
+        style={
+          Object {
+            "display": "flex",
+            "flex": 1,
+            "justifyContent": "center",
+          }
+        }
+      >
+        <Icon
+          style={
+            Object {
+              "fontSize": 42,
+            }
+          }
+          type="rocket"
+        />
+        <Label>
+          The following resource pools will be created for you
+        </Label>
+        <List
+          bordered={false}
+          dataSource={Array []}
+          loading={false}
+          pagination={false}
+          renderItem={[Function]}
+          split={true}
+        />
+      </Card>
+    </Col>
+    <Col
+      span={6}
+      style={
+        Object {
+          "display": "flex",
+          "flex": 1,
+        }
+      }
+    >
+      <Card
+        style={
+          Object {
+            "display": "flex",
+            "flex": 1,
+            "justifyContent": "center",
+          }
+        }
+      >
+        <Icon
+          style={
+            Object {
+              "fontSize": 42,
+            }
+          }
+          type="thunderbolt"
+        />
+        <Label>
+          The following applications (with their own consumer group) will be created for you
+        </Label>
+        <List
+          bordered={false}
+          dataSource={Array []}
+          loading={false}
+          pagination={false}
+          renderItem={[Function]}
+          split={true}
+        />
+      </Card>
+    </Col>
+  </Row>
+</div>
+`;

@@ -1,0 +1,89 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ListCardToggle renders correctly 1`] = `
+<div
+  style={
+    Object {
+      "display": "flex",
+      "justifyContent": "flex-end",
+    }
+  }
+>
+  <div
+    key="list"
+    onClick={[Function]}
+    style={
+      Object {
+        "borderBottomColor": "transparent",
+        "borderBottomStyle": "solid",
+        "borderBottomWidth": 1,
+        "color": "#0B7A75",
+        "cursor": "pointer",
+        "margin": "0 4px",
+        "paddingBottom": 4,
+        "textAlign": "center",
+        "width": 36,
+      }
+    }
+  >
+    <Icon
+      style={
+        Object {
+          "fontSize": "20px",
+        }
+      }
+      type="bars"
+    />
+    <span
+      style={
+        Object {
+          "display": "block",
+          "fontSize": "10px",
+          "lineHeight": "10px",
+          "textTransform": "uppercase",
+        }
+      }
+    >
+      list
+    </span>
+  </div>
+  <div
+    key="cards"
+    onClick={[Function]}
+    style={
+      Object {
+        "borderBottomColor": "#0B7A75",
+        "borderBottomStyle": "solid",
+        "borderBottomWidth": 1,
+        "color": "#0B7A75",
+        "cursor": "pointer",
+        "margin": "0 4px",
+        "paddingBottom": 4,
+        "textAlign": "center",
+        "width": 36,
+      }
+    }
+  >
+    <Icon
+      style={
+        Object {
+          "fontSize": "20px",
+        }
+      }
+      type="appstore"
+    />
+    <span
+      style={
+        Object {
+          "display": "block",
+          "fontSize": "10px",
+          "lineHeight": "10px",
+          "textTransform": "uppercase",
+        }
+      }
+    >
+      cards
+    </span>
+  </div>
+</div>
+`;

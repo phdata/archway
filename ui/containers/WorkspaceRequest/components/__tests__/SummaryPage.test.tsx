@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
+import toJson from 'enzyme-to-json';
 
 import SummaryPage from '../SummaryPage';
 import { Profile } from '../../../../models/Profile';
@@ -16,6 +17,6 @@ describe('SummaryPage', () => {
       },
     };
     const wrapper = shallow(<SummaryPage profile={profile} />);
-    expect(wrapper).toMatchSnapshot();
+    expect(toJson(wrapper)).toMatchSnapshot();
   });
 });

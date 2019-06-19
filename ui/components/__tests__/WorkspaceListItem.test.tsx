@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
+import toJson from 'enzyme-to-json';
 
 import WorkspaceListItem from '../WorkspaceListItem';
 import { WorkspaceSearchResult } from '../../models/Workspace';
@@ -19,6 +20,6 @@ describe('WorkspaceListItem', () => {
       total_max_memory_in_gb: 0,
     };
     const wrapper = shallow(<WorkspaceListItem workspace={workspace} onSelected={() => null} />);
-    expect(wrapper).toMatchSnapshot();
+    expect(toJson(wrapper)).toMatchSnapshot();
   });
 });

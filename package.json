@@ -4,8 +4,6 @@
   "private": true,
   "dependencies": {
     "antd": "^3.19.2",
-    "babel-jest": "^24.7.1",
-    "babel-plugin-import": "^1.11.0",
     "browserslist": "^4.5.6",
     "chart.js": "^2.7.3",
     "color": "^3.1.0",
@@ -58,15 +56,18 @@
     "@types/redux-form": "^7.4.15",
     "@types/redux-immutable": "^4.0.0",
     "@types/yup": "^0.26.4",
+    "babel-jest": "^24.8.0",
+    "babel-plugin-import": "^1.12.0",
     "css-loader": "^1.0.0",
     "enhanced-resolve": "^4.1.0",
     "enzyme": "^3.8.0",
     "enzyme-adapter-react-16": "^1.7.1",
+    "enzyme-to-json": "^3.3.5",
     "extract-text-webpack-plugin": "^4.0.0-beta.0",
     "file-loader": "^2.0.0",
     "html-webpack-plugin": "^3.2.0",
     "husky": "^2.4.1",
-    "jest": "^23.6.0",
+    "jest": "^24.8.0",
     "less": "^3.8.1",
     "less-loader": "^5.0.0",
     "less-watch-compiler": "^1.11.3",
@@ -114,9 +115,13 @@
     ]
   },
   "jest": {
+    "preset": "ts-jest",
     "setupFiles": [
       "<rootDir>/test-shim.js",
       "<rootDir>/test-setup.js"
+    ],
+    "snapshotSerializers": [
+      "enzyme-to-json/serializer"
     ]
   },
   "husky": {

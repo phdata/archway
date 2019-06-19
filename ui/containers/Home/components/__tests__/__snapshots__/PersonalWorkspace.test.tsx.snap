@@ -1,3 +1,138 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`PersonalWorkspace renders correctly 1`] = `ShallowWrapper {}`;
+exports[`PersonalWorkspace renders correctly 1`] = `
+<div
+  style={
+    Object {
+      "flex": 1,
+    }
+  }
+>
+  <Card
+    bodyStyle={
+      Object {
+        "display": "flex",
+        "flexDirection": "column",
+      }
+    }
+  >
+    <Label>
+      Your Personal Workspace
+    </Label>
+    <div>
+      <div
+        style={
+          Object {
+            "display": "flex",
+            "fontSize": "12px",
+            "fontWeight": "bold",
+            "justifyContent": "center",
+            "textAlign": "center",
+          }
+        }
+      >
+        <div
+          style={
+            Object {
+              "padding": "10px",
+            }
+          }
+        >
+          <div>
+            HDFS LOCATION
+          </div>
+          <div
+            style={
+              Object {
+                "fontWeight": 200,
+              }
+            }
+          />
+        </div>
+        <div
+          style={
+            Object {
+              "padding": "10px",
+            }
+          }
+        >
+          <div>
+            HIVE NAMESPACE
+          </div>
+          <div
+            style={
+              Object {
+                "fontWeight": 200,
+              }
+            }
+          />
+        </div>
+        <div
+          style={
+            Object {
+              "padding": "10px",
+            }
+          }
+        >
+          <div>
+            RESOURCE POOL
+          </div>
+          <div
+            style={
+              Object {
+                "fontWeight": 200,
+              }
+            }
+          />
+        </div>
+      </div>
+      <Row
+        gutter={12}
+      >
+        <Col
+          span={24}
+          style={
+            Object {
+              "marginTop": 10,
+            }
+          }
+          xl={8}
+        >
+          <SetupHelp
+            location=""
+            namespace=""
+          />
+        </Col>
+        <Col
+          span={24}
+          style={
+            Object {
+              "marginTop": 10,
+            }
+          }
+          xl={8}
+        >
+          <SetupHelp
+            host=""
+            namespace=""
+            port=""
+          />
+        </Col>
+        <Col
+          span={24}
+          style={
+            Object {
+              "marginTop": 10,
+            }
+          }
+          xl={8}
+        >
+          <RunHelp
+            queue=""
+          />
+        </Col>
+      </Row>
+    </div>
+  </Card>
+</div>
+`;

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
+import toJson from 'enzyme-to-json';
 
 import OverviewPage from '../OverviewPage';
 import { RequestInput } from '../../../../models/RequestInput';
@@ -17,6 +18,6 @@ describe('OverviewPage', () => {
       },
     };
     const wrapper = shallow(<OverviewPage request={request} setRequest={() => null} />);
-    expect(wrapper).toMatchSnapshot();
+    expect(toJson(wrapper)).toMatchSnapshot();
   });
 });

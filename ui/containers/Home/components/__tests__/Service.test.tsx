@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
+import toJson from 'enzyme-to-json';
 
 import Service from '../Service';
 import { HiveServiceLinks, Status, Statusable } from '../../../../models/Cluster';
@@ -14,6 +15,6 @@ describe('Service', () => {
       thrift: [],
     });
     const wrapper = shallow(<Service name="" status={status} links={links} index={0} />);
-    expect(wrapper).toMatchSnapshot();
+    expect(toJson(wrapper)).toMatchSnapshot();
   });
 });

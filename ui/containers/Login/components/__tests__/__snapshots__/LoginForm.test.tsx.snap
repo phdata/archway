@@ -1,3 +1,21 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`LoginForm renders correctly 1`] = `ShallowWrapper {}`;
+exports[`LoginForm renders correctly 1`] = `
+<Formik
+  enableReinitialize={false}
+  error=""
+  handleSubmit={[Function]}
+  initialValues={
+    Object {
+      "error": "",
+      "loggingIn": false,
+    }
+  }
+  isInitialValid={false}
+  loggingIn={false}
+  onSubmit={[Function]}
+  render={[Function]}
+  validateOnBlur={true}
+  validateOnChange={true}
+/>
+`;

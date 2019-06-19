@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
+import toJson from 'enzyme-to-json';
 
 import PersonalWorkspace from '../PersonalWorkspace';
 import { Workspace } from '../../../../models/Workspace';
@@ -65,6 +66,6 @@ describe('PersonalWorkspace', () => {
     const wrapper = shallow(
       <PersonalWorkspace workspace={workspace} services={services} loading={false} requestWorkspace={() => null} />
     );
-    expect(wrapper).toMatchSnapshot();
+    expect(toJson(wrapper)).toMatchSnapshot();
   });
 });
