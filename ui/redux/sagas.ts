@@ -1,4 +1,4 @@
-import { cancel, fork, take } from 'redux-saga/effects';
+import { cancel, fork, take, call, put } from 'redux-saga/effects';
 import cluster from '../containers/Navigation/sagas';
 import login from '../containers/Login/sagas';
 import workspace from '../containers/WorkspaceDetails/sagas';
@@ -7,8 +7,13 @@ import risk from '../containers/RiskListing/sagas';
 import operations from '../containers/OpsListing/sagas';
 import request from '../containers/WorkspaceRequest/sagas';
 import home from '../containers/Home/sagas';
+import * as Api from '../service/api';
+import * as actions from './actions';
 
-const sagas = [login, cluster, request, workspace, listing, risk, operations, home];
+const { config = {} } = window as any;
+const isDevMode = config.isDevMode === 'true';
+
+const sagas = [login, cluster, request, workspace, listing, risk, operations, home, configSaga];
 
 export const CANCEL_SAGAS_HMR = 'CANCEL_SAGAS_HMR';
 
@@ -23,6 +28,21 @@ const createAbortableSaga = (saga: any) => {
   }
   return saga;
 };
+
+function* configSaga() {
+  try {
+    const featureFlags = yield call(Api.getFeatureFlags);
+    if (featureFlags) {
+      yield put(actions.setFeatureFlag(featureFlags));
+    } else {
+      // tslint:disable-next-line: no-unused-expression
+      isDevMode && console.error('Nothing returned from feature-flags API endpoint');
+    }
+  } catch {
+    // tslint:disable-next-line: no-unused-expression
+    isDevMode && console.error('No API endpoint for feature-flags');
+  }
+}
 
 const SagaManager = {
   startSagas: (sagaMiddleware: any) => {

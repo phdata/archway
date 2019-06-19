@@ -1,3 +1,4 @@
+import { fromJS } from 'immutable';
 import { combineReducers } from 'redux-immutable';
 import cluster from '../containers/Navigation/reducers';
 import login from '../containers/Login/reducers';
@@ -8,6 +9,20 @@ import operations from '../containers/OpsListing/reducers';
 import request from '../containers/WorkspaceRequest/reducers';
 import { reducer as form } from 'redux-form/immutable';
 import home from '../containers/Home/reducers';
+import { FEATURE_FLAG } from './actions';
+
+const initialConfigState = fromJS({
+  featureFlags: [],
+});
+
+const config = (state = initialConfigState, action: any) => {
+  switch (action.type) {
+    case FEATURE_FLAG:
+      state.set('featureFlags', action.featureFlags);
+    default:
+      return state;
+  }
+};
 
 const reducers = combineReducers<any>({
   login,
@@ -19,6 +34,7 @@ const reducers = combineReducers<any>({
   details,
   form,
   home,
+  config,
 });
 
 export default reducers;

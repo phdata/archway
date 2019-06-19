@@ -9,7 +9,7 @@ import './index.less';
 
 const history = createHashHistory();
 
-const providerStore = store(history);
+export const providerStore = store(history);
 
 ReactDOM.render(
   <Provider store={providerStore}>
