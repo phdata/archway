@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
+import { Spin, Icon } from 'antd';
+
 import * as actions from '../Login/actions';
 import { refreshRecentWorkspaces } from './actions';
 import { Workspace } from '../../models/Workspace';
@@ -23,6 +25,10 @@ import { getClusterInfo, getPersonalWorkspace, getRecentWorkspaces, isProfileLoa
 /* tslint:disable:no-var-requires */
 const router = require('connected-react-router/immutable');
 
+interface States {
+  clusterTimeout: boolean;
+}
+
 interface Props {
   cluster: Cluster;
   personalWorkspace: Workspace;
@@ -33,10 +39,47 @@ interface Props {
   openWorkspace: (id: number) => void;
 }
 
-class Home extends React.Component<Props> {
+class Home extends React.Component<Props, States> {
+  public state = {
+    clusterTimeout: false,
+  };
+
   public componentDidMount() {
     this.props.refreshRecentWorkspaces();
   }
+
+  public renderClusterStatus = () => {
+    const { cluster } = this.props;
+    const clusterStatus = new Status<Cluster>(cluster);
+
+    return cluster.name === 'Unknown' ? (
+      <Spin
+        style={{ color: 'black', fontSize: '30px', fontWeight: 200 }}
+        tip="Connecting to Cluster"
+        indicator={<Icon type="loading" spin={true} style={{ color: 'black', fontSize: '30px' }} />}
+      />
+    ) : (
+      <React.Fragment>
+        <h1 style={{ fontWeight: 100 }}>You are currently connected to {cluster.name}!</h1>
+        <h3 style={{ fontWeight: 100 }}>
+          The current status of {cluster.name} is{' '}
+          <span
+            style={{
+              fontWeight: 'bold',
+              color: clusterStatus.statusColor().string(),
+            }}
+          >
+            {clusterStatus.statusText()}
+          </span>
+        </h3>
+        <h2>
+          <a target="_blank" rel="noreferrer noopener" href={cluster.cm_url}>
+            {cluster.name}&apos;s Cloudera Manager UI
+          </a>
+        </h2>
+      </React.Fragment>
+    );
+  };
 
   public render() {
     const {
@@ -47,33 +90,22 @@ class Home extends React.Component<Props> {
       requestWorkspace,
       openWorkspace,
     } = this.props;
+    const { clusterTimeout } = this.state;
 
     if (!cluster) {
       return <div />;
+    } else if (cluster.name === 'Unknown') {
+      setTimeout(() => {
+        this.setState({ clusterTimeout: true });
+      }, 30000);
     }
-
-    const clusterStatus = new Status<Cluster>(cluster);
 
     return (
       <div>
-        <div style={{ padding: 24, background: '#fff', textAlign: 'center', height: '100%' }}>
-          <h1 style={{ fontWeight: 100 }}>You are currently connected to {cluster.name}!</h1>
-          <h3 style={{ fontWeight: 100 }}>
-            The current status of {cluster.name} is{' '}
-            <span
-              style={{
-                fontWeight: 'bold',
-                color: clusterStatus.statusColor().string(),
-              }}
-            >
-              {clusterStatus.statusText()}
-            </span>
-          </h3>
-          <h2>
-            <a target="_blank" rel="noreferrer noopener" href={cluster.cm_url}>
-              {cluster.name}&apos;s Cloudera Manager UI
-            </a>
-          </h2>
+        <div
+          style={{ padding: 24, background: '#fff', textAlign: 'center', height: clusterTimeout ? '138px' : '100%' }}
+        >
+          {clusterTimeout || this.renderClusterStatus()}
         </div>
         <div style={{ display: 'flex', padding: '25px 12px' }}>
           <ServiceDisplay

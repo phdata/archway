@@ -11,12 +11,23 @@ interface Props {
 
 const ClusterInfo = ({ cluster }: Props) => {
   if (cluster.name === 'Unknown') {
+    const [isTimeout, setIsTimeout] = React.useState(false);
+    setTimeout(() => {
+      setIsTimeout(true);
+    }, 30000);
+
     return (
-      <Spin
-        style={{ color: 'white' }}
-        tip="fetching cluster"
-        indicator={<Icon type="loading" spin={true} style={{ color: 'white' }} />}
-      />
+      <div style={{ textAlign: 'center', color: 'white' }}>
+        {isTimeout ? (
+          <React.Fragment>Could not connect to Cluster</React.Fragment>
+        ) : (
+          <Spin
+            style={{ color: 'white' }}
+            tip="Connecting to Cluster"
+            indicator={<Icon type="loading" spin={true} style={{ color: 'white' }} />}
+          />
+        )}
+      </div>
     );
   }
 
