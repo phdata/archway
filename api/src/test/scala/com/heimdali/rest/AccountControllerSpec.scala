@@ -2,7 +2,7 @@ package com.heimdali.rest
 
 import cats.data._
 import cats.effect.{ContextShift, IO}
-import com.heimdali.services.AccountService
+import com.heimdali.services.{AccountService, FeatureService, FeatureServiceImpl}
 import com.heimdali.test.{TestAuthService, TestClusterService}
 import com.heimdali.test.fixtures.{HttpTest, _}
 import org.http4s._
@@ -62,12 +62,20 @@ class AccountControllerSpec
     check(response, Status.Created, Some(defaultResponse))
   }
 
+  it should "get a list of feature flags" in new Context {
+    val response: IO[Response[IO]] = accountController.tokenizedRoutes.orNotFound.run(Request(uri = Uri.uri("/feature-flags")))
+    check(response, Status.Ok, Some(fromResource("rest/feature-flags.expected.json")))(jsonDecoder)
+  }
+
   trait Context {
     val accountService: AccountService[IO] = mock[AccountService[IO]]
     val authService: TestAuthService = new TestAuthService(platformApprover = true)
-    val context = genMockContext(clusterService = new TestClusterService())
+    val context = genMockContext(
+      clusterService = new TestClusterService(),
+      featureService = new FeatureServiceImpl(List("feature-x", "feature-y", "feature-z"))
+    )
 
-    lazy val accountController: AccountController[IO] = new AccountController[IO](authService, accountService, context.appConfig)
+    lazy val accountController: AccountController[IO] = new AccountController[IO](authService, accountService, context)
   }
 
 }

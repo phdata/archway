@@ -183,6 +183,15 @@ package object config {
                             applicationGenerator: String,
                             ldapGroupGenerator: String)
 
+  type FeatureFlagsConfig = Seq[String]
+
+  implicit final val featureFlagsDecoder: Decoder[FeatureFlagsConfig] =
+    (c: HCursor) => {
+      for {
+       flags <- c.as[Option[String]]
+      } yield flags.getOrElse("").split(",")
+    }
+
   case class AppConfig(templates: TemplateConfig,
                        rest: RestConfig,
                        ui: UIConfig,
@@ -193,7 +202,9 @@ package object config {
                        db: DatabaseConfig,
                        workspaces: WorkspaceConfig,
                        kafka: KafkaConfig,
-                       provisioning: ProvisioningConfig)
+                       provisioning: ProvisioningConfig,
+                       featureFlags: FeatureFlagsConfig
+                      )
 
   object AppConfig {
 

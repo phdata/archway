@@ -7,7 +7,7 @@ import com.heimdali.caching.{CacheEntry, Cached}
 import com.heimdali.clients._
 import com.heimdali.config.AppConfig
 import com.heimdali.repositories.{ApplicationRepository, ApprovalRepository, ComplianceRepository, ConfigRepository, HiveAllocationRepository, HiveGrantRepository, KafkaTopicRepository, LDAPRepository, MemberRepository, TopicGrantRepository, WorkspaceRequestRepository, YarnRepository}
-import com.heimdali.services.{Cluster, ClusterService, LoginContextProvider, ProvisioningService}
+import com.heimdali.services.{Cluster, ClusterService, FeatureService, LoginContextProvider, ProvisioningService}
 import doobie.util.transactor.Strategy
 import doobie.{FC, Transactor}
 import org.apache.sentry.provider.db.generic.service.thrift.SentryGenericServiceClient
@@ -36,6 +36,7 @@ trait AppContextProvider {
                      kafkaClient: KafkaClient[IO] = mock[KafkaClient[IO]],
                      emailClient: EmailClient[IO] = mock[EmailClient[IO]],
                      clusterService: ClusterService[IO] = mock[ClusterService[IO]],
+                     featureService: FeatureService[IO] = mock[FeatureService[IO]],
                      sentryRawClient: SentryGenericServiceClient = mock[SentryGenericServiceClient],
                      workspaceRepository: WorkspaceRequestRepository = mock[WorkspaceRequestRepository],
                      complianceRepository: ComplianceRepository = mock[ComplianceRepository],
@@ -64,6 +65,7 @@ trait AppContextProvider {
       kafkaClient,
       emailClient,
       clusterService,
+      featureService,
       transactor,
       hiveDatabaseRepository,
       grantRepository,

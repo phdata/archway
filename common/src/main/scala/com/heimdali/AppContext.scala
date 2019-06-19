@@ -2,29 +2,18 @@ package com.heimdali
 
 import java.io.File
 
-import cats.effect.{ExitCode, IO, IOApp, _}
-import cats.implicits._
+import cats.effect._
 import com.heimdali.caching.Cached
 import com.heimdali.clients._
 import com.heimdali.config.AppConfig
-import com.heimdali.generators._
 import com.heimdali.repositories._
 import com.heimdali.services._
 import com.typesafe.config.{Config, ConfigFactory}
-import com.typesafe.scalalogging.LazyLogging
 import doobie.util.ExecutionContexts
 import doobie.util.transactor.Transactor
-import io.circe.Printer
-import io.circe.syntax._
 import org.apache.hadoop.conf.Configuration
 import org.apache.sentry.provider.db.generic.service.thrift.SentryGenericServiceClientFactory
 import org.http4s.client.blaze.BlazeClientBuilder
-import org.http4s.implicits._
-import org.http4s.server.SSLKeyStoreSupport.StoreInfo
-import org.http4s.server.blaze._
-import org.http4s.server.middleware.CORS
-import org.http4s.server.staticcontent._
-import org.http4s.server.{Router, Server => H4Server}
 
 import scala.concurrent.duration._
 
@@ -40,6 +29,7 @@ case class AppContext[F[_]](appConfig: AppConfig,
                             kafkaClient: KafkaClient[F],
                             emailClient: EmailClient[F],
                             clusterService: ClusterService[F],
+                            featureService: FeatureService[F],
                             transactor: Transactor[F],
                             databaseRepository: HiveAllocationRepository,
                             databaseGrantRepository: HiveGrantRepository,
@@ -87,6 +77,7 @@ object AppContext {
       cacheService = new TimedCacheService()
       clusterCache <- Resource.liftF(cacheService.initial[F, Seq[Cluster]])
       clusterService = new CDHClusterService[F](httpClient, config.cluster, hadoopConfiguration, cacheService, clusterCache)
+      featureService = new FeatureServiceImpl[F](config.featureFlags)
 
       loginContextProvider = new UGILoginContextProvider(config)
       sentryServiceClient = SentryGenericServiceClientFactory.create(hadoopConfiguration)
@@ -124,6 +115,7 @@ object AppContext {
       kafkaClient,
       emailClient,
       clusterService,
+      featureService,
       metaXA,
       hiveDatabaseRepository,
       hiveGrantRepository,

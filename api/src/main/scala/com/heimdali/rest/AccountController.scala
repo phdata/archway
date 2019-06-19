@@ -2,6 +2,7 @@ package com.heimdali.rest
 
 import cats.effect._
 import cats.implicits._
+import com.heimdali.AppContext
 import com.heimdali.config.AppConfig
 import com.heimdali.models.{Token, User}
 import com.heimdali.services.AccountService
@@ -11,7 +12,8 @@ import org.http4s.dsl.Http4sDsl
 
 class AccountController[F[_] : Sync](authService: AuthService[F],
                                      accountService: AccountService[F],
-                                     appConfig: AppConfig)
+                                     appContext: AppContext[F]
+                                    )
   extends Http4sDsl[F] {
 
   val basicAuthRoutes: HttpRoutes[F] = {
@@ -26,7 +28,7 @@ class AccountController[F[_] : Sync](authService: AuthService[F],
   val noAuthRoutes: HttpRoutes[F] = {
     HttpRoutes.of[F] {
       case GET -> Root =>
-        Ok(Map("authType" -> appConfig.rest.authType).asJson)
+        Ok(Map("authType" -> appContext.appConfig.rest.authType).asJson)
     }
   }
 
@@ -50,6 +52,9 @@ class AccountController[F[_] : Sync](authService: AuthService[F],
             workspace <- accountService.getWorkspace(user.distinguishedName).value
             response <- workspace.fold(NotFound("Not found"))(ws => Ok(ws.asJson))
           } yield response
+
+        case GET -> Root / "feature-flags" as _ =>
+          Ok(appContext.featureService.all().asJson)
       }
     }
 

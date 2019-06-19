@@ -659,6 +659,13 @@
           "required": "false",
           "type": "string",
           "default": "{{ name }} ({{ sAMAccountName }})"
+        },
+        {
+          "name": "heimdali.featureFlags",
+          "label": "Feature flags",
+          "description": "List of feature flags which are enabled",
+          "required": "false",
+          "type": "string"
         }
       ],
       "configWriter": {
