@@ -102,6 +102,11 @@
           "name": "HEIMDALI_API_SERVICE_PRINCIPAL",
           "primary": "heimdali_api",
           "instance": "${host}"
+        },
+        {
+          "name": "HEIMDALI_API_HTTP_PRINCIPAL",
+          "primary": "HTTP",
+          "instance": "${host}"
         }
       ],
       "logging": {
@@ -672,7 +677,13 @@
         "generators": [
           {
             "filename": "generated.conf",
-            "configFormat": "properties"
+            "configFormat": "properties",
+            "kerberosPrincipals" : [
+              {
+                "principalName" : "HEIMDALI_API_HTTP_PRINCIPAL",
+                "propertyName" : "heimdali.rest.httpPrincipal"
+              }
+            ]
           }
         ]
       },

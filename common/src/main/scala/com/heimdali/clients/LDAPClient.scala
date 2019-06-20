@@ -17,6 +17,8 @@ trait LDAPClient[F[_]] {
 
   def validateUser(username: String, password: String): OptionT[F, LDAPUser]
 
+  def getUser(username: String): OptionT[F, LDAPUser]
+
   def createGroup(groupName: String, attributes: List[(String, String)]): F[Unit]
 
   def addUser(groupName: String, distinguishedName: String): OptionT[F, String]

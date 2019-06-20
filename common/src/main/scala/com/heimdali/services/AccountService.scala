@@ -6,7 +6,9 @@ import com.heimdali.models.{Token, User, WorkspaceRequest}
 trait AccountService[F[_]] {
   def validate(token: String): EitherT[F, Throwable, User]
 
-  def login(username: String, password: String): OptionT[F, Token]
+  def ldapAuth(username: String, password: String): OptionT[F, Token]
+
+  def spnegoAuth(token: String): F[Either[Throwable, Token]]
 
   def refresh(user: User): F[Token]
 

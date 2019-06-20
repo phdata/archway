@@ -3,12 +3,13 @@ package com.heimdali.rest
 import cats.Monad
 import cats.implicits._
 import com.heimdali.models.User
+import com.heimdali.rest.authentication.TokenAuthService
 import com.heimdali.services.MemberService
 import io.circe.syntax._
 import org.http4s._
 import org.http4s.dsl.Http4sDsl
 
-class MemberController[F[_] : Monad](authService: AuthService[F],
+class MemberController[F[_] : Monad](authService: TokenAuthService[F],
                                      memberService: MemberService[F])
   extends Http4sDsl[F] {
 

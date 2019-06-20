@@ -10,6 +10,7 @@ import com.heimdali.generators._
 import com.heimdali.provisioning.DefaultProvisioningService
 import com.heimdali.repositories._
 import com.heimdali.rest._
+import com.heimdali.rest.authentication.{LdapAuthService, SpnegoAuthService, TokenAuthServiceImpl}
 import com.heimdali.services._
 import com.heimdali.startup.{CacheInitializer, HeimdaliStartup, Provisioning, SessionMaintainer}
 import com.typesafe.scalalogging.LazyLogging
@@ -55,19 +56,31 @@ object Server extends IOApp with LazyLogging {
       applicationService = new ApplicationServiceImpl[F](context, provisionService, applicationGenerator)
       emailService = new EmailServiceImpl[F](context, workspaceService)
 
-      authService = new AuthServiceImpl[F](accountService)
-      accountController = new AccountController[F](authService, accountService, context)
-      templateController = new TemplateController[F](authService, templateService)
-      clusterController = new ClusterController[F](context)
-      workspaceController = new WorkspaceController[F](authService, workspaceService, memberService, kafkaService, applicationService, emailService, provisionService)
-      _ <- Resource.liftF(logger.info("Workspace Controller has been initialized").pure[F])
+      authService = context.appConfig.rest.authType match {
+        case "spnego" =>
+          logger.info("Choosing spnego auth service")
+          new SpnegoAuthService[F](accountService)
+        case "ldap" =>
+          logger.info("Choosing ldap auth service")
+          new LdapAuthService[F](accountService)
+        case authType =>
+          logger.warn(s"Auth type not recognized '$authType', falling back to ldap auth")
+          new LdapAuthService[F](accountService)
+      }
 
-      memberController = new MemberController[F](authService, memberService)
-      riskController = new RiskController[F](authService, workspaceService)
-      opsController = new OpsController[F](authService, workspaceService)
+      tokenAuthService = new TokenAuthServiceImpl[F](accountService)
+      accountController = new AccountController[F](authService, tokenAuthService, accountService, context)
+      templateController = new TemplateController[F](tokenAuthService, templateService)
+      clusterController = new ClusterController[F](context)
+      workspaceController = new WorkspaceController[F](tokenAuthService, workspaceService, memberService, kafkaService, applicationService, emailService, provisionService)
+      _ <- Resource.liftF(logger.debug("Workspace Controller has been initialized").pure[F])
+
+      memberController = new MemberController[F](tokenAuthService, memberService)
+      riskController = new RiskController[F](tokenAuthService, workspaceService)
+      opsController = new OpsController[F](tokenAuthService, workspaceService)
 
       httpApp = Router(
-        "/token" -> accountController.basicAuthRoutes,
+        "/token" -> accountController.clientAuthRoutes,
         "/account" -> accountController.tokenizedRoutes,
         "/auth-type" -> accountController.noAuthRoutes,
         "/templates" -> templateController.route,

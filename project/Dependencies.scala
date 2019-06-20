@@ -135,6 +135,10 @@ object Dependencies {
   val iniConfig = Seq(
     "org.ini4j" % "ini4j" % iniVersion
   )
+  
+  val pac4jKerberos = Seq("org.pac4j" % "pac4j-kerberos" % "3.7.0")
+
+  val kerb4jClient = Seq("com.kerb4j" % "kerb4j-client" % "0.0.8" % "test")
 
   val simulacrumVersion = "0.17.0"
   val simulacrum = Seq(
@@ -146,7 +150,8 @@ object Dependencies {
       ExclusionRule(organization = "com.sun.jdmk"),
       ExclusionRule(organization = "com.sun.jmx"),
       ExclusionRule(organization = "javax.jms"),
-      ExclusionRule(organization = "commons-beanutils")
+      ExclusionRule(organization = "commons-beanutils"),
+      ExclusionRule(organization = "commons-logging")
     )
 
   val modelsDependencies =
@@ -160,8 +165,8 @@ object Dependencies {
 
   val commonDependencies =
     (scalate ++ unbound ++ mailer ++ logging ++ doobie ++ cats ++ catsEffect ++ fs2 ++ circeConfig ++ circe ++
-      scalatags ++ hadoop ++ fs2Http ++ http4s ++ jwt ++ iniConfig ++ scalacheck ++ coreTest ++ bouncy ++ atto ++
-      Seq("org.typelevel" %% "jawn-parser" % "0.14.0"))
+      scalatags ++ hadoop ++ fs2Http ++ http4s ++ jwt ++ iniConfig ++ scalacheck ++ coreTest ++ bouncy ++ atto ++ pac4jKerberos  ++ kerb4jClient
+      ++ Seq("org.typelevel" %% "jawn-parser" % "0.14.0"))
       .map(exclusions)
 
   val provisioningDependencies =
@@ -169,12 +174,12 @@ object Dependencies {
       .map(exclusions)
   
   val integrationTestDependencies =
-    dbCore ++
+    (dbCore ++ kerb4jClient ++
     Seq("org.tpolecat" %% "doobie-scalatest" % doobieVersion,
         "org.scalacheck" %% "scalacheck" % scalacheckVersion,
         "org.mockito" % "mockito-core" % "2.18.3" % "test",
         "org.scalamock" %% "scalamock-scalatest-support" % "3.6.0",
         "org.powermock" % "powermock-core" % "1.7.4",
         "org.scalacheck" %% "scalacheck" % scalacheckVersion,
-        "org.apache.hive" % "hive-jdbc" % hiveVersion % "provided").map(exclusions)
+        "org.apache.hive" % "hive-jdbc" % hiveVersion % "provided")).map(exclusions)
 }

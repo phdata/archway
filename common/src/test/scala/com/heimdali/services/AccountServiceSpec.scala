@@ -1,5 +1,8 @@
 package com.heimdali.services
 
+import java.net.URL
+import java.util.Base64
+
 import cats.data._
 import cats.effect.{ContextShift, IO, Timer}
 import cats.implicits._
@@ -10,6 +13,7 @@ import com.heimdali.generators.{DefaultApplicationGenerator, DefaultLDAPGroupGen
 import com.heimdali.models.TemplateRequest
 import com.heimdali.provisioning.{Message, SimpleMessage}
 import com.heimdali.test.fixtures._
+import com.kerb4j.client.SpnegoClient
 import io.circe.Json
 import io.circe.syntax._
 import org.scalamock.scalatest.MockFactory
@@ -37,21 +41,21 @@ class AccountServiceSpec extends FlatSpec with MockFactory with Matchers with Ap
   it should "return a user if one is found and password matches" in new Context {
     context.lookupLDAPClient.validateUser _ expects(username, actualPassword) returning OptionT.some(ldapUser)
 
-    val maybeUser = accountService.login(username, actualPassword).value.unsafeRunSync()
+    val maybeUser = accountService.ldapAuth(username, actualPassword).value.unsafeRunSync()
     maybeUser shouldBe defined
   }
 
   it should "return nothing if a user is found but the password doesn't match" in new Context {
     context.lookupLDAPClient.validateUser _ expects(username, wrongPassword) returning OptionT.none
 
-    val maybeUser = accountService.login(username, wrongPassword).value.unsafeRunSync()
+    val maybeUser = accountService.ldapAuth(username, wrongPassword).value.unsafeRunSync()
     maybeUser should not be defined
   }
 
   it should "return nothing if a user is not found" in new Context {
     context.lookupLDAPClient.validateUser _ expects(wrongUsername, actualPassword) returning OptionT.none
 
-    val maybeUser = accountService.login(wrongUsername, actualPassword).value.unsafeRunSync()
+    val maybeUser = accountService.ldapAuth(wrongUsername, actualPassword).value.unsafeRunSync()
     maybeUser should not be defined
   }
 
@@ -82,6 +86,15 @@ class AccountServiceSpec extends FlatSpec with MockFactory with Matchers with Ap
     )
   }
 
+  it should "return a token after spnego validatation" in new Context {
+    val spnegoHeader = "Negotiate fDcadfaeRadfcX"
+
+    context.kerberosClient.spnegoUsername _ expects spnegoHeader returning EitherT.rightT(username)
+    context.lookupLDAPClient.getUser _ expects username returning OptionT.some(ldapUser)
+
+    val Right(token) = accountService.spnegoAuth(spnegoHeader).unsafeRunSync()
+  }
+
   it should "validate a valid token" in new Context {
     context.lookupLDAPClient.findUser _ expects standardUserDN returning OptionT.some(ldapUser)
     val maybeUser = accountService.validate(infraApproverToken).value.unsafeRunSync()
@@ -92,7 +105,7 @@ class AccountServiceSpec extends FlatSpec with MockFactory with Matchers with Ap
   it should "returns approver roles" in new Context {
     context.lookupLDAPClient.validateUser _ expects(username, actualPassword) returning OptionT.some(ldapUser)
 
-    val maybeUser = accountService.login(username, actualPassword).value.unsafeRunSync()
+    val maybeUser = accountService.ldapAuth(username, actualPassword).value.unsafeRunSync()
 
     maybeUser shouldBe defined
   }
@@ -127,7 +140,6 @@ class AccountServiceSpec extends FlatSpec with MockFactory with Matchers with Ap
     val (name, wrongUsername, username, actualPassword, wrongPassword) = ("Dude Doe", "user", "username", "password", "passw0rd")
     val secret = "abc"
     val ldapUser = LDAPUser(personName, standardUsername, standardUserDN, Seq("cn=foo,dc=jotunn,dc=io"), Some("dude@email.com"))
-    val token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJuYW1lIjoiRHVkZSBEb2UiLCJ1c2VybmFtZSI6InVzZXJuYW1lIiwicGVybWlzc2lvbnMiOnsicmlza19tYW5hZ2VtZW50IjpmYWxzZSwicGxhdGZvcm1fb3BlcmF0aW9ucyI6ZmFsc2V9fQ.ltGXxBh4S7gwmIbcKz22IFWpGI2-zxad2XYOoxuGm734L8GlzfwvLRWIs-ZVKn7T8w3RJy5bKZWZoPj8951Qug"
 
     val workspaceService = mock[WorkspaceService[IO]]
     val provisioningService = mock[ProvisioningService[IO]]

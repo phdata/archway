@@ -2,11 +2,12 @@ package com.heimdali.rest
 
 import cats.data._
 import cats.effect.{ContextShift, IO}
-import com.heimdali.services.{AccountService, FeatureService, FeatureServiceImpl}
+
+import com.heimdali.rest.authentication.SpnegoAuthService
+import com.heimdali.services.AccountService
 import com.heimdali.test.{TestAuthService, TestClusterService}
 import com.heimdali.test.fixtures.{HttpTest, _}
 import org.http4s._
-import org.http4s.circe._
 import org.http4s.dsl.io._
 import org.http4s.client.dsl.Http4sClientDsl
 import org.http4s.implicits._
@@ -26,8 +27,13 @@ class AccountControllerSpec
 
   behavior of "AccountController"
 
+  it should "return a negotiate header" in new SpnegoContext {
+    val response: IO[Response[IO]] = accountController.clientAuthRoutes.orNotFound.run(Request(uri = Uri.uri("/")))
+    check(response, Status.Unauthorized, None)
+  }
+
   it should "get a token" in new Context {
-    val response: IO[Response[IO]] = accountController.basicAuthRoutes.orNotFound.run(Request(uri = Uri.uri("/")))
+    val response: IO[Response[IO]] = accountController.clientAuthRoutes.orNotFound.run(Request(uri = Uri.uri("/")))
     check(response, Status.Ok, Some(fromResource("rest/token.expected.json")))(jsonDecoder)
   }
 
@@ -62,20 +68,23 @@ class AccountControllerSpec
     check(response, Status.Created, Some(defaultResponse))
   }
 
-  it should "get a list of feature flags" in new Context {
-    val response: IO[Response[IO]] = accountController.tokenizedRoutes.orNotFound.run(Request(uri = Uri.uri("/feature-flags")))
-    check(response, Status.Ok, Some(fromResource("rest/feature-flags.expected.json")))(jsonDecoder)
+  trait SharedContext {
+
+    val context = genMockContext(clusterService = new TestClusterService())
+
+    val accountService = mock[AccountService[IO]]
+    val tokenAuthService = new TestAuthService(platformApprover = true)
   }
 
-  trait Context {
-    val accountService: AccountService[IO] = mock[AccountService[IO]]
-    val authService: TestAuthService = new TestAuthService(platformApprover = true)
-    val context = genMockContext(
-      clusterService = new TestClusterService(),
-      featureService = new FeatureServiceImpl(List("feature-x", "feature-y", "feature-z"))
-    )
+  trait Context extends SharedContext {
+    val authService = new TestAuthService()
+    val accountController = new AccountController[IO](authService, tokenAuthService, accountService, context)
+  }
 
-    lazy val accountController: AccountController[IO] = new AccountController[IO](authService, accountService, context)
+  trait SpnegoContext extends SharedContext {
+
+    val authService = new SpnegoAuthService[IO](accountService)
+    val accountController = new AccountController[IO](authService, tokenAuthService, accountService, context)
   }
 
 }

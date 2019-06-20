@@ -3,13 +3,14 @@ package com.heimdali.rest
 import cats.effect._
 import cats.implicits._
 import com.heimdali.models._
+import com.heimdali.rest.authentication.{AuthService, TokenAuthService}
 import com.heimdali.services.TemplateService
 import io.circe.Decoder
 import io.circe.syntax._
 import org.http4s._
 import org.http4s.dsl.Http4sDsl
 
-class TemplateController[F[_] : Sync](authService: AuthService[F],
+class TemplateController[F[_] : Sync](authService: TokenAuthService[F],
                                       templateGenerator: TemplateService[F])
   extends Http4sDsl[F] {
 

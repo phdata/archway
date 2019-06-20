@@ -38,10 +38,10 @@ init-ui: .make.init-ui
 
 validate: .make.validate
 .make.validate:
-	build-support/bin/validator -p $PWD/cloudera-integration/parcel/heimdali-meta/parcel.json
-	build-support/bin/validator -r $PWD/cloudera-integration/parcel/heimdali-meta/permissions.json
-	build-support/bin/validator -p $PWD/cloudera-integration/parcel/custom-shell-meta/parcel.json
-	build-support/bin/validator -s $PWD/cloudera-integration/csd/descriptor/service.sdl
+	build-support/bin/validator -p cloudera-integration/parcel/heimdali-meta/parcel.json
+	build-support/bin/validator -r cloudera-integration/parcel/heimdali-meta/permissions.json
+	build-support/bin/validator -p cloudera-integration/parcel/custom-shell-meta/parcel.json
+	build-support/bin/validator -s cloudera-integration/csd/descriptor/service.sdl
 	touch $@
 
 .PHONY: dist

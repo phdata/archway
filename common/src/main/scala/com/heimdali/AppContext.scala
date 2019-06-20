@@ -28,6 +28,7 @@ case class AppContext[F[_]](appConfig: AppConfig,
                             yarnClient: YarnClient[F],
                             kafkaClient: KafkaClient[F],
                             emailClient: EmailClient[F],
+                            kerberosClient: KerberosClient[F],
                             clusterService: ClusterService[F],
                             featureService: FeatureService[F],
                             transactor: Transactor[F],
@@ -89,6 +90,7 @@ object AppContext {
       yarnClient = new CDHYarnClient[F](httpClient, config.cluster, clusterService)
       kafkaClient = new KafkaClientImpl[F](config)
       emailClient = new EmailClientImpl[F](config, emailEC)
+      kerberosClient = new KerberosClientImpl[F](config)
 
       complianceRepository = new ComplianceRepositoryImpl
       ldapRepository = new LDAPRepositoryImpl
@@ -114,6 +116,7 @@ object AppContext {
       yarnClient,
       kafkaClient,
       emailClient,
+      kerberosClient,
       clusterService,
       featureService,
       metaXA,

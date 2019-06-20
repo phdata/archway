@@ -15,6 +15,7 @@ import io.circe.syntax._
 import pdi.jwt.algorithms.JwtHmacAlgorithm
 import pdi.jwt.{JwtAlgorithm, JwtCirce}
 
+
 import scala.concurrent.duration._
 
 class AccountServiceImpl[F[_] : Sync : Timer](context: AppContext[F],
@@ -34,6 +35,7 @@ class AccountServiceImpl[F[_] : Sync : Timer](context: AppContext[F],
       check(approvalConfig)
         .map(r => ldapUser.memberships.map(_.toLowerCase()).contains(r.toLowerCase()))
         .getOrElse(false)
+
     User(ldapUser.name,
       ldapUser.username,
       ldapUser.distinguishedName,
@@ -49,7 +51,7 @@ class AccountServiceImpl[F[_] : Sync : Timer](context: AppContext[F],
   private def encode(json: Json, secret: String, algo: JwtAlgorithm): F[String] =
     Sync[F].delay(JwtCirce.encode(json, secret, algo))
 
-  override def login(username: String, password: String): OptionT[F, Token] =
+  override def ldapAuth(username: String, password: String): OptionT[F, Token] =
     for {
       user <- context.lookupLDAPClient.validateUser(username, password)
       token <- OptionT.liftF(refresh(user))
@@ -65,7 +67,7 @@ class AccountServiceImpl[F[_] : Sync : Timer](context: AppContext[F],
     for {
       maybeToken <- EitherT.fromEither[F](decode(token, restConfig.secret, algo))
       user <- EitherT.fromEither[F](maybeToken.as[User])
-      result <- EitherT.fromOptionF(context.lookupLDAPClient.findUser(user.distinguishedName).value, new Throwable())
+      result <- EitherT.fromOptionF(context.lookupLDAPClient.findUser(user.distinguishedName).value, new Throwable()) // TODO `findUser` should return an Either
     } yield convertUser(result)
   }
 
@@ -86,4 +88,15 @@ class AccountServiceImpl[F[_] : Sync : Timer](context: AppContext[F],
 
   override def getWorkspace(distinguishedName: String): OptionT[F, WorkspaceRequest] =
     workspaceService.findByUsername(distinguishedName)
+
+  override def spnegoAuth(header: String): F[Either[Throwable, Token]] = {
+    val token: EitherT[F, Throwable, Token] = for {
+      username <- context.kerberosClient.spnegoUsername(header)
+      maybeUser <- EitherT.fromOptionF(context.lookupLDAPClient.getUser(username).value, new Exception("LDAP user not found"))
+      token <- EitherT.liftF(refresh(maybeUser))
+    } yield token
+
+    token.value
+  }
+
 }

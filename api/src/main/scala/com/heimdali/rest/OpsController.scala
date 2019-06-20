@@ -3,13 +3,14 @@ package com.heimdali.rest
 import cats.effect._
 import cats.implicits._
 import com.heimdali.models._
+import com.heimdali.rest.authentication.TokenAuthService
 import com.heimdali.services._
 import io.circe.syntax._
 import org.http4s._
 import org.http4s.dsl.Http4sDsl
 
-class OpsController[F[_] : Sync](authService: AuthService[F],
-                              workspaceService: WorkspaceService[F])
+class OpsController[F[_] : Sync](authService: TokenAuthService[F],
+                                 workspaceService: WorkspaceService[F])
   extends Http4sDsl[F] {
 
   val route: HttpRoutes[F] =

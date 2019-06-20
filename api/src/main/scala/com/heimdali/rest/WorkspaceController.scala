@@ -13,8 +13,9 @@ import io.circe.syntax._
 import org.http4s._
 import org.http4s.dsl.Http4sDsl
 import com.heimdali.provisioning.Message._
+import com.heimdali.rest.authentication.{AuthService, TokenAuthService}
 
-class WorkspaceController[F[_] : Sync : Timer](authService: AuthService[F],
+class WorkspaceController[F[_] : Sync : Timer](authService: TokenAuthService[F],
                                                workspaceService: WorkspaceService[F],
                                                memberService: MemberService[F],
                                                kafkaService: KafkaService[F],
