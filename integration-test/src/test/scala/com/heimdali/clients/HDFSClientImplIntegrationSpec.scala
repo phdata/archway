@@ -11,6 +11,7 @@ import com.sun.xml.internal.messaging.saaj.util.ByteInputStream
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.fs.{FileSystem, Path}
 import org.apache.hadoop.hdfs.client.HdfsAdmin
+import org.apache.hadoop.security.UserGroupInformation
 import org.scalatest._
 import org.scalatest.mockito.MockitoSugar
 
@@ -34,6 +35,7 @@ class HDFSClientImplIntegrationSpec
   override def afterAll(): Unit = {
     new Context {
       elevatedFS.delete(new Path(tmpLocation), true)
+      elevatedFS.delete(new Path(userDirLocation), true)
     }
   }
 
@@ -44,6 +46,16 @@ class HDFSClientImplIntegrationSpec
     result.toUri.getPath shouldBe tmpLocation
     elevatedFS.exists(new Path(tmpLocation)) shouldBe true
     elevatedFS.delete(new Path(tmpLocation), true)
+  }
+
+  it should "create a user directory" in new Context {
+    val result =
+      client.createUserDirectory(testUserName).unsafeRunSync()
+
+    result.toUri.getPath shouldBe userDirLocation
+    elevatedFS.exists(new Path(userDirLocation)) shouldBe true
+    elevatedFS.getFileStatus(new Path(userDirLocation)).getOwner shouldBe testUserName
+    elevatedFS.delete(new Path(userDirLocation), true)
   }
 
   it should "set quota" in new Context {
@@ -101,9 +113,12 @@ class HDFSClientImplIntegrationSpec
 
     private val fileSystem = () => FileSystem.get(configuration)
     val tmpLocation = "/tmp/heimdali_test_dir"
+    val testUserName = "heimdali_test"
+    val userDirLocation = s"/user/$testUserName"
     val hdfsUri = new URI(configuration.get("fs.defaultFS"))
     val admin = () => new HdfsAdmin(hdfsUri, configuration)
     val context = new UGILoginContextProvider(itestConfig)
+    UserGroupInformation.setConfiguration(configuration)
     val elevatedFS = context
       .elevate[IO, FileSystem]("hdfs") { () =>
         fileSystem()

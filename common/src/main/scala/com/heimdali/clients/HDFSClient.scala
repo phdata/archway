@@ -23,8 +23,6 @@ trait HDFSClient[F[_]] {
 
   def createUserDirectory(userName: String): F[Path]
 
-  def changeOwner(location: String, user: String): F[Path]
-
   def setQuota(path: String, maxSizeInGB: Double): F[HDFSAllocation]
 
   def getQuota(path: Path): F[Double]
@@ -62,11 +60,17 @@ class HDFSClientImpl[F[_] : Async](hadoopConfiguration: Configuration,
     }
 
   override def createUserDirectory(userName: String): F[Path] = {
-    Sync[F].delay{
-      if(fileSystem.exists(s"/user/$userName")){
-        fileSystem.getFileStatus(s"/user/$userName").getPath
+    val path = s"/user/$userName"
+
+    loginContextProvider.elevate("hdfs") { () =>
+      if(fileSystem.exists(path)){
+          fileSystem.getFileStatus(path).getPath
       } else {
-        createHDFSDirectory(s"/user/$userName")
+        logger.info(s"Creating user directory with path: $path")
+
+        val createdPath = createHDFSDirectory(path)
+        fileSystem.setOwner(createdPath, userName, userName)
+        createdPath
       }
     }
   }
@@ -74,12 +78,6 @@ class HDFSClientImpl[F[_] : Async](hadoopConfiguration: Configuration,
   override def deleteDirectory(location: String): F[Unit] =
     loginContextProvider.elevate("hdfs") { () =>
       fileSystem.delete(location)
-    }
-
-  override def changeOwner(location: String, user: String): F[Path] =
-    Sync[F].delay {
-      FileUtil.setOwner(new File(location), user, user)
-      location
     }
 
   override def setQuota(path: String, maxSizeInGB: Double): F[HDFSAllocation] =
