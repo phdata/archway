@@ -13,8 +13,8 @@ Heimdali.mwb.bak
 /api/src/main/resources/application.conf
 /api/src/main/resources/runtime.conf
 /integration-test/src/main/resources/*.properties
-
-# See https://help.github.com/ignore-files/ for more about ignoring files.
+itest-config/
+lib/
 
 # dependencies
 /node_modules
