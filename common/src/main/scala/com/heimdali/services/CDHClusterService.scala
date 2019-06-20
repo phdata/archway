@@ -103,8 +103,7 @@ class CDHClusterService[F[_] : ConcurrentEffect : Clock](http: HttpClient[F],
       details.status
     ) :: Nil
 
-  override def list: F[Seq[Cluster]] =
-    cacheService.getOrRun[F, Seq[Cluster]](30 seconds, clusterDetails, clusterCache)
+  override def list: F[Seq[Cluster]] = clusterDetails
 
 }
 
