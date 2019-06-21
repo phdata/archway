@@ -76,7 +76,7 @@ class LDAPClientImpl[F[_] : Effect](ldapConfig: LDAPConfig, binding: LDAPConfig 
         Option(connectionPool.getConnection.getEntry(dn))
       } catch {
         case exc: Throwable =>
-          exc.printStackTrace()
+          logger.info(s"Failed to get LDAP entry for dn '$dn'", exc)
           None
       }
     ))

@@ -26,7 +26,7 @@ class UGILoginContextProvider(appConfig: AppConfig)
             Right(result)
           } catch {
             case ex: Throwable =>
-              ex.printStackTrace()
+              logger.error(s"Failed to run priveleged block as user '$user'", ex)
               callback(Left(ex))
               Left(ex)
           }
