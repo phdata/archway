@@ -20,8 +20,14 @@ test-jar: .make.test-jar
 test: 
 	sbt test
 
-itest:
-	sbt itest
+itest-init: .make.itest-init
+
+.make.itest-init: itest-config
+	ln -f $(shell pwd)/itest-config/application.itest.conf api/src/main/resources/application.conf
+	touch $@
+
+itest-config:
+	git clone git@bitbucket.org:phdata/heimdali-itest.git itest-config
 
 serve-api:
 	echo "using TRUST_STORE: $${TRUST_STORE:?}"
@@ -77,3 +83,4 @@ clean:
 	rm -rf dist
 	rm -rf cloudera-integration/build
 	rm -rf .make.*
+

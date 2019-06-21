@@ -105,12 +105,6 @@ class HDFSClientImplIntegrationSpec
   }
 
   trait Context {
-    val configuration = new Configuration()
-    configuration.addResource(new File("./hive-conf/core-site.xml").toURI.toURL)
-    configuration.addResource(new File("./hive-conf/hdfs-site.xml").toURI.toURL)
-    configuration.addResource(new File("./hive-conf/hive-site.xml").toURI.toURL)
-    configuration.addResource(new File("./sentry-conf/sentry-site.xml").toURI.toURL)
-
     private val fileSystem = () => FileSystem.get(configuration)
     val tmpLocation = "/tmp/heimdali_test_dir"
     val testUserName = "heimdali_test"
@@ -118,7 +112,7 @@ class HDFSClientImplIntegrationSpec
     val hdfsUri = new URI(configuration.get("fs.defaultFS"))
     val admin = () => new HdfsAdmin(hdfsUri, configuration)
     val context = new UGILoginContextProvider(itestConfig)
-    UserGroupInformation.setConfiguration(configuration)
+
     val elevatedFS = context
       .elevate[IO, FileSystem]("hdfs") { () =>
         fileSystem()
