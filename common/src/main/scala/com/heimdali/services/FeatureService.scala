@@ -1,6 +1,5 @@
 package com.heimdali.services
 
-import com.heimdali.config.FeatureFlagsConfig
 import com.typesafe.scalalogging.LazyLogging
 
 trait FeatureService[F[_]] {
@@ -10,7 +9,7 @@ trait FeatureService[F[_]] {
   def all(): List[String]
 }
 
-class FeatureServiceImpl[F[_]](featureFlags: FeatureFlagsConfig) extends FeatureService[F] with LazyLogging{
+class FeatureServiceImpl[F[_]](featureFlags: Seq[String]) extends FeatureService[F] with LazyLogging{
 
   override def isEnabled(feature: String): Boolean = {
     logger.info(s"Enabled feature flags: $featureFlags")

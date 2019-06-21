@@ -669,8 +669,9 @@
           "name": "heimdali.featureFlags",
           "label": "Feature flags",
           "description": "List of feature flags which are enabled",
-          "required": "false",
-          "type": "string"
+          "required": "true",
+          "type": "string_array",
+          "default": []
         }
       ],
       "configWriter": {
