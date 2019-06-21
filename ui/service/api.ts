@@ -126,7 +126,7 @@ export const getHiveTables = (token: string, id: number) => get(`/workspaces/${i
 
 export const getYarnApplications = (token: string, id: number) => get(`/workspaces/${id}/yarn`, token);
 
-export const getAuthtype = () => get('/account/auth-type');
+export const getAuthtype = () => get('/auth-type');
 
 export const getFeatureFlags = () => get('/account/feature-flags');
 
