@@ -9,13 +9,15 @@ trait FeatureService[F[_]] {
   def all(): List[String]
 }
 
-class FeatureServiceImpl[F[_]](featureFlags: Seq[String]) extends FeatureService[F] with LazyLogging{
+class FeatureServiceImpl[F[_]](featureFlags: String) extends FeatureService[F] with LazyLogging{
+
+  private val flagsList = featureFlags.split(",").toList
 
   override def isEnabled(feature: String): Boolean = {
     logger.info(s"Enabled feature flags: $featureFlags")
     logger.debug(s"Checking is $feature is enabled")
-    featureFlags.exists(flag => flag.trim.toLowerCase == feature.trim.toLowerCase)
+    flagsList.exists(flag => flag.trim.toLowerCase == feature.trim.toLowerCase)
   }
 
-  override def all(): List[String] = featureFlags.toList
+  override def all(): List[String] = flagsList
 }

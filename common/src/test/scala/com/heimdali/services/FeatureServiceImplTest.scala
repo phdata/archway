@@ -23,7 +23,7 @@ class FeatureServiceImplTest extends FlatSpec with Matchers {
   }
 
   trait Context {
-    val featureService = new FeatureServiceImpl[IO](Seq("ENABLED-FEATURE", "ENABLED-FEATURE-2"))
+    val featureService = new FeatureServiceImpl[IO]("ENABLED-FEATURE,ENABLED-FEATURE-2")
   }
 
 }

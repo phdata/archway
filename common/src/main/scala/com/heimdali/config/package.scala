@@ -194,7 +194,7 @@ package object config {
                        workspaces: WorkspaceConfig,
                        kafka: KafkaConfig,
                        provisioning: ProvisioningConfig,
-                       featureFlags: Seq[String]
+                       featureFlags: String
                       )
 
   object AppConfig {
