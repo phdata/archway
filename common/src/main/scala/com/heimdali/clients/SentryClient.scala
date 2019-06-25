@@ -85,7 +85,8 @@ class SentryClientImpl[F[_]](transactor: Transactor[F],
         .update.run.transact(transactor).flatMap(_ => Sync[F].unit)
     }
 
-  override def enableAccessToDB(database: String, role: String, databaseRole: DatabaseRole): F[Unit] =
+  override def enableAccessToDB(database: String, role: String, databaseRole: DatabaseRole): F[Unit] = {
+    logger.debug(s"Granting $databaseRole to $database for role $role").pure[F] *>
     loginContextProvider.hadoopInteraction {
       (databaseRole match {
         case Manager =>
@@ -96,6 +97,7 @@ class SentryClientImpl[F[_]](transactor: Transactor[F],
           fr"GRANT SELECT ON DATABASE" ++ Fragment.const(database) ++ fr"TO ROLE" ++ Fragment.const(role)
       }).update.run.transact(transactor).flatMap(_ => Sync[F].unit)
     }
+  }
 
   override def enableAccessToLocation(location: String, role: String): F[Unit] =
     loginContextProvider.hadoopInteraction {
