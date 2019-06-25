@@ -9,6 +9,12 @@ export const getClusterInfo = () =>
     clusterState => clusterState.get('details').toJS() as Cluster
   );
 
+export const isClusterLoading = () =>
+  createSelector(
+    clusterSelector,
+    clusterState => clusterState.get('loading')
+  );
+
 export const getPersonalWorkspace = () =>
   createSelector(
     authSelector,

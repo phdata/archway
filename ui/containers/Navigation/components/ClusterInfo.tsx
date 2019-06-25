@@ -2,20 +2,24 @@ import { Icon, Spin, Tooltip } from 'antd';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import { getClusterInfo } from '../../Home/selectors';
+import { getClusterInfo, isClusterLoading } from '../../Home/selectors';
 import { Cluster, Status } from '../../../models/Cluster';
 
 interface Props {
   cluster: Cluster;
+  loading: boolean;
 }
 
-const ClusterInfo = ({ cluster }: Props) => {
-  if (cluster.name === 'Unknown') {
-    const [isTimeout, setIsTimeout] = React.useState(false);
-    setTimeout(() => {
-      setIsTimeout(true);
-    }, 30000);
+const ClusterInfo = ({ cluster, loading }: Props) => {
+  const errored = cluster.name === 'Unknown';
 
+  if (errored || loading) {
+    const [isTimeout, setIsTimeout] = React.useState(false);
+    if (!loading && errored) {
+      setTimeout(() => {
+        setIsTimeout(true);
+      }, 30000);
+    }
     return (
       <div style={{ textAlign: 'center', color: 'white' }}>
         {isTimeout ? (
@@ -52,6 +56,7 @@ const ClusterInfo = ({ cluster }: Props) => {
 const mapStateToProps = () =>
   createStructuredSelector({
     cluster: getClusterInfo(),
+    loading: isClusterLoading(),
   });
 
 const mapDispatchToProps = {};

@@ -5,8 +5,10 @@ import * as actions from './actions';
 
 function* clusterStatus() {
   while (true) {
+    yield put(actions.clusterLoading(true));
     const cluster = yield call(Api.cluster);
     yield put(actions.clusterInfo(cluster));
+    yield put(actions.clusterLoading(false));
     yield call(delay, 300000);
   }
 }

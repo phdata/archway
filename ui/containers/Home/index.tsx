@@ -20,7 +20,13 @@ import {
 } from '../../models/Cluster';
 
 import { PersonalWorkspace, RecentWorkspaces, Service as ServiceDisplay } from './components';
-import { getClusterInfo, getPersonalWorkspace, getRecentWorkspaces, isProfileLoading } from './selectors';
+import {
+  getClusterInfo,
+  getPersonalWorkspace,
+  getRecentWorkspaces,
+  isClusterLoading,
+  isProfileLoading,
+} from './selectors';
 
 /* tslint:disable:no-var-requires */
 const router = require('connected-react-router/immutable');
@@ -31,6 +37,7 @@ interface States {
 
 interface Props {
   cluster: Cluster;
+  clusterLoading: boolean;
   personalWorkspace: Workspace;
   recentWorkspaces: Workspace[];
   profileLoading: boolean;
@@ -84,6 +91,7 @@ class Home extends React.Component<Props, States> {
   public render() {
     const {
       cluster,
+      clusterLoading,
       personalWorkspace,
       recentWorkspaces,
       profileLoading,
@@ -94,7 +102,7 @@ class Home extends React.Component<Props, States> {
 
     if (!cluster) {
       return <div />;
-    } else if (cluster.name === 'Unknown') {
+    } else if (cluster.name === 'Unknown' && !clusterLoading) {
       setTimeout(() => {
         this.setState({ clusterTimeout: true });
       }, 30000);
@@ -148,6 +156,7 @@ class Home extends React.Component<Props, States> {
 const mapStateToProps = () =>
   createStructuredSelector({
     cluster: getClusterInfo(),
+    clusterLoading: isClusterLoading(),
     personalWorkspace: getPersonalWorkspace(),
     profileLoading: isProfileLoading(),
     recentWorkspaces: getRecentWorkspaces(),
