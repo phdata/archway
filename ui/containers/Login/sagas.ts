@@ -36,7 +36,7 @@ function* isSpnego() {
   try {
     const { authType } = yield call(Api.getAuthtype);
     if (authType === SPNEGO) {
-      yield call(requestLogin, { username: '', password: '' });
+      yield call(requestLogin, { login: { username: '', password: '' } });
     } else {
       // tslint:disable-next-line: no-unused-expression
       isDevMode && console.log('AuthType is not "spnego"');
