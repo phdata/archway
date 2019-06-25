@@ -78,7 +78,7 @@
         }
       ],
       "startRunner": {
-        "program": "scripts/control.sh",
+        "program": "scripts/control-redirect.sh",
         "args": [
           "ui",
           "start"
@@ -689,7 +689,7 @@
         ]
       },
       "startRunner": {
-        "program": "scripts/control.sh",
+        "program": "scripts/control-redirect.sh",
         "args": [
           "api",
           "start"

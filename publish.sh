@@ -26,15 +26,22 @@ package()
 
   mkdir -p ${READY_DIR}/usr/lib/heimdali-api
   mkdir -p ${READY_DIR}/usr/lib/heimdali-api-tests
+  mkdir -p ${READY_DIR}/usr/bin/
 
+  # API artifacts
   cp api/target/scala-2.12/heimdali-api.jar ${READY_DIR}/usr/lib/heimdali-api/
   cp integration-test/target/scala-2.12/heimdali-integration-tests.jar ${READY_DIR}/usr/lib/heimdali-api-tests/
   cp integration-test/target/scala-2.12/heimdali-test-dependencies.jar ${READY_DIR}/usr/lib/heimdali-api-tests/
   cp common/target/scala-2.12/heimdali-common-tests.jar ${READY_DIR}/usr/lib/heimdali-api-tests/
 
+  # UI artifacts
   cp -r dist ${READY_DIR}/usr/lib/heimdali-ui
   cp -R public/images ${READY_DIR}/usr/lib/heimdali-ui/
   cp -R public/fonts ${READY_DIR}/usr/lib/heimdali-ui/
+
+  # Control script
+  cp bin/control.sh ${READY_DIR}/usr/bin/
+
 
   pushd ${BUILD_BASE}
   tar cvf ${BUILD_NAME}-el6.parcel ${BUILD_NAME}
