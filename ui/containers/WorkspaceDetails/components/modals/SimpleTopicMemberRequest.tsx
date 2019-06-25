@@ -3,7 +3,7 @@ import { AutoComplete, Row, Radio } from 'antd';
 import { InjectedFormProps } from 'redux-form';
 import { Field } from 'redux-form/immutable';
 import { reduxForm } from 'redux-form/immutable';
-import FieldLabel from './FieldLabel';
+import FieldLabel from '../../../../components/FieldLabel';
 import { UserSuggestions, UserSuggestion } from './../../../../models/Workspace';
 
 /* tslint:disable:no-var-requires */

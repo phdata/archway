@@ -2,7 +2,7 @@ import * as React from 'react';
 import { InjectedFormProps } from 'redux-form';
 import { Field } from 'redux-form/immutable';
 import { reduxForm } from 'redux-form/immutable';
-import FieldLabel from './FieldLabel';
+import FieldLabel from '../../../../components/FieldLabel';
 
 /* tslint:disable:no-var-requires */
 const { TextField, SelectField } = require('redux-form-antd');
