@@ -30,10 +30,10 @@ echo "Using Java options: $JAVA_OPTS"
 
 MYSQL_JAR="${MYSQL_JAR:-/usr/share/java/mysql-connector-java.jar}"
 PG_JAR=${PG_JAR:-$(echo /usr/share/cmf/common_jars/postgres*.jar | tr ' ' ':')}
-BOUNCY_JAR=${BOUNCY_JAR:-`find /opt/cloudera/parcels/CDH/jars/ -name "bcprov-jdk*.jar"`}
-HIVE_JARS=${HIVE_JARS:-"/opt/cloudera/parcels/CDH/lib/hive/lib/hive-jdbc.jar:/opt/cloudera/parcels/CDH/lib/hive/lib/hive-jdbc-standalone.jar"}
+BOUNCY_JAR=${BOUNCY_JAR:-`find $PARCELS_ROOT/CDH/jars/ -name "bcprov-jdk*.jar"`}
+HIVE_JARS=${HIVE_JARS:-"$PARCELS_ROOT/CDH/lib/hive/lib/hive-jdbc.jar:$PARCELS_ROOT/CDH/lib/hive/lib/hive-jdbc-standalone.jar"}
 HADOOP_JARS=`hadoop classpath`
-SENTRY_JARS="${SENTRY_JARS:-/opt/cloudera/parcels/CDH/lib/sentry/lib/*}"
+SENTRY_JARS="${SENTRY_JARS:-$PARCELS_ROOT/CDH/lib/sentry/lib/*}"
 HEIMDALI_CLASSPATH="${HEIMDALI_CLASSPATH:-${CONF_DIR}:${MYSQL_JAR}:${BOUNCY_JAR}:${PG_JAR}:${HIVE_JARS}:${SENTRY_JARS}:${HADOOP_JARS}:${HEIMDALI_ADDITIONAL_CLASSPATH}:${HEIMDALI_API_HOME}/heimdali-api.jar}"
 
 case ${COMPONENT} in
