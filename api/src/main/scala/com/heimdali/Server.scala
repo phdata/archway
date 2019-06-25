@@ -1,14 +1,9 @@
 package com.heimdali
 
-import java.io.File
-
 import cats.effect.{ExitCode, IO, IOApp, _}
 import cats.implicits._
-import com.heimdali.clients._
-import com.heimdali.config.AppConfig
 import com.heimdali.generators._
 import com.heimdali.provisioning.DefaultProvisioningService
-import com.heimdali.repositories._
 import com.heimdali.rest._
 import com.heimdali.rest.authentication.{LdapAuthService, SpnegoAuthService, TokenAuthServiceImpl}
 import com.heimdali.services._
@@ -17,14 +12,10 @@ import com.typesafe.scalalogging.LazyLogging
 import doobie.util.ExecutionContexts
 import io.circe.Printer
 import io.circe.syntax._
-import org.apache.hadoop.conf.Configuration
-import org.apache.sentry.provider.db.generic.service.thrift.SentryGenericServiceClientFactory
-import org.http4s.client.blaze.BlazeClientBuilder
 import org.http4s.implicits._
 import org.http4s.server.SSLKeyStoreSupport.StoreInfo
 import org.http4s.server.blaze._
 import org.http4s.server.middleware.CORS
-import org.http4s.server.staticcontent._
 import org.http4s.server.{Router, Server => H4Server}
 
 import scala.concurrent.duration._
@@ -114,7 +105,15 @@ object Server extends IOApp with LazyLogging {
 
   override def run(args: List[String]): IO[ExitCode] = {
     logger.info("Server is starting")
-    createServer[IO].use(_ => IO.never).as(ExitCode.Success)
+    createServer[IO]
+      .use(_ => IO.never)
+      .redeemWith(
+        ex => {
+          logger.error(s"Starting server failed ${ex.getLocalizedMessage}", ex)
+          IO.pure(ExitCode.Error)
+        },
+        _ => IO.pure(ExitCode.Success)
+      )
   }
 
 }

@@ -49,7 +49,7 @@ object Dependencies {
     "org.typelevel" %% "cats-core" % catsVersion withSources()
   )
 
-  val catsEffectVersion = "1.0.0"
+  val catsEffectVersion = "1.3.1"
   val catsEffect = Seq(
     "org.typelevel" %% "cats-effect" % catsEffectVersion withSources()
   )
