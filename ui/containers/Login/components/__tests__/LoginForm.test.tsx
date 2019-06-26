@@ -6,7 +6,7 @@ import LoginForm from '../LoginForm';
 
 describe('LoginForm', () => {
   it('renders correctly', () => {
-    const wrapper = shallow(<LoginForm onSubmit={() => null} loggingIn={false} error="" />);
+    const wrapper = shallow(<LoginForm onSubmit={() => null} loggingIn={false} error="" authType="" />);
     expect(toJson(wrapper)).toMatchSnapshot();
   });
 });

@@ -2,11 +2,13 @@
 
 exports[`LoginForm renders correctly 1`] = `
 <Formik
+  authType=""
   enableReinitialize={false}
   error=""
   handleSubmit={[Function]}
   initialValues={
     Object {
+      "authType": "",
       "error": "",
       "loggingIn": false,
     }

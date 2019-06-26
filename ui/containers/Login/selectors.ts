@@ -12,3 +12,9 @@ export const loginError = () =>
     authSelector,
     authState => authState.get('error')
   );
+
+export const getAuthType = () =>
+  createSelector(
+    authSelector,
+    authState => authState.get('authType')
+  );

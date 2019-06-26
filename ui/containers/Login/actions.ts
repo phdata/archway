@@ -75,3 +75,10 @@ export const profileLoading = (loading: boolean) => ({
   type: 'PROFILE_LOADED',
   loading,
 });
+
+export const SET_AUTH_TYPE = 'SET_AUTH_TYPE';
+
+export const setAuthType = (authType: string) => ({
+  type: SET_AUTH_TYPE,
+  authType,
+});

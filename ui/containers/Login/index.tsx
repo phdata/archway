@@ -7,12 +7,13 @@ import { Colors } from '../../components';
 import { LoginForm } from './components';
 import { Login } from '../../models/Login';
 import { login } from './actions';
-import { isLoggingIn, loginError } from './selectors';
+import { isLoggingIn, loginError, getAuthType } from './selectors';
 
 interface Props {
   onSubmit: (payload: Login) => void;
   loggingIn: boolean;
   error: string;
+  authType: string;
 }
 
 class LoginPage extends React.PureComponent<Props> {
@@ -49,6 +50,7 @@ const mapStateToProps = () =>
   createStructuredSelector({
     loggingIn: isLoggingIn(),
     error: loginError(),
+    authType: getAuthType(),
   });
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({

@@ -6,6 +6,7 @@ import {
   PROFILE_READY,
   TOKEN_EXTRACTED,
   TOKEN_NOT_AVAILABLE,
+  SET_AUTH_TYPE,
 } from './actions';
 
 const initialAuthState = fromJS({
@@ -16,6 +17,7 @@ const initialAuthState = fromJS({
   profile: false,
   profileLoading: true,
   workspace: false,
+  authType: null,
 });
 
 const login = (state = initialAuthState, action: any) => {
@@ -36,6 +38,8 @@ const login = (state = initialAuthState, action: any) => {
       return state.set('workspace', fromJS(action.workspace));
     case 'PROFILE_LOADED':
       return state.set('profileLoading', action.loading);
+    case SET_AUTH_TYPE:
+      return state.set('authType', action.authType);
     default:
       return state;
   }
