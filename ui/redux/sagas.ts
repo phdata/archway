@@ -13,7 +13,7 @@ import * as actions from './actions';
 const { config = {} } = window as any;
 const isDevMode = config.isDevMode === 'true';
 
-const sagas = [login, cluster, request, workspace, listing, risk, operations, home, configSaga];
+const sagas = [login, cluster, request, workspace, listing, risk, operations, home];
 
 export const CANCEL_SAGAS_HMR = 'CANCEL_SAGAS_HMR';
 
@@ -29,7 +29,7 @@ const createAbortableSaga = (saga: any) => {
   return saga;
 };
 
-function* configSaga() {
+export function* configSaga() {
   try {
     const featureFlags = yield call(Api.getFeatureFlags);
     if (featureFlags) {

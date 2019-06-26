@@ -3,6 +3,7 @@ import { delay } from 'redux-saga';
 import * as Api from '../../service/api';
 import * as actions from './actions';
 import { SPNEGO } from '../../constants';
+import { configSaga } from '../../redux/sagas';
 
 const { config = {} } = window as any;
 const isDevMode = config.isDevMode === 'true';
@@ -21,7 +22,7 @@ function* checkLogin() {
 function* tokenReady({ token }: { token: string }) {
   const profile = yield call(Api.profile, token);
   yield put(actions.profileReady(profile));
-
+  yield call(configSaga);
   try {
     const workspace = yield call(Api.getPersonalWorkspace, token);
     yield put(actions.workspaceAvailable(workspace));
