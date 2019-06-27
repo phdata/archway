@@ -30,6 +30,7 @@ object Server extends IOApp with LazyLogging {
           context.appConfig.asJson.pretty(Printer.spaces2)).pure[F])
       provisionEC <- ExecutionContexts.fixedThreadPool(context.appConfig.provisioning.threadPoolSize)
       startupEC <- ExecutionContexts.fixedThreadPool(1)
+      staticContentEC <- ExecutionContexts.fixedThreadPool(1)
       _ <- Resource.liftF(logger.info("AppContext has been generated").pure[F])
 
       configService = new DBConfigService[F](context)
@@ -69,6 +70,7 @@ object Server extends IOApp with LazyLogging {
       memberController = new MemberController[F](tokenAuthService, memberService)
       riskController = new RiskController[F](tokenAuthService, workspaceService)
       opsController = new OpsController[F](tokenAuthService, workspaceService)
+      staticContentController = new StaticContentController[F](context, staticContentEC)
 
       httpApp = Router(
         "/token" -> accountController.clientAuthRoutes,
@@ -80,6 +82,7 @@ object Server extends IOApp with LazyLogging {
         "/members" -> memberController.route,
         "/risk" -> riskController.route,
         "/ops" -> opsController.route,
+        "/" -> staticContentController.route
       ).orNotFound
 
       provisioningJob = new Provisioning[F](context, provisionService)

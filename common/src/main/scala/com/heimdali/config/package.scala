@@ -113,7 +113,20 @@ package object config {
                         sslStorePassword: Option[String] = None,
                         sslKeyManagerPassword: Option[String] = None)
 
-  case class UIConfig(url: String)
+  case class UIConfig(url: String, staticContentDir: String)
+
+  object UIConfig {
+
+    private def handleDefault(confParam: String) =
+      if (confParam.isEmpty) {sys.env("HEIMDALI_UI_HOME")} else confParam
+
+    implicit val decoder: Decoder[UIConfig] = Decoder.instance { cursor =>
+      for {
+        url <- cursor.downField("url").as[String]
+        staticContentDir <- cursor.downField("staticContentDir").as[String]
+      } yield UIConfig(url, handleDefault(staticContentDir))
+    }
+  }
 
   case class SMTPConfig(fromEmail: String, host: String, port: Int, auth: Boolean, user: Option[String], pass: Option[String], ssl: Boolean)
 
@@ -202,7 +215,6 @@ package object config {
     import io.circe.generic.semiauto._
 
     implicit val restConfigDecoder: Decoder[RestConfig] = deriveDecoder
-    implicit val uIConfigDecoder: Decoder[UIConfig] = deriveDecoder
     implicit val sMTPConfigDecoder: Decoder[SMTPConfig] = deriveDecoder
     implicit val approvalConfigDecoder: Decoder[ApprovalConfig] = deriveDecoder
     implicit val workspaceConfigItemDecoder: Decoder[WorkspaceConfigItem] = deriveDecoder

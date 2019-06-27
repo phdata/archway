@@ -549,6 +549,14 @@
           "configurableInWizard": "true"
         },
         {
+          "name": "heimdali.ui.staticContentDir",
+          "label": "Heimdali UI static content directory",
+          "description": "Path to heimdali UI directory. It is an override and the original value comes from the env var `HEIMDALI_UI_HOME`",
+          "required": "false",
+          "type": "string",
+          "default": ""
+        },
+        {
           "name": "heimdali.smtp.fromEmail",
           "label": "Notification Email Sender",
           "description": "The email address to send notification emails as",
