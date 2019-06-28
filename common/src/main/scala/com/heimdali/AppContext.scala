@@ -56,9 +56,17 @@ object AppContext {
     conf
   }
 
+  private def updateClusterNameservice(currentConfig: AppConfig) : AppConfig = {
+    if(currentConfig.cluster.nameservice.isEmpty) {
+      val newClusterConf = currentConfig.cluster.copy(nameservice = hadoopConfiguration.get("dfs.nameservices"))
+      currentConfig.copy(cluster = newClusterConf)
+    } else currentConfig
+  }
+
   def default[F[_] : ConcurrentEffect : ContextShift : Timer](config: Config = ConfigFactory.defaultApplication().resolve()): Resource[F, AppContext[F]] =
     for {
-      config <- Resource.liftF(io.circe.config.parser.decodePathF[F, AppConfig](config, "heimdali"))
+      loadedConfig <- Resource.liftF(io.circe.config.parser.decodePathF[F, AppConfig](config, "heimdali"))
+      config = updateClusterNameservice(loadedConfig)
 
       httpEC <- ExecutionContexts.fixedThreadPool(10)
       dbConnectionEC <- ExecutionContexts.fixedThreadPool(10)
