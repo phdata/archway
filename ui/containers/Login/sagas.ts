@@ -52,7 +52,8 @@ function* isSpnego() {
 function* requestLogin({ login }: any) {
   const { username, password } = login;
   try {
-    const response = yield call(Api.login, username, password);
+    const authType = yield select((s: any) => s.get('login').get('authType'));
+    const response = yield call(Api.login, username, password, authType);
     const { access_token, refresh_token } = response;
     localStorage.setItem('requestToken', access_token);
     localStorage.setItem('refreshToken', refresh_token);

@@ -1,13 +1,16 @@
 import { Workspace } from '../models/Workspace';
+import { SPNEGO } from '../constants';
 
 const { config = {} } = window as any;
 const BASE_URL = config.baseUrl || '';
 
-export function login(username: string, password: string) {
+export function login(username: string, password: string, authType: string) {
+  // tslint:disable-next-line: no-shadowed-variable
+  const headers =
+    authType === SPNEGO ? { withCredentials: 'true' } : { Authorization: `Basic ${btoa(`${username}:${password}`)}` };
+
   return fetch(`${BASE_URL}/token`, {
-    headers: {
-      Authorization: `Basic ${btoa(`${username}:${password}`)}`,
-    },
+    headers: headers as any,
   }).then(response => response.json());
 }
 
