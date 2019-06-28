@@ -22,6 +22,7 @@ case class AppContext[F[_]](appConfig: AppConfig,
                             loginContextProvider: LoginContextProvider,
                             sentryClient: SentryClient[F],
                             hiveClient: HiveClient[F],
+                            impalaClient: Option[ImpalaClient[F]],
                             provisioningLDAPClient: LDAPClient[F],
                             lookupLDAPClient: LDAPClient[F],
                             hdfsClient: HDFSClient[F],
@@ -80,6 +81,7 @@ object AppContext {
 
       metaXA <- config.db.meta.tx(dbConnectionEC, dbTransactionEC)
       hiveXA = config.db.hive.hiveTx
+      impalaXA = config.db.impala.map(_.impalaTx)
 
       httpClient = new CMClient[F](h4Client, config.cluster)
 
@@ -92,6 +94,7 @@ object AppContext {
       sentryServiceClient = SentryGenericServiceClientFactory.create(hadoopConfiguration)
       sentryClient = new SentryClientImpl[F](hiveXA, sentryServiceClient, loginContextProvider)
       hiveClient = new HiveClientImpl[F](loginContextProvider, hiveXA)
+      impalaClient =  config.db.impala.map(impalaXA => new ImpalaClientImpl[F](loginContextProvider, impalaXA.impalaTx))
       lookupLDAPClient = new LDAPClientImpl[F](config.ldap, _.lookupBinding)
       provisioningLDAPClient = new LDAPClientImpl[F](config.ldap, _.provisioningBinding)
       hdfsClient = new HDFSClientImpl[F](hadoopConfiguration, loginContextProvider)
@@ -118,6 +121,7 @@ object AppContext {
       loginContextProvider,
       sentryClient,
       hiveClient,
+      impalaClient,
       provisioningLDAPClient,
       lookupLDAPClient,
       hdfsClient,

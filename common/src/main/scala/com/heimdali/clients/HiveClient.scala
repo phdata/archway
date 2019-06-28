@@ -18,6 +18,12 @@ trait HiveClient[F[_]] {
 
   def dropDatabase(name: String): F[Int]
 
+  def createTable(database: String, name: String): F[Int]
+
+  def showTables(databaseName: String): F[Seq[String]]
+
+  def dropTable(databaseName: String, name: String): F[Unit]
+
 }
 
 class HiveClientImpl[F[_]](loginContextProvider: LoginContextProvider,
@@ -50,10 +56,30 @@ class HiveClientImpl[F[_]](loginContextProvider: LoginContextProvider,
     }
 
   override def dropDatabase(name: String): F[Int] = {
-    (sql"""DROP DATABASE IF EXISTS """ ++ Fragment.const(name)).update.run.transact(transactor)
+    loginContextProvider.hadoopInteraction[F, Int] {
+      (sql"""DROP DATABASE IF EXISTS """ ++ Fragment.const(name)).update.run.transact(transactor)
+    }
   }
 
-  private[clients] def createDatabaseStatement(name: String, location: String, comment: String, dbProperties: Map[String, String]): Fragment = {
+  override def createTable(database: String, name: String): F[Int] = {
+    loginContextProvider.hadoopInteraction[F, Int] {
+      (sql"""CREATE TABLE """ ++ Fragment.const(database) ++ fr"." ++ Fragment.const(name) ++
+        fr"(id SMALLINT)").update.run.transact(transactor)
+    }
+  }
+
+  override def showTables(databaseName: String): F[Seq[String]] = {
+    (sql"""SHOW TABLES in """ ++ Fragment.const(databaseName)).query[String].to[Seq].transact(transactor)
+
+  }
+
+  override def dropTable(databaseName: String, name: String): F[Unit] = {
+    (sql"""DROP TABLE IF EXISTS """ ++ Fragment.const(databaseName) ++ fr"." ++ Fragment.const(name))
+      .update.run.transact(transactor).void
+  }
+
+  private[clients] def createDatabaseStatement(name: String, location: String, comment: String, dbProperties: Map[String, String]): Fragment =
+  {
     fr"CREATE DATABASE" ++ Fragment.const(name) ++ Fragment.const(" COMMENT ") ++
       fr"$comment" ++
       Fragment.const("LOCATION ") ++

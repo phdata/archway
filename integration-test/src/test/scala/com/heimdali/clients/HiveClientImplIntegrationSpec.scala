@@ -32,7 +32,7 @@ class HiveClientImplIntegrationSpec
   }
 
   private def cleanup() = {
-    runUpdate(Fragment.const(s"drop database if exists $FOO_DB_NAME"))
+    runUpdate(Fragment.const(s"drop database if exists $FOO_DB_NAME cascade"))
   }
 
   it should "Create a database" in {
@@ -50,6 +50,29 @@ class HiveClientImplIntegrationSpec
 
     hiveClient.dropDatabase(FOO_DB_NAME).unsafeRunSync()
     assert(!hiveClient.showDatabases().unsafeRunSync().contains(FOO_DB_NAME))
+  }
+
+  it should "Create a table" in {
+    val tableName = s"test_table_${UUID.randomUUID().toString.take(8)}"
+
+    hiveClient.createDatabase(FOO_DB_NAME, "/tmp", "a comment", Map("pii_data" -> "true", "pci_data" -> "false"))
+      .unsafeRunSync()
+
+    hiveClient.createTable(FOO_DB_NAME, tableName).unsafeRunSync()
+    assert(hiveClient.showTables(FOO_DB_NAME).unsafeRunSync().contains(tableName))
+  }
+
+  it should "Delete a table" in {
+    val tableName = s"test_table_${UUID.randomUUID().toString.take(8)}"
+
+    hiveClient.createDatabase(FOO_DB_NAME, "/tmp", "a comment", Map("pii_data" -> "true", "pci_data" -> "false"))
+      .unsafeRunSync()
+
+    hiveClient.createTable(FOO_DB_NAME, tableName).unsafeRunSync()
+    assert(hiveClient.showTables(FOO_DB_NAME).unsafeRunSync().contains(tableName))
+
+    hiveClient.dropTable(FOO_DB_NAME, tableName).unsafeRunSync()
+    assert(!hiveClient.showTables(FOO_DB_NAME).unsafeRunSync().contains(tableName))
   }
 
   private def runUpdate(f: Fragment): Int =

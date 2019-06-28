@@ -164,13 +164,23 @@ package object config {
   case class DatabaseConfigItem(driver: String, url: String, username: Option[String], password: Option[String]) {
 
     def hiveTx[F[_] : Async : ContextShift]: Transactor[F] = {
-      Class.forName("org.apache.hive.jdbc.HiveDriver")
+      Class.forName(driver)
 
       // Turn the transactor into no
       val initialHiveTransactor = Transactor.fromDriverManager[F](driver, url, "", "")
       val strategy = Strategy.void.copy(always = FC.close)
 
       Transactor.strategy.set(initialHiveTransactor, strategy)
+    }
+
+    def impalaTx[F[_] : Async : ContextShift]: Transactor[F] = {
+      Class.forName(driver)
+
+      // Turn the transactor into no
+      val initialImpalaTransactor = Transactor.fromDriverManager[F](driver, url, "", "")
+      val strategy = Strategy.void.copy(always = FC.close)
+
+      Transactor.strategy.set(initialImpalaTransactor, strategy)
     }
 
     def tx[F[_] : Async : ContextShift](connectionEC: ExecutionContext, transactionEC: ExecutionContext): Resource[F, HikariTransactor[F]] =
@@ -198,7 +208,7 @@ package object config {
     }
   }
 
-  case class DatabaseConfig(meta: DatabaseConfigItem, hive: DatabaseConfigItem)
+  case class DatabaseConfig(meta: DatabaseConfigItem, hive: DatabaseConfigItem, impala: Option[DatabaseConfigItem])
 
   case class KafkaConfig(zookeeperConnect: String,
                          secureTopics: Boolean)
