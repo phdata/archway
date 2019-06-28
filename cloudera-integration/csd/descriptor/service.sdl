@@ -519,7 +519,7 @@
         {
           "name": "heimdali.approvers.notificationEmail",
           "label": "Notification Email Address",
-          "description": "The email address to send notification emails to",
+          "description": "The comma separated list of email addresses to send notification emails to",
           "required": "true",
           "type": "string",
           "configurableInWizard": "true"

@@ -5,7 +5,7 @@ import org.scalatest.{Matchers, PropSpec}
 class ConfigSpec extends PropSpec with Matchers {
 
   property("A config with only one approval should only require 1 approval") {
-    val config = ApprovalConfig("", Some(""), None)
+    val config = ApprovalConfig(Seq.empty, Some(""), None)
     config.required shouldBe 1
   }
 

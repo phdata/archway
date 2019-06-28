@@ -130,8 +130,20 @@ package object config {
 
   case class SMTPConfig(fromEmail: String, host: String, port: Int, auth: Boolean, user: Option[String], pass: Option[String], ssl: Boolean)
 
-  case class ApprovalConfig(notificationEmail: String, infrastructure: Option[String], risk: Option[String]) {
+  case class ApprovalConfig(notificationEmail: Seq[String], infrastructure: Option[String], risk: Option[String]) {
     val required: Int = List(infrastructure, risk).flatten.length
+  }
+
+  object ApprovalConfig {
+    private def separateAddresses(input: String): Seq[String] = input.split(",").map(_.trim)
+
+    implicit val decoder: Decoder[ApprovalConfig] = Decoder.instance { cursor =>
+      for {
+        emailAddresses <- cursor.downField("notificationEmail").as[String]
+        infrastructure <- cursor.downField("infrastructure").as[Option[String]]
+        risk <- cursor.downField("risk").as[Option[String]]
+      } yield ApprovalConfig(separateAddresses(emailAddresses), infrastructure, risk)
+    }
   }
 
   case class WorkspaceConfigItem(root: String, defaultSize: Int, defaultCores: Int, defaultMemory: Int, poolParents: String)
@@ -216,7 +228,6 @@ package object config {
 
     implicit val restConfigDecoder: Decoder[RestConfig] = deriveDecoder
     implicit val sMTPConfigDecoder: Decoder[SMTPConfig] = deriveDecoder
-    implicit val approvalConfigDecoder: Decoder[ApprovalConfig] = deriveDecoder
     implicit val workspaceConfigItemDecoder: Decoder[WorkspaceConfigItem] = deriveDecoder
     implicit val workspaceConfigDecoder: Decoder[WorkspaceConfig] = deriveDecoder
     implicit val ldapBindingDecoder: Decoder[LDAPBinding] = deriveDecoder

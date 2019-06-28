@@ -47,9 +47,12 @@ class EmailServiceImpl[F[_] : Effect](context: AppContext[F],
 
     for {
       email <- Effect[F].delay(templateEngine.layout("/templates/emails/incoming.mustache", values))
-      toAddress = context.appConfig.approvers.notificationEmail
+      addressList = context.appConfig.approvers.notificationEmail
       fromAddress = context.appConfig.smtp.fromEmail
-      result <- context.emailClient.send("A New Workspace Is Waiting", email, fromAddress, toAddress)
-    } yield result
+    } yield {
+      addressList.map(recipient =>
+        context.emailClient.send("A New Workspace Is Waiting", email, fromAddress, recipient)
+      )
+    }
   }
 }

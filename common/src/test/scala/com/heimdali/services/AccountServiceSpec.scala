@@ -147,7 +147,7 @@ class AccountServiceSpec extends FlatSpec with MockFactory with Matchers with Ap
 
     val context: AppContext[IO] = genMockContext(
       appConfig = appConfig.copy(
-        approvers = ApprovalConfig("me@meail.com", Some("CN=foo,DC=jotunN,dc=io"), Some("cN=bar,dc=JOTUNN,dc=io"))
+        approvers = ApprovalConfig(Seq("me@meail.com"), Some("CN=foo,DC=jotunN,dc=io"), Some("cN=bar,dc=JOTUNN,dc=io"))
       )
     )
 
