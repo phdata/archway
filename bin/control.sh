@@ -57,17 +57,6 @@ case ${COMPONENT} in
                 ;;
         esac
         ;;
-    (ui)
-        case ${CMD} in
-            (start)
-                cd $HEIMDALI_UI_HOME
-                sed -i -e "s@%%BASE_URL%%@https://$(hostname -f):$HEIMDALI_REST_PORT@g" index.html
-                exec python $CONF_DIR/scripts/ui-server.py
-                ;;
-            (*)
-                echo ${SYNTAX}
-        esac
-        ;;
     (*)
         echo ${SYNTAX}
         ;;

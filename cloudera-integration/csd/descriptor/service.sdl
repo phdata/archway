@@ -9,7 +9,7 @@
     "principal": "heimdali_api"
   },
   "rolesWithExternalLinks": [
-    "HEIMDALI_UI"
+    "HEIMDALI_SERVICE"
   ],
   "icon": "images/favicon_symbol.png",
   "parcel": {
@@ -45,54 +45,6 @@
   ],
   "roles": [
     {
-      "name": "HEIMDALI_UI",
-      "label": "Heimdali UI",
-      "pluralLabel": "Heimdali UIs",
-      "kerberosPrincipals": [
-        {
-          "name": "HEIMDALI_UI_PRINCIPAL",
-          "primary": "heimdali_ui",
-          "instance": "${host}"
-        }
-      ],
-      "externalLink": {
-        "name": "heimdali_web_ui",
-        "label": "Heimdali UI",
-        "url": "https://${host}:${heimdali_ui_port}"
-      },
-      "sslServer": {
-        "keystoreFormat": "pem",
-        "enabledConfigName": "heimdali_ui.ssl.enabled",
-        "certificateLocationConfigName": "heimdali_ui.ssl.certificate.location",
-        "privateKeyLocationConfigName": "heimdali_ui.ssl.privatekey.location",
-        "privateKeyPasswordConfigName": "heimdali_ui.ssl.privatekey.password"
-      },
-      "parameters": [
-        {
-          "name": "heimdali_ui_port",
-          "label": "REST UI Port",
-          "description": "Heimdali UI Port",
-          "required": "true",
-          "type": "port",
-          "default": 8181
-        }
-      ],
-      "startRunner": {
-        "program": "scripts/control-redirect.sh",
-        "args": [
-          "ui",
-          "start"
-        ],
-        "environmentVariables": {
-          "HEIMDALI_SSL_CERT_LOCATION": "${ssl_server_certificate_location}",
-          "HEIMDALI_SSL_KEY_LOCATION": "${ssl_server_privatekey_location}",
-          "HEIMDALI_SSL_KEY_PASSWORD": "${ssl_server_privatekey_password}",
-          "HEIMDALI_UI_PORT": "${heimdali_ui_port}",
-          "HEIMDALI_REST_PORT": "${heimdali.rest.port}"
-        }
-      }
-    },
-    {
       "name": "HEIMDALI_SERVICE",
       "label": "Heimdali API",
       "pluralLabel": "Heimdali APIs",
@@ -109,6 +61,11 @@
           "instance": "${host}"
         }
       ],
+      "externalLink": {
+          "name": "heimdali_web_ui",
+          "label": "Heimdali UI",
+          "url": "https://${host}:${heimdali.rest.port}/"
+      },
       "logging": {
         "dir": "/var/log/heimdali-api",
         "filename": "heimdali-api.log",
@@ -189,9 +146,9 @@
           "name": "heimdali.cluster.nameservice",
           "label": "HDFS nameservice",
           "description": "The HDFS nameservice (dfs.nameservice)",
-          "required": "true",
+          "required": "false",
           "type": "string",
-          "configurableInWizard": "true"
+          "default": ""
         },
         {
           "name": "heimdali.cluster.environment",
@@ -536,14 +493,6 @@
           "name": "heimdali.approvers.risk",
           "label": "Risk Group DN",
           "description": "Group DN for Risk",
-          "required": "true",
-          "type": "string",
-          "configurableInWizard": "true"
-        },
-        {
-          "name": "heimdali.ui.url",
-          "label": "Heimdali UI",
-          "description": "Full url for Heimdali UI",
           "required": "true",
           "type": "string",
           "configurableInWizard": "true"
