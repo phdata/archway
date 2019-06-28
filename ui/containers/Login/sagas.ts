@@ -22,7 +22,7 @@ function* checkLogin() {
 function* tokenReady({ token }: { token: string }) {
   const profile = yield call(Api.profile, token);
   yield put(actions.profileReady(profile));
-  yield call(configSaga);
+  yield call(configSaga, token);
   try {
     const workspace = yield call(Api.getPersonalWorkspace, token);
     yield put(actions.workspaceAvailable(workspace));

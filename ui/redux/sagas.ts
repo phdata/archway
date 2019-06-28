@@ -29,9 +29,9 @@ const createAbortableSaga = (saga: any) => {
   return saga;
 };
 
-export function* configSaga() {
+export function* configSaga(token: string) {
   try {
-    const featureFlags = yield call(Api.getFeatureFlags);
+    const featureFlags = yield call(Api.getFeatureFlags, token);
     if (featureFlags) {
       yield put(actions.setFeatureFlag(featureFlags));
     } else {
