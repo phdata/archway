@@ -1,0 +1,32 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ApplicationsTab renders correctly 1`] = `
+<div
+  style={
+    Object {
+      "padding": 12,
+    }
+  }
+>
+  <Button
+    block={false}
+    ghost={false}
+    htmlType="button"
+    loading={false}
+    style={
+      Object {
+        "position": "absolute",
+        "right": 12,
+        "zIndex": 999,
+      }
+    }
+    type="primary"
+  >
+    Add an Application
+  </Button>
+  <Tabs
+    hideAdd={false}
+    tabPosition="top"
+  />
+</div>
+`;

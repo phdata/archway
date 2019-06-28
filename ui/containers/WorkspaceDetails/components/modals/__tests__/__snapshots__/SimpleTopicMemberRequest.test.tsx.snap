@@ -1,0 +1,45 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SimpleTopicMemberRequest renders correctly 1`] = `
+<Hoc
+  destroyOnUnmount={true}
+  enableReinitialize={false}
+  forceUnregisterOnUnmount={false}
+  form="simpleTopicMemberRequest"
+  forwardedRef={null}
+  getFormState={[Function]}
+  initialValues={
+    Object {
+      "role": "readonly",
+      "username": "",
+    }
+  }
+  keepDirtyOnReinitialize={false}
+  persistentSubmitErrors={false}
+  pure={true}
+  shouldAsyncValidate={[Function]}
+  shouldError={[Function]}
+  shouldValidate={[Function]}
+  shouldWarn={[Function]}
+  suggestions={
+    Object {
+      "filter": "user",
+      "groups": Array [
+        Object {
+          "display": "group_display",
+          "distinguished_name": "group_d",
+        },
+      ],
+      "users": Array [
+        Object {
+          "display": "user_display",
+          "distinguished_name": "user_d",
+        },
+      ],
+    }
+  }
+  touchOnBlur={true}
+  touchOnChange={false}
+  updateUnregisteredFields={false}
+/>
+`;

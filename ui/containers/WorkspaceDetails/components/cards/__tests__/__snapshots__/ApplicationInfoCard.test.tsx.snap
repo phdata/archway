@@ -1,0 +1,107 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ApplicationInfoCard renders correctly 1`] = `
+<Card
+  bordered={true}
+>
+  <div
+    style={
+      Object {
+        "alignItems": "center",
+        "display": "flex",
+      }
+    }
+  >
+    <div
+      style={
+        Object {
+          "flex": 1,
+        }
+      }
+    >
+      <CardHeader>
+        <Icon
+          style={
+            Object {
+              "fontSize": 36,
+              "marginRight": 12,
+            }
+          }
+          type="rocket"
+        />
+        <div>
+          default
+          <div
+            style={
+              Object {
+                "fontSize": 12,
+                "textTransform": "none",
+              }
+            }
+          >
+            test_workspace_default_cg
+          </div>
+        </div>
+      </CardHeader>
+      <div
+        style={
+          Object {
+            "display": "flex",
+          }
+        }
+      >
+        <div
+          style={
+            Object {
+              "flex": 1,
+              "fontSize": 16,
+              "fontWeight": 300,
+            }
+          }
+        >
+          CORES
+          <br />
+          <span
+            style={
+              Object {
+                "fontSize": 14,
+              }
+            }
+          >
+            10
+          </span>
+        </div>
+        <div
+          style={
+            Object {
+              "flex": 2,
+              "fontSize": 16,
+              "fontWeight": 300,
+            }
+          }
+        >
+          MEMORY
+          <br />
+          <span
+            style={
+              Object {
+                "fontSize": 14,
+              }
+            }
+          >
+            64Gb
+          </span>
+        </div>
+      </div>
+    </div>
+    <Icon
+      style={
+        Object {
+          "fontSize": 24,
+        }
+      }
+      type="right"
+    />
+  </div>
+</Card>
+`;

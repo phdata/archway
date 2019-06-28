@@ -1,0 +1,54 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`PoolCard renders correctly 1`] = `
+<Card
+  bodyStyle={
+    Object {
+      "paddingTop": 48,
+      "textAlign": "center",
+    }
+  }
+  bordered={true}
+>
+  <Icon
+    style={
+      Object {
+        "fontSize": 48,
+      }
+    }
+    type="api"
+  />
+  <div
+    style={
+      Object {
+        "fontSize": 18,
+        "lineHeight": 2,
+      }
+    }
+  >
+    RESOURCE POOL
+  </div>
+  <div
+    style={
+      Object {
+        "alignItems": "center",
+        "display": "flex",
+        "flexDirection": "column",
+        "height": 100,
+        "justifyContent": "center",
+      }
+    }
+  >
+    <div
+      key="0"
+      style={
+        Object {
+          "fontSize": 12,
+        }
+      }
+    >
+      RPool
+    </div>
+  </div>
+</Card>
+`;

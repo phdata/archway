@@ -1,0 +1,18 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ApplicationSummary renders correctly 1`] = `
+<div
+  style={
+    Object {
+      "paddingLeft": 24,
+      "paddingRight": 24,
+      "paddingTop": 24,
+      "textAlign": "left",
+    }
+  }
+>
+  <h2>
+    Applications
+  </h2>
+</div>
+`;

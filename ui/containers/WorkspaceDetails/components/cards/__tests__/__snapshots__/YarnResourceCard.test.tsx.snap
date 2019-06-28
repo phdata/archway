@@ -1,0 +1,64 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`YarnResourceCard renders correctly 1`] = `
+<Card
+  bodyStyle={
+    Object {
+      "padding": 8,
+    }
+  }
+  bordered={true}
+>
+  <Row
+    align="middle"
+    gutter={0}
+    style={
+      Object {
+        "height": 120,
+        "textAlign": "center",
+      }
+    }
+    type="flex"
+  >
+    <Col
+      span={24}
+    >
+      YARN RESOURCES
+    </Col>
+    <Col
+      span={24}
+    >
+      <b
+        style={
+          Object {
+            "fontSize": 12,
+          }
+        }
+      >
+        pool
+      </b>
+      <br />
+      QUEUE NAME
+    </Col>
+    <Col
+      span={12}
+    >
+      <b>
+        4
+      </b>
+      <br />
+      MAX CORES
+    </Col>
+    <Col
+      span={12}
+    >
+      <b>
+        4
+        GB
+      </b>
+      <br />
+      MAX MEMORY
+    </Col>
+  </Row>
+</Card>
+`;

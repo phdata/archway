@@ -8,7 +8,7 @@ interface Props {
   onChange: (name: string, value: boolean) => void;
 }
 
-const CompliancePage = ({ type, data, values: checkValues, onChange }: Props) => {
+const ComplianceCard = ({ type, data, values: checkValues, onChange }: Props) => {
   const { icon, label: complianceLabel, values } = data;
 
   return (
@@ -55,4 +55,4 @@ const CompliancePage = ({ type, data, values: checkValues, onChange }: Props) =>
   );
 };
 
-export default CompliancePage;
+export default ComplianceCard;

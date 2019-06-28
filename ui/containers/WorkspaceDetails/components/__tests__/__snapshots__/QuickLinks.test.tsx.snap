@@ -1,0 +1,32 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`QuickLinks renders correctly 1`] = `
+<Dropdown
+  mouseEnterDelay={0.15}
+  mouseLeaveDelay={0.1}
+  overlay={
+    <Menu
+      onClick={[Function]}
+    />
+  }
+  placement="bottomLeft"
+  trigger={
+    Array [
+      "click",
+    ]
+  }
+>
+  <Button
+    block={false}
+    ghost={false}
+    htmlType="button"
+    loading={false}
+    type="primary"
+  >
+    QUICK LINKS 
+    <Icon
+      type="down"
+    />
+  </Button>
+</Dropdown>
+`;

@@ -1,0 +1,54 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Liaison renders correctly 1`] = `
+<div
+  style={
+    Object {
+      "alignItems": "center",
+      "display": "flex",
+    }
+  }
+>
+  <div
+    style={
+      Object {
+        "marginRight": 8,
+        "textAlign": "right",
+        "textTransform": "uppercase",
+      }
+    }
+  >
+    <div
+      style={
+        Object {
+          "fontSize": 18,
+          "fontWeight": 300,
+        }
+      }
+    >
+      LIAISON
+    </div>
+    <a
+      href="mailto:undefined"
+      style={
+        Object {
+          "color": "rgb(67, 170, 139)",
+          "textTransform": "uppercase",
+        }
+      }
+    >
+      hdfs
+    </a>
+  </div>
+  <Icon
+    style={
+      Object {
+        "fontSize": 40,
+      }
+    }
+    theme="twoTone"
+    twoToneColor="#D7C9AA"
+    type="crown"
+  />
+</div>
+`;

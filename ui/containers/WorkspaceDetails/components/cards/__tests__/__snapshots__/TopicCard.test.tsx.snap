@@ -1,0 +1,81 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TopicCard renders correctly 1`] = `
+<Card>
+  <CardHeader>
+    <div
+      style={
+        Object {
+          "flex": 1,
+          "textAlign": "center",
+        }
+      }
+    >
+      ruud
+      <div
+        style={
+          Object {
+            "fontSize": 12,
+            "textTransform": "none",
+          }
+        }
+      >
+        ruud
+      </div>
+    </div>
+  </CardHeader>
+  <div
+    style={
+      Object {
+        "display": "flex",
+        "textAlign": "center",
+      }
+    }
+  >
+    <Row
+      gutter={12}
+      style={
+        Object {
+          "flex": 1,
+          "fontSize": 16,
+          "fontWeight": 300,
+        }
+      }
+    >
+      PARTITIONS
+      <br />
+      <span
+        style={
+          Object {
+            "fontSize": 14,
+          }
+        }
+      >
+        1
+      </span>
+    </Row>
+    <Row
+      gutter={12}
+      style={
+        Object {
+          "flex": 1,
+          "fontSize": 16,
+          "fontWeight": 300,
+        }
+      }
+    >
+      REPLICATION FACTOR
+      <br />
+      <span
+        style={
+          Object {
+            "fontSize": 14,
+          }
+        }
+      >
+        1
+      </span>
+    </Row>
+  </div>
+</Card>
+`;

@@ -1,0 +1,56 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Status renders correctly 1`] = `
+<div
+  style={
+    Object {
+      "alignItems": "center",
+      "display": "flex",
+    }
+  }
+>
+  <Icon
+    style={
+      Object {
+        "fontSize": 32,
+      }
+    }
+    theme="twoTone"
+    type="check-circle"
+  />
+  <div
+    style={
+      Object {
+        "marginLeft": 8,
+        "textTransform": "uppercase",
+      }
+    }
+  >
+    <div
+      style={
+        Object {
+          "fontSize": 18,
+        }
+      }
+    >
+      READY
+    </div>
+    <div
+      style={
+        Object {
+          "color": "rgb(187, 187, 187)",
+          "fontSize": 10,
+          "textTransform": "uppercase",
+        }
+      }
+    >
+      created 
+      <TimeAgo
+        datetime={2019-06-20T20:52:47.000Z}
+        live={true}
+        locale="en"
+      />
+    </div>
+  </div>
+</div>
+`;

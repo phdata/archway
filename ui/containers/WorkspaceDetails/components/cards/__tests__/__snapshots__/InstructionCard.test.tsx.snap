@@ -1,0 +1,157 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`InstructionCard renders correctly 1`] = `
+<Card
+  bordered={true}
+>
+  <CardHeader>
+    HOW WOULD I...  
+    <Dropdown
+      mouseEnterDelay={0.15}
+      mouseLeaveDelay={0.1}
+      overlay={
+        <Menu
+          onClick={[Function]}
+        >
+          <MenuItem>
+            CREATE A TABLE
+          </MenuItem>
+          <MenuItem>
+            CREATE AN APPLICATION
+          </MenuItem>
+          <MenuItem>
+            RUN APPLICATION
+          </MenuItem>
+        </Menu>
+      }
+      placement="bottomLeft"
+      trigger={
+        Array [
+          "click",
+        ]
+      }
+    >
+      <a
+        href="#"
+      >
+         
+        CREATE A TABLE
+        <Icon
+          style={
+            Object {
+              "fontSize": 14,
+              "marginLeft": 4,
+            }
+          }
+          type="caret-down"
+        />
+      </a>
+    </Dropdown>
+  </CardHeader>
+  <SyntaxHighlighter
+    language="sql"
+    style={
+      Object {
+        "hljs": Object {
+          "background": "#2d2d2d",
+          "color": "#cccccc",
+          "display": "block",
+          "overflowX": "auto",
+          "padding": "0.5em",
+        },
+        "hljs-addition": Object {
+          "color": "#99cc99",
+        },
+        "hljs-attribute": Object {
+          "color": "#ffcc66",
+        },
+        "hljs-built_in": Object {
+          "color": "#f99157",
+        },
+        "hljs-builtin-name": Object {
+          "color": "#f99157",
+        },
+        "hljs-bullet": Object {
+          "color": "#99cc99",
+        },
+        "hljs-comment": Object {
+          "color": "#999999",
+        },
+        "hljs-deletion": Object {
+          "color": "#f2777a",
+        },
+        "hljs-emphasis": Object {
+          "fontStyle": "italic",
+        },
+        "hljs-keyword": Object {
+          "color": "#cc99cc",
+        },
+        "hljs-link": Object {
+          "color": "#f99157",
+        },
+        "hljs-literal": Object {
+          "color": "#f99157",
+        },
+        "hljs-meta": Object {
+          "color": "#f99157",
+        },
+        "hljs-name": Object {
+          "color": "#f2777a",
+        },
+        "hljs-number": Object {
+          "color": "#f99157",
+        },
+        "hljs-params": Object {
+          "color": "#f99157",
+        },
+        "hljs-quote": Object {
+          "color": "#999999",
+        },
+        "hljs-regexp": Object {
+          "color": "#f2777a",
+        },
+        "hljs-section": Object {
+          "color": "#6699cc",
+        },
+        "hljs-selector-class": Object {
+          "color": "#f2777a",
+        },
+        "hljs-selector-id": Object {
+          "color": "#f2777a",
+        },
+        "hljs-selector-tag": Object {
+          "color": "#cc99cc",
+        },
+        "hljs-string": Object {
+          "color": "#99cc99",
+        },
+        "hljs-strong": Object {
+          "fontWeight": "bold",
+        },
+        "hljs-symbol": Object {
+          "color": "#99cc99",
+        },
+        "hljs-tag": Object {
+          "color": "#f2777a",
+        },
+        "hljs-template-variable": Object {
+          "color": "#f2777a",
+        },
+        "hljs-title": Object {
+          "color": "#6699cc",
+        },
+        "hljs-type": Object {
+          "color": "#f99157",
+        },
+        "hljs-variable": Object {
+          "color": "#f2777a",
+        },
+        "overflow": "auto",
+      }
+    }
+  >
+    CREATE TABLE valhalla.new_data_landing
+  LOCATION 'netherlands/new_data/landing'
+  </SyntaxHighlighter>
+</Card>
+`;

@@ -1,0 +1,15 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`CardHeader renders correctly 1`] = `
+<div
+  style={
+    Object {
+      "alignItems": "center",
+      "display": "flex",
+      "fontSize": 18,
+      "marginBottom": 16,
+      "textTransform": "uppercase",
+    }
+  }
+/>
+`;

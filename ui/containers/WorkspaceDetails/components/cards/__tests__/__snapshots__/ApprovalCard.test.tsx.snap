@@ -1,0 +1,67 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ApprovalCard renders correctly 1`] = `
+<Card
+  bordered={true}
+  style={
+    Object {
+      "height": "100%",
+    }
+  }
+>
+  <div
+    style={
+      Object {
+        "fontSize": 17,
+        "textAlign": "center",
+      }
+    }
+  />
+  <div
+    style={
+      Object {
+        "alignItems": "center",
+        "display": "flex",
+        "fontWeight": 300,
+        "justifyContent": "center",
+        "padding": "32px 0 48px 0",
+      }
+    }
+  >
+    <Icon
+      style={
+        Object {
+          "fontSize": 24,
+        }
+      }
+      theme="twoTone"
+      type="safety-certificate"
+    />
+    <div
+      style={
+        Object {
+          "lineHeight": 1.3,
+          "marginLeft": 8,
+        }
+      }
+    >
+      <div>
+        APPROVED
+      </div>
+      <div
+        style={
+          Object {
+            "fontSize": 12,
+          }
+        }
+      >
+        <TimeAgo
+          datetime={2019-06-20T20:52:35.000Z}
+          live={true}
+          locale="en"
+        />
+      </div>
+    </div>
+  </div>
+</Card>
+`;

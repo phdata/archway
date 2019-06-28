@@ -1,0 +1,49 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TablesCard renders correctly 1`] = `
+<Card
+  bordered={true}
+>
+  <CardHeader>
+    TABLES
+    <Icon
+      onClick={[Function]}
+      style={
+        Object {
+          "color": "rgb(67, 170, 139)",
+          "cursor": "pointer",
+          "fontSize": 16,
+          "marginLeft": 8,
+        }
+      }
+      type="sync"
+    />
+  </CardHeader>
+  <Table
+    bordered={false}
+    childrenColumnName="children"
+    className=""
+    dataSource={Array []}
+    indentSize={20}
+    loading={false}
+    locale={Object {}}
+    pagination={false}
+    rowKey="key"
+    showHeader={true}
+    size="default"
+    sortDirections={
+      Array [
+        "ascend",
+        "descend",
+      ]
+    }
+    useFixedHeader={false}
+  >
+    <Column
+      dataIndex="name"
+      key="name"
+      title="Name"
+    />
+  </Table>
+</Card>
+`;

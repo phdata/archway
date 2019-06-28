@@ -1,0 +1,50 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`PermissionCard renders correctly 1`] = `
+<Card
+  bordered={true}
+  style={
+    Object {
+      "height": "100%",
+    }
+  }
+>
+  <CardHeader>
+    Permissions
+  </CardHeader>
+  <Table
+    bordered={false}
+    childrenColumnName="children"
+    className=""
+    dataSource={Array []}
+    indentSize={20}
+    loading={false}
+    locale={Object {}}
+    pagination={false}
+    rowKey="distinguished_name"
+    showHeader={true}
+    size="default"
+    sortDirections={
+      Array [
+        "ascend",
+        "descend",
+      ]
+    }
+    useFixedHeader={false}
+  >
+    <Column
+      dataIndex="name"
+      key="name"
+      title="Name"
+    />
+    <Column
+      render={[Function]}
+      title="Role"
+    />
+    <Column
+      render={[Function]}
+      title="Remove"
+    />
+  </Table>
+</Card>
+`;

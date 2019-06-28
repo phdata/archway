@@ -1,0 +1,39 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SimpleMemberRequest renders correctly 1`] = `
+<Hoc
+  allocations={
+    Array [
+      Object {
+        "consumed_in_gb": 0,
+        "id": 161,
+        "location": "hdfs://valhalla/data/shared_workspace/test_workspace",
+        "name": "sw_test_workspace",
+        "size_in_gb": 1000,
+      },
+    ]
+  }
+  destroyOnUnmount={true}
+  enableReinitialize={false}
+  forceUnregisterOnUnmount={false}
+  form="simpleMemberRequest"
+  forwardedRef={null}
+  getFormState={[Function]}
+  initialValues={
+    Object {
+      "roles": Object {},
+      "username": "",
+    }
+  }
+  keepDirtyOnReinitialize={false}
+  persistentSubmitErrors={false}
+  pure={true}
+  shouldAsyncValidate={[Function]}
+  shouldError={[Function]}
+  shouldValidate={[Function]}
+  shouldWarn={[Function]}
+  touchOnBlur={true}
+  touchOnChange={false}
+  updateUnregisteredFields={false}
+/>
+`;

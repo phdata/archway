@@ -1,0 +1,197 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ComplianceCard renders correctly 1`] = `
+<Card
+  bodyStyle={
+    Object {
+      "padding": 12,
+    }
+  }
+  style={
+    Object {
+      "alignItems": "center",
+      "display": "flex",
+      "flexDirection": "column",
+      "fontSize": 11,
+    }
+  }
+>
+  <Icon
+    style={
+      Object {
+        "fontSize": 48,
+      }
+    }
+    theme="twoTone"
+    twoToneColor="red"
+    type="bank"
+  />
+  <h3
+    style={
+      Object {
+        "fontSize": 24,
+        "marginBottom": 0,
+        "textTransform": "uppercase",
+      }
+    }
+  >
+    pci
+  </h3>
+  <div
+    style={
+      Object {
+        "lineHeight": 2,
+        "marginBottom": 8,
+        "textAlign": "center",
+      }
+    }
+  >
+    Payment Card Industry [Data Security Standard]
+    <br />
+    DO YOU ANTICIPATE THE POSSIBILITY OF DATA CONTAINING...
+  </div>
+  <Row
+    align="middle"
+    gutter={24}
+    justify="center"
+    type="flex"
+  >
+    <Col
+      span={12}
+    />
+    <Col
+      span={2}
+    >
+      YES
+    </Col>
+    <Col
+      span={2}
+    >
+      NO
+    </Col>
+  </Row>
+  <Row
+    align="middle"
+    gutter={24}
+    justify="center"
+    key="card"
+    style={
+      Object {
+        "marginTop": 4,
+      }
+    }
+    type="flex"
+  >
+    <Col
+      span={12}
+      style={
+        Object {
+          "textAlign": "left",
+        }
+      }
+    >
+      Full or partial credit card numbers?
+    </Col>
+    <Col
+      span={2}
+    >
+      <Checkbox
+        checked={false}
+        indeterminate={false}
+        onChange={[Function]}
+      />
+    </Col>
+    <Col
+      span={2}
+    >
+      <Checkbox
+        checked={false}
+        indeterminate={false}
+        onChange={[Function]}
+      />
+    </Col>
+  </Row>
+  <Row
+    align="middle"
+    gutter={24}
+    justify="center"
+    key="bank"
+    style={
+      Object {
+        "marginTop": 4,
+      }
+    }
+    type="flex"
+  >
+    <Col
+      span={12}
+      style={
+        Object {
+          "textAlign": "left",
+        }
+      }
+    >
+      Full or partial bank account numbers?
+    </Col>
+    <Col
+      span={2}
+    >
+      <Checkbox
+        checked={false}
+        indeterminate={false}
+        onChange={[Function]}
+      />
+    </Col>
+    <Col
+      span={2}
+    >
+      <Checkbox
+        checked={false}
+        indeterminate={false}
+        onChange={[Function]}
+      />
+    </Col>
+  </Row>
+  <Row
+    align="middle"
+    gutter={24}
+    justify="center"
+    key="other"
+    style={
+      Object {
+        "marginTop": 4,
+      }
+    }
+    type="flex"
+  >
+    <Col
+      span={12}
+      style={
+        Object {
+          "textAlign": "left",
+        }
+      }
+    >
+      Any other combination of data that can be used to make purchases?
+    </Col>
+    <Col
+      span={2}
+    >
+      <Checkbox
+        checked={false}
+        indeterminate={false}
+        onChange={[Function]}
+      />
+    </Col>
+    <Col
+      span={2}
+    >
+      <Checkbox
+        checked={false}
+        indeterminate={false}
+        onChange={[Function]}
+      />
+    </Col>
+  </Row>
+</Card>
+`;

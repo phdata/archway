@@ -1,0 +1,76 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`HiveDatabase renders correctly 1`] = `
+<Card>
+  <div
+    style={
+      Object {
+        "fontSize": 14,
+        "overflow": "hidden",
+        "textAlign": "center",
+        "textOverflow": "ellipsis",
+      }
+    }
+  >
+    sw_test_workspace
+  </div>
+  <div
+    style={
+      Object {
+        "alignItems": "center",
+        "display": "flex",
+        "justifyContent": "center",
+        "marginTop": 12,
+      }
+    }
+  >
+    <Doughnut
+      data={
+        Object {
+          "datasets": Array [
+            Object {
+              "backgroundColor": Array [
+                "rgb(67, 170, 139)",
+                "hsl(161.89999999999998, 43.5%, 69.7%)",
+              ],
+              "data": Array [
+                1000,
+                0,
+              ],
+              "label": false,
+            },
+          ],
+          "labels": Array [
+            "Available (GB)",
+            "Consumed (GB)",
+          ],
+        }
+      }
+      height={52}
+      options={
+        Object {
+          "legend": false,
+          "maintainAspectRatio": false,
+          "title": false,
+        }
+      }
+      redraw={false}
+      width={52}
+    />
+  </div>
+  <div
+    style={
+      Object {
+        "fontSize": 12,
+        "letterSpacing": 1,
+        "padding": "4px 0 8px 0",
+        "textAlign": "center",
+      }
+    }
+  >
+    1000.0GB/1000GB
+    <br />
+    AVAILABLE
+  </div>
+</Card>
+`;

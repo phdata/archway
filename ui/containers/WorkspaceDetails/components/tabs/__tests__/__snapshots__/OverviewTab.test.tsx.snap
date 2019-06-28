@@ -1,0 +1,121 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`OverviewTab renders correctly 1`] = `
+<div
+  style={
+    Object {
+      "padding": 16,
+    }
+  }
+>
+  <Row
+    gutter={16}
+    type="flex"
+  >
+    <Col
+      span={12}
+    >
+      <ApprovalCard
+        onApprove={[Function]}
+      >
+        COMPLIANCE
+      </ApprovalCard>
+    </Col>
+    <Col
+      span={12}
+    >
+      <ApprovalCard
+        onApprove={[Function]}
+      >
+        PLATFORM OPERATIONS
+      </ApprovalCard>
+    </Col>
+  </Row>
+  <Row
+    gutter={16}
+    style={
+      Object {
+        "paddingTop": 16,
+      }
+    }
+    type="flex"
+  >
+    <Col
+      span={8}
+    >
+      <HDFSCard
+        data={
+          Array [
+            Object {
+              "consumed_in_gb": 0,
+              "id": 1,
+              "location": "",
+              "managing_group": Object {
+                "group": Object {
+                  "attributes": Array [
+                    Array [
+                      "",
+                      "",
+                    ],
+                  ],
+                  "common_name": "",
+                  "distinguished_name": "",
+                  "sentry_role": "",
+                },
+              },
+              "name": "",
+              "size_in_gb": 0,
+            },
+          ]
+        }
+      />
+    </Col>
+    <Col
+      span={8}
+    >
+      <HiveCard
+        data={
+          Array [
+            Object {
+              "consumed_in_gb": 0,
+              "id": 1,
+              "location": "",
+              "managing_group": Object {
+                "group": Object {
+                  "attributes": Array [
+                    Array [
+                      "",
+                      "",
+                    ],
+                  ],
+                  "common_name": "",
+                  "distinguished_name": "",
+                  "sentry_role": "",
+                },
+              },
+              "name": "",
+              "size_in_gb": 0,
+            },
+          ]
+        }
+      />
+    </Col>
+    <Col
+      span={8}
+    >
+      <PoolCard
+        data={
+          Array [
+            Object {
+              "id": 0,
+              "max_cores": 0,
+              "max_memory_in_gb": 0,
+              "pool_name": "",
+            },
+          ]
+        }
+      />
+    </Col>
+  </Row>
+</div>
+`;

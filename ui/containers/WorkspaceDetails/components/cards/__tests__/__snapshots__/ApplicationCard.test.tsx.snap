@@ -1,0 +1,80 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ApplicationCard renders correctly 1`] = `
+<Card
+  bodyStyle={
+    Object {
+      "padding": 8,
+    }
+  }
+  bordered={true}
+>
+  <Row
+    align="middle"
+    gutter={0}
+    style={
+      Object {
+        "height": 120,
+        "textAlign": "center",
+      }
+    }
+    type="flex"
+  >
+    <Col
+      span={24}
+      style={
+        Object {
+          "paddingBottom": 8,
+        }
+      }
+    >
+      <Icon
+        style={
+          Object {
+            "fontSize": 35,
+          }
+        }
+        type="code"
+      />
+    </Col>
+    <Col
+      span={8}
+    >
+      <b
+        style={
+          Object {
+            "fontSize": 12,
+          }
+        }
+      >
+        Java
+      </b>
+      <br />
+      LANGUAGE
+    </Col>
+    <Col
+      span={16}
+    >
+      <b
+        style={
+          Object {
+            "fontSize": 12,
+          }
+        }
+      >
+        <span
+          style={
+            Object {
+              "color": "#000000",
+            }
+          }
+        >
+          N/A
+        </span>
+      </b>
+      <br />
+      REPOSITORY
+    </Col>
+  </Row>
+</Card>
+`;

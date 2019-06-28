@@ -1,0 +1,135 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`CompliancePage renders correctly 1`] = `
+<div>
+  <h3>
+    Help us be proactive in addressing risk-related data needs
+  </h3>
+  <Row
+    gutter={25}
+    style={
+      Object {
+        "marginBottom": 25,
+        "marginTop": 25,
+      }
+    }
+    type="flex"
+  >
+    <Col
+      span={8}
+    >
+      <ComplianceCard
+        data={
+          Object {
+            "icon": "bank",
+            "label": "Payment Card Industry [Data Security Standard]",
+            "values": Array [
+              Object {
+                "key": "card",
+                "label": "Full or partial credit card numbers?",
+              },
+              Object {
+                "key": "bank",
+                "label": "Full or partial bank account numbers?",
+              },
+              Object {
+                "key": "other",
+                "label": "Any other combination of data that can be used to make purchases?",
+              },
+            ],
+          }
+        }
+        onChange={[Function]}
+        type="pci"
+        values={Object {}}
+      />
+    </Col>
+    <Col
+      span={8}
+    >
+      <ComplianceCard
+        data={
+          Object {
+            "icon": "idcard",
+            "label": "Personally Identifiable Information",
+            "values": Array [
+              Object {
+                "key": "name",
+                "label": "Full name",
+              },
+              Object {
+                "key": "address",
+                "label": "Home address",
+              },
+              Object {
+                "key": "email",
+                "label": "Email address",
+              },
+              Object {
+                "key": "ssn",
+                "label": "Social security number",
+              },
+              Object {
+                "key": "passport",
+                "label": "Passport number",
+              },
+              Object {
+                "key": "driver_license",
+                "label": "Driver's license number",
+              },
+              Object {
+                "key": "credit_card",
+                "label": "Credit card number",
+              },
+              Object {
+                "key": "dob",
+                "label": "Date of birth",
+              },
+              Object {
+                "key": "phone",
+                "label": "Telephone number",
+              },
+              Object {
+                "key": "credentials",
+                "label": "Software credentials",
+              },
+            ],
+          }
+        }
+        onChange={[Function]}
+        type="pii"
+        values={Object {}}
+      />
+    </Col>
+    <Col
+      span={8}
+    >
+      <ComplianceCard
+        data={
+          Object {
+            "icon": "medicine-box",
+            "label": "Protected Health Information",
+            "values": Array [
+              Object {
+                "key": "status",
+                "label": "Health status",
+              },
+              Object {
+                "key": "provision",
+                "label": "Provision of health care",
+              },
+              Object {
+                "key": "payment",
+                "label": "Payment for health care",
+              },
+            ],
+          }
+        }
+        onChange={[Function]}
+        type="phi"
+        values={Object {}}
+      />
+    </Col>
+  </Row>
+</div>
+`;

@@ -1,3 +1,386 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`BehaviorPage renders correctly 1`] = `ShallowWrapper {}`;
+exports[`BehaviorPage renders correctly 1`] = `
+<div>
+  <h3
+    style={
+      Object {
+        "display": "inline-block",
+        "marginRight": 7,
+      }
+    }
+  >
+    What kind of behavior should we manage?
+  </h3>
+  <i
+    aria-label="icon: question-circle"
+    className="anticon anticon-question-circle"
+    onMouseEnter={[Function]}
+    onMouseLeave={[Function]}
+  >
+    <svg
+      aria-hidden="true"
+      className=""
+      data-icon="question-circle"
+      fill="currentColor"
+      focusable="false"
+      height="1em"
+      viewBox="64 64 896 896"
+      width="1em"
+    >
+      <path
+        d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm0 820c-205.4 0-372-166.6-372-372s166.6-372 372-372 372 166.6 372 372-166.6 372-372 372z"
+        fill="#1890ff"
+      />
+      <path
+        d="M512 140c-205.4 0-372 166.6-372 372s166.6 372 372 372 372-166.6 372-372-166.6-372-372-372zm0 632c-22.1 0-40-17.9-40-40s17.9-40 40-40 40 17.9 40 40-17.9 40-40 40zm62.9-219.5a48.3 48.3 0 0 0-30.9 44.8V620c0 4.4-3.6 8-8 8h-48c-4.4 0-8-3.6-8-8v-21.5c0-23.1 6.7-45.9 19.9-64.9 12.9-18.6 30.9-32.8 52.1-40.9 34-13.1 56-41.6 56-72.7 0-44.1-43.1-80-96-80s-96 35.9-96 80v7.6c0 4.4-3.6 8-8 8h-48c-4.4 0-8-3.6-8-8V420c0-39.3 17.2-76 48.4-103.3C430.4 290.4 470 276 512 276s81.6 14.5 111.6 40.7C654.8 344 672 380.7 672 420c0 57.8-38.1 109.8-97.1 132.5z"
+        fill="#e6f7ff"
+      />
+      <path
+        d="M472 732a40 40 0 1 0 80 0 40 40 0 1 0-80 0zm151.6-415.3C593.6 290.5 554 276 512 276s-81.6 14.4-111.6 40.7C369.2 344 352 380.7 352 420v7.6c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8V420c0-44.1 43.1-80 96-80s96 35.9 96 80c0 31.1-22 59.6-56 72.7-21.2 8.1-39.2 22.3-52.1 40.9-13.2 19-19.9 41.8-19.9 64.9V620c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8v-22.7a48.3 48.3 0 0 1 30.9-44.8c59-22.7 97.1-74.7 97.1-132.5 0-39.3-17.2-76-48.4-103.3z"
+        fill="#1890ff"
+      />
+    </svg>
+  </i>
+  <div
+    className="ant-row-flex ant-row-flex-center"
+    style={
+      Object {
+        "marginBottom": 25,
+        "marginLeft": -12.5,
+        "marginRight": -12.5,
+        "marginTop": 25,
+      }
+    }
+  >
+    <div
+      className="ant-col ant-col-12 ant-col-lg-6"
+      style={
+        Object {
+          "display": "flex",
+          "paddingLeft": 12.5,
+          "paddingRight": 12.5,
+        }
+      }
+    >
+      <div
+        className="ant-card ant-card-bordered ant-card-hoverable"
+        onClick={[Function]}
+        style={
+          Object {
+            "borderRadius": 3,
+            "flex": 1,
+          }
+        }
+      >
+        <div
+          className="ant-card-body"
+          style={
+            Object {
+              "textAlign": "center",
+            }
+          }
+        >
+          <div
+            style={
+              Object {
+                "opacity": 0,
+                "position": "absolute",
+                "right": 25,
+                "top": 25,
+                "transition": "opacity 300ms",
+              }
+            }
+          >
+            <i
+              aria-label="icon: check"
+              className="anticon anticon-check"
+              style={
+                Object {
+                  "fontSize": 14,
+                }
+              }
+            >
+              <svg
+                aria-hidden="true"
+                className=""
+                data-icon="check"
+                fill="currentColor"
+                focusable="false"
+                height="1em"
+                viewBox="64 64 896 896"
+                width="1em"
+              >
+                <path
+                  d="M912 190h-69.9c-9.8 0-19.1 4.5-25.1 12.2L404.7 724.5 207 474a32 32 0 0 0-25.1-12.2H112c-6.7 0-10.4 7.7-6.3 12.9l273.9 347c12.8 16.2 37.4 16.2 50.3 0l488.4-618.9c4.1-5.1.4-12.8-6.3-12.8z"
+                />
+              </svg>
+            </i>
+          </div>
+          <i
+            aria-label="icon: team"
+            className="anticon anticon-team"
+            style={
+              Object {
+                "fontSize": 42,
+              }
+            }
+          >
+            <svg
+              aria-hidden="true"
+              className=""
+              data-icon="team"
+              fill="currentColor"
+              focusable="false"
+              height="1em"
+              viewBox="64 64 896 896"
+              width="1em"
+            >
+              <path
+                d="M824.2 699.9a301.55 301.55 0 0 0-86.4-60.4C783.1 602.8 812 546.8 812 484c0-110.8-92.4-201.7-203.2-200-109.1 1.7-197 90.6-197 200 0 62.8 29 118.8 74.2 155.5a300.95 300.95 0 0 0-86.4 60.4C345 754.6 314 826.8 312 903.8a8 8 0 0 0 8 8.2h56c4.3 0 7.9-3.4 8-7.7 1.9-58 25.4-112.3 66.7-153.5A226.62 226.62 0 0 1 612 684c60.9 0 118.2 23.7 161.3 66.8C814.5 792 838 846.3 840 904.3c.1 4.3 3.7 7.7 8 7.7h56a8 8 0 0 0 8-8.2c-2-77-33-149.2-87.8-203.9zM612 612c-34.2 0-66.4-13.3-90.5-37.5a126.86 126.86 0 0 1-37.5-91.8c.3-32.8 13.4-64.5 36.3-88 24-24.6 56.1-38.3 90.4-38.7 33.9-.3 66.8 12.9 91 36.6 24.8 24.3 38.4 56.8 38.4 91.4 0 34.2-13.3 66.3-37.5 90.5A127.3 127.3 0 0 1 612 612zM361.5 510.4c-.9-8.7-1.4-17.5-1.4-26.4 0-15.9 1.5-31.4 4.3-46.5.7-3.6-1.2-7.3-4.5-8.8-13.6-6.1-26.1-14.5-36.9-25.1a127.54 127.54 0 0 1-38.7-95.4c.9-32.1 13.8-62.6 36.3-85.6 24.7-25.3 57.9-39.1 93.2-38.7 31.9.3 62.7 12.6 86 34.4 7.9 7.4 14.7 15.6 20.4 24.4 2 3.1 5.9 4.4 9.3 3.2 17.6-6.1 36.2-10.4 55.3-12.4 5.6-.6 8.8-6.6 6.3-11.6-32.5-64.3-98.9-108.7-175.7-109.9-110.9-1.7-203.3 89.2-203.3 199.9 0 62.8 28.9 118.8 74.2 155.5-31.8 14.7-61.1 35-86.5 60.4-54.8 54.7-85.8 126.9-87.8 204a8 8 0 0 0 8 8.2h56.1c4.3 0 7.9-3.4 8-7.7 1.9-58 25.4-112.3 66.7-153.5 29.4-29.4 65.4-49.8 104.7-59.7 3.9-1 6.5-4.7 6-8.7z"
+              />
+            </svg>
+          </i>
+          <div
+            style={
+              Object {
+                "fontSize": 14,
+                "textTransform": "uppercase",
+              }
+            }
+          >
+            Simple
+          </div>
+          <p>
+            A simple place for multiple users to collaborate on a solution.
+          </p>
+          <div>
+            <div
+              style={
+                Object {
+                  "fontSize": 12,
+                  "textTransform": "uppercase",
+                }
+              }
+            >
+              example use cases
+            </div>
+            <div
+              className="ant-list ant-list-split"
+            >
+              <div
+                className="ant-spin-nested-loading"
+              >
+                <div
+                  className="ant-spin-container"
+                >
+                  <ul
+                    className="ant-list-items"
+                  >
+                    <div>
+                      brainstorming
+                    </div>
+                    <div>
+                      evaluation
+                    </div>
+                    <div>
+                      prototypes
+                    </div>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      className="ant-col ant-col-12 ant-col-lg-6"
+      style={
+        Object {
+          "display": "flex",
+          "paddingLeft": 12.5,
+          "paddingRight": 12.5,
+        }
+      }
+    >
+      <div
+        className="ant-card ant-card-bordered ant-card-hoverable"
+        onClick={[Function]}
+        style={
+          Object {
+            "borderRadius": 3,
+            "flex": 1,
+          }
+        }
+      >
+        <div
+          className="ant-card-body"
+          style={
+            Object {
+              "textAlign": "center",
+            }
+          }
+        >
+          <div
+            style={
+              Object {
+                "opacity": 0,
+                "position": "absolute",
+                "right": 25,
+                "top": 25,
+                "transition": "opacity 300ms",
+              }
+            }
+          >
+            <i
+              aria-label="icon: check"
+              className="anticon anticon-check"
+              style={
+                Object {
+                  "fontSize": 14,
+                }
+              }
+            >
+              <svg
+                aria-hidden="true"
+                className=""
+                data-icon="check"
+                fill="currentColor"
+                focusable="false"
+                height="1em"
+                viewBox="64 64 896 896"
+                width="1em"
+              >
+                <path
+                  d="M912 190h-69.9c-9.8 0-19.1 4.5-25.1 12.2L404.7 724.5 207 474a32 32 0 0 0-25.1-12.2H112c-6.7 0-10.4 7.7-6.3 12.9l273.9 347c12.8 16.2 37.4 16.2 50.3 0l488.4-618.9c4.1-5.1.4-12.8-6.3-12.8z"
+                />
+              </svg>
+            </i>
+          </div>
+          <i
+            aria-label="icon: deployment-unit"
+            className="anticon anticon-deployment-unit"
+            style={
+              Object {
+                "fontSize": 42,
+              }
+            }
+          >
+            <svg
+              aria-hidden="true"
+              className=""
+              data-icon="deployment-unit"
+              fill="currentColor"
+              focusable="false"
+              height="1em"
+              viewBox="64 64 896 896"
+              width="1em"
+            >
+              <path
+                d="M888.3 693.2c-42.5-24.6-94.3-18-129.2 12.8l-53-30.7V523.6c0-15.7-8.4-30.3-22-38.1l-136-78.3v-67.1c44.2-15 76-56.8 76-106.1 0-61.9-50.1-112-112-112s-112 50.1-112 112c0 49.3 31.8 91.1 76 106.1v67.1l-136 78.3c-13.6 7.8-22 22.4-22 38.1v151.6l-53 30.7c-34.9-30.8-86.8-37.4-129.2-12.8-53.5 31-71.7 99.4-41 152.9 30.8 53.5 98.9 71.9 152.2 41 42.5-24.6 62.7-73 53.6-118.8l48.7-28.3 140.6 81c6.8 3.9 14.4 5.9 22 5.9s15.2-2 22-5.9L674.5 740l48.7 28.3c-9.1 45.7 11.2 94.2 53.6 118.8 53.3 30.9 121.5 12.6 152.2-41 30.8-53.6 12.6-122-40.7-152.9zm-673 138.4a47.6 47.6 0 0 1-65.2-17.6c-13.2-22.9-5.4-52.3 17.5-65.5a47.6 47.6 0 0 1 65.2 17.6c13.2 22.9 5.4 52.3-17.5 65.5zM522 463.8zM464 234a48.01 48.01 0 0 1 96 0 48.01 48.01 0 0 1-96 0zm170 446.2l-122 70.3-122-70.3V539.8l122-70.3 122 70.3v140.4zm239.9 133.9c-13.2 22.9-42.4 30.8-65.2 17.6-22.8-13.2-30.7-42.6-17.5-65.5s42.4-30.8 65.2-17.6c22.9 13.2 30.7 42.5 17.5 65.5z"
+              />
+            </svg>
+          </i>
+          <div
+            style={
+              Object {
+                "fontSize": 14,
+                "textTransform": "uppercase",
+              }
+            }
+          >
+            Structured
+          </div>
+          <p>
+            Data moves through various stages. Each stage represents a more "structured" version of the data.
+          </p>
+          <div>
+            <div
+              style={
+                Object {
+                  "fontSize": 12,
+                  "textTransform": "uppercase",
+                }
+              }
+            >
+              example use cases
+            </div>
+            <div
+              className="ant-list ant-list-split"
+            >
+              <div
+                className="ant-spin-nested-loading"
+              >
+                <div
+                  className="ant-spin-container"
+                >
+                  <ul
+                    className="ant-list-items"
+                  >
+                    <div>
+                      publishings
+                    </div>
+                    <div>
+                      data assets
+                    </div>
+                    <div>
+                      external interfacing
+                    </div>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    className="ant-row-flex ant-row-flex-center"
+  >
+    <div
+      className="ant-col"
+    >
+      <div
+        onBlur={null}
+        onClick={[Function]}
+        onDragEnter={[Function]}
+        onDragLeave={[Function]}
+        onDragOver={[Function]}
+        onDrop={[Function]}
+        onFocus={null}
+        onKeyDown={null}
+      >
+        <input
+          autoComplete="off"
+          multiple={false}
+          onChange={[Function]}
+          onClick={[Function]}
+          style={
+            Object {
+              "display": "none",
+            }
+          }
+          tabIndex={-1}
+          type="file"
+        />
+        <button
+          className="ant-btn ant-btn-link"
+          onClick={[Function]}
+          style={
+            Object {
+              "marginBottom": "50px",
+            }
+          }
+          type="button"
+        >
+          <span>
+            Import a workspace
+          </span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+`;
