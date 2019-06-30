@@ -1,66 +1,34 @@
 pipelines:
   default:
-      - step:
-          size: 2x # Double resources available for this step.
-          name: "Build, Test and Package API"
-          image: openjdk:8-jdk
-          services:
-            - postgres
-          caches:
-            - sbt
-            - ivy2
-          artifacts:
-            - api/target/scala-2.12/*
-            - integration-test/target/scala-2.12/*
-            - common/target/scala-2.12/*
-
-          script:
-            - './flyway/flyway migrate -url="jdbc:postgresql://localhost:5432/heimdali" -user=postgres -password=postgres'
-            - ./sbt common/test
-            - ./sbt api/test
-            - ./sbt "set every test in assembly := {}" api/assembly
-            - ./sbt "set every test in assembly := {}" integration-test/assembly
-            - ./sbt integration-test/test:package
-            - ./sbt common/test:package
-      - step:
-          name: "Build, Test and Package UI"
-          image: node:9
-          caches:
-            - node
-          artifacts:
-            - dist/**
-          script:
-            - npm i -g typescript
-            - npm i
-            - npm run-script prepare
-      - step:
-          name: "Validate, Build, Deploy Parcel and CSD"
-          deployment: test
-          image: jotunn/cm-validator
-          script:
-            - export HEIMDALI_VERSION=$(date +%Y-%m-%d)-$BITBUCKET_COMMIT
-            - java -jar /usr/src/validator.jar -p $PWD/cloudera-integration/parcel/heimdali-meta/parcel.json
-            - java -jar /usr/src/validator.jar -r $PWD/cloudera-integration/parcel/heimdali-meta/permissions.json
-            - java -jar /usr/src/validator.jar -p $PWD/cloudera-integration/parcel/custom-shell-meta/parcel.json
-            - java -jar /usr/src/validator.jar -s $PWD/cloudera-integration/csd/descriptor/service.sdl
-            - ./publish.sh parcel heimdali
-            - ./publish.sh manifest
-            - ./publish.sh csd
-            - ./publish.sh ship
-      - step:
-          name: "Validate, Build, Deploy Parcel and CSD"
-          image: jotunn/cm-validator
-          deployment: staging
-          script:
-            - export HEIMDALI_VERSION=$(date +%Y-%m-%d)
-            - java -jar /usr/src/validator.jar -p $PWD/cloudera-integration/parcel/heimdali-meta/parcel.json
-            - java -jar /usr/src/validator.jar -r $PWD/cloudera-integration/parcel/heimdali-meta/permissions.json
-            - java -jar /usr/src/validator.jar -p $PWD/cloudera-integration/parcel/custom-shell-meta/parcel.json
-            - java -jar /usr/src/validator.jar -s $PWD/cloudera-integration/csd/descriptor/service.sdl
-            - ./publish.sh parcel heimdali
-            - ./publish.sh manifest
-            - ./publish.sh csd
-            - ./publish.sh ship
+    - step:
+        name: "Build and Test API"
+        image: openjdk:8-jdk
+        services:
+          - postgres
+        caches:
+          - sbt
+          - ivy2
+        script:
+          - './flyway/flyway migrate -url="jdbc:postgresql://localhost:5432/heimdali" -user=postgres -password=postgres'
+          - ./sbt common/test
+          - ./sbt api/test
+    - step:
+        name: "Build and Test UI"
+        image: node:9
+        caches:
+          - node
+        script:
+          - npm i -g typescript
+          - npm i
+          - npm run-script prepare
+    - step:
+        name: "Validate Parcel and CSD"
+        image: jotunn/cm-validator
+        script:
+          - java -jar /usr/src/validator.jar -p $PWD/cloudera-integration/parcel/heimdali-meta/parcel.json
+          - java -jar /usr/src/validator.jar -r $PWD/cloudera-integration/parcel/heimdali-meta/permissions.json
+          - java -jar /usr/src/validator.jar -p $PWD/cloudera-integration/parcel/custom-shell-meta/parcel.json
+          - java -jar /usr/src/validator.jar -s $PWD/cloudera-integration/csd/descriptor/service.sdl
 
   custom:
     nightly-build:
@@ -97,20 +65,6 @@ pipelines:
             - npm i -g typescript
             - npm i
             - npm run-script prepare
-      - step:
-          name: "Validate, Build, Deploy Parcel and CSD"
-          deployment: "test"
-          image: jotunn/cm-validator
-          script:
-            - export HEIMDALI_VERSION=$(date +%Y-%m-%d)
-            - java -jar /usr/src/validator.jar -p $PWD/cloudera-integration/parcel/heimdali-meta/parcel.json
-            - java -jar /usr/src/validator.jar -r $PWD/cloudera-integration/parcel/heimdali-meta/permissions.json
-            - java -jar /usr/src/validator.jar -p $PWD/cloudera-integration/parcel/custom-shell-meta/parcel.json
-            - java -jar /usr/src/validator.jar -s $PWD/cloudera-integration/csd/descriptor/service.sdl
-            - ./publish.sh parcel heimdali
-            - ./publish.sh manifest
-            - ./publish.sh csd
-            - ./publish.sh ship
       - step:
           name: "Validate, Build, Deploy Parcel and CSD"
           image: jotunn/cm-validator
