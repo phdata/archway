@@ -35,7 +35,7 @@ pipelines:
             - npm run-script prepare
       - step:
           name: "Validate, Build, Deploy Parcel and CSD"
-          deployment: "test"
+          deployment: test
           image: jotunn/cm-validator
           script:
             - export HEIMDALI_VERSION=$(date +%Y-%m-%d)-$BITBUCKET_COMMIT
@@ -50,7 +50,7 @@ pipelines:
       - step:
           name: "Validate, Build, Deploy Parcel and CSD"
           image: jotunn/cm-validator
-          deployment: nightly
+          deployment: staging
           script:
             - export HEIMDALI_VERSION=$(date +%Y-%m-%d)
             - java -jar /usr/src/validator.jar -p $PWD/cloudera-integration/parcel/heimdali-meta/parcel.json
