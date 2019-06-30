@@ -67,6 +67,20 @@ pipelines:
             - npm run-script prepare
       - step:
           name: "Validate, Build, Deploy Parcel and CSD"
+          deployment: "test"
+          image: jotunn/cm-validator
+          script:
+            - export HEIMDALI_VERSION=$(date +%Y-%m-%d)
+            - java -jar /usr/src/validator.jar -p $PWD/cloudera-integration/parcel/heimdali-meta/parcel.json
+            - java -jar /usr/src/validator.jar -r $PWD/cloudera-integration/parcel/heimdali-meta/permissions.json
+            - java -jar /usr/src/validator.jar -p $PWD/cloudera-integration/parcel/custom-shell-meta/parcel.json
+            - java -jar /usr/src/validator.jar -s $PWD/cloudera-integration/csd/descriptor/service.sdl
+            - ./publish.sh parcel heimdali
+            - ./publish.sh manifest
+            - ./publish.sh csd
+            - ./publish.sh ship
+      - step:
+          name: "Validate, Build, Deploy Parcel and CSD"
           image: jotunn/cm-validator
           script:
             - export HEIMDALI_VERSION=$(date +%Y-%m-%d)
