@@ -46,13 +46,13 @@ class WorkspaceServiceImpl[F[_]: ConcurrentEffect: ContextShift](
   override def list(distinguishedName: String): F[List[WorkspaceSearchResult]] =
     context.workspaceRequestRepository.list(distinguishedName).transact(context.transactor)
 
-  def create(workspace: WorkspaceRequest): F[WorkspaceRequest] =
-    (for {
+  def create(workspace: WorkspaceRequest): F[WorkspaceRequest] = {
+    val createResult = (for {
       compliance <- context.complianceRepository.create(workspace.compliance)
       updatedWorkspace = workspace.copy(compliance = compliance)
       newWorkspaceId <- context.workspaceRequestRepository.create(updatedWorkspace)
 
-      insertedHive <- workspace.data.traverse[ConnectionIO, HiveAllocation] { db =>
+      _ <- workspace.data.traverse[ConnectionIO, Unit] { db =>
         for {
           managerLdap <- context.ldapRepository.create(db.managingGroup.ldapRegistration)
           managerId <- context.databaseGrantRepository.create(managerLdap.id.get)
@@ -84,23 +84,23 @@ class WorkspaceServiceImpl[F[_]: ConcurrentEffect: ContextShift](
         } yield beforeCreate.copy(id = Some(newHiveId))
       }
 
-      insertedYarn <- workspace.processing.traverse[ConnectionIO, Yarn] { yarn =>
+      _ <- workspace.processing.traverse[ConnectionIO, Unit] { yarn =>
         for {
           newYarnId <- context.yarnRepository.create(yarn)
           _ <- context.workspaceRequestRepository.linkPool(newWorkspaceId, newYarnId)
-        } yield yarn.copy(id = Some(newYarnId))
+        } yield ()
       }
 
-      insertedApplications <- workspace.applications.traverse[ConnectionIO, Application] { app =>
+      _ <- workspace.applications.traverse[ConnectionIO, Unit] { app =>
         for {
           appLdap <- context.ldapRepository.create(app.group)
           newApplicationId <- context.applicationRepository.create(app.copy(group = appLdap))
           _ <- context.workspaceRequestRepository.linkApplication(newWorkspaceId, newApplicationId)
           _ <- context.memberRepository.create(workspace.requestedBy, appLdap.id.get)
-        } yield app.copy(id = Some(newApplicationId))
+        } yield ()
       }
 
-      insertedTopics <- workspace.kafkaTopics.traverse[ConnectionIO, KafkaTopic] { topic =>
+      _ <- workspace.kafkaTopics.traverse[ConnectionIO, KafkaTopic] { topic =>
         for {
           managerLdap <- context.ldapRepository.create(topic.managingRole.ldapRegistration)
           managerId <- context.topicGrantRepository.create(topic.managingRole.copy(ldapRegistration = managerLdap))
@@ -117,14 +117,10 @@ class WorkspaceServiceImpl[F[_]: ConcurrentEffect: ContextShift](
           _ <- context.workspaceRequestRepository.linkTopic(newWorkspaceId, newTopicId)
         } yield beforeCreate.copy(id = Some(newTopicId))
       }
-    } yield
-      updatedWorkspace.copy(
-        id = Some(newWorkspaceId),
-        data = insertedHive,
-        processing = insertedYarn,
-        applications = insertedApplications,
-        kafkaTopics = insertedTopics
-      )).transact(context.transactor)
+    } yield newWorkspaceId)
+
+    createResult.transact(context.transactor).flatMap(workspaceId => find(workspaceId).value.map(_.get))
+  }
 
   override def approve(id: Long, approval: Approval): F[Approval] =
     for {

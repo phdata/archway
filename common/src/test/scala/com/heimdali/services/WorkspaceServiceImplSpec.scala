@@ -74,6 +74,12 @@ class WorkspaceServiceImplSpec
       (context.applicationRepository.create _).expects(initialApplication.copy(group = savedLDAP)).returning(id.pure[ConnectionIO])
       (context.workspaceRequestRepository.linkApplication _).expects(id, id).returning(1.pure[ConnectionIO])
       (context.memberRepository.create _).expects(standardUserDN, id).returning(1L.pure[ConnectionIO])
+      (context.workspaceRequestRepository.find _).expects(123).returning(OptionT.some(savedWorkspaceRequest))
+      (context.databaseRepository.findByWorkspace _).expects(id)returning(List(savedHive).pure[ConnectionIO])
+      (context.yarnRepository.findByWorkspaceId _).expects(id)returning(List(savedYarn).pure[ConnectionIO])
+      (context.approvalRepository.findByWorkspaceId _).expects(id)returning(List(approval()).pure[ConnectionIO])
+      (context.kafkaRepository.findByWorkspaceId _).expects(id)returning(List(savedTopic).pure[ConnectionIO])
+      (context.applicationRepository.findByWorkspaceId _).expects(id).returning(List(savedApplication).pure[ConnectionIO])
     }
 
     val newWorkspace = projectServiceImpl.create(initialWorkspaceRequest).unsafeRunSync()
