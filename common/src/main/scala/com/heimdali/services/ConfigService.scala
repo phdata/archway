@@ -5,5 +5,3 @@ trait ConfigService[F[_]] {
   def getAndSetNextGid: F[Long]
 
 }
-
-

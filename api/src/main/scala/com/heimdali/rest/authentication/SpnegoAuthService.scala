@@ -12,16 +12,15 @@ import org.http4s.server.AuthMiddleware
 import org.http4s.util.CaseInsensitiveString
 import org.http4s.{AuthedService, Request, _}
 
-class SpnegoAuthService[F[_] : Sync](accountService: AccountService[F])
-  extends AuthService[F] with LazyLogging {
-  
+class SpnegoAuthService[F[_]: Sync](accountService: AccountService[F]) extends AuthService[F] with LazyLogging {
+
   val WWW_AUTH_HEADER = "WWW-Authenticate"
   val AUTHORIZATION_HEADER = "Authorization"
 
   val NEGOTIATE_HEADER = Header(WWW_AUTH_HEADER, "Negotiate")
 
-  def authStore: Kleisli[F, Request[F], Either[Throwable,Token]] =
-    Kleisli[F, Request[F], Either[Throwable,Token]] { request =>
+  def authStore: Kleisli[F, Request[F], Either[Throwable, Token]] =
+    Kleisli[F, Request[F], Either[Throwable, Token]] { request =>
       logger.trace(request.headers.toString())
       request.headers.get(CaseInsensitiveString(AUTHORIZATION_HEADER)) match {
         case Some(h) =>
@@ -32,7 +31,9 @@ class SpnegoAuthService[F[_] : Sync](accountService: AccountService[F])
       }
     }
 
-  val onFailure: AuthedService[Throwable, F] = Kleisli(_ => OptionT.some(Response(Unauthorized, headers = Headers(NEGOTIATE_HEADER))))
+  val onFailure: AuthedService[Throwable, F] = Kleisli(
+    _ => OptionT.some(Response(Unauthorized, headers = Headers(NEGOTIATE_HEADER)))
+  )
 
   override def clientAuth = AuthMiddleware(authStore, onFailure)
 

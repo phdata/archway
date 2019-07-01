@@ -10,8 +10,7 @@ import doobie.implicits._
 import doobie.util.{Get, Read}
 import doobie.util.fragments.{whereAnd, whereOr}
 
-class WorkspaceRequestRepositoryImpl
-  extends WorkspaceRequestRepository {
+class WorkspaceRequestRepositoryImpl extends WorkspaceRequestRepository {
 
   implicit val han = CustomLogHandler.logHandler(this.getClass)
 
@@ -53,6 +52,7 @@ class WorkspaceRequestRepositoryImpl
 object WorkspaceRequestRepositoryImpl {
 
   object Statements {
+
     def linkPool(workspaceId: Long, resourcePoolId: Long): Update0 =
       sql"""
         insert into workspace_pool (workspace_request_id, resource_pool_id)
@@ -139,7 +139,10 @@ object WorkspaceRequestRepositoryImpl {
         """
 
     def innerQueryWith(distinguishedName: String): Fragment =
-      innerQuery ++ whereOr(fr"mrm.distinguished_name = $distinguishedName", fr"rrm.distinguished_name = $distinguishedName")
+      innerQuery ++ whereOr(
+        fr"mrm.distinguished_name = $distinguishedName",
+        fr"rrm.distinguished_name = $distinguishedName"
+      )
 
     def listQuery(distinguishedName: String): Query0[(WorkspaceSearchResult)] =
       (listFragment ++ fr"where wr.id in (" ++ innerQueryWith(distinguishedName) ++ fr") and wr.single_user = false").query
@@ -181,7 +184,10 @@ object WorkspaceRequestRepositoryImpl {
       (selectFragment ++ whereAnd(fr"wr.requested_by = $username", fr"wr.single_user = true")).query[WorkspaceRequest]
 
     def pending(role: ApproverRole): Query0[WorkspaceSearchResult] =
-      (listFragment ++ whereAnd(fr"COALESCE(s." ++ Fragment.const(s"${role.show}_approved") ++ fr", 0) = 0", fr"wr.single_user = false")).query
+      (listFragment ++ whereAnd(
+        fr"COALESCE(s." ++ Fragment.const(s"${role.show}_approved") ++ fr", 0) = 0",
+        fr"wr.single_user = false"
+      )).query
 
   }
 

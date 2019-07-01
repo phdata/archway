@@ -15,44 +15,48 @@ trait KafkaService[F[_]] {
 
 }
 
-class KafkaServiceImpl[F[_] : Effect](appContext: AppContext[F],
-                                      provisioningService: ProvisioningService[F],
-                                      topicGenerator: TopicGenerator[F])
-    extends KafkaService[F]
-    with LazyLogging {
+class KafkaServiceImpl[F[_]: Effect](
+    appContext: AppContext[F],
+    provisioningService: ProvisioningService[F],
+    topicGenerator: TopicGenerator[F]
+) extends KafkaService[F] with LazyLogging {
 
   override def create(username: String, workspaceId: Long, topicRequest: TopicRequest): F[NonEmptyList[String]] =
     (for {
-       workspace <- OptionT(
-         appContext
-           .workspaceRequestRepository
-           .find(workspaceId)
-           .value
-           .transact(appContext.transactor)
-       )
+      workspace <- OptionT(
+        appContext.workspaceRequestRepository.find(workspaceId).value.transact(appContext.transactor)
+      )
 
-       kafkaTopic <- OptionT.liftF(topicGenerator.topicFor(topicRequest.name, topicRequest.partitions, topicRequest.replicationFactor, workspace))
+      kafkaTopic <- OptionT.liftF(
+        topicGenerator.topicFor(topicRequest.name, topicRequest.partitions, topicRequest.replicationFactor, workspace)
+      )
 
-       result <- OptionT.liftF {
-         (for {
-           managerLDAP <- appContext.ldapRepository.create(kafkaTopic.managingRole.ldapRegistration)
-           readonlyLDAP <- appContext.ldapRepository.create(kafkaTopic.readonlyRole.ldapRegistration)
+      result <- OptionT.liftF {
+        (for {
+          managerLDAP <- appContext.ldapRepository.create(kafkaTopic.managingRole.ldapRegistration)
+          readonlyLDAP <- appContext.ldapRepository.create(kafkaTopic.readonlyRole.ldapRegistration)
 
-           beforeRoles = kafkaTopic.copy(managingRole = kafkaTopic.managingRole.copy(ldapRegistration = managerLDAP), readonlyRole = kafkaTopic.readonlyRole.copy(ldapRegistration = readonlyLDAP))
-           managerRoleId <- appContext.topicGrantRepository.create(beforeRoles.managingRole)
-           readonlyRoleId <- appContext.topicGrantRepository.create(beforeRoles.readonlyRole)
+          beforeRoles = kafkaTopic.copy(
+            managingRole = kafkaTopic.managingRole.copy(ldapRegistration = managerLDAP),
+            readonlyRole = kafkaTopic.readonlyRole.copy(ldapRegistration = readonlyLDAP)
+          )
+          managerRoleId <- appContext.topicGrantRepository.create(beforeRoles.managingRole)
+          readonlyRoleId <- appContext.topicGrantRepository.create(beforeRoles.readonlyRole)
 
-           afterRoles = beforeRoles.copy(managingRole = beforeRoles.managingRole.copy(id = Some(managerRoleId)), readonlyRole = beforeRoles.readonlyRole.copy(id = Some(readonlyRoleId)))
+          afterRoles = beforeRoles.copy(
+            managingRole = beforeRoles.managingRole.copy(id = Some(managerRoleId)),
+            readonlyRole = beforeRoles.readonlyRole.copy(id = Some(readonlyRoleId))
+          )
 
-           id <- appContext.kafkaRepository.create(afterRoles)
+          id <- appContext.kafkaRepository.create(afterRoles)
 
-           _ <- appContext.memberRepository.create(username, managerLDAP.id.get)
+          _ <- appContext.memberRepository.create(username, managerLDAP.id.get)
 
-           _ <- appContext.workspaceRequestRepository.linkTopic(workspaceId, id)
-          } yield afterRoles.copy(id = Some(id))).transact(appContext.transactor)
-       }
+          _ <- appContext.workspaceRequestRepository.linkTopic(workspaceId, id)
+        } yield afterRoles.copy(id = Some(id))).transact(appContext.transactor)
+      }
 
-       _ <- OptionT.liftF(provisioningService.provisionTopic(workspaceId, result))
+      _ <- OptionT.liftF(provisioningService.provisionTopic(workspaceId, result))
 
     } yield NonEmptyList.one("")).value.map(_.get)
 }

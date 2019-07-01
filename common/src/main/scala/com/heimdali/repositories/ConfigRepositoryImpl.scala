@@ -16,7 +16,6 @@ class ConfigRepositoryImpl extends ConfigRepository {
   override def setValue(key: String, value: String): ConnectionIO[Unit] =
     update(key, value).run.void
 
-
   object Statements {
 
     def select(key: String): Query0[String] =

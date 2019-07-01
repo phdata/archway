@@ -15,15 +15,14 @@ import io.circe.syntax._
 import pdi.jwt.algorithms.JwtHmacAlgorithm
 import pdi.jwt.{JwtAlgorithm, JwtCirce}
 
-
 import scala.concurrent.duration._
 
-class AccountServiceImpl[F[_] : Sync : Timer](context: AppContext[F],
-                                              workspaceService: WorkspaceService[F],
-                                              templateService: TemplateService[F],
-                                              provisionService: ProvisioningService[F])
-  extends AccountService[F]
-    with LazyLogging {
+class AccountServiceImpl[F[_]: Sync: Timer](
+    context: AppContext[F],
+    workspaceService: WorkspaceService[F],
+    templateService: TemplateService[F],
+    provisionService: ProvisioningService[F]
+) extends AccountService[F] with LazyLogging {
 
   val approvalConfig: ApprovalConfig = context.appConfig.approvers
   val restConfig: RestConfig = context.appConfig.rest
@@ -36,13 +35,15 @@ class AccountServiceImpl[F[_] : Sync : Timer](context: AppContext[F],
         .map(r => ldapUser.memberships.map(_.toLowerCase()).contains(r.toLowerCase()))
         .getOrElse(false)
 
-    User(ldapUser.name,
+    User(
+      ldapUser.name,
       ldapUser.username,
       ldapUser.distinguishedName,
       UserPermissions(
         riskManagement = memberOf(_.risk),
         platformOperations = memberOf(_.infrastructure)
-      ))
+      )
+    )
   }
 
   private def decode(token: String, secret: String, algo: JwtHmacAlgorithm): Either[Throwable, Json] =
@@ -67,7 +68,8 @@ class AccountServiceImpl[F[_] : Sync : Timer](context: AppContext[F],
     for {
       maybeToken <- EitherT.fromEither[F](decode(token, restConfig.secret, algo))
       user <- EitherT.fromEither[F](maybeToken.as[User])
-      result <- EitherT.fromOptionF(context.lookupLDAPClient.findUser(user.distinguishedName).value, new Throwable()) // TODO `findUser` should return an Either
+      result <- EitherT
+        .fromOptionF(context.lookupLDAPClient.findUser(user.distinguishedName).value, new Throwable()) // TODO `findUser` should return an Either
     } yield convertUser(result)
   }
 
@@ -78,7 +80,9 @@ class AccountServiceImpl[F[_] : Sync : Timer](context: AppContext[F],
         for {
           template <- templateService.defaults(user)
           time <- Clock[F].realTime(MILLISECONDS)
-          workspace <- templateService.workspaceFor(template, "user").map(_.copy(requestDate = Instant.ofEpochMilli(time)))
+          workspace <- templateService
+            .workspaceFor(template, "user")
+            .map(_.copy(requestDate = Instant.ofEpochMilli(time)))
           savedWorkspace <- workspaceService.create(workspace)
           _ <- provisionService.attemptProvision(savedWorkspace, 0)
           completed <- workspaceService.find(savedWorkspace.id.get).value
@@ -92,7 +96,8 @@ class AccountServiceImpl[F[_] : Sync : Timer](context: AppContext[F],
   override def spnegoAuth(header: String): F[Either[Throwable, Token]] = {
     val token: EitherT[F, Throwable, Token] = for {
       username <- context.kerberosClient.spnegoUsername(header)
-      maybeUser <- EitherT.fromOptionF(context.lookupLDAPClient.getUser(username).value, new Exception("LDAP user not found"))
+      maybeUser <- EitherT
+        .fromOptionF(context.lookupLDAPClient.getUser(username).value, new Exception("LDAP user not found"))
       token <- EitherT.liftF(refresh(maybeUser))
     } yield token
 

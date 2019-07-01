@@ -8,21 +8,16 @@ import com.heimdali.generators.ApplicationGenerator
 import com.typesafe.scalalogging.LazyLogging
 import doobie.implicits._
 
-class ApplicationServiceImpl[F[_]](appContext: AppContext[F],
-                                   provisioningService: ProvisioningService[F],
-                                   applicationGenerator: ApplicationGenerator[F])
-                                  (implicit F: Effect[F])
-  extends ApplicationService[F]
-    with LazyLogging {
+class ApplicationServiceImpl[F[_]](
+    appContext: AppContext[F],
+    provisioningService: ProvisioningService[F],
+    applicationGenerator: ApplicationGenerator[F]
+)(implicit F: Effect[F])
+    extends ApplicationService[F] with LazyLogging {
 
   override def create(username: String, workspaceId: Long, applicationRrequest: ApplicationRequest): F[Application] =
     for {
-      workspace <-
-        appContext
-          .workspaceRequestRepository
-          .find(workspaceId)
-          .value
-          .transact(appContext.transactor)
+      workspace <- appContext.workspaceRequestRepository.find(workspaceId).value.transact(appContext.transactor)
 
       _ <- F.pure(logger.warn("found {}", workspace))
 

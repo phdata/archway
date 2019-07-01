@@ -12,8 +12,10 @@ trait TopicGenerator[F[_]] {
 
 object TopicGenerator {
 
-  def instance[F[_]](appConfig: AppConfig, ldapGroupGenerator: LDAPGroupGenerator[F], className: String)
-                    (implicit clock: Clock[F], F: Sync[F]): TopicGenerator[F] =
+  def instance[F[_]](appConfig: AppConfig, ldapGroupGenerator: LDAPGroupGenerator[F], className: String)(
+      implicit clock: Clock[F],
+      F: Sync[F]
+  ): TopicGenerator[F] =
     Class
       .forName(className)
       .getConstructors

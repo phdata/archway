@@ -25,15 +25,17 @@ package object config {
 
   case class ServiceOverride(host: Option[String], port: Int)
 
-  case class ClusterConfig(sessionRefresh: FiniteDuration,
-                           url: String,
-                           name: String,
-                           nameservice: String,
-                           environment: String,
-                           beeswaxPort: Int,
-                           hiveServer2Port: Int,
-                           admin: CredentialsConfig,
-                           hueOverride: ServiceOverride) {
+  case class ClusterConfig(
+      sessionRefresh: FiniteDuration,
+      url: String,
+      name: String,
+      nameservice: String,
+      environment: String,
+      beeswaxPort: Int,
+      hiveServer2Port: Int,
+      admin: CredentialsConfig,
+      hueOverride: ServiceOverride
+  ) {
     private val encodedName: String = URLEncoder.encode(name, "utf-8").replaceAll("\\+", "%20")
 
     val clusterUrl: String = s"$url/api/v18/clusters/$encodedName"
@@ -73,7 +75,10 @@ package object config {
 
     implicit val decoder: Decoder[ClusterConfig] = Decoder.instance { cursor =>
       for {
-        sessionRefresh <- cursor.downField("sessionRefresh").as[String].map(Duration.apply(_).asInstanceOf[FiniteDuration])
+        sessionRefresh <- cursor
+          .downField("sessionRefresh")
+          .as[String]
+          .map(Duration.apply(_).asInstanceOf[FiniteDuration])
         url <- cursor.downField("url").as[String]
         name <- cursor.downField("name").as[String]
         nameservice <- cursor.downField("nameservice").as[String]
@@ -82,7 +87,18 @@ package object config {
         hiveServer2Port <- cursor.downField("hiveServer2Port").as[Int]
         admin <- cursor.downField("admin").as[CredentialsConfig]
         hueOverride <- cursor.downField("hueOverride").as[ServiceOverride]
-      } yield ClusterConfig(sessionRefresh, url, name, nameservice, environment, beeswaxPort, hiveServer2Port, admin, hueOverride)
+      } yield
+        ClusterConfig(
+          sessionRefresh,
+          url,
+          name,
+          nameservice,
+          environment,
+          beeswaxPort,
+          hiveServer2Port,
+          admin,
+          hueOverride
+        )
     }
 
     implicit val credentialsConfigEncoder: Encoder[CredentialsConfig] = deriveEncoder
@@ -103,22 +119,26 @@ package object config {
 
   }
 
-  case class RestConfig(port: Int,
-                        secret: String,
-                        authType: String,
-                        principal: String,
-                        httpPrincipal: String,
-                        keytab: String,
-                        sslStore: Option[String] = None,
-                        sslStorePassword: Option[String] = None,
-                        sslKeyManagerPassword: Option[String] = None)
+  case class RestConfig(
+      port: Int,
+      secret: String,
+      authType: String,
+      principal: String,
+      httpPrincipal: String,
+      keytab: String,
+      sslStore: Option[String] = None,
+      sslStorePassword: Option[String] = None,
+      sslKeyManagerPassword: Option[String] = None
+  )
 
   case class UIConfig(url: String, staticContentDir: String)
 
   object UIConfig {
 
     private def handleDefault(confParam: String) =
-      if (confParam.isEmpty) {sys.env("HEIMDALI_UI_HOME")} else confParam
+      if (confParam.isEmpty) {
+        sys.env("HEIMDALI_UI_HOME")
+      } else confParam
 
     implicit val decoder: Decoder[UIConfig] = Decoder.instance { cursor =>
       for {
@@ -128,7 +148,15 @@ package object config {
     }
   }
 
-  case class SMTPConfig(fromEmail: String, host: String, port: Int, auth: Boolean, user: Option[String], pass: Option[String], ssl: Boolean)
+  case class SMTPConfig(
+      fromEmail: String,
+      host: String,
+      port: Int,
+      auth: Boolean,
+      user: Option[String],
+      pass: Option[String],
+      ssl: Boolean
+  )
 
   case class ApprovalConfig(notificationEmail: Seq[String], infrastructure: Option[String], risk: Option[String]) {
     val required: Int = List(infrastructure, risk).flatten.length
@@ -146,24 +174,36 @@ package object config {
     }
   }
 
-  case class WorkspaceConfigItem(root: String, defaultSize: Int, defaultCores: Int, defaultMemory: Int, poolParents: String)
+  case class WorkspaceConfigItem(
+      root: String,
+      defaultSize: Int,
+      defaultCores: Int,
+      defaultMemory: Int,
+      poolParents: String
+  )
 
-  case class WorkspaceConfig(user: WorkspaceConfigItem, sharedWorkspace: WorkspaceConfigItem, dataset: WorkspaceConfigItem)
+  case class WorkspaceConfig(
+      user: WorkspaceConfigItem,
+      sharedWorkspace: WorkspaceConfigItem,
+      dataset: WorkspaceConfigItem
+  )
 
   case class LDAPBinding(server: String, port: Int, bindDN: String, bindPassword: String)
 
-  case class LDAPConfig(lookupBinding: LDAPBinding,
-                        provisioningBinding: LDAPBinding,
-                        filterTemplate: String,
-                        memberDisplayTemplate: String,
-                        baseDN: String,
-                        groupPath: String,
-                        userPath: Option[String],
-                        realm: String)
+  case class LDAPConfig(
+      lookupBinding: LDAPBinding,
+      provisioningBinding: LDAPBinding,
+      filterTemplate: String,
+      memberDisplayTemplate: String,
+      baseDN: String,
+      groupPath: String,
+      userPath: Option[String],
+      realm: String
+  )
 
   case class DatabaseConfigItem(driver: String, url: String, username: Option[String], password: Option[String]) {
 
-    def hiveTx[F[_] : Async : ContextShift]: Transactor[F] = {
+    def hiveTx[F[_]: Async: ContextShift]: Transactor[F] = {
       Class.forName(driver)
 
       // Turn the transactor into no
@@ -173,7 +213,7 @@ package object config {
       Transactor.strategy.set(initialHiveTransactor, strategy)
     }
 
-    def impalaTx[F[_] : Async : ContextShift]: Transactor[F] = {
+    def impalaTx[F[_]: Async: ContextShift]: Transactor[F] = {
       Class.forName(driver)
 
       // Turn the transactor into no
@@ -183,8 +223,18 @@ package object config {
       Transactor.strategy.set(initialImpalaTransactor, strategy)
     }
 
-    def tx[F[_] : Async : ContextShift](connectionEC: ExecutionContext, transactionEC: ExecutionContext): Resource[F, HikariTransactor[F]] =
-      HikariTransactor.newHikariTransactor[F](driver, url, username.getOrElse(""), password.getOrElse(""), connectionEC, transactionEC)
+    def tx[F[_]: Async: ContextShift](
+        connectionEC: ExecutionContext,
+        transactionEC: ExecutionContext
+    ): Resource[F, HikariTransactor[F]] =
+      HikariTransactor.newHikariTransactor[F](
+        driver,
+        url,
+        username.getOrElse(""),
+        password.getOrElse(""),
+        connectionEC,
+        transactionEC
+      )
 
   }
 
@@ -194,7 +244,9 @@ package object config {
 
     implicit val decoder: Decoder[ProvisioningConfig] = Decoder.instance { cursor =>
       for {
-        provisionInterval <- cursor.downField("provisionInterval").as[String]
+        provisionInterval <- cursor
+          .downField("provisionInterval")
+          .as[String]
           .map(d => Duration.apply(d).asInstanceOf[FiniteDuration])
         threadpoolSize <- cursor.downField("threadPoolSize").as[Int]
       } yield ProvisioningConfig(threadpoolSize, provisionInterval)
@@ -210,27 +262,29 @@ package object config {
 
   case class DatabaseConfig(meta: DatabaseConfigItem, hive: DatabaseConfigItem, impala: Option[DatabaseConfigItem])
 
-  case class KafkaConfig(zookeeperConnect: String,
-                         secureTopics: Boolean)
+  case class KafkaConfig(zookeeperConnect: String, secureTopics: Boolean)
 
-  case class TemplateConfig(templateRoot: String,
-                            topicGenerator: String,
-                            applicationGenerator: String,
-                            ldapGroupGenerator: String)
-  
-  case class AppConfig(templates: TemplateConfig,
-                       rest: RestConfig,
-                       ui: UIConfig,
-                       smtp: SMTPConfig,
-                       cluster: ClusterConfig,
-                       approvers: ApprovalConfig,
-                       ldap: LDAPConfig,
-                       db: DatabaseConfig,
-                       workspaces: WorkspaceConfig,
-                       kafka: KafkaConfig,
-                       provisioning: ProvisioningConfig,
-                       featureFlags: String
-                      )
+  case class TemplateConfig(
+      templateRoot: String,
+      topicGenerator: String,
+      applicationGenerator: String,
+      ldapGroupGenerator: String
+  )
+
+  case class AppConfig(
+      templates: TemplateConfig,
+      rest: RestConfig,
+      ui: UIConfig,
+      smtp: SMTPConfig,
+      cluster: ClusterConfig,
+      approvers: ApprovalConfig,
+      ldap: LDAPConfig,
+      db: DatabaseConfig,
+      workspaces: WorkspaceConfig,
+      kafka: KafkaConfig,
+      provisioning: ProvisioningConfig,
+      featureFlags: String
+  )
 
   object AppConfig {
 

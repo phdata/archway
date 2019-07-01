@@ -10,16 +10,13 @@ import org.http4s.Request
 import org.http4s.headers.Authorization
 import org.http4s.server.AuthMiddleware
 
-
 class TokenAuthServiceImpl[F[_]: Sync](accountService: AccountService[F]) extends TokenAuthService[F] with LazyLogging {
-  def validate(auth: User => Boolean = _ => true)
-  : Kleisli[OptionT[F, ?], Request[F], User] =
+
+  def validate(auth: User => Boolean = _ => true): Kleisli[OptionT[F, ?], Request[F], User] =
     Kleisli[OptionT[F, ?], Request[F], User] { request =>
       for {
         header <- OptionT.fromOption(request.headers.get(Authorization.name))
-        user <- accountService
-          .validate(header.value.replace("Bearer ", ""))
-          .toOption
+        user <- accountService.validate(header.value.replace("Bearer ", "")).toOption
         _ <- OptionT.some[F](logger.debug(s"authorizing ${user.role.show}"))
         result <- if (auth(user)) OptionT.some(user) else OptionT.none
       } yield result

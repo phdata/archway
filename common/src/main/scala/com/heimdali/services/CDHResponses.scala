@@ -10,7 +10,13 @@ object CDHResponses {
 
   case class RoleConfigGroupRef(roleConfigGroupName: String)
 
-  case class AppRole(name: String, `type`: String, hostRef: HostRef, roleState: String, roleConfigGroupRef: RoleConfigGroupRef)
+  case class AppRole(
+      name: String,
+      `type`: String,
+      hostRef: HostRef,
+      roleState: String,
+      roleConfigGroupRef: RoleConfigGroupRef
+  )
 
   case class Services(items: Seq[ServiceInfo])
 

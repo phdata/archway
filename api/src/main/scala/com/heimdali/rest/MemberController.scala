@@ -9,9 +9,8 @@ import io.circe.syntax._
 import org.http4s._
 import org.http4s.dsl.Http4sDsl
 
-class MemberController[F[_] : Monad](authService: TokenAuthService[F],
-                                     memberService: MemberService[F])
-  extends Http4sDsl[F] {
+class MemberController[F[_]: Monad](authService: TokenAuthService[F], memberService: MemberService[F])
+    extends Http4sDsl[F] {
 
   val route: HttpService[F] =
     authService.tokenAuth {

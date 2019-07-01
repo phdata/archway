@@ -11,10 +11,9 @@ import org.apache.hadoop.security.UserGroupInformation
 
 import scala.concurrent.ExecutionContext
 
-class UGILoginContextProvider(appConfig: AppConfig)
-  extends LoginContextProvider with LazyLogging {
+class UGILoginContextProvider(appConfig: AppConfig) extends LoginContextProvider with LazyLogging {
 
-  override def elevate[F[_] : Async, A](user: String)(block: () => A): F[A] =
+  override def elevate[F[_]: Async, A](user: String)(block: () => A): F[A] =
     Async[F].async { callback =>
       logger.info(s"running block on behalf of $user")
       val ugi = UserGroupInformation.createProxyUser(user, UserGroupInformation.getLoginUser)
@@ -34,7 +33,7 @@ class UGILoginContextProvider(appConfig: AppConfig)
       })
     }
 
-  override def kinit[F[_] : Sync](): F[Unit] =
+  override def kinit[F[_]: Sync](): F[Unit] =
     Sync[F].delay {
       logger.info("kiniting api service principal ({})", appConfig.rest.principal)
       try {
@@ -48,12 +47,13 @@ class UGILoginContextProvider(appConfig: AppConfig)
     }
 
   override def hadoopInteraction[F[_], A](block: F[A])(implicit F: Effect[F]): F[A] =
-    Effect[F].delay{
+    Effect[F].delay {
       UserGroupInformation.getLoginUser.doAs(new PrivilegedAction[A] {
         override def run(): A =
           IO.async[A] { cb =>
-            F.runAsync(block)(r => IO(cb(r))).unsafeRunSync()
-          }.unsafeRunSync()
+              F.runAsync(block)(r => IO(cb(r))).unsafeRunSync()
+            }
+            .unsafeRunSync()
       })
     }
 }

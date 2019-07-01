@@ -9,9 +9,8 @@ import com.heimdali.config.ProvisioningConfig
 import com.heimdali.services.ProvisioningService
 import com.typesafe.scalalogging.LazyLogging
 
-class Provisioning[F[_] : Sync : Timer : ContextShift](context: AppContext[F],
-                                                       provisioningService: ProvisioningService[F])
-  extends ScheduledJob[F] with LazyLogging {
+class Provisioning[F[_]: Sync: Timer: ContextShift](context: AppContext[F], provisioningService: ProvisioningService[F])
+    extends ScheduledJob[F] with LazyLogging {
 
   val provisioningConfig: ProvisioningConfig = context.appConfig.provisioning
 

@@ -9,17 +9,17 @@ object DatabaseRole {
 
   implicit val viewer: Show[DatabaseRole] =
     Show.show {
-      case Manager => "manager"
+      case Manager   => "manager"
       case ReadWrite => "readwrite"
-      case ReadOnly => "readonly"
+      case ReadOnly  => "readonly"
     }
 
   def unapply(role: String): Option[DatabaseRole] =
     role match {
       case _ if role matches "managers?" => Some(Manager)
-      case "readonly" => Some(ReadOnly)
-      case "readwrite" => Some(ReadWrite)
-      case _ => None
+      case "readonly"                    => Some(ReadOnly)
+      case "readwrite"                   => Some(ReadWrite)
+      case _                             => None
     }
 
 }

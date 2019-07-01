@@ -6,19 +6,21 @@ import io.circe._
 import io.circe.java8.time._
 import io.circe.syntax._
 
-case class WorkspaceSearchResult(id: Long,
-                                 name: String,
-                                 summary: String,
-                                 behavior: String,
-                                 status: String,
-                                 piiData: Boolean,
-                                 pciData: Boolean,
-                                 phiData: Boolean,
-                                 requested: Instant,
-                                 fullyApproved: Option[Instant],
-                                 diskAllocatedInGB: BigDecimal,
-                                 maxCores: Long,
-                                 maxMemoryInGB: BigDecimal)
+case class WorkspaceSearchResult(
+    id: Long,
+    name: String,
+    summary: String,
+    behavior: String,
+    status: String,
+    piiData: Boolean,
+    pciData: Boolean,
+    phiData: Boolean,
+    requested: Instant,
+    fullyApproved: Option[Instant],
+    diskAllocatedInGB: BigDecimal,
+    maxCores: Long,
+    maxMemoryInGB: BigDecimal
+)
 
 object WorkspaceSearchResult {
 

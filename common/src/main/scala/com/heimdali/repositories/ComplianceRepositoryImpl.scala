@@ -4,8 +4,7 @@ import com.heimdali.models.Compliance
 import doobie._
 import doobie.implicits._
 
-class ComplianceRepositoryImpl
-  extends ComplianceRepository {
+class ComplianceRepositoryImpl extends ComplianceRepository {
 
   implicit val han = CustomLogHandler.logHandler(this.getClass)
 

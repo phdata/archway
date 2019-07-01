@@ -6,8 +6,7 @@ import cats.Monad
 import com.heimdali.AppContext
 import doobie.implicits._
 
-class DBConfigService[F[_] : Monad](context: AppContext[F])
-  extends ConfigService[F] {
+class DBConfigService[F[_]: Monad](context: AppContext[F]) extends ConfigService[F] {
 
   override def getAndSetNextGid: F[Long] =
     (for {

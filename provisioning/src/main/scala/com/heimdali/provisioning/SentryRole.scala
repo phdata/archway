@@ -16,18 +16,24 @@ object SentryRole {
 
   implicit object SentryRoleProvisioningTask extends ProvisioningTask[SentryRole] {
 
-    override def complete[F[_] : Sync](sentryRole: SentryRole, instant: Instant, workspaceContext: WorkspaceContext[F]): F[Unit] =
-      workspaceContext.context.ldapRepository.roleCreated(sentryRole.id, instant)
-        .transact(workspaceContext.context.transactor).void
+    override def complete[F[_]: Sync](
+        sentryRole: SentryRole,
+        instant: Instant,
+        workspaceContext: WorkspaceContext[F]
+    ): F[Unit] =
+      workspaceContext.context.ldapRepository
+        .roleCreated(sentryRole.id, instant)
+        .transact(workspaceContext.context.transactor)
+        .void
 
-    override def run[F[_] : Sync : Clock](sentryRole: SentryRole, workspaceContext: WorkspaceContext[F]): F[Unit] =
+    override def run[F[_]: Sync: Clock](sentryRole: SentryRole, workspaceContext: WorkspaceContext[F]): F[Unit] =
       workspaceContext.context.sentryClient.createRole(sentryRole.name)
 
   }
 
   implicit object SentryRoleDeprovisioningTask extends DeprovisioningTask[SentryRole] {
 
-    override def run[F[_] : Sync : Clock](createRole: SentryRole, workspaceContext: WorkspaceContext[F]): F[Unit] =
+    override def run[F[_]: Sync: Clock](createRole: SentryRole, workspaceContext: WorkspaceContext[F]): F[Unit] =
       workspaceContext.context.sentryClient.dropRole(createRole.name)
 
   }

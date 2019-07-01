@@ -6,8 +6,7 @@ import doobie._
 import doobie.implicits._
 import doobie.util.fragments.whereAnd
 
-class ApprovalRepositoryImpl
-  extends ApprovalRepository {
+class ApprovalRepositoryImpl extends ApprovalRepository {
   implicit val han: LogHandler = CustomLogHandler.logHandler(this.getClass)
 
   def insert(id: Long, approval: Approval): ConnectionIO[Long] =

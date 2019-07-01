@@ -9,18 +9,15 @@ import com.typesafe.scalalogging.LazyLogging
 import doobie._
 import doobie.implicits._
 
-class WorkspaceServiceImpl[F[_] : ConcurrentEffect : ContextShift](provisioningService: ProvisioningService[F],
-                                                                   context: AppContext[F])
-  extends WorkspaceService[F]
-    with LazyLogging {
+class WorkspaceServiceImpl[F[_]: ConcurrentEffect: ContextShift](
+    provisioningService: ProvisioningService[F],
+    context: AppContext[F]
+) extends WorkspaceService[F] with LazyLogging {
 
   def fillHive(dbs: List[HiveAllocation]): F[List[HiveAllocation]] =
     dbs.map {
       case hive if hive.directoryCreated.isDefined =>
-        context
-          .hdfsClient
-          .getConsumption(hive.location)
-          .map(consumed => hive.copy(consumedInGB = Some(consumed)))
+        context.hdfsClient.getConsumption(hive.location).map(consumed => hive.copy(consumedInGB = Some(consumed)))
       case hive => Effect[F].pure(hive)
     }.sequence
 
@@ -55,41 +52,43 @@ class WorkspaceServiceImpl[F[_] : ConcurrentEffect : ContextShift](provisioningS
       updatedWorkspace = workspace.copy(compliance = compliance)
       newWorkspaceId <- context.workspaceRequestRepository.create(updatedWorkspace)
 
-      insertedHive <- workspace.data.traverse[ConnectionIO, HiveAllocation] {
-        db =>
-          for {
-            managerLdap <- context.ldapRepository.create(db.managingGroup.ldapRegistration)
-            managerId <- context.databaseGrantRepository.create(managerLdap.id.get)
-            manager = db.managingGroup.copy(id = Some(managerId), ldapRegistration = managerLdap)
+      insertedHive <- workspace.data.traverse[ConnectionIO, HiveAllocation] { db =>
+        for {
+          managerLdap <- context.ldapRepository.create(db.managingGroup.ldapRegistration)
+          managerId <- context.databaseGrantRepository.create(managerLdap.id.get)
+          manager = db.managingGroup.copy(id = Some(managerId), ldapRegistration = managerLdap)
 
-            _ <- context.memberRepository.create(workspace.requestedBy, managerLdap.id.get)
+          _ <- context.memberRepository.create(workspace.requestedBy, managerLdap.id.get)
 
-            readwrite <- db.readWriteGroup.map { group =>
+          readwrite <- db.readWriteGroup
+            .map { group =>
               for {
                 ldap <- context.ldapRepository.create(group.ldapRegistration)
                 grant <- context.databaseGrantRepository.create(ldap.id.get)
               } yield group.copy(id = Some(grant), ldapRegistration = ldap)
-            }.sequence[ConnectionIO, HiveGrant]
+            }
+            .sequence[ConnectionIO, HiveGrant]
 
-            readonly <- db.readonlyGroup.map { group =>
+          readonly <- db.readonlyGroup
+            .map { group =>
               for {
                 ldap <- context.ldapRepository.create(group.ldapRegistration)
                 grant <- context.databaseGrantRepository.create(ldap.id.get)
               } yield group.copy(id = Some(grant), ldapRegistration = ldap)
-            }.sequence[ConnectionIO, HiveGrant]
+            }
+            .sequence[ConnectionIO, HiveGrant]
 
-            beforeCreate = db.copy(managingGroup = manager, readWriteGroup = readwrite, readonlyGroup = readonly)
-            newHiveId <- context.databaseRepository.create(beforeCreate)
-            _ <- context.workspaceRequestRepository.linkHive(newWorkspaceId, newHiveId)
-          } yield beforeCreate.copy(id = Some(newHiveId))
+          beforeCreate = db.copy(managingGroup = manager, readWriteGroup = readwrite, readonlyGroup = readonly)
+          newHiveId <- context.databaseRepository.create(beforeCreate)
+          _ <- context.workspaceRequestRepository.linkHive(newWorkspaceId, newHiveId)
+        } yield beforeCreate.copy(id = Some(newHiveId))
       }
 
-      insertedYarn <- workspace.processing.traverse[ConnectionIO, Yarn] {
-        yarn =>
-          for {
-            newYarnId <- context.yarnRepository.create(yarn)
-            _ <- context.workspaceRequestRepository.linkPool(newWorkspaceId, newYarnId)
-          } yield yarn.copy(id = Some(newYarnId))
+      insertedYarn <- workspace.processing.traverse[ConnectionIO, Yarn] { yarn =>
+        for {
+          newYarnId <- context.yarnRepository.create(yarn)
+          _ <- context.workspaceRequestRepository.linkPool(newWorkspaceId, newYarnId)
+        } yield yarn.copy(id = Some(newYarnId))
       }
 
       insertedApplications <- workspace.applications.traverse[ConnectionIO, Application] { app =>
@@ -118,14 +117,22 @@ class WorkspaceServiceImpl[F[_] : ConcurrentEffect : ContextShift](provisioningS
           _ <- context.workspaceRequestRepository.linkTopic(newWorkspaceId, newTopicId)
         } yield beforeCreate.copy(id = Some(newTopicId))
       }
-    } yield updatedWorkspace.copy(id = Some(newWorkspaceId), data = insertedHive, processing = insertedYarn, applications = insertedApplications, kafkaTopics = insertedTopics))
-      .transact(context.transactor)
+    } yield
+      updatedWorkspace.copy(
+        id = Some(newWorkspaceId),
+        data = insertedHive,
+        processing = insertedYarn,
+        applications = insertedApplications,
+        kafkaTopics = insertedTopics
+      )).transact(context.transactor)
 
   override def approve(id: Long, approval: Approval): F[Approval] =
     for {
       approval <- context.approvalRepository.create(id, approval).transact(context.transactor)
       maybeWorkspace <- find(id).value
-      _ <- maybeWorkspace.map(provisioningService.attemptProvision(_, context.appConfig.approvers.required)).getOrElse(().pure[F])
+      _ <- maybeWorkspace
+        .map(provisioningService.attemptProvision(_, context.appConfig.approvers.required))
+        .getOrElse(().pure[F])
     } yield approval
 
   override def findByUsername(distinguishedName: String): OptionT[F, WorkspaceRequest] =
@@ -143,17 +150,20 @@ class WorkspaceServiceImpl[F[_] : ConcurrentEffect : ContextShift](provisioningS
 
   override def yarnInfo(id: Long): F[List[YarnInfo]] =
     context.yarnRepository.findByWorkspaceId(id).transact(context.transactor).flatMap { workspace =>
-      workspace.traverse(yarn => context.yarnClient.applications(yarn.poolName)
-        .map(apps => YarnInfo(yarn.poolName, apps)))
+      workspace.traverse(yarn =>
+        context.yarnClient.applications(yarn.poolName).map(apps => YarnInfo(yarn.poolName, apps)))
     }
 
   override def hiveDetails(id: Long): F[List[HiveDatabase]] =
     for {
       datas <- context.databaseRepository.findByWorkspace(id).transact(context.transactor)
-      result <- datas.map {
-        case h if h.databaseCreated.isDefined => OptionT.liftF(context.hiveClient.describeDatabase(h.name))
-        case _ => OptionT.none[F, HiveDatabase]
-      }.traverse(_.value).map(_.flatten)
+      result <- datas
+        .map {
+          case h if h.databaseCreated.isDefined => OptionT.liftF(context.hiveClient.describeDatabase(h.name))
+          case _                                => OptionT.none[F, HiveDatabase]
+        }
+        .traverse(_.value)
+        .map(_.flatten)
     } yield result
 
   override def reviewerList(role: ApproverRole): F[List[WorkspaceSearchResult]] =

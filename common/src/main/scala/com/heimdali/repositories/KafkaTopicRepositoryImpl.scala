@@ -14,9 +14,7 @@ class KafkaTopicRepositoryImpl extends KafkaTopicRepository {
     Statements.create(kafkaTopic).withUniqueGeneratedKeys("id")
 
   override def topicCreated(id: Long, time: Instant): ConnectionIO[Int] =
-    Statements
-      .topicCreated(id, time)
-      .run
+    Statements.topicCreated(id, time).run
 
   private def grant(role: Statements.KafkaGrantHeader, ldap: LDAPRegistration, attributes: List[LDAPAttribute]) =
     TopicGrant(
@@ -29,27 +27,34 @@ class KafkaTopicRepositoryImpl extends KafkaTopicRepository {
 
   override def findByWorkspaceId(workspaceId: Long): doobie.ConnectionIO[List[KafkaTopic]] =
     Statements
-      .findByWorkspaceId(workspaceId).
-      to[List]
-    .map(_.groupBy(r => (r._1, r._2, r._3, r._5, r._6)).map {
-      case ((header, manager, managerLDAP, readonly, readonlyLDAP), group) =>
-        KafkaTopic(
-          header.name,
-          header.partitions,
-          header.replicationFactor,
-          grant(manager, managerLDAP, group.map(_._4)),
-          grant(readonly, readonlyLDAP, group.map(_._7)),
-          header.id
-        )
-    }.toList)
+      .findByWorkspaceId(workspaceId)
+      .to[List]
+      .map(_.groupBy(r => (r._1, r._2, r._3, r._5, r._6)).map {
+        case ((header, manager, managerLDAP, readonly, readonlyLDAP), group) =>
+          KafkaTopic(
+            header.name,
+            header.partitions,
+            header.replicationFactor,
+            grant(manager, managerLDAP, group.map(_._4)),
+            grant(readonly, readonlyLDAP, group.map(_._7)),
+            header.id
+          )
+      }.toList)
 
   object Statements {
 
-    case class KafkaHeader(name: String, partitions: Int, replicationFactor: Int, id: Option[Long], topicCreated: Option[Instant])
+    case class KafkaHeader(
+        name: String,
+        partitions: Int,
+        replicationFactor: Int,
+        id: Option[Long],
+        topicCreated: Option[Instant]
+    )
 
     case class KafkaGrantHeader(name: String, actions: String, id: Option[Long], topicAccess: Option[Instant])
 
-    type KafkaRecord = (KafkaHeader, KafkaGrantHeader, LDAPRecord, LDAPAttribute, KafkaGrantHeader, LDAPRecord, LDAPAttribute)
+    type KafkaRecord =
+      (KafkaHeader, KafkaGrantHeader, LDAPRecord, LDAPAttribute, KafkaGrantHeader, LDAPRecord, LDAPAttribute)
 
     def create(kafkaTopic: KafkaTopic): Update0 =
       sql"""

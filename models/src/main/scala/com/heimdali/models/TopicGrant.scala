@@ -11,11 +11,13 @@ import io.circe._
 import io.circe.syntax._
 import io.circe.java8.time._
 
-case class TopicGrant(name: String,
-                      ldapRegistration: LDAPRegistration,
-                      actions: String,
-                      id: Option[Long] = None,
-                      topicAccess: Option[Instant] = None)
+case class TopicGrant(
+    name: String,
+    ldapRegistration: LDAPRegistration,
+    actions: String,
+    id: Option[Long] = None,
+    topicAccess: Option[Instant] = None
+)
 
 object TopicGrant {
 

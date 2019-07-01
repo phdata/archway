@@ -21,7 +21,10 @@ class ApplicationRepositoryImpl extends ApplicationRepository {
       .findByWorkspaceId(workspaceId)
       .to[List]
       .map(_.groupBy(h => (h._1, h._2)).map {
-        case ((Statements.AppHeader(name, consumerGroup, applicationType, logo, language, repository, id), ldap), group) =>
+        case (
+            (Statements.AppHeader(name, consumerGroup, applicationType, logo, language, repository, id), ldap),
+            group
+            ) =>
           Application(
             name,
             consumerGroup,
@@ -30,12 +33,21 @@ class ApplicationRepositoryImpl extends ApplicationRepository {
             logo,
             language,
             repository,
-            id)
+            id
+          )
       }.toList)
 
   object Statements {
 
-    case class AppHeader(name: String, consumerGroup: String, applicationType: Option[String], logo: Option[String], language: Option[String], repository: Option[String], id: Option[Long])
+    case class AppHeader(
+        name: String,
+        consumerGroup: String,
+        applicationType: Option[String],
+        logo: Option[String],
+        language: Option[String],
+        repository: Option[String],
+        id: Option[Long]
+    )
 
     type ApplicationRecord = (AppHeader, LDAPRecord, LDAPAttribute)
 

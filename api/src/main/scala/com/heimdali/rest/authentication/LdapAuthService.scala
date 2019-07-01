@@ -9,9 +9,7 @@ import org.http4s.headers.Authorization
 import org.http4s.server.AuthMiddleware
 import org.http4s.{BasicCredentials, Request}
 
-class LdapAuthService[F[_]: Sync](accountService: AccountService[F])
-    extends AuthService[F]
-    with LazyLogging {
+class LdapAuthService[F[_]: Sync](accountService: AccountService[F]) extends AuthService[F] with LazyLogging {
 
   def authStore: Kleisli[OptionT[F, ?], Request[F], Token] =
     Kleisli[OptionT[F, ?], Request[F], Token] { request =>

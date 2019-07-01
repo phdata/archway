@@ -6,8 +6,8 @@ import com.heimdali.AppContext
 import com.heimdali.caching.CacheEntry
 import com.typesafe.scalalogging.LazyLogging
 
-class CacheInitializer[F[_] : Sync : ContextShift : Timer](context: AppContext[F])
-  extends ScheduledJob[F] with LazyLogging {
+class CacheInitializer[F[_]: Sync: ContextShift: Timer](context: AppContext[F])
+    extends ScheduledJob[F] with LazyLogging {
 
   override def work: F[Unit] =
     for {
@@ -17,4 +17,3 @@ class CacheInitializer[F[_] : Sync : ContextShift : Timer](context: AppContext[F
     } yield ()
 
 }
-

@@ -21,7 +21,7 @@ class KerberosClientImpl[F[_]: Sync](appConfig: AppConfig) extends KerberosClien
   def spnegoUsername(header: String): EitherT[F, Throwable, String] = {
     logger.debug("header " + header)
     // Header looks like: 'Negotiate <token>', strip off the token
-    Try{
+    Try {
       val base64KerberosToken = header.substring(10)
 
       val kerberosToken = Base64.getDecoder.decode(base64KerberosToken)
@@ -34,7 +34,7 @@ class KerberosClientImpl[F[_]: Sync](appConfig: AppConfig) extends KerberosClien
       val validationResult = validator.validateTicket(kerberosToken)
       validationResult.username().split("@").head
     } match {
-      case Success(user) => EitherT.right(user.pure[F])
+      case Success(user)      => EitherT.right(user.pure[F])
       case Failure(exception) => EitherT.left(exception.pure[F])
     }
   }

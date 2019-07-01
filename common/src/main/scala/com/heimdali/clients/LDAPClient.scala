@@ -10,7 +10,13 @@ case object GroupAlreadyExists extends GroupCreationError
 
 case class GeneralError(throwable: Throwable) extends GroupCreationError
 
-case class LDAPUser(name: String, username: String, distinguishedName: String, memberships: Seq[String], email: Option[String])
+case class LDAPUser(
+    name: String,
+    username: String,
+    distinguishedName: String,
+    memberships: Seq[String],
+    email: Option[String]
+)
 
 trait LDAPClient[F[_]] {
   def findUser(distinguishedName: String): OptionT[F, LDAPUser]

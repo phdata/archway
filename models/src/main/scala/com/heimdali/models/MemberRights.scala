@@ -10,11 +10,11 @@ case class MemberRights(name: String, id: Long, role: DatabaseRole)
 object MemberRights {
 
   implicit val encoder: Encoder[MemberRights] =
-  Encoder.instance { r =>
-    Json.obj(
-      "id" -> r.id.asJson,
-      "role" -> r.role.show.asJson
-    )
-  }
+    Encoder.instance { r =>
+      Json.obj(
+        "id" -> r.id.asJson,
+        "role" -> r.role.show.asJson
+      )
+    }
 
 }

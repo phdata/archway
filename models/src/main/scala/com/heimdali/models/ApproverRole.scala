@@ -17,7 +17,7 @@ object ApproverRole {
   def parseRole(role: String): ApproverRole =
     role match {
       case "infra" => Infra
-      case "risk" => Risk
+      case "risk"  => Risk
     }
 
   implicit def approverShow[A <: ApproverRole]: Show[A] =

@@ -16,9 +16,8 @@ trait EmailService[F[_]] {
 
 }
 
-class EmailServiceImpl[F[_] : Effect](context: AppContext[F],
-                                      workspaceService: WorkspaceService[F])
-  extends EmailService[F] with LazyLogging {
+class EmailServiceImpl[F[_]: Effect](context: AppContext[F], workspaceService: WorkspaceService[F])
+    extends EmailService[F] with LazyLogging {
 
   lazy val templateEngine: TemplateEngine = new TemplateEngine()
 
@@ -50,8 +49,8 @@ class EmailServiceImpl[F[_] : Effect](context: AppContext[F],
       addressList = context.appConfig.approvers.notificationEmail
       fromAddress = context.appConfig.smtp.fromEmail
     } yield {
-      addressList.map(recipient =>
-        context.emailClient.send("A New Workspace Is Waiting", email, fromAddress, recipient)
+      addressList.map(
+        recipient => context.emailClient.send("A New Workspace Is Waiting", email, fromAddress, recipient)
       )
     }
   }

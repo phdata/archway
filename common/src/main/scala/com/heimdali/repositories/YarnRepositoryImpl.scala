@@ -14,26 +14,18 @@ class YarnRepositoryImpl extends YarnRepository {
   implicit val han: LogHandler = CustomLogHandler.logHandler(this.getClass)
 
   override def complete(id: Long, time: Instant): ConnectionIO[Int] =
-    Statements
-      .complete(id, time)
-      .run
+    Statements.complete(id, time).run
 
   override def find(id: Long): OptionT[ConnectionIO, Yarn] =
     OptionT {
-      Statements
-        .find(id)
-        .option
+      Statements.find(id).option
     }
 
   override def create(yarn: Yarn): ConnectionIO[Long] =
-    Statements
-      .insert(yarn)
-      .withUniqueGeneratedKeys[Long]("id")
+    Statements.insert(yarn).withUniqueGeneratedKeys[Long]("id")
 
   override def findByWorkspaceId(id: Long): ConnectionIO[List[Yarn]] =
-      Statements
-        .findByWorkspace(id)
-        .to[List]
+    Statements.findByWorkspace(id).to[List]
 
   object Statements {
 
@@ -49,7 +41,7 @@ class YarnRepositoryImpl extends YarnRepository {
       """
 
     def insert(yarn: Yarn): Update0 =
-    sql"""
+      sql"""
        insert into resource_pool (pool_name, max_cores, max_memory_in_gb)
        values(
         ${yarn.poolName},
@@ -69,7 +61,9 @@ class YarnRepositoryImpl extends YarnRepository {
       (selectQuery ++ whereAnd(fr"rp.id = $id")).query[Yarn]
 
     def findByWorkspace(id: Long): Query0[Yarn] =
-      (selectQuery ++ fr"inner join workspace_pool wp on wp.resource_pool_id = rp.id" ++ whereAnd(fr"wp.workspace_request_id= $id")).query[Yarn]
+      (selectQuery ++ fr"inner join workspace_pool wp on wp.resource_pool_id = rp.id" ++ whereAnd(
+        fr"wp.workspace_request_id= $id"
+      )).query[Yarn]
 
   }
 

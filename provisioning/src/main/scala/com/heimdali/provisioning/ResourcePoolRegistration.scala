@@ -16,18 +16,31 @@ object ResourcePoolRegistration {
 
   implicit object ResourcePoolRegistrationProvisioningTask extends ProvisioningTask[ResourcePoolRegistration] {
 
-    override def complete[F[_] : Sync](resourcePoolRegistration: ResourcePoolRegistration, instant: Instant, workspaceContext: WorkspaceContext[F]): F[Unit] =
-      workspaceContext.context.yarnRepository.complete(resourcePoolRegistration.id, instant)
-        .transact(workspaceContext.context.transactor).void
+    override def complete[F[_]: Sync](
+        resourcePoolRegistration: ResourcePoolRegistration,
+        instant: Instant,
+        workspaceContext: WorkspaceContext[F]
+    ): F[Unit] =
+      workspaceContext.context.yarnRepository
+        .complete(resourcePoolRegistration.id, instant)
+        .transact(workspaceContext.context.transactor)
+        .void
 
-    override def run[F[_] : Sync : Clock](resourcePoolRegistration: ResourcePoolRegistration, workspaceContext: WorkspaceContext[F]): F[Unit] =
-      workspaceContext.context.yarnClient.createPool(resourcePoolRegistration.name, resourcePoolRegistration.cores, resourcePoolRegistration.memory)
+    override def run[F[_]: Sync: Clock](
+        resourcePoolRegistration: ResourcePoolRegistration,
+        workspaceContext: WorkspaceContext[F]
+    ): F[Unit] =
+      workspaceContext.context.yarnClient
+        .createPool(resourcePoolRegistration.name, resourcePoolRegistration.cores, resourcePoolRegistration.memory)
 
   }
 
   implicit object ResourcePoolRegistrationDeprovisioningTask extends DeprovisioningTask[ResourcePoolRegistration] {
 
-    override def run[F[_] : Sync : Clock](resourcePoolRegistration: ResourcePoolRegistration, workspaceContext: WorkspaceContext[F]): F[Unit] =
+    override def run[F[_]: Sync: Clock](
+        resourcePoolRegistration: ResourcePoolRegistration,
+        workspaceContext: WorkspaceContext[F]
+    ): F[Unit] =
       workspaceContext.context.yarnClient.deletePool(resourcePoolRegistration.name)
 
   }

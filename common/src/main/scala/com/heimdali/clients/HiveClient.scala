@@ -26,19 +26,22 @@ trait HiveClient[F[_]] {
 
 }
 
-class HiveClientImpl[F[_]](loginContextProvider: LoginContextProvider,
-                           transactor: Transactor[F])
-                          (implicit val F: Effect[F])
-  extends HiveClient[F] {
+class HiveClientImpl[F[_]](loginContextProvider: LoginContextProvider, transactor: Transactor[F])(
+    implicit val F: Effect[F]
+) extends HiveClient[F] {
 
   implicit val logHandler = CustomLogHandler.logHandler(this.getClass)
 
-  override def createDatabase(name: String, location: String, comment: String, dbProperties: Map[String, String]): F[Unit] =
+  override def createDatabase(
+      name: String,
+      location: String,
+      comment: String,
+      dbProperties: Map[String, String]
+  ): F[Unit] =
     loginContextProvider.hadoopInteraction {
       showDatabases().flatMap {
         case databases if !databases.contains(name) =>
-          (createDatabaseStatement(name, location, comment, dbProperties)
-            .update.run.transact(transactor).void)
+          (createDatabaseStatement(name, location, comment, dbProperties).update.run.transact(transactor).void)
         case _ =>
           Sync[F].unit
       }
@@ -74,12 +77,17 @@ class HiveClientImpl[F[_]](loginContextProvider: LoginContextProvider,
   }
 
   override def dropTable(databaseName: String, name: String): F[Unit] = {
-    (sql"""DROP TABLE IF EXISTS """ ++ Fragment.const(databaseName) ++ fr"." ++ Fragment.const(name))
-      .update.run.transact(transactor).void
+    (sql"""DROP TABLE IF EXISTS """ ++ Fragment.const(databaseName) ++ fr"." ++ Fragment.const(name)).update.run
+      .transact(transactor)
+      .void
   }
 
-  private[clients] def createDatabaseStatement(name: String, location: String, comment: String, dbProperties: Map[String, String]): Fragment =
-  {
+  private[clients] def createDatabaseStatement(
+      name: String,
+      location: String,
+      comment: String,
+      dbProperties: Map[String, String]
+  ): Fragment = {
     fr"CREATE DATABASE" ++ Fragment.const(name) ++ Fragment.const(" COMMENT ") ++
       fr"$comment" ++
       Fragment.const("LOCATION ") ++
@@ -91,10 +99,12 @@ class HiveClientImpl[F[_]](loginContextProvider: LoginContextProvider,
     if (dbProperties.isEmpty) {
       fr""
     } else {
-      val propertyPairs = dbProperties.map {
-        case (key, value) =>
-          fr"$key = $value"
-      }.reduce((l, r) => l ++ fr"," ++ r)
+      val propertyPairs = dbProperties
+        .map {
+          case (key, value) =>
+            fr"$key = $value"
+        }
+        .reduce((l, r) => l ++ fr"," ++ r)
 
       fr"with DBPROPERTIES(" ++ propertyPairs ++ fr")"
     }

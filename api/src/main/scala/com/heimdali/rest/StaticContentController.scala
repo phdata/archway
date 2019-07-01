@@ -11,8 +11,8 @@ import org.http4s.headers.Location
 
 import scala.concurrent.ExecutionContext
 
-class StaticContentController[F[_] : ContextShift : Sync](appContext: AppContext[F], blockingEc: ExecutionContext)
-  extends Http4sDsl[F] with LazyLogging{
+class StaticContentController[F[_]: ContextShift: Sync](appContext: AppContext[F], blockingEc: ExecutionContext)
+    extends Http4sDsl[F] with LazyLogging {
 
   val route: HttpRoutes[F] = {
 
@@ -24,13 +24,11 @@ class StaticContentController[F[_] : ContextShift : Sync](appContext: AppContext
       case req @ GET -> Root / path =>
         val fullFilePath = s"${appContext.appConfig.ui.staticContentDir}/$path"
         logger.debug(s"serving $fullFilePath")
-        StaticFile.fromFile(new File(fullFilePath), blockingEc, Some(req))
-          .getOrElseF(NotFound())
+        StaticFile.fromFile(new File(fullFilePath), blockingEc, Some(req)).getOrElseF(NotFound())
       case req @ GET -> Root / dir / path =>
         val fullFilePath = s"${appContext.appConfig.ui.staticContentDir}/$dir/$path"
         logger.debug(s"serving $fullFilePath")
-        StaticFile.fromFile(new File(fullFilePath), blockingEc, Some(req))
-          .getOrElseF(NotFound())
+        StaticFile.fromFile(new File(fullFilePath), blockingEc, Some(req)).getOrElseF(NotFound())
     }
   }
 

@@ -10,10 +10,12 @@ import io.circe.syntax._
 import org.http4s._
 import org.http4s.dsl.Http4sDsl
 
-
-class AccountController[F[_] : Sync](authService: AuthService[F], tokenAuthService: TokenAuthService[F],
-                                     accountService: AccountService[F], appContext: AppContext[F])
-  extends Http4sDsl[F] {
+class AccountController[F[_]: Sync](
+    authService: AuthService[F],
+    tokenAuthService: TokenAuthService[F],
+    accountService: AccountService[F],
+    appContext: AppContext[F]
+) extends Http4sDsl[F] {
 
   val clientAuthRoutes: HttpRoutes[F] =
     authService.clientAuth {
@@ -37,13 +39,10 @@ class AccountController[F[_] : Sync](authService: AuthService[F], tokenAuthServi
           Ok(user.asJson)
 
         case POST -> Root / "workspace" as user =>
-          accountService
-            .createWorkspace(user)
-            .value
-            .flatMap {
-              case Some(workspace) => Created(workspace.asJson)
-              case None => Conflict()
-            }
+          accountService.createWorkspace(user).value.flatMap {
+            case Some(workspace) => Created(workspace.asJson)
+            case None            => Conflict()
+          }
 
         case GET -> Root / "workspace" as user =>
           for {

@@ -14,4 +14,3 @@ trait ApplicationRepository {
   def findByWorkspaceId(workspaceId: Long): ConnectionIO[List[Application]]
 
 }
-

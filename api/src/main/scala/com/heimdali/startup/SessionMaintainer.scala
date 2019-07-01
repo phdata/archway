@@ -6,8 +6,8 @@ import com.heimdali.AppContext
 import com.heimdali.config.ClusterConfig
 import com.typesafe.scalalogging.LazyLogging
 
-class SessionMaintainer[F[_] : Sync : Timer : ContextShift](context: AppContext[F])
-  extends ScheduledJob[F] with LazyLogging {
+class SessionMaintainer[F[_]: Sync: Timer: ContextShift](context: AppContext[F])
+    extends ScheduledJob[F] with LazyLogging {
 
   val clusterConfig: ClusterConfig = context.appConfig.cluster
 

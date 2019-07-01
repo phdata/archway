@@ -6,4 +6,3 @@ import doobie.free.connection.ConnectionIO
 trait ComplianceRepository {
   def create(compliance: Compliance): ConnectionIO[Compliance]
 }
-

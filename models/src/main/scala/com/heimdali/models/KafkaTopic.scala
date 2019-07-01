@@ -4,12 +4,14 @@ import cats.Show
 import io.circe._
 import io.circe.syntax._
 
-case class KafkaTopic(name: String,
-                      partitions: Int,
-                      replicationFactor: Int,
-                      managingRole: TopicGrant,
-                      readonlyRole: TopicGrant,
-                      id: Option[Long] = None)
+case class KafkaTopic(
+    name: String,
+    partitions: Int,
+    replicationFactor: Int,
+    managingRole: TopicGrant,
+    readonlyRole: TopicGrant,
+    id: Option[Long] = None
+)
 
 object KafkaTopic {
 
@@ -39,6 +41,5 @@ object KafkaTopic {
         readonlyRole <- t.downField("readonly_role").as[TopicGrant]
       } yield KafkaTopic(name, partitions, replicationFactor, managingRole, readonlyRole, id)
     }
-
 
 }

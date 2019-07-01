@@ -13,9 +13,13 @@ import simulacrum.typeclass
 @typeclass
 trait Provisionable[A] {
 
-  def provision[F[_] : Clock : Sync](resource: A, workspaceContext: WorkspaceContext[F])(implicit show: Show[A]): WriterT[F, NonEmptyList[Message], ProvisionResult]
+  def provision[F[_]: Clock: Sync](resource: A, workspaceContext: WorkspaceContext[F])(
+      implicit show: Show[A]
+  ): WriterT[F, NonEmptyList[Message], ProvisionResult]
 
-  def deprovision[F[_] : Clock : Sync](resource: A, workspaceContext: WorkspaceContext[F])(implicit show: Show[A]): WriterT[F, NonEmptyList[Message], ProvisionResult]
+  def deprovision[F[_]: Clock: Sync](resource: A, workspaceContext: WorkspaceContext[F])(
+      implicit show: Show[A]
+  ): WriterT[F, NonEmptyList[Message], ProvisionResult]
 
 }
 
@@ -24,35 +28,44 @@ object Provisionable {
   def deriveFromSteps[A](resources: (A, AppConfig) => NonEmptyList[TypeWith[Provisionable]]): Provisionable[A] =
     new Provisionable[A] {
 
-      private def provisionOne[F[_] : Clock : Sync](workspaceContext: WorkspaceContext[F])
-                                                   (typewith: TypeWith[Provisionable]): WriterT[F, NonEmptyList[Message], ProvisionResult] = {
+      private def provisionOne[F[_]: Clock: Sync](
+          workspaceContext: WorkspaceContext[F]
+      )(typewith: TypeWith[Provisionable]): WriterT[F, NonEmptyList[Message], ProvisionResult] = {
         import typewith._
         typewith.evidence.provision(typewith.value, workspaceContext)
       }
 
-      private def deprovisionOne[F[_] : Clock : Sync](workspaceContext: WorkspaceContext[F])
-                                                     (typewith: TypeWith[Provisionable]): WriterT[F, NonEmptyList[Message], ProvisionResult] = {
+      private def deprovisionOne[F[_]: Clock: Sync](
+          workspaceContext: WorkspaceContext[F]
+      )(typewith: TypeWith[Provisionable]): WriterT[F, NonEmptyList[Message], ProvisionResult] = {
         import typewith._
         typewith.evidence.deprovision(typewith.value, workspaceContext)
       }
 
-      override def provision[F[_] : Clock : Sync](resource: A, workspaceContext: WorkspaceContext[F])
-                                                 (implicit show: Show[A]): WriterT[F, NonEmptyList[Message], ProvisionResult] =
+      override def provision[F[_]: Clock: Sync](resource: A, workspaceContext: WorkspaceContext[F])(
+          implicit show: Show[A]
+      ): WriterT[F, NonEmptyList[Message], ProvisionResult] =
         resources(resource, workspaceContext.context.appConfig)
           .nonEmptyTraverse(provisionOne(workspaceContext))
           .map(_.reduce)
 
-      override def deprovision[F[_] : Clock : Sync](resource: A, workspaceContext: WorkspaceContext[F])
-                                                   (implicit show: Show[A]): WriterT[F, NonEmptyList[Message], ProvisionResult] =
+      override def deprovision[F[_]: Clock: Sync](resource: A, workspaceContext: WorkspaceContext[F])(
+          implicit show: Show[A]
+      ): WriterT[F, NonEmptyList[Message], ProvisionResult] =
         resources(resource, workspaceContext.context.appConfig)
           .nonEmptyTraverse(deprovisionOne(workspaceContext)(_))
           .map(_.reduce)
     }
 
-  def deriveFromTasks[A](implicit provisioningTask: ProvisioningTask[A], deprovisioningTask: DeprovisioningTask[A]): Provisionable[A] =
+  def deriveFromTasks[A](
+      implicit provisioningTask: ProvisioningTask[A],
+      deprovisioningTask: DeprovisioningTask[A]
+  ): Provisionable[A] =
     new Provisionable[A] with LazyLogging {
 
-      override def deprovision[F[_] : Clock : Sync](resource: A, workspaceContext: WorkspaceContext[F])(implicit show: Show[A]): WriterT[F, NonEmptyList[Message], ProvisionResult] =
+      override def deprovision[F[_]: Clock: Sync](resource: A, workspaceContext: WorkspaceContext[F])(
+          implicit show: Show[A]
+      ): WriterT[F, NonEmptyList[Message], ProvisionResult] =
         WriterT {
           logger.info("DEPROVISIONING STARTING: {}", resource)
           deprovisioningTask.run(resource, workspaceContext).attempt.map {
@@ -69,7 +82,9 @@ object Provisionable {
           }
         }
 
-      override def provision[F[_] : Clock : Sync](resource: A, workspaceContext: WorkspaceContext[F])(implicit show: Show[A]): WriterT[F, NonEmptyList[Message], ProvisionResult] =
+      override def provision[F[_]: Clock: Sync](resource: A, workspaceContext: WorkspaceContext[F])(
+          implicit show: Show[A]
+      ): WriterT[F, NonEmptyList[Message], ProvisionResult] =
         WriterT(
           for {
             _ <- Sync[F].delay(logger.info("PROVISIONING STARTING: {}", resource))

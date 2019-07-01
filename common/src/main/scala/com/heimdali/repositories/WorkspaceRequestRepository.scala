@@ -17,7 +17,7 @@ trait WorkspaceRequestRepository {
 
   def findUnprovisioned(): ConnectionIO[List[WorkspaceRequest]]
 
-  def markProvisioned(workspaceId: Long, time: Instant):  ConnectionIO[Int]
+  def markProvisioned(workspaceId: Long, time: Instant): ConnectionIO[Int]
 
   def linkHive(workspaceId: Long, hiveDatabaseId: Long): ConnectionIO[Int]
 

@@ -16,25 +16,35 @@ object KafkaTopicRegistration {
 
   implicit object KafkaTopicRegistrationProvisioningTask extends ProvisioningTask[KafkaTopicRegistration] {
 
-    override def complete[F[_] : Sync](kafkaTopicRegistration: KafkaTopicRegistration, instant: Instant, workspaceContext: WorkspaceContext[F]): F[Unit] =
-      workspaceContext.context.kafkaRepository.topicCreated(workspaceContext.workspaceId, instant)
-        .transact(workspaceContext.context.transactor).void
+    override def complete[F[_]: Sync](
+        kafkaTopicRegistration: KafkaTopicRegistration,
+        instant: Instant,
+        workspaceContext: WorkspaceContext[F]
+    ): F[Unit] =
+      workspaceContext.context.kafkaRepository
+        .topicCreated(workspaceContext.workspaceId, instant)
+        .transact(workspaceContext.context.transactor)
+        .void
 
-    override def run[F[_] : Sync : Clock](kafkaTopicRegistration: KafkaTopicRegistration, workspaceContext: WorkspaceContext[F]): F[Unit] =
-      workspaceContext
-        .context
-        .kafkaClient
-        .createTopic(kafkaTopicRegistration.name, kafkaTopicRegistration.partitions, kafkaTopicRegistration.replicationFactor)
+    override def run[F[_]: Sync: Clock](
+        kafkaTopicRegistration: KafkaTopicRegistration,
+        workspaceContext: WorkspaceContext[F]
+    ): F[Unit] =
+      workspaceContext.context.kafkaClient.createTopic(
+        kafkaTopicRegistration.name,
+        kafkaTopicRegistration.partitions,
+        kafkaTopicRegistration.replicationFactor
+      )
 
   }
 
   implicit object KafkaTopicRegistrationDeprovisioningTask extends DeprovisioningTask[KafkaTopicRegistration] {
 
-    override def run[F[_] : Sync : Clock](kafkaTopicRegistration: KafkaTopicRegistration, workspaceContext: WorkspaceContext[F]): F[Unit] =
-      workspaceContext
-        .context
-        .kafkaClient
-        .deleteTopic(kafkaTopicRegistration.name)
+    override def run[F[_]: Sync: Clock](
+        kafkaTopicRegistration: KafkaTopicRegistration,
+        workspaceContext: WorkspaceContext[F]
+    ): F[Unit] =
+      workspaceContext.context.kafkaClient.deleteTopic(kafkaTopicRegistration.name)
 
   }
 

@@ -16,18 +16,24 @@ object GroupGrant {
 
   implicit object GrantGroupAccessProvisioningTask extends ProvisioningTask[GroupGrant] {
 
-    override def complete[F[_] : Sync](grantGroupAccess: GroupGrant, instant: Instant, workspaceContext: WorkspaceContext[F]): F[Unit] =
-      workspaceContext.context.ldapRepository.groupAssociated(grantGroupAccess.ldapId, instant)
-        .transact(workspaceContext.context.transactor).void
+    override def complete[F[_]: Sync](
+        grantGroupAccess: GroupGrant,
+        instant: Instant,
+        workspaceContext: WorkspaceContext[F]
+    ): F[Unit] =
+      workspaceContext.context.ldapRepository
+        .groupAssociated(grantGroupAccess.ldapId, instant)
+        .transact(workspaceContext.context.transactor)
+        .void
 
-    override def run[F[_] : Sync : Clock](grantGroupAccess: GroupGrant, workspaceContext: WorkspaceContext[F]): F[Unit] =
+    override def run[F[_]: Sync: Clock](grantGroupAccess: GroupGrant, workspaceContext: WorkspaceContext[F]): F[Unit] =
       workspaceContext.context.sentryClient.grantGroup(grantGroupAccess.groupName, grantGroupAccess.roleName)
 
   }
 
   implicit object GrantGroupAccessDeprovisioningTask extends DeprovisioningTask[GroupGrant] {
 
-    override def run[F[_] : Sync : Clock](grantGroupAccess: GroupGrant, workspaceContext: WorkspaceContext[F]): F[Unit] =
+    override def run[F[_]: Sync: Clock](grantGroupAccess: GroupGrant, workspaceContext: WorkspaceContext[F]): F[Unit] =
       workspaceContext.context.sentryClient.revokeGroup(grantGroupAccess.groupName, grantGroupAccess.roleName)
 
   }

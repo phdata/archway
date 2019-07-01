@@ -1,7 +1,7 @@
 pipelines:
   default:
     - step:
-        name: "Build and Test API"
+        name: 'Build and Test API'
         image: openjdk:8-jdk
         services:
           - postgres
@@ -12,8 +12,9 @@ pipelines:
           - './flyway/flyway migrate -url="jdbc:postgresql://localhost:5432/heimdali" -user=postgres -password=postgres'
           - ./sbt common/test
           - ./sbt api/test
+          - ./sbt scalafmtCheck
     - step:
-        name: "Build and Test UI"
+        name: 'Build and Test UI'
         image: node:9
         caches:
           - node
@@ -22,7 +23,7 @@ pipelines:
           - npm i
           - npm run-script prepare
     - step:
-        name: "Validate Parcel and CSD"
+        name: 'Validate Parcel and CSD'
         image: jotunn/cm-validator
         script:
           - java -jar /usr/src/validator.jar -p $PWD/cloudera-integration/parcel/heimdali-meta/parcel.json
@@ -34,7 +35,7 @@ pipelines:
     nightly-build:
       - step:
           size: 2x # Double resources available for this step.
-          name: "Build, Test and Package API"
+          name: 'Build, Test and Package API'
           image: openjdk:8-jdk
           services:
             - postgres
@@ -55,7 +56,7 @@ pipelines:
             - ./sbt integration-test/test:package
             - ./sbt common/test:package
       - step:
-          name: "Build, Test and Package UI"
+          name: 'Build, Test and Package UI'
           image: node:9
           caches:
             - node
@@ -66,7 +67,7 @@ pipelines:
             - npm i
             - npm run-script prepare
       - step:
-          name: "Validate, Build, Deploy Parcel and CSD"
+          name: 'Validate, Build, Deploy Parcel and CSD'
           image: jotunn/cm-validator
           script:
             - export HEIMDALI_VERSION=$(date +%Y-%m-%d)
@@ -80,9 +81,9 @@ pipelines:
             - ./publish.sh ship
 
   tags:
-    "*":
+    '*':
       - step:
-          name: "Package API"
+          name: 'Package API'
           image: openjdk:8-jdk
           caches:
             - sbt
@@ -98,7 +99,7 @@ pipelines:
             - ./sbt common/test:package
 
       - step:
-          name: "Package UI"
+          name: 'Package UI'
           image: node:9
           caches:
             - node
@@ -109,7 +110,7 @@ pipelines:
             - npm i
             - npm run-script prepare
       - step:
-          name: "Build Parcel and CSD"
+          name: 'Build Parcel and CSD'
           image: jotunn/cm-validator
           script:
             - ./publish.sh parcel heimdali

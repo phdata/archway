@@ -7,29 +7,26 @@ import com.heimdali.config.AppConfig
 import com.heimdali.models.{Application, TemplateRequest, WorkspaceRequest}
 import com.heimdali.services.{ApplicationRequest, TemplateService}
 
-class DefaultApplicationGenerator[F[_]](appConfig: AppConfig,
-                                        ldapGroupGenerator: LDAPGroupGenerator[F])
-                                       (implicit clock: Clock[F], F: Monad[F])
-  extends ApplicationGenerator[F] {
+class DefaultApplicationGenerator[F[_]](appConfig: AppConfig, ldapGroupGenerator: LDAPGroupGenerator[F])(
+    implicit clock: Clock[F],
+    F: Monad[F]
+) extends ApplicationGenerator[F] {
 
   override def applicationFor(application: ApplicationRequest, workspace: WorkspaceRequest): F[Application] = {
     val consumerGroup = s"${TemplateRequest.generateName(workspace.name)}_${application.name}_cg"
     ldapGroupGenerator
-      .generate(
-        consumerGroup,
-        s"cn=$consumerGroup,${appConfig.ldap.groupPath}",
-        s"role_$consumerGroup",
-        workspace).map { ldap =>
-      Application(
-        application.name,
-        consumerGroup,
-        ldap,
-        application.applicationType,
-        application.logo,
-        application.language,
-        application.repository
-      )
-    }
+      .generate(consumerGroup, s"cn=$consumerGroup,${appConfig.ldap.groupPath}", s"role_$consumerGroup", workspace)
+      .map { ldap =>
+        Application(
+          application.name,
+          consumerGroup,
+          ldap,
+          application.applicationType,
+          application.logo,
+          application.language,
+          application.repository
+        )
+      }
   }
 
 }

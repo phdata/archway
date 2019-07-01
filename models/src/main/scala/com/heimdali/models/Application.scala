@@ -4,14 +4,16 @@ import cats.Show
 import io.circe._
 import io.circe.syntax._
 
-case class Application(name: String,
-                       consumerGroup: String,
-                       group: LDAPRegistration,
-                       applicationType: Option[String] = None,
-                       logo: Option[String] = None,
-                       language: Option[String] = None,
-                       repository: Option[String] = None,
-                       id: Option[Long] = None)
+case class Application(
+    name: String,
+    consumerGroup: String,
+    group: LDAPRegistration,
+    applicationType: Option[String] = None,
+    logo: Option[String] = None,
+    language: Option[String] = None,
+    repository: Option[String] = None,
+    id: Option[Long] = None
+)
 
 object Application {
 
@@ -31,16 +33,9 @@ object Application {
     )
   }
 
-
   implicit val decoder: Decoder[Application] =
-    Decoder.forProduct8(
-      "name",
-      "consumer_group",
-      "group",
-      "application_type",
-      "logo",
-      "language",
-      "repository",
-      "id")(Application.apply)
+    Decoder.forProduct8("name", "consumer_group", "group", "application_type", "logo", "language", "repository", "id")(
+      Application.apply
+    )
 
 }

@@ -10,24 +10,26 @@ import io.circe._
 import io.circe.java8.time._
 import io.circe.syntax._
 
-case class WorkspaceRequest(name: String,
-                            summary: String,
-                            description: String,
-                            behavior: String,
-                            requestedBy: String,
-                            requestDate: Instant,
-                            compliance: Compliance,
-                            singleUser: Boolean,
-                            id: Option[Long] = None,
-                            approvals: List[Approval] = List.empty,
-                            data: List[HiveAllocation] = List.empty,
-                            processing: List[Yarn] = List.empty,
-                            applications: List[Application] = List.empty,
-                            kafkaTopics: List[KafkaTopic] = List.empty) {
+case class WorkspaceRequest(
+    name: String,
+    summary: String,
+    description: String,
+    behavior: String,
+    requestedBy: String,
+    requestDate: Instant,
+    compliance: Compliance,
+    singleUser: Boolean,
+    id: Option[Long] = None,
+    approvals: List[Approval] = List.empty,
+    data: List[HiveAllocation] = List.empty,
+    processing: List[Yarn] = List.empty,
+    applications: List[Application] = List.empty,
+    kafkaTopics: List[KafkaTopic] = List.empty
+) {
 
   val approved: Boolean = approvals.lengthCompare(2) == 0
 
-  val status: String = if(approved) "Approved" else "Pending"
+  val status: String = if (approved) "Approved" else "Pending"
 
 }
 
@@ -69,7 +71,21 @@ object WorkspaceRequest {
       processing <- json.downField("processing").as[List[Yarn]]
       applications <- json.downField("applications").as[List[Application]]
       topics <- json.downField("topics").as[List[KafkaTopic]]
-    } yield WorkspaceRequest(name, summary, description, behavior, userDN, instant, compliance, singleUser, data = data, processing = processing, applications = applications, kafkaTopics = topics)
+    } yield
+      WorkspaceRequest(
+        name,
+        summary,
+        description,
+        behavior,
+        userDN,
+        instant,
+        compliance,
+        singleUser,
+        data = data,
+        processing = processing,
+        applications = applications,
+        kafkaTopics = topics
+      )
   }
 
 }

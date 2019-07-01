@@ -13,5 +13,3 @@ trait HiveGrantRepository {
   def databaseGranted(id: Long, time: Instant): ConnectionIO[Int]
 
 }
-
-

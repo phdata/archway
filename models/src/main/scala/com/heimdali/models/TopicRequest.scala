@@ -5,10 +5,7 @@ import cats.implicits._
 import io.circe._
 import io.circe.syntax._
 
-case class TopicRequest(username: String,
-                        name: String,
-                        partitions: Int,
-                        replicationFactor: Int)
+case class TopicRequest(username: String, name: String, partitions: Int, replicationFactor: Int)
 
 object TopicRequest {
 

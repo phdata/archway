@@ -15,21 +15,22 @@ import org.http4s.dsl.Http4sDsl
 import com.heimdali.provisioning.Message._
 import com.heimdali.rest.authentication.{AuthService, TokenAuthService}
 
-class WorkspaceController[F[_] : Sync : Timer](authService: TokenAuthService[F],
-                                               workspaceService: WorkspaceService[F],
-                                               memberService: MemberService[F],
-                                               kafkaService: KafkaService[F],
-                                               applicationService: ApplicationService[F],
-                                               emailService: EmailService[F],
-                                               provisioningService: ProvisioningService[F])
-  extends Http4sDsl[F] {
+class WorkspaceController[F[_]: Sync: Timer](
+    authService: TokenAuthService[F],
+    workspaceService: WorkspaceService[F],
+    memberService: MemberService[F],
+    kafkaService: KafkaService[F],
+    applicationService: ApplicationService[F],
+    emailService: EmailService[F],
+    provisioningService: ProvisioningService[F]
+) extends Http4sDsl[F] {
 
   implicit val memberRequestEntityDecoder: EntityDecoder[F, MemberRequest] = jsonOf[F, MemberRequest]
 
   val route: HttpRoutes[F] =
     authService.tokenAuth {
       AuthedService[User, F] {
-        case req@POST -> Root / LongVar(id) / "approve" as user =>
+        case req @ POST -> Root / LongVar(id) / "approve" as user =>
           if (user.canApprove) {
             Clock[F].realTime(scala.concurrent.duration.MILLISECONDS).flatMap { time =>
               implicit val decoder: Decoder[Approval] = Approval.decoder(user, Instant.ofEpochMilli(time))
@@ -40,8 +41,7 @@ class WorkspaceController[F[_] : Sync : Timer](authService: TokenAuthService[F],
                 response <- Created(approved.asJson)
               } yield response
             }
-          }
-          else
+          } else
             Forbidden()
 
         case POST -> Root / LongVar(id) / "provision" as user =>
@@ -52,8 +52,7 @@ class WorkspaceController[F[_] : Sync : Timer](authService: TokenAuthService[F],
               provisionResult <- provisionFiber.join
               response <- Created(provisionResult.asJson)
             } yield response
-          }
-          else
+          } else
             Forbidden()
 
         case POST -> Root / LongVar(id) / "deprovision" as user =>
@@ -64,14 +63,14 @@ class WorkspaceController[F[_] : Sync : Timer](authService: TokenAuthService[F],
               provisionResult <- provisionFiber.join
               response <- Created(provisionResult.asJson)
             } yield response
-          }
-          else
+          } else
             Forbidden()
 
-        case req@POST -> Root as user =>
+        case req @ POST -> Root as user =>
           /* explicit implicit declaration because of `user` variable */
           Clock[F].realTime(scala.concurrent.duration.MILLISECONDS).flatMap { time =>
-            implicit val decoder: Decoder[WorkspaceRequest] = WorkspaceRequest.decoder(user.distinguishedName, Instant.ofEpochMilli(time))
+            implicit val decoder: Decoder[WorkspaceRequest] =
+              WorkspaceRequest.decoder(user.distinguishedName, Instant.ofEpochMilli(time))
             implicit val workspaceRequestEntityDecoder: EntityDecoder[F, WorkspaceRequest] = jsonOf[F, WorkspaceRequest]
             for {
               workspaceRequest <- req.req.as[WorkspaceRequest]
@@ -99,7 +98,7 @@ class WorkspaceController[F[_] : Sync : Timer](authService: TokenAuthService[F],
             response <- Ok(members.asJson)
           } yield response
 
-        case req@POST -> Root / LongVar(id) / "members" as _ =>
+        case req @ POST -> Root / LongVar(id) / "members" as _ =>
           import MemberRoleRequest.decoder
           implicit val roleDecoder: EntityDecoder[F, MemberRoleRequest] = jsonOf[F, MemberRoleRequest]
           for {
@@ -109,7 +108,7 @@ class WorkspaceController[F[_] : Sync : Timer](authService: TokenAuthService[F],
             response <- newMember.fold(NotFound())(member => Created(member.asJson))
           } yield response
 
-        case req@DELETE -> Root / LongVar(id) / "members" as _ =>
+        case req @ DELETE -> Root / LongVar(id) / "members" as _ =>
           import MemberRoleRequest.minDecoder
           implicit val roleDecoder: EntityDecoder[F, MemberRoleRequest] = jsonOf[F, MemberRoleRequest]
           for {
@@ -118,7 +117,7 @@ class WorkspaceController[F[_] : Sync : Timer](authService: TokenAuthService[F],
             response <- Ok()
           } yield response
 
-        case req@POST -> Root / LongVar(id) / "topics" as user =>
+        case req @ POST -> Root / LongVar(id) / "topics" as user =>
           implicit val kafkaTopicDecoderBase: Decoder[TopicRequest] = TopicRequest.decoder(user.username)
           implicit val kafkaTopicDecoder: EntityDecoder[F, TopicRequest] = jsonOf[F, TopicRequest]
           for {
@@ -127,7 +126,7 @@ class WorkspaceController[F[_] : Sync : Timer](authService: TokenAuthService[F],
             response <- Ok(result.asJson)
           } yield response
 
-        case req@POST -> Root / LongVar(id) / "applications" as user =>
+        case req @ POST -> Root / LongVar(id) / "applications" as user =>
           implicit val applicationDecoder: EntityDecoder[F, ApplicationRequest] = jsonOf[F, ApplicationRequest]
           for {
             request <- req.req.as[ApplicationRequest]

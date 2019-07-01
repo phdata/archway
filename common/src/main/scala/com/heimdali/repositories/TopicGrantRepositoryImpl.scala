@@ -14,15 +14,15 @@ class TopicGrantRepositoryImpl extends TopicGrantRepository {
     Statements.create(topicGrant).withUniqueGeneratedKeys("id")
 
   override def topicAccess(id: Long, time: Instant): ConnectionIO[Int] =
-    Statements
-      .topicAccess(id, time)
-      .run
+    Statements.topicAccess(id, time).run
 
   object Statements {
 
     def create(topicGrant: TopicGrant): Update0 = {
       // ...
-      sql"insert into topic_grant (ldap_registration_id, actions) values (${topicGrant.ldapRegistration.id}, ${topicGrant.actions})".asInstanceOf[Fragment].update
+      sql"insert into topic_grant (ldap_registration_id, actions) values (${topicGrant.ldapRegistration.id}, ${topicGrant.actions})"
+        .asInstanceOf[Fragment]
+        .update
     }
 
     def topicAccess(id: Long, time: Instant): Update0 =

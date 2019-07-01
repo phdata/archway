@@ -9,9 +9,8 @@ import io.circe.syntax._
 import org.http4s._
 import org.http4s.dsl.Http4sDsl
 
-class RiskController[F[_]: Monad](authService: TokenAuthService[F],
-                                  workspaceService: WorkspaceService[F])
-  extends Http4sDsl[F] {
+class RiskController[F[_]: Monad](authService: TokenAuthService[F], workspaceService: WorkspaceService[F])
+    extends Http4sDsl[F] {
 
   val route: HttpRoutes[F] =
     authService.tokenRoleAuth(user => user.role == Risk || user.role == Full) {

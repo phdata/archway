@@ -32,10 +32,8 @@ trait HDFSClient[F[_]] {
   def removeQuota(path: String): F[Unit]
 }
 
-class HDFSClientImpl[F[_] : Async](hadoopConfiguration: Configuration,
-                                   loginContextProvider: LoginContextProvider)
-  extends HDFSClient[F]
-    with LazyLogging {
+class HDFSClientImpl[F[_]: Async](hadoopConfiguration: Configuration, loginContextProvider: LoginContextProvider)
+    extends HDFSClient[F] with LazyLogging {
 
   lazy val fileSystem: FileSystem =
     FileSystem.get(hadoopConfiguration)
@@ -63,8 +61,8 @@ class HDFSClientImpl[F[_] : Async](hadoopConfiguration: Configuration,
     val path = s"/user/$userName"
 
     loginContextProvider.elevate("hdfs") { () =>
-      if(fileSystem.exists(path)){
-          fileSystem.getFileStatus(path).getPath
+      if (fileSystem.exists(path)) {
+        fileSystem.getFileStatus(path).getPath
       } else {
         logger.info(s"Creating user directory with path: $path")
 
@@ -96,9 +94,7 @@ class HDFSClientImpl[F[_] : Async](hadoopConfiguration: Configuration,
     Sync[F].delay {
       val path = new Path(hdfsLocation)
       val output: OutputStream = fileSystem.create(path)
-      Iterator.continually(stream.read())
-        .takeWhile(-1 !=)
-        .foreach(output.write)
+      Iterator.continually(stream.read()).takeWhile(-1 !=).foreach(output.write)
       output.close()
       path
     }
@@ -109,7 +105,9 @@ class HDFSClientImpl[F[_] : Async](hadoopConfiguration: Configuration,
     }
 
   override def removeQuota(path: String): F[Unit] =
-    loginContextProvider.elevate("hdfs") { () =>
-      hdfsAdmin.clearQuota(new Path(path))
-    }.void
+    loginContextProvider
+      .elevate("hdfs") { () =>
+        hdfsAdmin.clearQuota(new Path(path))
+      }
+      .void
 }

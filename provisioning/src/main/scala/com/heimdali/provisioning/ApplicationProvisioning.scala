@@ -13,7 +13,7 @@ trait ApplicationProvisioning {
         ),
         TypeWith[Provisionable, ConsumerGroupGrant](
           ConsumerGroupGrant(application.id.get, application.consumerGroup, application.group.sentryRole)
-        ),
+        )
       )
     }
 

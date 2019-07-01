@@ -10,19 +10,13 @@ class HiveGrantRepositoryImpl extends HiveGrantRepository {
   implicit val han: LogHandler = CustomLogHandler.logHandler(this.getClass)
 
   override def create(ldapRegistrationId: Long): ConnectionIO[Long] =
-    Statements
-      .insert(ldapRegistrationId)
-      .withUniqueGeneratedKeys("id")
+    Statements.insert(ldapRegistrationId).withUniqueGeneratedKeys("id")
 
   override def locationGranted(id: Long, time: Instant): ConnectionIO[Int] =
-    Statements
-      .updateLocationAccess(id, time)
-      .run
+    Statements.updateLocationAccess(id, time).run
 
   override def databaseGranted(id: Long, time: Instant): ConnectionIO[Int] =
-    Statements
-      .updateDatabaseAccess(id, time)
-      .run
+    Statements.updateDatabaseAccess(id, time).run
 
   object Statements {
 
@@ -38,7 +32,6 @@ class HiveGrantRepositoryImpl extends HiveGrantRepository {
         set database_access = $time
         where id = $id
         """.update
-
 
     def updateLocationAccess(id: Long, time: Instant): Update0 =
       sql"""

@@ -11,11 +11,13 @@ case class Approval(role: ApproverRole, approver: String, approvalTime: Instant,
 
 object Approval {
 
-  implicit def decoder(user: User, instant: Instant): Decoder[Approval] = Decoder.instance( cursor =>
-    for {
-      role <- cursor.downField("role").as[String]
-    } yield Approval(ApproverRole.parseRole(role), user.username, instant)
-  )
+  implicit def decoder(user: User, instant: Instant): Decoder[Approval] =
+    Decoder.instance(
+      cursor =>
+        for {
+          role <- cursor.downField("role").as[String]
+        } yield Approval(ApproverRole.parseRole(role), user.username, instant)
+    )
 
   implicit val encoder: Encoder[Approval] = Encoder.instance { approval =>
     Json.obj(

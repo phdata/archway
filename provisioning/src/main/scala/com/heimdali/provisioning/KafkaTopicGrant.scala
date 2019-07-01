@@ -18,23 +18,41 @@ object KafkaTopicGrant {
 
   implicit object GrantTopicAccessProvisioningTask extends ProvisioningTask[KafkaTopicGrant] {
 
-    override def complete[F[_] : Sync](kafkaTopicGrant: KafkaTopicGrant, instant: Instant, workspaceContext: WorkspaceContext[F]): F[Unit] =
-      workspaceContext.context.topicGrantRepository.topicAccess(kafkaTopicGrant.id, instant)
-        .transact(workspaceContext.context.transactor).void
+    override def complete[F[_]: Sync](
+        kafkaTopicGrant: KafkaTopicGrant,
+        instant: Instant,
+        workspaceContext: WorkspaceContext[F]
+    ): F[Unit] =
+      workspaceContext.context.topicGrantRepository
+        .topicAccess(kafkaTopicGrant.id, instant)
+        .transact(workspaceContext.context.transactor)
+        .void
 
-    override def run[F[_] : Sync : Clock](kafkaTopicGrant: KafkaTopicGrant, workspaceContext: WorkspaceContext[F]): F[Unit] =
-      kafkaTopicGrant.actions.traverse[F, Unit] { action =>
-        workspaceContext.context.sentryClient.grantPrivilege(kafkaTopicGrant.sentryRole, Kafka, s"Topic=${kafkaTopicGrant.name}->action=$action")
-      }.map(_.combineAll)
+    override def run[F[_]: Sync: Clock](
+        kafkaTopicGrant: KafkaTopicGrant,
+        workspaceContext: WorkspaceContext[F]
+    ): F[Unit] =
+      kafkaTopicGrant.actions
+        .traverse[F, Unit] { action =>
+          workspaceContext.context.sentryClient
+            .grantPrivilege(kafkaTopicGrant.sentryRole, Kafka, s"Topic=${kafkaTopicGrant.name}->action=$action")
+        }
+        .map(_.combineAll)
 
   }
 
   implicit object GrantTopicAccessDeprovisioningTask extends DeprovisioningTask[KafkaTopicGrant] {
 
-    override def run[F[_] : Sync : Clock](kafkaTopicGrant: KafkaTopicGrant, workspaceContext: WorkspaceContext[F]): F[Unit] =
-      kafkaTopicGrant.actions.traverse[F, Unit] { action =>
-        workspaceContext.context.sentryClient.removePrivilege(kafkaTopicGrant.sentryRole, Kafka, s"Topic=${kafkaTopicGrant.name}->action=$action")
-      }.map(_.combineAll)
+    override def run[F[_]: Sync: Clock](
+        kafkaTopicGrant: KafkaTopicGrant,
+        workspaceContext: WorkspaceContext[F]
+    ): F[Unit] =
+      kafkaTopicGrant.actions
+        .traverse[F, Unit] { action =>
+          workspaceContext.context.sentryClient
+            .removePrivilege(kafkaTopicGrant.sentryRole, Kafka, s"Topic=${kafkaTopicGrant.name}->action=$action")
+        }
+        .map(_.combineAll)
 
   }
 

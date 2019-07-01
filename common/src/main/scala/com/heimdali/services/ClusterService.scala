@@ -11,10 +11,22 @@ trait ClusterService[F[_]] {
 
 case class AppLocation(host: String, port: Int)
 
-case class ClusterApp(id: String, name: String, state: String, status: String, capabilities: Map[String, List[AppLocation]])
+case class ClusterApp(
+    id: String,
+    name: String,
+    state: String,
+    status: String,
+    capabilities: Map[String, List[AppLocation]]
+)
 
 object ClusterApp {
-  def apply(name: String, serviceInfo: ServiceInfo, hosts: ListContainer[HostInfo], appRoles: Map[String, (Int, List[AppRole])]): ClusterApp = {
+
+  def apply(
+      name: String,
+      serviceInfo: ServiceInfo,
+      hosts: ListContainer[HostInfo],
+      appRoles: Map[String, (Int, List[AppRole])]
+  ): ClusterApp = {
     ClusterApp(
       serviceInfo.name,
       name,
@@ -30,16 +42,25 @@ object ClusterApp {
 
   implicit val decoder: Encoder[ClusterApp] =
     Encoder.instance { a =>
-      a.capabilities.foldLeft(Json.obj(
-        "state" -> a.state.asJson,
-        "status" -> a.status.asJson,
-      )) { (existing, next) =>
+      a.capabilities.foldLeft(
+        Json.obj(
+          "state" -> a.state.asJson,
+          "status" -> a.status.asJson
+        )
+      ) { (existing, next) =>
         existing.deepMerge(Json.obj(next._1 -> next._2.asJson))
       }
     }
 }
 
-case class Cluster(id: String, name: String, cmURL: String, services: List[ClusterApp], distribution: CDH, status: String)
+case class Cluster(
+    id: String,
+    name: String,
+    cmURL: String,
+    services: List[ClusterApp],
+    distribution: CDH,
+    status: String
+)
 
 object Cluster {
   implicit val encoder: Encoder[Cluster] =
@@ -48,7 +69,8 @@ object Cluster {
         "id" -> a.id.asJson,
         "name" -> a.name.asJson,
         "cm_url" -> a.cmURL.asJson,
-        "services" -> a.services.foldLeft(Json.obj())((existing, next) => existing.deepMerge(Json.obj(next.name -> next.asJson))),
+        "services" -> a.services.foldLeft(Json.obj())((existing, next) =>
+          existing.deepMerge(Json.obj(next.name -> next.asJson))),
         "distribution" -> Json.obj(
           "name" -> a.distribution.name.asJson,
           "version" -> a.distribution.version.asJson

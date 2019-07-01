@@ -9,7 +9,7 @@ trait FeatureService[F[_]] {
   def all(): List[String]
 }
 
-class FeatureServiceImpl[F[_]](featureFlags: String) extends FeatureService[F] with LazyLogging{
+class FeatureServiceImpl[F[_]](featureFlags: String) extends FeatureService[F] with LazyLogging {
 
   private val flagsList = featureFlags.split(",").toList
 

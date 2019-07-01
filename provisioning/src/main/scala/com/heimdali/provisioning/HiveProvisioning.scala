@@ -12,11 +12,16 @@ trait HiveProvisioning {
           hiveGrant.ldapRegistration
         ),
         TypeWith[Provisionable, DatabaseGrant](
-          DatabaseGrant(hiveGrant.id.get, hiveGrant.ldapRegistration.sentryRole, hiveGrant.databaseName, hiveGrant.databaseRole)
+          DatabaseGrant(
+            hiveGrant.id.get,
+            hiveGrant.ldapRegistration.sentryRole,
+            hiveGrant.databaseName,
+            hiveGrant.databaseRole
+          )
         ),
         TypeWith[Provisionable, LocationGrant](
           LocationGrant(hiveGrant.id.get, hiveGrant.ldapRegistration.sentryRole, hiveGrant.location)
-        ),
+        )
       )
     }
 
@@ -34,7 +39,7 @@ trait HiveProvisioning {
         ),
         TypeWith[Provisionable, HiveGrant](
           hiveAllocation.managingGroup
-        ),
+        )
       ) ++
         hiveAllocation.readWriteGroup.map { readwrite =>
           TypeWith[Provisionable, HiveGrant](

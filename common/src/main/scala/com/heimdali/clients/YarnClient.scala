@@ -27,12 +27,8 @@ trait YarnClient[F[_]] {
 
 }
 
-class CDHYarnClient[F[_] : Sync](http: HttpClient[F],
-                                 clusterConfig: ClusterConfig,
-                                 clusterService: ClusterService[F])
-    extends YarnClient[F]
-    with Http4sClientDsl[F]
-    with LazyLogging {
+class CDHYarnClient[F[_]: Sync](http: HttpClient[F], clusterConfig: ClusterConfig, clusterService: ClusterService[F])
+    extends YarnClient[F] with Http4sClientDsl[F] with LazyLogging {
 
   type Memory = Int
   type Cores = Int
@@ -66,29 +62,36 @@ class CDHYarnClient[F[_] : Sync](http: HttpClient[F],
   )
 
   def dig(cursor: ACursor, parents: Queue[String]): ACursor = {
-    parents.dequeueOption.map {
-      case (parent, newQueue) =>
-        val newCursor = cursor.downField("queues")
-          .downAt(_.asObject.get.filter {
-            case ("name", json) => 
-              parent == json.asString.get
-            case _ => false
-          }.nonEmpty)
-        dig(newCursor, newQueue)
-    }.getOrElse(cursor)
+    parents.dequeueOption
+      .map {
+        case (parent, newQueue) =>
+          val newCursor = cursor
+            .downField("queues")
+            .downAt(_.asObject.get.filter {
+              case ("name", json) =>
+                parent == json.asString.get
+              case _ => false
+            }.nonEmpty)
+          dig(newCursor, newQueue)
+      }
+      .getOrElse(cursor)
   }
 
   def combine(existing: Json, poolName: String, cores: Cores, memory: Memory, parents: Queue[String]): Json =
     dig(existing.hcursor, parents)
       .downField("queues")
       .withFocus(_.withArray(arr => Json.arr(arr :+ config(poolName, cores, memory): _*)))
-      .top.get
+      .top
+      .get
 
   def strip(existing: Json, poolName: String, parents: Queue[String]) =
     dig(existing.hcursor, parents)
-    .downField("queues")
-    .withFocus(_.withArray(arr => Json.arr(arr.filterNot(_.hcursor.downField("name").as[String].toOption.get == poolName): _*)))
-    .top.get
+      .downField("queues")
+      .withFocus(
+        _.withArray(arr => Json.arr(arr.filterNot(_.hcursor.downField("name").as[String].toOption.get == poolName): _*))
+      )
+      .top
+      .get
 
   def prepare(container: Json, newConfig: Json): Json = {
     import io.circe.optics.JsonPath._
@@ -103,7 +106,9 @@ class CDHYarnClient[F[_] : Sync](http: HttpClient[F],
               json
           }
         }
-      }.top.get
+      }
+      .top
+      .get
   }
 
   def yarnConfig: F[Json] =
@@ -126,17 +131,17 @@ class CDHYarnClient[F[_] : Sync](http: HttpClient[F],
       response <- http.request[Json](Request[F](Method.POST, Uri.fromString(clusterConfig.refreshUrl).right.get))
     } yield response
 
-  def poolConfiguration(config: Json)
-                       (implicit evidence: Sync[F]): F[Json] =
+  def poolConfiguration(config: Json)(implicit evidence: Sync[F]): F[Json] =
     evidence.delay {
       config.hcursor
         .downField("items")
-        .downAt {
-          item =>
-            item.asObject.get.filter { field =>
-              field._1 == "name" && field._2.asString.contains("yarn_fs_scheduled_allocations")
-            }.nonEmpty
-        }.focus.get
+        .downAt { item =>
+          item.asObject.get.filter { field =>
+            field._1 == "name" && field._2.asString.contains("yarn_fs_scheduled_allocations")
+          }.nonEmpty
+        }
+        .focus
+        .get
     }
 
   def getParents(poolName: String): F[Queue[String]] = Sync[F].delay {

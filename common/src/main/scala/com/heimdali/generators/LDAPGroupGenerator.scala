@@ -13,8 +13,10 @@ trait LDAPGroupGenerator[F[_]] {
 
 object LDAPGroupGenerator {
 
-  def instance[F[_]](appConfig: AppConfig, configService: ConfigService[F], className: String)
-                    (implicit clock: Clock[F], F: Sync[F]): LDAPGroupGenerator[F] =
+  def instance[F[_]](appConfig: AppConfig, configService: ConfigService[F], className: String)(
+      implicit clock: Clock[F],
+      F: Sync[F]
+  ): LDAPGroupGenerator[F] =
     Class
       .forName(className)
       .getConstructors

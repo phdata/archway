@@ -10,34 +10,25 @@ class MemberRepositoryImpl extends MemberRepository {
   implicit val han = CustomLogHandler.logHandler(this.getClass)
 
   override def create(distinguishedName: String, ldapRegistrationId: Long): ConnectionIO[Long] =
-    Statements
-      .create(distinguishedName, ldapRegistrationId)
-      .withUniqueGeneratedKeys("id")
+    Statements.create(distinguishedName, ldapRegistrationId).withUniqueGeneratedKeys("id")
 
   override def complete(id: Long, distinguishedName: String): ConnectionIO[Int] =
-    Statements
-      .complete(id, distinguishedName)
-      .run
+    Statements.complete(id, distinguishedName).run
 
   override def get(id: Long): ConnectionIO[List[MemberRightsRecord]] =
-    Statements
-      .get(id)
-      .to[List]
+    Statements.get(id).to[List]
 
   override def delete(ldapRegistrationId: Long, distinguishedName: String): doobie.ConnectionIO[Int] =
-    Statements
-      .remove(ldapRegistrationId, distinguishedName)
-      .run
+    Statements.remove(ldapRegistrationId, distinguishedName).run
 
   override def list(workspaceId: Long): doobie.ConnectionIO[List[MemberRightsRecord]] =
-    Statements
-      .list(workspaceId)
-      .to[List]
+    Statements.list(workspaceId).to[List]
 
-  override def find(workspaceRequestId: Long, distinguishedName: String): doobie.ConnectionIO[List[MemberRightsRecord]] =
-    Statements
-      .find(workspaceRequestId, distinguishedName)
-      .to[List]
+  override def find(
+      workspaceRequestId: Long,
+      distinguishedName: String
+  ): doobie.ConnectionIO[List[MemberRightsRecord]] =
+    Statements.find(workspaceRequestId, distinguishedName).to[List]
 
   object Statements {
 
@@ -158,7 +149,10 @@ class MemberRepositoryImpl extends MemberRepository {
       (listSelect ++ whereAnd(fr"memberId = $id")).query
 
     def find(workspaceRequestId: Long, distinguished_name: String): Query0[MemberRightsRecord] =
-      (listSelect ++ whereAnd(fr"workspace_request_id = $workspaceRequestId", fr"distinguished_name = $distinguished_name")).query
+      (listSelect ++ whereAnd(
+        fr"workspace_request_id = $workspaceRequestId",
+        fr"distinguished_name = $distinguished_name"
+      )).query
 
   }
 

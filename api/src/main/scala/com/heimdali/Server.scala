@@ -22,12 +22,12 @@ import scala.concurrent.duration._
 
 object Server extends IOApp with LazyLogging {
 
-  def createServer[F[_] : ConcurrentEffect : ContextShift : Timer]: Resource[F, H4Server[F]] =
+  def createServer[F[_]: ConcurrentEffect: ContextShift: Timer]: Resource[F, H4Server[F]] =
     for {
       context <- AppContext.default[F]()
       _ <- Resource.liftF(
-        logger.debug("Config as been read as:\n{}",
-          context.appConfig.asJson.pretty(Printer.spaces2)).pure[F])
+        logger.debug("Config as been read as:\n{}", context.appConfig.asJson.pretty(Printer.spaces2)).pure[F]
+      )
       provisionEC <- ExecutionContexts.fixedThreadPool(context.appConfig.provisioning.threadPoolSize)
       startupEC <- ExecutionContexts.fixedThreadPool(1)
       staticContentEC <- ExecutionContexts.fixedThreadPool(1)
@@ -35,9 +35,12 @@ object Server extends IOApp with LazyLogging {
 
       configService = new DBConfigService[F](context)
 
-      ldapGroupGenerator = LDAPGroupGenerator.instance(context.appConfig, configService, context.appConfig.templates.ldapGroupGenerator)
-      applicationGenerator = ApplicationGenerator.instance(context.appConfig, ldapGroupGenerator, context.appConfig.templates.applicationGenerator)
-      topicGenerator = TopicGenerator.instance(context.appConfig, ldapGroupGenerator, context.appConfig.templates.topicGenerator)
+      ldapGroupGenerator = LDAPGroupGenerator
+        .instance(context.appConfig, configService, context.appConfig.templates.ldapGroupGenerator)
+      applicationGenerator = ApplicationGenerator
+        .instance(context.appConfig, ldapGroupGenerator, context.appConfig.templates.applicationGenerator)
+      topicGenerator = TopicGenerator
+        .instance(context.appConfig, ldapGroupGenerator, context.appConfig.templates.topicGenerator)
       templateService = new JSONTemplateService[F](context, configService)
 
       provisionService = new DefaultProvisioningService[F](context, provisionEC)
@@ -64,7 +67,15 @@ object Server extends IOApp with LazyLogging {
       accountController = new AccountController[F](authService, tokenAuthService, accountService, context)
       templateController = new TemplateController[F](tokenAuthService, templateService)
       clusterController = new ClusterController[F](context)
-      workspaceController = new WorkspaceController[F](tokenAuthService, workspaceService, memberService, kafkaService, applicationService, emailService, provisionService)
+      workspaceController = new WorkspaceController[F](
+        tokenAuthService,
+        workspaceService,
+        memberService,
+        kafkaService,
+        applicationService,
+        emailService,
+        provisionService
+      )
       _ <- Resource.liftF(logger.debug("Workspace Controller has been initialized").pure[F])
 
       memberController = new MemberController[F](tokenAuthService, memberService)
@@ -94,14 +105,16 @@ object Server extends IOApp with LazyLogging {
       _ <- Resource.liftF(startup.begin())
       _ <- Resource.liftF(logger.info("Class HeimdaliStartup has started").pure[F])
 
-      server <-
-        BlazeServerBuilder[F]
-          .bindHttp(context.appConfig.rest.port, "0.0.0.0")
-          .withHttpApp(CORS(httpApp))
-          .withIdleTimeout(10 minutes)
-          .withResponseHeaderTimeout(10 minutes)
-          .withSSL(StoreInfo(context.appConfig.rest.sslStore.get, context.appConfig.rest.sslStorePassword.get), context.appConfig.rest.sslKeyManagerPassword.get)
-          .resource
+      server <- BlazeServerBuilder[F]
+        .bindHttp(context.appConfig.rest.port, "0.0.0.0")
+        .withHttpApp(CORS(httpApp))
+        .withIdleTimeout(10 minutes)
+        .withResponseHeaderTimeout(10 minutes)
+        .withSSL(
+          StoreInfo(context.appConfig.rest.sslStore.get, context.appConfig.rest.sslStorePassword.get),
+          context.appConfig.rest.sslKeyManagerPassword.get
+        )
+        .resource
 
       _ <- Resource.liftF(logger.info("Server has started").pure[F])
     } yield server

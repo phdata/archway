@@ -16,18 +16,24 @@ object LocationGrant {
 
   implicit object LocationGrantProvisioningTask extends ProvisioningTask[LocationGrant] {
 
-    override def complete[F[_] : Sync](locationGrant: LocationGrant, instant: Instant, workspaceContext: WorkspaceContext[F]): F[Unit] =
-      workspaceContext.context.databaseGrantRepository.locationGranted(locationGrant.id, instant)
-        .transact(workspaceContext.context.transactor).void
+    override def complete[F[_]: Sync](
+        locationGrant: LocationGrant,
+        instant: Instant,
+        workspaceContext: WorkspaceContext[F]
+    ): F[Unit] =
+      workspaceContext.context.databaseGrantRepository
+        .locationGranted(locationGrant.id, instant)
+        .transact(workspaceContext.context.transactor)
+        .void
 
-    override def run[F[_] : Sync : Clock](locationGrant: LocationGrant, workspaceContext: WorkspaceContext[F]): F[Unit] =
+    override def run[F[_]: Sync: Clock](locationGrant: LocationGrant, workspaceContext: WorkspaceContext[F]): F[Unit] =
       workspaceContext.context.sentryClient.enableAccessToLocation(locationGrant.location, locationGrant.roleName)
 
   }
 
   implicit object LocationGrantDeprovisioningTask extends DeprovisioningTask[LocationGrant] {
 
-    override def run[F[_] : Sync : Clock](locationGrant: LocationGrant, workspaceContext: WorkspaceContext[F]): F[Unit] =
+    override def run[F[_]: Sync: Clock](locationGrant: LocationGrant, workspaceContext: WorkspaceContext[F]): F[Unit] =
       workspaceContext.context.sentryClient.removeAccessToLocation(locationGrant.location, locationGrant.roleName)
 
   }

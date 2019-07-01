@@ -9,13 +9,15 @@ import doobie.util.log.{ExecFailure, LogHandler, ProcessingFailure, Success}
 
 package object repositories {
 
-  case class LDAPRecord(distinguishedName: String,
-                        commonName: String,
-                        sentryRole: String,
-                        id: Option[Long],
-                        groupCreated: Option[Instant],
-                        roleCreated: Option[Instant],
-                        roleAssociated: Option[Instant])
+  case class LDAPRecord(
+      distinguishedName: String,
+      commonName: String,
+      sentryRole: String,
+      id: Option[Long],
+      groupCreated: Option[Instant],
+      roleCreated: Option[Instant],
+      roleAssociated: Option[Instant]
+  )
 
   case class LDAPAttribute(key: String, value: String)
 
@@ -26,9 +28,34 @@ package object repositories {
     Get[String].tmap(ApproverRole.parseRole)
 
   implicit val workspaceReader: Read[WorkspaceRequest] =
-    Read[(String, String, String, String, String, Instant, Boolean, Boolean, Boolean, Option[Long], Boolean, Option[Long])].map {
-      case (name, summary, description, behavior, requestedBy, requestDate, phiData, pciData, piiData, complianceId, singleUser, id) =>
-        WorkspaceRequest(name, summary, description, behavior, requestedBy, requestDate, Compliance(phiData, pciData, piiData, complianceId), singleUser, id)
+    Read[
+      (String, String, String, String, String, Instant, Boolean, Boolean, Boolean, Option[Long], Boolean, Option[Long])
+    ].map {
+      case (
+          name,
+          summary,
+          description,
+          behavior,
+          requestedBy,
+          requestDate,
+          phiData,
+          pciData,
+          piiData,
+          complianceId,
+          singleUser,
+          id
+          ) =>
+        WorkspaceRequest(
+          name,
+          summary,
+          description,
+          behavior,
+          requestedBy,
+          requestDate,
+          Compliance(phiData, pciData, piiData, complianceId),
+          singleUser,
+          id
+        )
     }
 
   implicit def fromRecord(ldap: LDAPRecord): LDAPRegistration =

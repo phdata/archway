@@ -10,7 +10,7 @@ sealed trait Message {
 }
 
 case class ExceptionMessage(override val workspaceId: Long, override val message: String, exception: Throwable)
-  extends Message
+    extends Message
 
 case class SimpleMessage(override val workspaceId: Long, override val message: String) extends Message
 

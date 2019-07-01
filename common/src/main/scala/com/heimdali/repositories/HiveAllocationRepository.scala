@@ -19,4 +19,3 @@ trait HiveAllocationRepository {
 
   def databaseCreated(id: Long, time: Instant): ConnectionIO[Int]
 }
-

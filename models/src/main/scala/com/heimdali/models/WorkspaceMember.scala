@@ -6,7 +6,12 @@ import io.circe.{Encoder, Json}
 import io.circe.java8.time._
 import io.circe.syntax._
 
-case class WorkspaceMember(name: String, distinguishedName: String, created: Option[Instant] = None, id: Option[Long] = None)
+case class WorkspaceMember(
+    name: String,
+    distinguishedName: String,
+    created: Option[Instant] = None,
+    id: Option[Long] = None
+)
 
 object WorkspaceMember {
 

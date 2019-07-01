@@ -13,8 +13,10 @@ trait ApplicationGenerator[F[_]] {
 
 object ApplicationGenerator {
 
-  def instance[F[_]](appConfig: AppConfig, ldapGenerator: LDAPGroupGenerator[F], className: String)
-                    (implicit clock: Clock[F], F: Sync[F]): ApplicationGenerator[F] =
+  def instance[F[_]](appConfig: AppConfig, ldapGenerator: LDAPGroupGenerator[F], className: String)(
+      implicit clock: Clock[F],
+      F: Sync[F]
+  ): ApplicationGenerator[F] =
     Class
       .forName(className)
       .getConstructors

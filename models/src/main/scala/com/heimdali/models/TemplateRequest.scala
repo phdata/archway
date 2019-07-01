@@ -2,7 +2,13 @@ package com.heimdali.models
 
 import io.circe.{Decoder, Encoder}
 
-case class TemplateRequest(name: String, summary: String, description: String, compliance: Compliance, requester: String) {
+case class TemplateRequest(
+    name: String,
+    summary: String,
+    description: String,
+    compliance: Compliance,
+    requester: String
+) {
   val generatedName: String = TemplateRequest.generateName(name)
 }
 

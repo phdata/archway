@@ -16,18 +16,32 @@ object DatabaseDirectory {
 
   implicit object DatabaseDirectoryProvisioningTask extends ProvisioningTask[DatabaseDirectory] {
 
-    override def complete[F[_] : Sync](createDatabaseDirectory: DatabaseDirectory, instant: Instant, workspaceContext: WorkspaceContext[F]): F[Unit] =
-      workspaceContext.context.databaseRepository.directoryCreated(createDatabaseDirectory.workspaceId, instant)
-        .transact(workspaceContext.context.transactor).void
+    override def complete[F[_]: Sync](
+        createDatabaseDirectory: DatabaseDirectory,
+        instant: Instant,
+        workspaceContext: WorkspaceContext[F]
+    ): F[Unit] =
+      workspaceContext.context.databaseRepository
+        .directoryCreated(createDatabaseDirectory.workspaceId, instant)
+        .transact(workspaceContext.context.transactor)
+        .void
 
-    override def run[F[_] : Sync : Clock](createDatabaseDirectory: DatabaseDirectory, workspaceContext: WorkspaceContext[F]): F[Unit] =
-      workspaceContext.context.hdfsClient.createDirectory(createDatabaseDirectory.location, createDatabaseDirectory.onBehalfOf).void
+    override def run[F[_]: Sync: Clock](
+        createDatabaseDirectory: DatabaseDirectory,
+        workspaceContext: WorkspaceContext[F]
+    ): F[Unit] =
+      workspaceContext.context.hdfsClient
+        .createDirectory(createDatabaseDirectory.location, createDatabaseDirectory.onBehalfOf)
+        .void
 
   }
 
   implicit object DatabaseDirectoryDeprovisioningTask extends DeprovisioningTask[DatabaseDirectory] {
 
-    override def run[F[_] : Sync : Clock](createDatabaseDirectory: DatabaseDirectory, workspaceContext: WorkspaceContext[F]): F[Unit] =
+    override def run[F[_]: Sync: Clock](
+        createDatabaseDirectory: DatabaseDirectory,
+        workspaceContext: WorkspaceContext[F]
+    ): F[Unit] =
       Sync[F].unit // skip deprovisioning
 
   }
