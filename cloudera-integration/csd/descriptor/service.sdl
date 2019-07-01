@@ -498,6 +498,14 @@
           "configurableInWizard": "true"
         },
         {
+          "name": "heimdali.ui.url",
+          "label": "Heimdali UI",
+          "description": "Full url for Heimdali UI",
+          "required": "true",
+          "type": "string",
+          "configurableInWizard": "true"
+        },
+        {
           "name": "heimdali.ui.staticContentDir",
           "label": "Heimdali UI static content directory",
           "description": "Path to heimdali UI directory. It is an override and the original value comes from the env var `HEIMDALI_UI_HOME`",
