@@ -3,6 +3,7 @@
 set -xeu
 
 HEIMDALI_VERSION=${HEIMDALI_VERSION:-$BITBUCKET_TAG}
+HEIMDALI_VERSION=$(echo -n $HEIMDALI_VERSION | tr a-z A-Z)
 PARCEL_BASE="cloudera-integration/parcel"
 CSD_BASE="cloudera-integration/csd"
 BUILD_BASE="cloudera-integration/build"
@@ -75,7 +76,7 @@ manifest()
 ship()
 {
   pushd ${PUBLISH_DIR}
-  READY_DIR=$(echo "${HEIMDALI_VERSION}" | tr a-z A-Z)
+  READY_DIR=$(echo "${HEIMDALI_VERSION}")
   curl -u${ARTIFACTORY_USER}:${ARTIFACTORY_TOKEN} -T manifest.json https://repository.phdata.io/artifactory/$DEPLOY_REPO/com/heimdali/${HEIMDALI_VERSION}/manifest.json
   curl -u${ARTIFACTORY_USER}:${ARTIFACTORY_TOKEN} -T HEIMDALI-${HEIMDALI_VERSION}.jar https://repository.phdata.io/artifactory/$DEPLOY_REPO/com/heimdali/${HEIMDALI_VERSION}/HEIMDALI-${HEIMDALI_VERSION}.jar
 
