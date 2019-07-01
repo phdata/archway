@@ -30,12 +30,10 @@ object HiveDatabaseRegistration extends LazyLogging{
           .transact(workspaceContext.context.transactor).map(_.get)
         _ <- workspaceContext.context.hiveClient.createDatabase(hiveDatabaseRegistration.name, hiveDatabaseRegistration.location, workspace.summary, createDBProperties(workspace))
         _ <- logger.info(s"Hive database ${hiveDatabaseRegistration.name} created").pure[F]
-
         tempTable = "heimdali_temp"
         result <- workspaceContext.context.hiveClient.createTable(hiveDatabaseRegistration.name, tempTable)
         _ <- logger.info("Create table result " + result).pure[F]
         _ <- workspaceContext.context.impalaClient.map(_.invalidateMetadata(hiveDatabaseRegistration.name, tempTable)).getOrElse(().pure[F])
-        _ <- workspaceContext.context.hiveClient.dropTable(hiveDatabaseRegistration.name, tempTable)
       } yield ()
     }
   }
