@@ -47,6 +47,12 @@ class AccountControllerSpec
     check(response, Status.Ok, Some(fromResource("rest/account.profile.expected.json")))
   }
 
+  it should "get feature flags" in new Context {
+    context.featureService.all _ expects() returning List("feature1")
+    val response: IO[Response[IO]] = accountController.tokenizedRoutes.orNotFound.run(Request(uri = Uri.uri("/feature-flags")))
+    check(response, Status.Ok, Some("[\"feature1\"]"))
+  }
+
   it should "return not found if a personal workspace hasn't been created yet" in new Context {
     accountService.getWorkspace _ expects standardUserDN returning OptionT.none
 
