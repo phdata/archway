@@ -18,7 +18,7 @@ class JSONTemplateService[F[_]: Effect: Clock](context: AppContext[F], configSer
   val templateEngine = new TemplateEngine()
 
   override def defaults(user: User): F[TemplateRequest] =
-    TemplateRequest(user.name, user.name, user.name, Compliance.empty, user.distinguishedName).pure[F]
+    TemplateRequest(user.username, user.name, user.name, Compliance.empty, user.distinguishedName).pure[F]
 
   private[services] def generateJSON(template: TemplateRequest, templatePath: String, templateName: String): F[String] =
     Sync[F].delay {
