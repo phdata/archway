@@ -9,6 +9,7 @@ export const workspaceListSelector = (state: any) => state.get('listing');
 export const riskSelector = (state: any) => state.get('risk');
 export const opsSelector = (state: any) => state.get('operations');
 export const homeSelector = (state: any) => state.get('home');
+export const configSelector = (state: any) => state.get('config');
 
 export const isLoading = () =>
   createSelector(

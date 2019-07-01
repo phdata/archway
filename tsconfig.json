@@ -2,10 +2,7 @@
   "compilerOptions": {
     "module": "esnext",
     "target": "es5",
-    "lib": [
-      "es6",
-      "dom"
-    ],
+    "lib": ["es2016", "dom"],
     "sourceMap": true,
     "allowJs": true,
     "jsx": "react",
@@ -27,16 +24,6 @@
     "isolatedModules": true,
     "noEmit": true
   },
-  "exclude": [
-    "node_modules",
-    "dist",
-    "scripts",
-    "acceptance-tests",
-    "webpack",
-    "jest",
-    "ui/setupTests.ts"
-  ],
-  "include": [
-    "ui"
-  ]
+  "exclude": ["node_modules", "dist", "scripts", "acceptance-tests", "webpack", "jest", "ui/setupTests.ts"],
+  "include": ["ui"]
 }

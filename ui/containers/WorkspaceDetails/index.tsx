@@ -34,6 +34,7 @@ import {
 } from '../../models/Workspace';
 import * as actions from './actions';
 import * as selectors from './selectors';
+import { featureFlagType } from '../../constants';
 
 interface DetailsRouteProps {
   id: any;
@@ -52,6 +53,7 @@ interface Props extends RouteComponentProps<DetailsRouteProps> {
   userSuggestions?: UserSuggestions;
   liasion?: Member;
   members?: Member[];
+  featureFlags: string[];
 
   clearDetails: () => void;
   getWorkspaceDetails: (id: number) => void;
@@ -184,7 +186,10 @@ class WorkspaceDetails extends React.PureComponent<Props> {
       userSuggestions,
       removeMember,
       liasion,
+      featureFlags,
     } = this.props;
+    const hasApplicationFlag = featureFlags.includes(featureFlagType.Application);
+    const hasMessagingFlag = featureFlags.includes(featureFlagType.Messaging);
 
     if (!workspace) {
       return (
@@ -266,28 +271,32 @@ class WorkspaceDetails extends React.PureComponent<Props> {
               requestRefreshHiveTables={requestRefreshHiveTables}
             />
           </Tabs.TabPane>
-          <Tabs.TabPane tab="APPLICATIONS" key="applications">
-            <ApplicationsTab
-              workspace={workspace}
-              yarn={cluster.services && cluster.services.yarn}
-              pools={pools}
-              selectedApplication={activeApplication}
-              onAddApplication={showApplicationDialog}
-              onRefreshPools={requestRefreshYarnApps}
-              onSelectApplication={selectApplication}
-            />
-          </Tabs.TabPane>
-          <Tabs.TabPane tab="MESSAGING" key="messaging">
-            <MessagingTab
-              workspace={workspace}
-              profile={profile}
-              members={members}
-              onAddTopic={showTopicDialog}
-              onAddMember={showSimpleTopicMemberDialog}
-              onChangeMemberRole={changeMemberRoleRequest}
-              removeMember={removeMember}
-            />
-          </Tabs.TabPane>
+          {hasApplicationFlag && (
+            <Tabs.TabPane tab="APPLICATIONS" key="applications">
+              <ApplicationsTab
+                workspace={workspace}
+                yarn={cluster.services && cluster.services.yarn}
+                pools={pools}
+                selectedApplication={activeApplication}
+                onAddApplication={showApplicationDialog}
+                onRefreshPools={requestRefreshYarnApps}
+                onSelectApplication={selectApplication}
+              />
+            </Tabs.TabPane>
+          )}
+          {hasMessagingFlag && (
+            <Tabs.TabPane tab="MESSAGING" key="messaging">
+              <MessagingTab
+                workspace={workspace}
+                profile={profile}
+                members={members}
+                onAddTopic={showTopicDialog}
+                onAddMember={showSimpleTopicMemberDialog}
+                onChangeMemberRole={changeMemberRoleRequest}
+                removeMember={removeMember}
+              />
+            </Tabs.TabPane>
+          )}
         </Tabs>
         <Modal
           visible={activeModal === 'simpleMember'}
@@ -340,6 +349,7 @@ const mapStateToProps = () =>
     userSuggestions: selectors.getUserSuggestions(),
     liasion: selectors.getLiaison(),
     members: selectors.getMembers(),
+    featureFlags: selectors.getFeatureFlags(),
   });
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
