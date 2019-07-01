@@ -74,8 +74,8 @@ manifest()
 
 ship()
 {
+  ARTIFACT=$1
   pushd ${PUBLISH_DIR}
-
   READY_DIR=$(echo "${ARTIFACT}-${HEIMDALI_VERSION}" | tr a-z A-Z)
   curl -u${ARTIFACTORY_USER}:${ARTIFACTORY_TOKEN} -T manifest.json https://repository.phdata.io/artifactory/$DEPLOY_REPO/com/heimdali/${HEIMDALI_VERSION}/manifest.json
   curl -u${ARTIFACTORY_USER}:${ARTIFACTORY_TOKEN} -T HEIMDALI-${HEIMDALI_VERSION}.jar https://repository.phdata.io/artifactory/$DEPLOY_REPO/com/heimdali/${HEIMDALI_VERSION}/HEIMDALI-${HEIMDALI_VERSION}.jar

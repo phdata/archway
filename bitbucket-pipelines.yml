@@ -1,39 +1,7 @@
 pipelines:
-  default:
-    - step:
-        name: 'Build and Test API'
-        image: openjdk:8-jdk
-        services:
-          - postgres
-        caches:
-          - sbt
-          - ivy2
-        script:
-          - './flyway/flyway migrate -url="jdbc:postgresql://localhost:5432/heimdali" -user=postgres -password=postgres'
-          - ./sbt common/test
-          - ./sbt api/test
-          - ./sbt scalafmtCheck
-    - step:
-        name: 'Build and Test UI'
-        image: node:9
-        caches:
-          - node
-        script:
-          - npm i -g typescript
-          - npm i
-          - npm run-script prepare
-    - step:
-        name: 'Validate Parcel and CSD'
-        image: jotunn/cm-validator
-        script:
-          - java -jar /usr/src/validator.jar -p $PWD/cloudera-integration/parcel/heimdali-meta/parcel.json
-          - java -jar /usr/src/validator.jar -r $PWD/cloudera-integration/parcel/heimdali-meta/permissions.json
-          - java -jar /usr/src/validator.jar -p $PWD/cloudera-integration/parcel/custom-shell-meta/parcel.json
-          - java -jar /usr/src/validator.jar -s $PWD/cloudera-integration/csd/descriptor/service.sdl
-
-  custom:
-    nightly-build:
-      - step:
+  definitions:
+    steps:
+      - step: &test-api
           size: 2x # Double resources available for this step.
           name: 'Build, Test and Package API'
           image: openjdk:8-jdk
@@ -46,7 +14,6 @@ pipelines:
             - api/target/scala-2.12/*
             - integration-test/target/scala-2.12/*
             - common/target/scala-2.12/*
-
           script:
             - './flyway/flyway migrate -url="jdbc:postgresql://localhost:5432/heimdali" -user=postgres -password=postgres'
             - ./sbt common/test
@@ -55,7 +22,7 @@ pipelines:
             - ./sbt "set every test in assembly := {}" integration-test/assembly
             - ./sbt integration-test/test:package
             - ./sbt common/test:package
-      - step:
+      - step: &test-ui
           name: 'Build, Test and Package UI'
           image: node:9
           caches:
@@ -66,53 +33,44 @@ pipelines:
             - npm i -g typescript
             - npm i
             - npm run-script prepare
-      - step:
-          name: 'Validate, Build, Deploy Parcel and CSD'
+      - step: &validate-parcel
+          name: 'Validate Parcel and CSD'
           image: jotunn/cm-validator
           script:
-            - export HEIMDALI_VERSION=$(date +%Y-%m-%d)
             - java -jar /usr/src/validator.jar -p $PWD/cloudera-integration/parcel/heimdali-meta/parcel.json
             - java -jar /usr/src/validator.jar -r $PWD/cloudera-integration/parcel/heimdali-meta/permissions.json
             - java -jar /usr/src/validator.jar -p $PWD/cloudera-integration/parcel/custom-shell-meta/parcel.json
             - java -jar /usr/src/validator.jar -s $PWD/cloudera-integration/csd/descriptor/service.sdl
+
+  default:
+    - step: *test-api
+    - step: *test-ui
+    - step: *validate-parcel
+
+  custom:
+    nightly:
+      - step: *test-api
+      - step: *test-ui
+      - step: *validate-parcel
+      - step:
+          name: 'Deploy nightly CSD and Parcel to parcels-dev'
+          image: jotunn/cm-validator
+          script:
+            - export HEIMDALI_VERSION=$(date +%Y-%m-%d)
             - ./publish.sh parcel heimdali
             - ./publish.sh manifest
             - ./publish.sh csd
             - ./publish.sh ship
 
-  tags:
-    '*':
+    commit:
+      - step: *test-api
+      - step: *test-ui
+      - step: *validate-parcel
       - step:
-          name: 'Package API'
-          image: openjdk:8-jdk
-          caches:
-            - sbt
-            - ivy2
-          artifacts:
-            - api/target/scala-2.12/*
-            - integration-test/target/scala-2.12/*
-            - common/target/scala-2.12/*
-          script:
-            - ./sbt "set every test in assembly := {}" api/assembly
-            - ./sbt "set every test in assembly := {}" integration-test/assembly
-            - ./sbt integration-test/test:package
-            - ./sbt common/test:package
-
-      - step:
-          name: 'Package UI'
-          image: node:9
-          caches:
-            - node
-          artifacts:
-            - dist/**
-          script:
-            - npm i -g typescript
-            - npm i
-            - npm run-script prepare
-      - step:
-          name: 'Build Parcel and CSD'
+          name: 'Deploy CSD and Parcel for a specific commit to parcels-dev'
           image: jotunn/cm-validator
           script:
+            - export HEIMDALI_VERSION=$(date +%Y-%m-%d)-$BITBUCKET_COMMIT
             - ./publish.sh parcel heimdali
             - ./publish.sh manifest
             - ./publish.sh csd

@@ -182,10 +182,13 @@ Heimdail follows [Semantic Versioning](https://semver.org/). Given a version lik
 We also add a 'release candidate' version to the end of the semver version so we can test and track versions internally
 before they are released to the public, for example `1.1.0-rc1` for release candiate '1'.
 
-### Tagging
+### Builds
 
-New releases can be created by tagging a release with a new version `git tag 1.1.1-rc1`. All release candidates go into
-the Artifactory repository `parcels-dev` when a tagged branch completes a build.
+There are three builds defined in Bitbucket
+
+- default: This build runs on each committed branch, building the UI and API code
+- nightly: This build creates a CSD and parcel in the parcels-dev Artifactory Repo nightly
+- commit: This build can be run to create a custom build for a specific commit hash. This is useful for on-demand testing
 
 ### Promoting a release
 
