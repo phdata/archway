@@ -22,8 +22,9 @@ trait WorkspaceRequestProvisioning {
         .transact(workspaceContext.context.transactor)
         .void
 
-    override def run[F[_]: Sync: Clock](workspace: WorkspaceRequest, workspaceContext: WorkspaceContext[F]): F[Unit] =
-      for {
+    override def run[F[_]: Sync: Clock](workspace: WorkspaceRequest, workspaceContext: WorkspaceContext[F]): F[Unit] = {
+      workspaceContext.context.hdfsClient.createUserDirectory(workspace.requestedBy) *>
+      (for {
         a <- workspace.data.traverse(a => a.provision[F](workspaceContext).run)
         b <- workspace.data.traverse(
           d =>
@@ -44,7 +45,8 @@ trait WorkspaceRequestProvisioning {
               .provision[F](workspaceContext)
               .run
         )
-      } yield a |+| b |+| c |+| d |+| e |+| f |+| g
+      } yield a |+| b |+| c |+| d |+| e |+| f |+| g)
+    }
 
   }
 

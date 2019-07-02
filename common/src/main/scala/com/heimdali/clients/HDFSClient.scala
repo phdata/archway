@@ -47,9 +47,14 @@ class HDFSClientImpl[F[_]: Async](hadoopConfiguration: Configuration, loginConte
     new Path(location)
 
   private def createHDFSDirectory(location: String): Path = {
-    logger.info(s"Creating $location in $fileSystem")
-    fileSystem.mkdirs(location)
-    location
+    if (!fileSystem.exists(location)) {
+      logger.info(s"Creating $location in $fileSystem")
+      fileSystem.mkdirs(location)
+    } else {
+      logger.info(s"$location already exists in $fileSystem")
+    }
+
+    fileSystem.getFileStatus(location).getPath
   }
 
   override def createDirectory(location: String, onBehalfOf: Option[String] = None): F[Path] =
