@@ -1,2 +1,2 @@
 #!/bin/bash -x
-$HEIMDALI_DIST/usr/bin/control.sh $@
+exec $HEIMDALI_DIST/usr/bin/control.sh $@
