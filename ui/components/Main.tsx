@@ -8,6 +8,7 @@ import WorkspaceListing from '../containers/WorkspaceListing';
 import RiskListing from '../containers/RiskListing';
 import OpsListing from '../containers/OpsListing';
 import WorkspaceRequest from '../containers/WorkspaceRequest';
+import CustomWorkspaces from '../containers/CustomWorkspaces';
 
 const { Content, Footer } = Layout;
 
@@ -23,6 +24,7 @@ const Main = () => (
             <Route exact path="/risks" component={RiskListing} />
             <Route exact path="/operations" component={OpsListing} />
             <Route exact path="/request" component={WorkspaceRequest} />
+            <Route exact path="/request/customworkspaces" component={CustomWorkspaces} />
             <Route path="/workspaces/:id" component={WorkspaceDetails} />
             <Redirect to="/home" />
           </Switch>

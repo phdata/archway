@@ -12,17 +12,22 @@ import {
   createWorkspaceRequest,
   createWorkspaceFailure,
 } from './actions';
-import { PAGE_BEHAVIOR, PAGE_DETAILS, PAGE_COMPLIANCE, PAGE_REVIEW } from './constants';
+import { PAGE_BEHAVIOR, PAGE_DETAILS, PAGE_COMPLIANCE, PAGE_REVIEW, PAGE_CUSTOM_WORKSPACES } from './constants';
 
 /* tslint:disable:no-var-requires */
 const router = require('connected-react-router/immutable');
 
 function* behaviorChangedListener({ behavior }: any) {
-  yield put(setLoading(true));
-  const token = yield select((s: any) => s.get('login').get('token'));
-  const templateDefaults = yield call(Api.getTemplate, token, behavior);
-  yield put(setTemplate(templateDefaults));
-  yield put(setLoading(false));
+  if (behavior === '') {
+    yield put(setCurrentPage(PAGE_CUSTOM_WORKSPACES));
+    yield put(router.push({ pathname: '/request/customworkspaces' }));
+  } else {
+    yield put(setLoading(true));
+    const token = yield select((s: any) => s.get('login').get('token'));
+    const templateDefaults = yield call(Api.getTemplate, token, behavior);
+    yield put(setTemplate(templateDefaults));
+    yield put(setLoading(false));
+  }
 }
 
 function* behaviorChanged() {
@@ -33,6 +38,9 @@ function* nextPageListener() {
   const currentPage = yield select((s: any) => s.get('request').get('currentPage'));
   if (currentPage === PAGE_BEHAVIOR) {
     yield put(setCurrentPage(PAGE_DETAILS));
+  } else if (currentPage === PAGE_CUSTOM_WORKSPACES) {
+    yield put(setCurrentPage(PAGE_DETAILS));
+    yield put(router.push({ pathname: '/request' }));
   } else if (currentPage === PAGE_DETAILS) {
     yield put(setCurrentPage(PAGE_COMPLIANCE));
   } else if (currentPage === PAGE_COMPLIANCE) {
@@ -78,7 +86,19 @@ function* prevPageListener() {
   } else if (currentPage === PAGE_COMPLIANCE) {
     yield put(setCurrentPage(PAGE_DETAILS));
   } else if (currentPage === PAGE_DETAILS) {
+    const currentBehavior = yield select((s: any) => s.get('request').get('behavior'));
+    const isCustomDescription =
+      currentBehavior !== 'simple' && currentBehavior !== 'structured' && currentBehavior !== '';
+    if (!isCustomDescription) {
+      yield put(setCurrentPage(PAGE_BEHAVIOR));
+    } else {
+      yield put(setCurrentPage(PAGE_CUSTOM_WORKSPACES));
+      yield put(router.push({ pathname: '/request/customworkspaces' }));
+    }
+  } else if (currentPage === PAGE_CUSTOM_WORKSPACES) {
     yield put(setCurrentPage(PAGE_BEHAVIOR));
+    yield put(clearRequest());
+    yield put(router.push({ pathname: '/request' }));
   }
 }
 

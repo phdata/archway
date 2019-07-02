@@ -17,7 +17,7 @@ const Behavior = ({ behaviorKey, icon, title, description, useCases, selected, o
   <Card
     onClick={() => onChange(behaviorKey, !selected)}
     hoverable={true}
-    style={{ flex: 1, borderRadius: 3 }}
+    style={{ flex: 1, borderRadius: 3, marginBottom: 15 }}
     bodyStyle={{ textAlign: 'center' }}
   >
     <div

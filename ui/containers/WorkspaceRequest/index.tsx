@@ -5,7 +5,8 @@ import { createStructuredSelector } from 'reselect';
 import { BehaviorPage, OverviewPage, CompliancePage, SummaryPage, WorkspaceSummary } from './components';
 import * as actions from './actions';
 import * as selectors from './selectors';
-import { PAGE_BEHAVIOR, PAGE_DETAILS, PAGE_COMPLIANCE, PAGE_REVIEW } from './constants';
+import { listCustomDescriptions } from '../../containers/CustomWorkspaces/actions';
+import { PAGE_BEHAVIOR, PAGE_DETAILS, PAGE_COMPLIANCE, PAGE_REVIEW, PAGE_CUSTOM_WORKSPACES } from './constants';
 import { RequestInput } from '../../models/RequestInput';
 import { Workspace } from '../../models/Workspace';
 import { Profile } from '../../models/Profile';
@@ -29,11 +30,19 @@ interface Props {
   clearRequest: () => void;
   setWorkspace: (workspace: Workspace) => void;
   setCurrentPage: (page: string) => void;
+  listCustomDescriptions: () => void;
 }
 
 class WorkspaceRequest extends React.Component<Props> {
   public componentDidMount() {
-    this.props.clearRequest();
+    const { currentPage, behavior, clearRequest } = this.props;
+    const isCustomDescriptionSelected = behavior !== 'simple' && behavior !== 'structured' && behavior !== '';
+
+    this.props.listCustomDescriptions();
+
+    if (currentPage === PAGE_CUSTOM_WORKSPACES || !isCustomDescriptionSelected) {
+      clearRequest();
+    }
   }
 
   public componentWillReceiveProps(nextProps: Props) {
@@ -161,6 +170,7 @@ const mapDispatchToProps = (dispatch: any) => ({
   clearRequest: () => dispatch(actions.clearRequest()),
   setWorkspace: (workspace: Workspace) => dispatch(actions.setWorkspace(workspace)),
   setCurrentPage: (page: string) => dispatch(actions.setCurrentPage(page)),
+  listCustomDescriptions: () => dispatch(listCustomDescriptions()),
 });
 
 export default connect(

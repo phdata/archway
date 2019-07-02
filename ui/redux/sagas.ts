@@ -7,13 +7,14 @@ import risk from '../containers/RiskListing/sagas';
 import operations from '../containers/OpsListing/sagas';
 import request from '../containers/WorkspaceRequest/sagas';
 import home from '../containers/Home/sagas';
+import templates from '../containers/CustomWorkspaces/sagas';
 import * as Api from '../service/api';
 import * as actions from './actions';
 
 const { config = {} } = window as any;
 const isDevMode = config.isDevMode === 'true';
 
-const sagas = [login, cluster, request, workspace, listing, risk, operations, home];
+const sagas = [login, cluster, request, workspace, listing, risk, operations, home, templates];
 
 export const CANCEL_SAGAS_HMR = 'CANCEL_SAGAS_HMR';
 

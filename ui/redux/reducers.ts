@@ -9,6 +9,7 @@ import operations from '../containers/OpsListing/reducers';
 import request from '../containers/WorkspaceRequest/reducers';
 import { reducer as form } from 'redux-form/immutable';
 import home from '../containers/Home/reducers';
+import templates from '../containers/CustomWorkspaces/reducers';
 import { FEATURE_FLAG } from './actions';
 
 const initialConfigState = fromJS({
@@ -35,6 +36,7 @@ const reducers = combineReducers<any>({
   form,
   home,
   config,
+  templates,
 });
 
 export default reducers;

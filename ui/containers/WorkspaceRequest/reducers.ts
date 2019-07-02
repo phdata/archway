@@ -15,7 +15,7 @@ import { PAGE_BEHAVIOR } from './constants';
 
 const initialState = fromJS({
   loading: false,
-  behavior: false,
+  behavior: '',
   request: {
     name: '',
     summary: '',
