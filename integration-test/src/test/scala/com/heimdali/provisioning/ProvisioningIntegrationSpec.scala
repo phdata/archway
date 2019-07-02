@@ -18,7 +18,7 @@ import scala.concurrent.ExecutionContext
 
 class ProvisioningIntegrationSpec extends FlatSpec with KerberosTest {
   implicit val timer: Timer[IO] = new TestTimer
-  val testUser = systemTestConfig.existingUser
+  val requester = "CN=svc_heim_test1,OU=users,OU=Heimdali,DC=phdata,DC=io"
   val commonDescription = "Created by Heimdali integration tests."
 
   implicit def contextShift: ContextShift[IO] = IO.contextShift(ExecutionContext.global)
@@ -28,7 +28,7 @@ class ProvisioningIntegrationSpec extends FlatSpec with KerberosTest {
       "Heimdali simple workspace test",
       commonDescription,
       Compliance.empty,
-      testUser)
+      requester)
 
     val result = provisionAndDestroyWorkspace(templateRequest, TemplateNames.simple)
 
@@ -38,11 +38,11 @@ class ProvisioningIntegrationSpec extends FlatSpec with KerberosTest {
   }
 
   it should "Provision a user workspace" in new Context {
-    val templateRequest = TemplateRequest(testUser,
+    val templateRequest = TemplateRequest("user_svc_heim_test1",
       "Heimdali user workspace test",
       commonDescription,
       Compliance.empty,
-      testUser)
+      requester)
 
     val result = provisionAndDestroyWorkspace(templateRequest, TemplateNames.user)
 
@@ -56,7 +56,7 @@ class ProvisioningIntegrationSpec extends FlatSpec with KerberosTest {
       "Heimdali structured workspace test",
       commonDescription,
       Compliance.empty,
-      testUser)
+      requester)
 
     val result = provisionAndDestroyWorkspace(templateRequest, TemplateNames.structured)
 

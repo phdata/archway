@@ -2,6 +2,7 @@ package com.heimdali.provisioning
 
 import java.time.Instant
 
+import cats.data.OptionT
 import cats.effect.{Clock, Sync}
 import cats.implicits._
 import com.heimdali.models.WorkspaceRequest
@@ -23,7 +24,13 @@ trait WorkspaceRequestProvisioning {
         .void
 
     override def run[F[_]: Sync: Clock](workspace: WorkspaceRequest, workspaceContext: WorkspaceContext[F]): F[Unit] = {
-      workspaceContext.context.hdfsClient.createUserDirectory(workspace.requestedBy) *>
+      val createUserWorkspace =
+        (for {
+          user <- workspaceContext.context.lookupLDAPClient.findUser(workspace.requestedBy)
+          _ <-OptionT.liftF(workspaceContext.context.hdfsClient.createUserDirectory(user.username))
+        } yield ()).value
+
+      createUserWorkspace *>
       (for {
         a <- workspace.data.traverse(a => a.provision[F](workspaceContext).run)
         b <- workspace.data.traverse(
