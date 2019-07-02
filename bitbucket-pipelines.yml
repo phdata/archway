@@ -76,6 +76,21 @@ pipelines:
             - ./publish.sh csd
             - ./publish.sh ship
 
+  tags:
+    '*':
+      - step: *test-api
+      - step: *test-ui
+      - step: *validate-parcel
+      - step:
+          name: 'Deploy CSD and Parcel for a tag to parcels-dev'
+          image: jotunn/cm-validator
+          script:
+            - export HEIMDALI_VERSION=$BITBUCKET_TAG
+            - ./publish.sh parcel heimdali
+            - ./publish.sh manifest
+            - ./publish.sh csd
+            - ./publish.sh ship
+
 definitions:
   services:
     postgres:
