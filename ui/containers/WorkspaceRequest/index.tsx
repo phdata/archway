@@ -6,7 +6,7 @@ import { BehaviorPage, OverviewPage, CompliancePage, SummaryPage, WorkspaceSumma
 import * as actions from './actions';
 import * as selectors from './selectors';
 import { listCustomDescriptions } from '../../containers/CustomWorkspaces/actions';
-import { PAGE_BEHAVIOR, PAGE_DETAILS, PAGE_COMPLIANCE, PAGE_REVIEW, PAGE_CUSTOM_WORKSPACES } from './constants';
+import { PAGE_BEHAVIOR, PAGE_DETAILS, PAGE_COMPLIANCE, PAGE_REVIEW } from './constants';
 import { RequestInput } from '../../models/RequestInput';
 import { Workspace } from '../../models/Workspace';
 import { Profile } from '../../models/Profile';
@@ -27,7 +27,6 @@ interface Props {
   setRequest: (request: boolean | RequestInput) => void;
   gotoNextPage: () => void;
   gotoPrevPage: () => void;
-  clearRequest: () => void;
   setWorkspace: (workspace: Workspace) => void;
   setCurrentPage: (page: string) => void;
   listCustomDescriptions: () => void;
@@ -35,14 +34,7 @@ interface Props {
 
 class WorkspaceRequest extends React.Component<Props> {
   public componentDidMount() {
-    const { currentPage, behavior, clearRequest } = this.props;
-    const isCustomDescriptionSelected = behavior !== 'simple' && behavior !== 'structured' && behavior !== '';
-
     this.props.listCustomDescriptions();
-
-    if (currentPage === PAGE_CUSTOM_WORKSPACES || !isCustomDescriptionSelected) {
-      clearRequest();
-    }
   }
 
   public componentWillReceiveProps(nextProps: Props) {
@@ -167,7 +159,6 @@ const mapDispatchToProps = (dispatch: any) => ({
   setRequest: (request: boolean | RequestInput) => dispatch(actions.setRequest(request)),
   gotoNextPage: () => dispatch(actions.gotoNextPage()),
   gotoPrevPage: () => dispatch(actions.gotoPrevPage()),
-  clearRequest: () => dispatch(actions.clearRequest()),
   setWorkspace: (workspace: Workspace) => dispatch(actions.setWorkspace(workspace)),
   setCurrentPage: (page: string) => dispatch(actions.setCurrentPage(page)),
   listCustomDescriptions: () => dispatch(listCustomDescriptions()),
