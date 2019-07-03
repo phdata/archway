@@ -1,3 +1,5 @@
+options:
+  max-time: 10
 pipelines:
   definitions:
     steps:
