@@ -5,4 +5,5 @@ export const SPNEGO = 'spnego';
 export enum featureFlagType {
   Application = 'application',
   Messaging = 'messaging',
+  CustomTemplates = 'custom-templates',
 }
