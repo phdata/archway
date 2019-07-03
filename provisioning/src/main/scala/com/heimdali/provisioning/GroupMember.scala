@@ -28,7 +28,6 @@ object GroupMember {
 
     override def run[F[_]: Sync: Clock](groupMember: GroupMember, workspaceContext: WorkspaceContext[F]): F[Unit] =
       for {
-        _ <- workspaceContext.context.hdfsClient.createUserDirectory(groupMember.distinguishedName)
         _ <- workspaceContext.context.provisioningLDAPClient
           .addUser(groupMember.groupDN, groupMember.distinguishedName)
           .value
