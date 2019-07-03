@@ -1,6 +1,6 @@
 import { fromJS } from 'immutable';
 import { createSelector } from 'reselect';
-import { authSelector, clusterSelector, workspaceSelector, configSelector } from '../../redux/selectors';
+import { authSelector, clusterSelector, workspaceSelector } from '../../redux/selectors';
 import {
   Member,
   NamespaceInfoList,
@@ -117,10 +117,4 @@ export const getLiaison = () =>
         .get('members')
         .toJS()
         .find(liasionFinder(workspaceState)) as Member)
-  );
-
-export const getFeatureFlags = () =>
-  createSelector(
-    configSelector,
-    configState => configState.get('featureFlags')
   );

@@ -34,6 +34,7 @@ import {
 } from '../../models/Workspace';
 import * as actions from './actions';
 import * as selectors from './selectors';
+import { FeatureService } from '../../service/FeatureService';
 import { featureFlagType } from '../../constants';
 
 interface DetailsRouteProps {
@@ -53,7 +54,6 @@ interface Props extends RouteComponentProps<DetailsRouteProps> {
   userSuggestions?: UserSuggestions;
   liasion?: Member;
   members?: Member[];
-  featureFlags: string[];
 
   clearDetails: () => void;
   getWorkspaceDetails: (id: number) => void;
@@ -186,10 +186,10 @@ class WorkspaceDetails extends React.PureComponent<Props> {
       userSuggestions,
       removeMember,
       liasion,
-      featureFlags,
     } = this.props;
-    const hasApplicationFlag = featureFlags.includes(featureFlagType.Application);
-    const hasMessagingFlag = featureFlags.includes(featureFlagType.Messaging);
+    const featureService = new FeatureService();
+    const hasApplicationFlag = featureService.isEnabled(featureFlagType.Application);
+    const hasMessagingFlag = featureService.isEnabled(featureFlagType.Messaging);
 
     if (!workspace) {
       return (
@@ -349,7 +349,6 @@ const mapStateToProps = () =>
     userSuggestions: selectors.getUserSuggestions(),
     liasion: selectors.getLiaison(),
     members: selectors.getMembers(),
-    featureFlags: selectors.getFeatureFlags(),
   });
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
