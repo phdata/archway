@@ -34,10 +34,10 @@ class LDAPClientImpl[F[_]: Effect](ldapConfig: LDAPConfig, binding: LDAPConfig =
     val bindRequest: SimpleBindRequest =
       new SimpleBindRequest(ldapBinding.bindDN, ldapBinding.bindPassword)
 
-    Try(new LDAPConnectionPool(failoverSet, bindRequest, 10)) match {
+    Try(new LDAPConnectionPool(failoverSet, bindRequest, 4)) match {
       case Success(value) => value
       case Failure(exception) => {
-        logger.warn("Creation of LDAPConnectionPool failed ", exception)
+        logger.error(s"Creation of LDAPConnectionPool failed ${exception.getLocalizedMessage}", exception)
         throw exception
       }
     }
@@ -64,7 +64,7 @@ class LDAPClientImpl[F[_]: Effect](ldapConfig: LDAPConfig, binding: LDAPConfig =
   def getUserEntry(username: String): OptionT[F, SearchResultEntry] =
     OptionT(Sync[F].delay {
       val searchResult =
-        connectionPool.getConnection.search(ldapConfig.baseDN, SearchScope.SUB, searchQuery(username))
+        connectionPool.search(ldapConfig.baseDN, SearchScope.SUB, searchQuery(username))
       searchResult.getSearchEntries.asScala.headOption
     })
 
@@ -73,7 +73,7 @@ class LDAPClientImpl[F[_]: Effect](ldapConfig: LDAPConfig, binding: LDAPConfig =
       Sync[F].delay(
         try {
           logger.debug(s"getting info for $dn")
-          Option(connectionPool.getConnection.getEntry(dn))
+          Option(connectionPool.getEntry(dn))
         } catch {
           case exc: Throwable =>
             logger.info(s"Failed to get LDAP entry for dn '$dn'", exc)
@@ -94,7 +94,7 @@ class LDAPClientImpl[F[_]: Effect](ldapConfig: LDAPConfig, binding: LDAPConfig =
   override def getUser(username: String): OptionT[F, LDAPUser] = getUserEntry(username).map(ldapUser)
 
   private def ldapBindingAsOption(distinguishedName: String, password: String, userName: String): Option[BindResult] = {
-    Try(connectionPool.getConnection.bind(distinguishedName, password)) match {
+    Try(connectionPool.bind(distinguishedName, password)) match {
       case Success(value) => Some(value)
       case Failure(exception) => {
         logger.warn(s"Bind process failed for user $userName", exception)
@@ -133,7 +133,7 @@ class LDAPClientImpl[F[_]: Effect](ldapConfig: LDAPConfig, binding: LDAPConfig =
       attributes: List[(String, String)]
   ): F[Option[_ <: LDAPRequest]] =
     Sync[F].delay {
-      Option(connectionPool.getConnection.getEntry(groupDN)) match {
+      Option(connectionPool.getEntry(groupDN)) match {
         case Some(entry) =>
           val existing = entry.getAttributes.asScala.map(a => a.getName -> a.getValue).toList
           val modifications = modificationsFor(existing, attributes).filterNot(_.getAttributeName == "objectClass")
@@ -150,10 +150,10 @@ class LDAPClientImpl[F[_]: Effect](ldapConfig: LDAPConfig, binding: LDAPConfig =
     groupRequest(groupDN, groupName, attributes).map {
       case Some(request: AddRequest) =>
         logger.info("adding group with {}", request)
-        connectionPool.getConnection.add(request)
+        connectionPool.add(request)
       case Some(request: ModifyRequest) =>
         logger.info("updating group with {}", request)
-        connectionPool.getConnection.modify(request)
+        connectionPool.modify(request)
       case None =>
         logger.info("existing group had no changes")
         ()
@@ -173,7 +173,7 @@ class LDAPClientImpl[F[_]: Effect](ldapConfig: LDAPConfig, binding: LDAPConfig =
       OptionT.liftF(
         Effect[F]
           .delay(
-            connectionPool.getConnection.modify(
+            connectionPool.modify(
               groupEntry.getDN,
               new Modification(ModificationType.ADD, "member", newMember)
             )
@@ -194,7 +194,7 @@ class LDAPClientImpl[F[_]: Effect](ldapConfig: LDAPConfig, binding: LDAPConfig =
   override def groupMembers(groupDN: String): F[List[LDAPUser]] =
     Sync[F].delay {
       val searchResult =
-        connectionPool.getConnection.search(
+        connectionPool.search(
           ldapConfig.baseDN,
           SearchScope.SUB,
           s"(&(objectClass=user)(memberOf=$groupDN))"
@@ -205,7 +205,7 @@ class LDAPClientImpl[F[_]: Effect](ldapConfig: LDAPConfig, binding: LDAPConfig =
   override def removeUser(groupDN: String, memberDN: String): OptionT[F, String] =
     OptionT(getEntry(groupDN).value.map {
       case Some(group) if group.hasAttribute("member") && group.getAttributeValues("member").contains(memberDN) =>
-        connectionPool.getConnection.modify(groupDN, new Modification(ModificationType.DELETE, "member", memberDN))
+        connectionPool.modify(groupDN, new Modification(ModificationType.DELETE, "member", memberDN))
         Some(memberDN)
       case _ => Some(memberDN) //no-op
     })
@@ -214,7 +214,7 @@ class LDAPClientImpl[F[_]: Effect](ldapConfig: LDAPConfig, binding: LDAPConfig =
     Effect[F].delay {
       val filterText = templateEngine.layout(filterTemplate.source, Map("filter" -> filter))
       logger.debug("looking up users with \"{}\"", filterText)
-      connectionPool.getConnection
+      connectionPool
         .search(ldapConfig.baseDN, SearchScope.SUB, filterText)
         .getSearchEntries
         .asScala
@@ -240,6 +240,6 @@ class LDAPClientImpl[F[_]: Effect](ldapConfig: LDAPConfig, binding: LDAPConfig =
   override def deleteGroup(groupDN: String): OptionT[F, String] =
     for {
       _ <- getEntry(groupDN)
-      _ <- OptionT(Option(connectionPool.getConnection.delete(groupDN)).pure[F])
+      _ <- OptionT(Option(connectionPool.delete(groupDN)).pure[F])
     } yield groupDN
 }
