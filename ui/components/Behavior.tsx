@@ -32,7 +32,7 @@ const Behavior = ({ behaviorKey, icon, title, description, useCases, selected, o
       <Icon type="check" style={{ fontSize: 14 }} />
     </div>
     <Icon type={icon} style={{ fontSize: 42 }} />
-    <div style={{ fontSize: 14, textTransform: 'uppercase' }}>{title}</div>
+    <div style={{ fontSize: 14, textTransform: 'uppercase', display: 'flex', justifyContent: 'center' }}>{title}</div>
     {description && <p>{description}</p>}
     {useCases && (
       <div>

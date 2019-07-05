@@ -11,7 +11,7 @@ import { RequestInput } from '../../models/RequestInput';
 import { Workspace } from '../../models/Workspace';
 import { Profile } from '../../models/Profile';
 import { FeatureService } from '../../service/FeatureService';
-import { featureFlagType } from '../../constants';
+import { FeatureFlagType } from '../../constants';
 
 interface Props {
   profile: Profile;
@@ -37,7 +37,7 @@ interface Props {
 class WorkspaceRequest extends React.Component<Props> {
   public componentDidMount() {
     const featureService = new FeatureService();
-    if (featureService.isEnabled(featureFlagType.CustomTemplates)) {
+    if (featureService.isEnabled(FeatureFlagType.CustomTemplates)) {
       this.props.listCustomDescriptions();
     }
   }

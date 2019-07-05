@@ -35,7 +35,7 @@ import {
 import * as actions from './actions';
 import * as selectors from './selectors';
 import { FeatureService } from '../../service/FeatureService';
-import { featureFlagType } from '../../constants';
+import { FeatureFlagType } from '../../constants';
 
 interface DetailsRouteProps {
   id: any;
@@ -188,8 +188,8 @@ class WorkspaceDetails extends React.PureComponent<Props> {
       liasion,
     } = this.props;
     const featureService = new FeatureService();
-    const hasApplicationFlag = featureService.isEnabled(featureFlagType.Application);
-    const hasMessagingFlag = featureService.isEnabled(featureFlagType.Messaging);
+    const hasApplicationFlag = featureService.isEnabled(FeatureFlagType.Application);
+    const hasMessagingFlag = featureService.isEnabled(FeatureFlagType.Messaging);
 
     if (!workspace) {
       return (

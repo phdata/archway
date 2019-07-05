@@ -22,3 +22,13 @@ export const setListingMode = (mode: string) => ({
   type: SET_LISTING_MODE,
   mode,
 });
+
+export const FILTER_WORKSPACES = 'FILTER_WORKSPACES';
+export const filterWorkspaces = (filter: string, behaviors: string[], statuses: string[]) => ({
+  type: FILTER_WORKSPACES,
+  filters: {
+    filter,
+    behaviors,
+    statuses,
+  },
+});

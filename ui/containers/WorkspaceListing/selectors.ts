@@ -3,6 +3,7 @@ import { workspaceListSelector, authSelector, clusterSelector } from '../../redu
 import { WorkspaceSearchResult } from '../../models/Workspace';
 import { Profile } from '../../models/Profile';
 import { Cluster } from '../../models/Cluster';
+import { Filters } from '../../models/Listing';
 
 const fuseList = () =>
   createSelector(
@@ -26,7 +27,7 @@ export const workspaceList = () =>
   createSelector(
     fuseList(),
     getListFilters(),
-    (fuse, filters: { filter: string; behaviors: string[]; statuses: string[] }) => {
+    (fuse, filters: Filters) => {
       return (filters.filter ? fuse.search(filters.filter) : fuse.list)
         .filter((workspace: WorkspaceSearchResult) => filters.behaviors.indexOf(workspace.behavior.toLowerCase()) >= 0)
         .filter(
