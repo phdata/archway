@@ -14,6 +14,11 @@ import scala.concurrent.duration.{Duration, FiniteDuration}
 
 package object config {
 
+  object AvailableFeatures {
+    val messaging = "messaging"
+    val applications = "applications"
+  }
+
   implicit final val finiteDurationDecoder: Decoder[Duration] =
     (c: HCursor) => {
       for {
