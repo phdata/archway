@@ -106,9 +106,54 @@ class CompliancePage extends React.Component<Props, State> {
     phi: {},
   };
 
+  public componentDidMount() {
+    window.addEventListener('keyup', this.onKeyUp);
+  }
+
+  public componentWillUnmount() {
+    window.removeEventListener('keyup', this.onKeyUp);
+  }
+
   public getBooleanFromData(data: any) {
     return Object.keys(data).filter(key => !!data[key]).length > 0;
   }
+
+  public onKeyUp: any = (e: React.KeyboardEvent) => {
+    if (e.key === 'a') {
+      const { request, setRequest } = this.props;
+
+      ['pci', 'pii', 'phi'].map(type => {
+        complianceData[type].values.map((value: any) => {
+          const { key } = value;
+          const { [type as ('pci' | 'pii' | 'phi')]: data } = this.state;
+          const newData = {
+            ...data,
+            [key]: true,
+          };
+          switch (type) {
+            case 'pci':
+              this.setState({ pci: newData });
+              break;
+            case 'pii':
+              this.setState({ pii: newData });
+              break;
+            case 'phi':
+              this.setState({ phi: newData });
+              break;
+            default:
+          }
+        });
+      });
+      setRequest({
+        ...request,
+        compliance: {
+          pci_data: true,
+          pii_data: true,
+          phi_data: true,
+        },
+      });
+    }
+  };
 
   public onChange(type: 'pci' | 'pii' | 'phi', name: string, value: boolean) {
     const { request, setRequest } = this.props;
