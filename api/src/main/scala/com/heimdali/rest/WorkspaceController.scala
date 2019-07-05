@@ -15,14 +15,17 @@ import org.http4s.dsl.Http4sDsl
 import com.heimdali.provisioning.Message._
 import com.heimdali.rest.authentication.{AuthService, TokenAuthService}
 
-class WorkspaceController[F[_]: Sync: Timer](
+import scala.concurrent.ExecutionContext
+
+class WorkspaceController[F[_]: Sync: Timer: ContextShift: ConcurrentEffect](
     authService: TokenAuthService[F],
     workspaceService: WorkspaceService[F],
     memberService: MemberService[F],
     kafkaService: KafkaService[F],
     applicationService: ApplicationService[F],
     emailService: EmailService[F],
-    provisioningService: ProvisioningService[F]
+    provisioningService: ProvisioningService[F],
+    emailEC: ExecutionContext
 ) extends Http4sDsl[F] {
 
   implicit val memberRequestEntityDecoder: EntityDecoder[F, MemberRequest] = jsonOf[F, MemberRequest]
@@ -75,7 +78,8 @@ class WorkspaceController[F[_]: Sync: Timer](
             for {
               workspaceRequest <- req.req.as[WorkspaceRequest]
               newWorkspace <- workspaceService.create(workspaceRequest)
-              _ <- emailService.newWorkspaceEmail(newWorkspace)
+              _ <- ConcurrentEffect[F].start(
+                ContextShift[F].evalOn(emailEC)(emailService.newWorkspaceEmail(newWorkspace)))
               response <- Created(newWorkspace.asJson)
             } yield response
           }

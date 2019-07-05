@@ -31,6 +31,7 @@ object Server extends IOApp with LazyLogging {
       provisionEC <- ExecutionContexts.fixedThreadPool(context.appConfig.provisioning.threadPoolSize)
       startupEC <- ExecutionContexts.fixedThreadPool(1)
       staticContentEC <- ExecutionContexts.fixedThreadPool(1)
+      emailEC <- ExecutionContexts.fixedThreadPool(1)
       _ <- Resource.liftF(logger.info("AppContext has been generated").pure[F])
 
       configService = new DBConfigService[F](context)
@@ -74,7 +75,8 @@ object Server extends IOApp with LazyLogging {
         kafkaService,
         applicationService,
         emailService,
-        provisionService
+        provisionService,
+        emailEC
       )
       _ <- Resource.liftF(logger.debug("Workspace Controller has been initialized").pure[F])
 

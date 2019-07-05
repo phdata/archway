@@ -124,7 +124,8 @@ class WorkspaceControllerSpec
 
   trait Context {
     implicit val timer: Timer[IO] = testTimer
-    val contextShift = IO.contextShift(ExecutionContext.global)
+    implicit val contextShift = IO.contextShift(ExecutionContext.global)
+    implicit val concurrentEffect = IO.ioConcurrentEffect(contextShift)
     val authService: TestAuthService = new TestAuthService(riskApprover = true, platformApprover = true)
     val memberService: MemberService[IO] = mock[MemberService[IO]]
     val kafkaService: KafkaService[IO] = mock[KafkaService[IO]]
@@ -141,7 +142,8 @@ class WorkspaceControllerSpec
         kafkaService,
         applicationService,
         emailService,
-        provisioningService
+        provisioningService,
+        ExecutionContext.global
       )
   }
 }
