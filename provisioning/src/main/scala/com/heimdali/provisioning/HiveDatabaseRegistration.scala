@@ -53,7 +53,6 @@ object HiveDatabaseRegistration extends LazyLogging {
         _ <- workspaceContext.context.impalaClient
           .map(_.invalidateMetadata(hiveDatabaseRegistration.name, tempTable))
           .getOrElse(().pure[F])
-        _ <- workspaceContext.context.hiveClient.dropTable(hiveDatabaseRegistration.name, tempTable)
       } yield ()
     }
   }
