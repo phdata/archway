@@ -36,6 +36,7 @@ import {
   refreshHiveTablesSuccess,
   refreshHiveTablesFailure,
   setActiveModal,
+  addDataMemberFailure,
 } from './actions';
 
 import { RECENT_WORKSPACES_KEY, TOKEN_EXTRACTOR } from '../../constants';
@@ -175,7 +176,8 @@ export function* simpleMemberRequested({ resource }: SimpleMemberRequestAction) 
     const members = yield call(Api.getMembers, token, workspace.id);
     yield put(setMembers(members));
   } catch (e) {
-    //
+    yield put(addDataMemberFailure(e.toString()));
+    yield put(simpleMemberRequestComplete());
   }
 }
 

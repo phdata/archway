@@ -25,6 +25,7 @@ import {
   REQUEST_REFRESH_HIVE_TABLES,
   REFRESH_HIVE_TABLES_SUCCESS,
   REFRESH_HIVE_TABLES_FAILURE,
+  ADD_DATA_MEMBER_FAILURE,
 } from './actions';
 
 import { Member } from '../../models/Workspace';
@@ -33,6 +34,7 @@ const initialState = fromJS({
   fetching: false,
   details: false,
   activeModal: false,
+  error: '',
 });
 
 const details = (state = initialState, action: any) => {
@@ -120,7 +122,7 @@ const details = (state = initialState, action: any) => {
       return state.set('activeModal', false);
 
     case SIMPLE_MEMBER_REQUEST_COMPLETE:
-      return state.set('activeModal', false);
+      return state.set('activeModal', false).set('error', '');
 
     case REQUEST_REMOVE_MEMBER:
       return state.set(
@@ -212,6 +214,9 @@ const details = (state = initialState, action: any) => {
           .setIn(['loading'], false)
           .setIn(['error'], action.error)
       );
+
+    case ADD_DATA_MEMBER_FAILURE:
+      return state.set('error', action.error);
 
     default:
       return state;

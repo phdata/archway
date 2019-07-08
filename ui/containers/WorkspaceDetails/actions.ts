@@ -270,3 +270,9 @@ export const refreshHiveTablesFailure = (error: string) => ({
   type: REFRESH_HIVE_TABLES_FAILURE,
   error,
 });
+
+export const ADD_DATA_MEMBER_FAILURE = 'ADD_DATA_MEMBER_FAILURE';
+export const addDataMemberFailure = (error: string) => ({
+  type: ADD_DATA_MEMBER_FAILURE,
+  error,
+});

@@ -54,6 +54,7 @@ interface Props extends RouteComponentProps<DetailsRouteProps> {
   userSuggestions?: UserSuggestions;
   liasion?: Member;
   members?: Member[];
+  error: string;
 
   clearDetails: () => void;
   getWorkspaceDetails: (id: number) => void;
@@ -103,6 +104,7 @@ class WorkspaceDetails extends React.PureComponent<Props> {
       match: {
         params: { id },
       },
+      error,
     } = nextProps;
     if (oldId !== id) {
       this.props.clearDetails();
@@ -127,6 +129,9 @@ class WorkspaceDetails extends React.PureComponent<Props> {
       if (newInfraStatus && (newInfraStatus.success === true || newInfraStatus.success === false)) {
         this.showApprovalNotification('Infra', newInfraStatus.error);
       }
+    }
+    if (!!error && error !== this.props.error) {
+      notification.error({ message: 'Error', description: 'Failed to add user' });
     }
   }
 
@@ -349,6 +354,7 @@ const mapStateToProps = () =>
     userSuggestions: selectors.getUserSuggestions(),
     liasion: selectors.getLiaison(),
     members: selectors.getMembers(),
+    error: selectors.getError(),
   });
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({

@@ -118,3 +118,9 @@ export const getLiaison = () =>
         .toJS()
         .find(liasionFinder(workspaceState)) as Member)
   );
+
+export const getError = () =>
+  createSelector(
+    workspaceSelector,
+    workspaceState => workspaceState.get('error')
+  );
