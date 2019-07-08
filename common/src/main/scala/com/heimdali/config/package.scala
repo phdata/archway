@@ -3,6 +3,7 @@ package com.heimdali
 import java.net.URLEncoder
 
 import cats.effect.{Async, ContextShift, Resource}
+import com.typesafe.scalalogging.StrictLogging
 import doobie._
 import doobie.hikari.HikariTransactor
 import doobie.util.transactor.Strategy
@@ -12,7 +13,7 @@ import io.circe.{Decoder, Encoder, HCursor, _}
 import scala.concurrent.ExecutionContext
 import scala.concurrent.duration.{Duration, FiniteDuration}
 
-package object config {
+package object config extends StrictLogging {
 
   object AvailableFeatures {
     val messaging = "messaging"
@@ -219,13 +220,23 @@ package object config {
     }
 
     def impalaTx[F[_]: Async: ContextShift]: Transactor[F] = {
-      Class.forName(driver)
+      try {
+        Class.forName(driver)
+      } catch {
+        case e: Exception =>
+          logger.warn(
+            """Impala driver not found. Impala driver must be added to the classpath to use the automatic
+              |Impala invalidate metadata functionality for new databases and Sentry permsissions.""".stripMargin,
+            e
+          )
+      }
 
       // Turn the transactor into no
       val initialImpalaTransactor = Transactor.fromDriverManager[F](driver, url, "", "")
       val strategy = Strategy.void.copy(always = FC.close)
 
       Transactor.strategy.set(initialImpalaTransactor, strategy)
+
     }
 
     def tx[F[_]: Async: ContextShift](
