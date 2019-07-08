@@ -171,17 +171,14 @@ class LDAPClientImpl[F[_]: Effect](ldapConfig: LDAPConfig, binding: LDAPConfig =
   def createMemberAttribute(groupEntry: SearchResultEntry, newMember: String): F[Option[Unit]] =
     if (!groupEntry.hasAttribute("member") || !groupEntry.getAttributeValues("member").contains(newMember))
       for {
-        res <- Effect[F].delay(connectionPool.modify(
-              groupEntry.getDN, new Modification(ModificationType.ADD, "member", newMember)))
+        res <- Effect[F].delay(
+          connectionPool.modify(groupEntry.getDN, new Modification(ModificationType.ADD, "member", newMember)))
       } yield {
-        if (res.getResultCode.intValue() == 0) { Some(()) }
-        else {
+        if (res.getResultCode.intValue() == 0) { Some(()) } else {
           logger.error("Adding member failed ", res.getDiagnosticMessage)
           None
         }
-      }
-
-    else Option.empty[Unit].pure[F]
+      } else Option.empty[Unit].pure[F]
 
   override def addUser(groupDN: String, distinguishedName: String): OptionT[F, String] =
     for {
@@ -215,11 +212,7 @@ class LDAPClientImpl[F[_]: Effect](ldapConfig: LDAPConfig, binding: LDAPConfig =
     Effect[F].delay {
       val filterText = templateEngine.layout(filterTemplate.source, Map("filter" -> filter))
       logger.debug("looking up users with \"{}\"", filterText)
-      connectionPool
-        .search(ldapConfig.baseDN, SearchScope.SUB, filterText)
-        .getSearchEntries
-        .asScala
-        .toList
+      connectionPool.search(ldapConfig.baseDN, SearchScope.SUB, filterText).getSearchEntries.asScala.toList
     }
 
   def genDisplay(searchResultEntry: SearchResultEntry): String = {
