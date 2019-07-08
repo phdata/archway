@@ -168,26 +168,27 @@ class LDAPClientImpl[F[_]: Effect](ldapConfig: LDAPConfig, binding: LDAPConfig =
       _ <- Sync[F].pure(logger.info("group {} created", groupName))
     } yield ()
 
-  def createMemberAttribute(groupEntry: SearchResultEntry, newMember: String): OptionT[F, Unit] =
+  def createMemberAttribute(groupEntry: SearchResultEntry, newMember: String): F[Option[Unit]] =
     if (!groupEntry.hasAttribute("member") || !groupEntry.getAttributeValues("member").contains(newMember))
-      OptionT.liftF(
-        Effect[F]
-          .delay(
-            connectionPool.modify(
-              groupEntry.getDN,
-              new Modification(ModificationType.ADD, "member", newMember)
-            )
-          )
-          .void
-      )
-    else OptionT.none[F, Unit]
+      for {
+        res <- Effect[F].delay(connectionPool.modify(
+              groupEntry.getDN, new Modification(ModificationType.ADD, "member", newMember)))
+      } yield {
+        if (res.getResultCode.intValue() == 0) { Some(()) }
+        else {
+          logger.error("Adding member failed ", res.getDiagnosticMessage)
+          None
+        }
+      }
+
+    else Option.empty[Unit].pure[F]
 
   override def addUser(groupDN: String, distinguishedName: String): OptionT[F, String] =
     for {
       _ <- OptionT.liftF(Sync[F].pure(logger.info("getting group {}", groupDN)))
       groupEntry <- getEntry(groupDN)
       _ <- OptionT.liftF(Sync[F].pure(logger.info("found group {}", groupEntry)))
-      _ <- createMemberAttribute(groupEntry, distinguishedName)
+      _ <- OptionT.liftF(createMemberAttribute(groupEntry, distinguishedName))
       _ <- OptionT.liftF(Sync[F].pure(logger.info("added {} to {}", distinguishedName, groupDN)))
     } yield distinguishedName
 

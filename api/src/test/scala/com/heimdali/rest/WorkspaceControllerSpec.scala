@@ -1,13 +1,10 @@
 package com.heimdali.rest
 
-import java.time.Instant
-
 import cats.data.{NonEmptyList, OptionT}
 import cats.effect._
-import cats.effect.implicits._
 import cats.implicits._
 import com.heimdali.models._
-import com.heimdali.provisioning.{Message => OurMessage, SimpleMessage}
+import com.heimdali.provisioning.{SimpleMessage, Message => OurMessage}
 import com.heimdali.services._
 import com.heimdali.test.TestAuthService
 import com.heimdali.test.fixtures._
@@ -15,9 +12,8 @@ import io.circe.Json
 import io.circe.parser._
 import io.circe.syntax._
 import org.http4s._
-import org.http4s.circe._
-import org.http4s.dsl.io._
 import org.http4s.client.dsl.Http4sClientDsl
+import org.http4s.dsl.io._
 import org.http4s.implicits._
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach, FlatSpec, Matchers}
@@ -111,7 +107,25 @@ class WorkspaceControllerSpec
       "role" -> "manager".asJson
     )
 
-    restApi.route.orNotFound.run(POST(request, Uri.uri("/123/members")).unsafeRunSync()).unsafeRunSync()
+    val response = restApi.route.orNotFound.run(POST(request, Uri.uri("/123/members")).unsafeRunSync()).unsafeRunSync()
+    response.status.code shouldBe 201
+  }
+
+  it should "return status 500 if adding member fails" in new Http4sClientDsl[IO] with Context {
+    val memberRequest = MemberRoleRequest(standardUserDN, "data", id, Some(Manager))
+
+    (memberService.addMember _).expects(id, memberRequest).returning(OptionT.none)
+    (emailService.newMemberEmail _).expects(id, memberRequest).returning(OptionT.some(IO.unit))
+
+    val request = Json.obj(
+      "distinguished_name" -> standardUserDN.asJson,
+      "resource" -> "data".asJson,
+      "resource_id" -> id.asJson,
+      "role" -> "manager".asJson
+    )
+
+    val response = restApi.route.orNotFound.run(POST(request, Uri.uri("/123/members")).unsafeRunSync()).unsafeRunSync()
+    response.status.code shouldBe 500
   }
 
   it should "provision workspace" in new Http4sClientDsl[IO] with Context {

@@ -6,14 +6,13 @@ import cats.effect._
 import cats.implicits._
 import com.heimdali.models._
 import com.heimdali.provisioning.Message._
+import com.heimdali.rest.authentication.TokenAuthService
 import com.heimdali.services._
 import io.circe.Decoder
 import io.circe.generic.auto._
 import io.circe.syntax._
 import org.http4s._
 import org.http4s.dsl.Http4sDsl
-import com.heimdali.provisioning.Message._
-import com.heimdali.rest.authentication.{AuthService, TokenAuthService}
 
 import scala.concurrent.ExecutionContext
 
@@ -109,7 +108,7 @@ class WorkspaceController[F[_]: Sync: Timer: ContextShift: ConcurrentEffect](
             memberRequest <- req.req.as[MemberRoleRequest]
             newMember <- memberService.addMember(id, memberRequest).value
             _ <- emailService.newMemberEmail(id, memberRequest).value
-            response <- newMember.fold(NotFound())(member => Created(member.asJson))
+            response <- newMember.fold(InternalServerError())(member => Created(member.asJson))
           } yield response
 
         case req @ DELETE -> Root / LongVar(id) / "members" as _ =>
