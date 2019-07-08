@@ -1,12 +1,12 @@
-import { Col, List, Row, Table, Checkbox, Card, Input } from 'antd';
+import { Col, Row } from 'antd';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import { createStructuredSelector } from 'reselect';
-import { WorkspaceListItem, ListCardToggle, workspaceColumns, Behavior, FieldLabel } from '../../components';
+import { WorkspaceList, ListingSearchBar } from '../../components';
 import { WorkspaceSearchResult } from '../../models/Workspace';
 import { FeatureService } from '../../service/FeatureService';
-import { FeatureFlagType, workspaceBehaviors, behaviorProperties, workspaceStatuses } from '../../constants';
+import { FeatureFlagType, workspaceBehaviors } from '../../constants';
 import { Filters } from '../../models/Listing';
 import * as actions from './actions';
 import * as selectors from './selectors';
@@ -27,14 +27,6 @@ interface Props {
 }
 
 class OpsListing extends React.PureComponent<Props> {
-  constructor(props: Props) {
-    super(props);
-
-    this.filterUpdated = this.filterUpdated.bind(this);
-    this.behaviorChanged = this.behaviorChanged.bind(this);
-    this.renderItem = this.renderItem.bind(this);
-  }
-
   public componentDidMount() {
     const {
       listWorkspaces,
@@ -50,151 +42,27 @@ class OpsListing extends React.PureComponent<Props> {
     listWorkspaces();
   }
 
-  public filterUpdated(event: React.ChangeEvent<HTMLInputElement>) {
-    const {
-      filters: { behaviors, statuses },
-      updateFilter,
-    } = this.props;
-
-    updateFilter(event.target.value, behaviors, statuses);
-  }
-
-  public behaviorChanged(behavior: string, checked: boolean) {
-    const {
-      filters: { filter, behaviors, statuses },
-      updateFilter,
-    } = this.props;
-
-    if (checked) {
-      behaviors.push(behavior);
-    } else {
-      behaviors.splice(behaviors.indexOf(behavior), 1);
-    }
-
-    updateFilter(filter, behaviors, statuses);
-  }
-
-  public statusChanged(status: string, checked: boolean) {
-    const {
-      filters: { filter, behaviors, statuses },
-    } = this.props;
-
-    if (checked) {
-      statuses.push(status);
-    } else {
-      statuses.splice(statuses.indexOf(status), 1);
-    }
-
-    this.props.updateFilter(filter, behaviors, statuses);
-  }
-
-  public renderItem(workspace: WorkspaceSearchResult) {
-    const { openWorkspace } = this.props;
-    return <WorkspaceListItem workspace={workspace} onSelected={openWorkspace} />;
-  }
-
-  public renderBehaviors(behaviors: string[]) {
-    return workspaceBehaviors.map((behavior, index) => (
-      <Col span={8} key={index}>
-        <Behavior
-          behaviorKey={behavior}
-          selected={behaviors.includes(behavior)}
-          onChange={this.behaviorChanged}
-          icon={behaviorProperties[behavior].icon}
-          title={behaviorProperties[behavior].title}
-        />
-      </Col>
-    ));
-  }
-
   public render() {
-    const {
-      fetching,
-      workspaceList,
-      openWorkspace,
-      listingMode,
-      setListingMode,
-      filters: { filter, behaviors, statuses },
-    } = this.props;
+    const { fetching, workspaceList, openWorkspace, listingMode, setListingMode, filters, updateFilter } = this.props;
     const emptyText = 'No workspaces found';
 
     return (
       <div>
-        <h1 style={{ textAlign: 'center', padding: 24 }}>Operations</h1>
+        <h1 style={{ textAlign: 'center', margin: 0, padding: 24 }}>Operations</h1>
         <Row type="flex">
           <Col span={24} xxl={{ span: 12, offset: 6 }}>
-            <Card>
-              <Row gutter={12} type="flex">
-                <Col
-                  span={24}
-                  lg={12}
-                  style={{
-                    display: 'flex',
-                    flex: 1,
-                    flexDirection: 'column',
-                    justifyContent: 'space-around',
-                  }}
-                >
-                  <div>
-                    <FieldLabel>FILTER</FieldLabel>
-                    <Input.Search value={filter} onChange={this.filterUpdated} placeholder="find a workspace..." />
-                  </div>
-                  <div>
-                    <FieldLabel>STATUS</FieldLabel>
-                    <div style={{ display: 'flex', justifyContent: 'space-around' }}>
-                      {workspaceStatuses.map((status: string) => (
-                        <Checkbox
-                          key={status}
-                          style={{ fontSize: 12, textTransform: 'uppercase' }}
-                          defaultChecked
-                          name={status}
-                          checked={statuses.includes(status)}
-                          onChange={(e: any) => this.statusChanged(status, e.target.checked)}
-                        >
-                          {status}
-                        </Checkbox>
-                      ))}
-                    </div>
-                  </div>
-                </Col>
-                <Col span={24} lg={12}>
-                  <FieldLabel>BEHAVIOR</FieldLabel>
-                  <Row type="flex" style={{ flexDirection: 'row', justifyContent: 'center' }} gutter={12}>
-                    {this.renderBehaviors(behaviors)}
-                  </Row>
-                </Col>
-              </Row>
-            </Card>
+            <ListingSearchBar filters={filters} updateFilter={updateFilter} />
           </Col>
         </Row>
 
-        <ListCardToggle
-          style={{ margin: '12px 0' }}
-          selectedMode={listingMode}
-          onSelect={mode => setListingMode(mode)}
+        <WorkspaceList
+          workspaceList={workspaceList}
+          listingMode={listingMode}
+          emptyText={emptyText}
+          fetching={fetching}
+          setListingMode={setListingMode}
+          openWorkspace={openWorkspace}
         />
-        {listingMode === 'cards' && (
-          <Row style={{ marginTop: 12 }}>
-            <Col span={24}>
-              <List
-                grid={{ gutter: 12, column: 2 }}
-                locale={{ emptyText }}
-                loading={fetching}
-                dataSource={workspaceList}
-                renderItem={this.renderItem}
-              />
-            </Col>
-          </Row>
-        )}
-        {listingMode === 'list' && (
-          <Table
-            columns={workspaceColumns}
-            dataSource={workspaceList}
-            onRow={record => ({
-              onClick: () => openWorkspace(record.id),
-            })}
-          />
-        )}
       </div>
     );
   }
