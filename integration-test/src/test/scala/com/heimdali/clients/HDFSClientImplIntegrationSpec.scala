@@ -1,6 +1,5 @@
 package com.heimdali.clients
 
-import java.io.File
 import java.net.URI
 
 import cats.effect.IO
@@ -8,10 +7,8 @@ import com.heimdali.itest.fixtures.{IntegrationTest, KerberosTest}
 import com.heimdali.services.UGILoginContextProvider
 import com.heimdali.itest.fixtures._
 import com.sun.xml.internal.messaging.saaj.util.ByteInputStream
-import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.fs.{FileSystem, Path}
 import org.apache.hadoop.hdfs.client.HdfsAdmin
-import org.apache.hadoop.security.UserGroupInformation
 import org.scalatest._
 import org.scalatest.mockito.MockitoSugar
 
@@ -24,6 +21,8 @@ class HDFSClientImplIntegrationSpec
     with KerberosTest {
 
   behavior of "HDFS Client"
+
+  val HIVE_USER = "hive"
 
   override def beforeAll(): Unit = {
     new Context{
@@ -56,6 +55,16 @@ class HDFSClientImplIntegrationSpec
     elevatedFS.exists(new Path(userDirLocation)) shouldBe true
     elevatedFS.getFileStatus(new Path(userDirLocation)).getOwner shouldBe testUserName
     elevatedFS.delete(new Path(userDirLocation), true)
+  }
+
+  it should "create a hive owned directory" in new Context {
+    val result =
+      client.createHiveDirectory(hiveDirLocation).unsafeRunSync()
+
+    result.toUri.getPath shouldBe hiveDirLocation
+    elevatedFS.exists(new Path(hiveDirLocation)) shouldBe true
+    elevatedFS.getFileStatus(new Path(hiveDirLocation)).getOwner shouldBe HIVE_USER
+    elevatedFS.delete(new Path(hiveDirLocation), true)
   }
 
   it should "set quota" in new Context {
@@ -109,6 +118,7 @@ class HDFSClientImplIntegrationSpec
     val tmpLocation = "/tmp/heimdali_test_dir"
     val testUserName = "heimdali_test"
     val userDirLocation = s"/user/$testUserName"
+    val hiveDirLocation = s"$tmpLocation/heimdali_hive_test"
     val hdfsUri = new URI(configuration.get("fs.defaultFS"))
     val admin = () => new HdfsAdmin(hdfsUri, configuration)
     val context = new UGILoginContextProvider(itestConfig)

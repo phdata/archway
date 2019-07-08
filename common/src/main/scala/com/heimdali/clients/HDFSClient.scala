@@ -9,7 +9,7 @@ import cats.implicits._
 import com.heimdali.services.LoginContextProvider
 import com.typesafe.scalalogging.LazyLogging
 import org.apache.hadoop.conf.Configuration
-import org.apache.hadoop.fs.{FileSystem, FileUtil, Path}
+import org.apache.hadoop.fs.{FileSystem, Path}
 import org.apache.hadoop.hdfs.client.HdfsAdmin
 
 case class HDFSAllocation(location: String, maxSizeInGB: Double)
@@ -22,6 +22,8 @@ trait HDFSClient[F[_]] {
   def deleteDirectory(location: String): F[Unit]
 
   def createUserDirectory(userName: String): F[Path]
+
+  def createHiveDirectory(path: String): F[Path]
 
   def setQuota(path: String, maxSizeInGB: Double): F[HDFSAllocation]
 
@@ -73,6 +75,20 @@ class HDFSClientImpl[F[_]: Async](hadoopConfiguration: Configuration, loginConte
 
         val createdPath = createHDFSDirectory(path)
         fileSystem.setOwner(createdPath, userName, userName)
+        createdPath
+      }
+    }
+  }
+
+  override def createHiveDirectory(path: String): F[Path] = {
+    loginContextProvider.elevate("hdfs") { () =>
+      if (fileSystem.exists(path)) {
+        fileSystem.getFileStatus(path).getPath
+      } else {
+        logger.info(s"Creating user directory with path: $path")
+
+        val createdPath = createHDFSDirectory(path)
+        fileSystem.setOwner(createdPath, "hive", "hive")
         createdPath
       }
     }

@@ -30,9 +30,7 @@ object DatabaseDirectory {
         createDatabaseDirectory: DatabaseDirectory,
         workspaceContext: WorkspaceContext[F]
     ): F[Unit] =
-      workspaceContext.context.hdfsClient
-        .createDirectory(createDatabaseDirectory.location, createDatabaseDirectory.onBehalfOf)
-        .void
+      workspaceContext.context.hdfsClient.createHiveDirectory(createDatabaseDirectory.location).void
 
   }
 
