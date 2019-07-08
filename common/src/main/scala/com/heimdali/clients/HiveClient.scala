@@ -60,7 +60,7 @@ class HiveClientImpl[F[_]](loginContextProvider: LoginContextProvider, transacto
 
   override def dropDatabase(name: String): F[Int] = {
     loginContextProvider.hadoopInteraction[F, Int] {
-      (sql"""DROP DATABASE IF EXISTS """ ++ Fragment.const(name)).update.run.transact(transactor)
+      (sql"""DROP DATABASE IF EXISTS """ ++ Fragment.const(name) ++ fr"CASCADE").update.run.transact(transactor)
     }
   }
 

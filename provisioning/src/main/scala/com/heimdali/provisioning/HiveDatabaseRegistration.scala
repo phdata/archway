@@ -3,7 +3,6 @@ package com.heimdali.provisioning
 import java.time.Instant
 
 import cats._
-import cats.effect.syntax.all._
 import cats.effect.{Clock, Sync}
 import cats.implicits._
 import com.heimdali.models.WorkspaceRequest
@@ -50,9 +49,9 @@ object HiveDatabaseRegistration extends LazyLogging {
         tempTable = "heimdali_temp"
         result <- workspaceContext.context.hiveClient.createTable(hiveDatabaseRegistration.name, tempTable)
         _ <- logger.info("Create table result " + result).pure[F]
-        _ <- workspaceContext.context.impalaClient
-          .map(_.invalidateMetadata(hiveDatabaseRegistration.name, tempTable))
-          .getOrElse(().pure[F])
+        _ <- workspaceContext.context.impalaClient.map(_.invalidateMetadata(hiveDatabaseRegistration.name, tempTable).recover{
+          case e: Exception => logger.error("Impala metadata invalidation failed {}", e)
+        }).getOrElse(().pure[F])
       } yield ()
     }
   }
