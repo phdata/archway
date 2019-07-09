@@ -1,6 +1,7 @@
 package com.heimdali
 
 import java.net.URLEncoder
+import java.util.Properties
 
 import cats.effect.{Async, ContextShift, Resource}
 import com.typesafe.scalalogging.StrictLogging
@@ -213,7 +214,7 @@ package object config extends StrictLogging {
       Class.forName(driver)
 
       // Turn the transactor into no
-      val initialHiveTransactor = Transactor.fromDriverManager[F](driver, url, "", "")
+      val initialHiveTransactor = Transactor.fromDriverManager[F](driver, url)
       val strategy = Strategy.void.copy(always = FC.close)
 
       Transactor.strategy.set(initialHiveTransactor, strategy)
@@ -231,8 +232,12 @@ package object config extends StrictLogging {
           )
       }
 
+      val properties = new Properties()
+      properties.setProperty("SYNC_DDL", "true")
+
       // Turn the transactor into no
-      val initialImpalaTransactor = Transactor.fromDriverManager[F](driver, url, "", "")
+      val initialImpalaTransactor = Transactor.fromDriverManager[F](driver, url, properties)
+
       val strategy = Strategy.void.copy(always = FC.close)
 
       Transactor.strategy.set(initialImpalaTransactor, strategy)
