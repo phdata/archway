@@ -8,6 +8,7 @@ import cats.implicits._
 import com.heimdali.config.AvailableFeatures
 import com.heimdali.models.WorkspaceRequest
 import com.heimdali.provisioning.Provisionable.ops._
+import com.heimdali.services.ImpalaService
 import doobie.implicits._
 
 trait WorkspaceRequestProvisioning {
@@ -66,6 +67,8 @@ trait WorkspaceRequestProvisioning {
                   .run)),
             kafkaTopicsNotEnabledMessage
           )
+
+          _ <- ImpalaService.invalidateMetadata(workspace.id.get)(workspaceContext.context)
         } yield a |+| b |+| c |+| d |+| e |+| f |+| g)
     }
 

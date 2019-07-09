@@ -48,6 +48,9 @@ class MemberServiceSpec
     context.memberRepository.get _ expects id returning List(MemberRightsRecord("data", newMember, savedHive.name, id, Manager)).pure[ConnectionIO]
     (context.lookupLDAPClient.findUser _).expects(newMember).returning(OptionT.some(LDAPUser(personName, "username", newMember, Seq.empty, Some("username@phdata.io")))).repeated(2)
     context.hdfsClient.createUserDirectory _ expects "username" returning new Path(s"/user/username").pure[IO]
+    context.databaseRepository.findByWorkspace _ expects 123 returning List(savedHive).pure[ConnectionIO]
+    context.hiveClient.createTable _ expects (savedHive.name, ImpalaService.TEMP_TABLE_NAME) returning 0.pure[IO]
+    context.impalaClient.get.invalidateMetadata _ expects (savedHive.name, ImpalaService.TEMP_TABLE_NAME) returning ().pure[IO]
     memberService.addMember(123, MemberRoleRequest(newMember, "data", 123, Some(Manager))).value.unsafeRunSync()
   }
 
