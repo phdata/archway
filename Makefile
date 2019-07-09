@@ -84,3 +84,9 @@ clean:
 	rm -rf cloudera-integration/build
 	rm -rf .make.*
 
+python-deps:
+	pip install -r requirements.txt --extra-index https://$ARTIFACTORY_USER:$ARTIFACTORY_TOKEN@repository.phdata.io/artifactory/api/pypi/python-dev
+
+docs: service.md
+service.md:
+	json_wrangler cloudera-integration/csd/descriptor/service.sdl docs/service.md build-support/csd-docs-template.j2

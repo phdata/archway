@@ -1,0 +1,28 @@
+## Service: {{json.name}}
+Description: {{json.description}}
+Version: {{json.version}}
+
+### Parameters
+{% for param in json.parameters %}
+**{{param.name}}**
+Label: {{param.label}}
+Description: {{param.description}}
+Required: {{param.required}}
+Default: {{param.default}}
+Type: {{param.port}}
+{% endfor %}
+
+### Roles
+{% for role in json.roles %}
+Service: {{role.name}}
+Label: {{role.label}}
+
+#### Parameters
+{% for param in role.parameters %}
+**{{param.name}}**
+Label: {{param.label}}
+Description: {{param.description}}
+Required: {{param.required}}
+Default: {{param.default}}
+{% endfor %}
+{% endfor %}
