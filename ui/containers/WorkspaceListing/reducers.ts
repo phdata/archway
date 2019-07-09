@@ -18,7 +18,7 @@ const listing = (state = initialState, action: any) => {
     case WORKSPACE_LISTING_UPDATED:
       return state
         .set('fetching', false)
-        .set('allWorkspaces', new Fuse(action.workspaces, { keys: ['name', 'summary'] }));
+        .set('allWorkspaces', new Fuse(action.workspaces, { keys: ['name', 'summary'], threshold: 0.2 }));
 
     case LIST_ALL_WORKSPACES:
       return state.set('allWorkspaces', new Fuse([], {})).set('fetching', true);

@@ -27,7 +27,7 @@ const listing = (state = initialState, action: any) => {
       return state
         .set('fetching', false)
         .set('error', '')
-        .set('workspaces', new Fuse(action.workspaces, { keys: ['name', 'summary'] }));
+        .set('workspaces', new Fuse(action.workspaces, { keys: ['name', 'summary'], threshold: 0.2 }));
 
     case LIST_OPS_WORKSPACES_FAILURE:
       return state.set('fetching', false).set('error', action.error);
