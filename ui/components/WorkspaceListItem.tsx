@@ -3,6 +3,7 @@ import { Card, Icon, List } from 'antd';
 import { Doughnut } from 'react-chartjs-2';
 import Colors from './Colors';
 import { Workspace, WorkspaceSearchResult } from '../models/Workspace';
+import TruncateText from './TruncateText';
 
 interface Props {
   workspace: Workspace | WorkspaceSearchResult;
@@ -77,8 +78,12 @@ const WorkspaceListItem = ({ workspace, onSelected }: Props) => {
         <ApprovalMessage />
         <div style={{ display: 'flex', alignItems: 'center', padding: '28px 0 40px' }}>
           <div style={{ fontSize: '12px', color: 'rgba(0, 0, 0, 0.65)', flex: 7 }}>
-            <div style={{ fontSize: '22px', lineHeight: '30px', textTransform: 'uppercase' }}>{name}</div>
-            <div>{summary}</div>
+            <div style={{ fontSize: '22px', textTransform: 'uppercase' }}>
+              <TruncateText text={name} lineHeight={32} maxLine={1} />
+            </div>
+            <div>
+              <TruncateText text={summary} lineHeight={16} maxLine={2} />
+            </div>
             <Icon type={behavior === 'simple' ? 'team' : 'deployment-unit'} />
             &nbsp;
             <div style={{ textTransform: 'uppercase', display: 'inline-block' }}>{behavior} dataset</div>

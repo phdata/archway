@@ -22,7 +22,7 @@ const WorkspaceList = ({ workspaceList, listingMode, emptyText, fetching, setLis
         <Row style={{ marginTop: 12 }}>
           <Col span={24}>
             <List
-              grid={{ gutter: 12, column: 2 }}
+              grid={{ gutter: 12, md: 1, lg: 2 }}
               locale={{ emptyText }}
               loading={fetching}
               dataSource={workspaceList}
