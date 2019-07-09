@@ -67,7 +67,6 @@ trait WorkspaceRequestProvisioning {
                   .run)),
             kafkaTopicsNotEnabledMessage
           )
-
           _ <- ImpalaService.invalidateMetadata(workspace.id.get)(workspaceContext.context)
         } yield a |+| b |+| c |+| d |+| e |+| f |+| g)
     }

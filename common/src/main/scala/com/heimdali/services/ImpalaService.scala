@@ -16,11 +16,9 @@ object ImpalaService extends LazyLogging {
       allocations <- context.databaseRepository.findByWorkspace(workspaceId).transact(context.transactor)
       _ <- allocations.traverse(x => ImpalaService.invalidateMetadata(x.name)(context))
     } yield ()
-
   }
 
   def invalidateMetadata[F[_]: Sync](database: String)(context: AppContext[F]): F[Unit] = {
-
     for {
       result <- context.hiveClient.createTable(database, TEMP_TABLE_NAME)
       _ <- logger.info("Create table result " + result).pure[F]
