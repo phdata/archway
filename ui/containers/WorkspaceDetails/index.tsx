@@ -55,6 +55,7 @@ interface Props extends RouteComponentProps<DetailsRouteProps> {
   liasion?: Member;
   members?: Member[];
   error: string;
+  memberLoading: boolean;
 
   clearDetails: () => void;
   getWorkspaceDetails: (id: number) => void;
@@ -191,6 +192,7 @@ class WorkspaceDetails extends React.PureComponent<Props> {
       userSuggestions,
       removeMember,
       liasion,
+      memberLoading,
     } = this.props;
     const featureService = new FeatureService();
     const hasApplicationFlag = featureService.isEnabled(FeatureFlagType.Application);
@@ -274,6 +276,7 @@ class WorkspaceDetails extends React.PureComponent<Props> {
               onChangeAllocation={updateSelectedAllocation}
               onChangeMemberRole={changeMemberRoleRequest}
               requestRefreshHiveTables={requestRefreshHiveTables}
+              memberLoading={memberLoading}
             />
           </Tabs.TabPane>
           {hasApplicationFlag && (
@@ -308,6 +311,7 @@ class WorkspaceDetails extends React.PureComponent<Props> {
           title="Add A Member"
           onCancel={clearModal}
           onOk={() => simpleMemberRequest('data')}
+          confirmLoading={memberLoading}
         >
           <SimpleMemberRequest
             allocations={workspace.data}
@@ -355,6 +359,7 @@ const mapStateToProps = () =>
     liasion: selectors.getLiaison(),
     members: selectors.getMembers(),
     error: selectors.getError(),
+    memberLoading: selectors.isMemberLoading(),
   });
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({

@@ -16,6 +16,7 @@ describe('PermissionCard', () => {
         size_in_gb: 1000,
         consumed_in_gb: 0,
       } as HiveAllocation,
+      memberLoading: false,
       onAddMember: () => null,
       onChangeMemberRole: () => null,
       removeMember: () => null,
