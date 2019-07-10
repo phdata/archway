@@ -12,8 +12,6 @@ import doobie.util.fragments.{whereAnd, whereOr}
 
 class WorkspaceRequestRepositoryImpl extends WorkspaceRequestRepository {
 
-  implicit val han = CustomLogHandler.logHandler(this.getClass)
-
   override def list(username: String): ConnectionIO[List[WorkspaceSearchResult]] =
     WorkspaceRequestRepositoryImpl.Statements.listQuery(username).to[List]
 
@@ -52,6 +50,8 @@ class WorkspaceRequestRepositoryImpl extends WorkspaceRequestRepository {
 object WorkspaceRequestRepositoryImpl {
 
   object Statements {
+
+    implicit val han = CustomLogHandler.logHandler(this.getClass)
 
     def linkPool(workspaceId: Long, resourcePoolId: Long): Update0 =
       sql"""
@@ -125,27 +125,26 @@ object WorkspaceRequestRepositoryImpl {
         left join (select wp.workspace_request_id, sum(max_cores) as cores, sum(max_memory_in_gb) as mem from workspace_pool wp inner join resource_pool rp on wp.resource_pool_id = rp.id group by wp.workspace_request_id) as res on res.workspace_request_id = wr.id
         """
 
-    val innerQuery: Fragment =
+    def innerQuery(distinguishedName: String): Fragment =
       fr"""
-        select wd.workspace_request_id
-        from workspace_database wd
-        inner join hive_database h on wd.hive_database_id = h.id
-        inner join hive_grant mg on h.manager_group_id = mg.id
-        inner join ldap_registration mr on mg.ldap_registration_id = mr.id
-        inner join member mrm on mrm.ldap_registration_id = mr.id
-        left join hive_grant rg on h.readonly_group_id = rg.id
-        left join ldap_registration rr on rg.ldap_registration_id = rr.id
-        left join member rrm on rrm.ldap_registration_id = mr.id
+           select wd.workspace_request_id
+           from workspace_database wd,
+                hive_database h,
+                ldap_registration mr,
+                member mrm,
+                hive_grant mg
+           where mrm.distinguished_name = $distinguishedName
+             AND (
+                   (h.readwrite_group_id = mg.id) OR
+                   (h.readonly_group_id = mg.id) OR
+                   (h.manager_group_id = mg.id))
+             AND h.id = wd.hive_database_id
+             AND mg.ldap_registration_id = mr.id
+             AND mrm.ldap_registration_id = mr.id
         """
 
-    def innerQueryWith(distinguishedName: String): Fragment =
-      innerQuery ++ whereOr(
-        fr"mrm.distinguished_name = $distinguishedName",
-        fr"rrm.distinguished_name = $distinguishedName"
-      )
-
     def listQuery(distinguishedName: String): Query0[(WorkspaceSearchResult)] =
-      (listFragment ++ fr"where wr.id in (" ++ innerQueryWith(distinguishedName) ++ fr") and wr.single_user = false").query
+      (listFragment ++ fr"where wr.id in (" ++ innerQuery(distinguishedName) ++ fr") and wr.single_user = false").query
 
     def insert(workspaceRequest: WorkspaceRequest): Update0 =
       sql"""
