@@ -85,7 +85,7 @@ clean:
 	rm -rf .make.*
 
 python-deps:
-	pip install -r requirements.txt --extra-index https://$ARTIFACTORY_USER:$ARTIFACTORY_TOKEN@repository.phdata.io/artifactory/api/pypi/python-dev
+	pip install -r requirements.txt --extra-index https://$$ARTIFACTORY_USER:$$ARTIFACTORY_TOKEN@repository.phdata.io/artifactory/api/pypi/python-internal/simple
 
 docs: service.md
 service.md:
