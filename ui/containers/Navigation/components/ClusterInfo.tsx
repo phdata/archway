@@ -47,7 +47,9 @@ const ClusterInfo = ({ cluster, loading }: Props) => {
           textAlign: 'center',
         }}
       >
-        {cluster.name} is {status.statusText()}
+        <a target="_blank" rel="noreferrer noopener" href={cluster.cm_url} style={{ color: 'white' }}>
+          {cluster.name} status : {status.statusText()}
+        </a>
       </div>
     </Tooltip>
   );
