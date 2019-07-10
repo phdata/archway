@@ -35,11 +35,11 @@ export class Status<T extends Statusable> {
   public statusText = () => {
     switch (this.statusable.status) {
       case 'GOOD_HEALTH':
-        return '"good"';
+        return 'good';
       case 'CONCERNING_HEALTH':
-        return '"concerning"';
+        return 'concerning';
       case 'BAD_HEALTH':
-        return '"bad"';
+        return 'bad';
       default:
         return 'unknown';
     }
