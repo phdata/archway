@@ -191,6 +191,7 @@ describe('DataTab', () => {
         },
         status: 'GOOD_HEALTH',
       } as Cluster,
+      memberLoading: false,
       onAddMember: () => null,
       onChangeAllocation: () => null,
       onChangeMemberRole: () => null,

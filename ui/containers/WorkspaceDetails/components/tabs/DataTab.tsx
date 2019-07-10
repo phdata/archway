@@ -16,6 +16,7 @@ interface Props {
   infos?: NamespaceInfoList;
   members?: Member[];
   selectedAllocation?: HiveAllocation;
+  memberLoading: boolean;
   onAddMember: (e: React.MouseEvent) => void;
   onChangeAllocation: (allocation: HiveAllocation) => void;
   onChangeMemberRole: (distinguished_name: string, roleId: number, role: string, resource: string) => void;
@@ -34,6 +35,7 @@ class DataTab extends React.Component<Props> {
       onChangeMemberRole,
       requestRefreshHiveTables,
       removeMember,
+      memberLoading,
     } = this.props;
 
     if (!workspace) {
@@ -86,6 +88,7 @@ LOCATION '${allocation.location}/new_data/landing'`}
                         onChangeMemberRole(member.distinguished_name, id, role, 'data');
                       }}
                       removeMember={removeMember}
+                      memberLoading={memberLoading}
                     />
                   </Col>
                 </Row>

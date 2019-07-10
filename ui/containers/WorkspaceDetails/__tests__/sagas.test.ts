@@ -3,7 +3,13 @@
 import { put, all, call, select } from 'redux-saga/effects';
 import { cloneableGenerator } from 'redux-saga/utils';
 import { Map } from 'immutable';
-import { simpleMemberRequestComplete, setMembers, REQUEST_REMOVE_MEMBER, removeMemberSuccess } from '../actions';
+import {
+  simpleMemberRequestComplete,
+  setMembers,
+  REQUEST_REMOVE_MEMBER,
+  removeMemberSuccess,
+  setMemberLoading,
+} from '../actions';
 import * as Api from '../../../service/api';
 import { simpleMemberRequested, detailExtractor, memberRequestFormExtractor, removeMemberRequested } from '../sagas';
 import { Workspace } from '../../../models/Workspace';
@@ -87,6 +93,7 @@ describe('new member flow', () => {
     expect(clone.next().value).toEqual(put(simpleMemberRequestComplete()));
     expect(clone.next().value).toEqual(call(Api.getMembers, 'abc', 1));
     expect(clone.next([]).value).toEqual(put(setMembers([])));
+    expect(clone.next().value).toEqual(put(setMemberLoading(false)));
   });
 });
 

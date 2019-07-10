@@ -124,3 +124,9 @@ export const getError = () =>
     workspaceSelector,
     workspaceState => workspaceState.get('error')
   );
+
+export const isMemberLoading = () =>
+  createSelector(
+    workspaceSelector,
+    workspaceState => workspaceState.get('memberLoading')
+  );

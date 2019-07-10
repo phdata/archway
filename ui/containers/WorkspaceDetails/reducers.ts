@@ -26,6 +26,7 @@ import {
   REFRESH_HIVE_TABLES_SUCCESS,
   REFRESH_HIVE_TABLES_FAILURE,
   ADD_DATA_MEMBER_FAILURE,
+  SET_MEMBER_LOADING,
 } from './actions';
 
 import { Member } from '../../models/Workspace';
@@ -35,6 +36,7 @@ const initialState = fromJS({
   details: false,
   activeModal: false,
   error: '',
+  memberLoading: false,
 });
 
 const details = (state = initialState, action: any) => {
@@ -217,6 +219,9 @@ const details = (state = initialState, action: any) => {
 
     case ADD_DATA_MEMBER_FAILURE:
       return state.set('error', action.error);
+
+    case SET_MEMBER_LOADING:
+      return state.set('memberLoading', action.loading);
 
     default:
       return state;

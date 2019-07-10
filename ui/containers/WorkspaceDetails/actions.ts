@@ -276,3 +276,9 @@ export const addDataMemberFailure = (error: string) => ({
   type: ADD_DATA_MEMBER_FAILURE,
   error,
 });
+
+export const SET_MEMBER_LOADING = 'SET_MEMBER_LOADING';
+export const setMemberLoading = (loading: boolean) => ({
+  type: SET_MEMBER_LOADING,
+  loading,
+});

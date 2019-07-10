@@ -37,6 +37,7 @@ import {
   refreshHiveTablesFailure,
   setActiveModal,
   addDataMemberFailure,
+  setMemberLoading,
 } from './actions';
 
 import { RECENT_WORKSPACES_KEY, TOKEN_EXTRACTOR } from '../../constants';
@@ -158,6 +159,7 @@ export function* simpleMemberRequested({ resource }: SimpleMemberRequestAction) 
   const token = yield select(TOKEN_EXTRACTOR);
   const workspace = (yield select(detailExtractor)).toJS();
   try {
+    yield put(setMemberLoading(true));
     if (resource === 'data') {
       const { username, roles } = (yield select(memberRequestFormExtractor)).toJS();
       yield all(
@@ -178,6 +180,8 @@ export function* simpleMemberRequested({ resource }: SimpleMemberRequestAction) 
   } catch (e) {
     yield put(addDataMemberFailure(e.toString()));
     yield put(simpleMemberRequestComplete());
+  } finally {
+    yield put(setMemberLoading(false));
   }
 }
 
