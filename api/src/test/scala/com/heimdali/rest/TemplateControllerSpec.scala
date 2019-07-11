@@ -1,7 +1,6 @@
 package com.heimdali.rest
 
 import cats.effect.{ContextShift, IO, Timer}
-import cats.implicits._
 import com.heimdali.AppContext
 import com.heimdali.generators._
 import com.heimdali.models.TemplateRequest
@@ -14,11 +13,10 @@ import io.circe.syntax._
 import org.http4s._
 import org.http4s.client.dsl.Http4sClientDsl
 import org.http4s.dsl.Http4sDsl
-import org.http4s.dsl.io._
 import org.http4s.implicits._
 import org.scalamock.scalatest.MockFactory
-import org.scalatest.{FlatSpec, Matchers}
 import org.scalatest.prop.TableDrivenPropertyChecks._
+import org.scalatest.{FlatSpec, Matchers}
 
 import scala.concurrent.ExecutionContext
 
@@ -34,9 +32,7 @@ class TemplateControllerSpec
 
   behavior of "Template controller"
 
-  it should "generate a simple workspace" in new Http4sClientDsl[IO] {
-    implicit val timer: Timer[IO] = testTimer
-
+  it should "generate a simple workspace" in new Context {
     val table = Table(
       ("name", "request"),
       ("user", TemplateRequest(standardUsername, standardUsername, standardUsername, initialCompliance, standardUserDN)),
@@ -45,21 +41,43 @@ class TemplateControllerSpec
     )
 
     forAll(table) { (name, request) =>
-      val context: AppContext[IO] = genMockContext()
-      val authService: TestAuthService = new TestAuthService
-      val configService: ConfigService[IO] = new TestConfigService
-      val ldapGroupGenerator = new DefaultLDAPGroupGenerator[IO](configService)
-      val applicationGenerator: ApplicationGenerator[IO] = new DefaultApplicationGenerator[IO](appConfig, ldapGroupGenerator)
-      val topicGenerator: TopicGenerator[IO] = new DefaultTopicGenerator[IO](appConfig, ldapGroupGenerator)
-      val templateService: TemplateService[IO] = new JSONTemplateService[IO](context, configService)
-
-      val templateController: TemplateController[IO] = new TemplateController[IO](authService, templateService)
-
       val response = templateController.route.orNotFound.run(POST(request.asJson, Uri.unsafeFromString(s"/$name")).unsafeRunSync())
 
       val expected: Json = fromResource(s"ssp/default/$name.expected.json")
       check(response, Status.Ok, Some(expected.asObject.get.add("requested_date", testTimer.instant.asJson).asJson))
     }
+  }
+
+  it should "return all custom templates" in new Context {
+    val response = templateController.route.orNotFound.run(GET(Uri.uri("custom")).unsafeRunSync())
+
+    val expected: Json = fromResource(s"ssp/default/custom/custom-metadata.expected.json")
+    check(response, Status.Ok, Some(expected))
+  }
+
+  it should "generate a custom workspace" in new Context {
+    val name = "custom-template-1"
+    val request = TemplateRequest("Custom template 1", "Custom template test", "A custom template test", initialCompliance, standardUserDN)
+
+    val response = templateController.route.orNotFound.run(POST(request.asJson, Uri.unsafeFromString(s"/$name")).unsafeRunSync())
+
+    val expected: Json = fromResource(s"ssp/default/custom/$name.expected.json")
+    check(response, Status.Ok, Some(expected.asObject.get.add("requested_date", testTimer.instant.asJson).asJson))
+  }
+
+  trait Context extends Http4sClientDsl[IO]{
+    implicit val timer: Timer[IO] = testTimer
+
+    val context: AppContext[IO] = genMockContext()
+    val authService: TestAuthService = new TestAuthService
+    val configService: ConfigService[IO] = new TestConfigService
+    val ldapGroupGenerator = new DefaultLDAPGroupGenerator[IO](configService)
+    val applicationGenerator: ApplicationGenerator[IO] = new DefaultApplicationGenerator[IO](appConfig, ldapGroupGenerator)
+    val topicGenerator: TopicGenerator[IO] = new DefaultTopicGenerator[IO](appConfig, ldapGroupGenerator)
+    val templateService: TemplateService[IO] = new JSONTemplateService[IO](context, configService)
+
+    val templateController: TemplateController[IO] = new TemplateController[IO](authService, templateService)
+
   }
 
 }

@@ -1,0 +1,25 @@
+[
+  {
+    "name": "Custom 1",
+    "description": "Custom template 1",
+    "ordering": 1,
+    "tags": {
+      "tag1": "foo"
+    }
+  },
+  {
+    "name": "Custom 2",
+    "description": "Custom template 2",
+    "ordering": 2,
+    "tags": {
+      "tag1": "foo",
+      "tag2": "bar"
+    }
+  },
+  {
+    "name": "Custom 3",
+    "description": "Custom template 3",
+    "ordering": 3,
+    "tags": {}
+  }
+]

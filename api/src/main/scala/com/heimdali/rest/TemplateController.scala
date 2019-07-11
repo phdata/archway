@@ -3,9 +3,8 @@ package com.heimdali.rest
 import cats.effect._
 import cats.implicits._
 import com.heimdali.models._
-import com.heimdali.rest.authentication.{AuthService, TokenAuthService}
+import com.heimdali.rest.authentication.TokenAuthService
 import com.heimdali.services.TemplateService
-import io.circe.Decoder
 import io.circe.syntax._
 import org.http4s._
 import org.http4s.dsl.Http4sDsl
@@ -16,6 +15,12 @@ class TemplateController[F[_]: Sync](authService: TokenAuthService[F], templateG
   val route: HttpRoutes[F] =
     authService.tokenAuth {
       AuthedService[User, F] {
+
+        case GET -> Root / custom as _ =>
+          for {
+            customTemplates <- templateGenerator.customTemplates
+            response <- Ok(customTemplates.map(_.metadata).asJson)
+          } yield response
 
         case GET -> Root / _ as user =>
           for {

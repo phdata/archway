@@ -1,4 +1,10 @@
 {
+  "metadata": {
+    "name": "Sesame Test #1",
+    "description": "With details",
+    "ordering": 1,
+    "tags": {}
+  },
   "summary": "A test",
   "description": "With details",
   "behavior": "structured",
@@ -19,12 +25,12 @@
           "distinguished_name": "cn=edh_dev_raw_sesame_test_1,ou=heimdali,dc=jotunn,dc=io",
           "sentry_role": "role_dev_raw_sesame_test_1",
           "attributes": [
-            [ "dn", "cn=edh_dev_raw_sesame_test_1,ou=heimdali,dc=jotunn,dc=io" ],
-            [ "objectClass", "group" ],
-            [ "objectClass", "top" ],
-            [ "sAMAccountName", "edh_dev_raw_sesame_test_1" ],
-            [ "cn", "edh_dev_raw_sesame_test_1" ],
-            [ "gidNumber", "123" ]
+            ["dn", "cn=edh_dev_raw_sesame_test_1,ou=heimdali,dc=jotunn,dc=io"],
+            ["objectClass", "group"],
+            ["objectClass", "top"],
+            ["sAMAccountName", "edh_dev_raw_sesame_test_1"],
+            ["cn", "edh_dev_raw_sesame_test_1"],
+            ["gidNumber", "123"]
           ]
         }
       },
@@ -34,12 +40,12 @@
           "distinguished_name": "cn=edh_dev_raw_sesame_test_1_rw,ou=heimdali,dc=jotunn,dc=io",
           "sentry_role": "role_dev_raw_sesame_test_1_rw",
           "attributes": [
-            [ "dn", "cn=edh_dev_raw_sesame_test_1_rw,ou=heimdali,dc=jotunn,dc=io" ],
-            [ "objectClass", "group" ],
-            [ "objectClass", "top" ],
-            [ "sAMAccountName", "edh_dev_raw_sesame_test_1_rw" ],
-            [ "cn", "edh_dev_raw_sesame_test_1_rw" ],
-            [ "gidNumber", "123" ]
+            ["dn", "cn=edh_dev_raw_sesame_test_1_rw,ou=heimdali,dc=jotunn,dc=io"],
+            ["objectClass", "group"],
+            ["objectClass", "top"],
+            ["sAMAccountName", "edh_dev_raw_sesame_test_1_rw"],
+            ["cn", "edh_dev_raw_sesame_test_1_rw"],
+            ["gidNumber", "123"]
           ]
         }
       },
@@ -49,12 +55,12 @@
           "distinguished_name": "cn=edh_dev_raw_sesame_test_1_ro,ou=heimdali,dc=jotunn,dc=io",
           "sentry_role": "role_dev_raw_sesame_test_1_ro",
           "attributes": [
-            [ "dn", "cn=edh_dev_raw_sesame_test_1_ro,ou=heimdali,dc=jotunn,dc=io" ],
-            [ "objectClass", "group" ],
-            [ "objectClass", "top" ],
-            [ "sAMAccountName", "edh_dev_raw_sesame_test_1_ro" ],
-            [ "cn", "edh_dev_raw_sesame_test_1_ro" ],
-            [ "gidNumber", "123" ]
+            ["dn", "cn=edh_dev_raw_sesame_test_1_ro,ou=heimdali,dc=jotunn,dc=io"],
+            ["objectClass", "group"],
+            ["objectClass", "top"],
+            ["sAMAccountName", "edh_dev_raw_sesame_test_1_ro"],
+            ["cn", "edh_dev_raw_sesame_test_1_ro"],
+            ["gidNumber", "123"]
           ]
         }
       }
@@ -69,12 +75,12 @@
           "distinguished_name": "cn=edh_dev_staging_sesame_test_1,ou=heimdali,dc=jotunn,dc=io",
           "sentry_role": "role_dev_staging_sesame_test_1",
           "attributes": [
-            [ "dn", "cn=edh_dev_staging_sesame_test_1,ou=heimdali,dc=jotunn,dc=io" ],
-            [ "objectClass", "group" ],
-            [ "objectClass", "top" ],
-            [ "sAMAccountName", "edh_dev_staging_sesame_test_1" ],
-            [ "cn", "edh_dev_staging_sesame_test_1" ],
-            [ "gidNumber", "123" ]
+            ["dn", "cn=edh_dev_staging_sesame_test_1,ou=heimdali,dc=jotunn,dc=io"],
+            ["objectClass", "group"],
+            ["objectClass", "top"],
+            ["sAMAccountName", "edh_dev_staging_sesame_test_1"],
+            ["cn", "edh_dev_staging_sesame_test_1"],
+            ["gidNumber", "123"]
           ]
         }
       },
@@ -84,12 +90,12 @@
           "distinguished_name": "cn=edh_dev_staging_sesame_test_1_rw,ou=heimdali,dc=jotunn,dc=io",
           "sentry_role": "role_dev_staging_sesame_test_1_rw",
           "attributes": [
-            [ "dn", "cn=edh_dev_staging_sesame_test_1_rw,ou=heimdali,dc=jotunn,dc=io" ],
-            [ "objectClass", "group" ],
-            [ "objectClass", "top" ],
-            [ "sAMAccountName", "edh_dev_staging_sesame_test_1_rw" ],
-            [ "cn", "edh_dev_staging_sesame_test_1_rw" ],
-            [ "gidNumber", "123" ]
+            ["dn", "cn=edh_dev_staging_sesame_test_1_rw,ou=heimdali,dc=jotunn,dc=io"],
+            ["objectClass", "group"],
+            ["objectClass", "top"],
+            ["sAMAccountName", "edh_dev_staging_sesame_test_1_rw"],
+            ["cn", "edh_dev_staging_sesame_test_1_rw"],
+            ["gidNumber", "123"]
           ]
         }
       },
@@ -99,12 +105,12 @@
           "distinguished_name": "cn=edh_dev_staging_sesame_test_1_ro,ou=heimdali,dc=jotunn,dc=io",
           "sentry_role": "role_dev_staging_sesame_test_1_ro",
           "attributes": [
-            [ "dn", "cn=edh_dev_staging_sesame_test_1_ro,ou=heimdali,dc=jotunn,dc=io" ],
-            [ "objectClass", "group" ],
-            [ "objectClass", "top" ],
-            [ "sAMAccountName", "edh_dev_staging_sesame_test_1_ro" ],
-            [ "cn", "edh_dev_staging_sesame_test_1_ro" ],
-            [ "gidNumber", "123" ]
+            ["dn", "cn=edh_dev_staging_sesame_test_1_ro,ou=heimdali,dc=jotunn,dc=io"],
+            ["objectClass", "group"],
+            ["objectClass", "top"],
+            ["sAMAccountName", "edh_dev_staging_sesame_test_1_ro"],
+            ["cn", "edh_dev_staging_sesame_test_1_ro"],
+            ["gidNumber", "123"]
           ]
         }
       }
@@ -119,12 +125,12 @@
           "distinguished_name": "cn=edh_dev_modeled_sesame_test_1,ou=heimdali,dc=jotunn,dc=io",
           "sentry_role": "role_dev_modeled_sesame_test_1",
           "attributes": [
-            [ "dn", "cn=edh_dev_modeled_sesame_test_1,ou=heimdali,dc=jotunn,dc=io" ],
-            [ "objectClass", "group" ],
-            [ "objectClass", "top" ],
-            [ "sAMAccountName", "edh_dev_modeled_sesame_test_1" ],
-            [ "cn", "edh_dev_modeled_sesame_test_1" ],
-            [ "gidNumber", "123" ]
+            ["dn", "cn=edh_dev_modeled_sesame_test_1,ou=heimdali,dc=jotunn,dc=io"],
+            ["objectClass", "group"],
+            ["objectClass", "top"],
+            ["sAMAccountName", "edh_dev_modeled_sesame_test_1"],
+            ["cn", "edh_dev_modeled_sesame_test_1"],
+            ["gidNumber", "123"]
           ]
         }
       },
@@ -134,12 +140,12 @@
           "distinguished_name": "cn=edh_dev_modeled_sesame_test_1_rw,ou=heimdali,dc=jotunn,dc=io",
           "sentry_role": "role_dev_modeled_sesame_test_1_rw",
           "attributes": [
-            [ "dn", "cn=edh_dev_modeled_sesame_test_1_rw,ou=heimdali,dc=jotunn,dc=io" ],
-            [ "objectClass", "group" ],
-            [ "objectClass", "top" ],
-            [ "sAMAccountName", "edh_dev_modeled_sesame_test_1_rw" ],
-            [ "cn", "edh_dev_modeled_sesame_test_1_rw" ],
-            [ "gidNumber", "123" ]
+            ["dn", "cn=edh_dev_modeled_sesame_test_1_rw,ou=heimdali,dc=jotunn,dc=io"],
+            ["objectClass", "group"],
+            ["objectClass", "top"],
+            ["sAMAccountName", "edh_dev_modeled_sesame_test_1_rw"],
+            ["cn", "edh_dev_modeled_sesame_test_1_rw"],
+            ["gidNumber", "123"]
           ]
         }
       },
@@ -149,12 +155,12 @@
           "distinguished_name": "cn=edh_dev_modeled_sesame_test_1_ro,ou=heimdali,dc=jotunn,dc=io",
           "sentry_role": "role_dev_modeled_sesame_test_1_ro",
           "attributes": [
-            [ "dn", "cn=edh_dev_modeled_sesame_test_1_ro,ou=heimdali,dc=jotunn,dc=io" ],
-            [ "objectClass", "group" ],
-            [ "objectClass", "top" ],
-            [ "sAMAccountName", "edh_dev_modeled_sesame_test_1_ro" ],
-            [ "cn", "edh_dev_modeled_sesame_test_1_ro" ],
-            [ "gidNumber", "123" ]
+            ["dn", "cn=edh_dev_modeled_sesame_test_1_ro,ou=heimdali,dc=jotunn,dc=io"],
+            ["objectClass", "group"],
+            ["objectClass", "top"],
+            ["sAMAccountName", "edh_dev_modeled_sesame_test_1_ro"],
+            ["cn", "edh_dev_modeled_sesame_test_1_ro"],
+            ["gidNumber", "123"]
           ]
         }
       }
@@ -176,12 +182,12 @@
         "distinguished_name": "cn=sesame_test_1_default_cg,ou=heimdali,dc=jotunn,dc=io",
         "sentry_role": "role_sesame_test_1_default_cg",
         "attributes": [
-          [ "dn", "cn=sesame_test_1_default_cg,ou=heimdali,dc=jotunn,dc=io" ],
-          [ "objectClass", "group" ],
-          [ "objectClass", "top" ],
-          [ "sAMAccountName", "sesame_test_1_default_cg" ],
-          [ "cn", "sesame_test_1_default_cg" ],
-          [ "gidNumber", "123" ]
+          ["dn", "cn=sesame_test_1_default_cg,ou=heimdali,dc=jotunn,dc=io"],
+          ["objectClass", "group"],
+          ["objectClass", "top"],
+          ["sAMAccountName", "sesame_test_1_default_cg"],
+          ["cn", "sesame_test_1_default_cg"],
+          ["gidNumber", "123"]
         ]
       }
     }

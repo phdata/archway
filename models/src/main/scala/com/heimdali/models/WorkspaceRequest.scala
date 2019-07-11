@@ -3,12 +3,22 @@ package com.heimdali.models
 import java.time.Instant
 
 import cats.Show
-import cats.effect.Clock
-import cats.implicits._
-import cats.effect.implicits._
 import io.circe._
+import io.circe.generic.semiauto._
 import io.circe.java8.time._
 import io.circe.syntax._
+
+case class Metadata(
+   name: String,
+   description: String,
+   ordering: Int,
+   tags: Map[String, String]
+)
+
+object Metadata {
+  implicit val metadataEncoder: Encoder[Metadata] = deriveEncoder[Metadata]
+  implicit val metadataDecoder: Decoder[Metadata] = deriveDecoder[Metadata]
+}
 
 case class WorkspaceRequest(
     name: String,
@@ -24,7 +34,8 @@ case class WorkspaceRequest(
     data: List[HiveAllocation] = List.empty,
     processing: List[Yarn] = List.empty,
     applications: List[Application] = List.empty,
-    kafkaTopics: List[KafkaTopic] = List.empty
+    kafkaTopics: List[KafkaTopic] = List.empty,
+    metadata: Metadata
 ) {
 
   val approved: Boolean = approvals.lengthCompare(2) == 0
@@ -54,7 +65,8 @@ object WorkspaceRequest {
         "single_user" -> request.singleUser.asJson,
         "requester" -> request.requestedBy.asJson,
         "requested_date" -> request.requestDate.asJson,
-        "status" -> request.status.asJson
+        "status" -> request.status.asJson,
+        "metadata" -> request.metadata.asJson
       )
     )((initial, approvals) => initial deepMerge Json.obj("approvals" -> approvals.asJson))
   }
@@ -71,6 +83,7 @@ object WorkspaceRequest {
       processing <- json.downField("processing").as[List[Yarn]]
       applications <- json.downField("applications").as[List[Application]]
       topics <- json.downField("topics").as[List[KafkaTopic]]
+      metadata <- json.downField("metadata").as[Metadata]
     } yield
       WorkspaceRequest(
         name,
@@ -84,7 +97,8 @@ object WorkspaceRequest {
         data = data,
         processing = processing,
         applications = applications,
-        kafkaTopics = topics
+        kafkaTopics = topics,
+        metadata = metadata
       )
   }
 

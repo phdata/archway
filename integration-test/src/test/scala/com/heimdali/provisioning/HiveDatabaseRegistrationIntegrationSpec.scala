@@ -7,7 +7,7 @@ import cats.effect.{ContextShift, IO, Resource}
 import com.heimdali.AppContext
 import com.heimdali.clients.HiveClientImpl
 import com.heimdali.itest.fixtures.{HiveTest, IntegrationTest, KerberosTest}
-import com.heimdali.models.{Compliance, WorkspaceRequest}
+import com.heimdali.models.{Compliance, Metadata, WorkspaceRequest}
 import com.heimdali.services.UGILoginContextProvider
 import com.heimdali.test.fixtures.{AppContextProvider, TestTimer}
 import com.typesafe.config.ConfigFactory
@@ -58,12 +58,13 @@ class HiveDatabaseRegistrationIntegrationSpec
     val workspaceRequest = new WorkspaceRequest(
       "workspace_name",
       "workspace_summary",
-      "workspace_desctiption",
+      "workspace_description",
       "workspace_behavior",
       "workspace_requestor",
       new TestTimer().instant,
       new Compliance(false, false, false),
-      false
+      false,
+      metadata = Metadata("workspace_name", "workspace_description", 0, Map.empty)
     )
 
     def context: Resource[IO, (WorkspaceContext[IO], HiveClientImpl[IO])] = {

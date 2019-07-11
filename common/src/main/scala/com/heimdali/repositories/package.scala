@@ -27,6 +27,18 @@ package object repositories {
   implicit val approverRoleGetter: Get[ApproverRole] =
     Get[String].tmap(ApproverRole.parseRole)
 
+  implicit val mapTagsReader: Read[Map[String, String]] =
+    Read[(String, String)].map { case (
+      key, value
+      ) => Map(key -> value)
+    }
+
+  implicit val metadataReader: Read[Metadata] =
+    Read[(String, String, Int, Map[String, String])].map { case (
+        name, description, ordering, tags
+        ) => Metadata (name, description, ordering, tags)
+    }
+
   implicit val workspaceReader: Read[WorkspaceRequest] =
     Read[
       (String, String, String, String, String, Instant, Boolean, Boolean, Boolean, Option[Long], Boolean, Option[Long])
@@ -54,7 +66,8 @@ package object repositories {
           requestDate,
           Compliance(phiData, pciData, piiData, complianceId),
           singleUser,
-          id
+          id,
+          metadata = Metadata(name, description, 0, Map.empty)
         )
     }
 

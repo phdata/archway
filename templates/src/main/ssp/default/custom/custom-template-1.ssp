@@ -4,10 +4,12 @@
 <%@ var template: com.heimdali.models.TemplateRequest %>
 {
   "metadata": {
-    "name": "${template.name}",
-    "description": "${template.description}",
+    "name": "Custom 1",
+    "description": "Custom template 1",
     "ordering": 1,
-    "tags": {}
+    "tags": {
+      "tag1" : "foo"
+    }
   },
   "summary": "${template.summary}",
   "description": "${template.description}",

@@ -8,4 +8,6 @@ trait TemplateService[F[_]] {
 
   def workspaceFor(template: TemplateRequest, templateName: String): F[WorkspaceRequest]
 
+  def customTemplates: F[List[WorkspaceRequest]]
+
 }

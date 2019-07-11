@@ -3,6 +3,12 @@
 <%@ var nextGid: Function0[Long] %>
 <%@ var template: com.heimdali.models.TemplateRequest %>
 {
+  "metadata": {
+    "name": "${template.name}",
+    "description": "${template.description}",
+    "ordering": 1,
+    "tags": {}
+  },
   "summary": "${template.summary}",
   "description": "${template.description}",
   "behavior": "${templateName}",

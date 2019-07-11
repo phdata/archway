@@ -90,7 +90,9 @@ package object fixtures {
     id = Some(id),
     data = List(savedHive),
     processing = List(savedYarn),
-    applications = List(savedApplication))
+    applications = List(savedApplication),
+    metadata = Metadata(name, name, 0, Map.empty)
+  )
 
   val initialWorkspaceRequest =
     savedWorkspaceRequest.copy(
@@ -196,7 +198,15 @@ package object fixtures {
        |  "topics": [],
        |  "single_user": false,
        |  "requester": "$standardUserDN",
-       |  "requested_date": "${testTimer.instant}"
+       |  "requested_date": "${testTimer.instant}",
+       |  "metadata" : {
+       |    "name" : "$name",
+       |    "description" : "$name",
+       |    "ordering" : 0,
+       |    "tags" : {
+       |
+       |    }
+       |  }
        |}
        """.stripMargin)
 
