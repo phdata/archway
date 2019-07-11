@@ -14,7 +14,6 @@ Heimdali.mwb.bak
 /api/src/main/resources/runtime.conf
 /integration-test/src/main/resources/*.properties
 itest-config/
-/lib
 # See https://help.github.com/ignore-files/ for more about ignoring files.
 
 # dependencies

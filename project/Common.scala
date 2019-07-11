@@ -38,7 +38,8 @@ object Common {
     resolvers ++= customResolvers,
     scalacOptions := compilerOptions,
     run in Compile := Defaults.runTask(fullClasspath in Compile, mainClass in (Compile, run), runner in (Compile, run)).evaluated,
-    runMain in Compile := Defaults.runMainTask(fullClasspath in Compile, runner in(Compile, run)).evaluated
+    runMain in Compile := Defaults.runMainTask(fullClasspath in Compile, runner in(Compile, run)).evaluated,
+    unmanagedJars in Compile ++= Seq(file("lib/ImpalaJDBC41-no-log4j.jar"))
   )
 
   val commonSettings = scalateOptions ++ Seq(

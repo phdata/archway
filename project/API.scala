@@ -21,7 +21,8 @@ object API {
       cp filter {_.data.getPath.contains("bouncycastle")}
     },
     assemblyMergeStrategy in assembly := {
-      case PathList(ps@_*) if ps.last endsWith "-site.xml" => MergeStrategy.discard
+      case PathList(ps@_*) if ps.last.endsWith("-site.xml") => MergeStrategy.discard
+      case PathList(ps@_*) if ps.last.endsWith("public-suffix-list.txt") => MergeStrategy.first
       case x =>
         val oldStrategy = (assemblyMergeStrategy in assembly).value
         oldStrategy(x)
