@@ -28,6 +28,7 @@ package()
   mkdir -p ${READY_DIR}/usr/lib/heimdali-api
   mkdir -p ${READY_DIR}/usr/lib/heimdali-api-tests
   mkdir -p ${READY_DIR}/usr/bin/
+  mkdir -p ${READY_DIR}/usr/lib/flyway
 
   # API artifacts
   cp api/target/scala-2.12/heimdali-api.jar ${READY_DIR}/usr/lib/heimdali-api/
@@ -43,6 +44,8 @@ package()
   # Control script
   cp bin/control.sh ${READY_DIR}/usr/bin/
 
+  # flyway
+  cp -r flyway/* ${READY_DIR}/usr/lib/flyway
 
   pushd ${BUILD_BASE}
   tar cvf ${BUILD_NAME}-el6.parcel ${BUILD_NAME}

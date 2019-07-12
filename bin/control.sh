@@ -1,5 +1,5 @@
 #!/bin/bash -x
-SYNTAX="Please use the following arguments: [api|ui] [start|stop]"
+SYNTAX="Please use the following arguments: [api start|migrate_db]"
 COMPONENT=$1
 CMD=$2
 
@@ -56,6 +56,21 @@ case ${COMPONENT} in
                 echo ${SYNTAX}
                 ;;
         esac
+        ;;
+    (migrate_db)
+        FLYWAY_DIR=$HEIMDALI_DIST/usr/lib/flyway/
+        DATABASE_SCRIPT_DIR=""
+
+        if [[ $DB_URL == *"mysql"* ]]; then
+            DATABASE_SCRIPT_DIR="mysql"
+        elif [[ $DB_URL == *"postgres"* ]]; then
+            DATABASE_SCRIPT_DIR="sql"
+        fi
+
+        FLYWAY_EXECUTABLE="$FLYWAY_DIR/flyway"
+        SCRIPTS_LOCATION="$FLYWAY_DIR/$DATABASE_SCRIPT_DIR"
+
+        exec env FLYWAY_LOCATIONS="filesystem:$SCRIPTS_LOCATION" "$FLYWAY_EXECUTABLE" migrate -url="$DB_URL" -user="$DB_USERNAME" -password="$DB_PASSWORD"
         ;;
     (*)
         echo ${SYNTAX}

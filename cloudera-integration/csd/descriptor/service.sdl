@@ -91,6 +91,28 @@
             }
         ]
       },
+      "commands": [
+              {
+                "name": "migrate_db",
+                "label": "Migrate Database",
+                "description": "Migrate the database using the Flyway migration tool",
+                "expectedExitCodes": [
+                  0
+                ],
+                "requiredRoleState": "running",
+                "commandRunner": {
+                  "program": "scripts/control-redirect.sh",
+                  "args": [
+                    "migrate_db"
+                  ],
+                  "environmentVariables": {
+                      "DB_URL": "${heimdali.db.meta.url}",
+                      "DB_USERNAME": "${heimdali.db.meta.username}",
+                      "DB_PASSWORD": "${heimdali.db.meta.password}"
+                  }
+                }
+              }
+            ],
       "sslServer": {
         "keyIdentifier": "heimdali_api",
         "enabledConfigName": "heimdali_api.ssl.enabled",
