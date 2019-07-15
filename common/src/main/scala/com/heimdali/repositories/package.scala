@@ -28,15 +28,23 @@ package object repositories {
     Get[String].tmap(ApproverRole.parseRole)
 
   implicit val mapTagsReader: Read[Map[String, String]] =
-    Read[(String, String)].map { case (
-      key, value
-      ) => Map(key -> value)
+    Read[(String, String)].map {
+      case (
+          key,
+          value
+          ) =>
+        Map(key -> value)
     }
 
   implicit val metadataReader: Read[Metadata] =
-    Read[(String, String, Int, Map[String, String])].map { case (
-        name, description, ordering, tags
-        ) => Metadata (name, description, ordering, tags)
+    Read[(String, String, Int, Map[String, String])].map {
+      case (
+          name,
+          description,
+          ordering,
+          tags
+          ) =>
+        Metadata(name, description, ordering, tags)
     }
 
   implicit val workspaceReader: Read[WorkspaceRequest] =

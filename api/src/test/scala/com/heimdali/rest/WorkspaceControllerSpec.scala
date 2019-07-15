@@ -136,6 +136,13 @@ class WorkspaceControllerSpec
     check(response, Status.Created, Some(Json.arr(Json.obj("message" -> "nothing to see here".asJson))))
   }
 
+  it should "delete a workspace" in new client.dsl.Http4sClientDsl[IO] with Context {
+    workspaceService.deleteWorkspace _ expects id returning ().pure[IO]
+    val response = restApi.route.orNotFound.run(DELETE(Uri.uri("/123")).unsafeRunSync()).unsafeRunSync()
+
+    response.status.code shouldBe 200
+  }
+  
   trait Context {
     implicit val timer: Timer[IO] = testTimer
     implicit val contextShift = IO.contextShift(ExecutionContext.global)

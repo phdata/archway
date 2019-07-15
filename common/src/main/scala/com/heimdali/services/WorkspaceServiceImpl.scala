@@ -47,7 +47,7 @@ class WorkspaceServiceImpl[F[_]: ConcurrentEffect: ContextShift](
     context.workspaceRequestRepository.list(distinguishedName).transact(context.transactor)
 
   def create(workspace: WorkspaceRequest): F[WorkspaceRequest] = {
-    val createResult = (for {
+    val createResult = for {
       compliance <- context.complianceRepository.create(workspace.compliance)
       updatedWorkspace = workspace.copy(compliance = compliance)
       newWorkspaceId <- context.workspaceRequestRepository.create(updatedWorkspace)
@@ -117,7 +117,7 @@ class WorkspaceServiceImpl[F[_]: ConcurrentEffect: ContextShift](
           _ <- context.workspaceRequestRepository.linkTopic(newWorkspaceId, newTopicId)
         } yield beforeCreate.copy(id = Some(newTopicId))
       }
-    } yield newWorkspaceId)
+    } yield newWorkspaceId
 
     createResult.transact(context.transactor).flatMap(workspaceId => find(workspaceId).value.map(_.get))
   }
@@ -164,5 +164,9 @@ class WorkspaceServiceImpl[F[_]: ConcurrentEffect: ContextShift](
 
   override def reviewerList(role: ApproverRole): F[List[WorkspaceSearchResult]] =
     context.workspaceRequestRepository.pendingQueue(role).transact(context.transactor)
+
+  override def deleteWorkspace(workspaceId: Long): F[Unit] = {
+    context.workspaceRequestRepository.deleteWorkspace(workspaceId).transact(context.transactor).void
+  }
 
 }

@@ -28,4 +28,6 @@ trait WorkspaceRequestRepository {
   def linkApplication(workspaceId: Long, applicationId: Long): ConnectionIO[Int]
 
   def pendingQueue(role: ApproverRole): ConnectionIO[List[WorkspaceSearchResult]]
+
+  def deleteWorkspace(workspaceId: Long): ConnectionIO[Int]
 }

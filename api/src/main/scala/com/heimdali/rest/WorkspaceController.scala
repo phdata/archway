@@ -68,6 +68,15 @@ class WorkspaceController[F[_]: Sync: Timer: ContextShift: ConcurrentEffect](
           } else
             Forbidden()
 
+        case DELETE -> Root / LongVar(id) as user =>
+          if (user.isSuperUser) {
+            for {
+              _ <- workspaceService.deleteWorkspace(id)
+              response <- Ok()
+            } yield response
+          } else
+            Forbidden()
+
         case req @ POST -> Root as user =>
           /* explicit implicit declaration because of `user` variable */
           Clock[F].realTime(scala.concurrent.duration.MILLISECONDS).flatMap { time =>
