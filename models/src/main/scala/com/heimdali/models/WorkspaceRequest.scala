@@ -9,10 +9,10 @@ import io.circe.java8.time._
 import io.circe.syntax._
 
 case class Metadata(
-   name: String,
-   description: String,
-   ordering: Int,
-   tags: Map[String, String]
+    name: String,
+    description: String,
+    ordering: Int,
+    tags: Map[String, String]
 )
 
 object Metadata {

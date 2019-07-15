@@ -82,7 +82,7 @@ class WorkspaceServiceImplSpec
       (context.applicationRepository.findByWorkspaceId _).expects(id).returning(List(savedApplication).pure[ConnectionIO])
     }
 
-    val newWorkspace = projectServiceImpl.create(initialWorkspaceRequest).unsafeRunSync()
+    val newWorkspace = workspaceServiceImpl.create(initialWorkspaceRequest).unsafeRunSync()
 
     newWorkspace.processing should not be empty
     newWorkspace.data should not be empty
@@ -96,7 +96,7 @@ class WorkspaceServiceImplSpec
     context.kafkaRepository.findByWorkspaceId _ expects id returning List(savedTopic).pure[ConnectionIO]
     context.applicationRepository.findByWorkspaceId _ expects id returning List(savedApplication).pure[ConnectionIO]
 
-    val foundWorkspace = projectServiceImpl.find(id).value.unsafeRunSync()
+    val foundWorkspace = workspaceServiceImpl.find(id).value.unsafeRunSync()
 
     foundWorkspace shouldBe defined
     foundWorkspace.get.data should not be empty
@@ -112,7 +112,7 @@ class WorkspaceServiceImplSpec
     context.kafkaRepository.findByWorkspaceId _ expects id returning List.empty[KafkaTopic].pure[ConnectionIO]
     context.applicationRepository.findByWorkspaceId _ expects id returning List.empty[Application].pure[ConnectionIO]
 
-    val maybeWorkspace = projectServiceImpl.findByUsername(standardUsername).value.unsafeRunSync()
+    val maybeWorkspace = workspaceServiceImpl.findByUsername(standardUsername).value.unsafeRunSync()
 
     maybeWorkspace shouldBe Some(savedWorkspaceRequest.copy(applications = List.empty))
   }
@@ -128,7 +128,7 @@ class WorkspaceServiceImplSpec
     context.applicationRepository.findByWorkspaceId _ expects id returning List(savedApplication).pure[ConnectionIO]
     context.hdfsClient.getConsumption _ expects withCreated.location returning IO.pure(1.0)
 
-    val foundWorkspace = projectServiceImpl.find(id).value.unsafeRunSync()
+    val foundWorkspace = workspaceServiceImpl.find(id).value.unsafeRunSync()
 
     foundWorkspace shouldBe defined
     foundWorkspace.get.data should not be empty
@@ -149,7 +149,20 @@ class WorkspaceServiceImplSpec
 
     (provisioningService.attemptProvision(_: WorkspaceRequest, _: Int)) expects(*, 2) returning NonEmptyList.one(SimpleMessage(1l, "").asInstanceOf[Message]).pure[IO].start(contextShift)
 
-    projectServiceImpl.approve(id, approval(instant)).unsafeRunSync()
+    workspaceServiceImpl.approve(id, approval(instant)).unsafeRunSync()
+  }
+
+  it should "get a workspace status when not provisioned" in new Context {
+    provisioningService.findUnprovisioned _ expects () returning List(savedWorkspaceRequest).pure[IO]
+    val result = workspaceServiceImpl.status(id).unsafeRunSync()
+    result shouldBe WorkspaceStatus(WorkspaceProvisioningStatus.PENDING)
+  }
+
+  it should "get a workspace status when provisioned" in new Context {
+    val unknownId = 456L
+    provisioningService.findUnprovisioned _ expects () returning List(savedWorkspaceRequest).pure[IO]
+    val result = workspaceServiceImpl.status(unknownId).unsafeRunSync()
+    result shouldBe WorkspaceStatus(WorkspaceProvisioningStatus.COMPLETED)
   }
 
   it should "get all yarn applications" in new Context {
@@ -158,7 +171,7 @@ class WorkspaceServiceImplSpec
 
     context.yarnClient.applications _ expects savedYarn.poolName returning List(app).pure[IO]
 
-    val result = projectServiceImpl.yarnInfo(id).unsafeRunSync()
+    val result = workspaceServiceImpl.yarnInfo(id).unsafeRunSync()
 
     result.head shouldBe YarnInfo(savedYarn.poolName, List(app))
   }
@@ -170,7 +183,7 @@ class WorkspaceServiceImplSpec
     context.hiveClient.describeDatabase _ expects "name1" returning HiveDatabase("name1", List(HiveTable("table1"))).pure[IO]
     context.hiveClient.describeDatabase _ expects "name2" returning HiveDatabase("name2", List(HiveTable("table1"))).pure[IO]
 
-    val maybeWorkspace = projectServiceImpl.hiveDetails(id).unsafeRunSync()
+    val maybeWorkspace = workspaceServiceImpl.hiveDetails(id).unsafeRunSync()
 
     maybeWorkspace shouldBe List(
       HiveDatabase("name1", List(HiveTable("table1"))),
@@ -181,7 +194,7 @@ class WorkspaceServiceImplSpec
   it should "list risk workspaces" in new Context {
     context.workspaceRequestRepository.pendingQueue _ expects Risk returning List(searchResult).pure[ConnectionIO]
 
-    val projects = projectServiceImpl.reviewerList(Risk).unsafeRunSync()
+    val projects = workspaceServiceImpl.reviewerList(Risk).unsafeRunSync()
     projects.length should be(1)
     projects.head should be(searchResult)
   }
@@ -189,7 +202,7 @@ class WorkspaceServiceImplSpec
   it should "list infra workspaces" in new Context {
     context.workspaceRequestRepository.pendingQueue _ expects Infra returning List(searchResult).pure[ConnectionIO]
 
-    val projects = projectServiceImpl.reviewerList(Infra).unsafeRunSync()
+    val projects = workspaceServiceImpl.reviewerList(Infra).unsafeRunSync()
     projects.length should be(1)
     projects.head should be(searchResult)
   }
@@ -200,7 +213,7 @@ class WorkspaceServiceImplSpec
     val provisioningService: ProvisioningService[IO] = mock[ProvisioningService[IO]]
     val context: AppContext[IO] = genMockContext()
 
-    lazy val projectServiceImpl = new WorkspaceServiceImpl[IO](provisioningService, context)
+    lazy val workspaceServiceImpl = new WorkspaceServiceImpl[IO](provisioningService, context)
   }
 
 }

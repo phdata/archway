@@ -12,6 +12,8 @@ trait WorkspaceService[F[_]] {
 
   def approve(id: Long, approval: Approval): F[Approval]
 
+  def status(id: Long): F[WorkspaceStatus]
+
   def findByUsername(distinguishedName: String): OptionT[F, WorkspaceRequest]
 
   def yarnInfo(id: Long): F[List[YarnInfo]]

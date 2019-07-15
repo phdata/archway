@@ -160,6 +160,12 @@ class WorkspaceController[F[_]: Sync: Timer: ContextShift: ConcurrentEffect](
             response <- Ok(result.asJson)
           } yield response
 
+        case GET -> Root / LongVar(id) / "status" as _ =>
+          for {
+            workspaceStatus <- workspaceService.status(id)
+            response <- Ok(workspaceStatus.asJson)
+          } yield response
+
       }
     }
 

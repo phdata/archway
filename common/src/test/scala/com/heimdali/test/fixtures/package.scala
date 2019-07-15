@@ -69,6 +69,8 @@ package object fixtures {
   val config = ConfigFactory.parseResources(sys.env.getOrElse("TEST_CONFIG_FILE", "application.test.conf"))
   val Right(appConfig) = io.circe.config.parser.decodePath[AppConfig](config.resolve(), "heimdali")
 
+  val workspaceStatus = WorkspaceStatus(WorkspaceProvisioningStatus.COMPLETED)
+
   def defaultLDAPAttributes(dn: String, cn: String): List[(String, String)] =
     List(
       "dn" -> dn,

@@ -131,6 +131,19 @@ class WorkspaceServiceImpl[F[_]: ConcurrentEffect: ContextShift](
         .getOrElse(().pure[F])
     } yield approval
 
+  override def status(id: Long): F[WorkspaceStatus] = {
+    for {
+      unProvisionedWorkspaces <- provisioningService.findUnprovisioned()
+      unProvisionedIds <- unProvisionedWorkspaces.map(_.id.get).pure[F]
+    } yield {
+      if (!unProvisionedIds.contains(id)) {
+        WorkspaceStatus(WorkspaceProvisioningStatus.COMPLETED)
+      } else {
+        WorkspaceStatus(WorkspaceProvisioningStatus.PENDING)
+      }
+    }
+  }
+
   override def findByUsername(distinguishedName: String): OptionT[F, WorkspaceRequest] =
     OptionT(
       context.workspaceRequestRepository.findByUsername(distinguishedName).value.transact(context.transactor).flatMap {
