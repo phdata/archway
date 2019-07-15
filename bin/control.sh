@@ -16,8 +16,6 @@ com.sun.security.jgss.krb5.initiate {
 
 echo $JAAS_CONFIGS > ${CONF_DIR}/jaas.conf
 
-JAVA_OPTS=""
-
 if [ ! -z "$JAVA_TRUST_STORE_LOCATION" ]; then
     JAVA_OPTS="$JAVA_OPTS -Djavax.net.ssl.trustStore=$JAVA_TRUST_STORE_LOCATION"
 fi

@@ -663,6 +663,14 @@
           "type": "password"
         },
         {
+          "name": "heimdali.additional.java.options",
+          "label": "Java addition options",
+          "description": "Injection of java options to the heimdali api process",
+          "required": "true",
+          "type": "string",
+          "default": ""
+        },
+        {
           "name": "heimdali.templates.templateRoot",
           "label": "Workspace template root directory",
           "description": "Workspace template root directory",
@@ -725,7 +733,8 @@
         "environmentVariables": {
           "JAVA_TRUST_STORE_LOCATION": "${heimdali.java.truststore.location}",
           "JAVA_TRUST_STORE_PASSWORD": "${heimdali.java.truststore.password}",
-          "HEIMDALI_ADDITIONAL_CLASSPATH": "${heimdali.additional.classpath}"
+          "HEIMDALI_ADDITIONAL_CLASSPATH": "${heimdali.additional.classpath}",
+          "JAVA_OPTS": "${heimdali.additional.java.options}"
         }
       }
     }
