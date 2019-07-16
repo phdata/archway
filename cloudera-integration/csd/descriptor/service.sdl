@@ -428,7 +428,8 @@
           "label": "Impala connection string",
           "description": "The Impala JDBC connection string. An example connection string using kerberos: \n\tjdbc:impala://<impalad-host>:21050;SSL=1;AuthMech=1;SSLTrustStorePwd=changeit;SSLTrustStore=/path/to/truststore;KrbHostFQDN=<impalad-host>;KrbServiceName=impala;KrbAuthType=0;KrbRealm=<realm>",
           "required": "false",
-          "type": "string"
+          "type": "string",
+          "default": ""
         },
         {
           "name": "heimdali.db.impala.driver",

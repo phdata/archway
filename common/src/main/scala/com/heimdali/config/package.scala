@@ -8,6 +8,7 @@ import com.typesafe.scalalogging.StrictLogging
 import doobie._
 import doobie.hikari.HikariTransactor
 import doobie.util.transactor.Strategy
+import io.circe.generic.semiauto.deriveDecoder
 import io.circe.syntax._
 import io.circe.{Decoder, Encoder, HCursor, _}
 
@@ -259,6 +260,8 @@ package object config extends StrictLogging {
 
   }
 
+  implicit val databaseConfigItemDecoder: Decoder[DatabaseConfigItem] = deriveDecoder
+
   case class ProvisioningConfig(threadPoolSize: Int, provisionInterval: FiniteDuration)
 
   object ProvisioningConfig {
@@ -282,6 +285,17 @@ package object config extends StrictLogging {
   }
 
   case class DatabaseConfig(meta: DatabaseConfigItem, hive: DatabaseConfigItem, impala: Option[DatabaseConfigItem])
+
+  object DatabaseConfig {
+
+    implicit val decoder: Decoder[DatabaseConfig] = Decoder.instance { cursor =>
+      for {
+        meta <- cursor.downField("meta").as[DatabaseConfigItem]
+        hive <- cursor.downField("hive").as[DatabaseConfigItem]
+        impala <- cursor.downField("impala").as[DatabaseConfigItem]
+      } yield DatabaseConfig(meta, hive, if (impala.url.isEmpty) None else Some(impala))
+    }
+  }
 
   case class KafkaConfig(zookeeperConnect: String, secureTopics: Boolean)
 
@@ -318,7 +332,6 @@ package object config extends StrictLogging {
     implicit val ldapBindingDecoder: Decoder[LDAPBinding] = deriveDecoder
     implicit val lDAPConfigDecoder: Decoder[LDAPConfig] = deriveDecoder
     implicit val databaseConfigItemDecoder: Decoder[DatabaseConfigItem] = deriveDecoder
-    implicit val databaseConfigDecoder: Decoder[DatabaseConfig] = deriveDecoder
     implicit val kafkaConfigDecoder: Decoder[KafkaConfig] = deriveDecoder
     implicit val generatorConfigDecoder: Decoder[TemplateConfig] = deriveDecoder
     implicit val provisioningConfigDecoder: Decoder[ProvisioningConfig] = ProvisioningConfig.decoder
