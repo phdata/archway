@@ -84,9 +84,18 @@ const WorkspaceListItem = ({ workspace, onSelected }: Props) => {
             <div>
               <TruncateText text={summary} lineHeight={16} maxLine={2} />
             </div>
-            <Icon type={behavior === 'simple' ? 'team' : 'deployment-unit'} />
-            &nbsp;
-            <div style={{ textTransform: 'uppercase', display: 'inline-block' }}>{behavior} dataset</div>
+            <div
+              style={{
+                textTransform: 'uppercase',
+                display: 'flex',
+                justifyContent: 'flex-start',
+                alignItems: 'center',
+              }}
+            >
+              <Icon type={behavior === 'simple' ? 'team' : 'deployment-unit'} />
+              &nbsp;
+              <TruncateText text={`${behavior} dataset`} lineHeight={12} maxLine={1} />
+            </div>
             <div style={{ color: '#0B7A75', lineHeight: '24px' }}>DETAILS ></div>
           </div>
           <div style={{ flex: 3 }}>
