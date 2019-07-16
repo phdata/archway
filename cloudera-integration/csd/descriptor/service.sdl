@@ -387,7 +387,7 @@
           "type": "string_enum",
           "validValues": [
             "org.postgresql.Driver",
-            "com.mysql.jdbc.Driver"
+            "com.mysql.cj.jdbc.Driver"
           ],
           "configurableInWizard": "true"
         },
