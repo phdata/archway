@@ -27,6 +27,7 @@ import {
   REFRESH_HIVE_TABLES_FAILURE,
   ADD_DATA_MEMBER_FAILURE,
   SET_MEMBER_LOADING,
+  SET_PROVISIONING_STATUS,
 } from './actions';
 
 import { Member } from '../../models/Workspace';
@@ -37,6 +38,7 @@ const initialState = fromJS({
   activeModal: false,
   error: '',
   memberLoading: false,
+  provisioning: '',
 });
 
 const details = (state = initialState, action: any) => {
@@ -222,6 +224,9 @@ const details = (state = initialState, action: any) => {
 
     case SET_MEMBER_LOADING:
       return state.set('memberLoading', action.loading);
+
+    case SET_PROVISIONING_STATUS:
+      return state.set('provisioning', action.provisioning);
 
     default:
       return state;

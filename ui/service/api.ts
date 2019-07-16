@@ -120,6 +120,8 @@ export const listOpsWorkspaces = (token: string) => get('/ops/workspaces', token
 
 export const getWorkspace = (token: string, id: number) => get(`/workspaces/${id}`, token);
 
+export const getProvisioning = (token: string, id: number) => get(`/workspaces/${id}/status`, token);
+
 export const approveWorkspace = (token: string, id: number, role: string) =>
   withBody(`/workspaces/${id}/approve`, token, { role });
 

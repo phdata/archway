@@ -38,6 +38,7 @@ import {
   setActiveModal,
   addDataMemberFailure,
   setMemberLoading,
+  setProvisioning,
 } from './actions';
 
 import { RECENT_WORKSPACES_KEY, TOKEN_EXTRACTOR } from '../../constants';
@@ -68,6 +69,9 @@ function* fetchWorkspace({ id }: { type: string; id: number }) {
   const recent = (yield select((s: any) => s.getIn(['home', 'recent']))).toJS();
   const workspace = yield call(Api.getWorkspace, token, id);
   yield put(setWorkspace(workspace));
+
+  const { provisioning } = yield call(Api.getProvisioning, token, id);
+  yield put(setProvisioning(provisioning));
 
   const recentWorkspaces = [workspace, ...recent.filter((w: Workspace) => w.id !== workspace.id)];
   localStorage.setItem(RECENT_WORKSPACES_KEY, JSON.stringify(recentWorkspaces.slice(0, 2)));

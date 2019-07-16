@@ -19,6 +19,7 @@ import {
   SimpleMemberRequest,
   SimpleTopicMemberRequest,
   ApplicationRequest,
+  Provisioning,
 } from './components';
 import { Cluster } from '../../models/Cluster';
 import { Profile } from '../../models/Profile';
@@ -35,7 +36,7 @@ import {
 import * as actions from './actions';
 import * as selectors from './selectors';
 import { FeatureService } from '../../service/FeatureService';
-import { FeatureFlagType } from '../../constants';
+import { FeatureFlagType, ProvisioningType } from '../../constants';
 
 interface DetailsRouteProps {
   id: any;
@@ -56,6 +57,7 @@ interface Props extends RouteComponentProps<DetailsRouteProps> {
   members?: Member[];
   error: string;
   memberLoading: boolean;
+  provisioning: ProvisioningType;
 
   clearDetails: () => void;
   getWorkspaceDetails: (id: number) => void;
@@ -193,6 +195,7 @@ class WorkspaceDetails extends React.PureComponent<Props> {
       removeMember,
       liasion,
       memberLoading,
+      provisioning,
     } = this.props;
     const featureService = new FeatureService();
     const hasApplicationFlag = featureService.isEnabled(FeatureFlagType.Application);
@@ -227,6 +230,7 @@ class WorkspaceDetails extends React.PureComponent<Props> {
             pci={workspace.compliance.pci_data}
             phi={workspace.compliance.phi_data}
           />
+          <Provisioning provisioning={provisioning} />
         </div>
         <Tooltip placement="topLeft" title="Download Workspace JSON data" arrowPointAtCenter>
           <Button
@@ -360,6 +364,7 @@ const mapStateToProps = () =>
     members: selectors.getMembers(),
     error: selectors.getError(),
     memberLoading: selectors.isMemberLoading(),
+    provisioning: selectors.getProvisioning(),
   });
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({

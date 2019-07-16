@@ -8,6 +8,7 @@ import {
   KafkaTopic,
   Application,
 } from '../../models/Workspace';
+import { ProvisioningType } from '../../constants';
 
 export const CLEAR_DETAILS = 'CLEAR_DETAILS';
 export const clearDetails = () => ({
@@ -281,4 +282,10 @@ export const SET_MEMBER_LOADING = 'SET_MEMBER_LOADING';
 export const setMemberLoading = (loading: boolean) => ({
   type: SET_MEMBER_LOADING,
   loading,
+});
+
+export const SET_PROVISIONING_STATUS = 'SET_PROVISIONING_STATUS';
+export const setProvisioning = (provisioning: ProvisioningType) => ({
+  type: SET_PROVISIONING_STATUS,
+  provisioning,
 });

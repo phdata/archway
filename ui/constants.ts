@@ -24,3 +24,8 @@ export enum FeatureFlagType {
   Messaging = 'messaging',
   CustomTemplates = 'custom-templates',
 }
+
+export enum ProvisioningType {
+  Pending = 'pending',
+  Complete = 'complete',
+}

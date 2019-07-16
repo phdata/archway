@@ -130,3 +130,9 @@ export const isMemberLoading = () =>
     workspaceSelector,
     workspaceState => workspaceState.get('memberLoading')
   );
+
+export const getProvisioning = () =>
+  createSelector(
+    workspaceSelector,
+    workspaceState => workspaceState.get('provisioning')
+  );

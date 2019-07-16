@@ -1,0 +1,34 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Provisioning renders correctly 1`] = `
+<div
+  style={
+    Object {
+      "alignItems": "center",
+      "display": "flex",
+      "justifyContent": "center",
+      "paddingTop": 8,
+    }
+  }
+>
+  <Icon
+    style={
+      Object {
+        "fontSize": 20,
+        "paddingRight": 8,
+      }
+    }
+    theme="twoTone"
+    type="check-circle"
+  />
+  <span
+    style={
+      Object {
+        "fontSize": 14,
+      }
+    }
+  >
+    PROVISIONING: COMPLETE
+  </span>
+</div>
+`;
