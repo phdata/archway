@@ -1,6 +1,6 @@
 package com.heimdali.services
 
-import java.nio.file.{FileVisitOption, Files, Paths}
+import java.nio.file.{FileVisitOption, Files, Path, Paths}
 import java.time.Instant
 import java.util.concurrent.TimeUnit
 
@@ -50,16 +50,20 @@ class JSONTemplateService[F[_]: Effect: Clock](context: AppContext[F], configSer
   }
 
   override def customTemplates: F[List[WorkspaceRequest]] = {
-    val templatesPath = Paths.get(context.appConfig.templates.templateRoot, "custom")
+    val templatesPath: Path = Paths.get(context.appConfig.templates.templateRoot, "custom")
 
-    val customTemplates = Files.walk(templatesPath, 1, FileVisitOption.FOLLOW_LINKS)
-      .iterator().asScala.toList.map(_.toString).filter(_.endsWith(".ssp")).sorted
+    if(templatesPath.toFile.exists) {
+      val customTemplates = Files.walk(templatesPath, 1, FileVisitOption.FOLLOW_LINKS)
+        .iterator().asScala.toList.map(_.toString).filter(_.endsWith(".ssp")).sorted
 
-    // creating empty object because it is not needed only required
-    val templateRequest: TemplateRequest = TemplateRequest("", "", "", Compliance(false, false, false) , "")
+      // creating empty object because it is not needed only required
+      val templateRequest: TemplateRequest = TemplateRequest("", "", "", Compliance(false, false, false) , "")
 
-    customTemplates.traverse[F, WorkspaceRequest] { templatePath =>
-      generateWorkspaceRequest(templateRequest, templatePath, extractTemplateName(templatePath))
+      customTemplates.traverse[F, WorkspaceRequest] { templatePath =>
+        generateWorkspaceRequest(templateRequest, templatePath, extractTemplateName(templatePath))
+      }
+    } else {
+      List.empty[WorkspaceRequest].pure[F]
     }
   }
 

@@ -55,6 +55,19 @@ class TemplateControllerSpec
     check(response, Status.Ok, Some(expected))
   }
 
+  it should "return none custom templates if path is incorrect" in new Context {
+    val overriddenTemplateConf = appConfig.templates.copy(templateRoot = "")
+    val overriddenAppConfig = appConfig.copy(templates = overriddenTemplateConf)
+    val overriddenContext = context.copy(appConfig = overriddenAppConfig)
+
+    override val templateService: TemplateService[IO] = new JSONTemplateService[IO](overriddenContext, configService)
+    override val templateController: TemplateController[IO] = new TemplateController[IO](authService, templateService)
+
+    val response = templateController.route.orNotFound.run(GET(Uri.uri("custom")).unsafeRunSync())
+
+    check(response, Status.Ok, Some(Json.arr()))
+  }
+
   it should "generate a custom workspace" in new Context {
     val name = "custom-template-1"
     val request = TemplateRequest("Custom template 1", "Custom template test", "A custom template test", initialCompliance, standardUserDN)
