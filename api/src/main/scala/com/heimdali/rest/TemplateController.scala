@@ -16,7 +16,7 @@ class TemplateController[F[_]: Sync](authService: TokenAuthService[F], templateG
     authService.tokenAuth {
       AuthedService[User, F] {
 
-        case GET -> Root / custom as _ =>
+        case GET -> Root / "custom" as _ =>
           for {
             customTemplates <- templateGenerator.customTemplates
             response <- Ok(customTemplates.map(_.metadata).asJson)

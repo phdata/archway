@@ -1,0 +1,11 @@
+{
+  "name": "john.doe",
+  "summary": "John Doe",
+  "description": "John Doe",
+  "compliance": {
+    "phi_data": false,
+    "pci_data": false,
+    "pii_data": false
+  },
+  "requester": "cn=john.doe,ou=hadoop,dc=example,dc=com"
+}

@@ -65,6 +65,13 @@ class TemplateControllerSpec
     check(response, Status.Ok, Some(expected.asObject.get.add("requested_date", testTimer.instant.asJson).asJson))
   }
 
+  it should "return defaults template" in new Context {
+    val response = templateController.route.orNotFound.run(GET(Uri.uri("simple")).unsafeRunSync())
+
+    val expected: Json = fromResource(s"ssp/default/user-defaults.expected.json")
+    check(response, Status.Ok, Some(expected))
+  }
+
   trait Context extends Http4sClientDsl[IO]{
     implicit val timer: Timer[IO] = testTimer
 
