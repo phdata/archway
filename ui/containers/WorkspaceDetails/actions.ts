@@ -272,12 +272,6 @@ export const refreshHiveTablesFailure = (error: string) => ({
   error,
 });
 
-export const ADD_DATA_MEMBER_FAILURE = 'ADD_DATA_MEMBER_FAILURE';
-export const addDataMemberFailure = (error: string) => ({
-  type: ADD_DATA_MEMBER_FAILURE,
-  error,
-});
-
 export const SET_MEMBER_LOADING = 'SET_MEMBER_LOADING';
 export const setMemberLoading = (loading: boolean) => ({
   type: SET_MEMBER_LOADING,
@@ -288,4 +282,20 @@ export const SET_PROVISIONING_STATUS = 'SET_PROVISIONING_STATUS';
 export const setProvisioning = (provisioning: ProvisioningType) => ({
   type: SET_PROVISIONING_STATUS,
   provisioning,
+});
+
+export const REQUEST_DELETE_WORKSPACE = 'REQUEST_DELETE_WORKSPACE';
+export const requestDeleteWorkspace = () => ({
+  type: REQUEST_DELETE_WORKSPACE,
+});
+
+export const REQUEST_DEPROVISION_WORKSPACE = 'REQUEST_DEPROVISION_WORKSPACE';
+export const requestDeprovisionWorkspace = () => ({
+  type: REQUEST_DEPROVISION_WORKSPACE,
+});
+
+export const SET_ERROR_STATUS = 'SET_ERROR_STATUS';
+export const setErrorStatus = (error: string) => ({
+  type: SET_ERROR_STATUS,
+  error,
 });

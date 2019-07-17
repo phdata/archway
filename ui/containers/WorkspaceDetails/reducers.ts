@@ -25,9 +25,9 @@ import {
   REQUEST_REFRESH_HIVE_TABLES,
   REFRESH_HIVE_TABLES_SUCCESS,
   REFRESH_HIVE_TABLES_FAILURE,
-  ADD_DATA_MEMBER_FAILURE,
   SET_MEMBER_LOADING,
   SET_PROVISIONING_STATUS,
+  SET_ERROR_STATUS,
 } from './actions';
 
 import { Member } from '../../models/Workspace';
@@ -219,14 +219,14 @@ const details = (state = initialState, action: any) => {
           .setIn(['error'], action.error)
       );
 
-    case ADD_DATA_MEMBER_FAILURE:
-      return state.set('error', action.error);
-
     case SET_MEMBER_LOADING:
       return state.set('memberLoading', action.loading);
 
     case SET_PROVISIONING_STATUS:
       return state.set('provisioning', action.provisioning);
+
+    case SET_ERROR_STATUS:
+      return state.set('error', action.error);
 
     default:
       return state;

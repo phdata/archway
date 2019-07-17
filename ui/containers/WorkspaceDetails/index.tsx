@@ -20,6 +20,8 @@ import {
   SimpleTopicMemberRequest,
   ApplicationRequest,
   Provisioning,
+  ManageTab,
+  WarningText,
 } from './components';
 import { Cluster } from '../../models/Cluster';
 import { Profile } from '../../models/Profile';
@@ -66,6 +68,8 @@ interface Props extends RouteComponentProps<DetailsRouteProps> {
   showSimpleMemberDialog: (e: React.MouseEvent) => void;
   showSimpleTopicMemberDialog: (e: React.MouseEvent) => void;
   showApplicationDialog: (e: React.MouseEvent) => void;
+  showDeleteWorkspaceDialog: (e: React.MouseEvent) => void;
+  showDeprovisionWorkspaceDialog: (e: React.MouseEvent) => void;
   clearModal: () => void;
   approveRisk: (e: React.MouseEvent) => void;
   approveOperations: (e: React.MouseEvent) => void;
@@ -78,6 +82,8 @@ interface Props extends RouteComponentProps<DetailsRouteProps> {
   requestRefreshHiveTables: () => void;
   getUserSuggestions: (filter: string) => void;
   removeMember: (distinguished_name: string, roleId: number, resource: string) => void;
+  deleteWorkspace: () => void;
+  deprovisionWorkspace: () => void;
 }
 
 class WorkspaceDetails extends React.PureComponent<Props> {
@@ -134,7 +140,7 @@ class WorkspaceDetails extends React.PureComponent<Props> {
       }
     }
     if (!!error && error !== this.props.error) {
-      notification.error({ message: 'Error', description: 'Failed to add user' });
+      notification.error({ message: 'Error', description: error });
     }
   }
 
@@ -179,6 +185,8 @@ class WorkspaceDetails extends React.PureComponent<Props> {
       showSimpleMemberDialog,
       showSimpleTopicMemberDialog,
       showApplicationDialog,
+      showDeleteWorkspaceDialog,
+      showDeprovisionWorkspaceDialog,
       clearModal,
       approveRisk,
       approveOperations,
@@ -196,6 +204,8 @@ class WorkspaceDetails extends React.PureComponent<Props> {
       liasion,
       memberLoading,
       provisioning,
+      deleteWorkspace,
+      deprovisionWorkspace,
     } = this.props;
     const featureService = new FeatureService();
     const hasApplicationFlag = featureService.isEnabled(FeatureFlagType.Application);
@@ -309,6 +319,15 @@ class WorkspaceDetails extends React.PureComponent<Props> {
               />
             </Tabs.TabPane>
           )}
+          {profile && profile.permissions.platform_operations && profile.permissions.risk_management && (
+            <Tabs.TabPane tab="MANAGE" key="manage">
+              <ManageTab
+                onDeleteWorkspace={showDeleteWorkspaceDialog}
+                onDeprovisionWorkspace={showDeprovisionWorkspaceDialog}
+                provisioning={provisioning}
+              />
+            </Tabs.TabPane>
+          )}
         </Tabs>
         <Modal
           visible={activeModal === 'simpleMember'}
@@ -341,6 +360,26 @@ class WorkspaceDetails extends React.PureComponent<Props> {
           onOk={requestApplication}
         >
           <ApplicationRequest />
+        </Modal>
+        <Modal
+          visible={activeModal === 'deleteWorkspace'}
+          title="Delete Workspace"
+          onCancel={clearModal}
+          onOk={deleteWorkspace}
+          okText="Delete"
+          okButtonProps={{ type: 'danger' }}
+        >
+          <WarningText message="Deleting a workspace cannot be undone. Are you sure you want to delete this workspace?" />
+        </Modal>
+        <Modal
+          visible={activeModal === 'deprovisionWorkspace'}
+          title="Deprovision Workspace"
+          onCancel={clearModal}
+          onOk={deprovisionWorkspace}
+          okText="Deprovision"
+          okButtonProps={{ type: 'danger' }}
+        >
+          <WarningText message="Deprovisioning a workspace cannot be undone. Are you sure you want to deprovision this workspace?" />
         </Modal>
       </div>
     );
@@ -392,6 +431,14 @@ const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
     e.preventDefault();
     return dispatch(actions.setActiveModal('application'));
   },
+  showDeleteWorkspaceDialog: (e: React.MouseEvent) => {
+    e.preventDefault();
+    return dispatch(actions.setActiveModal('deleteWorkspace'));
+  },
+  showDeprovisionWorkspaceDialog: (e: React.MouseEvent) => {
+    e.preventDefault();
+    return dispatch(actions.setActiveModal('deprovisionWorkspace'));
+  },
 
   approveRisk: (e: React.MouseEvent) => {
     e.preventDefault();
@@ -414,6 +461,8 @@ const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
 
   removeMember: (distinguished_name: string, roleId: number, resource: string) =>
     dispatch(actions.requestRemoveMember(distinguished_name, roleId, resource)),
+  deleteWorkspace: () => dispatch(actions.requestDeleteWorkspace()),
+  deprovisionWorkspace: () => dispatch(actions.requestDeprovisionWorkspace()),
 });
 
 export default connect(

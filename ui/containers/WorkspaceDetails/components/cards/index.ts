@@ -11,3 +11,5 @@ export { default as TopicCard } from './TopicCard';
 export { default as TopicPermissionsCard } from './TopicPermissionsCard';
 export { default as ApplicationCard } from './ApplicationCard';
 export { default as YarnResourceCard } from './YarnResourceCard';
+export { default as DeprovisionCard } from './DeprovisionCard';
+export { default as WorkspaceCard } from './WorkspaceCard';

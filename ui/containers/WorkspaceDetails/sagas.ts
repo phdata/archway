@@ -36,14 +36,19 @@ import {
   refreshHiveTablesSuccess,
   refreshHiveTablesFailure,
   setActiveModal,
-  addDataMemberFailure,
   setMemberLoading,
   setProvisioning,
+  REQUEST_DELETE_WORKSPACE,
+  REQUEST_DEPROVISION_WORKSPACE,
+  setErrorStatus,
 } from './actions';
 
 import { RECENT_WORKSPACES_KEY, TOKEN_EXTRACTOR } from '../../constants';
 
 import { Workspace } from '../../models/Workspace';
+
+/* tslint:disable:no-var-requires */
+const router = require('connected-react-router/immutable');
 
 export const detailExtractor = (s: any) => s.getIn(['details', 'details']);
 export const memberRequestFormExtractor = (s: any) => s.getIn(['form', 'simpleMemberRequest', 'values']);
@@ -182,7 +187,7 @@ export function* simpleMemberRequested({ resource }: SimpleMemberRequestAction) 
     const members = yield call(Api.getMembers, token, workspace.id);
     yield put(setMembers(members));
   } catch (e) {
-    yield put(addDataMemberFailure(e.toString()));
+    yield put(setErrorStatus('Failed to add user'));
     yield put(simpleMemberRequestComplete());
   } finally {
     yield put(setMemberLoading(false));
@@ -270,6 +275,41 @@ function* refreshHiveTablesRequestedListener() {
   yield takeLatest(REQUEST_REFRESH_HIVE_TABLES, refreshHiveTablesRequested);
 }
 
+function* deleteWorkspaceRequested() {
+  const token = yield select(TOKEN_EXTRACTOR);
+  const id = (yield select(detailExtractor)).toJS().id;
+  try {
+    yield call(Api.deleteWorkspace, token, id);
+    yield put(router.push({ pathname: '/operations' }));
+  } catch {
+    yield put(setErrorStatus(`Failed to delete workspace ${id}`));
+  } finally {
+    yield put(setActiveModal(false));
+    yield put(setErrorStatus(''));
+  }
+}
+
+function* deleteWorkspaceRequestedListener() {
+  yield takeLatest(REQUEST_DELETE_WORKSPACE, deleteWorkspaceRequested);
+}
+
+function* deprovisionWorkspaceRequested() {
+  const token = yield select(TOKEN_EXTRACTOR);
+  const id = (yield select(detailExtractor)).toJS().id;
+  try {
+    yield call(Api.deprovisionWorkspace, token, id);
+  } catch {
+    yield put(setErrorStatus(`Failed to deprovision workspace ${id}`));
+  } finally {
+    yield put(setActiveModal(false));
+    yield put(setErrorStatus(''));
+  }
+}
+
+function* deprovisionWorkspaceRequestedListener() {
+  yield takeLatest(REQUEST_DEPROVISION_WORKSPACE, deprovisionWorkspaceRequested);
+}
+
 export default function* root() {
   yield all([
     fork(workspaceRequest),
@@ -282,5 +322,7 @@ export default function* root() {
     fork(refreshYarnAppsRequestedListener),
     fork(refreshHiveTablesRequestedListener),
     fork(applicationRequestedListener),
+    fork(deleteWorkspaceRequestedListener),
+    fork(deprovisionWorkspaceRequestedListener),
   ]);
 }
