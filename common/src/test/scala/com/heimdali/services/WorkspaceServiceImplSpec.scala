@@ -3,31 +3,23 @@ package com.heimdali.services
 import java.time.Instant
 
 import cats.data.{NonEmptyList, OptionT}
-import cats.effect.{ContextShift, IO, Timer}
+import cats.effect.{IO, Timer}
 import cats.syntax.applicative._
 import com.heimdali.AppContext
-import com.heimdali.clients._
-import com.heimdali.config.AppConfig
 import com.heimdali.models._
 import com.heimdali.provisioning.{Message, SimpleMessage}
-import com.heimdali.repositories.{MemberRepository, _}
+import com.heimdali.repositories._
 import com.heimdali.test.fixtures.{id, _}
 import doobie._
 import doobie.implicits._
-import doobie.util.transactor.Strategy
-import org.apache.sentry.provider.db.generic.service.thrift.SentryGenericServiceClient
 import org.scalamock.scalatest.MockFactory
-import org.scalatest.{FlatSpec, Matchers, fixture}
-
-import scala.concurrent.ExecutionContext
+import org.scalatest.{FlatSpec, Matchers}
 
 class WorkspaceServiceImplSpec
   extends FlatSpec
     with Matchers
     with MockFactory
     with AppContextProvider {
-
-  override implicit def contextShift: ContextShift[IO] = IO.contextShift(ExecutionContext.global)
 
   behavior of "Workspace Service"
 

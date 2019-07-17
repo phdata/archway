@@ -9,8 +9,6 @@ import com.heimdali.test.fixtures._
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FlatSpec, Matchers}
 
-import scala.concurrent.ExecutionContext
-
 class EmailServiceImplSpec extends FlatSpec with Matchers with MockFactory with AppContextProvider {
 
   behavior of "Email Service"
@@ -31,8 +29,6 @@ class EmailServiceImplSpec extends FlatSpec with Matchers with MockFactory with 
 
     emailService.newWorkspaceEmail(savedWorkspaceRequest).unsafeRunSync()
   }
-
-  override implicit def contextShift: ContextShift[IO] = IO.contextShift(ExecutionContext.global)
 
   trait Context {
 

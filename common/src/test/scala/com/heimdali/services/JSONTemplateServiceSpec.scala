@@ -1,13 +1,10 @@
 package com.heimdali.services
 
 import cats.effect._
-import cats.implicits._
 import com.heimdali.models.TemplateRequest
 import com.heimdali.test.fixtures._
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FlatSpec, Matchers}
-
-import scala.concurrent.ExecutionContext
 
 class JSONTemplateServiceSpec extends FlatSpec with Matchers with MockFactory with AppContextProvider {
 
@@ -23,7 +20,4 @@ class JSONTemplateServiceSpec extends FlatSpec with Matchers with MockFactory wi
     val result = generator.workspaceFor(template, "simple").unsafeRunSync()
     println(result)
   }
-
-  override implicit def contextShift: ContextShift[IO] = IO.contextShift(ExecutionContext.global)
-
 }

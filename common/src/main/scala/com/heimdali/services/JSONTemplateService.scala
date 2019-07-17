@@ -39,7 +39,7 @@ class JSONTemplateService[F[_]: Effect: Clock](context: AppContext[F], configSer
   override def workspaceFor(template: TemplateRequest, templateName: String): F[WorkspaceRequest] = {
     val templateRootPath = Paths.get(context.appConfig.templates.templateRoot, s"$templateName.ssp")
 
-    val templatePath = if(templateRootPath.toFile.exists) {
+    val templatePath = if (templateRootPath.toFile.exists) {
       templateRootPath
     } else {
       Paths.get(context.appConfig.templates.templateRoot, "custom", s"$templateName.ssp")
@@ -52,12 +52,18 @@ class JSONTemplateService[F[_]: Effect: Clock](context: AppContext[F], configSer
   override def customTemplates: F[List[WorkspaceRequest]] = {
     val templatesPath: Path = Paths.get(context.appConfig.templates.templateRoot, "custom")
 
-    if(templatesPath.toFile.exists) {
-      val customTemplates = Files.walk(templatesPath, 1, FileVisitOption.FOLLOW_LINKS)
-        .iterator().asScala.toList.map(_.toString).filter(_.endsWith(".ssp")).sorted
+    if (templatesPath.toFile.exists) {
+      val customTemplates = Files
+        .walk(templatesPath, 1, FileVisitOption.FOLLOW_LINKS)
+        .iterator()
+        .asScala
+        .toList
+        .map(_.toString)
+        .filter(_.endsWith(".ssp"))
+        .sorted
 
       // creating empty object because it is not needed only required
-      val templateRequest: TemplateRequest = TemplateRequest("", "", "", Compliance(false, false, false) , "")
+      val templateRequest: TemplateRequest = TemplateRequest("", "", "", Compliance(false, false, false), "")
 
       customTemplates.traverse[F, WorkspaceRequest] { templatePath =>
         generateWorkspaceRequest(templateRequest, templatePath, extractTemplateName(templatePath))
@@ -67,7 +73,9 @@ class JSONTemplateService[F[_]: Effect: Clock](context: AppContext[F], configSer
     }
   }
 
-  private def generateWorkspaceRequest(templateRequest: TemplateRequest, templatePath: String, templateName: String): F[WorkspaceRequest] = {
+  private def generateWorkspaceRequest(templateRequest: TemplateRequest,
+                                       templatePath: String,
+                                       templateName: String): F[WorkspaceRequest] = {
     for {
       workspaceText <- generateJSON(templateRequest, templatePath, templateName)
       _ <- logger.debug("generated this output with the {} template: {}", templateName, workspaceText).pure[F]

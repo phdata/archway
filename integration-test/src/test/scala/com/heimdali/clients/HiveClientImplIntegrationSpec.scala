@@ -4,14 +4,12 @@ package com.heimdali.clients
 
 import java.util.UUID
 
-import cats.effect.{ContextShift, IO}
-import com.heimdali.services.UGILoginContextProvider
+import cats.effect.IO
 import com.heimdali.itest.fixtures._
+import com.heimdali.services.UGILoginContextProvider
 import doobie._
 import doobie.implicits._
 import org.scalatest.{BeforeAndAfterAll, FlatSpec, Matchers}
-
-import scala.concurrent.ExecutionContext
 
 class HiveClientImplIntegrationSpec
   extends FlatSpec
@@ -19,8 +17,6 @@ class HiveClientImplIntegrationSpec
     with HiveTest
     with BeforeAndAfterAll
     with IntegrationTest {
-
-  override implicit def contextShift: ContextShift[IO] = IO.contextShift(ExecutionContext.global)
 
   val FOO_DB_NAME = s"zz_heimdali_hive_client_integration_${UUID.randomUUID().toString.take(8)}"
 

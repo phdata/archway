@@ -1,7 +1,7 @@
 package com.heimdali.services
 
 import cats.data.OptionT
-import cats.effect.IO
+import cats.effect.{ContextShift, IO}
 import cats.implicits._
 import com.heimdali.AppContext
 import com.heimdali.clients.LDAPUser
@@ -14,12 +14,16 @@ import org.apache.hadoop.fs.Path
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FlatSpec, Matchers}
 
+import scala.concurrent.ExecutionContext
+
 class MemberServiceSpec
   extends FlatSpec
     with Matchers
     with DBTest
     with MockFactory
     with AppContextProvider {
+
+  override implicit val contextShift: ContextShift[IO] = IO.contextShift(ExecutionContext.global)
 
   behavior of "Member Service"
 

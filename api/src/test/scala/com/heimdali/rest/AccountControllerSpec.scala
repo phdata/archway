@@ -1,20 +1,17 @@
 package com.heimdali.rest
 
 import cats.data._
-import cats.effect.{ContextShift, IO}
-
+import cats.effect.IO
 import com.heimdali.rest.authentication.SpnegoAuthService
 import com.heimdali.services.AccountService
-import com.heimdali.test.{TestAuthService, TestClusterService}
 import com.heimdali.test.fixtures.{HttpTest, _}
+import com.heimdali.test.{TestAuthService, TestClusterService}
 import org.http4s._
-import org.http4s.dsl.io._
 import org.http4s.client.dsl.Http4sClientDsl
+import org.http4s.dsl.io._
 import org.http4s.implicits._
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FlatSpec, Matchers}
-
-import scala.concurrent.ExecutionContext
 
 class AccountControllerSpec
   extends FlatSpec
@@ -22,8 +19,6 @@ class AccountControllerSpec
     with MockFactory
     with HttpTest
     with AppContextProvider {
-
-  override implicit def contextShift: ContextShift[IO] = IO.contextShift(ExecutionContext.global)
 
   behavior of "AccountController"
 

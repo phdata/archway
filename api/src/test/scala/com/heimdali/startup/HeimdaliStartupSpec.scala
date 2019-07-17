@@ -14,8 +14,6 @@ import scala.concurrent.duration._
 
 class HeimdaliStartupSpec extends FlatSpec with Matchers with MockFactory with AppContextProvider {
 
-  override implicit def contextShift: ContextShift[IO] = IO.contextShift(ExecutionContext.global)
-
   it should "run two startup jobs" in new Context {
     (context.loginContextProvider.kinit[IO]()(_: Sync[IO])).expects(*).returning(timer.sleep(100 millis)).atLeastTwice()
     (provisioningService.provisionAll _).expects().returning(timer.sleep(100 millis)).atLeastTwice()

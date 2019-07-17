@@ -9,8 +9,6 @@ import doobie.implicits._
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.FlatSpec
 
-import scala.concurrent.ExecutionContext
-
 class DBConfigServiceSpec extends FlatSpec with MockFactory with AppContextProvider {
 
   behavior of "DBConfigService"
@@ -23,8 +21,6 @@ class DBConfigServiceSpec extends FlatSpec with MockFactory with AppContextProvi
     configService.getAndSetNextGid.unsafeRunSync()
 
   }
-
-  implicit val contextShift = IO.contextShift(ExecutionContext.global)
 
   trait Context {
 

@@ -1,26 +1,19 @@
 package com.heimdali.services
 
-import java.net.URL
-import java.util.Base64
-
 import cats.data._
-import cats.effect.{ContextShift, IO, Timer}
+import cats.effect.{IO, Timer}
 import cats.implicits._
 import com.heimdali.AppContext
-import com.heimdali.clients.{LDAPClient, LDAPUser}
-import com.heimdali.config.{ApprovalConfig, WorkspaceConfig, WorkspaceConfigItem}
-import com.heimdali.generators.{DefaultApplicationGenerator, DefaultLDAPGroupGenerator, DefaultTopicGenerator}
+import com.heimdali.clients.LDAPUser
+import com.heimdali.config.ApprovalConfig
 import com.heimdali.models.TemplateRequest
 import com.heimdali.provisioning.{Message, SimpleMessage}
 import com.heimdali.test.fixtures._
-import com.kerb4j.client.SpnegoClient
 import io.circe.Json
 import io.circe.syntax._
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FlatSpec, Matchers}
 import pdi.jwt.{JwtAlgorithm, JwtCirce}
-
-import scala.concurrent.ExecutionContext
 
 class AccountServiceSpec extends FlatSpec with MockFactory with Matchers with AppContextProvider {
 
@@ -132,8 +125,6 @@ class AccountServiceSpec extends FlatSpec with MockFactory with Matchers with Ap
 
     maybeWorkspace shouldBe Some(savedWorkspaceRequest)
   }
-
-  override implicit def contextShift: ContextShift[IO] = IO.contextShift(ExecutionContext.global)
 
   trait Context {
     implicit val timer: Timer[IO] = testTimer

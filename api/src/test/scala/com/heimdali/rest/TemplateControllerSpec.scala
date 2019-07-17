@@ -1,6 +1,6 @@
 package com.heimdali.rest
 
-import cats.effect.{ContextShift, IO, Timer}
+import cats.effect.{IO, Timer}
 import com.heimdali.AppContext
 import com.heimdali.generators._
 import com.heimdali.models.TemplateRequest
@@ -18,8 +18,6 @@ import org.scalamock.scalatest.MockFactory
 import org.scalatest.prop.TableDrivenPropertyChecks._
 import org.scalatest.{FlatSpec, Matchers}
 
-import scala.concurrent.ExecutionContext
-
 class TemplateControllerSpec
   extends FlatSpec
     with Matchers
@@ -27,8 +25,6 @@ class TemplateControllerSpec
     with HttpTest
     with Http4sDsl[IO]
     with AppContextProvider {
-
-  override implicit def contextShift: ContextShift[IO] = IO.contextShift(ExecutionContext.global)
 
   behavior of "Template controller"
 

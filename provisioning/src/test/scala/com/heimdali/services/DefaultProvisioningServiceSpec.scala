@@ -3,7 +3,7 @@ package com.heimdali.services
 import java.util.concurrent.TimeUnit
 
 import cats.data.OptionT
-import cats.effect.{ContextShift, IO, Timer}
+import cats.effect.{IO, Timer}
 import cats.implicits._
 import com.heimdali.AppContext
 import com.heimdali.clients._
@@ -14,18 +14,16 @@ import doobie._
 import doobie.implicits._
 import org.apache.hadoop.fs.Path
 import org.scalamock.scalatest.MockFactory
-import scala.concurrent.duration._
 import org.scalatest.{FlatSpec, Matchers}
 
 import scala.concurrent.ExecutionContext
+import scala.concurrent.duration._
 
 class DefaultProvisioningServiceSpec
   extends FlatSpec
     with MockFactory
     with Matchers
     with AppContextProvider {
-
-  implicit val contextShift: ContextShift[IO] = IO.contextShift(ExecutionContext.global)
 
   behavior of "DefaultProvisioningServiceSpec"
 

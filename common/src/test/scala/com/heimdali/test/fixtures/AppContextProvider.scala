@@ -19,7 +19,7 @@ import scala.concurrent.ExecutionContext
 trait AppContextProvider {
   this: FlatSpec with MockFactory =>
 
-  implicit def contextShift: ContextShift[IO]
+  implicit def contextShift: ContextShift[IO] = IO.contextShift(ExecutionContext.global)
 
   val emptyTransactor = Transactor.fromConnection[IO](null, ExecutionContext.global).copy(strategy0 = Strategy(FC.unit, FC.unit, FC.unit, FC.unit))
 
