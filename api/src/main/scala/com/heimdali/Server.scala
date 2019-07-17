@@ -35,6 +35,7 @@ object Server extends IOApp with LazyLogging {
       _ <- Resource.liftF(logger.info("AppContext has been generated").pure[F])
 
       configService = new DBConfigService[F](context)
+      _ <- Resource.liftF(configService.verifyDbConnection)
 
       ldapGroupGenerator = LDAPGroupGenerator
         .instance(context.appConfig, configService, context.appConfig.templates.ldapGroupGenerator)

@@ -16,4 +16,9 @@ class DBConfigService[F[_]: Monad](context: AppContext[F]) extends ConfigService
       _ <- context.configRepository.setValue("nextgid", nextgid.toString)
     } yield currentgid).transact(context.transactor)
 
+  override def verifyDbConnection: F[Unit] =
+    (for {
+      _ <- context.configRepository.getValue("nextgid")
+    } yield ()).transact(context.transactor)
+
 }
