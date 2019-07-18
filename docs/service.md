@@ -22,14 +22,14 @@ Version: 1.3.13
 **heimdali.rest.secret**
 
 - Label: REST API Secret
-- Description: Heimdali REST API Secret for hashing tokens
+- Description: Heimdali REST API Secret for hashing tokens. This parameter should be set to a randomly generated string.
 - Required: true
 - Default:
 
 **heimdali.rest.authType**
 
 - Label: REST Authentication Type
-- Description: Valid auth types are 'ldap'
+- Description: Valid auth types are 'ldap' and 'spnego'
 - Required: true
 - Default: ldap
 
@@ -43,7 +43,7 @@ Version: 1.3.13
 **heimdali.cluster.url**
 
 - Label: Cloudera Manager Base URL
-- Description: The base URL for CM API (eg. https://manager.valhalla.phdata.io:7183/api/v14)
+- Description: The base URL for CM API (eg. https://manager.valhalla.phdata.io:7183)
 - Required: true
 - Default:
 
@@ -272,59 +272,60 @@ Version: 1.3.13
 - Required:
 - Default: com.cloudera.impala.jdbc41.Driver
 
-**heimdali.ldap.lookupBinding.server**
+**heimdali.ldap.provisioningBinding.bindDN**
 
-- Label: Lookup LDAP Host
-- Description: THe LDAP/AD host for users and groups
-- Required: true
-- Default:
-
-**heimdali.ldap.lookupBinding.port**
-
-- Label: Lookup LDAP Port
-- Description: The LDAP/AD port for users and groups
-- Required: true
-- Default: 389
-
-**heimdali.ldap.lookupBinding.bindDN**
-
-- Label: Lookup LDAP Admin DN
-- Description: The DN for the admin user
-- Required: true
-- Default:
-
-**heimdali.ldap.lookupBinding.bindPassword**
-
-- Label: Lookup LDAP Admin Password
-- Description: The password for the admin user
+- Label: Provisioning LDAP Admin DN
+- Description: DN for a user that has privelege to create groups and modifying group membership in heimdali.ldap.baseDN
+  There are two LDAP connections created, 'provisiong' and 'lookup'. Usually the same values can be used for both. In rare cases it's not possible to do a group lookup from the same connection where groups are created, in this case you can use different values for the 'lookup' connection'''
 - Required: true
 - Default:
 
 **heimdali.ldap.provisioningBinding.server**
 
 - Label: Provisioning LDAP Host
-- Description: THe LDAP/AD host for users and groups
+- Description: THe LDAP/AD host for the 'provisioning' LDAP connection
 - Required: true
 - Default:
 
 **heimdali.ldap.provisioningBinding.port**
 
 - Label: Provisioning LDAP Port
-- Description: The LDAP/AD port for users and groups
+- Description: The LDAP/AD port the 'provisioning' LDAP connection
 - Required: true
 - Default: 389
-
-**heimdali.ldap.provisioningBinding.bindDN**
-
-- Label: Provisioning LDAP Admin DN
-- Description: The DN for the admin user
-- Required: true
-- Default:
 
 **heimdali.ldap.provisioningBinding.bindPassword**
 
 - Label: Provisioning LDAP Admin Password
 - Description: The password for the admin user
+- Required: true
+- Default:
+
+**heimdali.ldap.lookupBinding.bindDN**
+
+- Label: Lookup LDAP Admin DN
+- Description: The DN for the 'lookup' LDAP connection, used for authenticating users and validating group membership. This should usually be set to the same value as the corresponding provisioning value
+- Required: true
+- Default:
+
+**heimdali.ldap.lookupBinding.server**
+
+- Label: Lookup LDAP Host
+- Description: THe LDAP/AD host for the 'lookup' LDAP connection. This should usually be set to the same value as the corresponding 'provisioning' value
+- Required: true
+- Default:
+
+**heimdali.ldap.lookupBinding.port**
+
+- Label: Lookup LDAP Port
+- Description: The LDAP/AD port for the 'lookup' LDAP connection. This should usually be set to the same value as the corresponding 'provisioning' value
+- Required: true
+- Default: 389
+
+**heimdali.ldap.lookupBinding.bindPassword**
+
+- Label: Lookup LDAP Admin Password
+- Description: The password for the 'lookup' LDAP connection. This should usually be set to the same value as the corresponding 'provisioning' value
 - Required: true
 - Default:
 
@@ -366,21 +367,21 @@ Version: 1.3.13
 **heimdali.approvers.infrastructure**
 
 - Label: Operations Group DN
-- Description: Group DN for Platform Operations
+- Description: Members of this group have the ability to approve workspaces based on infrastructure availability and whether a project meets governance standards
 - Required: true
 - Default:
 
 **heimdali.approvers.risk**
 
 - Label: Risk Group DN
-- Description: Group DN for Risk
+- Description: Members of this group will have the ability to approve workspaces based on whether they meet company risk compliance
 - Required: true
 - Default:
 
 **heimdali.ui.url**
 
 - Label: Heimdali UI
-- Description: Full url for Heimdali UI
+- Description: Full url for Heimdali UI in the format `https://host:port`. You must use the same port from the parameter heimdali.rest.port. This property is used for links in email notifications
 - Required: true
 - Default:
 
@@ -443,7 +444,7 @@ Version: 1.3.13
 **heimdali.templates.ldapGroupGenerator**
 
 - Label: Group Generator Class
-- Description: Full class name reference for the ldap generator to use.
+- Description: Full class name reference for the LDAP generator to use.
 - Required: false
 - Default:
 
@@ -466,6 +467,13 @@ Version: 1.3.13
 - Label: Java truststore password
 - Description: Password for the Java truststore
 - Required: false
+- Default:
+
+**heimdali.additional.java.options**
+
+- Label: Java addition options
+- Description: Injection of java options to the heimdali api process
+- Required: true
 - Default:
 
 **heimdali.templates.templateRoot**

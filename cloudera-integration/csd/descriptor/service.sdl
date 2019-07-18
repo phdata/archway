@@ -125,15 +125,15 @@
         {
           "name": "heimdali.rest.secret",
           "label": "REST API Secret",
-          "description": "Heimdali REST API Secret for hashing tokens",
+          "description": "Heimdali REST API Secret for hashing tokens. This parameter should be set to a randomly generated string.",
           "required": "true",
-          "type": "string",
+          "type": "password",
           "configurableInWizard": "true"
         },
         {
           "name": "heimdali.rest.authType",
           "label": "REST Authentication Type",
-          "description": "Valid auth types are 'ldap'",
+          "description": "Valid auth types are 'ldap' and 'spnego'",
           "required": "true",
           "type": "string_enum",
           "validValues": [
@@ -153,7 +153,7 @@
         {
           "name": "heimdali.cluster.url",
           "label": "Cloudera Manager Base URL",
-          "description": "The base URL for CM API (eg. https://manager.valhalla.phdata.io:7183/api/v14)",
+          "description": "The base URL for CM API (eg. https://manager.valhalla.phdata.io:7183)",
           "required": "true",
           "type": "string",
           "configurableInWizard": "true"
@@ -440,42 +440,17 @@
           "configurableInWizard": "true"
         },
         {
-          "name": "heimdali.ldap.lookupBinding.server",
-          "label": "Lookup LDAP Host",
-          "description": "THe LDAP/AD host for users and groups",
+          "name": "heimdali.ldap.provisioningBinding.bindDN",
+          "label": "Provisioning LDAP Admin DN",
+          "description": "DN for a user that has privelege to create groups and modifying group membership in heimdali.ldap.baseDN\nThere are two LDAP connections created, 'provisiong' and 'lookup'. Usually the same values can be used for both. In rare cases it's not possible to do a group lookup from the same connection where groups are created, in this case you can use different values for the 'lookup' connection'''",
           "required": "true",
           "type": "string",
-          "configurableInWizard": "true"
-        },
-        {
-          "name": "heimdali.ldap.lookupBinding.port",
-          "label": "Lookup LDAP Port",
-          "description": "The LDAP/AD port for users and groups",
-          "required": "true",
-          "type": "port",
-          "default": 389,
-          "configurableInWizard": "true"
-        },
-        {
-          "name": "heimdali.ldap.lookupBinding.bindDN",
-          "label": "Lookup LDAP Admin DN",
-          "description": "The DN for the admin user",
-          "required": "true",
-          "type": "string",
-          "configurableInWizard": "true"
-        },
-        {
-          "name": "heimdali.ldap.lookupBinding.bindPassword",
-          "label": "Lookup LDAP Admin Password",
-          "description": "The password for the admin user",
-          "required": "true",
-          "type": "password",
           "configurableInWizard": "true"
         },
         {
           "name": "heimdali.ldap.provisioningBinding.server",
           "label": "Provisioning LDAP Host",
-          "description": "THe LDAP/AD host for users and groups",
+          "description": "THe LDAP/AD host for the 'provisioning' LDAP connection",
           "required": "true",
           "type": "string",
           "configurableInWizard": "true"
@@ -483,24 +458,49 @@
         {
           "name": "heimdali.ldap.provisioningBinding.port",
           "label": "Provisioning LDAP Port",
-          "description": "The LDAP/AD port for users and groups",
+          "description": "The LDAP/AD port the 'provisioning' LDAP connection",
           "required": "true",
           "type": "port",
           "default": 389,
           "configurableInWizard": "true"
         },
         {
-          "name": "heimdali.ldap.provisioningBinding.bindDN",
-          "label": "Provisioning LDAP Admin DN",
-          "description": "The DN for the admin user",
+          "name": "heimdali.ldap.provisioningBinding.bindPassword",
+          "label": "Provisioning LDAP Admin Password",
+          "description": "The password for the admin user",
+          "required": "true",
+          "type": "password",
+          "configurableInWizard": "true"
+        },
+        {
+          "name": "heimdali.ldap.lookupBinding.bindDN",
+          "label": "Lookup LDAP Admin DN",
+          "description": "The DN for the 'lookup' LDAP connection, used for authenticating users and validating group membership. This should usually be set to the same value as the corresponding provisioning value",
           "required": "true",
           "type": "string",
           "configurableInWizard": "true"
         },
         {
-          "name": "heimdali.ldap.provisioningBinding.bindPassword",
-          "label": "Provisioning LDAP Admin Password",
-          "description": "The password for the admin user",
+          "name": "heimdali.ldap.lookupBinding.server",
+          "label": "Lookup LDAP Host",
+          "description": "THe LDAP/AD host for the 'lookup' LDAP connection. This should usually be set to the same value as the corresponding 'provisioning' value",
+          "required": "true",
+          "type": "string",
+          "configurableInWizard": "true"
+        },
+        {
+          "name": "heimdali.ldap.lookupBinding.port",
+          "label": "Lookup LDAP Port",
+          "description": "The LDAP/AD port for the 'lookup' LDAP connection. This should usually be set to the same value as the corresponding 'provisioning' value",
+          "required": "true",
+          "type": "port",
+          "default": 389,
+          "configurableInWizard": "true"
+        },
+        {
+          "name": "heimdali.ldap.lookupBinding.bindPassword",
+          "label": "Lookup LDAP Admin Password",
+          "description": "The password for the 'lookup' LDAP connection. This should usually be set to the same value as the corresponding 'provisioning' value",
           "required": "true",
           "type": "password",
           "configurableInWizard": "true"
@@ -548,7 +548,7 @@
         {
           "name": "heimdali.approvers.infrastructure",
           "label": "Operations Group DN",
-          "description": "Group DN for Platform Operations",
+          "description": "Members of this group have the ability to approve workspaces based on infrastructure availability and whether a project meets governance standards",
           "required": "true",
           "type": "string",
           "configurableInWizard": "true"
@@ -556,7 +556,7 @@
         {
           "name": "heimdali.approvers.risk",
           "label": "Risk Group DN",
-          "description": "Group DN for Risk",
+          "description": "Members of this group will have the ability to approve workspaces based on whether they meet company risk compliance",
           "required": "true",
           "type": "string",
           "configurableInWizard": "true"
@@ -564,7 +564,7 @@
         {
           "name": "heimdali.ui.url",
           "label": "Heimdali UI",
-          "description": "Full url for Heimdali UI",
+          "description": "Full url for Heimdali UI in the format `https://host:port`. You must use the same port from the parameter heimdali.rest.port. This property is used for links in email notifications",
           "required": "true",
           "type": "string",
           "configurableInWizard": "true"
@@ -621,7 +621,7 @@
           "name": "heimdali.smtp.user",
           "label": "Username for SMTP",
           "description": "Username for SMTP",
-          "required": "true",
+          "required": "false",
           "type": "string",
           "configurableInWizard": "true"
         },
@@ -629,14 +629,14 @@
           "name": "heimdali.smtp.pass",
           "label": "Password for SMTP",
           "description": "Pssword for SMTP",
-          "required": "true",
+          "required": "false",
           "type": "password",
           "configurableInWizard": "true"
         },
         {
           "name": "heimdali.templates.ldapGroupGenerator",
           "label": "Group Generator Class",
-          "description": "Full class name reference for the ldap generator to use.",
+          "description": "Full class name reference for the LDAP generator to use.",
           "required": "false",
           "type": "string",
           "configurableInWizard": "true"
