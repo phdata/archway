@@ -15,7 +15,7 @@ class UGILoginContextProvider(appConfig: AppConfig) extends LoginContextProvider
 
   override def elevate[F[_]: Async, A](user: String)(block: () => A): F[A] =
     Async[F].async { callback =>
-      logger.info(s"running block on behalf of $user")
+      logger.debug(s"running block on behalf of $user")
       val ugi = UserGroupInformation.createProxyUser(user, UserGroupInformation.getLoginUser)
       ugi.doAs(new PrivilegedExceptionAction[Either[Throwable, A]] {
         override def run(): Either[Throwable, A] = {

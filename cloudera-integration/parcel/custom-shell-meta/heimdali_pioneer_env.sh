@@ -1,2 +1,0 @@
-#!/bin/bash
-export HEIMDALI_ADDITIONAL_CLASSPATH=$HEIMDALI_ADDITIONAL_CLASSPATH:$PARCELS_ROOT/$PARCEL_DIRNAME/usr/lib/heimdali-api/custom-shell.jar

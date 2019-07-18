@@ -20,11 +20,8 @@ test-jar: .make.test-jar
 test: 
 	sbt test
 
-itest-init: .make.itest-init
-
-.make.itest-init: itest-config
-	ln -f $(shell pwd)/itest-config/application.itest.conf api/src/main/resources/application.conf
-	touch $@
+itest-init:
+	ln -sf $(shell pwd)/itest-config/application.itest.conf api/src/main/resources/application.conf
 
 itest-config:
 	git clone git@bitbucket.org:phdata/heimdali-itest.git itest-config
@@ -46,7 +43,6 @@ validate: .make.validate
 .make.validate:
 	build-support/bin/validator -p cloudera-integration/parcel/heimdali-meta/parcel.json
 	build-support/bin/validator -r cloudera-integration/parcel/heimdali-meta/permissions.json
-	build-support/bin/validator -p cloudera-integration/parcel/custom-shell-meta/parcel.json
 	build-support/bin/validator -s cloudera-integration/csd/descriptor/service.sdl
 	touch $@
 
