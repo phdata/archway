@@ -1,6 +1,7 @@
 package com.heimdali.clients
 
-import cats.effect.{Async, Effect, Resource, Sync}
+import cats.effect.{Async, Resource}
+import cats.implicits._
 import com.heimdali.config.ClusterConfig
 import com.typesafe.scalalogging.LazyLogging
 import io.circe.Decoder
@@ -8,8 +9,6 @@ import org.http4s._
 import org.http4s.circe._
 import org.http4s.client.Client
 import org.http4s.headers.Authorization
-import cats.syntax.flatMap._
-import cats.syntax.functor._
 
 trait HttpClient[F[_]] {
   def request[A](request: Request[F])(implicit decoder: Decoder[A]): F[A]
@@ -29,7 +28,12 @@ class CMClient[F[_]: Async](client: Resource[F, Client[F]], clusterConfig: Clust
           )
         )
         _ <- Async[F].pure(logger.debug("raw request to CM API: {}", raw))
-        response <- ready.expect[A](raw)
+        response <- ready.fetch[A](raw){resp =>
+          if(!resp.status.isSuccess) {
+            logger.error("Can't connect to CM {}", resp.body)
+          }
+          resp.as[A]
+        }
       } yield response
     }
   }
