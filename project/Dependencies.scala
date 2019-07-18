@@ -10,16 +10,6 @@ object Dependencies {
     "org.http4s" %% "http4s-circe" % http4sVersion
   )
 
-  val fs2HttpVersion = "0.4.0"
-  val fs2Http = Seq(
-    "com.spinoco" %% "fs2-http" % fs2HttpVersion
-  )
-
-  val fs2Version = "1.0.0"
-  val fs2 = Seq(
-    "co.fs2" %% "fs2-core" % fs2Version
-  )
-
   val scalatagsVersion = "0.6.7"
   val scalatags = Seq(
     "com.lihaoyi" %% "scalatags" % scalatagsVersion
@@ -101,30 +91,27 @@ object Dependencies {
     "org.powermock" % "powermock-core" % "1.7.4" % "test"
   )
 
-  val scalateVersion = "1.9.1-RC1"
+  val scalateVersion = "1.9.4"
   val scalate = Seq(
     "org.scalatra.scalate" %% "scalate-core" % scalateVersion
   )
-
-  val scalacheckVersion = "1.14.0"
-  val scalacheck = Seq(
-    "org.scalacheck" %% "scalacheck" % scalacheckVersion % "test"
-  )
-
+  
+  val bouncyVersion = "1.57"
   val bouncy = Seq(
-    "org.bouncycastle" % "bcpkix-jdk15on" % "1.57" % "provided"
+    "org.bouncycastle" % "bcpkix-jdk15on" % bouncyVersion % "provided"
   )
 
+  val loggingVersion = "3.8.0"
   val logging = Seq(
-    "com.typesafe.scala-logging" %% "scala-logging" % "3.8.0"
+    "com.typesafe.scala-logging" %% "scala-logging" % loggingVersion
   )
 
+  val unboundIdVersion = "4.0.11"
   val unbound = Seq(
-    "com.unboundid" % "unboundid-ldapsdk" % "4.0.0"
+    "com.unboundid" % "unboundid-ldapsdk" % unboundIdVersion
   )
 
   val dbCore = Seq(
-    "org.flywaydb" % "flyway-core" % "4.2.0",
     "postgresql" % "postgresql" % "9.0-801.jdbc4" % "provided",
     "mysql" % "mysql-connector-java" % "6.0.6" % "provided"
   )
@@ -134,9 +121,11 @@ object Dependencies {
     "org.ini4j" % "ini4j" % iniVersion
   )
   
-  val pac4jKerberos = Seq("org.pac4j" % "pac4j-kerberos" % "3.7.0")
+  val pac4jKerberosVersion = "3.7.0"
+  val pac4jKerberos = Seq("org.pac4j" % "pac4j-kerberos" % pac4jKerberosVersion)
 
-  val kerb4jClient = Seq("com.kerb4j" % "kerb4j-client" % "0.0.8" % "test")
+  val kerb4jClientVersion = "0.0.8"
+  val kerb4jClient = Seq("com.kerb4j" % "kerb4j-client" % kerb4jClientVersion % "test")
 
   val simulacrumVersion = "0.17.0"
   val simulacrum = Seq(
@@ -158,12 +147,12 @@ object Dependencies {
 
   val apiDependencies =
     (coreTest ++ dbCore ++ logging ++ bouncy ++ circeConfig ++
-      http4s ++ fs2 ++ doobie ++ cats ++ catsEffect ++ circe ++ hadoop)
+      http4s ++ doobie ++ cats ++ catsEffect ++ circe ++ hadoop)
       .map(exclusions)
 
   val commonDependencies =
-    (scalate ++ unbound ++ mailer ++ logging ++ doobie ++ cats ++ catsEffect ++ fs2 ++ circeConfig ++ circe ++
-      scalatags ++ hadoop ++ fs2Http ++ http4s ++ jwt ++ iniConfig ++ scalacheck ++ coreTest ++ bouncy ++ atto ++ pac4jKerberos  ++ kerb4jClient
+    (scalate ++ unbound ++ mailer ++ logging ++ doobie ++ cats ++ catsEffect ++ circeConfig ++ circe ++
+      scalatags ++ hadoop ++ http4s ++ jwt ++ iniConfig ++ coreTest ++ bouncy ++ atto ++ pac4jKerberos  ++ kerb4jClient
       ++ Seq("org.typelevel" %% "jawn-parser" % "0.14.0"))
       .map(exclusions)
 
@@ -174,10 +163,8 @@ object Dependencies {
   val integrationTestDependencies =
     (dbCore ++ kerb4jClient ++
     Seq("org.tpolecat" %% "doobie-scalatest" % doobieVersion,
-        "org.scalacheck" %% "scalacheck" % scalacheckVersion,
         "org.mockito" % "mockito-core" % "2.18.3" % "test",
         "org.scalamock" %% "scalamock-scalatest-support" % "3.6.0",
         "org.powermock" % "powermock-core" % "1.7.4",
-        "org.scalacheck" %% "scalacheck" % scalacheckVersion,
         "org.apache.hive" % "hive-jdbc" % hiveVersion % "provided")).map(exclusions)
 }
