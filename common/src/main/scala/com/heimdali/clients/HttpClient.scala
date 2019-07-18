@@ -22,9 +22,8 @@ class CMClient[F[_]: Async](client: Resource[F, Client[F]], clusterConfig: Clust
       for {
         raw <- Async[F].pure(
           request.withHeaders(
-            request.headers ++ Seq(
-              Authorization(BasicCredentials(clusterConfig.admin.username, clusterConfig.admin.password))
-            )
+            request.headers ++
+              Headers.of(Authorization(BasicCredentials(clusterConfig.admin.username, clusterConfig.admin.password)))
           )
         )
         _ <- Async[F].pure(logger.debug("raw request to CM API: {}", raw))

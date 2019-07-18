@@ -76,18 +76,6 @@
             {
               "key": "log4j.logger.org.fusesource.scalate.util",
               "value": "ERROR"
-            },
-            {
-              "key": "log4j.logger.org.apache.hive.jdbc",
-              "value": "WARN"
-            },
-            {
-              "key": "log4j.logger.org.http4s.client",
-              "value": "OFF"
-            },
-            {
-              "key": "log4j.logger.org.http4s.blaze",
-              "value": "OFF"
             }
         ]
       },
