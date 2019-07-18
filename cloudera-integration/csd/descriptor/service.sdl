@@ -83,11 +83,11 @@
             },
             {
               "key": "log4j.logger.org.http4s.client",
-              "value": "WARN"
+              "value": "OFF"
             },
             {
               "key": "log4j.logger.org.http4s.blaze",
-              "value": "WARN"
+              "value": "OFF"
             }
         ]
       },
