@@ -1,6 +1,7 @@
 import { Login } from '../../models/Login';
 import { Profile } from '../../models/Profile';
 import { Workspace } from '../../models/Workspace';
+import { ProvisioningType } from '../../constants';
 
 export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
 export const LOGIN_REQUEST = 'LOGIN_REQUEST';
@@ -81,4 +82,10 @@ export const SET_AUTH_TYPE = 'SET_AUTH_TYPE';
 export const setAuthType = (authType: string) => ({
   type: SET_AUTH_TYPE,
   authType,
+});
+
+export const SET_PROVISIONING = 'SET_PROVISIONING';
+export const setProvisioning = (provisioning: ProvisioningType) => ({
+  type: SET_PROVISIONING,
+  provisioning,
 });

@@ -19,6 +19,9 @@ exports[`PersonalWorkspace renders correctly 1`] = `
     <Label>
       Your Personal Workspace
     </Label>
+    <Provisioning
+      provisioning="complete"
+    />
     <div>
       <div
         style={

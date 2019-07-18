@@ -35,26 +35,42 @@ exports[`WorkspaceListItem renders correctly 1`] = `
           style={
             Object {
               "fontSize": "22px",
-              "lineHeight": "30px",
-              "textTransform": "uppercase",
-            }
-          }
-        />
-        <div />
-        <Icon
-          type="team"
-        />
-         
-        <div
-          style={
-            Object {
-              "display": "inline-block",
               "textTransform": "uppercase",
             }
           }
         >
-          simple
-           dataset
+          <TruncateText
+            lineHeight={32}
+            maxLine={1}
+            text=""
+          />
+        </div>
+        <div>
+          <TruncateText
+            lineHeight={16}
+            maxLine={2}
+            text=""
+          />
+        </div>
+        <div
+          style={
+            Object {
+              "alignItems": "center",
+              "display": "flex",
+              "justifyContent": "flex-start",
+              "textTransform": "uppercase",
+            }
+          }
+        >
+          <Icon
+            type="team"
+          />
+           
+          <TruncateText
+            lineHeight={12}
+            maxLine={1}
+            text="simple dataset"
+          />
         </div>
         <div
           style={

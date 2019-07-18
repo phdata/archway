@@ -3,7 +3,7 @@ import { shallow } from 'enzyme';
 import toJson from 'enzyme-to-json';
 
 import Provisioning from '../Provisioning';
-import { ProvisioningType } from '../../../../constants';
+import { ProvisioningType } from '../../constants';
 
 describe('Provisioning', () => {
   it('renders correctly', () => {

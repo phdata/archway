@@ -7,6 +7,7 @@ import {
   TOKEN_EXTRACTED,
   TOKEN_NOT_AVAILABLE,
   SET_AUTH_TYPE,
+  SET_PROVISIONING,
 } from './actions';
 
 const initialAuthState = fromJS({
@@ -18,6 +19,7 @@ const initialAuthState = fromJS({
   profileLoading: true,
   workspace: false,
   authType: null,
+  provisioning: '',
 });
 
 const login = (state = initialAuthState, action: any) => {
@@ -40,6 +42,8 @@ const login = (state = initialAuthState, action: any) => {
       return state.set('profileLoading', action.loading);
     case SET_AUTH_TYPE:
       return state.set('authType', action.authType);
+    case SET_PROVISIONING:
+      return state.set('provisioning', action.provisioning);
     default:
       return state;
   }

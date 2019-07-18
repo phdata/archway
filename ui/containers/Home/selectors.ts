@@ -32,3 +32,9 @@ export const isProfileLoading = () =>
     authSelector,
     authState => authState.get('profileLoading')
   );
+
+export const getProvisioning = () =>
+  createSelector(
+    authSelector,
+    authState => authState.get('provisioning')
+  );

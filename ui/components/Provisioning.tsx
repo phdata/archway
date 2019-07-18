@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Icon } from 'antd';
 
-import { ProvisioningType } from '../../../constants';
+import { ProvisioningType } from '../constants';
 
 interface Props {
   provisioning: ProvisioningType;

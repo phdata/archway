@@ -19,7 +19,6 @@ import {
   SimpleMemberRequest,
   SimpleTopicMemberRequest,
   ApplicationRequest,
-  Provisioning,
   ManageTab,
   WarningText,
 } from './components';
@@ -39,6 +38,7 @@ import * as actions from './actions';
 import * as selectors from './selectors';
 import { FeatureService } from '../../service/FeatureService';
 import { FeatureFlagType, ProvisioningType } from '../../constants';
+import { Provisioning } from '../../components';
 
 interface DetailsRouteProps {
   id: any;

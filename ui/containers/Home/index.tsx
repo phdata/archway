@@ -24,9 +24,11 @@ import {
   getClusterInfo,
   getPersonalWorkspace,
   getRecentWorkspaces,
+  getProvisioning,
   isClusterLoading,
   isProfileLoading,
 } from './selectors';
+import { ProvisioningType } from '../../constants';
 
 /* tslint:disable:no-var-requires */
 const router = require('connected-react-router/immutable');
@@ -41,6 +43,7 @@ interface Props {
   personalWorkspace: Workspace;
   recentWorkspaces: Workspace[];
   profileLoading: boolean;
+  provisioning: ProvisioningType;
   refreshRecentWorkspaces: () => void;
   requestWorkspace: () => void;
   openWorkspace: (id: number) => void;
@@ -92,6 +95,7 @@ class Home extends React.Component<Props, States> {
     const {
       cluster,
       clusterLoading,
+      provisioning,
       personalWorkspace,
       recentWorkspaces,
       profileLoading,
@@ -146,6 +150,7 @@ class Home extends React.Component<Props, States> {
           requestWorkspace={requestWorkspace}
           workspace={personalWorkspace}
           services={cluster.services}
+          provisioning={provisioning}
         />
         <RecentWorkspaces workspaces={recentWorkspaces} onSelectWorkspace={openWorkspace} />
       </div>
@@ -160,6 +165,7 @@ const mapStateToProps = () =>
     personalWorkspace: getPersonalWorkspace(),
     profileLoading: isProfileLoading(),
     recentWorkspaces: getRecentWorkspaces(),
+    provisioning: getProvisioning(),
   });
 
 const mapDispatchToProps = (dispatch: any) => ({

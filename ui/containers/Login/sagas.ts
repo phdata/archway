@@ -25,7 +25,9 @@ function* tokenReady({ token }: { token: string }) {
   yield call(configSaga, token);
   try {
     const workspace = yield call(Api.getPersonalWorkspace, token);
+    const { provisioning } = yield call(Api.getProvisioning, token, workspace.id);
     yield put(actions.workspaceAvailable(workspace));
+    yield put(actions.setProvisioning(provisioning));
   } catch (exc) {
     /* tslint:disable:non-empty */
   } finally {

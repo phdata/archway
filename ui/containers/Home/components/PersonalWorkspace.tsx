@@ -1,18 +1,21 @@
 import * as React from 'react';
 import { Button, Card, Spin, Row, Col } from 'antd';
 import { PrepareHelp, RunHelp, CreateHelp, Label } from './';
+import { Provisioning } from '../../../components';
 import { Workspace } from '../../../models/Workspace';
 import { Cluster } from '../../../models/Cluster';
+import { ProvisioningType } from '../../../constants';
 
 interface Props {
   workspace: Workspace;
   services: any;
   loading: boolean;
   cluster?: Cluster;
+  provisioning: ProvisioningType;
   requestWorkspace: () => void;
 }
 
-const PersonalWorkspace = ({ workspace, services, requestWorkspace, loading }: Props) => {
+const PersonalWorkspace = ({ workspace, services, requestWorkspace, loading, provisioning }: Props) => {
   if (loading) {
     return (
       <div
@@ -33,6 +36,7 @@ const PersonalWorkspace = ({ workspace, services, requestWorkspace, loading }: P
       {workspace && workspace.data ? (
         <Card bodyStyle={{ display: 'flex', flexDirection: 'column' }}>
           <Label>Your Personal Workspace</Label>
+          <Provisioning provisioning={provisioning} />
           <div>
             <div
               style={{

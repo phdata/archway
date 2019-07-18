@@ -13,6 +13,7 @@ exports[`Behavior renders correctly 1`] = `
     Object {
       "borderRadius": 3,
       "flex": 1,
+      "marginBottom": 15,
     }
   }
 >
@@ -47,7 +48,9 @@ exports[`Behavior renders correctly 1`] = `
   <div
     style={
       Object {
+        "display": "flex",
         "fontSize": 14,
+        "justifyContent": "center",
         "textTransform": "uppercase",
       }
     }

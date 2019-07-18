@@ -215,6 +215,7 @@ LOCATION '/new_data/landing'
                 "size_in_gb": 0,
               }
             }
+            memberLoading={false}
             onAddMember={[Function]}
             onChangeMemberRole={[Function]}
             readonly={true}

@@ -4,6 +4,7 @@ import toJson from 'enzyme-to-json';
 
 import PersonalWorkspace from '../PersonalWorkspace';
 import { Workspace } from '../../../../models/Workspace';
+import { ProvisioningType } from '../../../../constants';
 
 describe('PersonalWorkspace', () => {
   it('renders correctly', () => {
@@ -64,7 +65,13 @@ describe('PersonalWorkspace', () => {
       },
     };
     const wrapper = shallow(
-      <PersonalWorkspace workspace={workspace} services={services} loading={false} requestWorkspace={() => null} />
+      <PersonalWorkspace
+        workspace={workspace}
+        services={services}
+        loading={false}
+        requestWorkspace={() => null}
+        provisioning={ProvisioningType.Complete}
+      />
     );
     expect(toJson(wrapper)).toMatchSnapshot();
   });
