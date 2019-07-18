@@ -4,57 +4,62 @@ import java.time.Instant
 
 import cats.data.OptionT
 import cats.implicits._
-import com.heimdali.models.{DatabaseRole, _}
+import com.heimdali.models._
+import com.heimdali.repositories.syntax.SqlSyntax
+import com.typesafe.scalalogging.LazyLogging
 import doobie._
 import doobie.implicits._
-import doobie.util.{Get, Read}
-import doobie.util.fragments.{whereAnd, whereOr}
+import doobie.util.fragments.whereAnd
 
-class WorkspaceRequestRepositoryImpl extends WorkspaceRequestRepository {
+class WorkspaceRequestRepositoryImpl(sqlSyntax: SqlSyntax) extends WorkspaceRequestRepository with LazyLogging {
+
+  val statements = if (sqlSyntax.name == SqlSyntax.DEFAULT) {
+    logger.debug("Chose default statements")
+    new DefaultStatements
+  } else {
+    logger.debug("Chose oracle statements")
+    new OracleStatements
+  }
+
+  implicit val han = CustomLogHandler.logHandler(this.getClass)
 
   override def list(username: String): ConnectionIO[List[WorkspaceSearchResult]] =
-    WorkspaceRequestRepositoryImpl.Statements.listQuery(username).to[List]
+    statements.listQuery(username).to[List]
 
   override def find(id: Long): OptionT[ConnectionIO, WorkspaceRequest] =
-    OptionT(WorkspaceRequestRepositoryImpl.Statements.find(id).option)
+    OptionT(statements.find(id).option)
 
   override def findUnprovisioned(): ConnectionIO[List[WorkspaceRequest]] =
-    WorkspaceRequestRepositoryImpl.Statements.findUnprovisioned.to[List]
+    statements.findUnprovisioned.to[List]
 
   override def markProvisioned(workspaceId: Long, time: Instant): ConnectionIO[Int] =
-    WorkspaceRequestRepositoryImpl.Statements.markProvisioned(workspaceId, time).run
+    statements.markProvisioned(workspaceId, time).run
 
   override def create(workspaceRequest: WorkspaceRequest): ConnectionIO[Long] =
-    WorkspaceRequestRepositoryImpl.Statements.insert(workspaceRequest).withUniqueGeneratedKeys("id")
+    statements.insert(workspaceRequest).withUniqueGeneratedKeys[Long]("id")
 
   override def linkHive(workspaceId: Long, hiveDatabaseId: Long): doobie.ConnectionIO[Int] =
-    WorkspaceRequestRepositoryImpl.Statements.linkHive(workspaceId, hiveDatabaseId).run
+    statements.linkHive(workspaceId, hiveDatabaseId).run
 
   override def linkPool(workspaceId: Long, resourcePoolId: Long): doobie.ConnectionIO[Int] =
-    WorkspaceRequestRepositoryImpl.Statements.linkPool(workspaceId, resourcePoolId).run
+    statements.linkPool(workspaceId, resourcePoolId).run
 
   override def linkTopic(workspaceId: Long, KafkaTopicId: Long): ConnectionIO[Int] =
-    WorkspaceRequestRepositoryImpl.Statements.linkTopic(workspaceId, KafkaTopicId).run
+    statements.linkTopic(workspaceId, KafkaTopicId).run
 
   override def linkApplication(workspaceId: Long, applicationId: Long): doobie.ConnectionIO[Int] =
-    WorkspaceRequestRepositoryImpl.Statements.linkApplication(workspaceId, applicationId).run
+    statements.linkApplication(workspaceId, applicationId).run
 
   override def findByUsername(distinguishedName: String): OptionT[doobie.ConnectionIO, WorkspaceRequest] =
-    OptionT(WorkspaceRequestRepositoryImpl.Statements.findByUsername(distinguishedName).option)
+    OptionT(statements.findByUsername(distinguishedName).option)
 
   override def pendingQueue(role: ApproverRole): ConnectionIO[List[WorkspaceSearchResult]] =
-    WorkspaceRequestRepositoryImpl.Statements.pending(role).to[List]
+    statements.pending(role).to[List]
 
   override def deleteWorkspace(workspaceId: Long): doobie.ConnectionIO[Int] =
-    WorkspaceRequestRepositoryImpl.Statements.deleteWorkspace(workspaceId).update.run
+    statements.deleteWorkspace(workspaceId).update.run
 
-}
-
-object WorkspaceRequestRepositoryImpl {
-
-  object Statements {
-
-    implicit val han = CustomLogHandler.logHandler(this.getClass)
+  class DefaultStatements {
 
     def linkPool(workspaceId: Long, resourcePoolId: Long): Update0 =
       sql"""
@@ -123,7 +128,7 @@ object WorkspaceRequestRepositoryImpl {
           COALESCE(res.mem, 0.0) as maxMemoryInGB
         from workspace_request wr
         inner join compliance c on wr.compliance_id = c.id
-        left join (select workspace_request_id, sum(case when "role" = 'risk' then 1 else 0 end) as risk_approved, sum(case when "role" = 'infra' then 1 else 0 end) as infra_approved, count(*) as approvals, max(approval_time) as latestApproval from approval group by workspace_request_id) as s on s.workspace_request_id = wr.id
+        left join (select workspace_request_id, sum(case when role = 'risk' then 1 else 0 end) as risk_approved, sum(case when role = 'infra' then 1 else 0 end) as infra_approved, count(*) as approvals, max(approval_time) as latestApproval from approval group by workspace_request_id) as s on s.workspace_request_id = wr.id
         left join (select wd.workspace_request_id, sum(size_in_gb) as size from workspace_database as wd inner join hive_database as hd on wd.hive_database_id = hd.id group by wd.workspace_request_id) as db on db.workspace_request_id = wr.id
         left join (select wp.workspace_request_id, sum(max_cores) as cores, sum(max_memory_in_gb) as mem from workspace_pool wp inner join resource_pool rp on wp.resource_pool_id = rp.id group by wp.workspace_request_id) as res on res.workspace_request_id = wr.id
         """
@@ -147,7 +152,7 @@ object WorkspaceRequestRepositoryImpl {
         """
 
     def listQuery(distinguishedName: String): Query0[(WorkspaceSearchResult)] =
-      (listFragment ++ fr"where wr.id in (" ++ innerQuery(distinguishedName) ++ fr") and wr.single_user = false").query
+      (listFragment ++ fr"where wr.id in (" ++ innerQuery(distinguishedName) ++ fr") and wr.single_user = 0").query
 
     def insert(workspaceRequest: WorkspaceRequest): Update0 =
       sql"""
@@ -169,7 +174,7 @@ object WorkspaceRequestRepositoryImpl {
             ${workspaceRequest.compliance.id},
             ${workspaceRequest.requestedBy},
             ${workspaceRequest.requestDate},
-            ${workspaceRequest.singleUser}
+            ${SqlSyntax.booleanToChar(workspaceRequest.singleUser).toString}
           )
       """.update
 
@@ -316,13 +321,51 @@ object WorkspaceRequestRepositoryImpl {
       sql"update workspace_request SET workspace_created = $time where id = $id".update
 
     def findByUsername(username: String): Query0[WorkspaceRequest] =
-      (selectFragment ++ whereAnd(fr"wr.requested_by = $username", fr"wr.single_user = true")).query[WorkspaceRequest]
+      (selectFragment ++ whereAnd(fr"wr.requested_by = $username", fr"wr.single_user = 1")).query[WorkspaceRequest]
 
     def pending(role: ApproverRole): Query0[WorkspaceSearchResult] =
       (listFragment ++ whereAnd(
-        fr"COALESCE(s." ++ Fragment.const(s"${role.show}_approved") ++ fr", 0) = 0",
-        fr"wr.single_user = false"
+        fr"wr.single_user = 0"
       )).query
+
+  }
+
+  class OracleStatements extends DefaultStatements {
+    override val listFragment: Fragment =
+      fr"""
+        select wr.id,
+               wr.name,
+               wr.summary,
+               wr.behavior,
+               case
+                   when s.approvals = 2 then 'approved'
+                   else 'pending'
+                   end                as status,
+               c.phi_data,
+               c.pci_data,
+               c.pii_data,
+               wr.request_date        as requested,
+               case
+                   when s.approvals = 2 then s.latestApproval
+                   else null
+                   end                as fullyApproved,
+               COALESCE(db.total_size, 0.0) as allocatedInGB,
+               res.cores              as maxCores,
+               COALESCE(res.mem, 0.0) as maxMemoryInGB
+        from workspace_request wr
+                 inner join compliance c on wr.compliance_id = c.id
+                 left join (select workspace_request_id,
+                                   sum(case when role = 'risk' then 1 else 0 end)  as risk_approved,
+                                   sum(case when role = 'infra' then 1 else 0 end) as infra_approved,
+                                   count(*)                                          as approvals,
+                                   max(approval_time)                                as latestApproval
+                            from approval
+                            group by workspace_request_id) s
+        on s.workspace_request_id = wr.id
+            left join (select wd.workspace_request_id, sum(size_in_gb) as total_size from workspace_database wd inner join hive_database hd on wd.hive_database_id = hd.id group by wd.workspace_request_id) db on db.workspace_request_id = wr.id
+            left join (select wp.workspace_request_id, sum(max_cores) as cores, sum(max_memory_in_gb) as mem from workspace_pool wp inner join resource_pool rp on wp.resource_pool_id = rp.id group by wp.workspace_request_id) res on res.workspace_request_id = wr.id
+        AND wr.single_user = 0
+        """
 
   }
 

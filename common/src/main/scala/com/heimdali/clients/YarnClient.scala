@@ -169,7 +169,9 @@ class CDHYarnClient[F[_]: Sync](http: HttpClient[F], clusterConfig: ClusterConfi
     for {
       serviceId <- yarnServiceName
       url = clusterConfig.yarnApplications(serviceId)
+      _ <- logger.debug("yarn url" + url).pure[F]
       result <- http.request[YarnApplicationList](Request[F](Method.GET, Uri.unsafeFromString(url)))
+      _ <- logger.debug("yarn application result " + result).pure[F]
     } yield result.applications
 
   override def deletePool(poolName: String): F[Unit] =

@@ -7,6 +7,7 @@ import com.heimdali.caching.Cached
 import com.heimdali.clients._
 import com.heimdali.config.AppConfig
 import com.heimdali.repositories._
+import com.heimdali.repositories.syntax.SqlSyntax
 import com.heimdali.services._
 import com.typesafe.config.{Config, ConfigFactory}
 import doobie.util.ExecutionContexts
@@ -113,13 +114,15 @@ object AppContext {
       emailClient = new EmailClientImpl[F](config, emailEC)
       kerberosClient = new KerberosClientImpl[F](config)
 
+      sqlSyntax = SqlSyntax(config.db.meta.driver)
+
       complianceRepository = new ComplianceRepositoryImpl
       ldapRepository = new LDAPRepositoryImpl
       hiveDatabaseRepository = new HiveAllocationRepositoryImpl
       yarnRepository = new YarnRepositoryImpl
-      workspaceRepository = new WorkspaceRequestRepositoryImpl
+      workspaceRepository = new WorkspaceRequestRepositoryImpl(sqlSyntax)
       approvalRepository = new ApprovalRepositoryImpl
-      memberRepository = new MemberRepositoryImpl
+      memberRepository = new MemberRepositoryImpl(sqlSyntax)
       hiveGrantRepository = new HiveGrantRepositoryImpl
       topicRepository = new KafkaTopicRepositoryImpl
       topicGrantRepository = new TopicGrantRepositoryImpl

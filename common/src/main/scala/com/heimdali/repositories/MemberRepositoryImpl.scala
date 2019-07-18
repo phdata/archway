@@ -2,11 +2,12 @@ package com.heimdali.repositories
 
 import java.time.Instant
 
+import com.heimdali.repositories.syntax.SqlSyntax
 import doobie._
 import doobie.implicits._
 import doobie.util.fragments.whereAnd
 
-class MemberRepositoryImpl extends MemberRepository {
+class MemberRepositoryImpl(sqlSyntax: SqlSyntax) extends MemberRepository {
   implicit val han = CustomLogHandler.logHandler(this.getClass)
 
   override def create(distinguishedName: String, ldapRegistrationId: Long): ConnectionIO[Long] =
@@ -127,8 +128,8 @@ class MemberRepositoryImpl extends MemberRepository {
         from workspace_application wa
         inner join application a on wa.application_id = a.id
         inner join member m on m.ldap_registration_id = a.ldap_registration_id
-        ) as roles
-        """
+        )
+        """ ++ sqlSyntax.anonymousTable
 
     def list(workspaceRequestId: Long): Query0[MemberRightsRecord] =
       (listSelect ++ whereAnd(fr"workspace_request_id = $workspaceRequestId")).query[MemberRightsRecord]
