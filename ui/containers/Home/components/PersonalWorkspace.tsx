@@ -4,7 +4,8 @@ import { PrepareHelp, RunHelp, CreateHelp, Label } from './';
 import { Provisioning } from '../../../components';
 import { Workspace } from '../../../models/Workspace';
 import { Cluster } from '../../../models/Cluster';
-import { ProvisioningType } from '../../../constants';
+import { ProvisioningType, FeatureFlagType } from '../../../constants';
+import { FeatureService } from '../../../service/FeatureService';
 
 interface Props {
   workspace: Workspace;
@@ -16,6 +17,10 @@ interface Props {
 }
 
 const PersonalWorkspace = ({ workspace, services, requestWorkspace, loading, provisioning }: Props) => {
+  const featureFlag = new FeatureService();
+  const hasMessagingFlag: boolean = featureFlag.isEnabled(FeatureFlagType.Messaging);
+  const hasApplicationFlag: boolean = featureFlag.isEnabled(FeatureFlagType.Application);
+
   if (loading) {
     return (
       <div
@@ -55,11 +60,13 @@ const PersonalWorkspace = ({ workspace, services, requestWorkspace, loading, pro
                 <div>HIVE NAMESPACE</div>
                 <div style={{ fontWeight: 200 }}>{workspace.data[0].name}</div>
               </div>
-              <div style={{ padding: '10px' }}>
-                <div>RESOURCE POOL</div>
-                <div style={{ fontWeight: 200 }}>{workspace.processing[0].pool_name}</div>
-              </div>
-              {workspace.topics[0] && (
+              {hasMessagingFlag && (
+                <div style={{ padding: '10px' }}>
+                  <div>RESOURCE POOL</div>
+                  <div style={{ fontWeight: 200 }}>{workspace.processing[0].pool_name}</div>
+                </div>
+              )}
+              {hasApplicationFlag && workspace.topics[0] && (
                 <div style={{ padding: '10px' }}>
                   <div>KAFKA TOPIC</div>
                   <div style={{ fontWeight: 200 }}>{workspace.topics[0].name}</div>
