@@ -15,7 +15,6 @@ import io.circe.syntax._
 import org.http4s.implicits._
 import org.http4s.server.SSLKeyStoreSupport.StoreInfo
 import org.http4s.server.blaze._
-import org.http4s.server.middleware.CORS
 import org.http4s.server.{Router, Server => H4Server}
 
 import scala.concurrent.duration._
@@ -110,7 +109,7 @@ object Server extends IOApp with LazyLogging {
 
       server <- BlazeServerBuilder[F]
         .bindHttp(context.appConfig.rest.port, "0.0.0.0")
-        .withHttpApp(CORS(httpApp))
+        .withHttpApp(httpApp)
         .withIdleTimeout(10 minutes)
         .withResponseHeaderTimeout(10 minutes)
         .withSSL(
