@@ -552,10 +552,10 @@
         {
           "name": "heimdali.ui.url",
           "label": "Heimdali UI",
-          "description": "Full url for Heimdali UI in the format `https://host:port`. You must use the same port from the parameter heimdali.rest.port. This property is used for links in email notifications",
-          "required": "true",
+          "description": "Full url for Heimdali UI in the format `https://host:port`. The default of this value should be auto generated and work without configuration",
+          "required": "false",
           "type": "string",
-          "configurableInWizard": "true"
+          "default": "${host}:${heimdali.rest.port}"
         },
         {
           "name": "heimdali.ui.staticContentDir",
