@@ -1,4 +1,10 @@
-# 1.6.1
+## 1.6.2
+
+### Bug Fixes
+
+- Fix json parsing in template requests where the user DN has a backslash 47fab50f8f9514745a8ce50921c66781aadb4f14, HEIM-364
+
+## 1.6.1
 
 ### Bug fixes
 
