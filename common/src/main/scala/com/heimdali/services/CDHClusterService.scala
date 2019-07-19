@@ -5,11 +5,10 @@ import cats.implicits._
 import com.heimdali.caching.Cached
 import com.heimdali.clients.HttpClient
 import com.heimdali.config.{ClusterConfig, ServiceOverride}
+import com.typesafe.scalalogging.LazyLogging
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.yarn.conf.YarnConfiguration
 import org.http4s._
-
-import scala.concurrent.duration._
 
 class CDHClusterService[F[_]: ConcurrentEffect: Clock](
     http: HttpClient[F],
@@ -17,7 +16,7 @@ class CDHClusterService[F[_]: ConcurrentEffect: Clock](
     hadoopConfiguration: Configuration,
     cacheService: CacheService,
     clusterCache: Cached[F, Seq[Cluster]]
-) extends ClusterService[F] {
+) extends ClusterService[F] with LazyLogging {
 
   val yarnConfiguration: YarnConfiguration = new YarnConfiguration(hadoopConfiguration)
 
@@ -47,10 +46,19 @@ class CDHClusterService[F[_]: ConcurrentEffect: Clock](
   def mgmtRoleListRequest: F[ListContainer[AppRole]] =
     http.request[ListContainer[AppRole]](Request(Method.GET, Uri.fromString(clusterConfig.mgmtRoleListUrl).right.get))
 
-  def mgmtRoleConfigGroupsRequest(roleConfigGroupName: String): F[ListContainer[RoleConfigGroup]] =
-    http.request[ListContainer[RoleConfigGroup]](
-      Request(Method.GET, Uri.fromString(clusterConfig.mgmtRoleConfigGroups(roleConfigGroupName)).right.get)
-    )
+  def mgmtRoleConfigGroupsRequest(appRole: Option[AppRole]): F[ListContainer[RoleConfigGroup]] = {
+    appRole match {
+      case Some(roleCGN) =>
+        Uri.fromString(clusterConfig.mgmtRoleConfigGroups(roleCGN.roleConfigGroupRef.roleConfigGroupName)) match {
+          case Right(uri) => http.request[ListContainer[RoleConfigGroup]](Request(Method.GET, uri))
+          case Left(failure) => {
+            logger.error("Uri cannot be parsed {}", failure)
+            ListContainer(List.empty[RoleConfigGroup]).pure[F]
+          }
+        }
+      case None => ListContainer(List.empty[RoleConfigGroup]).pure[F]
+    }
+  }
 
   def hueApp(hue: ServiceInfo, hosts: ListContainer[HostInfo], hueLBRole: List[AppRole]): ClusterApp =
     clusterConfig.hueOverride match {
@@ -86,9 +94,7 @@ class CDHClusterService[F[_]: ConcurrentEffect: Clock](
       mgmtNavigatorMetaServerRole <- mgmtRoleListRequest.map(
         _.items.filter(_.`type` == CDHClusterService.MgmtNavigatorMetaServerRole)
       )
-      mgmtRoleConfigGroups <- mgmtRoleConfigGroupsRequest(
-        mgmtNavigatorMetaServerRole.head.roleConfigGroupRef.roleConfigGroupName
-      )
+      mgmtRoleConfigGroups <- mgmtRoleConfigGroupsRequest(mgmtNavigatorMetaServerRole.headOption)
 
       nodeManagerRoles = yarnRoles.items.filter(_.`type` == CDHClusterService.NodeManagerRole)
       resourceManagerRoles = yarnRoles.items.filter(_.`type` == CDHClusterService.ResourceManagerRole)
