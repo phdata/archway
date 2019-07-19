@@ -1,3 +1,9 @@
+# 1.6.1
+
+### Bug fixes
+
+- Handle the case where no Navigator installation is available
+
 ##1.6.0
 
 ### Bug Fixes
