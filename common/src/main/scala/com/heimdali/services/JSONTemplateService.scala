@@ -30,20 +30,30 @@ class JSONTemplateService[F[_]: Effect: Clock](context: AppContext[F], configSer
           "appConfig" -> context.appConfig,
           "nextGid" -> (() => configService.getAndSetNextGid.toIO.unsafeRunSync()),
           "template" -> template
+            .copy(requester = template.requester.replace("""\""", """\\""")) // Handle backslash in a user DN
         )
       )
     }
 
   override def workspaceFor(template: TemplateRequest, templateName: String): F[WorkspaceRequest] = {
-    val templatePath = Paths.get(context.appConfig.templates.templateRoot, s"$templateName.ssp").toString
+    val templatePath = Paths.get(context.appConfig.templates.templateRoot, s"$templateName.ssp")
     logger.info("generating {} from {}", templateName, templatePath)
+    generateWorkspaceRequest(template, templatePath.toString, templateName)
+  }
+
+  private def generateWorkspaceRequest(templateRequest: TemplateRequest,
+                                       templatePath: String,
+                                       templateName: String): F[WorkspaceRequest] = {
+    // remove the escape sequences added for json parsing
+    val cleanUserDN = templateRequest.requester.replace("""\\""", """\""")
     for {
-      workspaceText <- generateJSON(template, templatePath, templateName)
+      workspaceText <- generateJSON(templateRequest, templatePath, templateName)
       _ <- logger.debug("generated this output with the {} template: {}", templateName, workspaceText).pure[F]
       time <- Clock[F].realTime(TimeUnit.MILLISECONDS)
+      _ <- logger.trace("Parsing workspace text: \n" + workspaceText).pure[F]
       Right(json) = io.circe.parser.parse(workspaceText)
       Right(result) = json.as[WorkspaceRequest](
-        WorkspaceRequest.decoder(template.requester, Instant.ofEpochMilli(time))
+        WorkspaceRequest.decoder(cleanUserDN, Instant.ofEpochMilli(time))
       )
     } yield result
   }
