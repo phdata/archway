@@ -51,6 +51,7 @@ describe('ApplicationsTab', () => {
         applications: [],
       } as Workspace,
       onSelectApplication: () => null,
+      showModal: () => null,
     };
     const wrapper = shallow(<ApplicationsTab {...props} />);
 

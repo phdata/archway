@@ -13,6 +13,7 @@ exports[`ApplicationsTab renders correctly 1`] = `
     ghost={false}
     htmlType="button"
     loading={false}
+    onClick={[Function]}
     style={
       Object {
         "position": "absolute",

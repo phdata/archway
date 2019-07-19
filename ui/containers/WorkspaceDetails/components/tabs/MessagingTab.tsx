@@ -4,21 +4,21 @@ import { Tabs, Button, Row, Col } from 'antd';
 import { TopicCard, TopicPermissionsCard } from '../cards';
 import { Member, KafkaTopic, Workspace } from '../../../../models/Workspace';
 import { Profile } from '../../../../models/Profile';
+import { ModalType } from '../../../../constants';
 
 interface Props {
   workspace?: Workspace;
   profile: Profile;
   members?: Member[];
   selectedTopic?: KafkaTopic;
-  onAddTopic: (e: React.MouseEvent) => void;
-  onAddMember: (e: React.MouseEvent) => void;
+  showModal: (e: React.MouseEvent, type: ModalType) => void;
   onChangeMemberRole: (distinguished_name: string, roleId: number, role: string, resource: string) => void;
   removeMember: (distinguished_name: string, roleId: number, resource: string) => void;
 }
 
 class MessagingTab extends React.Component<Props> {
   public render() {
-    const { workspace, profile, members, onAddTopic, onAddMember, onChangeMemberRole, removeMember } = this.props;
+    const { workspace, profile, members, showModal, onChangeMemberRole, removeMember } = this.props;
 
     if (!workspace) {
       return null;
@@ -34,7 +34,11 @@ class MessagingTab extends React.Component<Props> {
 
     return (
       <div style={{ padding: 16 }}>
-        <Button style={{ zIndex: 999, position: 'absolute', right: 12 }} type="primary" onClick={onAddTopic}>
+        <Button
+          style={{ zIndex: 999, position: 'absolute', right: 12 }}
+          type="primary"
+          onClick={e => showModal(e, ModalType.Kafka)}
+        >
           Add a Topic
         </Button>
         <Tabs>
@@ -56,7 +60,7 @@ class MessagingTab extends React.Component<Props> {
                       readonly={!hasPermission}
                       topic={topic}
                       members={members}
-                      onAddMember={onAddMember}
+                      onAddMember={e => showModal(e, ModalType.SimpleTopicMember)}
                       onChangeMemberRole={(member, id, role) => {
                         onChangeMemberRole(member.distinguished_name, id, role, 'topics');
                       }}

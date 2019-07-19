@@ -216,10 +216,10 @@ LOCATION '/new_data/landing'
               }
             }
             memberLoading={false}
-            onAddMember={[Function]}
             onChangeMemberRole={[Function]}
             readonly={true}
             removeMember={[Function]}
+            showModal={[Function]}
           />
         </Col>
       </Row>

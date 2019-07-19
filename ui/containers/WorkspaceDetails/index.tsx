@@ -37,7 +37,7 @@ import {
 import * as actions from './actions';
 import * as selectors from './selectors';
 import { FeatureService } from '../../service/FeatureService';
-import { FeatureFlagType, ProvisioningType } from '../../constants';
+import { FeatureFlagType, ProvisioningType, ModalType } from '../../constants';
 import { Provisioning } from '../../components';
 
 interface DetailsRouteProps {
@@ -64,12 +64,7 @@ interface Props extends RouteComponentProps<DetailsRouteProps> {
   clearDetails: () => void;
   getWorkspaceDetails: (id: number) => void;
   selectApplication: (application: Application) => void;
-  showTopicDialog: (e: React.MouseEvent) => void;
-  showSimpleMemberDialog: (e: React.MouseEvent) => void;
-  showSimpleTopicMemberDialog: (e: React.MouseEvent) => void;
-  showApplicationDialog: (e: React.MouseEvent) => void;
-  showDeleteWorkspaceDialog: (e: React.MouseEvent) => void;
-  showDeprovisionWorkspaceDialog: (e: React.MouseEvent) => void;
+  showModal: (e: React.MouseEvent, type: ModalType) => void;
   clearModal: () => void;
   approveRisk: (e: React.MouseEvent) => void;
   approveOperations: (e: React.MouseEvent) => void;
@@ -84,6 +79,7 @@ interface Props extends RouteComponentProps<DetailsRouteProps> {
   removeMember: (distinguished_name: string, roleId: number, resource: string) => void;
   deleteWorkspace: () => void;
   deprovisionWorkspace: () => void;
+  provisionWorkspace: () => void;
 }
 
 class WorkspaceDetails extends React.PureComponent<Props> {
@@ -181,12 +177,7 @@ class WorkspaceDetails extends React.PureComponent<Props> {
       activeApplication,
       activeModal,
       selectApplication,
-      showTopicDialog,
-      showSimpleMemberDialog,
-      showSimpleTopicMemberDialog,
-      showApplicationDialog,
-      showDeleteWorkspaceDialog,
-      showDeprovisionWorkspaceDialog,
+      showModal,
       clearModal,
       approveRisk,
       approveOperations,
@@ -206,6 +197,7 @@ class WorkspaceDetails extends React.PureComponent<Props> {
       provisioning,
       deleteWorkspace,
       deprovisionWorkspace,
+      provisionWorkspace,
     } = this.props;
     const featureService = new FeatureService();
     const hasApplicationFlag = featureService.isEnabled(FeatureFlagType.Application);
@@ -284,7 +276,7 @@ class WorkspaceDetails extends React.PureComponent<Props> {
               cluster={cluster}
               infos={infos}
               members={members}
-              onAddMember={showSimpleMemberDialog}
+              showModal={showModal}
               removeMember={removeMember}
               selectedAllocation={selectedAllocation}
               onChangeAllocation={updateSelectedAllocation}
@@ -300,7 +292,7 @@ class WorkspaceDetails extends React.PureComponent<Props> {
                 yarn={cluster.services && cluster.services.yarn}
                 pools={pools}
                 selectedApplication={activeApplication}
-                onAddApplication={showApplicationDialog}
+                showModal={showModal}
                 onRefreshPools={requestRefreshYarnApps}
                 onSelectApplication={selectApplication}
               />
@@ -312,8 +304,7 @@ class WorkspaceDetails extends React.PureComponent<Props> {
                 workspace={workspace}
                 profile={profile}
                 members={members}
-                onAddTopic={showTopicDialog}
-                onAddMember={showSimpleTopicMemberDialog}
+                showModal={showModal}
                 onChangeMemberRole={changeMemberRoleRequest}
                 removeMember={removeMember}
               />
@@ -321,16 +312,12 @@ class WorkspaceDetails extends React.PureComponent<Props> {
           )}
           {profile && profile.permissions.platform_operations && profile.permissions.risk_management && (
             <Tabs.TabPane tab="MANAGE" key="manage">
-              <ManageTab
-                onDeleteWorkspace={showDeleteWorkspaceDialog}
-                onDeprovisionWorkspace={showDeprovisionWorkspaceDialog}
-                provisioning={provisioning}
-              />
+              <ManageTab showModal={showModal} provisioning={provisioning} />
             </Tabs.TabPane>
           )}
         </Tabs>
         <Modal
-          visible={activeModal === 'simpleMember'}
+          visible={activeModal === ModalType.SimpleMember}
           title="Add A Member"
           onCancel={clearModal}
           onOk={() => simpleMemberRequest('data')}
@@ -343,7 +330,7 @@ class WorkspaceDetails extends React.PureComponent<Props> {
           />
         </Modal>
         <Modal
-          visible={activeModal === 'simpleTopicMember'}
+          visible={activeModal === ModalType.SimpleTopicMember}
           title="Add A Member"
           onCancel={clearModal}
           onOk={() => simpleMemberRequest('topics')}
@@ -354,7 +341,7 @@ class WorkspaceDetails extends React.PureComponent<Props> {
           <KafkaTopicRequest />
         </Modal>
         <Modal
-          visible={activeModal === 'application'}
+          visible={activeModal === ModalType.Application}
           title="New Application"
           onCancel={clearModal}
           onOk={requestApplication}
@@ -362,7 +349,7 @@ class WorkspaceDetails extends React.PureComponent<Props> {
           <ApplicationRequest />
         </Modal>
         <Modal
-          visible={activeModal === 'deleteWorkspace'}
+          visible={activeModal === ModalType.DeleteWorkspace}
           title="Delete Workspace"
           onCancel={clearModal}
           onOk={deleteWorkspace}
@@ -372,7 +359,7 @@ class WorkspaceDetails extends React.PureComponent<Props> {
           <WarningText message="Deleting a workspace cannot be undone. Are you sure you want to delete this workspace?" />
         </Modal>
         <Modal
-          visible={activeModal === 'deprovisionWorkspace'}
+          visible={activeModal === ModalType.DeprovisionWorkspace}
           title="Deprovision Workspace"
           onCancel={clearModal}
           onOk={deprovisionWorkspace}
@@ -380,6 +367,16 @@ class WorkspaceDetails extends React.PureComponent<Props> {
           okButtonProps={{ type: 'danger' }}
         >
           <WarningText message="Deprovisioning a workspace cannot be undone. Are you sure you want to deprovision this workspace?" />
+        </Modal>
+        <Modal
+          visible={activeModal === ModalType.ProvisionWorkspace}
+          title="provision Workspace"
+          onCancel={clearModal}
+          onOk={provisionWorkspace}
+          okText="Yes"
+          okButtonProps={{ type: 'danger' }}
+        >
+          <WarningText message="Are you sure you want to reprovision this workspace?" />
         </Modal>
       </div>
     );
@@ -415,29 +412,9 @@ const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
   selectTopic: (topic: KafkaTopic) => dispatch(actions.setActiveTopic(topic)),
   selectApplication: (application: Application) => dispatch(actions.setActiveApplication(application)),
 
-  showTopicDialog: (e: React.MouseEvent) => {
+  showModal: (e: React.MouseEvent, type: ModalType) => {
     e.preventDefault();
-    return dispatch(actions.setActiveModal('kafka'));
-  },
-  showSimpleMemberDialog: (e: React.MouseEvent) => {
-    e.preventDefault();
-    return dispatch(actions.setActiveModal('simpleMember'));
-  },
-  showSimpleTopicMemberDialog: (e: React.MouseEvent) => {
-    e.preventDefault();
-    return dispatch(actions.setActiveModal('simpleTopicMember'));
-  },
-  showApplicationDialog: (e: React.MouseEvent) => {
-    e.preventDefault();
-    return dispatch(actions.setActiveModal('application'));
-  },
-  showDeleteWorkspaceDialog: (e: React.MouseEvent) => {
-    e.preventDefault();
-    return dispatch(actions.setActiveModal('deleteWorkspace'));
-  },
-  showDeprovisionWorkspaceDialog: (e: React.MouseEvent) => {
-    e.preventDefault();
-    return dispatch(actions.setActiveModal('deprovisionWorkspace'));
+    return dispatch(actions.setActiveModal(type));
   },
 
   approveRisk: (e: React.MouseEvent) => {
@@ -463,6 +440,7 @@ const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
     dispatch(actions.requestRemoveMember(distinguished_name, roleId, resource)),
   deleteWorkspace: () => dispatch(actions.requestDeleteWorkspace()),
   deprovisionWorkspace: () => dispatch(actions.requestDeprovisionWorkspace()),
+  provisionWorkspace: () => dispatch(actions.requestProvisionWorkspace()),
 });
 
 export default connect(

@@ -8,7 +8,7 @@ import {
   KafkaTopic,
   Application,
 } from '../../models/Workspace';
-import { ProvisioningType } from '../../constants';
+import { ProvisioningType, ModalType } from '../../constants';
 
 export const CLEAR_DETAILS = 'CLEAR_DETAILS';
 export const clearDetails = () => ({
@@ -81,7 +81,7 @@ export const setNamespaceInfo = (infos: NamespaceInfo[]) => ({
 });
 
 export const SET_ACTIVE_MODAL = 'SET_ACTIVE_MODAL';
-export const setActiveModal = (activeModal: string | boolean) => ({
+export const setActiveModal = (activeModal: ModalType | boolean) => ({
   type: SET_ACTIVE_MODAL,
   activeModal,
 });
@@ -298,4 +298,9 @@ export const SET_ERROR_STATUS = 'SET_ERROR_STATUS';
 export const setErrorStatus = (error: string) => ({
   type: SET_ERROR_STATUS,
   error,
+});
+
+export const REQUEST_PROVISION_WORKSPACE = 'REQUEST_PROVISION_WORKSPACE';
+export const requestProvisionWorkspace = () => ({
+  type: REQUEST_PROVISION_WORKSPACE,
 });

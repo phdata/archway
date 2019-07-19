@@ -60,8 +60,7 @@ describe('MessagingTab', () => {
           platform_operations: true,
         },
       } as Profile,
-      onAddTopic: () => null,
-      onAddMember: () => null,
+      showModal: () => null,
       onChangeMemberRole: () => null,
       removeMember: () => null,
     };

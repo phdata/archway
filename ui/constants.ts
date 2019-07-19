@@ -29,3 +29,13 @@ export enum ProvisioningType {
   Pending = 'pending',
   Complete = 'complete',
 }
+
+export enum ModalType {
+  DeprovisionWorkspace = 'deprovisionWorkspace',
+  ProvisionWorkspace = 'provisionWorkspace',
+  DeleteWorkspace = 'deleteWorkspace',
+  Application = 'application',
+  Kafka = 'kafka',
+  SimpleTopicMember = 'simpleTopicMember',
+  SimpleMember = 'simpleMember',
+}

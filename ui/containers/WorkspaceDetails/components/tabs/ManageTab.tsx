@@ -1,25 +1,46 @@
 import * as React from 'react';
 import { Row, Col } from 'antd';
 
-import { WorkspaceCard, DeprovisionCard } from '../cards';
-import { ProvisioningType } from '../../../../constants';
+import { ManageCard } from '../cards';
+import { ProvisioningType, ModalType } from '../../../../constants';
 
 interface Props {
   provisioning: ProvisioningType;
-  onDeleteWorkspace: (e: React.MouseEvent) => void;
-  onDeprovisionWorkspace: (e: React.MouseEvent) => void;
+  showModal: (e: React.MouseEvent, type: ModalType) => void;
 }
 
-const ManageTab = ({ provisioning, onDeleteWorkspace }: Props) => (
+const ManageTab = ({ provisioning, showModal }: Props) => (
   <div style={{ padding: 16, fontSize: 17 }}>
     <Row gutter={16} type="flex">
-      <Col span={12}>
-        <WorkspaceCard onDeleteWorkspace={onDeleteWorkspace}>DELETE</WorkspaceCard>
+      <Col span={8}>
+        <ManageCard
+          showModal={showModal}
+          modalType={ModalType.ProvisionWorkspace}
+          buttonText="Provision"
+          disabled={provisioning === ProvisioningType.Pending}
+        >
+          PROVISION
+        </ManageCard>
       </Col>
-      <Col span={12}>
-        <DeprovisionCard onDeprovisionWorkspace={onDeleteWorkspace} provisioning={provisioning}>
+      <Col span={8}>
+        <ManageCard
+          showModal={showModal}
+          modalType={ModalType.DeleteWorkspace}
+          buttonText="Delete Workspace"
+          disabled={false}
+        >
+          DELETE
+        </ManageCard>
+      </Col>
+      <Col span={8}>
+        <ManageCard
+          showModal={showModal}
+          modalType={ModalType.DeprovisionWorkspace}
+          buttonText="Deprovision"
+          disabled={provisioning === ProvisioningType.Pending}
+        >
           DEPROVISION
-        </DeprovisionCard>
+        </ManageCard>
       </Col>
     </Row>
   </div>

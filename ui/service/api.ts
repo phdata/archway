@@ -161,3 +161,5 @@ export const deleteWorkspace = (token: string, id: number) =>
   withBody(`/workspaces/${id}`, token, {}, 'DELETE', true, false);
 
 export const deprovisionWorkspace = (token: string, id: number) => withBody(`/workspaces/${id}/deprovision`, token);
+
+export const provisionWorkspace = (token: string, id: number) => withBody(`/workspaces/${id}/provision`, token);

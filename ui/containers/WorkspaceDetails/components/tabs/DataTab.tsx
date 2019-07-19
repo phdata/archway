@@ -8,6 +8,7 @@ import { Cluster } from '../../../../models/Cluster';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { tomorrowNightEighties } from 'react-syntax-highlighter/dist/styles/hljs';
 import CardHeader from '../cards/CardHeader';
+import { ModalType } from '../../../../constants';
 
 interface Props {
   workspace?: Workspace;
@@ -17,7 +18,7 @@ interface Props {
   members?: Member[];
   selectedAllocation?: HiveAllocation;
   memberLoading: boolean;
-  onAddMember: (e: React.MouseEvent) => void;
+  showModal: (e: React.MouseEvent, type: ModalType) => void;
   onChangeAllocation: (allocation: HiveAllocation) => void;
   onChangeMemberRole: (distinguished_name: string, roleId: number, role: string, resource: string) => void;
   requestRefreshHiveTables: () => void;
@@ -31,7 +32,7 @@ class DataTab extends React.Component<Props> {
       profile,
       infos,
       members,
-      onAddMember,
+      showModal,
       onChangeMemberRole,
       requestRefreshHiveTables,
       removeMember,
@@ -83,7 +84,7 @@ LOCATION '${allocation.location}/new_data/landing'`}
                       readonly={!hasPermission}
                       allocation={allocation}
                       members={members}
-                      onAddMember={onAddMember}
+                      showModal={showModal}
                       onChangeMemberRole={(member, id, role) => {
                         onChangeMemberRole(member.distinguished_name, id, role, 'data');
                       }}

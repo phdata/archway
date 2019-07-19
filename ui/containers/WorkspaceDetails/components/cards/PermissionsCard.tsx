@@ -2,13 +2,14 @@ import * as React from 'react';
 import { Card, Table, Icon, Dropdown, Menu, Button, Spin } from 'antd';
 import CardHeader from './CardHeader';
 import { Member, HiveAllocation } from '../../../../models/Workspace';
+import { ModalType } from '../../../../constants';
 
 interface Props {
   readonly: boolean;
   allocation: HiveAllocation;
   members?: Member[];
   memberLoading: boolean;
-  onAddMember: (e: React.MouseEvent) => void;
+  showModal: (e: React.MouseEvent, type: ModalType) => void;
   onChangeMemberRole: (member: Member, id: number, role: string) => void;
   removeMember: (distinguished_name: string, roleId: number, resource: string) => void;
 }
@@ -48,7 +49,7 @@ const PermissionsCard = ({
   allocation,
   members,
   memberLoading,
-  onAddMember,
+  showModal,
   onChangeMemberRole,
   removeMember,
 }: Props) => (
@@ -56,7 +57,7 @@ const PermissionsCard = ({
     <CardHeader>
       Permissions
       {!readonly && (
-        <Button style={{ marginLeft: 'auto' }} type="primary" onClick={onAddMember}>
+        <Button style={{ marginLeft: 'auto' }} type="primary" onClick={e => showModal(e, ModalType.SimpleMember)}>
           Add a Member
         </Button>
       )}

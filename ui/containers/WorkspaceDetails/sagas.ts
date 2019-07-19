@@ -1,11 +1,20 @@
 import { all, call, fork, put, select, takeLatest, takeEvery } from 'redux-saga/effects';
 import * as Api from '../../service/api';
 import {
+  GET_WORKSPACE,
+  GET_USER_SUGGESTIONS,
+  CHANGE_MEMBER_ROLE_REQUESTED,
+  SIMPLE_MEMBER_REQUEST,
   REQUEST_APPROVAL,
   REQUEST_REMOVE_MEMBER,
-  GET_WORKSPACE,
+  REQUEST_TOPIC,
+  REQUEST_APPLICATION,
+  REQUEST_REFRESH_YARN_APPS,
+  REQUEST_REFRESH_HIVE_TABLES,
+  REQUEST_DELETE_WORKSPACE,
+  REQUEST_DEPROVISION_WORKSPACE,
+  REQUEST_PROVISION_WORKSPACE,
   setWorkspace,
-  GET_USER_SUGGESTIONS,
   setUserSuggestions,
   setMembers,
   setNamespaceInfo,
@@ -14,32 +23,24 @@ import {
   setActiveApplication,
   ApprovalRequestAction,
   approvalSuccess,
-  REQUEST_TOPIC,
   topicRequestSuccess,
-  SIMPLE_MEMBER_REQUEST,
   SimpleMemberRequestAction,
   simpleMemberRequestComplete,
-  CHANGE_MEMBER_ROLE_REQUESTED,
   ChangeMemberRoleRequestAction,
   changeMemberRoleRequestComplete,
-  REQUEST_APPLICATION,
   applicationRequestSuccess,
   getWorkspace,
   approvalFailure,
   RemoveMemberRequestAction,
   removeMemberSuccess,
   removeMemberFailure,
-  REQUEST_REFRESH_YARN_APPS,
   refreshYarnAppsSuccess,
   refreshYarnAppsFailure,
-  REQUEST_REFRESH_HIVE_TABLES,
   refreshHiveTablesSuccess,
   refreshHiveTablesFailure,
   setActiveModal,
   setMemberLoading,
   setProvisioning,
-  REQUEST_DELETE_WORKSPACE,
-  REQUEST_DEPROVISION_WORKSPACE,
   setErrorStatus,
 } from './actions';
 
@@ -310,6 +311,23 @@ function* deprovisionWorkspaceRequestedListener() {
   yield takeLatest(REQUEST_DEPROVISION_WORKSPACE, deprovisionWorkspaceRequested);
 }
 
+function* provisionWorkspaceRequested() {
+  const token = yield select(TOKEN_EXTRACTOR);
+  const id = (yield select(detailExtractor)).toJS().id;
+  try {
+    yield call(Api.provisionWorkspace, token, id);
+  } catch {
+    yield put(setErrorStatus(`Failed to provision workspace ${id}`));
+  } finally {
+    yield put(setActiveModal(false));
+    yield put(setErrorStatus(''));
+  }
+}
+
+function* provisionWorkspaceRequestedListener() {
+  yield takeLatest(REQUEST_PROVISION_WORKSPACE, provisionWorkspaceRequested);
+}
+
 export default function* root() {
   yield all([
     fork(workspaceRequest),
@@ -324,5 +342,6 @@ export default function* root() {
     fork(applicationRequestedListener),
     fork(deleteWorkspaceRequestedListener),
     fork(deprovisionWorkspaceRequestedListener),
+    fork(provisionWorkspaceRequestedListener),
   ]);
 }
