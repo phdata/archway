@@ -20,4 +20,17 @@ class JSONTemplateServiceSpec extends FlatSpec with Matchers with MockFactory wi
     val result = generator.workspaceFor(template, "simple").unsafeRunSync()
     println(result)
   }
+
+  it should "properly escape backslashes in a requester DN" in {
+    val crazyDN = """CN=WHO\+AMI,DC=COMPANY,DC=COM"""
+    implicit val timer: Timer[IO] = new TestTimer
+    implicit val clock: Clock[IO] = timer.clock
+    val context = genMockContext()
+    val configService: ConfigService[IO] = new TestConfigService()
+    val generator = new JSONTemplateService[IO](context, configService)
+    val template = TemplateRequest(name, purpose, purpose, initialCompliance, crazyDN)
+    val result = generator.workspaceFor(template, "user").unsafeRunSync()
+    result.requestedBy shouldBe crazyDN
+  }
+
 }
