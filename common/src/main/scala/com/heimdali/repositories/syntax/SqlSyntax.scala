@@ -7,7 +7,7 @@ trait SqlSyntax {
   val name: String
 
   val anonymousTable: Fragment
-  
+
 }
 
 object SqlSyntax {

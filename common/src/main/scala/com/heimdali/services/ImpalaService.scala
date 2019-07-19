@@ -1,9 +1,9 @@
 package com.heimdali.services
 
-import cats.effect.{Effect, Sync}
+import cats.effect.Sync
+import cats.implicits._
 import com.heimdali.AppContext
 import com.typesafe.scalalogging.LazyLogging
-import cats.implicits._
 import doobie.implicits._
 
 object ImpalaService extends LazyLogging {
@@ -23,14 +23,13 @@ object ImpalaService extends LazyLogging {
       result <- context.hiveClient.createTable(database, TEMP_TABLE_NAME)
       _ <- logger.info("Create table result " + result).pure[F]
       _ <- context.impalaClient
-        .map(_.invalidateMetadata(database, TEMP_TABLE_NAME).recover {
-          case e: Exception => logger.error(s"Impala metadata invalidation failed: ${e.getLocalizedMessage}", e)
+        .map(_.invalidateMetadata(database, TEMP_TABLE_NAME).attempt.flatMap {
+          case Right(_) => logger.info(s"Invalidate metadata for '$database' complete").pure[F]
+          case Left(e)  => logger.error(s"Impala metadata invalidation failed: ${e.getLocalizedMessage}", e).pure[F]
         })
-        .getOrElse(
-          logger
-            .warn(s"Skipped Impala invalidate metadata for database '$database' because ImpalaClient was not defined")
-            .pure[F])
-      _ <- logger.info(s"Invalidate metadata for '$database' complete").pure[F]
+        .getOrElse(logger
+          .warn(s"Skipped Impala invalidate metadata for database '$database' because ImpalaClient was not defined")
+          .pure[F])
     } yield ()
   }
 

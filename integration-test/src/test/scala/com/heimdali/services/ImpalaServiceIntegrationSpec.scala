@@ -2,12 +2,12 @@ package com.heimdali.services
 
 import java.util.concurrent.Executors
 
-import cats.effect.{ContextShift, IO, Timer}
+import cats.effect.{ContextShift, IO}
 import com.heimdali.AppContext
 import com.heimdali.itest.fixtures.KerberosTest
 import com.heimdali.test.fixtures.TestTimer
-import org.scalatest.FlatSpec
 import doobie.implicits._
+import org.scalatest.FlatSpec
 
 import scala.concurrent.ExecutionContext
 
@@ -18,7 +18,7 @@ class ImpalaServiceIntegrationSpec extends FlatSpec with KerberosTest {
   it should "Invalidate metadata" in new Context {
     context
       .use {
-        case context =>
+        context =>
           for {
             workspaceId <- context.workspaceRequestRepository.list(requester).transact(context.transactor)
             _ <- ImpalaService.invalidateMetadata(workspaceId.head.id)(context)
@@ -37,7 +37,7 @@ class ImpalaServiceIntegrationSpec extends FlatSpec with KerberosTest {
     val context = for {
       context <- AppContext.default[IO]()
 
-    } yield (context)
+    } yield context
 
   }
 

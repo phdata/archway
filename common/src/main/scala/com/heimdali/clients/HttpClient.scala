@@ -27,8 +27,8 @@ class CMClient[F[_]: Async](client: Resource[F, Client[F]], clusterConfig: Clust
           )
         )
         _ <- Async[F].pure(logger.debug("raw request to CM API: {}", raw))
-        response <- ready.fetch[A](raw){resp =>
-          if(!resp.status.isSuccess) {
+        response <- ready.fetch[A](raw) { resp =>
+          if (!resp.status.isSuccess) {
             logger.error("Can't connect to CM {}", resp.body)
           }
           resp.as[A]
