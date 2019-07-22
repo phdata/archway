@@ -78,7 +78,6 @@ class JSONTemplateService[F[_]: Effect: Clock](context: AppContext[F], configSer
                                        templatePath: String,
                                        templateName: String): F[WorkspaceRequest] = {
     // remove the escape sequences added for json parsing
-    val cleanUserDN = templateRequest.requester.replace("""\\""", """\""")
     for {
       workspaceText <- generateJSON(templateRequest, templatePath, templateName)
       _ <- logger.debug("generated this output with the {} template: {}", templateName, workspaceText).pure[F]
@@ -86,7 +85,7 @@ class JSONTemplateService[F[_]: Effect: Clock](context: AppContext[F], configSer
       _ <- logger.trace("Parsing workspace text: \n" + workspaceText).pure[F]
       Right(json) = io.circe.parser.parse(workspaceText)
       Right(result) = json.as[WorkspaceRequest](
-        WorkspaceRequest.decoder(cleanUserDN, Instant.ofEpochMilli(time))
+        WorkspaceRequest.decoder(templateRequest.requester, Instant.ofEpochMilli(time))
       )
     } yield result
   }
