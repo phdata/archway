@@ -28,7 +28,7 @@ class TemplateController[F[_]: Sync](authService: TokenAuthService[F], templateG
           for {
             simpleTemplate <- req.req.as[TemplateRequest].map(_.copy(requester = user.distinguishedName))
             workspaceRequest <- templateGenerator.workspaceFor(simpleTemplate, templateName).onError {
-              case e: Exception =>
+              case e: Throwable =>
                 logger
                   .error(
                     s"Error parsing template request for user '${user.username}' using template '$templateName': ${e.getLocalizedMessage}")
