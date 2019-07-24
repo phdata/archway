@@ -6,6 +6,7 @@ import { createStructuredSelector } from 'reselect';
 import Login from '../Login';
 import { Main } from '../../components';
 import { getToken, isLoading } from '../../redux/selectors';
+import { getVersionInfo } from '../Login/selectors';
 
 /* tslint:disable:no-var-requires */
 const router = require('connected-react-router/immutable');
@@ -14,15 +15,16 @@ interface Props {
   loading: boolean;
   token?: string;
   history: History;
+  version: string;
 }
 
-const AppContainer = ({ loading, token, history }: Props) => {
+const AppContainer = ({ loading, token, history, version }: Props) => {
   if (loading) {
     return <Icon type="loading" spin={true} style={{ fontSize: 64 }} />;
   } else if (token) {
     return (
       <router.ConnectedRouter history={history}>
-        <Main />
+        <Main version={version} />
       </router.ConnectedRouter>
     );
   }
@@ -33,6 +35,7 @@ const mapStateToProps = () =>
   createStructuredSelector({
     loading: isLoading(),
     token: getToken(),
+    version: getVersionInfo(),
   });
 
 const mapDispatchToProps = {};

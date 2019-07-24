@@ -12,10 +12,21 @@ function* checkLogin() {
   const requestToken = localStorage.getItem('requestToken');
   if (requestToken) {
     yield put(actions.tokenExtracted(requestToken));
+    yield call(versionInfo, requestToken);
     yield fork(tokenReady, { token: requestToken });
   } else {
     yield put(actions.tokenNotAvailalbe());
     yield call(isSpnego);
+  }
+}
+
+function* versionInfo(token: string) {
+  try {
+    const { version } = yield call(Api.versionInfo, token);
+    yield put(actions.setVersionInfo(version));
+  } catch {
+    // tslint:disable-next-line: no-unused-expression
+    isDevMode && console.log('Version API endpoint does not exist');
   }
 }
 

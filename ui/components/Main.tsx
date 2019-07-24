@@ -12,7 +12,11 @@ import CustomWorkspaces from '../containers/CustomWorkspaces';
 
 const { Content, Footer } = Layout;
 
-const Main = () => (
+interface Props {
+  version: string;
+}
+
+const Main = ({ version }: Props) => (
   <Layout style={{ minHeight: '100%' }}>
     <Navigation />
     <Layout style={{ minHeight: '100%', marginLeft: 250, backgroundColor: '#F0F3F5' }}>
@@ -30,7 +34,11 @@ const Main = () => (
           </Switch>
         </div>
       </Content>
-      <Footer style={{ textAlign: 'center' }}>Heimdali &copy;2018 Created by phData</Footer>
+      <Footer style={{ textAlign: 'center' }}>
+        Heimdali &copy;2018 Created by phData
+        <br />
+        {!!version && `Version ${version}`}
+      </Footer>
     </Layout>
   </Layout>
 );

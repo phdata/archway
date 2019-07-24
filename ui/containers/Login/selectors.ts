@@ -18,3 +18,9 @@ export const getAuthType = () =>
     authSelector,
     authState => authState.get('authType')
   );
+
+export const getVersionInfo = () =>
+  createSelector(
+    authSelector,
+    authState => authState.get('version')
+  );

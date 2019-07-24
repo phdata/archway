@@ -89,3 +89,11 @@ export const setProvisioning = (provisioning: ProvisioningType) => ({
   type: SET_PROVISIONING,
   provisioning,
 });
+
+export const SET_VERSION_INFO = 'SET_VERSION_INFO';
+export const setVersionInfo = (version: string) => {
+  return {
+    type: SET_VERSION_INFO,
+    version,
+  };
+};

@@ -8,6 +8,7 @@ import {
   TOKEN_NOT_AVAILABLE,
   SET_AUTH_TYPE,
   SET_PROVISIONING,
+  SET_VERSION_INFO,
 } from './actions';
 
 const initialAuthState = fromJS({
@@ -20,6 +21,7 @@ const initialAuthState = fromJS({
   workspace: false,
   authType: null,
   provisioning: '',
+  version: '',
 });
 
 const login = (state = initialAuthState, action: any) => {
@@ -44,6 +46,8 @@ const login = (state = initialAuthState, action: any) => {
       return state.set('authType', action.authType);
     case SET_PROVISIONING:
       return state.set('provisioning', action.provisioning);
+    case SET_VERSION_INFO:
+      return state.set('version', action.version);
     default:
       return state;
   }
