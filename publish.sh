@@ -24,6 +24,7 @@ package()
   cp -r ${READY_DIR}/${ARTIFACT}-meta ${READY_DIR}/meta
 
   sed -i "s/0.1.5/${HEIMDALI_VERSION}/g" "${READY_DIR}/meta/parcel.json"
+  echo -n ${HEIMDALI_VERSION} > "${READY_DIR}/version.txt"
 
   mkdir -p ${READY_DIR}/usr/lib/heimdali-api
   mkdir -p ${READY_DIR}/usr/lib/heimdali-api-tests

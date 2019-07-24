@@ -5,7 +5,8 @@ import cats.implicits._
 import com.heimdali.AppContext
 import com.heimdali.models.{Token, User}
 import com.heimdali.rest.authentication.{AuthService, TokenAuthService}
-import com.heimdali.services.AccountService
+import com.heimdali.services.{AccountService, DefaultFileReader}
+import com.typesafe.scalalogging.LazyLogging
 import io.circe.syntax._
 import org.http4s._
 import org.http4s.dsl.Http4sDsl
@@ -15,13 +16,31 @@ class AccountController[F[_]: Sync](
     tokenAuthService: TokenAuthService[F],
     accountService: AccountService[F],
     appContext: AppContext[F]
-) extends Http4sDsl[F] {
+) extends Http4sDsl[F] with LazyLogging {
+
+  private val heimdaliVersion: F[String] = {
+    sys.env.get("HEIMDALI_DIST") match {
+      case Some(value) =>
+        for {
+          fileLines <- new DefaultFileReader[F].readLines(s"$value/version.txt")
+          _ <- Sync[F].pure(logger.info(s"Heimdali version ${fileLines.head}"))
+        } yield fileLines.head
+      case None =>
+        logger.warn("System property HEIMDALI_DIST is not set, unable to retrieve version")
+        "".pure[F]
+    }
+  }
 
   val clientAuthRoutes: HttpRoutes[F] =
     authService.clientAuth {
       AuthedService[Token, F] {
         case GET -> Root as token =>
           Ok(token.asJson)
+        case GET -> Root / "version" as _ =>
+          for {
+            version <- heimdaliVersion
+            response <- Ok(Map("version" -> version).asJson)
+          } yield response
       }
     }
 
