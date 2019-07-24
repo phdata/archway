@@ -3,7 +3,7 @@ package com.heimdali.rest
 import cats.Monad
 import cats.implicits._
 import com.heimdali.models._
-import com.heimdali.rest.authentication.{AuthService, TokenAuthService}
+import com.heimdali.rest.authentication.TokenAuthService
 import com.heimdali.services._
 import io.circe.syntax._
 import org.http4s._

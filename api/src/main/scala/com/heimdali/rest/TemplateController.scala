@@ -19,7 +19,9 @@ class TemplateController[F[_]: Sync](authService: TokenAuthService[F], templateG
 
         case GET -> Root / "custom" as _ =>
           for {
-            customTemplates <- templateGenerator.customTemplates
+            customTemplates <- templateGenerator.customTemplates.onError {
+              case e: Throwable => logger.error(s"Failed to read custom templates: ${e.getLocalizedMessage}", e).pure[F]
+            }
             response <- Ok(customTemplates.map(_.metadata).asJson)
           } yield response
 
@@ -34,7 +36,7 @@ class TemplateController[F[_]: Sync](authService: TokenAuthService[F], templateG
           for {
             simpleTemplate <- req.req.as[TemplateRequest].map(_.copy(requester = user.distinguishedName))
             workspaceRequest <- templateGenerator.workspaceFor(simpleTemplate, templateName).onError {
-              case e: Exception =>
+              case e: Throwable =>
                 logger
                   .error(
                     s"Error parsing template request for user '${user.username}' using template '$templateName': ${e.getLocalizedMessage}")

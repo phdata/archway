@@ -144,5 +144,8 @@ class MemberServiceImpl[F[_]](context: AppContext[F])(implicit val F: Effect[F])
     } yield result
 
   override def availableMembers(filter: String): F[MemberSearchResult] =
-    context.lookupLDAPClient.search(filter)
+    context.lookupLDAPClient.search(filter).onError {
+      case e: Throwable =>
+        logger.error(s"Failed to find members for filter $filter. ${e.getLocalizedMessage}", e).pure[F]
+    }
 }

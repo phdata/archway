@@ -58,10 +58,17 @@ class AccountController[F[_]: Sync](
           Ok(user.asJson)
 
         case POST -> Root / "workspace" as user =>
-          accountService.createWorkspace(user).value.flatMap {
-            case Some(workspace) => Created(workspace.asJson)
-            case None            => Conflict()
-          }
+          accountService
+            .createWorkspace(user)
+            .value
+            .onError {
+              case e: Throwable =>
+                logger.error("Error creating personal workspace", e).pure[F]
+            }
+            .flatMap {
+              case Some(workspace) => Created(workspace.asJson)
+              case None            => Conflict()
+            }
 
         case GET -> Root / "workspace" as user =>
           for {
