@@ -6,6 +6,7 @@ import cats.effect._
 import cats.implicits._
 import com.heimdali.models._
 import com.heimdali.provisioning.Message._
+import com.heimdali.provisioning._
 import com.heimdali.rest.authentication.TokenAuthService
 import com.heimdali.services._
 import com.typesafe.scalalogging.LazyLogging
@@ -29,6 +30,12 @@ class WorkspaceController[F[_]: Sync: Timer: ContextShift: ConcurrentEffect](
 ) extends Http4sDsl[F] with LazyLogging {
 
   implicit val memberRequestEntityDecoder: EntityDecoder[F, MemberRequest] = jsonOf[F, MemberRequest]
+
+  // Assign case objects to values so we can match on them
+  val success = Success
+  val error = Error
+  val noop = NoOp
+  val unknown = Unknown
 
   val route: HttpRoutes[F] =
     authService.tokenAuth {
@@ -59,7 +66,12 @@ class WorkspaceController[F[_]: Sync: Timer: ContextShift: ConcurrentEffect](
                 case e: Throwable =>
                   logger.error(s"Failed to provision workspace id $id: ${e.getLocalizedMessage}", e).pure[F]
               }
-              response <- Created(provisionResult.asJson)
+              response <- provisionResult.head match {
+                case success => Created (provisionResult.asJson)
+                case noop => NotModified()
+                case error => InternalServerError(provisionResult.asJson)
+                case unknown => InternalServerError(provisionResult.asJson)
+              }
             } yield response
           } else
             Forbidden()
@@ -73,7 +85,12 @@ class WorkspaceController[F[_]: Sync: Timer: ContextShift: ConcurrentEffect](
                 case e: Throwable =>
                   logger.error(s"Failed to deprovision workspace id $id: ${e.getLocalizedMessage}", e).pure[F]
               }
-              response <- Created(provisionResult.asJson)
+              response <- provisionResult.head match {
+                case success => Ok(provisionResult.asJson)
+                case noop => NotModified()
+                case error => InternalServerError(provisionResult.asJson)
+                case unknown => InternalServerError(provisionResult.asJson)
+              }
             } yield response
           } else
             Forbidden()
