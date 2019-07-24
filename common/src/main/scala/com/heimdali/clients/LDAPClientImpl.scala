@@ -154,6 +154,8 @@ class LDAPClientImpl[F[_]: Effect](ldapConfig: LDAPConfig, binding: LDAPConfig =
       case Some(request: ModifyRequest) =>
         logger.info("updating group with {}", request)
         connectionPool.modify(request)
+      case Some(request) =>
+        logger.error("unidentified request type {}", request)
       case None =>
         logger.info("existing group had no changes")
         ()
