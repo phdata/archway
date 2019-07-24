@@ -90,6 +90,22 @@ class JSONTemplateService[F[_]: Effect: Clock](context: AppContext[F], configSer
     } yield result
   }
 
+  def verifyDefaultTemplates: F[Unit] = {
+    val defaultCompliance = Compliance(false, false, false)
+
+    val simpleTemplateRequest =
+      TemplateRequest("simple", "simple-summary", "simple-description", defaultCompliance, "heimdali")
+    val userTemplateRequest = TemplateRequest("user", "user-summary", "user-description", defaultCompliance, "heimdali")
+    val structuredTemplateRequest =
+      TemplateRequest("structured", "structured-summary", "structured-description", defaultCompliance, "heimdali")
+
+    val defaultTemplatesRequests = List(simpleTemplateRequest, userTemplateRequest, structuredTemplateRequest)
+
+    for {
+      _ <- defaultTemplatesRequests.traverse(templateRequest => workspaceFor(templateRequest, templateRequest.name))
+    } yield ()
+  }
+
   private def extractTemplateName(templatePath: String): String = {
     val fileName = Paths.get(templatePath).getFileName.toString
     fileName.split("\\.").toList.head
