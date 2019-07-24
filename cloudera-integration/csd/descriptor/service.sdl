@@ -321,15 +321,6 @@
           "default": "root"
         },
         {
-          "name": "heimdali.workspaces.dataset.root",
-          "label": "Governed Dataset HDFS Path",
-          "description": "The HDFS location for governed datasets",
-          "required": "true",
-          "type": "string",
-          "configurableInWizard": "true",
-          "default": "/data/governed"
-        },
-        {
           "name": "heimdali.workspaces.dataset.defaultSize",
           "label": "Default Governed Dataset Quota Size",
           "description": "The default size for governed datasets",

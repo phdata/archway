@@ -187,13 +187,6 @@ Version: 1.3.13
 - Required: true
 - Default: root
 
-**heimdali.workspaces.dataset.root**
-
-- Label: Governed Dataset HDFS Path
-- Description: The HDFS location for governed datasets
-- Required: true
-- Default: /data/governed
-
 **heimdali.workspaces.dataset.defaultSize**
 
 - Label: Default Governed Dataset Quota Size

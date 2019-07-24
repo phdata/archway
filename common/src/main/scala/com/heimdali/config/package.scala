@@ -183,7 +183,6 @@ package object config extends StrictLogging {
   }
 
   case class WorkspaceConfigItem(
-      root: String,
       defaultSize: Int,
       defaultCores: Int,
       defaultMemory: Int,
