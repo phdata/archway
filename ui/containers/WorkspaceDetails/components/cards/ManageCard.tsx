@@ -4,23 +4,26 @@ import { ModalType } from '../../../../constants';
 
 interface Props {
   children?: any;
+  title: string;
   buttonText: string;
   modalType: ModalType;
   disabled: boolean;
   showModal: (e: React.MouseEvent, type: ModalType) => void;
 }
 
-const WorkspaceCard = ({ children, modalType, buttonText, disabled, showModal }: Props) => {
+const WorkspaceCard = ({ title, children, modalType, buttonText, disabled, showModal }: Props) => {
   return (
     <Card style={{ height: '100%' }} bordered>
-      <div style={{ textAlign: 'center', fontSize: 17 }}>{children}</div>
+      <div style={{ textAlign: 'center', fontSize: 17 }}>{title}</div>
+      <div style={{ textAlign: 'left', fontSize: 15, padding: '20px 20px 100px 20px' }}>{children}</div>
       <div
         style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
           fontWeight: 300,
-          padding: '32px 0 48px 0',
+          position: 'absolute',
+          bottom: 20,
+          left: '50%',
+          transform: 'translateX(-50%)',
+          padding: 20,
         }}
       >
         <Button type="primary" onClick={e => showModal(e, modalType)} disabled={disabled}>
