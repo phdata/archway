@@ -28,6 +28,7 @@ import {
   SET_MEMBER_LOADING,
   SET_PROVISIONING_STATUS,
   SET_ERROR_STATUS,
+  MANAGE_LOADING,
 } from './actions';
 
 import { Member } from '../../models/Workspace';
@@ -39,6 +40,11 @@ const initialState = fromJS({
   error: '',
   memberLoading: false,
   provisioning: '',
+  manageLoading: {
+    provision: false,
+    deprovision: false,
+    delete: false,
+  },
 });
 
 const details = (state = initialState, action: any) => {
@@ -227,6 +233,9 @@ const details = (state = initialState, action: any) => {
 
     case SET_ERROR_STATUS:
       return state.set('error', action.error);
+
+    case MANAGE_LOADING:
+      return state.setIn(['manageLoading', action.payload.manageType], action.payload.loading);
 
     default:
       return state;

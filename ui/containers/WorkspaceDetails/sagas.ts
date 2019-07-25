@@ -42,6 +42,7 @@ import {
   setMemberLoading,
   setProvisioning,
   setErrorStatus,
+  setManageLoading,
 } from './actions';
 
 import { RECENT_WORKSPACES_KEY, TOKEN_EXTRACTOR } from '../../constants';
@@ -280,11 +281,13 @@ function* deleteWorkspaceRequested() {
   const token = yield select(TOKEN_EXTRACTOR);
   const id = (yield select(detailExtractor)).toJS().id;
   try {
+    yield put(setManageLoading('delete', true));
     yield call(Api.deleteWorkspace, token, id);
     yield put(router.push({ pathname: '/operations' }));
   } catch {
     yield put(setErrorStatus(`Failed to delete workspace ${id}`));
   } finally {
+    yield put(setManageLoading('delete', false));
     yield put(setActiveModal(false));
     yield put(setErrorStatus(''));
   }
@@ -298,10 +301,12 @@ function* deprovisionWorkspaceRequested() {
   const token = yield select(TOKEN_EXTRACTOR);
   const id = (yield select(detailExtractor)).toJS().id;
   try {
+    yield put(setManageLoading('deprovision', true));
     yield call(Api.deprovisionWorkspace, token, id);
   } catch {
     yield put(setErrorStatus(`Failed to deprovision workspace ${id}`));
   } finally {
+    yield put(setManageLoading('deprovision', false));
     yield put(setActiveModal(false));
     yield put(setErrorStatus(''));
   }
@@ -315,10 +320,12 @@ function* provisionWorkspaceRequested() {
   const token = yield select(TOKEN_EXTRACTOR);
   const id = (yield select(detailExtractor)).toJS().id;
   try {
+    yield put(setManageLoading('provision', true));
     yield call(Api.provisionWorkspace, token, id);
   } catch {
     yield put(setErrorStatus(`Failed to provision workspace ${id}`));
   } finally {
+    yield put(setManageLoading('provision', false));
     yield put(setActiveModal(false));
     yield put(setErrorStatus(''));
   }

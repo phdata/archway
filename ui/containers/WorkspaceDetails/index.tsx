@@ -44,6 +44,12 @@ interface DetailsRouteProps {
   id: any;
 }
 
+interface ManageLoading {
+  provision: boolean;
+  deprovision: boolean;
+  delete: boolean;
+}
+
 interface Props extends RouteComponentProps<DetailsRouteProps> {
   workspace?: Workspace;
   cluster: Cluster;
@@ -60,6 +66,7 @@ interface Props extends RouteComponentProps<DetailsRouteProps> {
   error: string;
   memberLoading: boolean;
   provisioning: ProvisioningType;
+  manageLoading: ManageLoading;
 
   clearDetails: () => void;
   getWorkspaceDetails: (id: number) => void;
@@ -198,6 +205,7 @@ class WorkspaceDetails extends React.PureComponent<Props> {
       deleteWorkspace,
       deprovisionWorkspace,
       provisionWorkspace,
+      manageLoading,
     } = this.props;
     const featureService = new FeatureService();
     const hasApplicationFlag = featureService.isEnabled(FeatureFlagType.Application);
@@ -355,6 +363,7 @@ class WorkspaceDetails extends React.PureComponent<Props> {
           onOk={deleteWorkspace}
           okText="Delete"
           okButtonProps={{ type: 'danger' }}
+          confirmLoading={manageLoading.delete}
         >
           <WarningText message="Deleting a workspace cannot be undone. Are you sure you want to delete this workspace?" />
         </Modal>
@@ -365,18 +374,24 @@ class WorkspaceDetails extends React.PureComponent<Props> {
           onOk={deprovisionWorkspace}
           okText="Deprovision"
           okButtonProps={{ type: 'danger' }}
+          confirmLoading={manageLoading.deprovision}
         >
-          <WarningText message="Deprovisioning a workspace cannot be undone. Are you sure you want to deprovision this workspace?" />
+          <WarningText
+            message={
+              'Deprovisioning a workspace cannot be undone. Are you sure you want to deprovision this workspace? Deprovisioning can take up to 15 minutes. It is not necessary to keep this page open.'
+            }
+          />
         </Modal>
         <Modal
           visible={activeModal === ModalType.ProvisionWorkspace}
-          title="provision Workspace"
+          title="Provision Workspace"
           onCancel={clearModal}
           onOk={provisionWorkspace}
           okText="Yes"
           okButtonProps={{ type: 'danger' }}
+          confirmLoading={manageLoading.provision}
         >
-          <WarningText message="Are you sure you want to reprovision this workspace?" />
+          <WarningText message="Are you sure you want to reprovision this workspace? Provisioning can take up to 15 minutes. It is not necessary to keep this page open." />
         </Modal>
       </div>
     );
@@ -401,6 +416,7 @@ const mapStateToProps = () =>
     error: selectors.getError(),
     memberLoading: selectors.isMemberLoading(),
     provisioning: selectors.getProvisioning(),
+    manageLoading: selectors.getManageLoading(),
   });
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({

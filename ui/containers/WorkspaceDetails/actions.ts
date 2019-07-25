@@ -304,3 +304,9 @@ export const REQUEST_PROVISION_WORKSPACE = 'REQUEST_PROVISION_WORKSPACE';
 export const requestProvisionWorkspace = () => ({
   type: REQUEST_PROVISION_WORKSPACE,
 });
+
+export const MANAGE_LOADING = 'MANAGE_LOADING';
+export const setManageLoading = (manageType: string, loading: boolean) => ({
+  type: MANAGE_LOADING,
+  payload: { manageType, loading },
+});

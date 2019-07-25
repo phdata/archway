@@ -136,3 +136,9 @@ export const getProvisioning = () =>
     workspaceSelector,
     workspaceState => workspaceState.get('provisioning')
   );
+
+export const getManageLoading = () =>
+  createSelector(
+    workspaceSelector,
+    workspaceState => workspaceState.get('manageLoading').toJS()
+  );
