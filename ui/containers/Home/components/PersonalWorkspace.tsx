@@ -60,13 +60,13 @@ const PersonalWorkspace = ({ workspace, services, requestWorkspace, loading, pro
                 <div>HIVE NAMESPACE</div>
                 <div style={{ fontWeight: 200 }}>{workspace.data[0].name}</div>
               </div>
-              {hasMessagingFlag && (
+              {hasApplicationFlag && (
                 <div style={{ padding: '10px' }}>
                   <div>RESOURCE POOL</div>
                   <div style={{ fontWeight: 200 }}>{workspace.processing[0].pool_name}</div>
                 </div>
               )}
-              {hasApplicationFlag && workspace.topics[0] && (
+              {hasMessagingFlag && workspace.topics[0] && (
                 <div style={{ padding: '10px' }}>
                   <div>KAFKA TOPIC</div>
                   <div style={{ fontWeight: 200 }}>{workspace.topics[0].name}</div>
