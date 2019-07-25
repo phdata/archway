@@ -4,7 +4,7 @@ import cats.data.{NonEmptyList, OptionT}
 import cats.effect._
 import cats.implicits._
 import com.heimdali.models._
-import com.heimdali.provisioning.{SimpleMessage, Message => OurMessage}
+import com.heimdali.provisioning.{Error, SimpleMessage, Message => OurMessage}
 import com.heimdali.services._
 import com.heimdali.test.TestAuthService
 import com.heimdali.test.fixtures._
@@ -134,6 +134,32 @@ class WorkspaceControllerSpec
 
     val response = restApi.route.orNotFound.run(POST(Uri.uri("/123/provision")).unsafeRunSync())
     check(response, Status.Created, Some(Json.arr(Json.obj("message" -> "nothing to see here".asJson))))
+  }
+
+  it should "return a 500 on a failed provision" in new Http4sClientDsl[IO] with Context {
+    val error = Error.message("", 1, new Exception())
+    workspaceService.find _ expects id returning OptionT.some(savedWorkspaceRequest)
+    provisioningService.attemptProvision _ expects(savedWorkspaceRequest, 0) returning error.pure[IO].start(contextShift)
+
+    val response = restApi.route.orNotFound.run(POST(Uri.uri("/123/provision")).unsafeRunSync())
+    check(response, Status.InternalServerError, Some(Json.arr(Json.obj("message" -> "FAILED:  for workspace 1 due to null".asJson))))
+  }
+
+  it should "deprovision workspace" in new Http4sClientDsl[IO] with Context {
+    workspaceService.find _ expects id returning OptionT.some(savedWorkspaceRequest)
+    provisioningService.attemptDeprovision _ expects(savedWorkspaceRequest) returning NonEmptyList.one(SimpleMessage(id, "nothing to see here").asInstanceOf[OurMessage]).pure[IO].start(contextShift)
+
+    val response = restApi.route.orNotFound.run(POST(Uri.uri("/123/deprovision")).unsafeRunSync())
+    check(response, Status.Ok, Some(Json.arr(Json.obj("message" -> "nothing to see here".asJson))))
+  }
+
+  it should "return a 500 on a failed deprovision" in new Http4sClientDsl[IO] with Context {
+    val error = Error.message("", 1, new Exception())
+    workspaceService.find _ expects id returning OptionT.some(savedWorkspaceRequest)
+    provisioningService.attemptDeprovision _ expects(savedWorkspaceRequest) returning error.pure[IO].start(contextShift)
+
+    val response = restApi.route.orNotFound.run(POST(Uri.uri("/123/deprovision")).unsafeRunSync())
+    check(response, Status.InternalServerError, Some(Json.arr(Json.obj("message" -> "FAILED:  for workspace 1 due to null".asJson))))
   }
 
   it should "delete a workspace" in new client.dsl.Http4sClientDsl[IO] with Context {

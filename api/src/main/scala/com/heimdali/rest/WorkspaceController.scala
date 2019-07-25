@@ -2,11 +2,12 @@ package com.heimdali.rest
 
 import java.time.Instant
 
+import cats.data.NonEmptyList
 import cats.effect._
 import cats.implicits._
 import com.heimdali.models._
 import com.heimdali.provisioning.Message._
-import com.heimdali.provisioning._
+import com.heimdali.provisioning.{Message, _}
 import com.heimdali.rest.authentication.TokenAuthService
 import com.heimdali.services._
 import com.typesafe.scalalogging.LazyLogging
@@ -67,10 +68,8 @@ class WorkspaceController[F[_]: Sync: Timer: ContextShift: ConcurrentEffect](
                   logger.error(s"Failed to provision workspace id $id: ${e.getLocalizedMessage}", e).pure[F]
               }
               response <- provisionResult.head match {
-                case success => Created (provisionResult.asJson)
-                case noop => NotModified()
-                case error => InternalServerError(provisionResult.asJson)
-                case unknown => InternalServerError(provisionResult.asJson)
+                case _: SimpleMessage    => Created(provisionResult.asJson)
+                case _: ExceptionMessage => InternalServerError(provisionResult.asJson)
               }
             } yield response
           } else
@@ -86,10 +85,8 @@ class WorkspaceController[F[_]: Sync: Timer: ContextShift: ConcurrentEffect](
                   logger.error(s"Failed to deprovision workspace id $id: ${e.getLocalizedMessage}", e).pure[F]
               }
               response <- provisionResult.head match {
-                case success => Ok(provisionResult.asJson)
-                case noop => NotModified()
-                case error => InternalServerError(provisionResult.asJson)
-                case unknown => InternalServerError(provisionResult.asJson)
+                case _: SimpleMessage    => Ok(provisionResult.asJson)
+                case _: ExceptionMessage => InternalServerError(provisionResult.asJson)
               }
             } yield response
           } else
