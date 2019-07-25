@@ -137,7 +137,7 @@ export const getAuthtype = () => get('/auth-type');
 
 export const getFeatureFlags = (token: string) => get('/account/feature-flags', token);
 
-export const getCustomDescriptions = (token: string) => get('/template/custom', token);
+export const getCustomDescriptions = (token: string) => get('/templates/custom', token);
 
 export const requestTopic = (token: string, id: number, name: string, partitions: number, replication_factor: number) =>
   withBody(`/workspaces/${id}/topics`, token, { name, partitions, replication_factor });
