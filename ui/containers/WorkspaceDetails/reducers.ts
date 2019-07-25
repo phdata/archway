@@ -27,8 +27,9 @@ import {
   REFRESH_HIVE_TABLES_FAILURE,
   SET_MEMBER_LOADING,
   SET_PROVISIONING_STATUS,
-  SET_ERROR_STATUS,
   MANAGE_LOADING,
+  SET_NOTIFICATION_STATUS,
+  CLEAR_NOTIFICATION_STATUS,
 } from './actions';
 
 import { Member } from '../../models/Workspace';
@@ -37,7 +38,10 @@ const initialState = fromJS({
   fetching: false,
   details: false,
   activeModal: false,
-  error: '',
+  notification: {
+    type: '',
+    message: '',
+  },
   memberLoading: false,
   provisioning: '',
   manageLoading: {
@@ -132,7 +136,7 @@ const details = (state = initialState, action: any) => {
       return state.set('activeModal', false);
 
     case SIMPLE_MEMBER_REQUEST_COMPLETE:
-      return state.set('activeModal', false).set('error', '');
+      return state.set('activeModal', false).setIn(['notification', 'message'], '');
 
     case REQUEST_REMOVE_MEMBER:
       return state.set(
@@ -231,11 +235,14 @@ const details = (state = initialState, action: any) => {
     case SET_PROVISIONING_STATUS:
       return state.set('provisioning', action.provisioning);
 
-    case SET_ERROR_STATUS:
-      return state.set('error', action.error);
+    case SET_NOTIFICATION_STATUS:
+      return state.set('notification', fromJS({ type: action.payload.type, message: action.payload.message }));
 
     case MANAGE_LOADING:
       return state.setIn(['manageLoading', action.payload.manageType], action.payload.loading);
+
+    case CLEAR_NOTIFICATION_STATUS:
+      return state.set('notification', fromJS({ type: '', message: '' }));
 
     default:
       return state;

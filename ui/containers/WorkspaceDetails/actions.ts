@@ -8,7 +8,7 @@ import {
   KafkaTopic,
   Application,
 } from '../../models/Workspace';
-import { ProvisioningType, ModalType } from '../../constants';
+import { ProvisioningType, ModalType, NotificationType } from '../../constants';
 
 export const CLEAR_DETAILS = 'CLEAR_DETAILS';
 export const clearDetails = () => ({
@@ -294,10 +294,18 @@ export const requestDeprovisionWorkspace = () => ({
   type: REQUEST_DEPROVISION_WORKSPACE,
 });
 
-export const SET_ERROR_STATUS = 'SET_ERROR_STATUS';
-export const setErrorStatus = (error: string) => ({
-  type: SET_ERROR_STATUS,
-  error,
+export const SET_NOTIFICATION_STATUS = 'SET_NOTIFICATION_STATUS';
+export const setNotificationStatus = (type: NotificationType, message: string) => ({
+  type: SET_NOTIFICATION_STATUS,
+  payload: {
+    type,
+    message,
+  },
+});
+
+export const CLEAR_NOTIFICATION_STATUS = 'CLEAR_NOTIFICATION_STATUS';
+export const clearNotificationStatus = () => ({
+  type: CLEAR_NOTIFICATION_STATUS,
 });
 
 export const REQUEST_PROVISION_WORKSPACE = 'REQUEST_PROVISION_WORKSPACE';

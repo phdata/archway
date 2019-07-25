@@ -41,11 +41,12 @@ import {
   setActiveModal,
   setMemberLoading,
   setProvisioning,
-  setErrorStatus,
   setManageLoading,
+  setNotificationStatus,
+  clearNotificationStatus,
 } from './actions';
 
-import { RECENT_WORKSPACES_KEY, TOKEN_EXTRACTOR } from '../../constants';
+import { RECENT_WORKSPACES_KEY, TOKEN_EXTRACTOR, NotificationType } from '../../constants';
 
 import { Workspace } from '../../models/Workspace';
 
@@ -189,7 +190,7 @@ export function* simpleMemberRequested({ resource }: SimpleMemberRequestAction) 
     const members = yield call(Api.getMembers, token, workspace.id);
     yield put(setMembers(members));
   } catch (e) {
-    yield put(setErrorStatus('Failed to add user'));
+    yield put(setNotificationStatus(NotificationType.Error, 'Failed to add user'));
     yield put(simpleMemberRequestComplete());
   } finally {
     yield put(setMemberLoading(false));
@@ -283,13 +284,14 @@ function* deleteWorkspaceRequested() {
   try {
     yield put(setManageLoading('delete', true));
     yield call(Api.deleteWorkspace, token, id);
+    yield put(setNotificationStatus(NotificationType.Success, `Success: Delete workspace ${id}`));
     yield put(router.push({ pathname: '/operations' }));
   } catch {
-    yield put(setErrorStatus(`Failed to delete workspace ${id}`));
+    yield put(setNotificationStatus(NotificationType.Error, `Failed to delete workspace ${id}`));
   } finally {
     yield put(setManageLoading('delete', false));
     yield put(setActiveModal(false));
-    yield put(setErrorStatus(''));
+    yield put(clearNotificationStatus());
   }
 }
 
@@ -303,12 +305,13 @@ function* deprovisionWorkspaceRequested() {
   try {
     yield put(setManageLoading('deprovision', true));
     yield call(Api.deprovisionWorkspace, token, id);
+    yield put(setNotificationStatus(NotificationType.Success, `Success: Deprovision workspace ${id}`));
   } catch {
-    yield put(setErrorStatus(`Failed to deprovision workspace ${id}`));
+    yield put(setNotificationStatus(NotificationType.Error, `Failed to deprovision workspace ${id}`));
   } finally {
     yield put(setManageLoading('deprovision', false));
     yield put(setActiveModal(false));
-    yield put(setErrorStatus(''));
+    yield put(clearNotificationStatus());
   }
 }
 
@@ -322,12 +325,13 @@ function* provisionWorkspaceRequested() {
   try {
     yield put(setManageLoading('provision', true));
     yield call(Api.provisionWorkspace, token, id);
+    yield put(setNotificationStatus(NotificationType.Success, `Success: Provision workspace ${id}`));
   } catch {
-    yield put(setErrorStatus(`Failed to provision workspace ${id}`));
+    yield put(setNotificationStatus(NotificationType.Error, `Failed to provision workspace ${id}`));
   } finally {
     yield put(setManageLoading('provision', false));
     yield put(setActiveModal(false));
-    yield put(setErrorStatus(''));
+    yield put(clearNotificationStatus());
   }
 }
 

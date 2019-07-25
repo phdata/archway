@@ -39,3 +39,10 @@ export enum ModalType {
   SimpleTopicMember = 'simpleTopicMember',
   SimpleMember = 'simpleMember',
 }
+
+export enum NotificationType {
+  Success = 'success',
+  Info = 'info',
+  Warning = 'warning',
+  Error = 'error',
+}

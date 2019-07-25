@@ -61,6 +61,8 @@ const withBody = (path: string, token: string, data?: any, method = 'POST', allo
       return result;
     } else if (response.status === 404 && allow404) {
       return result;
+    } else if (response.status === 304 && path.includes('provision' || 'deprovision')) {
+      return result;
     } else {
       if (response.status === 401) {
         logout();

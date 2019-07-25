@@ -119,10 +119,10 @@ export const getLiaison = () =>
         .find(liasionFinder(workspaceState)) as Member)
   );
 
-export const getError = () =>
+export const getNotification = () =>
   createSelector(
     workspaceSelector,
-    workspaceState => workspaceState.get('error')
+    workspaceState => workspaceState.get('notification').toJS()
   );
 
 export const isMemberLoading = () =>

@@ -63,7 +63,7 @@ interface Props extends RouteComponentProps<DetailsRouteProps> {
   userSuggestions?: UserSuggestions;
   liasion?: Member;
   members?: Member[];
-  error: string;
+  notificationInfo: any;
   memberLoading: boolean;
   provisioning: ProvisioningType;
   manageLoading: ManageLoading;
@@ -116,7 +116,7 @@ class WorkspaceDetails extends React.PureComponent<Props> {
       match: {
         params: { id },
       },
-      error,
+      notificationInfo,
     } = nextProps;
     if (oldId !== id) {
       this.props.clearDetails();
@@ -142,8 +142,11 @@ class WorkspaceDetails extends React.PureComponent<Props> {
         this.showApprovalNotification('Infra', newInfraStatus.error);
       }
     }
-    if (!!error && error !== this.props.error) {
-      notification.error({ message: 'Error', description: error });
+
+    const { type, message } = notificationInfo;
+
+    if (!!message && message !== this.props.notificationInfo.message) {
+      notification[type]({ message: type.toUpperCase(), description: message });
     }
   }
 
@@ -413,7 +416,7 @@ const mapStateToProps = () =>
     userSuggestions: selectors.getUserSuggestions(),
     liasion: selectors.getLiaison(),
     members: selectors.getMembers(),
-    error: selectors.getError(),
+    notificationInfo: selectors.getNotification(),
     memberLoading: selectors.isMemberLoading(),
     provisioning: selectors.getProvisioning(),
     manageLoading: selectors.getManageLoading(),
