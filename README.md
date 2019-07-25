@@ -33,6 +33,10 @@ $ make itest-init
 - In another terminal tab, run `npm i` which will install the npm dependencies
 - Run `npm start` which will spin up the UI
 - Once the UI has started you can start editing and the UI will refresh based on your changes
+- To run the UI in browsers, you need to run browsers without CORS. To run the UI
+  in chrome browser, you need to run chrome using the command below:
+  `open -n -a /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --args --user-data-dir="/tmp/chrome_dev_test" --disable-web-security`
+  in safari browser, go to developer settings, and check `Disable cross-origin restrictions`.
 
 ## Heimdali API
 
