@@ -1,3 +1,8 @@
+## 1.6.3
+
+- Add extra error handling to controllers. 2487c8dd2c83504e91174df7492b4a609ea70878
+- Lowercase usernames when creating home directories. 2ef1e422b8c35583a6317814ece5e9c6cfee8100
+
 ## 1.6.2
 
 ### Bug Fixes
