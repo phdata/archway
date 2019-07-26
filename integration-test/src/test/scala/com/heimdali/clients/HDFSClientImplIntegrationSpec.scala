@@ -57,6 +57,15 @@ class HDFSClientImplIntegrationSpec
     elevatedFS.delete(new Path(userDirLocation), true)
   }
 
+  it should "lowercase a user name when creating a user directory" in new Context {
+    val result =
+      client.createUserDirectory(testUserName.toUpperCase).unsafeRunSync()
+
+    result.toUri.getPath shouldBe userDirLocation
+    elevatedFS.exists(new Path(userDirLocation)) shouldBe true
+    elevatedFS.getFileStatus(new Path(userDirLocation)).getOwner shouldBe testUserName
+    elevatedFS.delete(new Path(userDirLocation), true)
+  }
   it should "create a hive owned directory" in new Context {
     val result =
       client.createHiveDirectory(hiveDirLocation).unsafeRunSync()
