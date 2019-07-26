@@ -6,6 +6,7 @@ import com.heimdali.AppContext
 import com.heimdali.models.{Token, User}
 import com.heimdali.rest.authentication.{AuthService, TokenAuthService}
 import com.heimdali.services.AccountService
+import com.typesafe.scalalogging.LazyLogging
 import io.circe.syntax._
 import org.http4s._
 import org.http4s.dsl.Http4sDsl
@@ -15,7 +16,7 @@ class AccountController[F[_]: Sync](
     tokenAuthService: TokenAuthService[F],
     accountService: AccountService[F],
     appContext: AppContext[F]
-) extends Http4sDsl[F] {
+) extends Http4sDsl[F] with LazyLogging {
 
   val clientAuthRoutes: HttpRoutes[F] =
     authService.clientAuth {
