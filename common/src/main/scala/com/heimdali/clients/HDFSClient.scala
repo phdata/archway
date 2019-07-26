@@ -65,7 +65,8 @@ class HDFSClientImpl[F[_]: Async](hadoopConfiguration: Configuration, loginConte
     }
 
   override def createUserDirectory(userName: String): F[Path] = {
-    val path = s"/user/$userName"
+    val lowerUsername = userName.toLowerCase
+    val path = s"/user/$lowerUsername"
 
     loginContextProvider.elevate("hdfs") { () =>
       if (fileSystem.exists(path)) {
@@ -74,7 +75,7 @@ class HDFSClientImpl[F[_]: Async](hadoopConfiguration: Configuration, loginConte
         logger.info(s"Creating user directory with path: $path")
 
         val createdPath = createHDFSDirectory(path)
-        fileSystem.setOwner(createdPath, userName, userName)
+        fileSystem.setOwner(createdPath, lowerUsername, lowerUsername)
         createdPath
       }
     }
