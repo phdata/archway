@@ -18,19 +18,21 @@ trait KafkaClient[F[_]] {
 
 class KafkaClientImpl[F[_]: Sync](appConfig: AppConfig) extends KafkaClient[F] with LazyLogging {
 
-  val sessionTimeOutInMs = 15 * 1000; // 15 secs
-  val connectionTimeOutInMs = 10 * 1000; // 10 secs
+  val SESSION_TIMEOUT_MS = 15 * 1000; // 15 secs
+  val CONNECTION_TIMEOUT_MS = 10 * 1000; // 10 secs
+  val MIN_REPLICATION_FACTOR = 3
   val zkClient = new ZkClient(
     appConfig.kafka.zookeeperConnect,
-    sessionTimeOutInMs,
-    connectionTimeOutInMs,
+    SESSION_TIMEOUT_MS,
+    CONNECTION_TIMEOUT_MS,
     ZKStringSerializer$.MODULE$
   )
   val zkUtils = new ZkUtils(zkClient, new ZkConnection(appConfig.kafka.zookeeperConnect), false)
 
   override def createTopic(name: String, partitions: Int, replicationFactor: Int): F[Unit] = {
     logger.warn("creating {} via {}", name, zkUtils)
-    Sync[F].delay(AdminUtils.createTopic(zkUtils, name, partitions, replicationFactor))
+    val computedReplicationFactor = Math.max(replicationFactor, MIN_REPLICATION_FACTOR)
+    Sync[F].delay(AdminUtils.createTopic(zkUtils, name, partitions, computedReplicationFactor))
   }
 
   override def deleteTopic(name: String): F[Unit] =

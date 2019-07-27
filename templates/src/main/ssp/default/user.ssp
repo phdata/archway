@@ -52,7 +52,7 @@
     {
       "name" : "${template.generatedName}.default",
       "partitions" : 1,
-      "replication_factor" : 1,
+      "replication_factor" : 3,
       "managing_role" : {
         "name" : "${template.generatedName}.default",
         "group" : {
