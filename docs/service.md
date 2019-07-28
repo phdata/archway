@@ -117,13 +117,6 @@ Version: 1.3.13
 - Required: false
 - Default:
 
-**heimdali.workspaces.user.root**
-
-- Label: User HDFS Path
-- Description: The HDFS location for users
-- Required: true
-- Default: /user
-
 **heimdali.workspaces.user.defaultSize**
 
 - Label: Default User Workspace Quota Size
@@ -151,13 +144,6 @@ Version: 1.3.13
 - Description: Default parent pools for user workspaces (eg. "root")
 - Required: true
 - Default: root.users
-
-**heimdali.workspaces.sharedWorkspace.root**
-
-- Label: Shared Workspace HDFS Path
-- Description: The HDFS location for shared workspaces
-- Required: true
-- Default: /data/shared_workspace
 
 **heimdali.workspaces.sharedWorkspace.defaultSize**
 
