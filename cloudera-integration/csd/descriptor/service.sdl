@@ -470,7 +470,7 @@
         {
           "name": "heimdali.ldap.baseDN",
           "label": "Base DN",
-          "description": "The base DN Heimdali will manage",
+          "description": "The base DN for user search when authenticating users to Heimdali",
           "required": "true",
           "type": "string",
           "configurableInWizard": "true"
@@ -494,7 +494,7 @@
         {
           "name": "heimdali.ldap.groupPath",
           "label": "Group DN",
-          "description": "The LDAP location for groups",
+          "description": "The LDAP location for groups. Groups needed for Sentry access control will be created in the DN",
           "required": "true",
           "type": "string",
           "configurableInWizard": "true"
@@ -615,6 +615,7 @@
           "name": "heimdali.java.truststore.location",
           "label": "Java truststore location",
           "description": "Java truststore location",
+          "configurableInWizard": "true",
           "required": "false",
           "type": "string"
         },
@@ -622,6 +623,7 @@
           "name": "heimdali.java.truststore.password",
           "label": "Java truststore password",
           "description": "Password for the Java truststore",
+          "configurableInWizard": "true",
           "required": "false",
           "type": "password"
         },
@@ -638,6 +640,7 @@
           "label": "Workspace template root directory",
           "description": "Workspace template root directory",
           "required": "true",
+          "configurableInWizard": "true",
           "type": "string"
         },
         {
