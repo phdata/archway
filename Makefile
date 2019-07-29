@@ -74,6 +74,9 @@ validate-version: .make.validate-version
 ship: validate-version
 	./publish.sh ship
 
+dependencies:
+	sbt dependencyUpdates
+
 clean:
 	sbt clean 
 	rm -rf dist
