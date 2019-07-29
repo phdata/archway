@@ -16,6 +16,13 @@ import scala.util.{Failure, Success, Try}
 class LDAPClientImpl[F[_]: Effect](ldapConfig: LDAPConfig, binding: LDAPConfig => LDAPBinding)
     extends LDAPClient[F] with LazyLogging {
 
+  // Enable unbound debug logging at application debug level. https://docs.ldap.com/ldap-sdk/docs/getting-started/debug.html
+  private val UNBOUND_DEBUG_LOGGING_PROPERTY = "com.unboundid.ldap.sdk.debug.enabled"
+  if (logger.underlying.isDebugEnabled) {
+    logger.debug(s"Enabling unbound logging $UNBOUND_DEBUG_LOGGING_PROPERTY")
+    System.setProperty(UNBOUND_DEBUG_LOGGING_PROPERTY, "true")
+  }
+
   val templateEngine: TemplateEngine = new TemplateEngine()
   val filterTemplate: Template = templateEngine.compileText("mustache", ldapConfig.filterTemplate)
   val displayTemplate: Template = templateEngine.compileText("mustache", ldapConfig.memberDisplayTemplate)
