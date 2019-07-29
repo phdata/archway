@@ -13,6 +13,7 @@ import {
   createWorkspaceFailure,
 } from './actions';
 import { PAGE_BEHAVIOR, PAGE_DETAILS, PAGE_COMPLIANCE, PAGE_REVIEW, PAGE_CUSTOM_WORKSPACES } from './constants';
+import { escapeDoubleQuotes } from '../../service/string';
 
 /* tslint:disable:no-var-requires */
 const router = require('connected-react-router/immutable');
@@ -55,6 +56,9 @@ function* nextPageListener() {
       const token = yield select((s: any) => s.get('login').get('token'));
       const requestType = yield select((s: any) => s.get('request').get('behavior'));
       const template = yield select((s: any) => s.get('request').get('template'));
+      ['name', 'description', 'summary'].map(
+        item => (request[item] = escapeDoubleQuotes(JSON.stringify(request[item])))
+      );
       const workspaceRequest = Object.assign({}, template, request);
       const workspace = yield call(Api.processTemplate, token, requestType, workspaceRequest);
       yield put(setWorkspace(workspace));
