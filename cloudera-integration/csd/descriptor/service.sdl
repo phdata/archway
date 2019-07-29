@@ -422,7 +422,7 @@
           "label": "Provisioning LDAP Port",
           "description": "The LDAP/AD port the 'provisioning' LDAP connection",
           "required": "true",
-          "type": "port",
+          "type": "long",
           "default": 389,
           "configurableInWizard": "true"
         },
@@ -455,7 +455,7 @@
           "label": "Lookup LDAP Port",
           "description": "The LDAP/AD port for the 'lookup' LDAP connection. This should usually be set to the same value as the corresponding 'provisioning' value",
           "required": "true",
-          "type": "port",
+          "type": "long",
           "default": 389,
           "configurableInWizard": "true"
         },
