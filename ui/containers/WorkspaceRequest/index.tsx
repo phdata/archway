@@ -11,7 +11,7 @@ import { RequestInput } from '../../models/RequestInput';
 import { Workspace } from '../../models/Workspace';
 import { Profile } from '../../models/Profile';
 import { FeatureService } from '../../service/FeatureService';
-import { FeatureFlagType } from '../../constants';
+import { FeatureFlagType, NotificationType } from '../../constants';
 
 interface Props {
   profile: Profile;
@@ -49,7 +49,7 @@ class WorkspaceRequest extends React.Component<Props> {
   }
 
   public showFailedNotification(error: string) {
-    notification.open({
+    notification[NotificationType.Error]({
       message: 'Failed to create workspace',
       description: `The request to create a personal workspace failed due to the following error: ${error}`,
     });

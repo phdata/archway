@@ -10,6 +10,7 @@ import {
   CREATE_WORKSPACE_FAILURE,
   SET_ADVANCED_VISIBLE,
   CLEAR_REQUEST,
+  CLEAR_ERROR,
 } from './actions';
 import { PAGE_BEHAVIOR } from './constants';
 
@@ -59,6 +60,9 @@ const request = (state = initialState, action: any) => {
 
     case CLEAR_REQUEST:
       return initialState;
+
+    case CLEAR_ERROR:
+      return state.set('error', '');
 
     default:
       return state;

@@ -11,6 +11,7 @@ import {
   GOTO_PREV_PAGE,
   createWorkspaceRequest,
   createWorkspaceFailure,
+  clearError,
 } from './actions';
 import { PAGE_BEHAVIOR, PAGE_DETAILS, PAGE_COMPLIANCE, PAGE_REVIEW, PAGE_CUSTOM_WORKSPACES } from './constants';
 import { escapeDoubleQuotes } from '../../service/string';
@@ -60,10 +61,15 @@ function* nextPageListener() {
         item => (request[item] = escapeDoubleQuotes(JSON.stringify(request[item])))
       );
       const workspaceRequest = Object.assign({}, template, request);
-      const workspace = yield call(Api.processTemplate, token, requestType, workspaceRequest);
-      yield put(setWorkspace(workspace));
-      yield put(setLoading(false));
-      yield put(setCurrentPage(PAGE_REVIEW));
+      try {
+        const workspace = yield call(Api.processTemplate, token, requestType, workspaceRequest);
+        yield put(setWorkspace(workspace));
+        yield put(setLoading(false));
+        yield put(setCurrentPage(PAGE_REVIEW));
+      } catch (e) {
+        yield put(createWorkspaceFailure(e.toString()));
+        yield put(clearError());
+      }
     }
   } else if (currentPage === PAGE_REVIEW) {
     const token = yield select((s: any) => s.get('login').get('token'));
@@ -75,6 +81,7 @@ function* nextPageListener() {
       yield put(clearRequest());
     } catch (e) {
       yield put(createWorkspaceFailure(e.toString()));
+      yield put(clearError());
     }
   }
 }
