@@ -1,6 +1,6 @@
 ## 1.6.4
 
-- Fix error when requesting workspaces with special characters in descriptions. 220800ea3dbe592fee9f49b8611b2bc8994f2314
+- Fix error when requesting workspaces with special characters in workspace requests. 220800ea3dbe592fee9f49b8611b2bc8994f2314
 
 ## 1.6.3
 
