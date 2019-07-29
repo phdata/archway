@@ -34,8 +34,9 @@ const Main = ({ version }: Props) => (
           </Switch>
         </div>
       </Content>
+
       <Footer style={{ textAlign: 'center' }}>
-        Heimdali &copy;2018 Created by phData
+        Heimdali &copy; {new Date().getFullYear()} Created by phData
         <br />
         {!!version && `Version ${version}`}
       </Footer>
