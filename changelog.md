@@ -1,3 +1,7 @@
+## 1.6.4
+
+- Fix error when requesting workspaces with special characters in descriptions. 220800ea3dbe592fee9f49b8611b2bc8994f2314
+
 ## 1.6.3
 
 - Add extra error handling to controllers. 2487c8dd2c83504e91174df7492b4a609ea70878
