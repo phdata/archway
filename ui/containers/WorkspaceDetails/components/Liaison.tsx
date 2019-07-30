@@ -11,7 +11,7 @@ const Liaison = ({ data }: Props) =>
   data ? (
     <div style={{ display: 'flex', alignItems: 'center' }}>
       <div style={{ textTransform: 'uppercase', textAlign: 'right', marginRight: 8 }}>
-        <div style={{ fontSize: 18, fontWeight: 300 }}>LIAISON</div>
+        <div style={{ fontSize: 18, fontWeight: 300 }}>OWNER</div>
         <a href={`mailto:${data.email}`} style={{ color: Colors.Green.string(), textTransform: 'uppercase' }}>
           {data.name}
         </a>
