@@ -46,7 +46,7 @@ class WorkspaceControllerSpec
   }
 
   it should "list all members" in new Http4sClientDsl[IO] with Context {
-    memberService.members _ expects id returning IO.pure(List(WorkspaceMemberEntry(standardUserDN, "John Doe", Some("johndoe@email.com"), List.empty, List.empty, List.empty, List.empty)))
+    memberService.members _ expects id returning IO.pure(List(WorkspaceMemberEntry(standardUserDN.value, "John Doe", Some("johndoe@email.com"), List.empty, List.empty, List.empty, List.empty)))
 
     val response = restApi.route.orNotFound.run(GET(Uri.uri("/123/members")).unsafeRunSync())
     val Right(json) = parse(
@@ -92,11 +92,11 @@ class WorkspaceControllerSpec
   }
 
   it should "add a user" in new Http4sClientDsl[IO] with Context {
-    val memberRequest = MemberRoleRequest(standardUserDN, "data", id, Some(Manager))
+    val memberRequest = MemberRoleRequest(standardUserDN.value, "data", id, Some(Manager))
     (memberService.addMember _)
       .expects(id, memberRequest)
       .returning(OptionT.some(
-        WorkspaceMemberEntry(standardUserDN, name, Some("johndoe@phdata.io"), List.empty, List.empty, List.empty, List.empty)
+        WorkspaceMemberEntry(standardUserDN.value, name, Some("johndoe@phdata.io"), List.empty, List.empty, List.empty, List.empty)
       ))
     (emailService.newMemberEmail _).expects(id, memberRequest).returning(OptionT.some(IO.unit))
 
@@ -112,7 +112,7 @@ class WorkspaceControllerSpec
   }
 
   it should "return status 500 if adding member fails" in new Http4sClientDsl[IO] with Context {
-    val memberRequest = MemberRoleRequest(standardUserDN, "data", id, Some(Manager))
+    val memberRequest = MemberRoleRequest(standardUserDN.value, "data", id, Some(Manager))
 
     (memberService.addMember _).expects(id, memberRequest).returning(OptionT.none)
     (emailService.newMemberEmail _).expects(id, memberRequest).returning(OptionT.some(IO.unit))

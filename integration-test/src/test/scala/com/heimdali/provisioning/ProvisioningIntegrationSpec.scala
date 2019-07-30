@@ -10,7 +10,7 @@ import cats.effect.{ContextShift, IO, Timer}
 import com.heimdali.itest.fixtures._
 import cats.implicits._
 import com.heimdali.config.TemplateNames
-import com.heimdali.models.{Compliance, TemplateRequest}
+import com.heimdali.models.{Compliance, TemplateRequest, UserDN}
 import com.heimdali.services.{DBConfigService, JSONTemplateService, WorkspaceServiceImpl}
 import com.heimdali.test.fixtures.TestTimer
 
@@ -28,7 +28,7 @@ class ProvisioningIntegrationSpec extends FlatSpec with KerberosTest {
       "Heimdali simple workspace test",
       commonDescription,
       Compliance.empty,
-      requester)
+      UserDN(requester))
 
     val result = provisionAndDestroyWorkspace(templateRequest, TemplateNames.simple)
 
@@ -42,7 +42,7 @@ class ProvisioningIntegrationSpec extends FlatSpec with KerberosTest {
       "Heimdali user workspace test",
       commonDescription,
       Compliance.empty,
-      requester)
+      UserDN(requester))
 
     val result = provisionAndDestroyWorkspace(templateRequest, TemplateNames.user)
 
@@ -56,7 +56,7 @@ class ProvisioningIntegrationSpec extends FlatSpec with KerberosTest {
       "Heimdali structured workspace test",
       commonDescription,
       Compliance.empty,
-      requester)
+      UserDN(requester))
 
     val result = provisionAndDestroyWorkspace(templateRequest, TemplateNames.structured)
 

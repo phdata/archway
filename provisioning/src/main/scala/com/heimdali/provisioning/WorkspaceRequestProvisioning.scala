@@ -44,7 +44,7 @@ trait WorkspaceRequestProvisioning {
           a <- workspace.data.traverse(a => a.provision[F](workspaceContext).run)
           b <- workspace.data.traverse(
             d =>
-              GroupMember(d.id.get, d.managingGroup.ldapRegistration.distinguishedName, workspace.requestedBy)
+              GroupMember(d.id.get, d.managingGroup.ldapRegistration.distinguishedName, workspace.requestedBy.value)
                 .provision[F](workspaceContext)
                 .run
           )
@@ -52,7 +52,9 @@ trait WorkspaceRequestProvisioning {
           d <- workspace.applications.traverse(_.provision[F](workspaceContext).run)
           e <- workspace.applications.traverse(
             d =>
-              GroupMember(d.id.get, d.group.distinguishedName, workspace.requestedBy).provision[F](workspaceContext).run
+              GroupMember(d.id.get, d.group.distinguishedName, workspace.requestedBy.value)
+                .provision[F](workspaceContext)
+                .run
           )
           f <- workspaceContext.context.featureService.runIfEnabled(
             AvailableFeatures.messaging,
@@ -60,11 +62,11 @@ trait WorkspaceRequestProvisioning {
             kafkaTopicsNotEnabledMessage)
           g <- workspaceContext.context.featureService.runIfEnabled(
             AvailableFeatures.messaging,
-            (workspace.kafkaTopics.traverse(
+            workspace.kafkaTopics.traverse(
               d =>
-                GroupMember(d.id.get, d.managingRole.ldapRegistration.distinguishedName, workspace.requestedBy)
+                GroupMember(d.id.get, d.managingRole.ldapRegistration.distinguishedName, workspace.requestedBy.value)
                   .provision[F](workspaceContext)
-                  .run)),
+                  .run),
             kafkaTopicsNotEnabledMessage
           )
           _ <- ImpalaService.invalidateMetadata(workspace.id.get)(workspaceContext.context)
@@ -78,20 +80,22 @@ trait WorkspaceRequestProvisioning {
       for {
         g <- workspace.kafkaTopics.traverse(
           d =>
-            GroupMember(d.id.get, d.managingRole.ldapRegistration.distinguishedName, workspace.requestedBy)
+            GroupMember(d.id.get, d.managingRole.ldapRegistration.distinguishedName, workspace.requestedBy.value)
               .deprovision[F](workspaceContext)
               .run
         )
         f <- workspace.kafkaTopics.traverse(_.deprovision[F](workspaceContext).run)
         e <- workspace.applications.traverse(
           d =>
-            GroupMember(d.id.get, d.group.distinguishedName, workspace.requestedBy).deprovision[F](workspaceContext).run
+            GroupMember(d.id.get, d.group.distinguishedName, workspace.requestedBy.value)
+              .deprovision[F](workspaceContext)
+              .run
         )
         d <- workspace.applications.traverse(_.deprovision[F](workspaceContext).run)
         c <- workspace.processing.traverse(_.deprovision[F](workspaceContext).run)
         b <- workspace.data.traverse(
           d =>
-            GroupMember(d.id.get, d.managingGroup.ldapRegistration.distinguishedName, workspace.requestedBy)
+            GroupMember(d.id.get, d.managingGroup.ldapRegistration.distinguishedName, workspace.requestedBy.value)
               .deprovision[F](workspaceContext)
               .run
         )

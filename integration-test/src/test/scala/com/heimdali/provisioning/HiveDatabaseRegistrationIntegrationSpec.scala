@@ -7,7 +7,7 @@ import cats.effect.{ContextShift, IO, Resource}
 import com.heimdali.AppContext
 import com.heimdali.clients.HiveClientImpl
 import com.heimdali.itest.fixtures.{HiveTest, IntegrationTest, KerberosTest}
-import com.heimdali.models.{Compliance, Metadata, WorkspaceRequest}
+import com.heimdali.models.{Compliance, Metadata, UserDN, WorkspaceRequest}
 import com.heimdali.services.UGILoginContextProvider
 import com.heimdali.test.fixtures.{AppContextProvider, TestTimer}
 import com.typesafe.config.ConfigFactory
@@ -60,7 +60,7 @@ class HiveDatabaseRegistrationIntegrationSpec
       "workspace_summary",
       "workspace_description",
       "workspace_behavior",
-      "workspace_requestor",
+      UserDN("cn=john.doe,ou=hadoop,dc=example,dc=com"),
       new TestTimer().instant,
       new Compliance(false, false, false),
       false,

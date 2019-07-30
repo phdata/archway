@@ -21,6 +21,7 @@ class KafkaClientImpl[F[_]: Sync](appConfig: AppConfig) extends KafkaClient[F] w
   val SESSION_TIMEOUT_MS = 15 * 1000; // 15 secs
   val CONNECTION_TIMEOUT_MS = 10 * 1000; // 10 secs
   val MIN_REPLICATION_FACTOR = 3
+
   val zkClient = new ZkClient(
     appConfig.kafka.zookeeperConnect,
     SESSION_TIMEOUT_MS,

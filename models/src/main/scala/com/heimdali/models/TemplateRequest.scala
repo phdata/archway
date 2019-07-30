@@ -7,7 +7,7 @@ case class TemplateRequest(
     summary: String,
     description: String,
     compliance: Compliance,
-    requester: String
+    requester: UserDN
 ) {
   val generatedName: String = TemplateRequest.generateName(name)
 }

@@ -106,8 +106,8 @@ class DefaultProvisioningServiceSpec
       }
 
       inSequence {
-        context.provisioningLDAPClient.addUser _ expects(savedLDAP.distinguishedName, standardUserDN) returning OptionT.some(standardUserDN)
-        context.memberRepository.complete _ expects(id, standardUserDN) returning 0.pure[ConnectionIO]
+        context.provisioningLDAPClient.addUser _ expects(savedLDAP.distinguishedName, standardUserDN.value) returning OptionT.some(standardUserDN.value)
+        context.memberRepository.complete _ expects(id, standardUserDN.value) returning 0.pure[ConnectionIO]
       }
 
       inSequence {
@@ -127,8 +127,8 @@ class DefaultProvisioningServiceSpec
       }
 
       inSequence {
-        context.provisioningLDAPClient.addUser _ expects(savedLDAP.distinguishedName, standardUserDN) returning OptionT.some(standardUserDN)
-        context.memberRepository.complete _ expects(id, standardUserDN) returning 0.pure[ConnectionIO]
+        context.provisioningLDAPClient.addUser _ expects(savedLDAP.distinguishedName, standardUserDN.value) returning OptionT.some(standardUserDN.value)
+        context.memberRepository.complete _ expects(id, standardUserDN.value) returning 0.pure[ConnectionIO]
       }
 
       context.workspaceRequestRepository.markProvisioned _ expects(id, *) returning 0.pure[ConnectionIO]
@@ -145,17 +145,17 @@ class DefaultProvisioningServiceSpec
 
   it should "deprovision a workspace" in new Context {
     inSequence {
-      context.provisioningLDAPClient.removeUser _ expects(savedLDAP.distinguishedName, standardUserDN) returning OptionT.some(standardUserDN)
+      context.provisioningLDAPClient.removeUser _ expects(savedLDAP.distinguishedName, standardUserDN.value) returning OptionT.some(standardUserDN.value)
 
       inSequence {
         context.sentryClient.removePrivilege _ expects(*, *, *) returning IO.unit
         context.sentryClient.revokeGroup _ expects(savedLDAP.commonName, savedLDAP.sentryRole) returning IO.unit
         context.sentryClient.dropRole _ expects savedLDAP.sentryRole returning IO.unit
-        context.provisioningLDAPClient.deleteGroup _ expects savedLDAP.commonName returning OptionT.some(standardUserDN)
+        context.provisioningLDAPClient.deleteGroup _ expects savedLDAP.commonName returning OptionT.some(standardUserDN.value)
       }
 
       context.yarnClient.deletePool _ expects poolName returning IO.unit
-      context.provisioningLDAPClient.removeUser _ expects(savedLDAP.distinguishedName, standardUserDN) returning OptionT.some(standardUserDN)
+      context.provisioningLDAPClient.removeUser _ expects(savedLDAP.distinguishedName, standardUserDN.value) returning OptionT.some(standardUserDN.value)
 
       inSequence {
         context.sentryClient.removeAccessToLocation _ expects(savedHive.location, savedLDAP.sentryRole) returning IO.unit
@@ -163,13 +163,13 @@ class DefaultProvisioningServiceSpec
         context.sentryClient.revokeGroup _ expects(savedLDAP.commonName, savedLDAP.sentryRole) returning IO.unit
 
         context.sentryClient.dropRole _ expects savedLDAP.sentryRole returning IO.unit
-        context.provisioningLDAPClient.deleteGroup _ expects savedLDAP.commonName returning OptionT.some(standardUserDN)
+        context.provisioningLDAPClient.deleteGroup _ expects savedLDAP.commonName returning OptionT.some(standardUserDN.value)
         context.sentryClient.removeAccessToLocation _ expects(savedHive.location, savedLDAP.sentryRole) returning IO.unit
         context.sentryClient.removeAccessToDB _ expects(savedHive.name, savedLDAP.sentryRole, Manager) returning IO.unit
         context.sentryClient.revokeGroup _ expects(savedLDAP.commonName, savedLDAP.sentryRole) returning IO.unit
 
         context.sentryClient.dropRole _ expects savedLDAP.sentryRole returning IO.unit
-        context.provisioningLDAPClient.deleteGroup _ expects savedLDAP.commonName returning OptionT.some(standardUserDN)
+        context.provisioningLDAPClient.deleteGroup _ expects savedLDAP.commonName returning OptionT.some(standardUserDN.value)
         context.hiveClient.dropDatabase _ expects savedHive.name returning IO(1)
         context.hdfsClient.removeQuota _ expects savedHive.location returning IO.pure(HDFSAllocation(savedHive.location, savedHive.sizeInGB))
       }

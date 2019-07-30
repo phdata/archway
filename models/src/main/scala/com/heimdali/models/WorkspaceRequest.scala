@@ -20,12 +20,31 @@ object Metadata {
   implicit val metadataDecoder: Decoder[Metadata] = deriveDecoder[Metadata]
 }
 
+case class UserDN(value: String) {
+  assert(value.toLowerCase.contains("cn="))
+
+  override def toString: String = value
+}
+
+object UserDN {
+  implicit val encoder: Encoder[UserDN] =
+    Encoder.instance { userDN =>
+      Json.fromString(userDN.value)
+    }
+
+  implicit val decoder: Decoder[UserDN] = Decoder.instance { cursor =>
+    for {
+      value <- cursor.value.as[String]
+    } yield (UserDN(value))
+  }
+}
+
 case class WorkspaceRequest(
     name: String,
     summary: String,
     description: String,
     behavior: String,
-    requestedBy: String,
+    requestedBy: UserDN,
     requestDate: Instant,
     compliance: Compliance,
     singleUser: Boolean,
@@ -71,7 +90,7 @@ object WorkspaceRequest {
     )((initial, approvals) => initial deepMerge Json.obj("approvals" -> approvals.asJson))
   }
 
-  implicit def decoder(userDN: String, instant: Instant): Decoder[WorkspaceRequest] = Decoder.instance { json =>
+  implicit def decoder(userDN: UserDN, instant: Instant): Decoder[WorkspaceRequest] = Decoder.instance { json =>
     for {
       name <- json.downField("name").as[String]
       summary <- json.downField("summary").as[String]

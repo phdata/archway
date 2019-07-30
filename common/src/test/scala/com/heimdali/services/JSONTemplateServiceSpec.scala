@@ -1,7 +1,7 @@
 package com.heimdali.services
 
 import cats.effect._
-import com.heimdali.models.TemplateRequest
+import com.heimdali.models.{TemplateRequest, UserDN}
 import com.heimdali.test.fixtures._
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FlatSpec, Matchers}
@@ -28,9 +28,9 @@ class JSONTemplateServiceSpec extends FlatSpec with Matchers with MockFactory wi
     val context = genMockContext()
     val configService: ConfigService[IO] = new TestConfigService()
     val generator = new JSONTemplateService[IO](context, configService)
-    val template = TemplateRequest(name, purpose, purpose, initialCompliance, crazyDN)
+    val template = TemplateRequest(name, purpose, purpose, initialCompliance, UserDN(crazyDN))
     val result = generator.workspaceFor(template, "user").unsafeRunSync()
-    result.requestedBy shouldBe crazyDN
+    result.requestedBy.value shouldBe crazyDN
   }
 
 }

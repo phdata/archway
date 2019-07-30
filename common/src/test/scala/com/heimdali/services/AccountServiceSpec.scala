@@ -6,7 +6,7 @@ import cats.implicits._
 import com.heimdali.AppContext
 import com.heimdali.clients.LDAPUser
 import com.heimdali.config.ApprovalConfig
-import com.heimdali.models.TemplateRequest
+import com.heimdali.models.{TemplateRequest, UserDN}
 import com.heimdali.provisioning.{Message, SimpleMessage}
 import com.heimdali.test.fixtures._
 import io.circe.Json
@@ -112,7 +112,7 @@ class AccountServiceSpec extends FlatSpec with MockFactory with Matchers with Ap
   }
 
   it should "save and create a workspace" in new Context {
-    val templateRequest = TemplateRequest(infraApproverUser.username, infraApproverUser.username, infraApproverUser.username, initialCompliance, infraApproverUser.distinguishedName)
+    val templateRequest = TemplateRequest(infraApproverUser.username, infraApproverUser.username, infraApproverUser.username, initialCompliance, UserDN(infraApproverUser.distinguishedName))
     templateService.defaults _ expects infraApproverUser returning templateRequest.pure[IO]
     templateService.workspaceFor _ expects(templateRequest, "user") returning initialWorkspaceRequest.pure[IO]
     workspaceService.findByUsername _ expects standardUsername returning OptionT.none
@@ -130,7 +130,7 @@ class AccountServiceSpec extends FlatSpec with MockFactory with Matchers with Ap
     implicit val timer: Timer[IO] = testTimer
     val (name, wrongUsername, username, actualPassword, wrongPassword) = ("Dude Doe", "user", "username", "password", "passw0rd")
     val secret = "abc"
-    val ldapUser = LDAPUser(personName, standardUsername, standardUserDN, Seq("cn=foo,dc=jotunn,dc=io"), Some("dude@email.com"))
+    val ldapUser = LDAPUser(personName, standardUsername, standardUserDN.value, Seq("cn=foo,dc=jotunn,dc=io"), Some("dude@email.com"))
 
     val workspaceService = mock[WorkspaceService[IO]]
     val provisioningService = mock[ProvisioningService[IO]]

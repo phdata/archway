@@ -4,6 +4,7 @@ import cats.data.OptionT
 import cats.effect.{Effect, Sync}
 import cats.implicits._
 import com.heimdali.config._
+import com.heimdali.models.UserDN
 import com.heimdali.services.{MemberSearchResult, MemberSearchResultItem}
 import com.typesafe.scalalogging.LazyLogging
 import com.unboundid.ldap.sdk._
@@ -89,8 +90,8 @@ class LDAPClientImpl[F[_]: Effect](ldapConfig: LDAPConfig, binding: LDAPConfig =
       )
     )
 
-  override def findUser(distinguishedName: String): OptionT[F, LDAPUser] =
-    getEntry(distinguishedName).map(ldapUser)
+  override def findUser(distinguishedName: UserDN): OptionT[F, LDAPUser] =
+    getEntry(distinguishedName.value).map(ldapUser)
 
   override def validateUser(username: String, password: String): OptionT[F, LDAPUser] =
     for {

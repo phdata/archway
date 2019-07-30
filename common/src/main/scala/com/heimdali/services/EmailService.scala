@@ -4,7 +4,7 @@ import cats.data._
 import cats.effect._
 import cats.implicits._
 import com.heimdali.AppContext
-import com.heimdali.models.{MemberRoleRequest, WorkspaceRequest}
+import com.heimdali.models.{MemberRoleRequest, UserDN, WorkspaceRequest}
 import com.typesafe.scalalogging.LazyLogging
 import org.fusesource.scalate.TemplateEngine
 
@@ -25,7 +25,7 @@ class EmailServiceImpl[F[_]: Effect](context: AppContext[F], workspaceService: W
     for {
       workspace <- workspaceService.find(workspaceId)
       fromAddress = context.appConfig.smtp.fromEmail
-      to <- context.lookupLDAPClient.findUser(memberRoleRequest.distinguishedName)
+      to <- context.lookupLDAPClient.findUser(UserDN(memberRoleRequest.distinguishedName))
       toAddress <- OptionT(Effect[F].pure(to.email))
       values = Map(
         "roleName" -> memberRoleRequest.role.get.show,

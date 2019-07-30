@@ -8,7 +8,7 @@ import cats.effect._
 import cats.effect.implicits._
 import cats.implicits._
 import com.heimdali.AppContext
-import com.heimdali.models.{Compliance, TemplateRequest, User, WorkspaceRequest}
+import com.heimdali.models.{Compliance, TemplateRequest, User, UserDN, WorkspaceRequest}
 import com.typesafe.scalalogging.LazyLogging
 import org.fusesource.scalate.TemplateEngine
 
@@ -20,7 +20,7 @@ class JSONTemplateService[F[_]: Effect: Clock](context: AppContext[F], configSer
   val templateEngine = new TemplateEngine()
 
   override def defaults(user: User): F[TemplateRequest] =
-    TemplateRequest(user.username, user.name, user.name, Compliance.empty, user.distinguishedName).pure[F]
+    TemplateRequest(user.username, user.name, user.name, Compliance.empty, UserDN(user.distinguishedName)).pure[F]
 
   private[services] def generateJSON(template: TemplateRequest, templatePath: String, templateName: String): F[String] =
     Sync[F].delay {
@@ -32,7 +32,7 @@ class JSONTemplateService[F[_]: Effect: Clock](context: AppContext[F], configSer
           "appConfig" -> context.appConfig,
           "nextGid" -> (() => configService.getAndSetNextGid.toIO.unsafeRunSync()),
           "template" -> template
-            .copy(requester = template.requester.replace("""\""", """\\""")) // Handle backslash in a user DN
+            .copy(requester = UserDN(template.requester.value.replace("""\""", """\\"""))) // Handle backslash in a user DN
         )
       )
     }
@@ -64,7 +64,8 @@ class JSONTemplateService[F[_]: Effect: Clock](context: AppContext[F], configSer
         .sorted
 
       // creating empty object because it is not needed only required
-      val templateRequest: TemplateRequest = TemplateRequest("", "", "", Compliance(false, false, false), "")
+      val templateRequest: TemplateRequest =
+        TemplateRequest("", "", "", Compliance(false, false, false), UserDN("cn=admin,ou=heimdali,dc=io"))
 
       customTemplates.traverse[F, WorkspaceRequest] { templatePath =>
         generateWorkspaceRequest(templateRequest, templatePath, extractTemplateName(templatePath))
@@ -94,10 +95,22 @@ class JSONTemplateService[F[_]: Effect: Clock](context: AppContext[F], configSer
     val defaultCompliance = Compliance(false, false, false)
 
     val simpleTemplateRequest =
-      TemplateRequest("simple", "simple-summary", "simple-description", defaultCompliance, "heimdali")
-    val userTemplateRequest = TemplateRequest("user", "user-summary", "user-description", defaultCompliance, "heimdali")
+      TemplateRequest("simple",
+                      "simple-summary",
+                      "simple-description",
+                      defaultCompliance,
+                      UserDN("cn=admin,ou=heimdali,dc=io"))
+    val userTemplateRequest = TemplateRequest("user",
+                                              "user-summary",
+                                              "user-description",
+                                              defaultCompliance,
+                                              UserDN("cn=admin,ou=heimdali,dc=io"))
     val structuredTemplateRequest =
-      TemplateRequest("structured", "structured-summary", "structured-description", defaultCompliance, "heimdali")
+      TemplateRequest("structured",
+                      "structured-summary",
+                      "structured-description",
+                      defaultCompliance,
+                      UserDN("cn=admin,ou=heimdali,dc=io"))
 
     val defaultTemplatesRequests = List(simpleTemplateRequest, userTemplateRequest, structuredTemplateRequest)
 

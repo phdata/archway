@@ -1,6 +1,7 @@
 package com.heimdali.clients
 
 import com.heimdali.itest.fixtures.{IntegrationTest, _}
+import com.heimdali.models.UserDN
 import com.heimdali.test.fixtures.defaultLDAPAttributes
 import com.unboundid.ldap.sdk._
 import org.scalatest.mockito.MockitoSugar
@@ -72,7 +73,7 @@ class LDAPClientImplIntegrationSpec
   }
 
   it should "find a user" in {
-    val userDN = s"cn=${systemTestConfig.existingUser},${itestConfig.ldap.userPath.get}"
+    val userDN = UserDN(s"cn=${systemTestConfig.existingUser},${itestConfig.ldap.userPath.get}")
     val maybeUser = lookupClient.findUser(userDN).value.unsafeRunSync()
     println(maybeUser.get)
     maybeUser shouldBe defined

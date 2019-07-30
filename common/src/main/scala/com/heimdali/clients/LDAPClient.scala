@@ -1,8 +1,8 @@
 package com.heimdali.clients
 
 import cats.data.OptionT
+import com.heimdali.models.UserDN
 import com.heimdali.services.MemberSearchResult
-import com.unboundid.ldap.sdk._
 
 sealed trait GroupCreationError
 
@@ -19,7 +19,7 @@ case class LDAPUser(
 )
 
 trait LDAPClient[F[_]] {
-  def findUser(distinguishedName: String): OptionT[F, LDAPUser]
+  def findUser(distinguishedName: UserDN): OptionT[F, LDAPUser]
 
   def validateUser(username: String, password: String): OptionT[F, LDAPUser]
 
