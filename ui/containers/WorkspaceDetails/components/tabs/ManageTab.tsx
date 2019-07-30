@@ -18,7 +18,7 @@ const ManageTab = ({ provisioning, showModal }: Props) => (
           showModal={showModal}
           modalType={ModalType.ProvisionWorkspace}
           buttonText="Provision"
-          disabled={provisioning === ProvisioningType.Pending}
+          disabled={false}
         >
           Provisioning a workspace manually is not necessary under normal circumstances. Automatic provisioning
           scheduled and will automatically re-attempt errored workspaces. This manual provisioning can be used to
