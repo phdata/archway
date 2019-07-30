@@ -97,7 +97,7 @@ class HDFSClientImpl[F[_]: Async](hadoopConfiguration: Configuration, loginConte
 
   override def deleteDirectory(location: String): F[Unit] =
     loginContextProvider.elevate("hdfs") { () =>
-      fileSystem.delete(location)
+      fileSystem.delete(location, true)
     }
 
   override def setQuota(path: String, maxSizeInGB: Double): F[HDFSAllocation] =
@@ -107,10 +107,18 @@ class HDFSClientImpl[F[_]: Async](hadoopConfiguration: Configuration, loginConte
     }
 
   override def getQuota(path: Path): F[Double] =
-    Sync[F].delay {
-      val dec = new DecimalFormat("0.00")
-      dec.format(((fileSystem.getContentSummary(path).getSpaceQuota / 1024.0) / 1024.0) / 1024.0).toDouble
-    }
+    Sync[F]
+      .delay {
+        val dec = new DecimalFormat("0.00")
+        dec.format(((fileSystem.getContentSummary(path).getSpaceQuota / 1024.0) / 1024.0) / 1024.0).toDouble
+      }
+      .recover {
+        case e: Throwable =>
+          val message = s"Failed to get quota for ${path.toString}, returning a default value"
+          logger.warn(message)
+          logger.debug(message, e)
+          0
+      }
 
   override def uploadFile(stream: InputStream, hdfsLocation: String): F[Path] =
     Sync[F].delay {
@@ -122,9 +130,17 @@ class HDFSClientImpl[F[_]: Async](hadoopConfiguration: Configuration, loginConte
     }
 
   override def getConsumption(location: String): F[Double] =
-    loginContextProvider.elevate("hdfs") { () =>
-      ((fileSystem.getContentSummary(new Path(location)).getSpaceConsumed / 1024.0) / 1024.0) / 1024.0
-    }
+    loginContextProvider
+      .elevate("hdfs") { () =>
+        ((fileSystem.getContentSummary(new Path(location)).getSpaceConsumed / 1024.0) / 1024.0) / 1024.0
+      }
+      .recover {
+        case e: Throwable =>
+          val message = s"Failed to get consumption for $location, returning a default value"
+          logger.warn(message)
+          logger.debug(message, e)
+          0
+      }
 
   override def removeQuota(path: String): F[Unit] =
     loginContextProvider
