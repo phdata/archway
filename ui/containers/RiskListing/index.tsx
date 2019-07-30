@@ -5,10 +5,7 @@ import { Dispatch } from 'redux';
 import { createStructuredSelector } from 'reselect';
 import { ListingSearchBar, WorkspaceList } from '../../components';
 import { WorkspaceSearchResult } from '../../models/Workspace';
-import { FeatureService } from '../../service/FeatureService';
-import { FeatureFlagType } from '../../constants';
 import { Filters } from '../../models/Listing';
-import { workspaceBehaviors } from '../../constants';
 import * as actions from './actions';
 import * as selectors from './selectors';
 
@@ -29,18 +26,7 @@ interface Props {
 
 class RiskListing extends React.PureComponent<Props> {
   public componentDidMount() {
-    const {
-      listWorkspaces,
-      updateFilter,
-      filters: { filter, statuses },
-    } = this.props;
-    const featureService = new FeatureService();
-
-    if (!featureService.isEnabled(FeatureFlagType.CustomTemplates) && workspaceBehaviors.includes('custom')) {
-      workspaceBehaviors.splice(workspaceBehaviors.indexOf('custom'), 1);
-      updateFilter(filter, workspaceBehaviors, statuses);
-    }
-    listWorkspaces();
+    this.props.listWorkspaces();
   }
 
   public render() {
@@ -97,10 +83,10 @@ class RiskListing extends React.PureComponent<Props> {
 
 const mapStateToProps = () =>
   createStructuredSelector({
-    fetching: selectors.isFetchingRiskWorkspaces(),
-    workspaceList: selectors.riskWorkspaceList(),
-    listingMode: selectors.getListingMode(),
-    filters: selectors.getListFilters(),
+    fetching: selectors.searchBar.isFetchingWorkspaces(),
+    workspaceList: selectors.searchBar.workspaceList(),
+    listingMode: selectors.searchBar.getListingMode(),
+    filters: selectors.searchBar.getListFilters(),
   });
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({

@@ -36,9 +36,9 @@ import {
 } from '../../models/Workspace';
 import * as actions from './actions';
 import * as selectors from './selectors';
-import { FeatureService } from '../../service/FeatureService';
 import { FeatureFlagType, ProvisioningType, ModalType } from '../../constants';
 import { Provisioning } from '../../components';
+import { getFeatureFlags } from '../../redux/selectors';
 
 interface DetailsRouteProps {
   id: any;
@@ -67,6 +67,7 @@ interface Props extends RouteComponentProps<DetailsRouteProps> {
   memberLoading: boolean;
   provisioning: ProvisioningType;
   manageLoading: ManageLoading;
+  featureFlags: string[];
 
   clearDetails: () => void;
   getWorkspaceDetails: (id: number) => void;
@@ -209,10 +210,10 @@ class WorkspaceDetails extends React.PureComponent<Props> {
       deprovisionWorkspace,
       provisionWorkspace,
       manageLoading,
+      featureFlags,
     } = this.props;
-    const featureService = new FeatureService();
-    const hasApplicationFlag = featureService.isEnabled(FeatureFlagType.Application);
-    const hasMessagingFlag = featureService.isEnabled(FeatureFlagType.Messaging);
+    const hasApplicationFlag = featureFlags.includes(FeatureFlagType.Application);
+    const hasMessagingFlag = featureFlags.includes(FeatureFlagType.Messaging);
 
     if (!workspace) {
       return (
@@ -420,6 +421,7 @@ const mapStateToProps = () =>
     memberLoading: selectors.isMemberLoading(),
     provisioning: selectors.getProvisioning(),
     manageLoading: selectors.getManageLoading(),
+    featureFlags: getFeatureFlags(),
   });
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({

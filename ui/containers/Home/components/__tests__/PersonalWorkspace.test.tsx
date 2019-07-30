@@ -3,7 +3,7 @@ import { shallow } from 'enzyme';
 import toJson from 'enzyme-to-json';
 
 import PersonalWorkspace from '../PersonalWorkspace';
-import { Workspace } from '../../../../models/Workspace';
+import { Workspace, KafkaTopic } from '../../../../models/Workspace';
 import { ProvisioningType } from '../../../../constants';
 
 describe('PersonalWorkspace', () => {
@@ -47,7 +47,14 @@ describe('PersonalWorkspace', () => {
           max_memory_in_gb: 0,
         },
       ],
-      topics: [],
+      topics: [
+        {
+          id: 1,
+          name: '',
+          partitions: 1024,
+          replication_factor: 1,
+        } as KafkaTopic,
+      ],
       applications: [],
     };
     const services = {

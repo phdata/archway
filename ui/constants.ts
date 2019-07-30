@@ -22,7 +22,6 @@ export const behaviorProperties = {
 export enum FeatureFlagType {
   Application = 'application',
   Messaging = 'messaging',
-  CustomTemplates = 'custom-templates',
 }
 
 export enum ProvisioningType {

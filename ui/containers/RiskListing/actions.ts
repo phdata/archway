@@ -17,15 +17,15 @@ export const listRiskWorkspacesFailure = (error: string) => ({
   error,
 });
 
-export const SET_LISTING_MODE = 'SET_LISTING_MODE';
+export const SET_RISK_LISTING_MODE = 'SET_RISK_LISTING_MODE';
 export const setListingMode = (mode: string) => ({
-  type: SET_LISTING_MODE,
+  type: SET_RISK_LISTING_MODE,
   mode,
 });
 
-export const FILTER_WORKSPACES = 'FILTER_WORKSPACES';
+export const FILTER_RISK_WORKSPACES = 'FILTER_RISK_WORKSPACES';
 export const filterWorkspaces = (filter: string, behaviors: string[], statuses: string[]) => ({
-  type: FILTER_WORKSPACES,
+  type: FILTER_RISK_WORKSPACES,
   filters: {
     filter,
     behaviors,

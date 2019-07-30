@@ -9,18 +9,27 @@ import * as workspaceRequestActions from '../WorkspaceRequest/actions';
 import * as selectors from './selectors';
 import * as workspaceRequestSelectors from '../WorkspaceRequest/selectors';
 import { CustomDescription } from '../../models/Template';
+import { listCustomDescriptions } from './actions';
+
+// tslint:disable-next-line: no-var-requires
+const router = require('connected-react-router/immutable');
 
 interface Props extends RouteComponentProps<any> {
   customDescriptions: CustomDescription[];
   currentBehavior: string;
+
   listCustomDescriptions: () => void;
   setBehavior: (behavior: string) => void;
   gotoNextPage: () => void;
   gotoPrevPage: () => void;
-  setCurrentPage: (page: string) => void;
+  gotoBehaviorPage: () => void;
 }
 
 class CustomWorkspaces extends React.PureComponent<Props> {
+  public componentDidMount() {
+    this.props.listCustomDescriptions();
+  }
+
   public renderBehaviors() {
     const { customDescriptions, currentBehavior, setBehavior } = this.props;
     return customDescriptions.map((item, index) => (
@@ -73,7 +82,8 @@ const mapDispatchToProps = (dispatch: any) => ({
   setBehavior: (behavior: string) => dispatch(workspaceRequestActions.setBehavior(behavior)),
   gotoNextPage: () => dispatch(workspaceRequestActions.gotoNextPage()),
   gotoPrevPage: () => dispatch(workspaceRequestActions.gotoPrevPage()),
-  setCurrentPage: (page: string) => dispatch(workspaceRequestActions.setCurrentPage(page)),
+  gotoBehaviorPage: () => dispatch(router.push({ pathname: '/request' })),
+  listCustomDescriptions: () => dispatch(listCustomDescriptions()),
 });
 
 export default connect(

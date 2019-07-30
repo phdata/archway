@@ -6,12 +6,14 @@ import { BehaviorPage, OverviewPage, CompliancePage, SummaryPage, WorkspaceSumma
 import * as actions from './actions';
 import * as selectors from './selectors';
 import { listCustomDescriptions } from '../../containers/CustomWorkspaces/actions';
-import { PAGE_BEHAVIOR, PAGE_DETAILS, PAGE_COMPLIANCE, PAGE_REVIEW } from './constants';
+import { PAGE_BEHAVIOR, PAGE_DETAILS, PAGE_COMPLIANCE, PAGE_REVIEW, PAGE_CUSTOM_WORKSPACES } from './constants';
 import { RequestInput } from '../../models/RequestInput';
 import { Workspace } from '../../models/Workspace';
 import { Profile } from '../../models/Profile';
-import { FeatureService } from '../../service/FeatureService';
-import { FeatureFlagType, NotificationType } from '../../constants';
+import { NotificationType } from '../../constants';
+
+// tslint:disable-next-line: no-var-requires
+const router = require('connected-react-router/immutable');
 
 interface Props {
   profile: Profile;
@@ -32,13 +34,14 @@ interface Props {
   setWorkspace: (workspace: Workspace) => void;
   setCurrentPage: (page: string) => void;
   listCustomDescriptions: () => void;
+  gotoCustomWorkspacesPage: () => void;
 }
 
 class WorkspaceRequest extends React.Component<Props> {
   public componentDidMount() {
-    const featureService = new FeatureService();
-    if (featureService.isEnabled(FeatureFlagType.CustomTemplates)) {
-      this.props.listCustomDescriptions();
+    const { currentPage, gotoCustomWorkspacesPage } = this.props;
+    if (currentPage === PAGE_CUSTOM_WORKSPACES) {
+      gotoCustomWorkspacesPage();
     }
   }
 
@@ -167,6 +170,7 @@ const mapDispatchToProps = (dispatch: any) => ({
   setWorkspace: (workspace: Workspace) => dispatch(actions.setWorkspace(workspace)),
   setCurrentPage: (page: string) => dispatch(actions.setCurrentPage(page)),
   listCustomDescriptions: () => dispatch(listCustomDescriptions()),
+  gotoCustomWorkspacesPage: () => dispatch(router.push({ pathname: '/request/customworkspaces' })),
 });
 
 export default connect(

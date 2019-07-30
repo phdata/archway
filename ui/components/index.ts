@@ -7,6 +7,7 @@ export { default as Main } from './Main';
 export { default as ListingSearchBar } from './ListingSearchBar';
 export { default as WorkspaceList } from './WorkspaceList';
 export { default as Provisioning } from './Provisioning';
+export { default as Feature } from './Feature';
 
 export const workspaceColumns = [
   {

@@ -19,7 +19,7 @@ const initialConfigState = fromJS({
 const config = (state = initialConfigState, action: any) => {
   switch (action.type) {
     case FEATURE_FLAG:
-      return state.set('featureFlags', action.featureFlags);
+      return state.set('featureFlags', fromJS(action.featureFlags));
     default:
       return state;
   }

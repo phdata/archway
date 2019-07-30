@@ -10,8 +10,6 @@ import { Profile } from '../../models/Profile';
 import { Cluster } from '../../models/Cluster';
 import * as actions from './actions';
 import * as selectors from './selectors';
-import { workspaceBehaviors, FeatureFlagType } from '../../constants';
-import { FeatureService } from '../../service/FeatureService';
 
 /* tslint:disable:no-var-requires */
 const { CSVLink } = require('react-csv');
@@ -33,18 +31,7 @@ interface Props {
 
 class WorkspaceListing extends React.PureComponent<Props> {
   public componentDidMount() {
-    const {
-      listWorkspaces,
-      updateFilter,
-      filters: { filter, statuses },
-    } = this.props;
-    const featureService = new FeatureService();
-
-    if (!featureService.isEnabled(FeatureFlagType.CustomTemplates) && workspaceBehaviors.includes('custom')) {
-      workspaceBehaviors.splice(workspaceBehaviors.indexOf('custom'), 1);
-      updateFilter(filter, workspaceBehaviors, statuses);
-    }
-    listWorkspaces();
+    this.props.listWorkspaces();
   }
 
   public generateCSV(workspaceList: WorkspaceSearchResult[]) {
@@ -110,10 +97,10 @@ class WorkspaceListing extends React.PureComponent<Props> {
 
 const mapStateToProps = () =>
   createStructuredSelector({
-    fetching: selectors.isFetchingWorkspaces(),
-    listingMode: selectors.getListingMode(),
-    workspaceList: selectors.workspaceList(),
-    filters: selectors.getListFilters(),
+    fetching: selectors.SearchBar.isFetchingWorkspaces(),
+    listingMode: selectors.SearchBar.getListingMode(),
+    workspaceList: selectors.SearchBar.workspaceList(),
+    filters: selectors.SearchBar.getListFilters(),
     profile: selectors.getProfile(),
     cluster: selectors.getCluster(),
   });

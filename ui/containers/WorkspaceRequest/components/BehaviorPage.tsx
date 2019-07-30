@@ -1,22 +1,17 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
 import { Behavior } from '../../../components';
 import { Col, Icon, Row, Tooltip, Button } from 'antd';
 import { useDropzone } from 'react-dropzone';
-import { createStructuredSelector } from 'reselect';
 
-import { getCustomDescriptions } from '../../CustomWorkspaces/selectors';
 import { Workspace } from '../../../models/Workspace';
-import { CustomDescription } from '../../../models/Template';
 
 interface Props {
   selected?: string;
-  customDescriptions: CustomDescription[];
   onChange: (behavior: string) => void;
   importData: (jsonData: Workspace) => void;
 }
 
-const BehaviorPage = ({ selected, customDescriptions, onChange, importData }: Props) => {
+const BehaviorPage = ({ selected, onChange, importData }: Props) => {
   const { getRootProps, getInputProps, open } = useDropzone({
     // Disable click and keydown behavior
     noClick: true,
@@ -24,7 +19,6 @@ const BehaviorPage = ({ selected, customDescriptions, onChange, importData }: Pr
     multiple: false,
     onDrop: files => handleImportClick(files),
   });
-  const hasCustomDescriptions = customDescriptions.length > 0;
 
   function handleImportClick(files: any) {
     // tslint:disable-next-line: no-console
@@ -48,6 +42,7 @@ const BehaviorPage = ({ selected, customDescriptions, onChange, importData }: Pr
       alert('File Read Failed. Please try a newer browser!');
     }
   }
+
   return (
     <div>
       <h3 style={{ display: 'inline-block', marginRight: 7 }}>What kind of behavior should we manage?</h3>
@@ -80,19 +75,17 @@ const BehaviorPage = ({ selected, customDescriptions, onChange, importData }: Pr
             useCases={['publishings', 'data assets', 'external interfacing']}
           />
         </Col>
-        {hasCustomDescriptions && (
-          <Col span={12} lg={4} style={{ display: 'flex' }}>
-            <Behavior
-              behaviorKey=""
-              selected={false}
-              onChange={(behavior, checked) => checked && onChange(behavior)}
-              icon="select"
-              title="Custom"
-              description={`Data moves through various stages. Each stage represents a more "structured" version of the data.`}
-              useCases={['publishings', 'data assets', 'external interfacing']}
-            />
-          </Col>
-        )}
+        <Col span={12} lg={4} style={{ display: 'flex' }}>
+          <Behavior
+            behaviorKey=""
+            selected={false}
+            onChange={(behavior, checked) => checked && onChange(behavior)}
+            icon="select"
+            title="Custom"
+            description={`Data moves through various stages. Each stage represents a more "structured" version of the data.`}
+            useCases={['publishings', 'data assets', 'external interfacing']}
+          />
+        </Col>
       </Row>
       <Row type="flex" justify="center">
         <Col>
@@ -108,12 +101,4 @@ const BehaviorPage = ({ selected, customDescriptions, onChange, importData }: Pr
   );
 };
 
-const mapStateToProps = () =>
-  createStructuredSelector({
-    customDescriptions: getCustomDescriptions(),
-  });
-
-export default connect(
-  mapStateToProps,
-  null
-)(BehaviorPage);
+export default BehaviorPage;

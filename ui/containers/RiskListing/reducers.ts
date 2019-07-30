@@ -4,8 +4,8 @@ import {
   LIST_RISK_WORKSPACES,
   RISK_WORKSPACES_UPDATED,
   LIST_RISK_WORKSPACES_FAILURE,
-  SET_LISTING_MODE,
-  FILTER_WORKSPACES,
+  SET_RISK_LISTING_MODE,
+  FILTER_RISK_WORKSPACES,
 } from './actions';
 import { workspaceStatuses, workspaceBehaviors } from '../../constants';
 
@@ -38,11 +38,11 @@ const listing = (state = initialState, action: any) => {
         .set('error', '')
         .set('fetching', true);
 
-    case SET_LISTING_MODE:
+    case SET_RISK_LISTING_MODE:
       localStorage.setItem('workspaceListingMode', action.mode);
       return state.set('listingMode', action.mode);
 
-    case FILTER_WORKSPACES:
+    case FILTER_RISK_WORKSPACES:
       return state.set('filters', fromJS(action.filters));
 
     default:

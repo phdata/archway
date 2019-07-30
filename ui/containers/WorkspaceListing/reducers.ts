@@ -1,15 +1,16 @@
 import Fuse from 'fuse.js';
 import { fromJS } from 'immutable';
 import { FILTER_WORKSPACES, LIST_ALL_WORKSPACES, WORKSPACE_LISTING_UPDATED, SET_LISTING_MODE } from './actions';
+import { workspaceStatuses, workspaceBehaviors } from '../../constants';
 
 const initialState = fromJS({
   listingMode: localStorage.getItem('workspaceListingMode') || 'cards',
   fetching: false,
-  allWorkspaces: new Fuse([], {}),
+  workspaces: new Fuse([], {}),
   filters: {
     filter: '',
-    behaviors: ['simple', 'structured'],
-    statuses: ['approved', 'pending', 'rejected'],
+    behaviors: workspaceBehaviors,
+    statuses: workspaceStatuses,
   },
 });
 
@@ -18,10 +19,10 @@ const listing = (state = initialState, action: any) => {
     case WORKSPACE_LISTING_UPDATED:
       return state
         .set('fetching', false)
-        .set('allWorkspaces', new Fuse(action.workspaces, { keys: ['name', 'summary'], threshold: 0.2 }));
+        .set('workspaces', new Fuse(action.workspaces, { keys: ['name', 'summary'], threshold: 0.2 }));
 
     case LIST_ALL_WORKSPACES:
-      return state.set('allWorkspaces', new Fuse([], {})).set('fetching', true);
+      return state.set('workspaces', new Fuse([], {})).set('fetching', true);
 
     case SET_LISTING_MODE:
       localStorage.setItem('workspaceListingMode', action.mode);

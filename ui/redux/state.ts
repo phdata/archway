@@ -13,7 +13,7 @@ export interface LoginState {
 
 export interface ListingState {
   fetching: boolean;
-  allWorkspaces: any;
+  workspaces: any;
   filters: {
     filter: string;
     behaviors: string[];
