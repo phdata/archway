@@ -63,8 +63,8 @@ class CDHClusterServiceSpec
     hue.capabilities("load_balancer").head.port shouldBe 8088
 
     val yarn = details.services.find(_.name == "yarn").get
-    yarn.capabilities("node_manager").head.port shouldBe 9998
-    yarn.capabilities("resource_manager").head.port shouldBe 9999
+    yarn.capabilities("node_manager").head.port shouldBe 8044
+    yarn.capabilities("resource_manager").head.port shouldBe 8090
 
     val mgmt = details.services.find(_.name == "mgmt").get
     mgmt.capabilities("navigator").head.port shouldBe 7187

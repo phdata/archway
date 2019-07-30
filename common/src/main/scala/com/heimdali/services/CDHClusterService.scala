@@ -50,13 +50,25 @@ class CDHClusterService[F[_]: ConcurrentEffect: Clock](
     appRole match {
       case Some(roleCGN) =>
         Uri.fromString(clusterConfig.mgmtRoleConfigGroups(roleCGN.roleConfigGroupRef.roleConfigGroupName)) match {
-          case Right(uri) => http.request[ListContainer[RoleConfigGroup]](Request(Method.GET, uri))
+          case Right(uri) =>
+            http.request[ListContainer[RoleConfigGroup]](Request(Method.GET, uri))
           case Left(failure) => {
             logger.error("Uri cannot be parsed {}", failure)
             ListContainer(List.empty[RoleConfigGroup]).pure[F]
           }
         }
       case None => ListContainer(List.empty[RoleConfigGroup]).pure[F]
+    }
+  }
+
+  def yarnRoleConfigRequest(role: String): F[ListContainer[RoleProperty]] = {
+    Uri.fromString(clusterConfig.yarnRoleConfig(role)) match {
+      case Right(uri) =>
+        http.request[ListContainer[RoleProperty]](Request(Method.GET, uri))
+      case Left(failure) => {
+        logger.error("Uri cannot be parsed {}", failure)
+        ListContainer(List.empty[RoleProperty]).pure[F]
+      }
     }
   }
 
@@ -95,6 +107,8 @@ class CDHClusterService[F[_]: ConcurrentEffect: Clock](
         _.items.filter(_.`type` == CDHClusterService.MgmtNavigatorMetaServerRole)
       )
       mgmtRoleConfigGroups <- mgmtRoleConfigGroupsRequest(mgmtNavigatorMetaServerRole.headOption)
+      yarnNodeManagerRoleProps <- yarnRoleConfigRequest(CDHClusterService.YarnNodeManagerRole)
+      yarnResourceManagerRoleProps <- yarnRoleConfigRequest(CDHClusterService.YarnResourceManagerRole)
 
       nodeManagerRoles = yarnRoles.items.filter(_.`type` == CDHClusterService.NodeManagerRole)
       resourceManagerRoles = yarnRoles.items.filter(_.`type` == CDHClusterService.ResourceManagerRole)
@@ -125,14 +139,10 @@ class CDHClusterService[F[_]: ConcurrentEffect: Clock](
             yarn,
             hosts,
             Map(
-              "node_manager" -> (hadoopConfiguration
-                .get("yarn.nodemanager.webapp.address", "0.0.0.0:8042")
-                .split("\\s?:\\s?")(1)
-                .toInt, nodeManagerRoles),
-              "resource_manager" -> (hadoopConfiguration
-                .get("yarn.resourcemanager.webapp.address", "0.0.0.0:8088")
-                .split("\\s?:\\s?")(1)
-                .toInt, resourceManagerRoles)
+              "node_manager" -> (resolvePort(yarnNodeManagerRoleProps, 8042, "yarn.nodemanager.webapp.https.address"), resourceManagerRoles),
+              "resource_manager" -> (resolvePort(yarnResourceManagerRoleProps,
+                                                 8088,
+                                                 "yarn.resourcemanager.webapp.https.address"), resourceManagerRoles)
             )
           ),
           ClusterApp(
@@ -151,6 +161,14 @@ class CDHClusterService[F[_]: ConcurrentEffect: Clock](
         details.status
       ) :: Nil
 
+  private def resolvePort(roleProperties: ListContainer[RoleProperty], defaultPort: Int, name: String): Int = {
+    roleProperties.items
+      .find(_.relatedName == name)
+      .map(property => property.value.getOrElse(property.default.getOrElse(defaultPort.toString)))
+      .map(_.toInt)
+      .getOrElse(defaultPort)
+  }
+
   override def list: F[Seq[Cluster]] = clusterDetails
 
 }
@@ -168,4 +186,6 @@ object CDHClusterService {
   val NodeManagerRole: String = "NODEMANAGER"
   val MgmtNavigatorRole: String = "NAVIGATOR"
   val MgmtNavigatorMetaServerRole: String = "NAVIGATORMETASERVER"
+  val YarnNodeManagerRole: String = "yarn-NODEMANAGER-BASE"
+  val YarnResourceManagerRole: String = "yarn-RESOURCEMANAGER-BASE"
 }

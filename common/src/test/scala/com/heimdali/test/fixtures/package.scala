@@ -242,7 +242,13 @@ package object fixtures {
     case GET -> Root / "api" / "v18" / "cm" / "service" / "roleConfigGroups" / "mgmt-NAVIGATORMETASERVER-BASE" / "config" :? view("full") =>
       Ok(fromResource("cloudera/cm_service_roleConfig_navigatorMetaServer.json"))
 
-  }.orNotFound)))(pool => IO.unit)
+    case GET -> Root / "api" / "v18" / "clusters" / "cluster" / "services" / "yarn" / "roleConfigGroups" / "yarn-NODEMANAGER-BASE" / "config" :? view("full") =>
+      Ok(fromResource("cloudera/clusters.cluster.services.yarn.roleConfigGroups.yarn-NODEMANAGER-BASE.json"))
+
+    case GET -> Root / "api" / "v18" / "clusters" / "cluster" / "services" / "yarn" / "roleConfigGroups" / "yarn-RESOURCEMANAGER-BASE" / "config" :? view("full") =>
+      Ok(fromResource("cloudera/clusters.cluster.services.yarn.roleConfigGroups.yarn-RESOURCEMANAGER-BASE.json"))
+
+  }.orNotFound)))(_ => IO.unit)
 
 
   val httpClient = new CMClient[IO](testClient, appConfig.cluster)

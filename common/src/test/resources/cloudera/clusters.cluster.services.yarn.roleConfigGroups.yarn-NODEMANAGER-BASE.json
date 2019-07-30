@@ -1,0 +1,1350 @@
+{
+  "items": [
+    {
+      "name": "NODEMANAGER_role_env_safety_valve",
+      "required": false,
+      "displayName": "NodeManager Environment Advanced Configuration Snippet (Safety Valve)",
+      "description": "For advanced use only, key-value pairs (one on each line) to be inserted into a role's environment. Applies to configurations of this role except client configuration.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK",
+      "validationWarningsSuppressed": false
+    },
+    {
+      "name": "container_executor_allowed_system_users",
+      "value": "nobody,impala,hive,llama,hbase,datarobot,hdfs",
+      "required": false,
+      "default": "nobody,impala,hive,llama,hbase",
+      "displayName": "Allowed System Users",
+      "description": "List of users explicitly whitelisted to be allowed to run containers. Users with IDs lower than the \"Minimum User Id\" setting may be whitelisted by using this setting.",
+      "relatedName": "allowed.system.users",
+      "sensitive": false,
+      "validationState": "OK",
+      "validationWarningsSuppressed": false
+    },
+    {
+      "name": "container_executor_banned_users",
+      "value": "yarn,mapred,bin",
+      "required": false,
+      "default": "hdfs,yarn,mapred,bin",
+      "displayName": "Banned System Users",
+      "description": "List of users banned from running containers.",
+      "relatedName": "banned.users",
+      "sensitive": false,
+      "validationState": "OK",
+      "validationWarningsSuppressed": false
+    },
+    {
+      "name": "container_executor_group",
+      "required": false,
+      "default": "yarn",
+      "displayName": "Container Executor Group",
+      "description": "The system group that owns the container-executor binary. This does not need to be changed unless the ownership of the binary is explicitly changed.",
+      "relatedName": "yarn.nodemanager.linux-container-executor.group",
+      "sensitive": false,
+      "validationState": "OK",
+      "validationWarningsSuppressed": false
+    },
+    {
+      "name": "container_executor_min_user_id",
+      "required": false,
+      "default": "1000",
+      "displayName": "Minimum User ID",
+      "description": "The minimum Linux user ID allowed.  Used to prevent other super users.",
+      "relatedName": "min.user.id",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "enable_alerts",
+      "required": false,
+      "default": "true",
+      "displayName": "Enable Health Alerts for this Role",
+      "description": "When set, Cloudera Manager will send alerts when the health of this role reaches the threshold specified by the EventServer setting eventserver_health_events_alert_threshold",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "enable_config_alerts",
+      "required": false,
+      "default": "false",
+      "displayName": "Enable Configuration Change Alerts",
+      "description": "When set, Cloudera Manager will send alerts when this entity's configuration changes.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "hadoop_metrics2_safety_valve",
+      "required": false,
+      "displayName": "Hadoop Metrics2 Advanced Configuration Snippet (Safety Valve)",
+      "description": "Advanced Configuration Snippet (Safety Valve) for Hadoop Metrics2. Properties will be inserted into <strong>hadoop-metrics2.properties</strong>.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK",
+      "validationWarningsSuppressed": false
+    },
+    {
+      "name": "heap_dump_directory_free_space_absolute_thresholds",
+      "required": false,
+      "default": "{\"critical\":\"5.36870912E9\",\"warning\":\"1.073741824E10\"}",
+      "displayName": "Heap Dump Directory Free Space Monitoring Absolute Thresholds",
+      "description": "The health test thresholds for monitoring of free space on the filesystem that contains this role's heap dump directory.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "heap_dump_directory_free_space_percentage_thresholds",
+      "required": false,
+      "default": "{\"critical\":\"never\",\"warning\":\"never\"}",
+      "displayName": "Heap Dump Directory Free Space Monitoring Percentage Thresholds",
+      "description": "The health test thresholds for monitoring of free space on the filesystem that contains this role's heap dump directory. Specified as a percentage of the capacity on that filesystem. This setting is not used if a Heap Dump Directory Free Space Monitoring Absolute Thresholds setting is configured.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "linux_container_executor_cgroups_hierarchy",
+      "required": false,
+      "default": "/hadoop-yarn",
+      "displayName": "CGroups Hierarchy",
+      "description": "Path (rooted in the cgroups hierarchy on the machine) where to place YARN-managed cgroups.",
+      "relatedName": "yarn.nodemanager.linux-container-executor.cgroups.hierarchy",
+      "sensitive": false,
+      "validationState": "OK",
+      "validationWarningsSuppressed": false
+    },
+    {
+      "name": "log4j_safety_valve",
+      "required": false,
+      "displayName": "NodeManager Logging Advanced Configuration Snippet (Safety Valve)",
+      "description": "For advanced use only, a string to be inserted into <strong>log4j.properties</strong> for this role only.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK",
+      "validationWarningsSuppressed": false
+    },
+    {
+      "name": "log_directory_free_space_absolute_thresholds",
+      "required": false,
+      "default": "{\"critical\":\"5.36870912E9\",\"warning\":\"1.073741824E10\"}",
+      "displayName": "Log Directory Free Space Monitoring Absolute Thresholds",
+      "description": "The health test thresholds for monitoring of free space on the filesystem that contains this role's log directory.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "log_directory_free_space_percentage_thresholds",
+      "required": false,
+      "default": "{\"critical\":\"never\",\"warning\":\"never\"}",
+      "displayName": "Log Directory Free Space Monitoring Percentage Thresholds",
+      "description": "The health test thresholds for monitoring of free space on the filesystem that contains this role's log directory. Specified as a percentage of the capacity on that filesystem. This setting is not used if a Log Directory Free Space Monitoring Absolute Thresholds setting is configured.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "log_event_whitelist",
+      "required": false,
+      "default": "{\n  \"version\": \"0\",\n  \"rules\": [\n    {\"alert\": false, \"rate\": 1, \"periodminutes\": 1, \"threshold\":\"FATAL\"},\n    {\"alert\": false, \"rate\": 0, \"threshold\":\"WARN\", \"content\": \".* is deprecated. Instead, use .*\"},\n    {\"alert\": false, \"rate\": 0, \"threshold\":\"WARN\", \"content\": \".* is deprecated. Use .* instead\"},\n    {\"alert\": false, \"rate\": 1, \"periodminutes\": 2, \"exceptiontype\": \".*\"},\n    {\"alert\": false, \"rate\": 1, \"periodminutes\": 1, \"threshold\":\"WARN\"}\n  ]\n}\n",
+      "displayName": "Rules to Extract Events from Log Files",
+      "description": "<p>This file contains the rules that govern how log messages are turned into events by the custom log4j appender that this role loads. It is in JSON format, and is composed of a list of rules. Every log message is evaluated against each of these rules in turn to decide whether or not to send an event for that message. If a log message matches multiple rules, the first matching rule is used. </p><p>Each rule has some or all of the following fields:</p><ul><li><code>alert</code> - whether or not events generated from this rule should be promoted to alerts. A value of \"true\" will cause alerts to be generated. If not specified, the default is \"false\".</li><li><code>rate</code> <b>(mandatory)</b> - the maximum number of log messages matching this rule that can be sent as events every minute. If more than <code>rate</code> matching log messages are received in a single minute, the extra messages are ignored. If rate is less than 0, the number of messages per minute is unlimited.</li><li><code>periodminutes</code>  - the number of minutes during which the publisher will only publish <code>rate</code> events or fewer. If not specified, the default is <b>one minute</b></li><li><code>threshold</code> - apply this rule only to messages with this log4j severity level or above. An example is \"WARN\" for warning level messages or higher.</li><li><code>content</code> - match only those messages for which contents match this regular expression.</li><li><code>exceptiontype</code> - match only those messages that are part of an exception message. The exception type must match this regular expression.</li></ul><p>Example:</p><ul><li><pre>{\"alert\": false, \"rate\": 10, \"exceptiontype\": \"java.lang.StringIndexOutOfBoundsException\"}</pre>This rule sends events to Cloudera Manager for every <code>StringIndexOutOfBoundsException</code>, up to a maximum of 10 every minute.</li><li><pre>{\"alert\": false, \"rate\": 1, \"periodminutes\": 1, \"exceptiontype\": \".*\"}, {\"alert\": true, \"rate\": 1, \"periodminutes\": 1, \"threshold\":\"ERROR\"}</pre>In this example, an event generated may not be promoted to alert if an exception is in the ERROR log message, because the first rule with alert = false will match.</li></ul>",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK",
+      "validationWarningsSuppressed": false
+    },
+    {
+      "name": "log_threshold",
+      "required": false,
+      "default": "INFO",
+      "displayName": "NodeManager Logging Threshold",
+      "description": "The minimum log level for NodeManager logs",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "mapred_healthchecker_script_args",
+      "required": false,
+      "default": "",
+      "displayName": "Healthchecker Script Arguments",
+      "description": "Comma-separated list of arguments which are to be passed to node health script when it is being launched.",
+      "relatedName": "yarn.nodemanager.health-checker.script.opts",
+      "sensitive": false,
+      "validationState": "OK",
+      "validationWarningsSuppressed": false
+    },
+    {
+      "name": "mapred_healthchecker_script_path",
+      "required": false,
+      "default": "",
+      "displayName": "Healthchecker Script Path",
+      "description": "Absolute path to the script which is periodically run by the node health monitoring service to determine if the node is healthy or not. If the value of this key is empty or the file does not exist in the location configured here, the node health monitoring service is not started.",
+      "relatedName": "yarn.nodemanager.health-checker.script.path",
+      "sensitive": false,
+      "validationState": "OK",
+      "validationWarningsSuppressed": false
+    },
+    {
+      "name": "mapreduce_aux_service",
+      "required": false,
+      "default": "true",
+      "displayName": "Enable Shuffle Auxiliary Service",
+      "description": "If enabled, adds 'org.apache.hadoop.mapred.ShuffleHandler' to the NodeManager auxiliary services.  This is required for MapReduce applications.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "mapreduce_shuffle_max_connections",
+      "required": false,
+      "default": "0",
+      "displayName": "Max Shuffle Connections",
+      "description": "Maximum allowed connections for the shuffle. Set to 0 (zero) to indicate no limit on the number of connections.",
+      "relatedName": "mapreduce.shuffle.max.connections",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "mapreduce_shuffle_max_threads",
+      "required": false,
+      "default": "80",
+      "displayName": "Max Shuffle Threads",
+      "description": "Maximum allowed threads for serving shuffle connections. Set to zero to indicate the default of 2 times the number of available processors.",
+      "relatedName": "mapreduce.shuffle.max.threads",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "max_log_backup_index",
+      "required": false,
+      "default": "10",
+      "displayName": "NodeManager Maximum Log File Backups",
+      "description": "The maximum number of rolled log files to keep for NodeManager logs.  Typically used by log4j or logback.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "max_log_size",
+      "required": false,
+      "default": "200",
+      "displayName": "NodeManager Max Log Size",
+      "description": "The maximum size, in megabytes, per log file for NodeManager logs.  Typically used by log4j or logback.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "node_manager_java_heapsize",
+      "value": "805306368",
+      "required": false,
+      "default": "1073741824",
+      "displayName": "Java Heap Size of NodeManager in Bytes",
+      "description": "Maximum size in bytes for the Java Process heap memory.  Passed to Java -Xmx.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "node_manager_java_opts",
+      "required": false,
+      "default": "-XX:+UseParNewGC -XX:+UseConcMarkSweepGC -XX:CMSInitiatingOccupancyFraction=70 -XX:+CMSParallelRemarkEnabled -Dlibrary.leveldbjni.path={{CONF_DIR}}",
+      "displayName": "Java Configuration Options for NodeManager",
+      "description": "These arguments will be passed as part of the Java command line. Commonly, garbage collection flags, PermGen, or extra debugging flags would be passed here.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK",
+      "validationWarningsSuppressed": false
+    },
+    {
+      "name": "node_manager_log_dir",
+      "required": false,
+      "default": "/var/log/hadoop-yarn",
+      "displayName": "NodeManager Log Directory",
+      "description": "Directory where NodeManager will place its log files.",
+      "relatedName": "hadoop.log.dir",
+      "sensitive": false,
+      "validationState": "OK",
+      "validationWarningsSuppressed": false
+    },
+    {
+      "name": "nodemanager_config_safety_valve",
+      "value": "<property><name>yarn.nodemanager.linux-container-executor.cgroups.delete-timeout-ms</name><value>10000</value></property><property><name>yarn.nodemanager.linux-container-executor.cgroups.delete-delay-ms</name><value>200</value></property>",
+      "required": false,
+      "displayName": "NodeManager Advanced Configuration Snippet (Safety Valve) for yarn-site.xml",
+      "description": "For advanced use only. A string to be inserted into <strong>yarn-site.xml</strong> for this role only.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK",
+      "validationWarningsSuppressed": false
+    },
+    {
+      "name": "nodemanager_connectivity_health_enabled",
+      "required": false,
+      "default": "true",
+      "displayName": "NodeManager Connectivity Health Check",
+      "description": "Enables the health check that verifies the NodeManager is connected to the ResourceManager.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "nodemanager_connectivity_tolerance_seconds",
+      "required": false,
+      "default": "180",
+      "displayName": "NodeManager Connectivity Tolerance at Startup",
+      "description": "The amount of time to wait for the NodeManager to fully start up and connect to the ResourceManager before enforcing the connectivity check.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "nodemanager_fd_thresholds",
+      "required": false,
+      "default": "{\"critical\":\"70.0\",\"warning\":\"50.0\"}",
+      "displayName": "File Descriptor Monitoring Thresholds",
+      "description": "The health test thresholds of the number of file descriptors used. Specified as a percentage of file descriptor limit.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "nodemanager_gc_duration_thresholds",
+      "required": false,
+      "default": "{\"critical\":\"60.0\",\"warning\":\"30.0\"}",
+      "displayName": "Garbage Collection Duration Thresholds",
+      "description": "The health test thresholds for the weighted average time spent in Java garbage collection. Specified as a percentage of elapsed wall clock time.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "nodemanager_gc_duration_window",
+      "required": false,
+      "default": "5",
+      "displayName": "Garbage Collection Duration Monitoring Period",
+      "description": "The period to review when computing the moving average of garbage collection time.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "nodemanager_health_checker_health_enabled",
+      "required": false,
+      "default": "true",
+      "displayName": "NodeManager Health Checker Health Check",
+      "description": "Enables the health check that verifies the NodeManager is seen as healthy by the ResourceManager.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "nodemanager_host_health_enabled",
+      "required": false,
+      "default": "true",
+      "displayName": "NodeManager Host Health Test",
+      "description": "When computing the overall NodeManager health, consider the host's health.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "nodemanager_local_data_directories_free_space_absolute_thresholds",
+      "required": false,
+      "default": "{\"critical\":\"5.36870912E9\",\"warning\":\"1.073741824E10\"}",
+      "displayName": "NodeManager Local Directories Free Space Monitoring Absolute Thresholds",
+      "description": "The health test thresholds for monitoring of free space on the filesystem that contains this role's NodeManager Local Directories.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "nodemanager_local_data_directories_free_space_percentage_thresholds",
+      "required": false,
+      "default": "{\"critical\":\"never\",\"warning\":\"never\"}",
+      "displayName": "NodeManager Local Directories Free Space Monitoring Percentage Thresholds",
+      "description": "The health test thresholds for monitoring of free space on the filesystem that contains this role's NodeManager Local Directories. Specified as a percentage of the capacity on that filesystem. This setting is not used if a NodeManager Local Directories Free Space Monitoring Absolute Thresholds setting is configured.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "nodemanager_log_directories_free_space_absolute_thresholds",
+      "required": false,
+      "default": "{\"critical\":\"5.36870912E9\",\"warning\":\"1.073741824E10\"}",
+      "displayName": "NodeManager Container Log Directories Free Space Monitoring Absolute Thresholds",
+      "description": "The health test thresholds for monitoring of free space on the filesystem that contains this role's NodeManager Container Log Directories.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "nodemanager_log_directories_free_space_percentage_thresholds",
+      "required": false,
+      "default": "{\"critical\":\"never\",\"warning\":\"never\"}",
+      "displayName": "NodeManager Container Log Directories Free Space Monitoring Percentage Thresholds",
+      "description": "The health test thresholds for monitoring of free space on the filesystem that contains this role's NodeManager Container Log Directories. Specified as a percentage of the capacity on that filesystem. This setting is not used if a NodeManager Container Log Directories Free Space Monitoring Absolute Thresholds setting is configured.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "nodemanager_mapred_safety_valve",
+      "required": false,
+      "displayName": "NodeManager Advanced Configuration Snippet (Safety Valve) for mapred-site.xml",
+      "description": "For advanced use only. A string to be inserted into <strong>mapred-site.xml</strong> for this role only.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK",
+      "validationWarningsSuppressed": false
+    },
+    {
+      "name": "nodemanager_recovery_directory_free_space_absolute_thresholds",
+      "required": false,
+      "default": "{\"critical\":\"5.36870912E9\",\"warning\":\"1.073741824E10\"}",
+      "displayName": "NodeManager Recovery Directory Free Space Monitoring Absolute Thresholds",
+      "description": "The health test thresholds for monitoring of free space on the filesystem that contains this role's NodeManager Recovery Directory.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "nodemanager_recovery_directory_free_space_percentage_thresholds",
+      "required": false,
+      "default": "{\"critical\":\"never\",\"warning\":\"never\"}",
+      "displayName": "NodeManager Recovery Directory Free Space Monitoring Percentage Thresholds",
+      "description": "The health test thresholds for monitoring of free space on the filesystem that contains this role's NodeManager Recovery Directory. Specified as a percentage of the capacity on that filesystem. This setting is not used if a NodeManager Recovery Directory Free Space Monitoring Absolute Thresholds setting is configured.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "nodemanager_scm_health_enabled",
+      "required": false,
+      "default": "true",
+      "displayName": "NodeManager Process Health Test",
+      "description": "Enables the health test that the NodeManager's process state is consistent with the role configuration",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "nodemanager_web_metric_collection_enabled",
+      "required": false,
+      "default": "true",
+      "displayName": "Web Metric Collection",
+      "description": "Enables the health test that the Cloudera Manager Agent can successfully contact and gather metrics from the web server.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "nodemanager_web_metric_collection_thresholds",
+      "required": false,
+      "default": "{\"critical\":\"never\",\"warning\":\"10000.0\"}",
+      "displayName": "Web Metric Collection Duration",
+      "description": "The health test thresholds on the duration of the metrics request to the web server.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "nodemanager_webserver_https_port",
+      "required": false,
+      "default": "8044",
+      "displayName": "NodeManager Web Application HTTPS Port (TLS/SSL)",
+      "description": "The HTTPS port of the NodeManager web application.",
+      "relatedName": "yarn.nodemanager.webapp.https.address",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "nodemanager_webserver_port",
+      "required": false,
+      "default": "8042",
+      "displayName": "NodeManager Web Application HTTP Port",
+      "description": "The HTTP Port of the NodeManager web application.",
+      "relatedName": "yarn.nodemanager.webapp.address",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "oom_heap_dump_dir",
+      "required": false,
+      "default": "/tmp",
+      "displayName": "Heap Dump Directory",
+      "description": "Path to directory where heap dumps are generated when java.lang.OutOfMemoryError error is thrown. This directory is automatically created if it does not exist. If this directory already exists, role user must have write access to this directory. If this directory is shared among multiple roles, it should have 1777 permissions. The heap dump files are created with 600 permissions and are owned by the role user. The amount of free space in this directory should be greater than the maximum Java Process heap size configured for this role.",
+      "relatedName": "oom_heap_dump_dir",
+      "sensitive": false,
+      "validationState": "OK",
+      "validationWarningsSuppressed": false
+    },
+    {
+      "name": "oom_heap_dump_enabled",
+      "required": false,
+      "default": "true",
+      "displayName": "Dump Heap When Out of Memory",
+      "description": "When set, generates heap dump file when java.lang.OutOfMemoryError is thrown.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "oom_sigkill_enabled",
+      "required": false,
+      "default": "true",
+      "displayName": "Kill When Out of Memory",
+      "description": "When set, a SIGKILL signal is sent to the role process when java.lang.OutOfMemoryError is thrown.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "process_auto_restart",
+      "required": false,
+      "default": "true",
+      "displayName": "Automatically Restart Process",
+      "description": "When set, this role's process is automatically (and transparently) restarted in the event of an unexpected failure.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "process_should_monitor",
+      "required": false,
+      "default": "true",
+      "displayName": "Enable Metric Collection",
+      "description": "Cloudera Manager agent monitors each service and each of its role by publishing metrics to the Cloudera Manager Service Monitor. Setting it to false will stop Cloudera Manager agent from publishing any metric for corresponding service/roles. This is usually helpful for services that generate large amount of metrics which Service Monitor is not able to process.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "process_swap_memory_thresholds",
+      "required": false,
+      "default": "{\"critical\":\"never\",\"warning\":\"any\"}",
+      "displayName": "Process Swap Memory Thresholds",
+      "description": "The health test thresholds on the swap memory usage of the process.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "rlimit_fds",
+      "required": false,
+      "displayName": "Maximum Process File Descriptors",
+      "description": "If configured, overrides the process soft and hard rlimits (also called ulimits) for file descriptors to the configured value.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "rm_cpu_shares",
+      "required": false,
+      "default": "1024",
+      "displayName": "Cgroup CPU Shares",
+      "description": "Number of CPU shares to assign to this role. The greater the number of shares, the larger the share of the host's CPUs that will be given to this role when the host experiences CPU contention. Must be between 2 and 262144. Defaults to 1024 for processes not managed by Cloudera Manager.",
+      "relatedName": "cpu.shares",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "rm_io_weight",
+      "required": false,
+      "default": "500",
+      "displayName": "Cgroup I/O Weight",
+      "description": "Weight for the read I/O requests issued by this role. The greater the weight, the higher the priority of the requests when the host experiences I/O contention. Must be between 100 and 1000. Defaults to 1000 for processes not managed by Cloudera Manager.",
+      "relatedName": "blkio.weight",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "rm_memory_hard_limit",
+      "required": false,
+      "default": "-1",
+      "displayName": "Cgroup Memory Hard Limit",
+      "description": "Hard memory limit to assign to this role, enforced by the Linux kernel. When the limit is reached, the kernel will reclaim pages charged to the process. If reclaiming fails, the kernel may kill the process. Both anonymous as well as page cache pages contribute to the limit. Use a value of -1 B to specify no limit. By default processes not managed by Cloudera Manager will have no limit.",
+      "relatedName": "memory.limit_in_bytes",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "rm_memory_soft_limit",
+      "required": false,
+      "default": "-1",
+      "displayName": "Cgroup Memory Soft Limit",
+      "description": "Soft memory limit to assign to this role, enforced by the Linux kernel. When the limit is reached, the kernel will reclaim pages charged to the process if and only if the host is facing memory pressure. If reclaiming fails, the kernel may kill the process. Both anonymous as well as page cache pages contribute to the limit. Use a value of -1 B to specify no limit. By default processes not managed by Cloudera Manager will have no limit.",
+      "relatedName": "memory.soft_limit_in_bytes",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "role_config_suppression_cdh_version_validator",
+      "required": false,
+      "default": "false",
+      "displayName": "Suppress Configuration Validator: CDH Version Validator",
+      "description": "Whether to suppress configuration warnings produced by the CDH Version Validator configuration validator.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "role_config_suppression_container_executor_allowed_system_users",
+      "required": false,
+      "default": "false",
+      "displayName": "Suppress Parameter Validation: Allowed System Users",
+      "description": "Whether to suppress configuration warnings produced by the built-in parameter validation for the Allowed System Users parameter.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "role_config_suppression_container_executor_banned_users",
+      "required": false,
+      "default": "false",
+      "displayName": "Suppress Parameter Validation: Banned System Users",
+      "description": "Whether to suppress configuration warnings produced by the built-in parameter validation for the Banned System Users parameter.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "role_config_suppression_container_executor_group",
+      "required": false,
+      "default": "false",
+      "displayName": "Suppress Parameter Validation: Container Executor Group",
+      "description": "Whether to suppress configuration warnings produced by the built-in parameter validation for the Container Executor Group parameter.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "role_config_suppression_hadoop_metrics2_safety_valve",
+      "required": false,
+      "default": "false",
+      "displayName": "Suppress Parameter Validation: Hadoop Metrics2 Advanced Configuration Snippet (Safety Valve)",
+      "description": "Whether to suppress configuration warnings produced by the built-in parameter validation for the Hadoop Metrics2 Advanced Configuration Snippet (Safety Valve) parameter.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "role_config_suppression_linux_container_executor_cgroups_hierarchy",
+      "required": false,
+      "default": "false",
+      "displayName": "Suppress Parameter Validation: CGroups Hierarchy",
+      "description": "Whether to suppress configuration warnings produced by the built-in parameter validation for the CGroups Hierarchy parameter.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "role_config_suppression_log4j_safety_valve",
+      "required": false,
+      "default": "false",
+      "displayName": "Suppress Parameter Validation: NodeManager Logging Advanced Configuration Snippet (Safety Valve)",
+      "description": "Whether to suppress configuration warnings produced by the built-in parameter validation for the NodeManager Logging Advanced Configuration Snippet (Safety Valve) parameter.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "role_config_suppression_log_event_whitelist",
+      "required": false,
+      "default": "false",
+      "displayName": "Suppress Parameter Validation: Rules to Extract Events from Log Files",
+      "description": "Whether to suppress configuration warnings produced by the built-in parameter validation for the Rules to Extract Events from Log Files parameter.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "role_config_suppression_mapred_healthchecker_script_args",
+      "required": false,
+      "default": "false",
+      "displayName": "Suppress Parameter Validation: Healthchecker Script Arguments",
+      "description": "Whether to suppress configuration warnings produced by the built-in parameter validation for the Healthchecker Script Arguments parameter.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "role_config_suppression_mapred_healthchecker_script_path",
+      "required": false,
+      "default": "false",
+      "displayName": "Suppress Parameter Validation: Healthchecker Script Path",
+      "description": "Whether to suppress configuration warnings produced by the built-in parameter validation for the Healthchecker Script Path parameter.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "role_config_suppression_node_manager_java_opts",
+      "required": false,
+      "default": "false",
+      "displayName": "Suppress Parameter Validation: Java Configuration Options for NodeManager",
+      "description": "Whether to suppress configuration warnings produced by the built-in parameter validation for the Java Configuration Options for NodeManager parameter.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "role_config_suppression_node_manager_log_dir",
+      "required": false,
+      "default": "false",
+      "displayName": "Suppress Parameter Validation: NodeManager Log Directory",
+      "description": "Whether to suppress configuration warnings produced by the built-in parameter validation for the NodeManager Log Directory parameter.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "role_config_suppression_nodemanager_config_safety_valve",
+      "required": false,
+      "default": "false",
+      "displayName": "Suppress Parameter Validation: NodeManager Advanced Configuration Snippet (Safety Valve) for yarn-site.xml",
+      "description": "Whether to suppress configuration warnings produced by the built-in parameter validation for the NodeManager Advanced Configuration Snippet (Safety Valve) for yarn-site.xml parameter.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "role_config_suppression_nodemanager_mapred_safety_valve",
+      "required": false,
+      "default": "false",
+      "displayName": "Suppress Parameter Validation: NodeManager Advanced Configuration Snippet (Safety Valve) for mapred-site.xml",
+      "description": "Whether to suppress configuration warnings produced by the built-in parameter validation for the NodeManager Advanced Configuration Snippet (Safety Valve) for mapred-site.xml parameter.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "role_config_suppression_nodemanager_role_env_safety_valve",
+      "required": false,
+      "default": "false",
+      "displayName": "Suppress Parameter Validation: NodeManager Environment Advanced Configuration Snippet (Safety Valve)",
+      "description": "Whether to suppress configuration warnings produced by the built-in parameter validation for the NodeManager Environment Advanced Configuration Snippet (Safety Valve) parameter.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "role_config_suppression_oom_heap_dump_dir",
+      "required": false,
+      "default": "false",
+      "displayName": "Suppress Parameter Validation: Heap Dump Directory",
+      "description": "Whether to suppress configuration warnings produced by the built-in parameter validation for the Heap Dump Directory parameter.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "role_config_suppression_role_triggers",
+      "required": false,
+      "default": "false",
+      "displayName": "Suppress Parameter Validation: Role Triggers",
+      "description": "Whether to suppress configuration warnings produced by the built-in parameter validation for the Role Triggers parameter.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "role_config_suppression_single_user_mode_override_validator",
+      "required": false,
+      "default": "false",
+      "displayName": "Suppress Configuration Validator: Single User Mode Overrides Validator",
+      "description": "Whether to suppress configuration warnings produced by the Single User Mode Overrides Validator configuration validator.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "role_config_suppression_stacks_collection_directory",
+      "required": false,
+      "default": "false",
+      "displayName": "Suppress Parameter Validation: Stacks Collection Directory",
+      "description": "Whether to suppress configuration warnings produced by the built-in parameter validation for the Stacks Collection Directory parameter.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "role_config_suppression_yarn_nodemanager_admin_env",
+      "required": false,
+      "default": "false",
+      "displayName": "Suppress Parameter Validation: Containers Environment Variable",
+      "description": "Whether to suppress configuration warnings produced by the built-in parameter validation for the Containers Environment Variable parameter.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "role_config_suppression_yarn_nodemanager_env_whitelist",
+      "required": false,
+      "default": "false",
+      "displayName": "Suppress Parameter Validation: Containers Environment Variables Whitelist ",
+      "description": "Whether to suppress configuration warnings produced by the built-in parameter validation for the Containers Environment Variables Whitelist  parameter.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "role_config_suppression_yarn_nodemanager_local_dirs",
+      "required": false,
+      "default": "false",
+      "displayName": "Suppress Parameter Validation: NodeManager Local Directories",
+      "description": "Whether to suppress configuration warnings produced by the built-in parameter validation for the NodeManager Local Directories parameter.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "role_config_suppression_yarn_nodemanager_log_dirs",
+      "required": false,
+      "default": "false",
+      "displayName": "Suppress Parameter Validation: NodeManager Container Log Directories",
+      "description": "Whether to suppress configuration warnings produced by the built-in parameter validation for the NodeManager Container Log Directories parameter.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "role_config_suppression_yarn_nodemanager_recovery_dir",
+      "required": false,
+      "default": "false",
+      "displayName": "Suppress Parameter Validation: NodeManager Recovery Directory",
+      "description": "Whether to suppress configuration warnings produced by the built-in parameter validation for the NodeManager Recovery Directory parameter.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "role_config_suppression_yarn_nodemanager_remote_app_log_dir",
+      "required": false,
+      "default": "false",
+      "displayName": "Suppress Parameter Validation: Remote App Log Directory",
+      "description": "Whether to suppress configuration warnings produced by the built-in parameter validation for the Remote App Log Directory parameter.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "role_config_suppression_yarn_nodemanager_remote_app_log_dir_suffix",
+      "required": false,
+      "default": "false",
+      "displayName": "Suppress Parameter Validation: Remote App Log Directory Suffix",
+      "description": "Whether to suppress configuration warnings produced by the built-in parameter validation for the Remote App Log Directory Suffix parameter.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "role_health_suppression_node_manager_audit_health",
+      "required": false,
+      "default": "false",
+      "displayName": "Suppress Health Test: Audit Pipeline Test",
+      "description": "Whether to suppress the results of the Audit Pipeline Test heath test. The results of suppressed health tests are ignored when computing the overall health of the associated host, role or service, so suppressed health tests will not generate alerts.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "role_health_suppression_node_manager_connectivity",
+      "required": false,
+      "default": "false",
+      "displayName": "Suppress Health Test: ResourceManager Connectivity",
+      "description": "Whether to suppress the results of the ResourceManager Connectivity heath test. The results of suppressed health tests are ignored when computing the overall health of the associated host, role or service, so suppressed health tests will not generate alerts.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "role_health_suppression_node_manager_file_descriptor",
+      "required": false,
+      "default": "false",
+      "displayName": "Suppress Health Test: File Descriptors",
+      "description": "Whether to suppress the results of the File Descriptors heath test. The results of suppressed health tests are ignored when computing the overall health of the associated host, role or service, so suppressed health tests will not generate alerts.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "role_health_suppression_node_manager_gc_duration",
+      "required": false,
+      "default": "false",
+      "displayName": "Suppress Health Test: GC Duration",
+      "description": "Whether to suppress the results of the GC Duration heath test. The results of suppressed health tests are ignored when computing the overall health of the associated host, role or service, so suppressed health tests will not generate alerts.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "role_health_suppression_node_manager_health_checker",
+      "required": false,
+      "default": "false",
+      "displayName": "Suppress Health Test: NodeManager Health Checker",
+      "description": "Whether to suppress the results of the NodeManager Health Checker heath test. The results of suppressed health tests are ignored when computing the overall health of the associated host, role or service, so suppressed health tests will not generate alerts.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "role_health_suppression_node_manager_heap_dump_directory_free_space",
+      "required": false,
+      "default": "false",
+      "displayName": "Suppress Health Test: Heap Dump Directory Free Space",
+      "description": "Whether to suppress the results of the Heap Dump Directory Free Space heath test. The results of suppressed health tests are ignored when computing the overall health of the associated host, role or service, so suppressed health tests will not generate alerts.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "role_health_suppression_node_manager_host_health",
+      "required": false,
+      "default": "false",
+      "displayName": "Suppress Health Test: Host Health",
+      "description": "Whether to suppress the results of the Host Health heath test. The results of suppressed health tests are ignored when computing the overall health of the associated host, role or service, so suppressed health tests will not generate alerts.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "role_health_suppression_node_manager_log_directory_free_space",
+      "required": false,
+      "default": "false",
+      "displayName": "Suppress Health Test: Log Directory Free Space",
+      "description": "Whether to suppress the results of the Log Directory Free Space heath test. The results of suppressed health tests are ignored when computing the overall health of the associated host, role or service, so suppressed health tests will not generate alerts.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "role_health_suppression_node_manager_scm_health",
+      "required": false,
+      "default": "false",
+      "displayName": "Suppress Health Test: Process Status",
+      "description": "Whether to suppress the results of the Process Status heath test. The results of suppressed health tests are ignored when computing the overall health of the associated host, role or service, so suppressed health tests will not generate alerts.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "role_health_suppression_node_manager_swap_memory_usage",
+      "required": false,
+      "default": "false",
+      "displayName": "Suppress Health Test: Swap Memory Usage",
+      "description": "Whether to suppress the results of the Swap Memory Usage heath test. The results of suppressed health tests are ignored when computing the overall health of the associated host, role or service, so suppressed health tests will not generate alerts.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "role_health_suppression_node_manager_unexpected_exits",
+      "required": false,
+      "default": "false",
+      "displayName": "Suppress Health Test: Unexpected Exits",
+      "description": "Whether to suppress the results of the Unexpected Exits heath test. The results of suppressed health tests are ignored when computing the overall health of the associated host, role or service, so suppressed health tests will not generate alerts.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "role_health_suppression_node_manager_web_metric_collection",
+      "required": false,
+      "default": "false",
+      "displayName": "Suppress Health Test: Web Server Status",
+      "description": "Whether to suppress the results of the Web Server Status heath test. The results of suppressed health tests are ignored when computing the overall health of the associated host, role or service, so suppressed health tests will not generate alerts.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "role_health_suppression_nodemanager_local_data_directories_free_space",
+      "required": false,
+      "default": "false",
+      "displayName": "Suppress Health Test: NodeManager Local Directories Free Space",
+      "description": "Whether to suppress the results of the NodeManager Local Directories Free Space heath test. The results of suppressed health tests are ignored when computing the overall health of the associated host, role or service, so suppressed health tests will not generate alerts.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "role_health_suppression_nodemanager_log_directories_free_space",
+      "required": false,
+      "default": "false",
+      "displayName": "Suppress Health Test: NodeManager Container Log Directories Free Space",
+      "description": "Whether to suppress the results of the NodeManager Container Log Directories Free Space heath test. The results of suppressed health tests are ignored when computing the overall health of the associated host, role or service, so suppressed health tests will not generate alerts.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "role_health_suppression_nodemanager_recovery_directory_free_space",
+      "required": false,
+      "default": "false",
+      "displayName": "Suppress Health Test: NodeManager Recovery Directory Free Space",
+      "description": "Whether to suppress the results of the NodeManager Recovery Directory Free Space heath test. The results of suppressed health tests are ignored when computing the overall health of the associated host, role or service, so suppressed health tests will not generate alerts.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "role_triggers",
+      "required": false,
+      "default": "[]",
+      "displayName": "Role Triggers",
+      "description": "<p>The configured triggers for this role. This is a JSON-formatted list of triggers. These triggers are evaluated as part as the health system. Every trigger expression is parsed, and if the trigger condition is met, the list of actions provided in the trigger expression is executed.</p><p>Each trigger has the following fields:</p><ul><li><code>triggerName</code> <b>(mandatory)</b> - The name of the trigger. This value must be unique for the specific role. </li><li><code>triggerExpression</code> <b>(mandatory)</b> - A tsquery expression representing the trigger. </li><li><code>streamThreshold</code> <b>(optional)</b> - The maximum number of streams that can satisfy a condition of a trigger before the condition fires. By default set to 0, and any stream returned causes the condition to fire. </li><li><code>enabled</code> <b> (optional)</b> - By default set to 'true'. If set to 'false', the trigger is not evaluated.</li><li><code>expressionEditorConfig</code> <b> (optional)</b> - Metadata for the trigger editor. If present, the trigger should only be edited from the Edit Trigger page; editing the trigger here can lead to inconsistencies.</li></ul><p>For example, the following JSON formatted trigger configured for a DataNode fires if the DataNode has more than 1500 file descriptors opened:</p><p><pre>[{\"triggerName\": \"sample-trigger\",\n  \"triggerExpression\": \"IF (SELECT fd_open WHERE roleName=$ROLENAME and last(fd_open) > 1500) DO health:bad\",\n  \"streamThreshold\": 0, \"enabled\": \"true\"}]</pre></p><p>See the trigger rules documentation for more details on how to write triggers using tsquery.</p><p>The JSON format is evolving and may change and, as a result, backward compatibility is not guaranteed between releases.</p>",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK",
+      "validationWarningsSuppressed": false
+    },
+    {
+      "name": "stacks_collection_data_retention",
+      "required": false,
+      "default": "104857600",
+      "displayName": "Stacks Collection Data Retention",
+      "description": "The amount of stacks data that is retained. After the retention limit is reached, the oldest data is deleted.",
+      "relatedName": "stacks_collection_data_retention",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "stacks_collection_directory",
+      "required": false,
+      "displayName": "Stacks Collection Directory",
+      "description": "The directory in which stacks logs are placed. If not set, stacks are logged into a <code>stacks</code> subdirectory of the role's log directory.",
+      "relatedName": "stacks_collection_directory",
+      "sensitive": false,
+      "validationState": "OK",
+      "validationWarningsSuppressed": false
+    },
+    {
+      "name": "stacks_collection_enabled",
+      "required": false,
+      "default": "false",
+      "displayName": "Stacks Collection Enabled",
+      "description": "Whether or not periodic stacks collection is enabled.",
+      "relatedName": "stacks_collection_enabled",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "stacks_collection_frequency",
+      "required": false,
+      "default": "5.0",
+      "displayName": "Stacks Collection Frequency",
+      "description": "The frequency with which stacks are collected.",
+      "relatedName": "stacks_collection_frequency",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "stacks_collection_method",
+      "required": false,
+      "default": "jstack",
+      "displayName": "Stacks Collection Method",
+      "description": "The method used to collect stacks. The jstack option involves periodically running the jstack command against the role's daemon process. The servlet method is available for those roles that have an HTTP server endpoint exposing the current stacks traces of all threads. When the servlet method is selected, that HTTP endpoint is periodically scraped.",
+      "relatedName": "stacks_collection_method",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "unexpected_exits_thresholds",
+      "required": false,
+      "default": "{\"critical\":\"any\",\"warning\":\"never\"}",
+      "displayName": "Unexpected Exits Thresholds",
+      "description": "The health test thresholds for unexpected exits encountered within a recent period specified by the unexpected_exits_window configuration for the role.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "unexpected_exits_window",
+      "required": false,
+      "default": "5",
+      "displayName": "Unexpected Exits Monitoring Period",
+      "description": "The period to review when computing unexpected exits.",
+      "relatedName": "",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "yarn_nodemanager_address",
+      "required": false,
+      "default": "8041",
+      "displayName": "NodeManager IPC Address",
+      "description": "The address of the NodeManager IPC.",
+      "relatedName": "yarn.nodemanager.address",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "yarn_nodemanager_admin_env",
+      "required": false,
+      "default": "MALLOC_ARENA_MAX=$MALLOC_ARENA_MAX",
+      "displayName": "Containers Environment Variable",
+      "description": "Environment variables that should be forwarded from the NodeManager's environment to the container's.",
+      "relatedName": "yarn.nodemanager.admin-env",
+      "sensitive": false,
+      "validationState": "OK",
+      "validationWarningsSuppressed": false
+    },
+    {
+      "name": "yarn_nodemanager_container_manager_thread_count",
+      "required": false,
+      "default": "20",
+      "displayName": "Container Manager Thread Count",
+      "description": "Number of threads container manager uses.",
+      "relatedName": "yarn.nodemanager.container-manager.thread-count",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "yarn_nodemanager_delete_debug_delay_sec",
+      "value": "600",
+      "required": false,
+      "default": "0",
+      "displayName": "Localized Dir Deletion Delay",
+      "description": "Number of seconds after an application finishes before the NodeManager's DeletionService will delete the application's localized file and log directory. To diagnose YARN application problems, set this property's value large enough (for example, to 600 = 10 minutes) to permit examination of these directories.",
+      "relatedName": "yarn.nodemanager.delete.debug-delay-sec",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "yarn_nodemanager_delete_thread_count",
+      "required": false,
+      "default": "4",
+      "displayName": "Cleanup Thread Count",
+      "description": "Number of threads used in cleanup.",
+      "relatedName": "yarn.nodemanager.delete.thread-count",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "yarn_nodemanager_disk_health_checker_interval_ms",
+      "required": false,
+      "default": "120000",
+      "displayName": "Disk Health Checker Frequency",
+      "description": "Frequency, in milliseconds, of running disk health checker.",
+      "relatedName": "yarn.nodemanager.disk-health-checker.interval-ms",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "yarn_nodemanager_disk_health_checker_max_disk_utilization_per_disk_percentage",
+      "required": false,
+      "default": "90.0",
+      "displayName": "Dish Health Checker Max Disk Utilization Percent",
+      "description": "The maximum percentage of disk space utilization allowed after which a disk is marked as bad. Values can range from 0.0 to 100.0. If the value is greater than or equal to 100, the NodeManager will check for full disk. This applies to local directories and log directories.",
+      "relatedName": "yarn.nodemanager.disk-health-checker.max-disk-utilization-per-disk-percentage",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "yarn_nodemanager_disk_health_checker_min_free_space_per_disk_mb",
+      "required": false,
+      "default": "0",
+      "displayName": "Disk Health Checker Minimum Health Disk Space",
+      "description": "The minimum space that must be available on a disk for it to be used. This applies to local directories and log directories.",
+      "relatedName": "yarn.nodemanager.disk-health-checker.min-free-space-per-disk-mb",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "yarn_nodemanager_disk_health_checker_min_healthy_disks",
+      "required": false,
+      "default": "0.25",
+      "displayName": "Disk Health Checker Minimum Health Disks Fraction",
+      "description": "The minimum fraction of number of disks to be healthy for the NodeManager to launch new containers. This correspond to both local directories and log directories; that is, if there are fewer healthy local directories (or log directories) available, then new containers will not be launched on this node.",
+      "relatedName": "yarn.nodemanager.disk-health-checker.min-healthy-disks",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "yarn_nodemanager_env_whitelist",
+      "required": false,
+      "default": "JAVA_HOME,HADOOP_COMMON_HOME,HADOOP_HDFS_HOME,HADOOP_CLIENT_CONF_DIR,HADOOP_YARN_HOME,HADOOP_MAPRED_HOME,MR2_CLASSPATH,JAVA_LIBRARY_PATH",
+      "displayName": "Containers Environment Variables Whitelist ",
+      "description": "Environment variables that containers may override rather than use NodeManager's default.",
+      "relatedName": "yarn.nodemanager.env-whitelist",
+      "sensitive": false,
+      "validationState": "OK",
+      "validationWarningsSuppressed": false
+    },
+    {
+      "name": "yarn_nodemanager_heartbeat_interval_ms",
+      "value": "100",
+      "required": false,
+      "default": "1000",
+      "displayName": "Heartbeat Interval",
+      "description": "Heartbeat interval to ResourceManager",
+      "relatedName": "yarn.resourcemanager.nodemanagers.heartbeat-interval-ms",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "yarn_nodemanager_linux_container_executor_cgroups_strict_resource_usage",
+      "required": false,
+      "default": "false",
+      "displayName": "Strict CGroup Resource Usage",
+      "description": "CGroups allows cpu usage limits to be hard or soft. When this setting is true, containers cannot use more CPU usage than allocated even if spare CPU is available. This ensures that containers can only use CPU that they were allocated. When set to false, containers can use spare CPU if available. It should be noted that irrespective of whether set to true or false, at no time can the combined CPU usage of all containers exceed the value specified in Containers CPU Limit Percentage.",
+      "relatedName": "yarn.nodemanager.linux-container-executor.cgroups.strict-resource-usage",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "yarn_nodemanager_local_dirs",
+      "value": "/data0/yarn/nm,/data1/yarn/nm,/data2/yarn/nm",
+      "required": true,
+      "displayName": "NodeManager Local Directories",
+      "description": "List of directories on the local filesystem where a NodeManager stores intermediate data files.",
+      "relatedName": "yarn.nodemanager.local-dirs",
+      "sensitive": false,
+      "validationState": "OK",
+      "validationWarningsSuppressed": false
+    },
+    {
+      "name": "yarn_nodemanager_localizer_address",
+      "required": false,
+      "default": "8040",
+      "displayName": "Localizer Port",
+      "description": "Address where the localizer IPC is.",
+      "relatedName": "yarn.nodemanager.localizer.address",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "yarn_nodemanager_localizer_cache_cleanup_interval_ms",
+      "required": false,
+      "default": "600000",
+      "displayName": "Localizer Cache Cleanup Interval",
+      "description": "Address where the localizer IPC is.",
+      "relatedName": "yarn.nodemanager.localizer.cache.cleanup.interval-ms",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "yarn_nodemanager_localizer_cache_target_size_mb",
+      "required": false,
+      "default": "10240",
+      "displayName": "Localizer Cache Target Size",
+      "description": "Target size of localizer cache in MB, per local directory.",
+      "relatedName": "yarn.nodemanager.localizer.cache.target-size-mb",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "yarn_nodemanager_localizer_client_thread_count",
+      "required": false,
+      "default": "5",
+      "displayName": "Localizer Client Thread Count",
+      "description": "Number of threads to handle localization requests.",
+      "relatedName": "yarn.nodemanager.localizer.client.thread-count",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "yarn_nodemanager_localizer_fetch_thread_count",
+      "required": false,
+      "default": "4",
+      "displayName": "Localizer Fetch Thread Count",
+      "description": "Number of threads to use for localization fetching.",
+      "relatedName": "yarn.nodemanager.localizer.fetch.thread-count",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "yarn_nodemanager_log_dirs",
+      "value": "/data0/yarn/container-logs,/data1/yarn/container-logs,/data2/yarn/container-logs",
+      "required": false,
+      "default": "/var/log/hadoop-yarn/container",
+      "displayName": "NodeManager Container Log Directories",
+      "description": "List of directories on the local filesystem where a NodeManager stores container log files.",
+      "relatedName": "yarn.nodemanager.log-dirs",
+      "sensitive": false,
+      "validationState": "OK",
+      "validationWarningsSuppressed": false
+    },
+    {
+      "name": "yarn_nodemanager_log_retain_seconds",
+      "required": false,
+      "default": "10800",
+      "displayName": "Log Retain Duration",
+      "description": "Time in seconds to retain user logs. Only applicable if log aggregation is disabled.",
+      "relatedName": "yarn.nodemanager.log.retain-seconds",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "yarn_nodemanager_recovery_dir",
+      "required": false,
+      "default": "/var/lib/hadoop-yarn/yarn-nm-recovery",
+      "displayName": "NodeManager Recovery Directory",
+      "description": "The local filesystem directory in which the NodeManager stores state when recovery is enabled. Recovery is enabled by default.",
+      "relatedName": "yarn.nodemanager.recovery.dir",
+      "sensitive": false,
+      "validationState": "OK",
+      "validationWarningsSuppressed": false
+    },
+    {
+      "name": "yarn_nodemanager_remote_app_log_dir",
+      "required": false,
+      "default": "/tmp/logs",
+      "displayName": "Remote App Log Directory",
+      "description": "HDFS directory where application logs are stored when an application completes.",
+      "relatedName": "yarn.nodemanager.remote-app-log-dir",
+      "sensitive": false,
+      "validationState": "OK",
+      "validationWarningsSuppressed": false
+    },
+    {
+      "name": "yarn_nodemanager_remote_app_log_dir_suffix",
+      "required": false,
+      "default": "logs",
+      "displayName": "Remote App Log Directory Suffix",
+      "description": "The remote log dir will be created at {yarn.nodemanager.remote-app-log-dir}/${user}/{thisParam}",
+      "relatedName": "yarn.nodemanager.remote-app-log-dir-suffix",
+      "sensitive": false,
+      "validationState": "OK",
+      "validationWarningsSuppressed": false
+    },
+    {
+      "name": "yarn_nodemanager_resource_cpu_vcores",
+      "value": "7",
+      "required": false,
+      "default": "8",
+      "displayName": "Container Virtual CPU Cores",
+      "description": "Number of virtual CPU cores that can be allocated for containers. This parameter has no effect prior to CDH 4.4.",
+      "relatedName": "yarn.nodemanager.resource.cpu-vcores",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "yarn_nodemanager_resource_memory_mb",
+      "value": "15360",
+      "required": false,
+      "default": "8192",
+      "displayName": "Container Memory",
+      "description": "Amount of physical memory, in MiB, that can be allocated for containers.",
+      "relatedName": "yarn.nodemanager.resource.memory-mb",
+      "sensitive": false,
+      "validationState": "OK"
+    },
+    {
+      "name": "yarn_nodemanager_resource_percentage_physical_cpu_limit",
+      "required": false,
+      "default": "100",
+      "displayName": "Containers CPU Limit Percentage",
+      "description": "Amount of CPU reserved for all the containers on each node.",
+      "relatedName": "yarn.nodemanager.resource.percentage-physical-cpu-limit",
+      "sensitive": false,
+      "validationState": "OK"
+    }
+  ]
+}

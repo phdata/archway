@@ -28,6 +28,19 @@ object CDHResponses {
 
   case class RoleConfigGroup(name: String, value: Option[String], default: String)
 
+  case class RoleProperty(
+      name: String,
+      required: Boolean,
+      displayName: String,
+      description: String,
+      relatedName: String,
+      sensitive: Boolean,
+      validationState: String,
+      validationWarningsSuppressed: Option[Boolean],
+      value: Option[String],
+      default: Option[String]
+  )
+
   implicit val decodeHosInfo: Decoder[HostInfo] =
     Decoder.forProduct2("hostId", "hostname")(HostInfo.apply)
 
@@ -53,7 +66,21 @@ object CDHResponses {
         value <- c.downField("value").as[Option[String]]
         default <- c.downField("default").as[Option[String]]
       } yield {
-        new RoleConfigGroup(name, value, default.getOrElse(""))
+        RoleConfigGroup(name, value, default.getOrElse(""))
       }
   }
+
+  implicit val decodeYarnRoleProperty: Decoder[RoleProperty] =
+    Decoder.forProduct10(
+      "name",
+      "required",
+      "displayName",
+      "description",
+      "relatedName",
+      "sensitive",
+      "validationState",
+      "validationWarningsSuppressed",
+      "value",
+      "default"
+    )(RoleProperty.apply)
 }
