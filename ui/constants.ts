@@ -22,6 +22,7 @@ export const behaviorProperties = {
 export enum FeatureFlagType {
   Application = 'application',
   Messaging = 'messaging',
+  DeleteWorkspace = 'workspace-delete',
 }
 
 export enum ProvisioningType {

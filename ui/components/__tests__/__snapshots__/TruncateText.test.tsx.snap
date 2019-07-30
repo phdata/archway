@@ -1,0 +1,20 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TruncateText it renders correctly 1`] = `
+<div
+  style={
+    Object {
+      "WebkitBoxOrient": "vertical",
+      "WebkitLineClamp": 2,
+      "display": "-webkit-box",
+      "lineHeight": "100px",
+      "minHeight": "200px",
+      "overflow": "hidden",
+      "textOverflow": "ellipsis",
+      "wordBreak": "break-all",
+    }
+  }
+>
+  truncate
+</div>
+`;

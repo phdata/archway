@@ -2,7 +2,8 @@ import * as React from 'react';
 import { Row, Col } from 'antd';
 
 import { ManageCard } from '../cards';
-import { ProvisioningType, ModalType } from '../../../../constants';
+import { ProvisioningType, ModalType, FeatureFlagType } from '../../../../constants';
+import { Feature } from '../../../../components';
 
 interface Props {
   provisioning: ProvisioningType;
@@ -12,7 +13,7 @@ interface Props {
 const ManageTab = ({ provisioning, showModal }: Props) => (
   <div style={{ padding: 16, fontSize: 17 }}>
     <Row gutter={16} type="flex">
-      <Col span={8}>
+      <Col style={{ flex: 1 }}>
         <ManageCard
           title="PROVISION"
           showModal={showModal}
@@ -25,20 +26,22 @@ const ManageTab = ({ provisioning, showModal }: Props) => (
           reprovision a workspace that has already successfully provisioned.
         </ManageCard>
       </Col>
-      <Col span={8}>
-        <ManageCard
-          title="DELETE"
-          showModal={showModal}
-          modalType={ModalType.DeleteWorkspace}
-          buttonText="Delete Workspace"
-          disabled={false}
-        >
-          Deleting a workspace will delete the record of the workspace from Heimdali only. Deleting a workspace will not
-          affect the Hive database, AD groups, Sentry roles, or any other components of the workspace. Deleting a
-          workspace cannot be undone.
-        </ManageCard>
-      </Col>
-      <Col span={8}>
+      <Feature flag={FeatureFlagType.DeleteWorkspace}>
+        <Col style={{ flex: 1 }}>
+          <ManageCard
+            title="DELETE"
+            showModal={showModal}
+            modalType={ModalType.DeleteWorkspace}
+            buttonText="Delete Workspace"
+            disabled={false}
+          >
+            Deleting a workspace will delete the record of the workspace from Heimdali only. Deleting a workspace will
+            not affect the Hive database, AD groups, Sentry roles, or any other components of the workspace. Deleting a
+            workspace cannot be undone.
+          </ManageCard>
+        </Col>
+      </Feature>
+      <Col style={{ flex: 1 }}>
         <ManageCard
           title="DEPROVISION"
           showModal={showModal}
