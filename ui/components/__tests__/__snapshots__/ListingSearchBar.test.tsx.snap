@@ -1,0 +1,152 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ListingSearchBar it renders correctly 1`] = `
+<Card>
+  <Row
+    gutter={12}
+    type="flex"
+  >
+    <Col
+      lg={12}
+      span={24}
+      style={
+        Object {
+          "display": "flex",
+          "flex": "1",
+          "flexDirection": "column",
+          "justifyContent": "space-around",
+        }
+      }
+    >
+      <div>
+        <FieldLabel>
+          FILTER
+        </FieldLabel>
+        <Search
+          enterButton={false}
+          onChange={[Function]}
+          placeholder="find a workspace..."
+          value="Test"
+        />
+      </div>
+      <div>
+        <FieldLabel>
+          STATUS
+        </FieldLabel>
+        <div
+          style={
+            Object {
+              "display": "flex",
+              "justifyContent": "space-around",
+            }
+          }
+        >
+          <Checkbox
+            checked={false}
+            defaultChecked={true}
+            indeterminate={false}
+            key="approved"
+            name="approved"
+            onChange={[Function]}
+            style={
+              Object {
+                "fontSize": 12,
+                "textTransform": "uppercase",
+              }
+            }
+          >
+            approved
+          </Checkbox>
+          <Checkbox
+            checked={true}
+            defaultChecked={true}
+            indeterminate={false}
+            key="pending"
+            name="pending"
+            onChange={[Function]}
+            style={
+              Object {
+                "fontSize": 12,
+                "textTransform": "uppercase",
+              }
+            }
+          >
+            pending
+          </Checkbox>
+          <Checkbox
+            checked={true}
+            defaultChecked={true}
+            indeterminate={false}
+            key="rejected"
+            name="rejected"
+            onChange={[Function]}
+            style={
+              Object {
+                "fontSize": 12,
+                "textTransform": "uppercase",
+              }
+            }
+          >
+            rejected
+          </Checkbox>
+        </div>
+      </div>
+    </Col>
+    <Col
+      lg={12}
+      span={24}
+    >
+      <FieldLabel>
+        BEHAVIOR
+      </FieldLabel>
+      <Row
+        gutter={12}
+        style={
+          Object {
+            "flexDirection": "row",
+            "justifyContent": "center",
+          }
+        }
+        type="flex"
+      >
+        <Col
+          key="0"
+          span={8}
+        >
+          <Behavior
+            behaviorKey="simple"
+            icon="team"
+            onChange={[Function]}
+            selected={true}
+            title="Simple"
+          />
+        </Col>
+        <Col
+          key="1"
+          span={8}
+        >
+          <Behavior
+            behaviorKey="structured"
+            icon="deployment-unit"
+            onChange={[Function]}
+            selected={true}
+            title="Structured"
+          />
+        </Col>
+        <Col
+          key="2"
+          span={8}
+        >
+          <Behavior
+            behaviorKey="custom"
+            icon="select"
+            onChange={[Function]}
+            selected={true}
+            title="Custom"
+          />
+        </Col>
+      </Row>
+    </Col>
+  </Row>
+</Card>
+`;

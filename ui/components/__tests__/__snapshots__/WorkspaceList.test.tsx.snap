@@ -1,0 +1,15 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`WorkspaceList it renders correctly 1`] = `
+<Fragment>
+  <ListCardToggle
+    onSelect={[Function]}
+    selectedMode="card"
+    style={
+      Object {
+        "margin": "12px 0",
+      }
+    }
+  />
+</Fragment>
+`;

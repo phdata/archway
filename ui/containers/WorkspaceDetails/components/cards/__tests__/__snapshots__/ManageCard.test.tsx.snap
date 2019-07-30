@@ -1,0 +1,56 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ManageCard it renders correctly 1`] = `
+<Card
+  bordered={true}
+  style={
+    Object {
+      "height": "100%",
+    }
+  }
+>
+  <div
+    style={
+      Object {
+        "fontSize": 17,
+        "textAlign": "center",
+      }
+    }
+  >
+    Provision
+  </div>
+  <div
+    style={
+      Object {
+        "fontSize": 15,
+        "padding": "20px 20px 100px 20px",
+        "textAlign": "left",
+      }
+    }
+  />
+  <div
+    style={
+      Object {
+        "bottom": 20,
+        "fontWeight": 300,
+        "left": "50%",
+        "padding": 20,
+        "position": "absolute",
+        "transform": "translateX(-50%)",
+      }
+    }
+  >
+    <Button
+      block={false}
+      disabled={false}
+      ghost={false}
+      htmlType="button"
+      loading={false}
+      onClick={[Function]}
+      type="primary"
+    >
+      Provision
+    </Button>
+  </div>
+</Card>
+`;
