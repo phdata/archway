@@ -106,7 +106,9 @@ object AppContext {
       sentryClient = new SentryClientImpl[F](hiveXA, sentryServiceClient, loginContextProvider)
       hiveClient = new HiveClientImpl[F](loginContextProvider, hiveXA)
       impalaClient = config.db.impala.map(impalaXA => new ImpalaClientImpl[F](loginContextProvider, impalaXA.impalaTx))
-      lookupLDAPClient = new LDAPClientImpl[F](config.ldap, _.lookupBinding)
+      lookupLDAPClient = new LDAPClientImpl[F](
+        config.ldap,
+        config => if (config.lookupBinding.server.isEmpty) { config.provisioningBinding } else { config.lookupBinding })
       provisioningLDAPClient = new LDAPClientImpl[F](config.ldap, _.provisioningBinding)
       hdfsClient = new HDFSClientImpl[F](hadoopConfiguration, loginContextProvider)
       yarnClient = new CDHYarnClient[F](httpClient, config.cluster, clusterService)

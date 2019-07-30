@@ -440,15 +440,15 @@
           "description": "The DN for the 'lookup' LDAP connection, used for authenticating users and validating group membership. This should usually be set to the same value as the corresponding provisioning value",
           "required": "true",
           "type": "string",
-          "configurableInWizard": "true"
+          "default": ""
         },
         {
           "name": "heimdali.ldap.lookupBinding.server",
           "label": "Lookup LDAP Host",
-          "description": "THe LDAP/AD host for the 'lookup' LDAP connection. This should usually be set to the same value as the corresponding 'provisioning' value",
+          "description": "THe LDAP/AD host for the 'lookup' LDAP connection. This should usually be set to the same value as the corresponding 'provisioning' value. If it is set to empty string 'provisioning' value is used instead",
           "required": "true",
           "type": "string",
-          "configurableInWizard": "true"
+          "default": ""
         },
         {
           "name": "heimdali.ldap.lookupBinding.port",
@@ -456,8 +456,7 @@
           "description": "The LDAP/AD port for the 'lookup' LDAP connection. This should usually be set to the same value as the corresponding 'provisioning' value",
           "required": "true",
           "type": "long",
-          "default": 389,
-          "configurableInWizard": "true"
+          "default": 389
         },
         {
           "name": "heimdali.ldap.lookupBinding.bindPassword",
@@ -465,7 +464,7 @@
           "description": "The password for the 'lookup' LDAP connection. This should usually be set to the same value as the corresponding 'provisioning' value",
           "required": "true",
           "type": "password",
-          "configurableInWizard": "true"
+          "default": ""
         },
         {
           "name": "heimdali.ldap.baseDN",

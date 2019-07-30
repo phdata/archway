@@ -198,7 +198,9 @@ package object config extends StrictLogging {
       dataset: WorkspaceConfigItem
   )
 
-  case class LDAPBinding(server: String, port: Int, bindDN: String, bindPassword: String)
+  case class LDAPBinding(server: String, port: Int, bindDN: String, bindPassword: String) {
+    assert(bindPassword.nonEmpty && bindDN.nonEmpty, s"LDAPBinding bindPassword and bindDN need to be set")
+  }
 
   case class LDAPConfig(
       lookupBinding: LDAPBinding,
@@ -230,7 +232,7 @@ package object config extends StrictLogging {
         case e: Exception =>
           logger.warn(
             """Impala driver not found. Impala driver must be added to the classpath to use the automatic
-              |Impala invalidate metadata functionality for new databases and Sentry permsissions.""".stripMargin,
+              |Impala invalidate metadata functionality for new databases and Sentry permissions.""".stripMargin,
             e
           )
       }
