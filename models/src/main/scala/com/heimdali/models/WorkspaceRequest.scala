@@ -21,7 +21,7 @@ object Metadata {
 }
 
 case class UserDN(value: String) {
-  assert(value.toLowerCase.contains("cn="))
+  assert(value.toLowerCase.contains("cn="), s"Invalid user DN $value")
 
   override def toString: String = value
 }
