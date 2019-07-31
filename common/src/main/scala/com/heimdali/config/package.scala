@@ -167,7 +167,12 @@ package object config extends StrictLogging {
       user: Option[String],
       pass: Option[String],
       ssl: Boolean
-  )
+  ) {
+    if (auth) {
+      assert(user.isDefined && pass.isDefined,
+             "Smtp authorization is enabled but username or password are not provided")
+    }
+  }
 
   case class ApprovalConfig(notificationEmail: Seq[String], infrastructure: Option[String], risk: Option[String]) {
     val required: Int = List(infrastructure, risk).flatten.length
