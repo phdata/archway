@@ -22,7 +22,6 @@
   and application the application will fail on startup. 3aba1a503065a02113225959edc95a5cb3b4a4a6
 - Add Oracle database support. Oracle database support is handled automatically by the application 'Database Migration'
   command, no steps are necessary except setting the correct connection string, driver, username, and password for your Oracle database. 9e8d76ed6725814e68e475720721f6be3d0f27e3
-- Show the application version in the UI near the copyright. d31515c8c6f41b151064c7b40efc6d78fa89fa71
 - Dynamically generate the application copyright year. 93b08baf5e612601f82ab99a5219491b34b640e5
 - Pull yarn ports from Cloudera Manager instead of the hadoop config files. ffd21b3be690de4cd73a4fd831de755ec9c899eb
 - Make the 'lookup' ldap connection optional. If the lookup connection server is left empty, the provisioning connection
