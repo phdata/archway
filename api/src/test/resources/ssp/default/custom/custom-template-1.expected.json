@@ -1,7 +1,7 @@
 {
   "summary": "Custom template test",
   "description": "A custom template test",
-  "behavior": "custom-template-1",
+  "behavior": "Custom template 1",
   "name": "Custom template 1",
   "compliance": {
     "phi_data": false,
@@ -92,7 +92,7 @@
   "requested_date": "2019-07-11T10:18:31.905Z",
   "status": "Pending",
   "metadata": {
-    "name": "Custom 1",
+    "name": "Custom template 1",
     "description": "Custom template 1",
     "ordering": 1,
     "tags": {

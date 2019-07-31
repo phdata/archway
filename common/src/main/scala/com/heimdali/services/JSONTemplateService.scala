@@ -19,6 +19,32 @@ class JSONTemplateService[F[_]: Effect: Clock](context: AppContext[F], configSer
 
   val templateEngine = new TemplateEngine()
 
+  private val customTemplatesData: F[List[(WorkspaceRequest, String)]] = {
+    val customTemplatesPath: Path = Paths.get(context.appConfig.templates.templateRoot, "custom")
+
+    if (customTemplatesPath.toFile.exists) {
+      val customTemplates = Files
+        .walk(customTemplatesPath, 1, FileVisitOption.FOLLOW_LINKS)
+        .iterator()
+        .asScala
+        .toList
+        .map(_.toString)
+        .filter(_.endsWith(".ssp"))
+        .sorted
+
+      // creating empty object because it is not needed only required
+      val templateRequest: TemplateRequest =
+        TemplateRequest("", "", "", Compliance(false, false, false), UserDN("cn=admin,ou=heimdali,dc=io"))
+
+      customTemplates.traverse[F, (WorkspaceRequest, String)] { templatePath =>
+        generateWorkspaceRequest(templateRequest, templatePath, extractTemplateName(templatePath))
+          .map(workspaceRequest => (workspaceRequest, templatePath))
+      }
+    } else {
+      List.empty[(WorkspaceRequest, String)].pure[F]
+    }
+  }
+
   override def defaults(user: User): F[TemplateRequest] =
     TemplateRequest(user.username, user.name, user.name, Compliance.empty, UserDN(user.distinguishedName)).pure[F]
 
@@ -38,42 +64,27 @@ class JSONTemplateService[F[_]: Effect: Clock](context: AppContext[F], configSer
     }
 
   override def workspaceFor(template: TemplateRequest, templateName: String): F[WorkspaceRequest] = {
-    val templateRootPath = Paths.get(context.appConfig.templates.templateRoot, s"$templateName.ssp")
 
-    val templatePath = if (templateRootPath.toFile.exists) {
-      templateRootPath
+    if (Seq("user", "simple", "structured").contains(templateName)) {
+      val templatePath = Paths.get(context.appConfig.templates.templateRoot, s"$templateName.ssp")
+
+      logger.info("generating {} from {}", templateName, templatePath)
+      generateWorkspaceRequest(template, templatePath.toString, templateName)
     } else {
-      Paths.get(context.appConfig.templates.templateRoot, "custom", s"$templateName.ssp")
-    }
-
-    logger.info("generating {} from {}", templateName, templatePath)
-    generateWorkspaceRequest(template, templatePath.toString, templateName)
-  }
-
-  override def customTemplates: F[List[WorkspaceRequest]] = {
-    val templatesPath: Path = Paths.get(context.appConfig.templates.templateRoot, "custom")
-
-    if (templatesPath.toFile.exists) {
-      val customTemplates = Files
-        .walk(templatesPath, 1, FileVisitOption.FOLLOW_LINKS)
-        .iterator()
-        .asScala
-        .toList
-        .map(_.toString)
-        .filter(_.endsWith(".ssp"))
-        .sorted
-
-      // creating empty object because it is not needed only required
-      val templateRequest: TemplateRequest =
-        TemplateRequest("", "", "", Compliance(false, false, false), UserDN("cn=admin,ou=heimdali,dc=io"))
-
-      customTemplates.traverse[F, WorkspaceRequest] { templatePath =>
-        generateWorkspaceRequest(templateRequest, templatePath, extractTemplateName(templatePath))
-      }
-    } else {
-      List.empty[WorkspaceRequest].pure[F]
+      for {
+        data <- customTemplatesData
+        templateInfo <- data
+          .find(_._1.metadata.name == templateName)
+          .getOrElse(throw new Exception(s"Template with name $templateName could not be found at " +
+            s"${Paths.get(context.appConfig.templates.templateRoot, "custom")})"))
+          .pure[F]
+        _ <- logger.info("generating {} from {}", templateName, templateInfo._2).pure[F]
+        result <- generateWorkspaceRequest(template, templateInfo._2, templateName)
+      } yield result
     }
   }
+
+  override def customTemplates: F[List[WorkspaceRequest]] = customTemplatesData.map(_.map(_._1))
 
   private def generateWorkspaceRequest(templateRequest: TemplateRequest,
                                        templatePath: String,

@@ -1,5 +1,7 @@
 package com.heimdali.rest
 
+import java.net.URLDecoder
+
 import cats.effect._
 import cats.implicits._
 import com.heimdali.models._
@@ -35,13 +37,15 @@ class TemplateController[F[_]: Sync](authService: TokenAuthService[F], templateG
           implicit val templateEntityDecoder: EntityDecoder[F, TemplateRequest] = jsonOf[F, TemplateRequest]
           for {
             simpleTemplate <- req.req.as[TemplateRequest].map(_.copy(requester = UserDN(user.distinguishedName)))
-            workspaceRequest <- templateGenerator.workspaceFor(simpleTemplate, templateName).onError {
-              case e: Throwable =>
-                logger
-                  .error(
-                    s"Error parsing template request for user '${user.username}' using template '$templateName': ${e.getLocalizedMessage}")
-                  .pure[F]
-            }
+            workspaceRequest <- templateGenerator
+              .workspaceFor(simpleTemplate, URLDecoder.decode(templateName, "UTF-8"))
+              .onError {
+                case e: Throwable =>
+                  logger
+                    .error(
+                      s"Error parsing template request for user '${user.username}' using template '$templateName': ${e.getLocalizedMessage}")
+                    .pure[F]
+              }
             response <- Ok(workspaceRequest.asJson)
           } yield response
       }

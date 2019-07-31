@@ -1,5 +1,7 @@
 package com.heimdali.rest
 
+import java.net.URLEncoder
+
 import cats.effect.{IO, Timer}
 import com.heimdali.AppContext
 import com.heimdali.generators._
@@ -65,12 +67,12 @@ class TemplateControllerSpec
   }
 
   it should "generate a custom workspace" in new Context {
-    val name = "custom-template-1"
-    val request = TemplateRequest("Custom template 1", "Custom template test", "A custom template test", initialCompliance, standardUserDN)
+    val name = "Custom template 1"
+    val request = TemplateRequest(name, "Custom template test", "A custom template test", initialCompliance, standardUserDN)
 
-    val response = templateController.route.orNotFound.run(POST(request.asJson, Uri.unsafeFromString(s"/$name")).unsafeRunSync())
+    val response = templateController.route.orNotFound.run(POST(request.asJson, Uri.unsafeFromString(s"/${URLEncoder.encode(name, "UTF-8")}")).unsafeRunSync())
 
-    val expected: Json = fromResource(s"ssp/default/custom/$name.expected.json")
+    val expected: Json = fromResource(s"ssp/default/custom/custom-template-1.expected.json")
     check(response, Status.Ok, Some(expected.asObject.get.add("requested_date", testTimer.instant.asJson).asJson))
   }
 

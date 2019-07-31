@@ -1,6 +1,6 @@
 [
   {
-    "name": "Custom 1",
+    "name": "Custom template 1",
     "description": "Custom template 1",
     "ordering": 1,
     "tags": {
@@ -8,7 +8,7 @@
     }
   },
   {
-    "name": "Custom 2",
+    "name": "Custom template 2",
     "description": "Custom template 2",
     "ordering": 2,
     "tags": {
@@ -17,7 +17,7 @@
     }
   },
   {
-    "name": "Custom 3",
+    "name": "Custom template 3",
     "description": "Custom template 3",
     "ordering": 3,
     "tags": {}
