@@ -1,3 +1,68 @@
+## 1.7.0
+
+### Enhancements
+
+- Users can now see the workspaces they are a part of, even if they are not the manager of that workspace. 0d7ba505af07a6527979bbff3482d179c47d681e
+- The 'Cluster Status' icon now links directly to CM so you can immediately satisfy your curiosity when there is a
+  bad CM health status. ef2f0f3e3a40f075688419451f39ec7bab536ca9
+- Custom Templates can now be added to the template root dir under the 'custom' folder. Custom templates will
+  show as another option on the workspace request 'Behavior' page. See 'Breaking Changes' below for instructions on creating a custom template and modifying existing templates. 9f0d4415fbbe5cf0903fec540f238d2b79c15933
+- Package the Impala JDBC driver with the application. It is no longer to download the Impala driver and add it to
+  the classpath manually. 8a8d63c539c04bcb50d85c8eaaa9ab8783ffd298
+- Add the database migration 'flyway' command as a role command. Before installing the service for the first time,
+  and when there are database migrations, run the 'Migrate Database' command. e4f6c93056c15822e3e13e847826fe55e175149c
+- Add 'heimdali.additional.java.options' safety valve style parameter to the service for adding additional Java options
+  to the service. fe6262993572bd30a3c06a8f84b0069f9329c981
+- Show a workspace status of either 'provisioning' or 'pending' that is linked to the actual provisioning status of
+  the workspace. The old 'READY' icon in the upper left of the workspaces has been removed, it was only tied to workspace approvals and could be misleading about the status of a workspace. c805625825c5500e6069e9011de6dcbe4025dc37
+- Verify database connection during Heimdali startup for faster fail and easier debugging of configuration. 7c0848dfdabb3be65f0b6a55dc356e851088d18e
+- Add a 'MANAGE' tab to the workspace details page. the Manage tab has 'provision' and 'deprovision' buttons.
+  'Deprovision' is an experimental feature, it may not deprovision all resources in your workspace. 039d265ef6145f2e915a260d1ee8909f8fab9f25
+- Add validation for SMTP authentication settings: If you choose authenticated SMTP but don't set the username
+  and application the application will fail on startup. 3aba1a503065a02113225959edc95a5cb3b4a4a6
+- Add Oracle database support. Oracle database support is handled automatically by the application 'Database Migration'
+  command, no steps are necessary except setting the correct connection string, driver, username, and password for your Oracle database. 9e8d76ed6725814e68e475720721f6be3d0f27e3
+- Show the application version in the UI near the copyright. d31515c8c6f41b151064c7b40efc6d78fa89fa71
+- Dynamically generate the application copyright year. 93b08baf5e612601f82ab99a5219491b34b640e5
+- Pull yarn ports from Cloudera Manager instead of the hadoop config files. ffd21b3be690de4cd73a4fd831de755ec9c899eb
+- Make the 'lookup' ldap connection optional. If the lookup connection server is left empty, the provisioning connection
+  will be used. e407508fb7c1de23f59b2abf99380df4a9a45d3b
+
+### Bug Fixes
+
+- When adding a member to a workspace, users are checked for exsitence in Active Directory before the user is added to
+  the workspace. There is a spinner that shows until this check is completed and the user is added to the workspace
+- Fix noisy http4s client error messages. abee7743f1e10ac23a52dcce8a1299dccb1d74b2
+- Remove CORS headers. 85d0a585bcc903a790ac5dfd6ad3b862d3f58008
+- Show better messages when provisioning fails to invalidate Impala metadata. fdeb55451cd031c04cb7e68d67fb6d8da7be9e37
+- Handle backslashes in user DNs. bea55dae6698bee30a4ac34baad05ed94b9e2210
+- Additional error handling and logging of error messages everywhere we could. b5041f8ba633db702e7f08b49cd49911436d9659
+- Use a minimum Kafka topic replication factor of '3', regardless of what is defined in the template. 6e19a5343f832954e5f8559c9e655659b8cbc0af
+- Fix Cloudera Manager port validation error when the two ldap connections used the same port. 0bc79b3d2c5fdfba1d8ee20c00749acf720c4f37
+- When deprovisioning a workspace, don't fail the deprovision when the hdfs dir does not exist. 215f4a23413122eb207f0f4e4802de4f194edb5c
+
+## CSD Upgrade Note
+
+A CSD upgrade should not be necessary, but since there are so many documentation and usability improvements updating the CSD is recommended
+
+### Breaking Changes
+
+**Template Changes**
+You must update existing templates to contain a 'metadata' block. If you do not update this block, your current templates 'user.ssp', 'structured.ssp', and 'simple.ssp' will fail to work. The metadata block descriptions are not important and the values do not need to be customized at this time.
+
+A metadata block looks like this:
+
+```
+  "metadata": {
+    "name": "${template.name}",
+    "description": "${template.description}",
+    "ordering": 1,
+    "tags": {}
+  },
+```
+
+A full template example can be found here: https://bitbucket.org/phdata/heimdali/src/8f588dadbc60b04bbfcc1c5a71b40c6626fb3464/templates/src/main/ssp/default/simple.ssp#lines-6
+
 ## 1.6.4
 
 - Fix error when requesting workspaces with special characters in workspace requests. 220800ea3dbe592fee9f49b8611b2bc8994f2314
