@@ -64,6 +64,8 @@ case ${COMPONENT} in
             DATABASE_SCRIPT_DIR="mysql"
         elif [[ $DB_URL == *"postgres"* ]]; then
             DATABASE_SCRIPT_DIR="sql"
+        elif [[ $DB_URL == *"oracle"* ]]; then
+            DATABASE_SCRIPT_DIR="oracle"
         fi
 
         FLYWAY_EXECUTABLE="$FLYWAY_DIR/flyway"
