@@ -109,7 +109,9 @@ function* requestWorkspace() {
   yield put(actions.profileLoading(true));
   const token = yield select((s: any) => s.get('login').get('token'));
   const workspace = yield call(Api.createWorkspace, token);
+  const { provisioning } = yield call(Api.getProvisioning, token, workspace.id);
   yield put(actions.workspaceAvailable(workspace));
+  yield put(actions.setProvisioning(provisioning));
   yield put(actions.profileLoading(false));
 }
 
