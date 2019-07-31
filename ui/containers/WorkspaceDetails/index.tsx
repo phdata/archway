@@ -6,7 +6,6 @@ import { Dispatch } from 'redux';
 import { createStructuredSelector } from 'reselect';
 import { throttle } from 'lodash';
 import {
-  Status,
   Liaison,
   Info,
   Compliance,
@@ -56,7 +55,6 @@ interface Props extends RouteComponentProps<DetailsRouteProps> {
   profile: Profile;
   pools?: ResourcePoolsInfo;
   infos?: NamespaceInfoList;
-  approved: boolean;
   activeApplication?: Application;
   activeModal?: string;
   selectedAllocation?: HiveAllocation;
@@ -183,7 +181,6 @@ class WorkspaceDetails extends React.PureComponent<Props> {
       cluster,
       pools,
       infos,
-      approved,
       members,
       activeApplication,
       activeModal,
@@ -228,12 +225,11 @@ class WorkspaceDetails extends React.PureComponent<Props> {
         <div
           style={{
             display: 'flex',
-            justifyContent: 'space-between',
+            justifyContent: 'flex-end',
             backgroundColor: 'white',
             padding: 16,
           }}
         >
-          <Status ready={approved} createdAt={workspace.requested_date} />
           <Liaison data={liasion} />
         </div>
 
@@ -410,7 +406,6 @@ const mapStateToProps = () =>
     profile: selectors.getProfile(),
     infos: selectors.getNamespaceInfo(),
     pools: selectors.getPoolInfo(),
-    approved: selectors.getApproved(),
     activeTopic: selectors.getActiveTopic(),
     activeApplication: selectors.getActiveApplication(),
     activeModal: selectors.getActiveModal(),
