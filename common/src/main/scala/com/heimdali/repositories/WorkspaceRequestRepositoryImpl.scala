@@ -152,7 +152,7 @@ class WorkspaceRequestRepositoryImpl(sqlSyntax: SqlSyntax) extends WorkspaceRequ
         """
 
     def listQuery(distinguishedName: String): Query0[(WorkspaceSearchResult)] =
-      (listFragment ++ fr"where wr.id in (" ++ innerQuery(distinguishedName) ++ fr") and wr.single_user = 0").query
+      (listFragment ++ fr"where wr.id in (" ++ innerQuery(distinguishedName) ++ fr") and wr.single_user = '0'").query
 
     def insert(workspaceRequest: WorkspaceRequest): Update0 =
       sql"""
@@ -321,11 +321,11 @@ class WorkspaceRequestRepositoryImpl(sqlSyntax: SqlSyntax) extends WorkspaceRequ
       sql"update workspace_request SET workspace_created = $time where id = $id".update
 
     def findByUsername(username: String): Query0[WorkspaceRequest] =
-      (selectFragment ++ whereAnd(fr"wr.requested_by = $username", fr"wr.single_user = 1")).query[WorkspaceRequest]
+      (selectFragment ++ whereAnd(fr"wr.requested_by = $username", fr"wr.single_user = '1'")).query[WorkspaceRequest]
 
     def pending(role: ApproverRole): Query0[WorkspaceSearchResult] =
       (listFragment ++ whereAnd(
-        fr"wr.single_user = 0"
+        fr"wr.single_user = '0'"
       )).query
 
   }
@@ -364,7 +364,7 @@ class WorkspaceRequestRepositoryImpl(sqlSyntax: SqlSyntax) extends WorkspaceRequ
         on s.workspace_request_id = wr.id
             left join (select wd.workspace_request_id, sum(size_in_gb) as total_size from workspace_database wd inner join hive_database hd on wd.hive_database_id = hd.id group by wd.workspace_request_id) db on db.workspace_request_id = wr.id
             left join (select wp.workspace_request_id, sum(max_cores) as cores, sum(max_memory_in_gb) as mem from workspace_pool wp inner join resource_pool rp on wp.resource_pool_id = rp.id group by wp.workspace_request_id) res on res.workspace_request_id = wr.id
-        AND wr.single_user = 0
+        AND wr.single_user = '0'
         """
 
   }

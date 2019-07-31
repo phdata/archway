@@ -112,7 +112,7 @@ object Dependencies {
   )
 
   val dbCore = Seq(
-    "postgresql" % "postgresql" % "9.0-801.jdbc4" % "provided",
+    "org.postgresql" % "postgresql" % "9.4.1212" % "provided",
     "mysql" % "mysql-connector-java" % "6.0.6" % "provided"
   )
 

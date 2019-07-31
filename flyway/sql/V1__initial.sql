@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS ldap_registration (
   id BIGINT NOT NULL DEFAULT NEXTVAL ('ldap_registration_seq'),
   distinguished_name VARCHAR(255) NOT NULL,
   common_name VARCHAR(255) NOT NULL,
-  existing BOOLEAN NOT NULL DEFAULT false,
+  existing CHAR(1) NOT NULL DEFAULT '0',
   sentry_role VARCHAR(255) NOT NULL,
   group_created TIMESTAMP NULL,
   role_created TIMESTAMP NULL,
@@ -103,9 +103,9 @@ CREATE SEQUENCE compliance_seq;
 
 CREATE TABLE IF NOT EXISTS compliance (
   id BIGINT NOT NULL DEFAULT NEXTVAL ('compliance_seq'),
-  phi_data BOOLEAN NOT NULL,
-  pii_data BOOLEAN NOT NULL,
-  pci_data BOOLEAN NOT NULL,
+  phi_data CHAR(1) NOT NULL,
+  pii_data CHAR(1) NOT NULL,
+  pci_data CHAR(1) NOT NULL,
   PRIMARY KEY (id));
 
 
@@ -120,7 +120,7 @@ CREATE TABLE IF NOT EXISTS workspace_request (
   compliance_id BIGINT NOT NULL,
   requested_by VARCHAR(255) NOT NULL,
   request_date TIMESTAMP NOT NULL,
-  single_user BOOLEAN NOT NULL DEFAULT false,
+  single_user CHAR(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (id)
  ,
   CONSTRAINT fk_workspace_request_compliance1

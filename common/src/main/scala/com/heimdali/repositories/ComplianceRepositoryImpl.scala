@@ -12,9 +12,9 @@ class ComplianceRepositoryImpl extends ComplianceRepository {
     sql"""
        insert into compliance (phi_data, pci_data, pii_data)
        values(
-        ${compliance.phiData},
-        ${compliance.pciData},
-        ${compliance.piiData}
+        ${toChar(compliance.phiData).toString},
+        ${toChar(compliance.pciData).toString},
+        ${toChar(compliance.piiData).toString}
        )
       """.update.withUniqueGeneratedKeys[Long]("id")
 
@@ -36,5 +36,12 @@ class ComplianceRepositoryImpl extends ComplianceRepository {
       id <- insertRecord(compliance)
       result <- find(id)
     } yield result
+
+  private def toChar(boolean: Boolean): Char = {
+    boolean match {
+      case true => '1'
+      case false => '0'
+    }
+  }
 
 }
