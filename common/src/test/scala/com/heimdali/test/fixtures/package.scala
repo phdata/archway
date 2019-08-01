@@ -250,7 +250,4 @@ package object fixtures {
 
   }.orNotFound)))(_ => IO.unit)
 
-
-  val httpClient = new CMClient[IO](testClient, appConfig.cluster)
-
 }

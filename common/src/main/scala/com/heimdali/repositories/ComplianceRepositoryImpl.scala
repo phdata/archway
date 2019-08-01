@@ -39,7 +39,7 @@ class ComplianceRepositoryImpl extends ComplianceRepository {
 
   private def toChar(boolean: Boolean): Char = {
     boolean match {
-      case true => '1'
+      case true  => '1'
       case false => '0'
     }
   }

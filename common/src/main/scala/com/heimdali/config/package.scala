@@ -71,8 +71,8 @@ package object config extends StrictLogging {
     def mgmtRoleConfigGroups(roleConfigGroupName: String) =
       s"$mgmtServiceUrl/roleConfigGroups/$roleConfigGroupName/config?view=full"
 
-    def yarnRoleConfig(role: String) =
-      s"$url/api/v18/clusters/cluster/services/yarn/roleConfigGroups/$role/config?view=full"
+    def yarnRoleConfig(serviceName: String, role: String) =
+      s"${serviceUrl(serviceName)}/roles/$role/config?view=full"
 
     val refreshUrl = s"$clusterUrl/commands/poolsRefresh"
   }

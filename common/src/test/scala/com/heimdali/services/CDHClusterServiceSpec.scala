@@ -5,6 +5,7 @@ import java.util.concurrent.Executors
 import cats.effect.concurrent.MVar
 import cats.effect.{ContextShift, IO, Timer}
 import com.heimdali.caching.{CacheEntry, Cached}
+import com.heimdali.clients.HttpClient
 import com.heimdali.config.ServiceOverride
 import com.heimdali.test.fixtures.{HttpTest, _}
 import org.apache.hadoop.conf.Configuration
@@ -16,12 +17,12 @@ import scala.concurrent.ExecutionContext
 class CDHClusterServiceSpec
   extends FlatSpec
     with Matchers
-    with MockFactory
-    with HttpTest {
+    with MockFactory {
 
   behavior of "CDH Cluster service"
 
   it should "use hue override" in new Context {
+    val httpClient = mock[HttpClient[IO]]
     val configuration = new Configuration()
     val newConfig = appConfig.cluster.copy(hueOverride = ServiceOverride(Some("abc"), 8088))
     val timedCacheService = new TimedCacheService()
@@ -33,47 +34,7 @@ class CDHClusterServiceSpec
     actual.head._2.head shouldBe AppLocation("abc", 8088)
   }
 
-  it should "return a cluster" in new Context {
-    val url = ""
-    val name = "cluster"
-    val version = "5.15.0"
 
-    val username = "admin"
-    val password = "admin"
-
-    val configuration = new Configuration()
-    configuration.set("hive.server2.thrift.port", "888")
-    configuration.set("yarn.nodemanager.webapp.address", "0.0.0.0:9998")
-    configuration.set("yarn.resourcemanager.webapp.address", "0.0.0.0:9999")
-
-    val timedCacheService = new TimedCacheService()
-    val clusterCache: Cached[IO, Seq[Cluster]] = MVar[IO].of(CacheEntry(1000, Seq.empty[Cluster])).unsafeRunSync
-
-    val service = new CDHClusterService(httpClient, appConfig.cluster, configuration, timedCacheService, clusterCache)
-    val details = service.clusterDetails.unsafeRunSync.head
-
-    val impala = details.services.find(_.name == "impala").get
-    impala.capabilities("beeswax").head.port shouldBe 21000
-    impala.capabilities("hiveServer2").head.port shouldBe 21050
-
-    val hive = details.services.find(_.name == "hive").get
-    hive.capabilities("thrift").head.port shouldBe 888
-
-    val hue = details.services.find(_.name == "hue").get
-    hue.capabilities("load_balancer").head.port shouldBe 8088
-
-    val yarn = details.services.find(_.name == "yarn").get
-    yarn.capabilities("node_manager").head.port shouldBe 8044
-    yarn.capabilities("resource_manager").head.port shouldBe 8090
-
-    val mgmt = details.services.find(_.name == "mgmt").get
-    mgmt.capabilities("navigator").head.port shouldBe 7187
-
-    details.id should be(name)
-    details.name should be("Odin")
-    details.distribution should be(CDH(version))
-    details.status should be("GOOD_HEALTH")
-  }
 
 //  it should "use the cache service" in new Context {
 //    val configuration = new Configuration()
