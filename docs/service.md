@@ -290,7 +290,7 @@ Version: 1.3.13
 **heimdali.ldap.lookupBinding.server**
 
 - Label: Lookup LDAP Host
-- Description: THe LDAP/AD host for the 'lookup' LDAP connection. This should usually be set to the same value as the corresponding 'provisioning' value
+- Description: THe LDAP/AD host for the 'lookup' LDAP connection. This should usually be set to the same value as the corresponding 'provisioning' value. If it is set to empty string 'provisioning' value is used instead
 - Required: true
 - Default:
 
@@ -311,7 +311,7 @@ Version: 1.3.13
 **heimdali.ldap.baseDN**
 
 - Label: Base DN
-- Description: The base DN Heimdali will manage
+- Description: The base DN for user search when authenticating users to Heimdali
 - Required: true
 - Default:
 
@@ -332,7 +332,7 @@ Version: 1.3.13
 **heimdali.ldap.groupPath**
 
 - Label: Group DN
-- Description: The LDAP location for groups
+- Description: The LDAP location for groups. Groups needed for Sentry access control will be created in the DN
 - Required: true
 - Default:
 
@@ -360,9 +360,9 @@ Version: 1.3.13
 **heimdali.ui.url**
 
 - Label: Heimdali UI
-- Description: Full url for Heimdali UI in the format `https://host:port`. You must use the same port from the parameter heimdali.rest.port. This property is used for links in email notifications
-- Required: true
-- Default:
+- Description: Full url for Heimdali UI in the format `https://host:port`. The default of this value should be auto generated and work without configuration
+- Required: false
+- Default: ${host}:${heimdali.rest.port}
 
 **heimdali.ui.staticContentDir**
 
@@ -410,14 +410,14 @@ Version: 1.3.13
 
 - Label: Username for SMTP
 - Description: Username for SMTP
-- Required: true
+- Required: false
 - Default:
 
 **heimdali.smtp.pass**
 
 - Label: Password for SMTP
 - Description: Pssword for SMTP
-- Required: true
+- Required: false
 - Default:
 
 **heimdali.templates.ldapGroupGenerator**
