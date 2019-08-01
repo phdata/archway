@@ -22,7 +22,7 @@ const SummaryPage = ({ workspace, profile }: Props) => {
         <Col span={8}>
           <Card>
             <Icon type="crown" style={{ fontSize: 42 }} />
-            <Label>You will be the liason for this project</Label>
+            <Label>You will be the owner for this project</Label>
             <h4>{profile.name}</h4>
           </Card>
         </Col>
