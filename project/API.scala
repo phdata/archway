@@ -30,7 +30,7 @@ object API {
   )
 
   val revolverSettings = Seq(
-    mainClass in reStart := Some("com.heimdali.Server"),
+    mainClass in reStart := Some("io.phdata.Server"),
     javaOptions in reStart := Seq(
       "-Dhadoop.home.dir=$PWD",
       s"-Djava.security.krb5.conf=${baseDirectory.value}/../krb5.conf"

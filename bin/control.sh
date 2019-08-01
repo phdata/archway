@@ -49,7 +49,7 @@ case ${COMPONENT} in
                           $JAVA_OPTS \
                           $CSD_JAVA_OPTS \
                           -cp $HEIMDALI_CLASSPATH \
-                          com.heimdali.Server
+                          io.phdata.Server
                 ;;
             (*)
                 echo ${SYNTAX}

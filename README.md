@@ -18,7 +18,7 @@ $ make itest-init
 ### Run The App (API-focused development)
 
 - Open the project in IntelliJ
-- Open `com.heimdali.Server` and click the green "play" button next to the `object` definition
+- Open `io.phdata.Server` and click the green "play" button next to the `object` definition
 - The first run won't work, because we need to change the newly created run configuration
 - Open the run configuration drop down and click "Edit Configurations..."
 - Select the "Server" configuration and enable "Include dependencies with 'Provided' scope"
@@ -29,7 +29,7 @@ $ make itest-init
 
 ### Run The App (UI-focused development)
 
-- In the terminal tab, run `./sbt -Djavax.net.ssl.trustStore=<truststore> compile "api/runMain com.heimdali.Server"`
+- In the terminal tab, run `./sbt -Djavax.net.ssl.trustStore=<truststore> compile "api/runMain io.phdata.Server"`
 - In another terminal tab, run `npm i` which will install the npm dependencies
 - Run `npm start` which will spin up the UI
 - Once the UI has started you can start editing and the UI will refresh based on your changes
@@ -48,19 +48,19 @@ Heimdali API is the REST interface primally enabling functionality to it's UI co
 
 The code is comprised of a few primary packages:
 
-- REST API - `com.heimdali.rest`
+- REST API - `io.phdata.rest`
   Responsible for serving requests via HTTP.
-- Startup - `com.heimdali.startup`
+- Startup - `io.phdata.startup`
   Responsible for managing initial (and often repeating) tasks.
-- Services - `com.heimdali.services`
+- Services - `io.phdata.services`
   Responsible for providing business logic.
-- Clients - `com.heimdali.clients`
+- Clients - `io.phdata.clients`
   Responsible for interacting with third party integrations like CM API.
-- Repositories - `com.heimdali.repositories`
+- Repositories - `io.phdata.repositories`
   Responsible for managing interactions with the meta database.
-- Provisioning - `com.heimdali.provisioning`
+- Provisioning - `io.phdata.provisioning`
   Responsible for applying metadata to the cluster and resources requested.
-- Models - `com.heimdali.models`
+- Models - `io.phdata.models`
   Responsible for representing the domain model of the application.
 
 #### Functional Programming/Cats
@@ -92,7 +92,7 @@ java -cp "/path/to/application.conf:cloudera-integration/build/HEIMDALI-1.5.1/us
 When run in a dev environment this looks like:
 
 ```bash
-java -cp "common/src/test/resources/application.test.conf:integration-test/target/scala-2.12/heimdali-test.jar" org.scalatest.run com.heimdali.clients.LDAPClientImplIntegrationSpec
+java -cp "common/src/test/resources/application.test.conf:integration-test/target/scala-2.12/heimdali-test.jar" org.scalatest.run io.phdata.clients.LDAPClientImplIntegrationSpec
 ````
 
 Build the test jar locally with

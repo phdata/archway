@@ -1,7 +1,7 @@
 <%@ var templateName: String %>
-<%@ var appConfig: com.heimdali.config.AppConfig %>
+<%@ var appConfig: io.phdata.config.AppConfig %>
 <%@ var nextGid: Function0[Long] %>
-<%@ var template: com.heimdali.models.TemplateRequest %>
+<%@ var template: io.phdata.models.TemplateRequest %>
 {
   "metadata": {
     "name": "Custom template 2",

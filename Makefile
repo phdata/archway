@@ -28,7 +28,7 @@ itest-config:
 
 serve-api:
 	echo "using TRUST_STORE: $${TRUST_STORE:?}"
-	sbt -Djavax.net.ssl.trustStore=$$TRUST_STORE "api/runMain com.heimdali.Server"
+	sbt -Djavax.net.ssl.trustStore=$$TRUST_STORE "api/runMain io.phdata.Server"
 
 serve-ui:
 	npm start
