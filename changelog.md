@@ -1,3 +1,7 @@
+## 1.7.1
+
+- Fix bug where yarn node manager and resource manager links would fail causing the all cluster info to fail. c74955361a62c9655324257593de6571434655d1
+
 ## 1.7.0
 
 ### Enhancements
