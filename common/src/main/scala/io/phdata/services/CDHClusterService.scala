@@ -6,10 +6,11 @@ import io.phdata.caching.Cached
 import io.phdata.clients.HttpClient
 import io.phdata.config.{ClusterConfig, ServiceOverride}
 import com.typesafe.scalalogging.LazyLogging
+import io.phdata.services.CDHResponses._
 import org.apache.hadoop.conf.Configuration
-import org.apache.hadoop.yarn.conf.YarnConfiguration
 import org.http4s._
 import scala.concurrent.duration._
+import io.circe.generic.auto._
 
 class CDHClusterService[F[_]: ConcurrentEffect: Clock](
     http: HttpClient[F],
@@ -18,11 +19,6 @@ class CDHClusterService[F[_]: ConcurrentEffect: Clock](
     cacheService: CacheService,
     clusterCache: Cached[F, Seq[Cluster]]
 ) extends ClusterService[F] with LazyLogging {
-
-  val yarnConfiguration: YarnConfiguration = new YarnConfiguration(hadoopConfiguration)
-
-  import CDHResponses._
-  import io.circe.generic.auto._
 
   def hostListRequest: F[ListContainer[HostInfo]] =
     http.request[ListContainer[HostInfo]](Request(Method.GET, Uri.fromString(clusterConfig.hostListUrl).right.get))
@@ -62,8 +58,8 @@ class CDHClusterService[F[_]: ConcurrentEffect: Clock](
     }
   }
 
-  def yarnRoleConfigRequest(role: String): F[ListContainer[RoleProperty]] = {
-    Uri.fromString(clusterConfig.yarnRoleConfig(role)) match {
+  def yarnRoleConfigRequest(serviceName: String, roleName: String): F[ListContainer[RoleProperty]] = {
+    Uri.fromString(clusterConfig.yarnRoleConfig(serviceName, roleName)) match {
       case Right(uri) =>
         http.request[ListContainer[RoleProperty]](Request(Method.GET, uri))
       case Left(failure) => {
@@ -108,11 +104,11 @@ class CDHClusterService[F[_]: ConcurrentEffect: Clock](
         _.items.filter(_.`type` == CDHClusterService.MgmtNavigatorMetaServerRole)
       )
       mgmtRoleConfigGroups <- mgmtRoleConfigGroupsRequest(mgmtNavigatorMetaServerRole.headOption)
-      yarnNodeManagerRoleProps <- yarnRoleConfigRequest(CDHClusterService.YarnNodeManagerRole)
-      yarnResourceManagerRoleProps <- yarnRoleConfigRequest(CDHClusterService.YarnResourceManagerRole)
 
       nodeManagerRoles = yarnRoles.items.filter(_.`type` == CDHClusterService.NodeManagerRole)
       resourceManagerRoles = yarnRoles.items.filter(_.`type` == CDHClusterService.ResourceManagerRole)
+      yarnNodeManagerRoleProps <- yarnRoleConfigRequest(yarn.name, nodeManagerRoles.head.name)
+      yarnResourceManagerRoleProps <- yarnRoleConfigRequest(yarn.name, resourceManagerRoles.head.name)
     } yield
       Cluster(
         details.name,
@@ -186,6 +182,4 @@ object CDHClusterService {
   val NodeManagerRole: String = "NODEMANAGER"
   val MgmtNavigatorRole: String = "NAVIGATOR"
   val MgmtNavigatorMetaServerRole: String = "NAVIGATORMETASERVER"
-  val YarnNodeManagerRole: String = "yarn-NODEMANAGER-BASE"
-  val YarnResourceManagerRole: String = "yarn-RESOURCEMANAGER-BASE"
 }
