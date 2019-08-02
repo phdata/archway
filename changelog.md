@@ -1,3 +1,8 @@
+## 1.7.2
+
+- Fix bug where the UI would fail if a user didn't have a kafka topic
+- Added full http client request logging when 'TRACE' logging is enabled
+
 ## 1.7.1
 
 - Fix bug where yarn node manager and resource manager links would fail causing the all cluster info to fail. c74955361a62c9655324257593de6571434655d1
