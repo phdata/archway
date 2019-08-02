@@ -62,12 +62,14 @@ const PersonalWorkspace = ({ workspace, services, requestWorkspace, loading, pro
                   <div style={{ fontWeight: 200 }}>{workspace.processing[0].pool_name}</div>
                 </div>
               </Feature>
-              <Feature flag={FeatureFlagType.Messaging}>
-                <div style={{ padding: '10px' }}>
-                  <div>KAFKA TOPIC</div>
-                  <div style={{ fontWeight: 200 }}>{workspace.topics[0].name}</div>
-                </div>
-              </Feature>
+              {!!workspace.topics[0] && !!workspace.topics[0].name && (
+                <Feature flag={FeatureFlagType.Messaging}>
+                  <div style={{ padding: '10px' }}>
+                    <div>KAFKA TOPIC</div>
+                    <div style={{ fontWeight: 200 }}>{workspace.topics[0].name}</div>
+                  </div>
+                </Feature>
+              )}
             </div>
             <Row gutter={12}>
               <Col span={24} xl={8} style={{ marginTop: 10 }}>
