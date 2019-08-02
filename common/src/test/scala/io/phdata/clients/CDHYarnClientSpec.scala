@@ -14,6 +14,7 @@ import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FlatSpec, Matchers}
 
 import scala.collection.immutable.Queue
+import scala.concurrent.ExecutionContext
 import scala.io.Source
 
 class CDHYarnClientSpec extends FlatSpec with MockFactory with Matchers with HttpTest {
@@ -74,6 +75,9 @@ class CDHYarnClientSpec extends FlatSpec with MockFactory with Matchers with Htt
   }
 
   trait HttpContext {
+    implicit val contextShift = IO.contextShift(ExecutionContext.global)
+    implicit val concurrentEffect = IO.ioConcurrentEffect(contextShift)
+
     val yarnClient = Resource.make(IO.pure(Client.fromHttpApp(HttpRoutes.of[IO] {
       case GET -> Root / "api" / "v18" / "clusters" / "cluster" =>
         Ok(fromResource("cloudera/clusters.cluster_name.actual.json"))
