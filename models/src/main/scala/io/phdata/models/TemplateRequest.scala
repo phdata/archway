@@ -7,7 +7,8 @@ case class TemplateRequest(
     summary: String,
     description: String,
     compliance: Compliance,
-    requester: UserDN
+    requester: UserDN,
+    generateNextId: Boolean = true
 ) {
   val generatedName: String = TemplateRequest.generateName(name)
 }
@@ -26,7 +27,14 @@ object TemplateRequest {
       r => (r.name, r.summary, r.description, r.compliance, r.requester)
     )
 
-  implicit val decoder: Decoder[TemplateRequest] =
-    Decoder.forProduct5("name", "summary", "description", "compliance", "requester")(TemplateRequest.apply)
+  implicit val decoder: Decoder[TemplateRequest] = Decoder.instance { cursor =>
+    for {
+      name <- cursor.downField("name").as[String]
+      summary <- cursor.downField("summary").as[String]
+      description <- cursor.downField("description").as[String]
+      compliance <- cursor.downField("compliance").as[Compliance]
+      requester <- cursor.downField("requester").as[UserDN]
+    } yield TemplateRequest(name, summary, description, compliance, requester)
 
+  }
 }

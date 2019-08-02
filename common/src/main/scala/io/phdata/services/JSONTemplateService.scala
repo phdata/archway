@@ -34,7 +34,7 @@ class JSONTemplateService[F[_]: Effect: Clock](context: AppContext[F], configSer
 
       // creating empty object because it is not needed only required
       val templateRequest: TemplateRequest =
-        TemplateRequest("", "", "", Compliance(false, false, false), UserDN("cn=admin,ou=heimdali,dc=io"))
+        TemplateRequest("", "", "", Compliance(false, false, false), UserDN("cn=admin,ou=heimdali,dc=io"), false)
 
       customTemplates.traverse[F, (WorkspaceRequest, String)] { templatePath =>
         generateWorkspaceRequest(templateRequest, templatePath, extractTemplateName(templatePath))
@@ -56,7 +56,7 @@ class JSONTemplateService[F[_]: Effect: Clock](context: AppContext[F], configSer
         Map(
           "templateName" -> templateName,
           "appConfig" -> context.appConfig,
-          "nextGid" -> (() => configService.getAndSetNextGid.toIO.unsafeRunSync()),
+          "nextGid" -> (() => if (template.generateNextId) configService.getAndSetNextGid.toIO.unsafeRunSync() else 0),
           "template" -> template
             .copy(requester = UserDN(template.requester.value.replace("""\""", """\\"""))) // Handle backslash in a user DN
         )
@@ -110,18 +110,24 @@ class JSONTemplateService[F[_]: Effect: Clock](context: AppContext[F], configSer
                       "simple-summary",
                       "simple-description",
                       defaultCompliance,
-                      UserDN("cn=admin,ou=heimdali,dc=io"))
+                      UserDN("cn=admin,ou=heimdali,dc=io"),
+                      false
+      )
     val userTemplateRequest = TemplateRequest("user",
                                               "user-summary",
                                               "user-description",
                                               defaultCompliance,
-                                              UserDN("cn=admin,ou=heimdali,dc=io"))
+                                              UserDN("cn=admin,ou=heimdali,dc=io"),
+                                              false
+    )
     val structuredTemplateRequest =
       TemplateRequest("structured",
                       "structured-summary",
                       "structured-description",
                       defaultCompliance,
-                      UserDN("cn=admin,ou=heimdali,dc=io"))
+                      UserDN("cn=admin,ou=heimdali,dc=io"),
+                      false
+      )
 
     val defaultTemplatesRequests = List(simpleTemplateRequest, userTemplateRequest, structuredTemplateRequest)
 
