@@ -1,7 +1,7 @@
 ## 1.7.2
 
-- Fix bug where the UI would fail if a user didn't have a kafka topic
-- Added full http client request logging when 'TRACE' logging is enabled
+- Fix bug where the UI would fail if a user didn't have a kafka topic. d2851bc290263c6d5d11a75e83b6bb9fc146b550
+- Added full http client request logging when 'TRACE' logging is enabled. 42958024ebe90483a335911d2584b7c90347995f
 
 ## 1.7.1
 
