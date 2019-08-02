@@ -249,8 +249,5 @@ package object fixtures {
       Ok(fromResource("cloudera/clusters.cluster.services.yarn.roleConfigGroups.yarn-RESOURCEMANAGER-BASE.json"))
 
   }.orNotFound)))(_ => IO.unit)
-
-
-  val httpClient = new CMClient[IO](testClient, appConfig.cluster)
-
+  
 }
