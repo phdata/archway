@@ -5,6 +5,7 @@ import java.util.concurrent.Executors
 import cats.effect.concurrent.MVar
 import cats.effect.{ContextShift, IO, Timer}
 import io.phdata.caching.{CacheEntry, Cached}
+import io.phdata.clients.CMClient
 import io.phdata.config.ServiceOverride
 import io.phdata.test.fixtures.{HttpTest, _}
 import io.phdata.test.fixtures.HttpTest
@@ -92,5 +93,7 @@ class CDHClusterServiceSpec
     val executor: ExecutionContext = ExecutionContext.fromExecutor(Executors.newFixedThreadPool(1))
     implicit val timer: Timer[IO] = IO.timer(executor)
     implicit val contextShift: ContextShift[IO] = IO.contextShift(executor)
+
+    val httpClient = new CMClient[IO](testClient, appConfig.cluster)
   }
 }
