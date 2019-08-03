@@ -136,6 +136,8 @@ class JSONTemplateService[F[_]: Effect: Clock](context: AppContext[F], configSer
     } yield ()
   }
 
+  def verifyCustomTemplates: F[List[(WorkspaceRequest, String)]] = customTemplatesData
+
   private def extractTemplateName(templatePath: String): String = {
     val fileName = Paths.get(templatePath).getFileName.toString
     fileName.split("\\.").toList.head
