@@ -106,7 +106,7 @@ class DefaultProvisioningServiceSpec
       }
 
       inSequence {
-        context.provisioningLDAPClient.addUser _ expects(savedLDAP.distinguishedName, standardUserDN.value) returning OptionT.some(standardUserDN.value)
+        context.provisioningLDAPClient.addUser _ expects(savedLDAP.distinguishedName, standardUserDN) returning OptionT.some(standardUserDN.value)
         context.memberRepository.complete _ expects(id, standardUserDN.value) returning 0.pure[ConnectionIO]
       }
 
@@ -127,7 +127,7 @@ class DefaultProvisioningServiceSpec
       }
 
       inSequence {
-        context.provisioningLDAPClient.addUser _ expects(savedLDAP.distinguishedName, standardUserDN.value) returning OptionT.some(standardUserDN.value)
+        context.provisioningLDAPClient.addUser _ expects(savedLDAP.distinguishedName, standardUserDN) returning OptionT.some(standardUserDN.value)
         context.memberRepository.complete _ expects(id, standardUserDN.value) returning 0.pure[ConnectionIO]
       }
 
@@ -145,7 +145,7 @@ class DefaultProvisioningServiceSpec
 
   it should "deprovision a workspace" in new Context {
     inSequence {
-      context.provisioningLDAPClient.removeUser _ expects(savedLDAP.distinguishedName, standardUserDN.value) returning OptionT.some(standardUserDN.value)
+      context.provisioningLDAPClient.removeUser _ expects(savedLDAP.distinguishedName, standardUserDN) returning OptionT.some(standardUserDN.value)
 
       inSequence {
         context.sentryClient.removePrivilege _ expects(*, *, *) returning IO.unit
@@ -155,7 +155,7 @@ class DefaultProvisioningServiceSpec
       }
 
       context.yarnClient.deletePool _ expects poolName returning IO.unit
-      context.provisioningLDAPClient.removeUser _ expects(savedLDAP.distinguishedName, standardUserDN.value) returning OptionT.some(standardUserDN.value)
+      context.provisioningLDAPClient.removeUser _ expects(savedLDAP.distinguishedName, standardUserDN) returning OptionT.some(standardUserDN.value)
 
       inSequence {
         context.sentryClient.removeAccessToLocation _ expects(savedHive.location, savedLDAP.sentryRole) returning IO.unit

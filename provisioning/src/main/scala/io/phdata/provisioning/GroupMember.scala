@@ -6,6 +6,7 @@ import cats._
 import cats.effect._
 import cats.implicits._
 import doobie.implicits._
+import io.phdata.models.UserDN
 
 case class GroupMember(ldapRegistrationId: Long, groupDN: String, distinguishedName: String)
 
@@ -29,7 +30,7 @@ object GroupMember {
     override def run[F[_]: Sync: Clock](groupMember: GroupMember, workspaceContext: WorkspaceContext[F]): F[Unit] =
       for {
         _ <- workspaceContext.context.provisioningLDAPClient
-          .addUser(groupMember.groupDN, groupMember.distinguishedName)
+          .addUser(groupMember.groupDN, UserDN(groupMember.distinguishedName))
           .value
           .void
       } yield ()
@@ -39,7 +40,7 @@ object GroupMember {
 
     override def run[F[_]: Sync: Clock](groupMember: GroupMember, workspaceContext: WorkspaceContext[F]): F[Unit] =
       workspaceContext.context.provisioningLDAPClient
-        .removeUser(groupMember.groupDN, groupMember.distinguishedName)
+        .removeUser(groupMember.groupDN, UserDN(groupMember.distinguishedName))
         .value
         .void
 

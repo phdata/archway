@@ -67,7 +67,7 @@ class LDAPClientImplIntegrationSpec
     val userDN = s"cn=${systemTestConfig.existingUser},${itestConfig.ldap.userPath.get}"
 
     provisioningClient.createGroup(groupName, defaultLDAPAttributes(groupDN, groupName)).unsafeRunSync()
-    provisioningClient.addUser(groupDN, userDN).value.unsafeRunSync()
+    provisioningClient.addUser(groupDN, UserDN(userDN)).value.unsafeRunSync()
 
     ldapConnectionPool.getConnection.delete(groupDN)
   }
@@ -83,8 +83,8 @@ class LDAPClientImplIntegrationSpec
     def userDN(username: String) = s"cn=$username,${itestConfig.ldap.userPath.get}"
 
     lookupClient.createGroup(groupName, defaultLDAPAttributes(groupDN, groupName)).unsafeRunSync()
-    lookupClient.addUser(groupDN, userDN("svc_heim_test1")).value.unsafeRunSync()
-    lookupClient.addUser(groupDN, userDN("svc_heim_test2")).value.unsafeRunSync()
+    lookupClient.addUser(groupDN, UserDN(userDN("svc_heim_test1"))).value.unsafeRunSync()
+    lookupClient.addUser(groupDN, UserDN(userDN("svc_heim_test2"))).value.unsafeRunSync()
 
     val result = lookupClient.groupMembers(groupDN).unsafeRunSync()
 

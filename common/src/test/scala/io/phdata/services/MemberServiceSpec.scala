@@ -47,7 +47,7 @@ class MemberServiceSpec
     val newMember = UserDN(s"cn=username,${appConfig.ldap.userPath.get}")
     context.ldapRepository.find _ expects("data", id, "manager") returning OptionT[ConnectionIO, LDAPRegistration](Option(savedLDAP).pure[ConnectionIO])
     context.memberRepository.create _ expects(newMember.value, id) returning id.pure[ConnectionIO]
-    context.provisioningLDAPClient.addUser _ expects(savedLDAP.distinguishedName, newMember.value) returning OptionT.some(newMember.value)
+    context.provisioningLDAPClient.addUser _ expects(savedLDAP.distinguishedName, newMember) returning OptionT.some(newMember.value)
     context.memberRepository.complete _ expects(id, newMember.value) returning id.toInt.pure[ConnectionIO]
     context.memberRepository.get _ expects id returning List(MemberRightsRecord("data", newMember.value, savedHive.name, id, Manager)).pure[ConnectionIO]
     (context.lookupLDAPClient.findUser _).expects(newMember).returning(OptionT.some(LDAPUser(personName, "username", newMember.value, Seq.empty, Some("username@phdata.io")))).repeated(2)

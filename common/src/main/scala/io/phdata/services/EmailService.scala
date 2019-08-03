@@ -5,7 +5,7 @@ import cats.effect._
 import cats.implicits._
 import io.phdata.AppContext
 import com.typesafe.scalalogging.LazyLogging
-import io.phdata.models.{MemberRoleRequest, WorkspaceRequest, UserDN}
+import io.phdata.models.{MemberRoleRequest, UserDN, WorkspaceRequest}
 import org.fusesource.scalate.TemplateEngine
 
 trait EmailService[F[_]] {
