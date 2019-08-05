@@ -48,7 +48,7 @@ const BehaviorPage = ({ selected, onChange, importData }: Props) => {
       <h3 style={{ display: 'inline-block', marginRight: 7 }}>What kind of behavior should we manage?</h3>
       <Tooltip
         /* tslint:disable:max-line-length */
-        title="Heimdali will set up a structure that enables your team to work on a workspace in a certain way. See descriptions below for more information"
+        title="Archway will set up a structure that enables your team to work on a workspace in a certain way. See descriptions below for more information"
       >
         <Icon theme="twoTone" type="question-circle" />
       </Tooltip>

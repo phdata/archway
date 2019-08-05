@@ -36,7 +36,7 @@ const Main = ({ version }: Props) => (
       </Content>
 
       <Footer style={{ textAlign: 'center' }}>
-        Heimdali &copy; {new Date().getFullYear()} Created by phData
+        Archway &copy; {new Date().getFullYear()} Created by phData
         <br />
         {!!version && `Version ${version}`}
       </Footer>

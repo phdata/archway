@@ -34,7 +34,11 @@ interface Props extends RouteComponentProps<any> {
 const Navigation = ({ location, profile }: Props) => (
   <Layout.Sider width={250} style={{ overflow: 'auto', height: '100vh', position: 'fixed', left: 0 }}>
     <Link to="/home">
-      <img src="images/white_logo_transparent.png" style={{ padding: 25, width: '100%' }} alt="Heimdali Logo" />
+      <img
+        src="images/logo_big_white.png"
+        style={{ padding: 25, width: '100%', height: 250, objectFit: 'contain' }}
+        alt="Archway Logo"
+      />
     </Link>
     <ClusterInfo />
     <Menu

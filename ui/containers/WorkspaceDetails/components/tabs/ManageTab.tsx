@@ -35,7 +35,7 @@ const ManageTab = ({ provisioning, showModal }: Props) => (
             buttonText="Delete Workspace"
             disabled={false}
           >
-            Deleting a workspace will delete the record of the workspace from Heimdali only. Deleting a workspace will
+            Deleting a workspace will delete the record of the workspace from Archway only. Deleting a workspace will
             not affect the Hive database, AD groups, Sentry roles, or any other components of the workspace. Deleting a
             workspace cannot be undone.
           </ManageCard>

@@ -28,7 +28,7 @@ class LoginPage extends React.PureComponent<Props> {
         <Col span={24}>
           <Row type="flex" justify="center">
             <Col span={10} style={{ textAlign: 'center' }}>
-              <img src="images/logo_black_modified.png" style={{ maxHeight: 250 }} alt="logo" />
+              <img src="images/logo_big.png" style={{ height: 150, width: 250, objectFit: 'cover' }} alt="logo" />
             </Col>
           </Row>
           <Row type="flex" justify="center">
