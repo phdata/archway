@@ -7,7 +7,7 @@ import cats.effect.{ContextShift, IO, Resource}
 import io.phdata.AppContext
 import io.phdata.clients.HiveClientImpl
 import io.phdata.itest.fixtures.{IntegrationTest, KerberosTest}
-import io.phdata.models.{Compliance, Metadata, UserDN, WorkspaceRequest}
+import io.phdata.models.{Compliance, Metadata, DistinguishedName, WorkspaceRequest}
 import io.phdata.services.UGILoginContextProvider
 import io.phdata.test.fixtures.{TestTimer}
 import com.typesafe.config.ConfigFactory
@@ -60,7 +60,7 @@ class HiveDatabaseRegistrationIntegrationSpec
       "workspace_summary",
       "workspace_description",
       "workspace_behavior",
-      UserDN("cn=john.doe,ou=hadoop,dc=example,dc=com"),
+      DistinguishedName("cn=john.doe,ou=hadoop,dc=example,dc=com"),
       new TestTimer().instant,
       new Compliance(false, false, false),
       false,

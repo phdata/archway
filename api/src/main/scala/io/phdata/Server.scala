@@ -43,8 +43,8 @@ object Server extends IOApp with LazyLogging {
       topicGenerator = TopicGenerator
         .instance(context.appConfig, ldapGroupGenerator, context.appConfig.templates.topicGenerator)
       templateService = new JSONTemplateService[F](context, configService)
-       _ <- Resource.liftF(templateService.verifyDefaultTemplates)
-       _ <- Resource.liftF(templateService.verifyCustomTemplates)
+      _ <- Resource.liftF(templateService.verifyDefaultTemplates)
+      _ <- Resource.liftF(templateService.verifyCustomTemplates)
 
       provisionService = new DefaultProvisioningService[F](context, provisionEC)
       workspaceService = new WorkspaceServiceImpl[F](provisionService, context)

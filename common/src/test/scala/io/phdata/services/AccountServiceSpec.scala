@@ -6,7 +6,7 @@ import cats.implicits._
 import io.phdata.AppContext
 import io.phdata.clients.LDAPUser
 import io.phdata.config.ApprovalConfig
-import io.phdata.models.{TemplateRequest, UserDN}
+import io.phdata.models.{TemplateRequest, DistinguishedName}
 import io.phdata.provisioning.{Message, SimpleMessage}
 import io.phdata.test.fixtures._
 import io.circe.Json
@@ -113,7 +113,7 @@ class AccountServiceSpec extends FlatSpec with MockFactory with Matchers with Ap
   }
 
   it should "save and create a workspace" in new Context {
-    val templateRequest = TemplateRequest(infraApproverUser.username, infraApproverUser.username, infraApproverUser.username, initialCompliance, UserDN(infraApproverUser.distinguishedName))
+    val templateRequest = TemplateRequest(infraApproverUser.username, infraApproverUser.username, infraApproverUser.username, initialCompliance, DistinguishedName(infraApproverUser.distinguishedName))
     templateService.defaults _ expects infraApproverUser returning templateRequest.pure[IO]
     templateService.workspaceFor _ expects(templateRequest, "user") returning initialWorkspaceRequest.pure[IO]
     workspaceService.findByUsername _ expects standardUsername returning OptionT.none

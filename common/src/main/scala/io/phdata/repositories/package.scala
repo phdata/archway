@@ -70,7 +70,7 @@ package object repositories {
           summary,
           description,
           behavior,
-          UserDN(requestedBy),
+          DistinguishedName(requestedBy),
           requestDate,
           Compliance(phiData, pciData, piiData, complianceId),
           singleUser,

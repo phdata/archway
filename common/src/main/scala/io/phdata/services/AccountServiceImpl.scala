@@ -68,7 +68,7 @@ class AccountServiceImpl[F[_]: Sync: Timer](
     for {
       maybeToken <- EitherT.fromEither[F](decode(token, restConfig.secret, algo))
       user <- EitherT.fromEither[F](maybeToken.as[User])
-      result <- EitherT.fromOptionF(context.lookupLDAPClient.findUser(UserDN(user.distinguishedName)).value,
+      result <- EitherT.fromOptionF(context.lookupLDAPClient.findUser(DistinguishedName(user.distinguishedName)).value,
                                     new Throwable()) // TODO `findUser` should return an Either
     } yield convertUser(result)
   }

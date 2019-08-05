@@ -5,7 +5,7 @@ import cats.effect._
 import cats.implicits._
 import io.phdata.AppContext
 import com.typesafe.scalalogging.LazyLogging
-import io.phdata.models.{MemberRoleRequest, UserDN, WorkspaceRequest}
+import io.phdata.models.{DistinguishedName, MemberRoleRequest, WorkspaceRequest}
 import org.fusesource.scalate.TemplateEngine
 
 trait EmailService[F[_]] {
@@ -25,7 +25,7 @@ class EmailServiceImpl[F[_]: Effect](context: AppContext[F], workspaceService: W
     for {
       workspace <- workspaceService.find(workspaceId)
       fromAddress = context.appConfig.smtp.fromEmail
-      to <- context.lookupLDAPClient.findUser(UserDN(memberRoleRequest.distinguishedName))
+      to <- context.lookupLDAPClient.findUser(DistinguishedName(memberRoleRequest.distinguishedName))
       toAddress <- OptionT(Effect[F].pure(to.email))
       values = Map(
         "roleName" -> memberRoleRequest.role.get.show,

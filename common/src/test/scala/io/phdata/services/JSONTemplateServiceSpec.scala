@@ -1,7 +1,7 @@
 package io.phdata.services
 
 import cats.effect._
-import io.phdata.models.{TemplateRequest, UserDN}
+import io.phdata.models.{TemplateRequest, DistinguishedName}
 import io.phdata.test.fixtures._
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FlatSpec, Matchers}
@@ -28,7 +28,7 @@ class JSONTemplateServiceSpec extends FlatSpec with Matchers with MockFactory wi
     val context = genMockContext()
     val configService: ConfigService[IO] = new TestConfigService()
     val generator = new JSONTemplateService[IO](context, configService)
-    val template = TemplateRequest(name, purpose, purpose, initialCompliance, UserDN(crazyDN))
+    val template = TemplateRequest(name, purpose, purpose, initialCompliance, DistinguishedName(crazyDN))
     val result = generator.workspaceFor(template, "user").unsafeRunSync()
     result.requestedBy.value shouldBe crazyDN
   }

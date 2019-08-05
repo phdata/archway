@@ -1,7 +1,7 @@
 package io.phdata.clients
 
 import io.phdata.itest.fixtures.{IntegrationTest, _}
-import io.phdata.models.UserDN
+import io.phdata.models.DistinguishedName
 import io.phdata.test.fixtures.defaultLDAPAttributes
 import com.unboundid.ldap.sdk._
 import org.scalatest.mockito.MockitoSugar
@@ -16,7 +16,7 @@ class LDAPClientImplIntegrationSpec
     with LDAPTest
     with IntegrationTest {
 
-  val groupName = "edh_sw_sesame"
+  val  groupName = "edh_sw_sesame"
   val groupDN = s"cn=$groupName,${itestConfig.ldap.groupPath}"
 
   behavior of "LDAPClientImpl"
@@ -44,7 +44,7 @@ class LDAPClientImplIntegrationSpec
     provisioningClient.createGroup(groupName, attributes).unsafeRunSync()
     Option(ldapConnectionPool.getConnection.getEntry(groupDN)) shouldBe defined
 
-    provisioningClient.deleteGroup(groupDN).value.unsafeRunSync()
+    provisioningClient.deleteGroup(DistinguishedName(groupDN)).value.unsafeRunSync()
     Option(ldapConnectionPool.getConnection.getEntry(groupDN)) shouldBe None
   }
 
@@ -67,13 +67,13 @@ class LDAPClientImplIntegrationSpec
     val userDN = s"cn=${systemTestConfig.existingUser},${itestConfig.ldap.userPath.get}"
 
     provisioningClient.createGroup(groupName, defaultLDAPAttributes(groupDN, groupName)).unsafeRunSync()
-    provisioningClient.addUser(groupDN, UserDN(userDN)).value.unsafeRunSync()
+    provisioningClient.addUser(groupDN, DistinguishedName(userDN)).value.unsafeRunSync()
 
     ldapConnectionPool.getConnection.delete(groupDN)
   }
 
   it should "find a user" in {
-    val userDN = UserDN(s"cn=${systemTestConfig.existingUser},${itestConfig.ldap.userPath.get}")
+    val userDN = DistinguishedName(s"cn=${systemTestConfig.existingUser},${itestConfig.ldap.userPath.get}")
     val maybeUser = lookupClient.findUser(userDN).value.unsafeRunSync()
     println(maybeUser.get)
     maybeUser shouldBe defined
@@ -83,10 +83,10 @@ class LDAPClientImplIntegrationSpec
     def userDN(username: String) = s"cn=$username,${itestConfig.ldap.userPath.get}"
 
     lookupClient.createGroup(groupName, defaultLDAPAttributes(groupDN, groupName)).unsafeRunSync()
-    lookupClient.addUser(groupDN, UserDN(userDN("svc_heim_test1"))).value.unsafeRunSync()
-    lookupClient.addUser(groupDN, UserDN(userDN("svc_heim_test2"))).value.unsafeRunSync()
+    lookupClient.addUser(groupDN, DistinguishedName(userDN("svc_heim_test1"))).value.unsafeRunSync()
+    lookupClient.addUser(groupDN, DistinguishedName(userDN("svc_heim_test2"))).value.unsafeRunSync()
 
-    val result = lookupClient.groupMembers(groupDN).unsafeRunSync()
+    val result = lookupClient.groupMembers(DistinguishedName(groupDN)).unsafeRunSync()
 
     ldapConnectionPool.getConnection.delete(groupDN)
 

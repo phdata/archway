@@ -44,7 +44,7 @@ class MemberServiceSpec
   }
 
   it should "add a member" in new Context {
-    val newMember = UserDN(s"cn=username,${appConfig.ldap.userPath.get}")
+    val newMember = DistinguishedName(s"cn=username,${appConfig.ldap.userPath.get}")
     context.ldapRepository.find _ expects("data", id, "manager") returning OptionT[ConnectionIO, LDAPRegistration](Option(savedLDAP).pure[ConnectionIO])
     context.memberRepository.create _ expects(newMember.value, id) returning id.pure[ConnectionIO]
     context.provisioningLDAPClient.addUser _ expects(savedLDAP.distinguishedName, newMember) returning OptionT.some(newMember.value)

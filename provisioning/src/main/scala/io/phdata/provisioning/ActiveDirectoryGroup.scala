@@ -6,6 +6,7 @@ import cats.Show
 import cats.effect.{Clock, Sync}
 import cats.implicits._
 import doobie.implicits._
+import io.phdata.models.DistinguishedName
 
 case class ActiveDirectoryGroup(
     groupId: Long,
@@ -46,7 +47,10 @@ object ActiveDirectoryGroup {
         createLDAPGroup: ActiveDirectoryGroup,
         workspaceContext: WorkspaceContext[F]
     ): F[Unit] =
-      workspaceContext.context.provisioningLDAPClient.deleteGroup(createLDAPGroup.commonName).value.void
+      workspaceContext.context.provisioningLDAPClient
+        .deleteGroup(DistinguishedName(createLDAPGroup.commonName))
+        .value
+        .void
 
   }
 

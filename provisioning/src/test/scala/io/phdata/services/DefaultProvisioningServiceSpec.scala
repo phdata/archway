@@ -151,7 +151,7 @@ class DefaultProvisioningServiceSpec
         context.sentryClient.removePrivilege _ expects(*, *, *) returning IO.unit
         context.sentryClient.revokeGroup _ expects(savedLDAP.commonName, savedLDAP.sentryRole) returning IO.unit
         context.sentryClient.dropRole _ expects savedLDAP.sentryRole returning IO.unit
-        context.provisioningLDAPClient.deleteGroup _ expects savedLDAP.commonName returning OptionT.some(standardUserDN.value)
+        context.provisioningLDAPClient.deleteGroup _ expects DistinguishedName(savedLDAP.commonName) returning OptionT.some(standardUserDN.value)
       }
 
       context.yarnClient.deletePool _ expects poolName returning IO.unit
@@ -163,13 +163,13 @@ class DefaultProvisioningServiceSpec
         context.sentryClient.revokeGroup _ expects(savedLDAP.commonName, savedLDAP.sentryRole) returning IO.unit
 
         context.sentryClient.dropRole _ expects savedLDAP.sentryRole returning IO.unit
-        context.provisioningLDAPClient.deleteGroup _ expects savedLDAP.commonName returning OptionT.some(standardUserDN.value)
+        context.provisioningLDAPClient.deleteGroup _ expects DistinguishedName(savedLDAP.commonName) returning OptionT.some(standardUserDN.value)
         context.sentryClient.removeAccessToLocation _ expects(savedHive.location, savedLDAP.sentryRole) returning IO.unit
         context.sentryClient.removeAccessToDB _ expects(savedHive.name, savedLDAP.sentryRole, Manager) returning IO.unit
         context.sentryClient.revokeGroup _ expects(savedLDAP.commonName, savedLDAP.sentryRole) returning IO.unit
 
         context.sentryClient.dropRole _ expects savedLDAP.sentryRole returning IO.unit
-        context.provisioningLDAPClient.deleteGroup _ expects savedLDAP.commonName returning OptionT.some(standardUserDN.value)
+        context.provisioningLDAPClient.deleteGroup _ expects DistinguishedName(savedLDAP.commonName) returning OptionT.some(standardUserDN.value)
         context.hiveClient.dropDatabase _ expects savedHive.name returning IO(1)
         context.hdfsClient.removeQuota _ expects savedHive.location returning IO.pure(HDFSAllocation(savedHive.location, savedHive.sizeInGB))
       }

@@ -7,7 +7,7 @@ case class TemplateRequest(
     summary: String,
     description: String,
     compliance: Compliance,
-    requester: UserDN,
+    requester: DistinguishedName,
     generateNextId: Boolean = true
 ) {
   val generatedName: String = TemplateRequest.generateName(name)
@@ -33,7 +33,7 @@ object TemplateRequest {
       summary <- cursor.downField("summary").as[String]
       description <- cursor.downField("description").as[String]
       compliance <- cursor.downField("compliance").as[Compliance]
-      requester <- cursor.downField("requester").as[UserDN]
+      requester <- cursor.downField("requester").as[DistinguishedName]
     } yield TemplateRequest(name, summary, description, compliance, requester)
 
   }

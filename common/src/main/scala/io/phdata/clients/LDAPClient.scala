@@ -1,7 +1,7 @@
 package io.phdata.clients
 
 import cats.data.OptionT
-import io.phdata.models.UserDN
+import io.phdata.models.DistinguishedName
 import io.phdata.services.MemberSearchResult
 
 sealed trait GroupCreationError
@@ -19,7 +19,7 @@ case class LDAPUser(
 )
 
 trait LDAPClient[F[_]] {
-  def findUser(distinguishedName: UserDN): OptionT[F, LDAPUser]
+  def findUser(distinguishedName: DistinguishedName): OptionT[F, LDAPUser]
 
   def validateUser(username: String, password: String): OptionT[F, LDAPUser]
 
@@ -27,13 +27,13 @@ trait LDAPClient[F[_]] {
 
   def createGroup(groupName: String, attributes: List[(String, String)]): F[Unit]
 
-  def addUser(groupName: String, distinguishedName: UserDN): OptionT[F, String]
+  def addUser(groupName: String, distinguishedName: DistinguishedName): OptionT[F, String]
 
-  def removeUser(groupName: String, distinguishedName: UserDN): OptionT[F, String]
+  def removeUser(groupName: String, distinguishedName: DistinguishedName): OptionT[F, String]
 
-  def groupMembers(groupDN: String): F[List[LDAPUser]]
+  def groupMembers(groupDN: DistinguishedName): F[List[LDAPUser]]
 
   def search(filter: String): F[MemberSearchResult]
 
-  def deleteGroup(groupDN: String): OptionT[F, String]
+  def deleteGroup(groupDN: DistinguishedName): OptionT[F, String]
 }

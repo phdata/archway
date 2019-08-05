@@ -19,7 +19,7 @@ class MemberServiceImpl[F[_]](context: AppContext[F])(implicit val F: Effect[F])
     memberRightsRecord
       .groupBy(_.distinguishedName)
       .map { e =>
-        context.lookupLDAPClient.findUser(UserDN(e._1)).map { user =>
+        context.lookupLDAPClient.findUser(DistinguishedName(e._1)).map { user =>
           WorkspaceMemberEntry(
             e._1,
             user.name,
@@ -51,12 +51,12 @@ class MemberServiceImpl[F[_]](context: AppContext[F])(implicit val F: Effect[F])
         logger.info(s"adding ${memberRequest.distinguishedName} to ${registration.commonName} in ldap")
       )
 
-      user <- context.lookupLDAPClient.findUser(UserDN(memberRequest.distinguishedName))
+      user <- context.lookupLDAPClient.findUser(DistinguishedName(memberRequest.distinguishedName))
 
       _ <- OptionT.liftF(context.hdfsClient.createUserDirectory(user.username))
 
       _ <- context.provisioningLDAPClient
-        .addUser(registration.distinguishedName, UserDN(memberRequest.distinguishedName))
+        .addUser(registration.distinguishedName, DistinguishedName(memberRequest.distinguishedName))
 
       _ <- OptionT.some[F](
         logger.info(s"adding ${memberRequest.distinguishedName} to ${registration.commonName} in db")
@@ -122,7 +122,7 @@ class MemberServiceImpl[F[_]](context: AppContext[F])(implicit val F: Effect[F])
           .map(
             reg =>
               context.provisioningLDAPClient
-                .removeUser(reg.distinguishedName, UserDN(memberRequest.distinguishedName))
+                .removeUser(reg.distinguishedName, DistinguishedName(memberRequest.distinguishedName))
                 .value
           )
           .sequence

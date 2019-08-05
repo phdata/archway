@@ -4,7 +4,7 @@ import cats.data._
 import cats.effect._
 import io.phdata.AppContext
 import io.phdata.clients.LDAPUser
-import io.phdata.models.{Manager, MemberRoleRequest, UserDN}
+import io.phdata.models.{Manager, MemberRoleRequest, DistinguishedName}
 import io.phdata.test.fixtures._
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FlatSpec, Matchers}
@@ -14,7 +14,7 @@ class EmailServiceImplSpec extends FlatSpec with Matchers with MockFactory with 
   behavior of "Email Service"
 
   it should "send a welcome email" in new Context {
-    val newMember = UserDN(s"cn=username,${appConfig.ldap.userPath.get}")
+    val newMember = DistinguishedName(s"cn=username,${appConfig.ldap.userPath.get}")
 
     (workspaceService.find _).expects(id).returning(OptionT.some[IO](savedWorkspaceRequest))
     (context.lookupLDAPClient.findUser _).expects(newMember).returning(OptionT.some[IO](LDAPUser(personName, "username", newMember.value, Seq.empty, Some("username@phdata.io"))))

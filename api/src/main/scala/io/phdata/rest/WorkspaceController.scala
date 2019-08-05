@@ -112,7 +112,7 @@ class WorkspaceController[F[_]: Sync: Timer: ContextShift: ConcurrentEffect](
           /* explicit implicit declaration because of `user` variable */
           Clock[F].realTime(scala.concurrent.duration.MILLISECONDS).flatMap { time =>
             implicit val decoder: Decoder[WorkspaceRequest] =
-              WorkspaceRequest.decoder(UserDN(user.distinguishedName), Instant.ofEpochMilli(time))
+              WorkspaceRequest.decoder(DistinguishedName(user.distinguishedName), Instant.ofEpochMilli(time))
             implicit val workspaceRequestEntityDecoder: EntityDecoder[F, WorkspaceRequest] = jsonOf[F, WorkspaceRequest]
             for {
               workspaceRequest <- req.req.as[WorkspaceRequest]

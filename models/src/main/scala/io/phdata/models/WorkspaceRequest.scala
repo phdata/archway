@@ -20,22 +20,22 @@ object Metadata {
   implicit val metadataDecoder: Decoder[Metadata] = deriveDecoder[Metadata]
 }
 
-case class UserDN(value: String) {
-  assert(value.toLowerCase.contains("cn="), s"Invalid user DN $value")
+case class DistinguishedName(value: String) {
+  assert(value.toLowerCase.contains("cn="), s"Invalid distinguished name $value")
 
   override def toString: String = value
 }
 
-object UserDN {
-  implicit val encoder: Encoder[UserDN] =
+object DistinguishedName {
+  implicit val encoder: Encoder[DistinguishedName] =
     Encoder.instance { userDN =>
       Json.fromString(userDN.value)
     }
 
-  implicit val decoder: Decoder[UserDN] = Decoder.instance { cursor =>
+  implicit val decoder: Decoder[DistinguishedName] = Decoder.instance { cursor =>
     for {
       value <- cursor.value.as[String]
-    } yield (UserDN(value))
+    } yield DistinguishedName(value)
   }
 }
 
@@ -44,7 +44,7 @@ case class WorkspaceRequest(
     summary: String,
     description: String,
     behavior: String,
-    requestedBy: UserDN,
+    requestedBy: DistinguishedName,
     requestDate: Instant,
     compliance: Compliance,
     singleUser: Boolean,
@@ -90,35 +90,36 @@ object WorkspaceRequest {
     )((initial, approvals) => initial deepMerge Json.obj("approvals" -> approvals.asJson))
   }
 
-  implicit def decoder(userDN: UserDN, instant: Instant): Decoder[WorkspaceRequest] = Decoder.instance { json =>
-    for {
-      name <- json.downField("name").as[String]
-      summary <- json.downField("summary").as[String]
-      description <- json.downField("description").as[String]
-      behavior <- json.downField("behavior").as[String]
-      compliance <- json.downField("compliance").as[Compliance]
-      singleUser <- json.downField("single_user").as[Boolean]
-      data <- json.downField("data").as[List[HiveAllocation]]
-      processing <- json.downField("processing").as[List[Yarn]]
-      applications <- json.downField("applications").as[List[Application]]
-      topics <- json.downField("topics").as[List[KafkaTopic]]
-      metadata <- json.downField("metadata").as[Metadata]
-    } yield
-      WorkspaceRequest(
-        name,
-        summary,
-        description,
-        behavior,
-        userDN,
-        instant,
-        compliance,
-        singleUser,
-        data = data,
-        processing = processing,
-        applications = applications,
-        kafkaTopics = topics,
-        metadata = metadata
-      )
+  implicit def decoder(userDN: DistinguishedName, instant: Instant): Decoder[WorkspaceRequest] = Decoder.instance {
+    json =>
+      for {
+        name <- json.downField("name").as[String]
+        summary <- json.downField("summary").as[String]
+        description <- json.downField("description").as[String]
+        behavior <- json.downField("behavior").as[String]
+        compliance <- json.downField("compliance").as[Compliance]
+        singleUser <- json.downField("single_user").as[Boolean]
+        data <- json.downField("data").as[List[HiveAllocation]]
+        processing <- json.downField("processing").as[List[Yarn]]
+        applications <- json.downField("applications").as[List[Application]]
+        topics <- json.downField("topics").as[List[KafkaTopic]]
+        metadata <- json.downField("metadata").as[Metadata]
+      } yield
+        WorkspaceRequest(
+          name,
+          summary,
+          description,
+          behavior,
+          userDN,
+          instant,
+          compliance,
+          singleUser,
+          data = data,
+          processing = processing,
+          applications = applications,
+          kafkaTopics = topics,
+          metadata = metadata
+        )
   }
 
 }

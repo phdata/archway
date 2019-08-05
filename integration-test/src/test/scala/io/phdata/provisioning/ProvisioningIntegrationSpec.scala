@@ -9,7 +9,7 @@ import org.scalatest.FlatSpec
 import cats.effect.{ContextShift, IO, Timer}
 import cats.implicits._
 import io.phdata.config.TemplateNames
-import io.phdata.models.{Compliance, TemplateRequest, UserDN}
+import io.phdata.models.{Compliance, TemplateRequest, DistinguishedName}
 import io.phdata.services.{DBConfigService, JSONTemplateService, WorkspaceServiceImpl}
 import io.phdata.test.fixtures.TestTimer
 
@@ -27,7 +27,7 @@ class ProvisioningIntegrationSpec extends FlatSpec with KerberosTest {
       "Heimdali simple workspace test",
       commonDescription,
       Compliance.empty,
-      UserDN(requester))
+      DistinguishedName(requester))
 
     val result = provisionAndDestroyWorkspace(templateRequest, TemplateNames.simple)
 
@@ -41,7 +41,7 @@ class ProvisioningIntegrationSpec extends FlatSpec with KerberosTest {
       "Heimdali user workspace test",
       commonDescription,
       Compliance.empty,
-      UserDN(requester))
+      DistinguishedName(requester))
 
     val result = provisionAndDestroyWorkspace(templateRequest, TemplateNames.user)
 
@@ -55,7 +55,7 @@ class ProvisioningIntegrationSpec extends FlatSpec with KerberosTest {
       "Heimdali structured workspace test",
       commonDescription,
       Compliance.empty,
-      UserDN(requester))
+      DistinguishedName(requester))
 
     val result = provisionAndDestroyWorkspace(templateRequest, TemplateNames.structured)
 
