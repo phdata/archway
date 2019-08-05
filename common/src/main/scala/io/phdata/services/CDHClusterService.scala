@@ -9,6 +9,7 @@ import com.typesafe.scalalogging.LazyLogging
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.yarn.conf.YarnConfiguration
 import org.http4s._
+import scala.concurrent.duration._
 
 class CDHClusterService[F[_]: ConcurrentEffect: Clock](
     http: HttpClient[F],
@@ -169,8 +170,7 @@ class CDHClusterService[F[_]: ConcurrentEffect: Clock](
       .getOrElse(defaultPort)
   }
 
-  override def list: F[Seq[Cluster]] = clusterDetails
-
+  override def list: F[Seq[Cluster]] = cacheService.getOrRun[F, Seq[Cluster]](1 hour, clusterDetails, clusterCache)
 }
 
 object CDHClusterService {

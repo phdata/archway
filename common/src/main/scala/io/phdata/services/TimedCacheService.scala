@@ -2,28 +2,32 @@ package io.phdata.services
 
 import java.util.concurrent.TimeUnit
 
-import cats.Monad
+import cats.Functor
 import cats.effect.concurrent.MVar
 import cats.effect.{Clock, Concurrent}
 import cats.implicits._
+import com.typesafe.scalalogging.LazyLogging
 import io.phdata.caching._
 
 import scala.concurrent.duration.FiniteDuration
 
-class TimedCacheService extends CacheService {
+class TimedCacheService extends CacheService with LazyLogging {
 
   override def initial[F[_]: Concurrent, A]: F[Cached[F, A]] =
     MVar[F].empty[CacheEntry[A]]
 
-  def cacheIsValid[F[_]: Monad: Clock](cacheDuration: FiniteDuration, timeWhenCached: Long): F[Boolean] =
+  def cacheIsValid[F[_]: Functor: Clock](lifetime: FiniteDuration, createdTime: Long): F[Boolean] =
     Clock[F].realTime(TimeUnit.MILLISECONDS).map { currentTime =>
-      currentTime - cacheDuration.toMillis < timeWhenCached
+      logger.trace(s"Current time $currentTime, cache lifetime ${lifetime.toMillis}, cache create time $createdTime")
+      (currentTime - lifetime.toMillis) < createdTime
     }
 
   def run[F[_]: Concurrent: Clock, A](work: F[A]): F[CacheEntry[A]] =
     for {
       time <- Clock[F].realTime(TimeUnit.MILLISECONDS)
-      readyToCache <- work
+      readyToCache <- work.onError {
+        case e: Throwable => logger.error(s"Work failed $work", e).pure[F]
+      }
     } yield CacheEntry(time, readyToCache)
 
   override def getOrRun[F[_]: Concurrent: Clock, A](
@@ -34,8 +38,19 @@ class TimedCacheService extends CacheService {
     for {
       existingCache <- cache.take
       valid <- cacheIsValid[F](cacheDuration, existingCache.cachedTime)
-      newValue <- if (valid) CacheEntry(existingCache.cachedTime, existingCache.entry).pure[F] else run(work)
-      _ <- cache.put(newValue)
-    } yield newValue.entry
+      _ <- logger.trace(s"Cache validity: $valid").pure[F]
+      newCache <- if (valid) {
+        CacheEntry(existingCache.cachedTime, existingCache.value).pure[F]
+      } else {
+        logger.debug(s"Starting cache refresh")
+        val result = run(work)
+        logger.debug(s"Finished cache refresh")
+        result
+      }
+      _ <- cache.put(newCache).onError {
+        case e: Throwable =>
+          logger.error(s"Cache refresh failed!", e).pure[F]
+      }
+    } yield newCache.value
 
 }
