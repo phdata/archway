@@ -78,6 +78,7 @@ describe('PersonalWorkspace', () => {
         loading={false}
         requestWorkspace={() => null}
         provisioning={ProvisioningType.Complete}
+        workspaceFetched={true}
       />
     );
     expect(toJson(wrapper)).toMatchSnapshot();

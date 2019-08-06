@@ -97,3 +97,9 @@ export const setVersionInfo = (version: string) => {
     version,
   };
 };
+
+export const SET_WORKSPACE_FETCHED = 'SET_WORKSPACE_FETCHED';
+export const setWorkspaceFetched = (isFetched: boolean) => ({
+  type: SET_WORKSPACE_FETCHED,
+  isFetched,
+});

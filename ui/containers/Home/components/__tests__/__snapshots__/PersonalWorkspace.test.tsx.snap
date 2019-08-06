@@ -92,28 +92,6 @@ exports[`PersonalWorkspace renders correctly 1`] = `
             />
           </div>
         </Connect(Feature)>
-        <Connect(Feature)
-          flag="messaging"
-        >
-          <div
-            style={
-              Object {
-                "padding": "10px",
-              }
-            }
-          >
-            <div>
-              KAFKA TOPIC
-            </div>
-            <div
-              style={
-                Object {
-                  "fontWeight": 200,
-                }
-              }
-            />
-          </div>
-        </Connect(Feature)>
       </div>
       <Row
         gutter={12}

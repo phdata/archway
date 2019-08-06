@@ -13,10 +13,18 @@ interface Props {
   loading: boolean;
   cluster?: Cluster;
   provisioning: ProvisioningType;
+  workspaceFetched: boolean;
   requestWorkspace: () => void;
 }
 
-const PersonalWorkspace = ({ workspace, services, requestWorkspace, loading, provisioning }: Props) => {
+const PersonalWorkspace = ({
+  workspace,
+  services,
+  requestWorkspace,
+  loading,
+  provisioning,
+  workspaceFetched,
+}: Props) => {
   if (loading) {
     return (
       <div
@@ -90,10 +98,16 @@ const PersonalWorkspace = ({ workspace, services, requestWorkspace, loading, pro
         </Card>
       ) : (
         <Card bodyStyle={{ textAlign: 'center' }}>
-          <h3>You don't have a personal workspace yet!</h3>
-          <Button type="primary" onClick={requestWorkspace}>
-            Create One Now
-          </Button>
+          {workspaceFetched ? (
+            <React.Fragment>
+              <h3>You don't have a personal workspace yet!</h3>
+              <Button type="primary" onClick={requestWorkspace}>
+                Create One Now
+              </Button>
+            </React.Fragment>
+          ) : (
+            <h3 style={{ color: 'red' }}>Error retrieving personal workspace.</h3>
+          )}
         </Card>
       )}
     </div>

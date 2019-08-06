@@ -38,3 +38,9 @@ export const getProvisioning = () =>
     authSelector,
     authState => authState.get('provisioning')
   );
+
+export const isWorkspaceFetched = () =>
+  createSelector(
+    authSelector,
+    authState => authState.get('workspaceFetched')
+  );

@@ -27,6 +27,7 @@ import {
   getProvisioning,
   isClusterLoading,
   isProfileLoading,
+  isWorkspaceFetched,
 } from './selectors';
 import { ProvisioningType } from '../../constants';
 
@@ -44,6 +45,8 @@ interface Props {
   recentWorkspaces: Workspace[];
   profileLoading: boolean;
   provisioning: ProvisioningType;
+  workspaceFetched: boolean;
+
   refreshRecentWorkspaces: () => void;
   requestWorkspace: () => void;
   openWorkspace: (id: number) => void;
@@ -99,6 +102,7 @@ class Home extends React.Component<Props, States> {
       personalWorkspace,
       recentWorkspaces,
       profileLoading,
+      workspaceFetched,
       requestWorkspace,
       openWorkspace,
     } = this.props;
@@ -151,6 +155,7 @@ class Home extends React.Component<Props, States> {
           workspace={personalWorkspace}
           services={cluster.services}
           provisioning={provisioning}
+          workspaceFetched={workspaceFetched}
         />
         <RecentWorkspaces workspaces={recentWorkspaces} onSelectWorkspace={openWorkspace} />
       </div>
@@ -166,6 +171,7 @@ const mapStateToProps = () =>
     profileLoading: isProfileLoading(),
     recentWorkspaces: getRecentWorkspaces(),
     provisioning: getProvisioning(),
+    workspaceFetched: isWorkspaceFetched(),
   });
 
 const mapDispatchToProps = (dispatch: any) => ({

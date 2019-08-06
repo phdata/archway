@@ -9,6 +9,7 @@ import {
   SET_AUTH_TYPE,
   SET_PROVISIONING,
   SET_VERSION_INFO,
+  SET_WORKSPACE_FETCHED,
 } from './actions';
 
 const initialAuthState = fromJS({
@@ -22,6 +23,7 @@ const initialAuthState = fromJS({
   authType: null,
   provisioning: '',
   version: '',
+  workspaceFetched: false,
 });
 
 const login = (state = initialAuthState, action: any) => {
@@ -48,6 +50,8 @@ const login = (state = initialAuthState, action: any) => {
       return state.set('provisioning', action.provisioning);
     case SET_VERSION_INFO:
       return state.set('version', action.version);
+    case SET_WORKSPACE_FETCHED:
+      return state.set('workspaceFetched', action.isFetched);
     default:
       return state;
   }

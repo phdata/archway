@@ -29,7 +29,7 @@ exports[`SummaryPage renders correctly 1`] = `
           type="crown"
         />
         <Label>
-          You will be the liason for this project
+          You will be the owner for this project
         </Label>
         <h4 />
       </Card>

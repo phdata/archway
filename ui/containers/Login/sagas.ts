@@ -35,12 +35,16 @@ function* tokenReady({ token }: { token: string }) {
   yield put(actions.profileReady(profile));
   yield call(configSaga, token);
   try {
+    yield put(actions.setWorkspaceFetched(false));
     const workspace = yield call(Api.getPersonalWorkspace, token);
     const { provisioning } = yield call(Api.getProvisioning, token, workspace.id);
     yield put(actions.workspaceAvailable(workspace));
     yield put(actions.setProvisioning(provisioning));
-  } catch (exc) {
-    /* tslint:disable:non-empty */
+    yield put(actions.setWorkspaceFetched(true));
+  } catch (err) {
+    if (err === 404) {
+      yield put(actions.setWorkspaceFetched(true));
+    }
   } finally {
     yield put(actions.profileLoading(false));
   }

@@ -39,6 +39,8 @@ const get = (path: string, token?: string) =>
     } else {
       if (response.status === 401) {
         logout();
+      } else if (response.status === 404 && path === '/account/workspace') {
+        throw response.status;
       }
       return json.then(Promise.reject.bind(Promise));
     }
