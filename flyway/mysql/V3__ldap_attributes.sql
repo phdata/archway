@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS `ldap_attribute` (
   INDEX `fk_ldap_attribute_ldap_registration1_idx` (`ldap_registration_id` ASC),
   CONSTRAINT `fk_ldap_attribute_ldap_registration1`
     FOREIGN KEY (`ldap_registration_id`)
-    REFERENCES `heimdali`.`ldap_registration` (`id`)
+    REFERENCES `ldap_registration` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION);
 

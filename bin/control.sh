@@ -1,9 +1,9 @@
 #!/bin/bash -x
-SYNTAX="Please use the following arguments: [api start|migrate_db]"
+SYNTAX="Please use the following arguments: [server start|migrate_db]"
 COMPONENT=$1
 CMD=$2
 
-KEYTAB_FILE="${CONF_DIR}/heimdali.keytab"
+KEYTAB_FILE="${CONF_DIR}/archway.keytab"
 JAAS_CONFIGS="
 com.sun.security.jgss.krb5.initiate {
    com.sun.security.auth.module.Krb5LoginModule required
@@ -11,7 +11,7 @@ com.sun.security.jgss.krb5.initiate {
    useKeyTab=true
    storeKey=true
    keyTab=\"$KEYTAB_FILE\"
-   principal=\"$HEIMDALI_API_SERVICE_PRINCIPAL\";
+   principal=\"$ARCHWAY_SERVICE_PRINCIPAL\";
 };"
 
 echo $JAAS_CONFIGS > ${CONF_DIR}/jaas.conf
@@ -32,10 +32,10 @@ BOUNCY_JAR=${BOUNCY_JAR:-`find $PARCELS_ROOT/CDH/jars/ -name "bcprov-jdk*.jar"`}
 HIVE_JARS=${HIVE_JARS:-"$PARCELS_ROOT/CDH/lib/hive/lib/hive-jdbc.jar:$PARCELS_ROOT/CDH/lib/hive/lib/hive-jdbc-standalone.jar"}
 HADOOP_JARS=`hadoop classpath`
 SENTRY_JARS="${SENTRY_JARS:-$PARCELS_ROOT/CDH/lib/sentry/lib/*}"
-HEIMDALI_CLASSPATH="${HEIMDALI_CLASSPATH:-${CONF_DIR}:${MYSQL_JAR}:${BOUNCY_JAR}:${PG_JAR}:${HIVE_JARS}:${SENTRY_JARS}:${HADOOP_JARS}:${HEIMDALI_ADDITIONAL_CLASSPATH}:${HEIMDALI_API_HOME}/heimdali-api.jar}"
+ARCHWAY_CLASSPATH="${ARCHWAY_CLASSPATH:-${CONF_DIR}:${MYSQL_JAR}:${BOUNCY_JAR}:${PG_JAR}:${HIVE_JARS}:${SENTRY_JARS}:${HADOOP_JARS}:${ARCHWAY_ADDITIONAL_CLASSPATH}:${ARCHWAY_SERVER_HOME}/archway-server.jar}"
 
 case ${COMPONENT} in
-    (api)
+    (server)
         case ${CMD} in
             (start)
                 cp -f generated.conf runtime.conf
@@ -48,7 +48,7 @@ case ${COMPONENT} in
                           -Dlog4j.properties=file:"${CONF_DIR}/log4j.properties" \
                           $JAVA_OPTS \
                           $CSD_JAVA_OPTS \
-                          -cp $HEIMDALI_CLASSPATH \
+                          -cp $ARCHWAY_CLASSPATH \
                           io.phdata.Server
                 ;;
             (*)
@@ -57,7 +57,7 @@ case ${COMPONENT} in
         esac
         ;;
     (migrate_db)
-        FLYWAY_DIR=$HEIMDALI_DIST/usr/lib/flyway/
+        FLYWAY_DIR=$ARCHWAY_DIST/usr/lib/flyway/
         DATABASE_SCRIPT_DIR=""
 
         if [[ $DB_URL == *"mysql"* ]]; then

@@ -148,7 +148,7 @@ package object config extends StrictLogging {
 
     private def handleDefault(confParam: String) =
       if (confParam.isEmpty) {
-        sys.env("HEIMDALI_UI_HOME")
+        sys.env("ARCHWAY_UI_HOME")
       } else confParam
 
     implicit val decoder: Decoder[UIConfig] = Decoder.instance { cursor =>

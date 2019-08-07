@@ -10,7 +10,7 @@ trait Startup[F[_]] {
   def begin(): F[NonEmptyList[Fiber[F, Unit]]]
 }
 
-class HeimdaliStartup[F[_]: ConcurrentEffect: ContextShift](jobs: ScheduledJob[F]*)(executionContext: ExecutionContext)
+class ArchwayStartup[F[_]: ConcurrentEffect: ContextShift](jobs: ScheduledJob[F]*)(executionContext: ExecutionContext)
     extends Startup[F] {
 
   val work: NonEmptyList[F[Unit]] =

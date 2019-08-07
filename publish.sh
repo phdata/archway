@@ -2,8 +2,8 @@
 
 set -xeu
 
-HEIMDALI_VERSION=${HEIMDALI_VERSION:-$BITBUCKET_TAG}
-HEIMDALI_VERSION=$(echo -n $HEIMDALI_VERSION | tr a-z A-Z)
+ARCHWAY_VERSION=${ARCHWAY_VERSION:-$BITBUCKET_TAG}
+ARCHWAY_VERSION=$(echo -n $ARCHWAY_VERSION | tr a-z A-Z)
 PARCEL_BASE="cloudera-integration/parcel"
 CSD_BASE="cloudera-integration/csd"
 BUILD_BASE="cloudera-integration/build"
@@ -16,31 +16,31 @@ mkdir -p ${PUBLISH_DIR}
 package()
 {
   ARTIFACT=$1
-  BUILD_NAME=$(echo "${ARTIFACT}-${HEIMDALI_VERSION}" | tr a-z A-Z)
+  BUILD_NAME=$(echo "${ARTIFACT}-${ARCHWAY_VERSION}" | tr a-z A-Z)
   READY_DIR=${BUILD_BASE}/${BUILD_NAME}
 
   mkdir -p ${READY_DIR}
   cp -R ${PARCEL_BASE}/${ARTIFACT}-meta ${READY_DIR}
   cp -r ${READY_DIR}/${ARTIFACT}-meta ${READY_DIR}/meta
 
-  sed -i "s/0.1.5/${HEIMDALI_VERSION}/g" "${READY_DIR}/meta/parcel.json"
-  echo -n ${HEIMDALI_VERSION} > "${READY_DIR}/version.txt"
+  sed -i "s/0.1.5/${ARCHWAY_VERSION}/g" "${READY_DIR}/meta/parcel.json"
+  echo -n ${ARCHWAY_VERSION} > "${READY_DIR}/version.txt"
 
-  mkdir -p ${READY_DIR}/usr/lib/heimdali-api
-  mkdir -p ${READY_DIR}/usr/lib/heimdali-api-tests
+  mkdir -p ${READY_DIR}/usr/lib/archway-server
+  mkdir -p ${READY_DIR}/usr/lib/archway-tests
   mkdir -p ${READY_DIR}/usr/bin/
   mkdir -p ${READY_DIR}/usr/lib/flyway
 
   # API artifacts
-  cp api/target/scala-2.12/heimdali-api.jar ${READY_DIR}/usr/lib/heimdali-api/
-  cp integration-test/target/scala-2.12/heimdali-integration-tests.jar ${READY_DIR}/usr/lib/heimdali-api-tests/
-  cp integration-test/target/scala-2.12/heimdali-test-dependencies.jar ${READY_DIR}/usr/lib/heimdali-api-tests/
-  cp common/target/scala-2.12/heimdali-common-tests.jar ${READY_DIR}/usr/lib/heimdali-api-tests/
+  cp api/target/scala-2.12/archway-server.jar ${READY_DIR}/usr/lib/archway-server/
+  cp integration-test/target/scala-2.12/archway-integration-tests.jar ${READY_DIR}/usr/lib/archway-tests/
+  cp integration-test/target/scala-2.12/archway-test-dependencies.jar ${READY_DIR}/usr/lib/archway-tests/
+  cp common/target/scala-2.12/archway-common-tests.jar ${READY_DIR}/usr/lib/archway-tests/
 
   # UI artifacts
-  cp -r dist ${READY_DIR}/usr/lib/heimdali-ui
-  cp -R public/images ${READY_DIR}/usr/lib/heimdali-ui/
-  cp -R public/fonts ${READY_DIR}/usr/lib/heimdali-ui/
+  cp -r dist ${READY_DIR}/usr/lib/archway-ui
+  cp -R public/images ${READY_DIR}/usr/lib/archway-ui/
+  cp -R public/fonts ${READY_DIR}/usr/lib/archway-ui/
 
   # Control script
   cp bin/control.sh ${READY_DIR}/usr/bin/
@@ -66,10 +66,10 @@ csd()
 {
   cp -R ${CSD_BASE} ${BUILD_BASE}
   pushd ${BUILD_BASE}/csd
-  sed -i -e "s/0.1.0/${HEIMDALI_VERSION}/g" descriptor/service.sdl
-  jar cvf HEIMDALI-${HEIMDALI_VERSION}.jar `find . -mindepth 1 -not -path "./.git*"`
+  sed -i -e "s/0.1.0/${ARCHWAY_VERSION}/g" descriptor/service.sdl
+  jar cvf ARCHWAY-${ARCHWAY_VERSION}.jar `find . -mindepth 1 -not -path "./.git*"`
   popd
-  cp ${BUILD_BASE}/csd/HEIMDALI-${HEIMDALI_VERSION}.jar ${PUBLISH_DIR}
+  cp ${BUILD_BASE}/csd/ARCHWAY-${ARCHWAY_VERSION}.jar ${PUBLISH_DIR}
 }
 
 manifest()
@@ -80,9 +80,9 @@ manifest()
 ship()
 {
   pushd ${PUBLISH_DIR}
-  READY_DIR=$(echo "${HEIMDALI_VERSION}")
-  curl -u${ARTIFACTORY_USER}:${ARTIFACTORY_TOKEN} -T manifest.json https://repository.phdata.io/artifactory/$DEPLOY_REPO/com/heimdali/${HEIMDALI_VERSION}/manifest.json
-  curl -u${ARTIFACTORY_USER}:${ARTIFACTORY_TOKEN} -T HEIMDALI-${HEIMDALI_VERSION}.jar https://repository.phdata.io/artifactory/$DEPLOY_REPO/com/heimdali/${HEIMDALI_VERSION}/HEIMDALI-${HEIMDALI_VERSION}.jar
+  READY_DIR=$(echo "${ARCHWAY_VERSION}")
+  curl -u${ARTIFACTORY_USER}:${ARTIFACTORY_TOKEN} -T manifest.json https://repository.phdata.io/artifactory/$DEPLOY_REPO/io/phdata/${ARCHWAY_VERSION}/manifest.json
+  curl -u${ARTIFACTORY_USER}:${ARTIFACTORY_TOKEN} -T ARCHWAY-${ARCHWAY_VERSION}.jar https://repository.phdata.io/artifactory/$DEPLOY_REPO/io/phdata/${ARCHWAY_VERSION}/ARCHWAY-${ARCHWAY_VERSION}.jar
 
   push heimdali
 
@@ -92,13 +92,13 @@ ship()
 push()
 {
   ARTIFACT=$1
-  READY_DIR=$(echo "${ARTIFACT}-${HEIMDALI_VERSION}" | tr a-z A-Z)
-  curl -u${ARTIFACTORY_USER}:${ARTIFACTORY_TOKEN} -T ${READY_DIR}-el6.parcel https://repository.phdata.io/artifactory/$DEPLOY_REPO/com/heimdali/${HEIMDALI_VERSION}/${READY_DIR}-el6.parcel
-  curl -u${ARTIFACTORY_USER}:${ARTIFACTORY_TOKEN} -T ${READY_DIR}-el7.parcel https://repository.phdata.io/artifactory/$DEPLOY_REPO/com/heimdali/${HEIMDALI_VERSION}/${READY_DIR}-el7.parcel
-  curl -u${ARTIFACTORY_USER}:${ARTIFACTORY_TOKEN} -T ${READY_DIR}-xenial.parcel https://repository.phdata.io/artifactory/$DEPLOY_REPO/com/heimdali/${HEIMDALI_VERSION}/${READY_DIR}-xenial.parcel
-  curl -u${ARTIFACTORY_USER}:${ARTIFACTORY_TOKEN} -T ${READY_DIR}-el6.parcel.sha https://repository.phdata.io/artifactory/$DEPLOY_REPO/com/heimdali/${HEIMDALI_VERSION}/${READY_DIR}-el6.parcel.sha
-  curl -u${ARTIFACTORY_USER}:${ARTIFACTORY_TOKEN} -T ${READY_DIR}-el7.parcel.sha https://repository.phdata.io/artifactory/$DEPLOY_REPO/com/heimdali/${HEIMDALI_VERSION}/${READY_DIR}-el7.parcel.sha
-  curl -u${ARTIFACTORY_USER}:${ARTIFACTORY_TOKEN} -T ${READY_DIR}-xenial.parcel.sha https://repository.phdata.io/artifactory/$DEPLOY_REPO/com/heimdali/${HEIMDALI_VERSION}/${READY_DIR}-xenial.parcel.sha
+  READY_DIR=$(echo "${ARTIFACT}-${ARCHWAY_VERSION}" | tr a-z A-Z)
+  curl -u${ARTIFACTORY_USER}:${ARTIFACTORY_TOKEN} -T ${READY_DIR}-el6.parcel https://repository.phdata.io/artifactory/$DEPLOY_REPO/io/phdata/${ARCHWAY_VERSION}/${READY_DIR}-el6.parcel
+  curl -u${ARTIFACTORY_USER}:${ARTIFACTORY_TOKEN} -T ${READY_DIR}-el7.parcel https://repository.phdata.io/artifactory/$DEPLOY_REPO/io/phdata/${ARCHWAY_VERSION}/${READY_DIR}-el7.parcel
+  curl -u${ARTIFACTORY_USER}:${ARTIFACTORY_TOKEN} -T ${READY_DIR}-xenial.parcel https://repository.phdata.io/artifactory/$DEPLOY_REPO/io/phdata/${ARCHWAY_VERSION}/${READY_DIR}-xenial.parcel
+  curl -u${ARTIFACTORY_USER}:${ARTIFACTORY_TOKEN} -T ${READY_DIR}-el6.parcel.sha https://repository.phdata.io/artifactory/$DEPLOY_REPO/io/phdata/${ARCHWAY_VERSION}/${READY_DIR}-el6.parcel.sha
+  curl -u${ARTIFACTORY_USER}:${ARTIFACTORY_TOKEN} -T ${READY_DIR}-el7.parcel.sha https://repository.phdata.io/artifactory/$DEPLOY_REPO/io/phdata/${ARCHWAY_VERSION}/${READY_DIR}-el7.parcel.sha
+  curl -u${ARTIFACTORY_USER}:${ARTIFACTORY_TOKEN} -T ${READY_DIR}-xenial.parcel.sha https://repository.phdata.io/artifactory/$DEPLOY_REPO/io/phdata/${ARCHWAY_VERSION}/${READY_DIR}-xenial.parcel.sha
 }
 
 case $1 in

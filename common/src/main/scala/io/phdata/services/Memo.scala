@@ -9,8 +9,7 @@ import cats.implicits._
 
 import scala.concurrent.{ExecutionContext, Promise}
 
-
-class Memo[F[_]: Sync : Async](implicit val ec: ExecutionContext) {
+class Memo[F[_]: Sync: Async](implicit val ec: ExecutionContext) {
 
   def memoize[A](io: IO[A])(implicit ec: ExecutionContext): IO[IO[A]] =
     IO { IO.fromFuture(IO.eval(Eval.later(io.unsafeToFuture()))) }

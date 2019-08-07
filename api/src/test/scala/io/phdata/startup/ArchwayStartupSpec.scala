@@ -15,7 +15,7 @@ import org.scalatest.{FlatSpec, Matchers}
 import scala.concurrent.ExecutionContext
 import scala.concurrent.duration._
 
-class HeimdaliStartupSpec extends FlatSpec with Matchers with MockFactory with AppContextProvider {
+class ArchwayStartupSpec extends FlatSpec with Matchers with MockFactory with AppContextProvider {
 
   it should "run two startup jobs" in new Context {
     (context.loginContextProvider.kinit[IO]()(_: Sync[IO])).expects(*).returning(timer.sleep(100 millis)).atLeastTwice()
@@ -49,7 +49,7 @@ class HeimdaliStartupSpec extends FlatSpec with Matchers with MockFactory with A
       new Provisioning[IO](context, provisioningService)
     val sessionMaintainer: SessionMaintainer[IO] =
       new SessionMaintainer[IO](context)
-    lazy val startup: HeimdaliStartup[IO] = new HeimdaliStartup[IO](provisioningJob, sessionMaintainer)(executor)
+    lazy val startup: ArchwayStartup[IO] = new ArchwayStartup[IO](provisioningJob, sessionMaintainer)(executor)
   }
 
 }

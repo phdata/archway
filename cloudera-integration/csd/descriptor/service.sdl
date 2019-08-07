@@ -1,21 +1,20 @@
 {
-  "name": "HEIMDALI",
-  "label": "Heimdali",
-  "description": "The Heimdali service",
+  "name": "ARCHWAY",
+  "label": "Archway",
+  "description": "The Archway Service",
   "version": "1.3.13",
   "runAs": {
-    "user": "heimdali_api",
-    "group": "heimdali_api",
-    "principal": "heimdali_api"
+    "user": "archway",
+    "group": "archway",
+    "principal": "archway"
   },
   "rolesWithExternalLinks": [
-    "HEIMDALI_SERVICE"
+    "ARCHWAY_SERVER"
   ],
   "icon": "images/favicon_symbol.png",
   "parcel": {
     "requiredTags": [
-      "heimdali-api",
-      "heimdali-ui"
+      "archway"
     ]
   },
   "serviceDependencies": [
@@ -34,9 +33,9 @@
   ],
   "parameters": [
     {
-      "name": "heimdali.rest.port",
+      "name": "archway.rest.port",
       "label": "REST API Port",
-      "description": "Heimdali REST API Port",
+      "description": "Archway REST API Port",
       "required": "true",
       "type": "port",
       "default": 8080,
@@ -45,30 +44,30 @@
   ],
   "roles": [
     {
-      "name": "HEIMDALI_SERVICE",
-      "label": "Heimdali API",
-      "pluralLabel": "Heimdali APIs",
+      "name": "ARCHWAY_SERVER",
+      "label": "Archway Server",
+      "pluralLabel": "Archway Servers",
       "jvmBased" : "true",
       "kerberosPrincipals": [
         {
-          "name": "HEIMDALI_API_SERVICE_PRINCIPAL",
-          "primary": "heimdali_api",
+          "name": "ARCHWAY_SERVICE_PRINCIPAL",
+          "primary": "archway",
           "instance": "${host}"
         },
         {
-          "name": "HEIMDALI_API_HTTP_PRINCIPAL",
+          "name": "ARCHWAY_HTTP_PRINCIPAL",
           "primary": "HTTP",
           "instance": "${host}"
         }
       ],
       "externalLink": {
-          "name": "heimdali_web_ui",
-          "label": "Heimdali UI",
-          "url": "https://${host}:${heimdali.rest.port}/"
+          "name": "archway_web_ui",
+          "label": "Archway UI",
+          "url": "https://${host}:${archway.rest.port}/"
       },
       "logging": {
-        "dir": "/var/log/heimdali-api",
-        "filename": "heimdali-api.log",
+        "dir": "/var/log/archway",
+        "filename": "archway-server.log",
         "modifiable": true,
         "configName": "log.dir",
         "loggingType": "log4j",
@@ -94,32 +93,32 @@
                     "migrate_db"
                   ],
                   "environmentVariables": {
-                      "DB_URL": "${heimdali.db.meta.url}",
-                      "DB_USERNAME": "${heimdali.db.meta.username}",
-                      "DB_PASSWORD": "${heimdali.db.meta.password}"
+                      "DB_URL": "${archway.db.meta.url}",
+                      "DB_USERNAME": "${archway.db.meta.username}",
+                      "DB_PASSWORD": "${archway.db.meta.password}"
                   }
                 }
               }
             ],
       "sslServer": {
-        "keyIdentifier": "heimdali_api",
-        "enabledConfigName": "heimdali_api.ssl.enabled",
-        "keystoreLocationConfigName": "heimdali.rest.sslStore",
-        "keystorePasswordConfigName": "heimdali.rest.sslStorePassword",
-        "keystoreKeyPasswordConfigName": "heimdali.rest.sslKeyManagerPassword",
+        "keyIdentifier": "archway_server",
+        "enabledConfigName": "archway_server.ssl.enabled",
+        "keystoreLocationConfigName": "archway.rest.sslStore",
+        "keystorePasswordConfigName": "archway.rest.sslStorePassword",
+        "keystoreKeyPasswordConfigName": "archway.rest.sslKeyManagerPassword",
         "keyPasswordOptionality": "required"
       },
       "parameters": [
         {
-          "name": "heimdali.rest.secret",
+          "name": "archway.rest.secret",
           "label": "REST API Secret",
-          "description": "Heimdali REST API Secret for hashing tokens. This parameter should be set to a randomly generated string.",
+          "description": "Archway REST API Secret for hashing tokens. This parameter should be set to a randomly generated string.",
           "required": "true",
           "type": "password",
           "configurableInWizard": "true"
         },
         {
-          "name": "heimdali.rest.authType",
+          "name": "archway.rest.authType",
           "label": "REST Authentication Type",
           "description": "Valid auth types are 'ldap' and 'spnego'",
           "required": "true",
@@ -131,7 +130,7 @@
           "default": "ldap"
         },
         {
-          "name": "heimdali.cluster.sessionRefresh",
+          "name": "archway.cluster.sessionRefresh",
           "label": "Kerberos Refresh Interval",
           "description": "Interval between refreshing kerberos cache (eg. 1h, 30m, etc)",
           "required": "true",
@@ -139,7 +138,7 @@
           "default": "1h"
         },
         {
-          "name": "heimdali.cluster.url",
+          "name": "archway.cluster.url",
           "label": "Cloudera Manager Base URL",
           "description": "The base URL for CM API (eg. https://manager.valhalla.phdata.io:7183)",
           "required": "true",
@@ -147,23 +146,23 @@
           "configurableInWizard": "true"
         },
         {
-          "name": "heimdali.cluster.admin.username",
-          "label": "Heimdali CM User",
+          "name": "archway.cluster.admin.username",
+          "label": "Archway CM User",
           "description": "The username for the CM user",
           "required": "true",
           "type": "string",
           "configurableInWizard": "true"
         },
         {
-          "name": "heimdali.cluster.admin.password",
-          "label": "Heimdali CM Password",
+          "name": "archway.cluster.admin.password",
+          "label": "Archway CM Password",
           "description": "The password for the CM user",
           "required": "true",
           "type": "password",
           "configurableInWizard": "true"
         },
         {
-          "name": "heimdali.cluster.name",
+          "name": "archway.cluster.name",
           "label": "Cluster Name",
           "description": "The name of the cluster to manage",
           "required": "true",
@@ -171,7 +170,7 @@
           "configurableInWizard": "true"
         },
         {
-          "name": "heimdali.cluster.nameservice",
+          "name": "archway.cluster.nameservice",
           "label": "HDFS nameservice",
           "description": "The HDFS nameservice (dfs.nameservice)",
           "required": "false",
@@ -179,7 +178,7 @@
           "default": ""
         },
         {
-          "name": "heimdali.cluster.environment",
+          "name": "archway.cluster.environment",
           "label": "Cluster Environment",
           "description": "The environment the cluster represents, such as dev, qa, prod, etc. Should be lowercase, no spaces or special chars",
           "required": "true",
@@ -187,15 +186,15 @@
           "configurableInWizard": "true"
         },
         {
-          "name": "heimdali.additional.classpath",
+          "name": "archway.additional.classpath",
           "label": "Additional Classpath",
-          "description": "Classpath values to be appended to the Heimdali API classpath",
+          "description": "Classpath values to be appended to the Archway API classpath",
           "required": "false",
           "type": "string",
           "default": ""
         },
         {
-          "name": "heimdali.cluster.hueOverride.host",
+          "name": "archway.cluster.hueOverride.host",
           "label": "Hue Override Host",
           "description": "Optionally specify the host for Hue's alternative location",
           "required": "false",
@@ -203,7 +202,7 @@
           "configurableInWizard": "true"
         },
         {
-          "name": "heimdali.cluster.hueOverride.port",
+          "name": "archway.cluster.hueOverride.port",
           "label": "Hue Override Port",
           "description": "Optionally specify the port for Hue's alternative location",
           "required": "false",
@@ -211,7 +210,7 @@
           "configurableInWizard": "true"
         },
         {
-          "name": "heimdali.cluster.beeswaxPort",
+          "name": "archway.cluster.beeswaxPort",
           "label": "Impala Beeswax Port",
           "description": "The port for Impala's beeswax port used by impala-shell",
           "required": "false",
@@ -219,7 +218,7 @@
           "configurableInWizard": "true"
         },
         {
-          "name": "heimdali.cluster.hiveServer2Port",
+          "name": "archway.cluster.hiveServer2Port",
           "label": "Impala HiveServer2 Port",
           "description": "The port for Impala's hiveserver2 port used by clients",
           "required": "false",
@@ -227,7 +226,7 @@
           "configurableInWizard": "true"
         },
         {
-          "name": "heimdali.workspaces.user.defaultSize",
+          "name": "archway.workspaces.user.defaultSize",
           "label": "Default User Workspace Quota Size",
           "description": "The default size for user workspaces",
           "required": "true",
@@ -237,7 +236,7 @@
           "default": "250"
         },
         {
-          "name": "heimdali.workspaces.user.defaultCores",
+          "name": "archway.workspaces.user.defaultCores",
           "label": "Default User YARN Cores",
           "description": "The default user workspace number of cores",
           "type": "long",
@@ -246,7 +245,7 @@
           "default": "5"
         },
         {
-          "name": "heimdali.workspaces.user.defaultMemory",
+          "name": "archway.workspaces.user.defaultMemory",
           "label": "User Default YARN Memory",
           "description": "Default amount of memory for user workspaces",
           "type": "long",
@@ -256,7 +255,7 @@
           "unit": "gigabytes"
         },
         {
-          "name": "heimdali.workspaces.user.poolParents",
+          "name": "archway.workspaces.user.poolParents",
           "label": "User YARN Pool Parents",
           "description": "Default parent pools for user workspaces (eg. \"root\")",
           "type": "string",
@@ -265,7 +264,7 @@
           "default": "root.users"
         },
         {
-          "name": "heimdali.workspaces.sharedWorkspace.defaultSize",
+          "name": "archway.workspaces.sharedWorkspace.defaultSize",
           "label": "Default Shared Workspace Quota Size",
           "description": "The default size for shared workspaces",
           "required": "true",
@@ -275,7 +274,7 @@
           "default": "1000"
         },
         {
-          "name": "heimdali.workspaces.sharedWorkspace.defaultCores",
+          "name": "archway.workspaces.sharedWorkspace.defaultCores",
           "label": "Default Shared YARN Cores",
           "description": "The default shared workspace number of cores",
           "type": "long",
@@ -284,7 +283,7 @@
           "default": "25"
         },
         {
-          "name": "heimdali.workspaces.sharedWorkspace.defaultMemory",
+          "name": "archway.workspaces.sharedWorkspace.defaultMemory",
           "label": "Shared Default YARN Memory",
           "description": "Default amount of memory for shared workspaces",
           "type": "long",
@@ -294,7 +293,7 @@
           "unit": "gigabytes"
         },
         {
-          "name": "heimdali.workspaces.sharedWorkspace.poolParents",
+          "name": "archway.workspaces.sharedWorkspace.poolParents",
           "label": "Shared YARN Pool Parents",
           "description": "Default parent pools for shared workspaces (eg. \"root\"",
           "type": "string",
@@ -303,7 +302,7 @@
           "default": "root"
         },
         {
-          "name": "heimdali.workspaces.dataset.defaultSize",
+          "name": "archway.workspaces.dataset.defaultSize",
           "label": "Default Governed Dataset Quota Size",
           "description": "The default size for governed datasets",
           "required": "true",
@@ -313,7 +312,7 @@
           "default": "4000"
         },
         {
-          "name": "heimdali.workspaces.dataset.defaultCores",
+          "name": "archway.workspaces.dataset.defaultCores",
           "label": "Default Dataset YARN Cores",
           "description": "The default dataset workspace number of cores",
           "type": "long",
@@ -322,7 +321,7 @@
           "default": "25"
         },
         {
-          "name": "heimdali.workspaces.dataset.defaultMemory",
+          "name": "archway.workspaces.dataset.defaultMemory",
           "label": "Datase Default YARN Memory",
           "description": "Default amount of memory for dataset workspaces",
           "type": "long",
@@ -332,7 +331,7 @@
           "unit": "gigabytes"
         },
         {
-          "name": "heimdali.workspaces.dataset.poolParents",
+          "name": "archway.workspaces.dataset.poolParents",
           "label": "Dataset YARN Pool Parents",
           "description": "Default parent pools for dataset workspaces (eg. \"root\"",
           "type": "string",
@@ -341,7 +340,7 @@
           "default": "root"
         },
         {
-          "name": "heimdali.db.meta.driver",
+          "name": "archway.db.meta.driver",
           "label": "db_driver",
           "description": "The database driver to use for storage",
           "required": "true",
@@ -354,15 +353,15 @@
           "configurableInWizard": "true"
         },
         {
-          "name": "heimdali.db.meta.url",
+          "name": "archway.db.meta.url",
           "label": "JDBC string",
-          "description": "The JDBC string to the Heimdali database",
+          "description": "The JDBC string to the Archway database",
           "required": "true",
           "type": "string",
           "configurableInWizard": "true"
         },
         {
-          "name": "heimdali.db.meta.username",
+          "name": "archway.db.meta.username",
           "label": "Database Username",
           "description": "User with insert permissions",
           "required": "true",
@@ -370,7 +369,7 @@
           "configurableInWizard": "true"
         },
         {
-          "name": "heimdali.db.meta.password",
+          "name": "archway.db.meta.password",
           "label": "Database Password",
           "description": "Password for the user with insert permissions",
           "required": "true",
@@ -378,7 +377,7 @@
           "configurableInWizard": "true"
         },
         {
-          "name": "heimdali.db.hive.url",
+          "name": "archway.db.hive.url",
           "label": "Hive URL",
           "description": "The URL for connecting to Hive",
           "required": "true",
@@ -386,7 +385,7 @@
           "configurableInWizard": "true"
         },
         {
-          "name": "heimdali.db.impala.url",
+          "name": "archway.db.impala.url",
           "label": "Impala connection string",
           "description": "The Impala JDBC connection string. An example connection string using kerberos: \n\tjdbc:impala://<impalad-host>:21050;SSL=1;AuthMech=1;SSLTrustStorePwd=changeit;SSLTrustStore=/path/to/truststore;KrbHostFQDN=<impalad-host>;KrbServiceName=impala;KrbAuthType=0;KrbRealm=<realm>",
           "required": "false",
@@ -394,7 +393,7 @@
           "default": ""
         },
         {
-          "name": "heimdali.db.impala.driver",
+          "name": "archway.db.impala.driver",
           "label": "Impala JDBC Driver",
           "description": "JDBC Driver to use with Impala",
           "default": "com.cloudera.impala.jdbc41.Driver",
@@ -402,15 +401,15 @@
           "configurableInWizard": "true"
         },
         {
-          "name": "heimdali.ldap.provisioningBinding.bindDN",
+          "name": "archway.ldap.provisioningBinding.bindDN",
           "label": "Provisioning LDAP Admin DN",
-          "description": "DN for a user that has privelege to create groups and modifying group membership in heimdali.ldap.baseDN\nThere are two LDAP connections created, 'provisiong' and 'lookup'. Usually the same values can be used for both. In rare cases it's not possible to do a group lookup from the same connection where groups are created, in this case you can use different values for the 'lookup' connection'''",
+          "description": "DN for a user that has privelege to create groups and modifying group membership in archway.ldap.baseDN\nThere are two LDAP connections created, 'provisiong' and 'lookup'. Usually the same values can be used for both. In rare cases it's not possible to do a group lookup from the same connection where groups are created, in this case you can use different values for the 'lookup' connection'''",
           "required": "true",
           "type": "string",
           "configurableInWizard": "true"
         },
         {
-          "name": "heimdali.ldap.provisioningBinding.server",
+          "name": "archway.ldap.provisioningBinding.server",
           "label": "Provisioning LDAP Host",
           "description": "THe LDAP/AD host for the 'provisioning' LDAP connection",
           "required": "true",
@@ -418,7 +417,7 @@
           "configurableInWizard": "true"
         },
         {
-          "name": "heimdali.ldap.provisioningBinding.port",
+          "name": "archway.ldap.provisioningBinding.port",
           "label": "Provisioning LDAP Port",
           "description": "The LDAP/AD port the 'provisioning' LDAP connection",
           "required": "true",
@@ -427,7 +426,7 @@
           "configurableInWizard": "true"
         },
         {
-          "name": "heimdali.ldap.provisioningBinding.bindPassword",
+          "name": "archway.ldap.provisioningBinding.bindPassword",
           "label": "Provisioning LDAP Admin Password",
           "description": "The password for the admin user",
           "required": "true",
@@ -435,7 +434,7 @@
           "configurableInWizard": "true"
         },
         {
-          "name": "heimdali.ldap.lookupBinding.bindDN",
+          "name": "archway.ldap.lookupBinding.bindDN",
           "label": "Lookup LDAP Admin DN",
           "description": "The DN for the 'lookup' LDAP connection, used for authenticating users and validating group membership. This should usually be set to the same value as the corresponding provisioning value",
           "required": "true",
@@ -443,7 +442,7 @@
           "default": ""
         },
         {
-          "name": "heimdali.ldap.lookupBinding.server",
+          "name": "archway.ldap.lookupBinding.server",
           "label": "Lookup LDAP Host",
           "description": "THe LDAP/AD host for the 'lookup' LDAP connection. This should usually be set to the same value as the corresponding 'provisioning' value. If it is set to empty string 'provisioning' value is used instead",
           "required": "true",
@@ -451,7 +450,7 @@
           "default": ""
         },
         {
-          "name": "heimdali.ldap.lookupBinding.port",
+          "name": "archway.ldap.lookupBinding.port",
           "label": "Lookup LDAP Port",
           "description": "The LDAP/AD port for the 'lookup' LDAP connection. This should usually be set to the same value as the corresponding 'provisioning' value",
           "required": "true",
@@ -459,7 +458,7 @@
           "default": 389
         },
         {
-          "name": "heimdali.ldap.lookupBinding.bindPassword",
+          "name": "archway.ldap.lookupBinding.bindPassword",
           "label": "Lookup LDAP Admin Password",
           "description": "The password for the 'lookup' LDAP connection. This should usually be set to the same value as the corresponding 'provisioning' value",
           "required": "true",
@@ -467,15 +466,15 @@
           "default": ""
         },
         {
-          "name": "heimdali.ldap.baseDN",
+          "name": "archway.ldap.baseDN",
           "label": "Base DN",
-          "description": "The base DN for user search when authenticating users to Heimdali",
+          "description": "The base DN for user search when authenticating users to Archway",
           "required": "true",
           "type": "string",
           "configurableInWizard": "true"
         },
         {
-          "name": "heimdali.ldap.domain",
+          "name": "archway.ldap.domain",
           "label": "AD Realm",
           "description": "The realm to use when looking up users (eg. EXAMPLE.COM)",
           "required": "true",
@@ -483,7 +482,7 @@
           "configurableInWizard": "true"
         },
         {
-          "name": "heimdali.ldap.realm",
+          "name": "archway.ldap.realm",
           "label": "NIS Realm",
           "description": "The NIS domain for Linux attributes (eg. \"example\")",
           "required": "true",
@@ -491,7 +490,7 @@
           "configurableInWizard": "true"
         },
         {
-          "name": "heimdali.ldap.groupPath",
+          "name": "archway.ldap.groupPath",
           "label": "Group DN",
           "description": "The LDAP location for groups. Groups needed for Sentry access control will be created in the DN",
           "required": "true",
@@ -499,7 +498,7 @@
           "configurableInWizard": "true"
         },
         {
-          "name": "heimdali.approvers.notificationEmail",
+          "name": "archway.approvers.notificationEmail",
           "label": "Notification Email Address",
           "description": "The comma separated list of email addresses to send notification emails to",
           "required": "true",
@@ -507,7 +506,7 @@
           "configurableInWizard": "true"
         },
         {
-          "name": "heimdali.approvers.infrastructure",
+          "name": "archway.approvers.infrastructure",
           "label": "Operations Group DN",
           "description": "Members of this group have the ability to approve workspaces based on infrastructure availability and whether a project meets governance standards",
           "required": "true",
@@ -515,7 +514,7 @@
           "configurableInWizard": "true"
         },
         {
-          "name": "heimdali.approvers.risk",
+          "name": "archway.approvers.risk",
           "label": "Risk Group DN",
           "description": "Members of this group will have the ability to approve workspaces based on whether they meet company risk compliance",
           "required": "true",
@@ -523,23 +522,23 @@
           "configurableInWizard": "true"
         },
         {
-          "name": "heimdali.ui.url",
-          "label": "Heimdali UI",
-          "description": "Full url for Heimdali UI in the format `https://host:port`. The default of this value should be auto generated and work without configuration",
+          "name": "archway.ui.url",
+          "label": "Archway UI",
+          "description": "Full url for Archway UI in the format `https://host:port`. The default of this value should be auto generated and work without configuration",
           "required": "false",
           "type": "string",
-          "default": "${host}:${heimdali.rest.port}"
+          "default": "${host}:${archway.rest.port}"
         },
         {
-          "name": "heimdali.ui.staticContentDir",
-          "label": "Heimdali UI static content directory",
-          "description": "Path to heimdali UI directory. It is an override and the original value comes from the env var `HEIMDALI_UI_HOME`",
+          "name": "archway.ui.staticContentDir",
+          "label": "Archway UI static content directory",
+          "description": "Path to Archway UI directory. It is an override and the original value comes from the env var `ARCHWAY_UI_HOME`",
           "required": "false",
           "type": "string",
           "default": ""
         },
         {
-          "name": "heimdali.smtp.fromEmail",
+          "name": "archway.smtp.fromEmail",
           "label": "Notification Email Sender",
           "description": "The email address to send notification emails as",
           "required": "true",
@@ -547,7 +546,7 @@
           "configurableInWizard": "true"
         },
         {
-          "name": "heimdali.smtp.host",
+          "name": "archway.smtp.host",
           "label": "SMTP Host",
           "description": "SMTP Host",
           "required": "true",
@@ -555,7 +554,7 @@
           "configurableInWizard": "true"
         },
         {
-          "name": "heimdali.smtp.port",
+          "name": "archway.smtp.port",
           "label": "SMTP Port",
           "description": "SMTP Port",
           "required": "true",
@@ -563,7 +562,7 @@
           "configurableInWizard": "true"
         },
         {
-          "name": "heimdali.smtp.ssl",
+          "name": "archway.smtp.ssl",
           "label": "Enable SMTP SSL",
           "description": "Enable SMTP SSL",
           "required": "true",
@@ -571,7 +570,7 @@
           "configurableInWizard": "true"
         },
         {
-          "name": "heimdali.smtp.auth",
+          "name": "archway.smtp.auth",
           "label": "SMTP Auth",
           "description": "SMTP Auth Required?",
           "required": "true",
@@ -579,7 +578,7 @@
           "configurableInWizard": "true"
         },
         {
-          "name": "heimdali.smtp.user",
+          "name": "archway.smtp.user",
           "label": "Username for SMTP",
           "description": "Username for SMTP",
           "required": "false",
@@ -587,7 +586,7 @@
           "configurableInWizard": "true"
         },
         {
-          "name": "heimdali.smtp.pass",
+          "name": "archway.smtp.pass",
           "label": "Password for SMTP",
           "description": "Pssword for SMTP",
           "required": "false",
@@ -595,7 +594,7 @@
           "configurableInWizard": "true"
         },
         {
-          "name": "heimdali.templates.ldapGroupGenerator",
+          "name": "archway.templates.ldapGroupGenerator",
           "label": "Group Generator Class",
           "description": "Full class name reference for the LDAP generator to use.",
           "required": "false",
@@ -603,7 +602,7 @@
           "configurableInWizard": "true"
         },
         {
-          "name": "heimdali.kafka.zookeeperConnect",
+          "name": "archway.kafka.zookeeperConnect",
           "label": "Kafka Zookeeper Connect String",
           "description": "The Kakfa zookeeper quorum connect string.",
           "required": "true",
@@ -611,7 +610,7 @@
           "configurableInWizard": "true"
         },
         {
-          "name": "heimdali.java.truststore.location",
+          "name": "archway.java.truststore.location",
           "label": "Java truststore location",
           "description": "Java truststore location",
           "configurableInWizard": "true",
@@ -619,7 +618,7 @@
           "type": "string"
         },
         {
-          "name": "heimdali.java.truststore.password",
+          "name": "archway.java.truststore.password",
           "label": "Java truststore password",
           "description": "Password for the Java truststore",
           "configurableInWizard": "true",
@@ -627,15 +626,15 @@
           "type": "password"
         },
         {
-          "name": "heimdali.additional.java.options",
+          "name": "archway.additional.java.options",
           "label": "Java addition options",
-          "description": "Injection of java options to the heimdali api process",
+          "description": "Injection of java options to the Archway Server process",
           "required": "true",
           "type": "string",
           "default": ""
         },
         {
-          "name": "heimdali.templates.templateRoot",
+          "name": "archway.templates.templateRoot",
           "label": "Workspace template root directory",
           "description": "Workspace template root directory",
           "required": "true",
@@ -643,7 +642,7 @@
           "type": "string"
         },
         {
-          "name": "heimdali.kafka.secureTopics",
+          "name": "archway.kafka.secureTopics",
           "label": "Secure Kafka Topics",
           "description": "Creates appropriate security groups and grants for Kafka topics",
           "required": "false",
@@ -651,7 +650,7 @@
           "default": true
         },
         {
-          "name": "heimdali.ldap.filterTemplate",
+          "name": "archway.ldap.filterTemplate",
           "label": "LDAP Filter Template",
           "description": "The Mustache template used for finding new members",
           "required": "false",
@@ -659,7 +658,7 @@
           "default": "(&(sAMAccountName={{ filter }}*)(|(objectClass=user)(objectClass=group)))"
         },
         {
-          "name": "heimdali.ldap.memberDisplayTemplate",
+          "name": "archway.ldap.memberDisplayTemplate",
           "label": "Member Display Template",
           "description": "The Mustache template used for displaying members when adding and showing existing members",
           "required": "false",
@@ -667,7 +666,7 @@
           "default": "{{ name }} ({{ sAMAccountName }})"
         },
         {
-          "name": "heimdali.featureFlags",
+          "name": "archway.featureFlags",
           "label": "Feature flags",
           "description": "List of feature flags which are enabled",
           "required": "true",
@@ -682,8 +681,8 @@
             "configFormat": "properties",
             "kerberosPrincipals" : [
               {
-                "principalName" : "HEIMDALI_API_HTTP_PRINCIPAL",
-                "propertyName" : "heimdali.rest.httpPrincipal"
+                "principalName" : "ARCHWAY_HTTP_PRINCIPAL",
+                "propertyName" : "archway.rest.httpPrincipal"
               }
             ]
           }
@@ -696,10 +695,10 @@
           "start"
         ],
         "environmentVariables": {
-          "JAVA_TRUST_STORE_LOCATION": "${heimdali.java.truststore.location}",
-          "JAVA_TRUST_STORE_PASSWORD": "${heimdali.java.truststore.password}",
-          "HEIMDALI_ADDITIONAL_CLASSPATH": "${heimdali.additional.classpath}",
-          "JAVA_OPTS": "${heimdali.additional.java.options}"
+          "JAVA_TRUST_STORE_LOCATION": "${archway.java.truststore.location}",
+          "JAVA_TRUST_STORE_PASSWORD": "${archway.java.truststore.password}",
+          "ARCHWAY_ADDITIONAL_CLASSPATH": "${archway.additional.classpath}",
+          "JAVA_OPTS": "${archway.additional.java.options}"
         }
       }
     }

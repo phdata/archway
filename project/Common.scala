@@ -44,7 +44,7 @@ object Common {
 
   val commonSettings = scalateOptions ++ Seq(
     artifactName := { (sv: ScalaVersion, module: ModuleID, artifact: Artifact) =>
-      s"heimdali-common-tests.jar"
+      s"archway-common-tests.jar"
     },
     libraryDependencies ++= Dependencies.commonDependencies
   )

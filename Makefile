@@ -41,8 +41,8 @@ init-ui: .make.init-ui
 
 validate: .make.validate
 .make.validate:
-	build-support/bin/validator -p cloudera-integration/parcel/heimdali-meta/parcel.json
-	build-support/bin/validator -r cloudera-integration/parcel/heimdali-meta/permissions.json
+	build-support/bin/validator -p cloudera-integration/parcel/archway-meta/parcel.json
+	build-support/bin/validator -r cloudera-integration/parcel/archway-meta/permissions.json
 	build-support/bin/validator -s cloudera-integration/csd/descriptor/service.sdl
 	touch $@
 
@@ -50,14 +50,14 @@ validate: .make.validate
 
 parcel: validate-version .make.parcel
 .make.parcel:
-	echo "using HEIMDALI_VERSION: $${HEIMDALI_VERSION:?}"
-	./publish.sh parcel heimdali
+	echo "using ARCHWAY_VERSION: $${ARCHWAY_VERSION:?}"
+	./publish.sh parcel archway
 	./publish.sh manifest
 	touch $@
 
 csd: validate-version .make.csd
 .make.csd:
-	echo "using HEIMDALI_VERSION: $${HEIMDALI_VERSION:?}"
+	echo "using ARCHWAY_VERSION: $${ARCHWAY_VERSION:?}"
 	./publish.sh csd
 	touch $@
 
@@ -68,8 +68,8 @@ dist: app parcel csd
 # TODO invalidate this of version changes, maybe like https://www.cmcrossroads.com/article/rebuilding-when-files-checksum-changes
 validate-version: .make.validate-version
 .make.validate-version:
-	echo "using HEIMDALI_VERSION: $${HEIMDALI_VERSION:?}"
-	echo "$$HEIMDALI_VERSION" > $@
+	echo "using ARCHWAY_VERSION: $${ARCHWAY_VERSION:?}"
+	echo "$$ARCHWAY_VERSION" > $@
 
 ship: validate-version
 	./publish.sh ship

@@ -1,6 +1,6 @@
 # Contributing
 
-Before contributing to this repository, please first discuss the change you wish to make in Slack (#heimdali). All
+Before contributing to this repository, please first discuss the change you wish to make in Slack (#archway). All
 work should be associated with a ticket on the [Jira board](https://phdata.atlassian.net/jira/software/projects/HEIM/boards/29).
 
 ## Pull Request Process
@@ -8,17 +8,18 @@ work should be associated with a ticket on the [Jira board](https://phdata.atlas
 1. Do not commit binary files unless absolutely necessary. If they are necessary please include rationale.
 2. Ensure you've followed the code guidelines below.
 3. Update the README.md if any of your changes impact it's integrity.
-4. Ensure any database schema changes are reflected in the mysql model (heimdali.mwb), flyway/mysql, and flyway/pg
+4. Ensure any database schema changes are reflected in the mysql model (archway.mwb), flyway/mysql, and flyway/pg
 5. Test all code locally either in IntelliJ via `run all ScalaTests` or `sbt test` (see README.md)
 6. Once you've created a pull request, please ensure your ticket reflects the "ready" status in the Jira board
 
 ## Application Design Principals
 
 ### Cats, Cats Effect, and Tagless Final
+
 We are using cats and cats-effect as the foundation for this project. If you are writing new functionality please stick
 with those libraries as they either solve 80% of the problems and provide the facilities for another 19%. If you are
 tempted to use `Future` directly, `synchronize`, or other more "traditional" means to solve code problems, please ask
-in #heimdali-dev and someone can help walk through the problem with you.
+in #archway-dev and someone can help walk through the problem with you.
 
 Benefits:
 
@@ -29,6 +30,7 @@ Benefits:
   If a data type is not available that suits your needs, you can utilize ad-hoc inheritance to provide your own capability.
 
 ### Separation of Concerns
+
 If your logic can be influenced by external factors like `ExecutionContext`, `CacheService`, a http client, etc, they
 should be parameters of your container. A container (i.e. class) should be responsible for one topic, if it depends on
 a capability outside it's responsibility, it should be accepted as a parameter. See existing code for examples on how
@@ -44,7 +46,8 @@ Benefits:
   know where to look (e.g. all `ExecutionContext`s are defined in `Server`, or all our http client calls go through "here").
 
 ### External Dependencies
-Heimdali's API is heavily focused on cats-related dependencies in alignment with the previous principal discussed. If new
+
+Archway's API is heavily focused on cats-related dependencies in alignment with the previous principal discussed. If new
 dependencies are required, it should be discussed first, and ideally should be within the TypeLevel ecosystem.
 
 Current Primary Dependencies:
@@ -59,7 +62,9 @@ Current Primary Dependencies:
 ## Provisioning
 
 ## Creating New Provisioning Actions
+
 Using the following template for IntelliJ, adding a new provisioning task is quite simple:
+
 ```scala
 implicit object $PROV_TYPE$CompletionTask extends CompletionTask[$PROV_TYPE$] {
 

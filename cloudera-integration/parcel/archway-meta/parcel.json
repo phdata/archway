@@ -1,33 +1,30 @@
 {
   "schema_version": 1,
-  "name": "HEIMDALI",
+  "name": "ARCHWAY",
   "version": "0.1.5",
   "setActiveSymlink": true,
-  "replaces": "HEIMDALI",
-  "provides": [
-    "heimdali-api",
-    "heimdali-ui"
-  ],
+  "replaces": "ARCHWAY",
+  "provides": ["archway"],
   "scripts": {
-    "defines": "heimdali_env.sh"
+    "defines": "archway_env.sh"
   },
   "packages": [],
   "components": [
     {
-      "name": "heimdali-api",
+      "name": "archway-server",
       "version": "0.1.5",
       "pkg_version": "0.1.5"
     },
     {
-      "name": "heimdali-ui",
+      "name": "archway-ui",
       "version": "0.1.5",
       "pkg_version": "0.1.5"
     }
   ],
   "users": {
-    "heimdali_api": {
-      "longname": "Heimdali API",
-      "home": "/var/lib/heimdali_api",
+    "archway": {
+      "longname": "Archway",
+      "home": "/var/lib/archway",
       "shell": "/bin/bash",
       "extra_groups": []
     }

@@ -12,7 +12,7 @@ class EmailClientImplIntegrationSpec extends FlatSpec {
 
     val result = mailClient
       .send("test email",
-            "<div>Hello from Heimdali.EmailClientImplIntegrationSpec</div>",
+            "<div>Hello from Archway.EmailClientImplIntegrationSpec</div>",
             "valhalla@phdata.io",
             "tony@phdata.io")
       .unsafeRunSync()

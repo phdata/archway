@@ -72,7 +72,7 @@ object AppContext {
       config: Config = ConfigFactory.defaultApplication().resolve()
   ): Resource[F, AppContext[F]] =
     for {
-      loadedConfig <- Resource.liftF(io.circe.config.parser.decodePathF[F, AppConfig](config, "heimdali"))
+      loadedConfig <- Resource.liftF(io.circe.config.parser.decodePathF[F, AppConfig](config, "archway"))
       config = updateClusterNameservice(loadedConfig)
 
       httpEC <- ExecutionContexts.fixedThreadPool(10)

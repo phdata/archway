@@ -12,7 +12,7 @@
 -- -----------------------------------------------------
 
 -- -----------------------------------------------------
--- Table `heimdali`.`ldap_registration`
+-- Table `ldap_registration`
 -- -----------------------------------------------------
 CREATE SEQUENCE ldap_registration_seq;
 
@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS ldap_registration (
 
 
 -- -----------------------------------------------------
--- Table `heimdali`.`hive_grant`
+-- Table `hive_grant`
 -- -----------------------------------------------------
 CREATE SEQUENCE hive_grant_seq;
 
@@ -51,7 +51,7 @@ CREATE INDEX fk_hive_grant_ldap_registration1_idx ON hive_grant (ldap_registrati
 
 
 -- -----------------------------------------------------
--- Table `heimdali`.`hive_database`
+-- Table `hive_database`
 -- -----------------------------------------------------
 CREATE SEQUENCE hive_database_seq;
 
@@ -83,7 +83,7 @@ CREATE INDEX fk_hive_database_hive_grant2_idx ON hive_database (readonly_group_i
 
 
 -- -----------------------------------------------------
--- Table `heimdali`.`resource_pool`
+-- Table `resource_pool`
 -- -----------------------------------------------------
 CREATE SEQUENCE resource_pool_seq;
 
@@ -97,7 +97,7 @@ CREATE TABLE IF NOT EXISTS resource_pool (
 
 
 -- -----------------------------------------------------
--- Table `heimdali`.`compliance`
+-- Table `compliance`
 -- -----------------------------------------------------
 CREATE SEQUENCE compliance_seq;
 
@@ -110,7 +110,7 @@ CREATE TABLE IF NOT EXISTS compliance (
 
 
 -- -----------------------------------------------------
--- Table `heimdali`.`workspace_request`
+-- Table `workspace_request`
 -- -----------------------------------------------------
 CREATE SEQUENCE workspace_request_seq;
 
@@ -134,7 +134,7 @@ CREATE INDEX fk_workspace_request_compliance1_idx ON workspace_request (complian
 
 
 -- -----------------------------------------------------
--- Table `heimdali`.`approval`
+-- Table `approval`
 -- -----------------------------------------------------
 CREATE SEQUENCE approval_seq;
 
@@ -157,7 +157,7 @@ CREATE INDEX fk_approval_workspace_request1_idx ON approval (workspace_request_i
 
 
 -- -----------------------------------------------------
--- Table `heimdali`.`member`
+-- Table `member`
 -- -----------------------------------------------------
 CREATE SEQUENCE member_seq;
 
@@ -179,7 +179,7 @@ CREATE INDEX fk_member_ldap_registration1_idx ON member (ldap_registration_id);
 
 
 -- -----------------------------------------------------
--- Table `heimdali`.`provision_task`
+-- Table `provision_task`
 -- -----------------------------------------------------
 CREATE SEQUENCE provision_task_seq;
 
@@ -192,7 +192,7 @@ CREATE TABLE IF NOT EXISTS provision_task (
 
 
 -- -----------------------------------------------------
--- Table `heimdali`.`task_log`
+-- Table `task_log`
 -- -----------------------------------------------------
 CREATE SEQUENCE task_log_seq;
 
@@ -213,7 +213,7 @@ CREATE INDEX fk_table1_provision_task1_idx ON task_log (provision_task_id);
 
 
 -- -----------------------------------------------------
--- Table `heimdali`.`topic_grant`
+-- Table `topic_grant`
 -- -----------------------------------------------------
 CREATE SEQUENCE topic_grant_seq;
 
@@ -235,7 +235,7 @@ CREATE INDEX fk_topic_role_ldap_registration1_idx ON topic_grant (ldap_registrat
 
 
 -- -----------------------------------------------------
--- Table `heimdali`.`kafka_topic`
+-- Table `kafka_topic`
 -- -----------------------------------------------------
 CREATE SEQUENCE kafka_topic_seq;
 
@@ -266,7 +266,7 @@ CREATE INDEX fk_kafka_topic_topic_role2_idx ON kafka_topic (readonly_role_id);
 
 
 -- -----------------------------------------------------
--- Table `heimdali`.`application`
+-- Table `application`
 -- -----------------------------------------------------
 CREATE SEQUENCE application_seq;
 
@@ -289,7 +289,7 @@ CREATE INDEX fk_application_ldap_registration1_idx ON application (ldap_registra
 
 
 -- -----------------------------------------------------
--- Table `heimdali`.`workspace_topic`
+-- Table `workspace_topic`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS workspace_topic (
   workspace_request_id BIGINT NOT NULL,
@@ -313,7 +313,7 @@ CREATE INDEX fk_workspace_request_has_kafka_topic_workspace_request1_idx ON work
 
 
 -- -----------------------------------------------------
--- Table `heimdali`.`workspace_database`
+-- Table `workspace_database`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS workspace_database (
   workspace_request_id BIGINT NOT NULL,
@@ -337,7 +337,7 @@ CREATE INDEX fk_workspace_request_has_hive_database_workspace_request1_idx ON wo
 
 
 -- -----------------------------------------------------
--- Table `heimdali`.`workspace_pool`
+-- Table `workspace_pool`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS workspace_pool (
   workspace_request_id BIGINT NOT NULL,
@@ -361,7 +361,7 @@ CREATE INDEX fk_workspace_request_has_resource_pool_workspace_request1_idx ON wo
 
 
 -- -----------------------------------------------------
--- Table `heimdali`.`workspace_application`
+-- Table `workspace_application`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS workspace_application (
   application_id BIGINT NOT NULL,

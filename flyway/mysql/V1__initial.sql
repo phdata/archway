@@ -1,6 +1,6 @@
 
 -- -----------------------------------------------------
--- Table `heimdali`.`ldap_registration`
+-- Table `ldap_registration`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `ldap_registration` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS `ldap_registration` (
 
 
 -- -----------------------------------------------------
--- Table `heimdali`.`hive_grant`
+-- Table `hive_grant`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `hive_grant` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
@@ -26,13 +26,13 @@ CREATE TABLE IF NOT EXISTS `hive_grant` (
   INDEX `fk_hive_grant_ldap_registration1_idx` (`ldap_registration_id` ASC),
   CONSTRAINT `fk_hive_grant_ldap_registration1`
     FOREIGN KEY (`ldap_registration_id`)
-    REFERENCES `heimdali`.`ldap_registration` (`id`)
+    REFERENCES `ldap_registration` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION);
 
 
 -- -----------------------------------------------------
--- Table `heimdali`.`hive_database`
+-- Table `hive_database`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `hive_database` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
@@ -49,18 +49,18 @@ CREATE TABLE IF NOT EXISTS `hive_database` (
   INDEX `fk_hive_database_hive_grant2_idx` (`readonly_group_id` ASC),
   CONSTRAINT `fk_hive_database_hive_grant1`
     FOREIGN KEY (`manager_group_id`)
-    REFERENCES `heimdali`.`hive_grant` (`id`)
+    REFERENCES `hive_grant` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_hive_database_hive_grant2`
     FOREIGN KEY (`readonly_group_id`)
-    REFERENCES `heimdali`.`hive_grant` (`id`)
+    REFERENCES `hive_grant` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION);
 
 
 -- -----------------------------------------------------
--- Table `heimdali`.`resource_pool`
+-- Table `resource_pool`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `resource_pool` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
@@ -72,7 +72,7 @@ CREATE TABLE IF NOT EXISTS `resource_pool` (
 
 
 -- -----------------------------------------------------
--- Table `heimdali`.`compliance`
+-- Table `compliance`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `compliance` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
@@ -83,7 +83,7 @@ CREATE TABLE IF NOT EXISTS `compliance` (
 
 
 -- -----------------------------------------------------
--- Table `heimdali`.`workspace_request`
+-- Table `workspace_request`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `workspace_request` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
@@ -96,13 +96,13 @@ CREATE TABLE IF NOT EXISTS `workspace_request` (
   INDEX `fk_workspace_request_compliance1_idx` (`compliance_id` ASC),
   CONSTRAINT `fk_workspace_request_compliance1`
     FOREIGN KEY (`compliance_id`)
-    REFERENCES `heimdali`.`compliance` (`id`)
+    REFERENCES `compliance` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION);
 
 
 -- -----------------------------------------------------
--- Table `heimdali`.`approval`
+-- Table `approval`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `approval` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
@@ -114,13 +114,13 @@ CREATE TABLE IF NOT EXISTS `approval` (
   INDEX `fk_approval_workspace_request1_idx` (`workspace_request_id` ASC),
   CONSTRAINT `fk_approval_workspace_request1`
     FOREIGN KEY (`workspace_request_id`)
-    REFERENCES `heimdali`.`workspace_request` (`id`)
+    REFERENCES `workspace_request` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION);
 
 
 -- -----------------------------------------------------
--- Table `heimdali`.`member`
+-- Table `member`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `member` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
@@ -131,13 +131,13 @@ CREATE TABLE IF NOT EXISTS `member` (
   INDEX `fk_member_ldap_registration1_idx` (`ldap_registration_id` ASC),
   CONSTRAINT `fk_member_ldap_registration1`
     FOREIGN KEY (`ldap_registration_id`)
-    REFERENCES `heimdali`.`ldap_registration` (`id`)
+    REFERENCES `ldap_registration` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION);
 
 
 -- -----------------------------------------------------
--- Table `heimdali`.`provision_task`
+-- Table `provision_task`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `provision_task` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
@@ -147,7 +147,7 @@ CREATE TABLE IF NOT EXISTS `provision_task` (
 
 
 -- -----------------------------------------------------
--- Table `heimdali`.`task_log`
+-- Table `task_log`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `task_log` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
@@ -157,13 +157,13 @@ CREATE TABLE IF NOT EXISTS `task_log` (
   INDEX `fk_table1_provision_task1_idx` (`provision_task_id` ASC),
   CONSTRAINT `fk_table1_provision_task1`
     FOREIGN KEY (`provision_task_id`)
-    REFERENCES `heimdali`.`provision_task` (`id`)
+    REFERENCES `provision_task` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION);
 
 
 -- -----------------------------------------------------
--- Table `heimdali`.`topic_grant`
+-- Table `topic_grant`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `topic_grant` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
@@ -174,13 +174,13 @@ CREATE TABLE IF NOT EXISTS `topic_grant` (
   INDEX `fk_topic_role_ldap_registration1_idx` (`ldap_registration_id` ASC),
   CONSTRAINT `fk_topic_role_ldap_registration1`
     FOREIGN KEY (`ldap_registration_id`)
-    REFERENCES `heimdali`.`ldap_registration` (`id`)
+    REFERENCES `ldap_registration` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION);
 
 
 -- -----------------------------------------------------
--- Table `heimdali`.`kafka_topic`
+-- Table `kafka_topic`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `kafka_topic` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
@@ -195,18 +195,18 @@ CREATE TABLE IF NOT EXISTS `kafka_topic` (
   INDEX `fk_kafka_topic_topic_role2_idx` (`readonly_role_id` ASC),
   CONSTRAINT `fk_kafka_topic_topic_role1`
     FOREIGN KEY (`manager_role_id`)
-    REFERENCES `heimdali`.`topic_grant` (`id`)
+    REFERENCES `topic_grant` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_kafka_topic_topic_role2`
     FOREIGN KEY (`readonly_role_id`)
-    REFERENCES `heimdali`.`topic_grant` (`id`)
+    REFERENCES `topic_grant` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION);
 
 
 -- -----------------------------------------------------
--- Table `heimdali`.`application`
+-- Table `application`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `application` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
@@ -218,13 +218,13 @@ CREATE TABLE IF NOT EXISTS `application` (
   INDEX `fk_application_ldap_registration1_idx` (`ldap_registration_id` ASC),
   CONSTRAINT `fk_application_ldap_registration1`
     FOREIGN KEY (`ldap_registration_id`)
-    REFERENCES `heimdali`.`ldap_registration` (`id`)
+    REFERENCES `ldap_registration` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION);
 
 
 -- -----------------------------------------------------
--- Table `heimdali`.`workspace_topic`
+-- Table `workspace_topic`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `workspace_topic` (
   `workspace_request_id` BIGINT NOT NULL,
@@ -234,18 +234,18 @@ CREATE TABLE IF NOT EXISTS `workspace_topic` (
   INDEX `fk_workspace_request_has_kafka_topic_workspace_request1_idx` (`workspace_request_id` ASC),
   CONSTRAINT `fk_workspace_request_has_kafka_topic_workspace_request1`
     FOREIGN KEY (`workspace_request_id`)
-    REFERENCES `heimdali`.`workspace_request` (`id`)
+    REFERENCES `workspace_request` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_workspace_request_has_kafka_topic_kafka_topic1`
     FOREIGN KEY (`kafka_topic_id`)
-    REFERENCES `heimdali`.`kafka_topic` (`id`)
+    REFERENCES `kafka_topic` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION);
 
 
 -- -----------------------------------------------------
--- Table `heimdali`.`workspace_database`
+-- Table `workspace_database`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `workspace_database` (
   `workspace_request_id` BIGINT NOT NULL,
@@ -255,18 +255,18 @@ CREATE TABLE IF NOT EXISTS `workspace_database` (
   INDEX `fk_workspace_request_has_hive_database_workspace_request1_idx` (`workspace_request_id` ASC),
   CONSTRAINT `fk_workspace_request_has_hive_database_workspace_request1`
     FOREIGN KEY (`workspace_request_id`)
-    REFERENCES `heimdali`.`workspace_request` (`id`)
+    REFERENCES `workspace_request` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_workspace_request_has_hive_database_hive_database1`
     FOREIGN KEY (`hive_database_id`)
-    REFERENCES `heimdali`.`hive_database` (`id`)
+    REFERENCES `hive_database` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION);
 
 
 -- -----------------------------------------------------
--- Table `heimdali`.`workspace_pool`
+-- Table `workspace_pool`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `workspace_pool` (
   `workspace_request_id` BIGINT NOT NULL,
@@ -276,18 +276,18 @@ CREATE TABLE IF NOT EXISTS `workspace_pool` (
   INDEX `fk_workspace_request_has_resource_pool_workspace_request1_idx` (`workspace_request_id` ASC),
   CONSTRAINT `fk_workspace_request_has_resource_pool_workspace_request1`
     FOREIGN KEY (`workspace_request_id`)
-    REFERENCES `heimdali`.`workspace_request` (`id`)
+    REFERENCES `workspace_request` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_workspace_request_has_resource_pool_resource_pool1`
     FOREIGN KEY (`resource_pool_id`)
-    REFERENCES `heimdali`.`resource_pool` (`id`)
+    REFERENCES `resource_pool` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION);
 
 
 -- -----------------------------------------------------
--- Table `heimdali`.`workspace_application`
+-- Table `workspace_application`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `workspace_application` (
   `application_id` BIGINT NOT NULL,
@@ -297,11 +297,11 @@ CREATE TABLE IF NOT EXISTS `workspace_application` (
   INDEX `fk_application_has_workspace_request_application1_idx` (`application_id` ASC),
   CONSTRAINT `fk_application_has_workspace_request_application1`
     FOREIGN KEY (`application_id`)
-    REFERENCES `heimdali`.`application` (`id`)
+    REFERENCES `application` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_application_has_workspace_request_workspace_request1`
     FOREIGN KEY (`workspace_request_id`)
-    REFERENCES `heimdali`.`workspace_request` (`id`)
+    REFERENCES `workspace_request` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION);

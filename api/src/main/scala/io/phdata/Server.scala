@@ -11,7 +11,7 @@ import io.phdata.provisioning.DefaultProvisioningService
 import io.phdata.rest.authentication.{LdapAuthService, SpnegoAuthService, TokenAuthServiceImpl}
 import io.phdata.rest._
 import io.phdata.services._
-import io.phdata.startup.{CacheInitializer, HeimdaliStartup, Provisioning, SessionMaintainer}
+import io.phdata.startup.{ArchwayStartup, CacheInitializer, Provisioning, SessionMaintainer}
 import org.http4s.implicits._
 import org.http4s.server.SSLKeyStoreSupport.StoreInfo
 import org.http4s.server.blaze._
@@ -103,11 +103,11 @@ object Server extends IOApp with LazyLogging {
       provisioningJob = new Provisioning[F](context, provisionService)
       sessionMaintainer = new SessionMaintainer[F](context)
       cacheInitializer = new CacheInitializer[F](context)
-      _ <- Resource.liftF(logger.info("Initializing HeimdaliStartup class").pure[F])
-      startup = new HeimdaliStartup[F](cacheInitializer, sessionMaintainer, provisioningJob)(startupEC)
+      _ <- Resource.liftF(logger.info("Initializing ArchwayStartup class").pure[F])
+      startup = new ArchwayStartup[F](cacheInitializer, sessionMaintainer, provisioningJob)(startupEC)
 
       _ <- Resource.liftF(startup.begin())
-      _ <- Resource.liftF(logger.info("Class HeimdaliStartup has started").pure[F])
+      _ <- Resource.liftF(logger.info("Class ArchwayStartup has started").pure[F])
 
       server <- BlazeServerBuilder[F]
         .bindHttp(context.appConfig.rest.port, "0.0.0.0")

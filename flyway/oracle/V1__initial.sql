@@ -12,7 +12,7 @@
 -- -----------------------------------------------------
 
 -- -----------------------------------------------------
--- Table `heimdali`.`ldap_registration`
+-- Table `ldap_registration`
 -- -----------------------------------------------------
 
 CREATE TABLE ldap_registration (
@@ -28,7 +28,7 @@ CREATE TABLE ldap_registration (
 
 
 -- -----------------------------------------------------
--- Table `heimdali`.`hive_grant`
+-- Table `hive_grant`
 -- -----------------------------------------------------
 
 CREATE TABLE hive_grant (
@@ -48,7 +48,7 @@ CREATE INDEX fk_hive_grant_ldap_r_idx ON hive_grant (ldap_registration_id);
 
 
 -- -----------------------------------------------------
--- Table `heimdali`.`hive_database`
+-- Table `hive_database`
 -- -----------------------------------------------------
 
 CREATE TABLE hive_database (
@@ -83,7 +83,7 @@ CREATE INDEX fk_hive_database_grant3_idx ON hive_database (readwrite_group_id);
 
 
 -- -----------------------------------------------------
--- Table `heimdali`.`resource_pool`
+-- Table `resource_pool`
 -- -----------------------------------------------------
 
 CREATE TABLE resource_pool (
@@ -96,7 +96,7 @@ CREATE TABLE resource_pool (
 
 
 -- -----------------------------------------------------
--- Table `heimdali`.`compliance`
+-- Table `compliance`
 -- -----------------------------------------------------
 CREATE TABLE compliance (
   id NUMBER GENERATED ALWAYS AS IDENTITY,
@@ -107,7 +107,7 @@ CREATE TABLE compliance (
 
 
 -- -----------------------------------------------------
--- Table `heimdali`.`workspace_request`
+-- Table `workspace_request`
 -- -----------------------------------------------------
 CREATE TABLE workspace_request (
   id NUMBER GENERATED ALWAYS AS IDENTITY,
@@ -132,7 +132,7 @@ CREATE INDEX fk_wk_request_cmplnc1_idx ON workspace_request (compliance_id);
 
 
 -- -----------------------------------------------------
--- Table `heimdali`.`approval`
+-- Table `approval`
 -- -----------------------------------------------------
 CREATE TABLE approval (
   id NUMBER GENERATED ALWAYS AS IDENTITY,
@@ -152,7 +152,7 @@ CREATE INDEX fk_approval_wks_request1_idx ON approval (workspace_request_id);
 
 
 -- -----------------------------------------------------
--- Table `heimdali`.`member`
+-- Table `member`
 -- -----------------------------------------------------
 CREATE TABLE member (
   id NUMBER GENERATED ALWAYS AS IDENTITY,
@@ -171,7 +171,7 @@ CREATE INDEX fk_member_ldap_reg1_idx ON member (ldap_registration_id);
 
 
 -- -----------------------------------------------------
--- Table `heimdali`.`provision_task`
+-- Table `provision_task`
 -- -----------------------------------------------------
 CREATE TABLE provision_task (
   id NUMBER GENERATED ALWAYS AS IDENTITY,
@@ -182,7 +182,7 @@ CREATE TABLE provision_task (
 
 
 -- -----------------------------------------------------
--- Table `heimdali`.`task_log`
+-- Table `task_log`
 -- -----------------------------------------------------
 
 CREATE TABLE task_log (
@@ -201,7 +201,7 @@ CREATE INDEX fk_table1_provision_task1_idx ON task_log (provision_task_id);
 
 
 -- -----------------------------------------------------
--- Table `heimdali`.`topic_grant`
+-- Table `topic_grant`
 -- -----------------------------------------------------
 CREATE TABLE topic_grant (
   id NUMBER GENERATED ALWAYS AS IDENTITY,
@@ -220,7 +220,7 @@ CREATE INDEX fk_topic_role_ldap_reg1_idx ON topic_grant (ldap_registration_id);
 
 
 -- -----------------------------------------------------
--- Table `heimdali`.`kafka_topic`
+-- Table `kafka_topic`
 -- -----------------------------------------------------
 CREATE TABLE kafka_topic (
   id NUMBER GENERATED ALWAYS AS IDENTITY,
@@ -247,7 +247,7 @@ CREATE INDEX fk_kafka_topic_topic_role2_idx ON kafka_topic (readonly_role_id);
 
 
 -- -----------------------------------------------------
--- Table `heimdali`.`application`
+-- Table `application`
 -- -----------------------------------------------------
 CREATE TABLE application (
   id NUMBER GENERATED ALWAYS AS IDENTITY,
@@ -271,7 +271,7 @@ CREATE INDEX fk_application_ldap_reg1_idx ON application (ldap_registration_id);
 
 
 -- -----------------------------------------------------
--- Table `heimdali`.`workspace_topic`
+-- Table `workspace_topic`
 -- -----------------------------------------------------
 CREATE TABLE workspace_topic (
   workspace_request_id NUMBER NOT NULL,
@@ -294,7 +294,7 @@ CREATE INDEX fk_ws_topic_idx2 ON workspace_topic (workspace_request_id);
 
 
 -- -----------------------------------------------------
--- Table `heimdali`.`workspace_database`
+-- Table `workspace_database`
 -- -----------------------------------------------------
 CREATE TABLE workspace_database (
   workspace_request_id NUMBER NOT NULL,
@@ -316,7 +316,7 @@ CREATE INDEX fk_ws_db_idx2 ON workspace_database (workspace_request_id);
 
 
 -- -----------------------------------------------------
--- Table `heimdali`.`workspace_pool`
+-- Table `workspace_pool`
 -- -----------------------------------------------------
 CREATE TABLE workspace_pool (
   workspace_request_id NUMBER NOT NULL,
@@ -338,7 +338,7 @@ CREATE INDEX fk_wks_rq_idx2 ON workspace_pool (workspace_request_id);
 
 
 -- -----------------------------------------------------
--- Table `heimdali`.`workspace_application`
+-- Table `workspace_application`
 -- -----------------------------------------------------
 CREATE TABLE workspace_application (
   application_id NUMBER NOT NULL,
@@ -359,7 +359,7 @@ CREATE INDEX fk_app_idx1 ON workspace_application (workspace_request_id);
 CREATE INDEX fk_app_idx2 ON workspace_application (application_id);
 
 -- -----------------------------------------------------
--- Table `heimdali`.`heimdali_config`
+-- Table `heimdali_config`
 -- -----------------------------------------------------
 CREATE TABLE heimdali_config (
   config_key VARCHAR2(255) NOT NULL,
@@ -368,7 +368,7 @@ CREATE TABLE heimdali_config (
 
 
 -- -----------------------------------------------------
--- Table `heimdali`.`ldap_attribute`
+-- Table `ldap_attribute`
 -- -----------------------------------------------------
 
 CREATE TABLE ldap_attribute (

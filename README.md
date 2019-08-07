@@ -1,4 +1,4 @@
-# Heimdali
+# Archway
 
 ## Running Locally
 
@@ -38,9 +38,9 @@ $ make itest-init
   `open -n -a /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --args --user-data-dir="/tmp/chrome_dev_test" --disable-web-security`
   in safari browser, go to developer settings, and check `Disable cross-origin restrictions`.
 
-## Heimdali API
+## Archway API
 
-Heimdali API is the REST interface primally enabling functionality to it's UI counterpart but also a means for automation.
+Archway API is the REST interface primally enabling functionality to it's UI counterpart but also a means for automation.
 
 ### Code
 
@@ -65,11 +65,11 @@ The code is comprised of a few primary packages:
 
 #### Functional Programming/Cats
 
-Some projects are based on AKKA, Play, Spark (in the case of batch), or some other "pattern library." Heimdali is built on Cats, Cats Effect, Http4s, Circe, and Doobie, all in the [Typelevel](http://typelevel.org) stack. These libraries are all built on Cats and encourage functional programming. If you've never used Cats or done functional programming, the good thing is, most patterns are already established and can just be repeated. All of these libraries have excellent documentation, and even better people in Gitter ready and willing to answer questions (just like us on ##heimdali-dev in Slack).
+Some projects are based on AKKA, Play, Spark (in the case of batch), or some other "pattern library." Archway is built on Cats, Cats Effect, Http4s, Circe, and Doobie, all in the [Typelevel](http://typelevel.org) stack. These libraries are all built on Cats and encourage functional programming. If you've never used Cats or done functional programming, the good thing is, most patterns are already established and can just be repeated. All of these libraries have excellent documentation, and even better people in Gitter ready and willing to answer questions (just like us on ##archway-dev in Slack).
 
 ### Database
 
-The metadata for Heimdali is broken up into two main parts: workspace metadata and application configuration.
+The metadata for Archway is broken up into two main parts: workspace metadata and application configuration.
 
 #### Workspace Metadata
 
@@ -82,17 +82,17 @@ All workspaces can contain a collection of topics, applications, databases, and 
 
 ### Integration test package
 
-An integration test jar is included in the parcel at \$PARCELS_ROOT/HEIMDALI/usr/lib/heimdali-api/heimdali-test.jar
+An integration test jar is included in the parcel at \$PARCELS_ROOT/ARCHWAY/usr/lib/archway-server/archway-test.jar
 
 Run tests by adding your application.conf to the classpath and choosing a test:
 
 ````bash
-java -cp "/path/to/application.conf:cloudera-integration/build/HEIMDALI-1.5.1/usr/lib/heimdali-api/*:cloudera-integration/build/HEIMDALI-1.5.1/usr/lib/heimdali-api-tests/*" org.scalatest.tools.Runner -o -R cloudera-integration/build/HEIMDALI-1.5.1/usr/lib/heimdali-api-tests/heimdali-integration-tests.jar -q Spec```bash
+java -cp "/path/to/application.conf:cloudera-integration/build/ARCHWAY-1.5.1/usr/lib/archway-server/*:cloudera-integration/build/ARCHWAY-1.5.1/usr/lib/archway-server-tests/*" org.scalatest.tools.Runner -o -R cloudera-integration/build/ARCHWAY-1.5.1/usr/lib/archway-server-tests/archway-integration-tests.jar -q Spec```bash
 
 When run in a dev environment this looks like:
 
 ```bash
-java -cp "common/src/test/resources/application.test.conf:integration-test/target/scala-2.12/heimdali-test.jar" org.scalatest.run io.phdata.clients.LDAPClientImplIntegrationSpec
+java -cp "common/src/test/resources/application.test.conf:integration-test/target/scala-2.12/archway-test.jar" org.scalatest.run io.phdata.clients.LDAPClientImplIntegrationSpec
 ````
 
 Build the test jar locally with
@@ -105,13 +105,13 @@ Create integration tests with `make package-tests`.
 
 ### Contributing
 
-Pull requests are welcome. For major changes, please start the discussion on [#heimdali-dev](https://phdata.slack.com/app_redirect?channel=heimdali-dev).
+Pull requests are welcome. For major changes, please start the discussion on [#archway-dev](https://phdata.slack.com/app_redirect?channel=archway-dev).
 
 Please make sure to review [CONTRIBUTING.md](CONTRIBUTING.md)
 
-## Heimdali UI
+## Archway UI
 
-Heimdali UI is a web application for managing resources.
+Archway UI is a web application for managing resources.
 
 ### What's Being Used?
 
@@ -165,7 +165,7 @@ Here resides the code for making api calls.
 Set the parcel/csd version
 
 ```
-export HEIMDALI_VERSION=1.5.15.6
+export ARCHWAY_VERSION=1.5.15.6
 ```
 
 ```
