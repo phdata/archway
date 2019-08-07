@@ -66,6 +66,7 @@ interface Props extends RouteComponentProps<DetailsRouteProps> {
   provisioning: ProvisioningType;
   manageLoading: ManageLoading;
   featureFlags: string[];
+  userSuggestionsLoading: boolean;
 
   clearDetails: () => void;
   getWorkspaceDetails: (id: number) => void;
@@ -208,6 +209,7 @@ class WorkspaceDetails extends React.PureComponent<Props> {
       provisionWorkspace,
       manageLoading,
       featureFlags,
+      userSuggestionsLoading,
     } = this.props;
     const hasApplicationFlag = featureFlags.includes(FeatureFlagType.Application);
     const hasMessagingFlag = featureFlags.includes(FeatureFlagType.Messaging);
@@ -335,6 +337,7 @@ class WorkspaceDetails extends React.PureComponent<Props> {
             allocations={workspace.data}
             suggestions={userSuggestions}
             onSearch={this.handleMemberSearch}
+            loading={userSuggestionsLoading}
           />
         </Modal>
         <Modal
@@ -417,6 +420,7 @@ const mapStateToProps = () =>
     provisioning: selectors.getProvisioning(),
     manageLoading: selectors.getManageLoading(),
     featureFlags: getFeatureFlags(),
+    userSuggestionsLoading: selectors.getUserSuggestionsLoading(),
   });
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({

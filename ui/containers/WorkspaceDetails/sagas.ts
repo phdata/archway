@@ -44,6 +44,7 @@ import {
   setManageLoading,
   setNotificationStatus,
   clearNotificationStatus,
+  setUserSuggestionsLoading,
 } from './actions';
 
 import { RECENT_WORKSPACES_KEY, TOKEN_EXTRACTOR, NotificationType } from '../../constants';
@@ -61,10 +62,13 @@ export const activeTopicExtractor = (s: any) => s.getIn(['details', 'activeTopic
 function* fetchUserSuggestions({ filter }: { type: string; filter: string }) {
   const token = yield select(TOKEN_EXTRACTOR);
   try {
+    yield put(setUserSuggestionsLoading(true));
     const suggestions = yield call(Api.getUserSuggestions, token, filter);
     yield put(setUserSuggestions(filter, suggestions));
   } catch (e) {
     //
+  } finally {
+    yield put(setUserSuggestionsLoading(false));
   }
 }
 

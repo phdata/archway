@@ -17,6 +17,7 @@ describe('SimpleMemberRequest', () => {
           consumed_in_gb: 0,
         } as HiveAllocation,
       ],
+      loading: true,
     };
     const wrapper = shallow(<SimpleMemberRequest {...props} />);
 

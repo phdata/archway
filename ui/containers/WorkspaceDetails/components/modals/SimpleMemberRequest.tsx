@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { AutoComplete, Row, Radio } from 'antd';
+import { AutoComplete, Row, Radio, Spin, Icon } from 'antd';
 import { InjectedFormProps } from 'redux-form';
 import { Field } from 'redux-form/immutable';
 import { reduxForm } from 'redux-form/immutable';
@@ -43,6 +43,7 @@ interface SimpleMemberForm {
 interface SimpleMemberRequestProps {
   allocations: HiveAllocation[];
   suggestions?: UserSuggestions;
+  loading: boolean;
   onSearch?: (v: string) => void;
   handleSubmit?: () => void;
 }
@@ -63,37 +64,46 @@ const renderGroup = (group: any) => (
 const SimpleMemberRequest = ({
   allocations,
   suggestions,
+  loading,
   onSearch,
   handleSubmit,
 }: InjectedFormProps<SimpleMemberForm, {}> & SimpleMemberRequestProps) => (
   <form style={{}} onSubmit={handleSubmit}>
-    <FieldLabel>member</FieldLabel>
-    <Field
-      name="username"
-      dataSource={
-        suggestions
-          ? [
-              renderGroup({
-                title: 'Users',
-                children: suggestions.users.map((item: UserSuggestion) => ({
-                  text: item.display,
-                  value: item.distinguished_name,
-                })),
-              }),
-              renderGroup({
-                title: 'Groups',
-                children: suggestions.groups.map((item: UserSuggestion) => ({
-                  text: item.display,
-                  value: item.distinguished_name,
-                })),
-              }),
-            ]
-          : []
-      }
-      onSearch={onSearch}
-      component={ReduxAutoComplete}
-      style={{ marginBottom: 0 }}
-    />
+    <FieldLabel>MEMBER ID SEARCH</FieldLabel>
+    <div style={{ position: 'relative' }}>
+      <Field
+        name="username"
+        dataSource={
+          suggestions
+            ? [
+                renderGroup({
+                  title: 'Users',
+                  children: suggestions.users.map((item: UserSuggestion) => ({
+                    text: item.display,
+                    value: item.distinguished_name,
+                  })),
+                }),
+                renderGroup({
+                  title: 'Groups',
+                  children: suggestions.groups.map((item: UserSuggestion) => ({
+                    text: item.display,
+                    value: item.distinguished_name,
+                  })),
+                }),
+              ]
+            : []
+        }
+        onSearch={onSearch}
+        component={ReduxAutoComplete}
+        style={{ marginBottom: 0 }}
+      />
+      {loading && (
+        <Spin
+          indicator={<Icon type="sync" style={{ fontSize: 20 }} spin />}
+          style={{ position: 'absolute', top: 6, right: 6 }}
+        />
+      )}
+    </div>
     {allocations.map((allocation: HiveAllocation) => {
       return (
         <div key={allocation.name}>

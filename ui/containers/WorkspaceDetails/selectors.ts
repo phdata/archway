@@ -142,3 +142,9 @@ export const getManageLoading = () =>
     workspaceSelector,
     workspaceState => workspaceState.get('manageLoading').toJS()
   );
+
+export const getUserSuggestionsLoading = () =>
+  createSelector(
+    workspaceSelector,
+    workspaceState => workspaceState.get('userSuggestionsLoading')
+  );

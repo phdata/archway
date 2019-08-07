@@ -26,6 +26,7 @@ exports[`SimpleMemberRequest renders correctly 1`] = `
     }
   }
   keepDirtyOnReinitialize={false}
+  loading={true}
   persistentSubmitErrors={false}
   pure={true}
   shouldAsyncValidate={[Function]}

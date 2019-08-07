@@ -318,3 +318,9 @@ export const setManageLoading = (manageType: string, loading: boolean) => ({
   type: MANAGE_LOADING,
   payload: { manageType, loading },
 });
+
+export const SET_USERSUGGESTIONS_LOADING = 'SET_USERSUGGESTIONS_LOADING';
+export const setUserSuggestionsLoading = (loading: boolean) => ({
+  type: SET_USERSUGGESTIONS_LOADING,
+  loading,
+});

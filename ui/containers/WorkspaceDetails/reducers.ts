@@ -30,6 +30,7 @@ import {
   MANAGE_LOADING,
   SET_NOTIFICATION_STATUS,
   CLEAR_NOTIFICATION_STATUS,
+  SET_USERSUGGESTIONS_LOADING,
 } from './actions';
 
 import { Member } from '../../models/Workspace';
@@ -49,6 +50,7 @@ const initialState = fromJS({
     deprovision: false,
     delete: false,
   },
+  userSuggestionsLoading: false,
 });
 
 const details = (state = initialState, action: any) => {
@@ -243,6 +245,9 @@ const details = (state = initialState, action: any) => {
 
     case CLEAR_NOTIFICATION_STATUS:
       return state.set('notification', fromJS({ type: '', message: '' }));
+
+    case SET_USERSUGGESTIONS_LOADING:
+      return state.set('userSuggestionsLoading', action.loading);
 
     default:
       return state;
