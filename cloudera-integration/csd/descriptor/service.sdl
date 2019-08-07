@@ -87,7 +87,7 @@
                 "expectedExitCodes": [
                   0
                 ],
-                "requiredRoleState": "running",
+                "requiredRoleState": "stopped",
                 "commandRunner": {
                   "program": "scripts/control-redirect.sh",
                   "args": [
