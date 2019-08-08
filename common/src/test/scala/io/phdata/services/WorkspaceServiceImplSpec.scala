@@ -25,24 +25,28 @@ class WorkspaceServiceImplSpec
 
   behavior of "Workspace Service"
 
-  it should "list projects" in {
-    val invalidWorkspace = "CN=non_workspace,OU=groups,dn=example,dn=com"
-    val validWorkspace = "CN=edh_sw_project,OU=groups,dn=example,dn=com"
-    val memberships = Seq(
-      invalidWorkspace,
-      validWorkspace
-    )
+  it should "list projects" in new Context {
+    val userDN = standardUserDN.value
+    context.workspaceRequestRepository.list _ expects userDN returning List(searchResult).pure[ConnectionIO]
 
-    val workspaceRepository = mock[WorkspaceRequestRepository]
-    workspaceRepository.list _ expects standardUsername returning List(searchResult).pure[ConnectionIO]
-
-    val provisioningService = mock[ProvisioningService[IO]]
-
-    val context: AppContext[IO] = genMockContext(workspaceRepository = workspaceRepository)
-    val workspaceService = new WorkspaceServiceImpl[IO](provisioningService, context)
-    val projects = workspaceService.list(standardUsername).unsafeRunSync()
+    val projects = workspaceServiceImpl.list(userDN).unsafeRunSync()
     projects.length should be(1)
     projects.head should be(searchResult)
+  }
+
+  it should "userAccessible returns true if a user has access to a workspace" in new Context {
+    val userWorkspace = 1L
+    context.workspaceRequestRepository.userAccessible _ expects standardUserDN returning List(userWorkspace).pure[ConnectionIO]
+    val hasAccess = workspaceServiceImpl.userAccessible(standardUserDN, userWorkspace).unsafeRunSync()
+    assert(hasAccess)
+  }
+
+  it should "userAccessible returns false if a user does not access to a workspace" in new Context {
+    val workspaceId = 1L
+    val noAccessWorkspace = 2L
+    context.workspaceRequestRepository.userAccessible _ expects standardUserDN returning List(workspaceId).pure[ConnectionIO]
+    val hasAccess = workspaceServiceImpl.userAccessible(standardUserDN, noAccessWorkspace).unsafeRunSync()
+    assert(!hasAccess)
   }
 
   it should "create a workspace" in new Context {

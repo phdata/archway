@@ -3,7 +3,7 @@ package io.phdata.repositories
 import java.time.Instant
 
 import cats.data.OptionT
-import io.phdata.models.{ApproverRole, WorkspaceRequest, WorkspaceSearchResult}
+import io.phdata.models.{ApproverRole, DistinguishedName, WorkspaceRequest, WorkspaceSearchResult}
 import doobie._
 
 trait WorkspaceRequestRepository {
@@ -12,6 +12,8 @@ trait WorkspaceRequestRepository {
   def create(workspaceRequest: WorkspaceRequest): ConnectionIO[Long]
 
   def list(username: String): ConnectionIO[List[WorkspaceSearchResult]]
+
+  def userAccessible(distinguishedName: DistinguishedName): ConnectionIO[List[Long]]
 
   def find(id: Long): OptionT[ConnectionIO, WorkspaceRequest]
 

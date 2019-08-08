@@ -46,6 +46,11 @@ class WorkspaceServiceImpl[F[_]: ConcurrentEffect: ContextShift](
   override def list(distinguishedName: String): F[List[WorkspaceSearchResult]] =
     context.workspaceRequestRepository.list(distinguishedName).transact(context.transactor)
 
+  override def userAccessible(distinguishedName: DistinguishedName, id: Long): F[Boolean] =
+    for {
+      accessible <- context.workspaceRequestRepository.userAccessible(distinguishedName).transact(context.transactor)
+    } yield accessible.contains(id)
+
   def create(workspace: WorkspaceRequest): F[WorkspaceRequest] = {
     val createResult = for {
       compliance <- context.complianceRepository.create(workspace.compliance)

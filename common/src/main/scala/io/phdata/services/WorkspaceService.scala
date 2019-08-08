@@ -8,6 +8,8 @@ trait WorkspaceService[F[_]] {
 
   def list(distinguishedName: String): F[List[WorkspaceSearchResult]]
 
+  def userAccessible(distinguishedName: DistinguishedName, id: Long): F[Boolean]
+
   def create(workspace: WorkspaceRequest): F[WorkspaceRequest]
 
   def approve(id: Long, approval: Approval): F[Approval]

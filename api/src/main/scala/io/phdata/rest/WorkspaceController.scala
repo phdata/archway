@@ -2,11 +2,12 @@ package io.phdata.rest
 
 import java.time.Instant
 
-import cats.data.NonEmptyList
+import cats.data.{NonEmptyList, OptionT}
 import cats.effect._
 import cats.implicits._
 import io.phdata.models._
 import io.phdata.provisioning.Message._
+import cats.implicits.catsSyntaxFlatMapIdOps
 import io.phdata.provisioning.{Message, _}
 import io.phdata.rest.authentication.TokenAuthService
 import io.phdata.services._
@@ -14,6 +15,7 @@ import com.typesafe.scalalogging.LazyLogging
 import io.circe.Decoder
 import io.circe.generic.auto._
 import io.circe.syntax._
+import cats.syntax._
 import io.phdata.models._
 import io.phdata.provisioning.{Error, ExceptionMessage, NoOp, SimpleMessage, Success, Unknown}
 import io.phdata.rest.authentication.TokenAuthService
@@ -136,13 +138,29 @@ class WorkspaceController[F[_]: Sync: Timer: ContextShift: ConcurrentEffect](
             response <- Ok(workspaces.asJson)
           } yield response
 
-        case GET -> Root / LongVar(id) as _ =>
-          for {
-            maybeWorkspace <- workspaceService.find(id).value.onError {
-              case e: Throwable => logger.error(s"Failed to find workspace $id: ${e.getLocalizedMessage}", e).pure[F]
-            }
-            response <- maybeWorkspace.fold(NotFound())(workspace => Ok(workspace.asJson))
-          } yield response
+        case GET -> Root / LongVar(id) as user => {
+          val maybeWorkspaceT =
+            for {
+              userHasAccess <- OptionT.liftF(workspaceService.userAccessible(
+                DistinguishedName(user.distinguishedName),
+                id)) // TODO parse as a DN in the `User` object
+              _ <- if (userHasAccess || user.isSuperUser) {
+                OptionT.liftF(
+                  logger
+                    .debug(
+                      s"User $user granted access to workspace $id. Workspace access $userHasAccess, super user ${user.isSuperUser}")
+                    .pure[F])
+              } else {
+                OptionT.liftF(logger
+                  .info(
+                    s"User ${user.distinguishedName} denied access to workspace $id! Workspace access $userHasAccess, super user ${user.isSuperUser}")
+                  .pure[F])
+              }
+              maybeWorkspace <- workspaceService.find(id)
+            } yield maybeWorkspace
+
+          maybeWorkspaceT.value.flatMap(_.fold(NotFound())(workspace => Ok(workspace.asJson)))
+        }
 
         case GET -> Root / LongVar(id) / "members" as _ =>
           for {

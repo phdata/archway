@@ -24,7 +24,10 @@ class WorkspaceRequestRepositoryImpl(sqlSyntax: SqlSyntax) extends WorkspaceRequ
   implicit val han = CustomLogHandler.logHandler(this.getClass)
 
   override def list(username: String): ConnectionIO[List[WorkspaceSearchResult]] =
-    statements.listQuery(username).to[List]
+    statements.listQuery(DistinguishedName(username)).to[List]
+
+  override def userAccessible(userDn: DistinguishedName): ConnectionIO[List[Long]] =
+    statements.userAccessibleQuery(userDn).to[List]
 
   override def find(id: Long): OptionT[ConnectionIO, WorkspaceRequest] =
     OptionT(statements.find(id).option)
@@ -133,7 +136,7 @@ class WorkspaceRequestRepositoryImpl(sqlSyntax: SqlSyntax) extends WorkspaceRequ
         left join (select wp.workspace_request_id, sum(max_cores) as cores, sum(max_memory_in_gb) as mem from workspace_pool wp inner join resource_pool rp on wp.resource_pool_id = rp.id group by wp.workspace_request_id) as res on res.workspace_request_id = wr.id
         """
 
-    def innerQuery(distinguishedName: String): Fragment =
+    def innerQuery(userDN: DistinguishedName): Fragment =
       fr"""
            select wd.workspace_request_id
            from workspace_database wd,
@@ -141,7 +144,7 @@ class WorkspaceRequestRepositoryImpl(sqlSyntax: SqlSyntax) extends WorkspaceRequ
                 ldap_registration mr,
                 member mrm,
                 hive_grant mg
-           where mrm.distinguished_name = $distinguishedName
+           where mrm.distinguished_name = ${userDN.value}
              AND (
                    (h.readwrite_group_id = mg.id) OR
                    (h.readonly_group_id = mg.id) OR
@@ -151,8 +154,10 @@ class WorkspaceRequestRepositoryImpl(sqlSyntax: SqlSyntax) extends WorkspaceRequ
              AND mrm.ldap_registration_id = mr.id
         """
 
-    def listQuery(distinguishedName: String): Query0[(WorkspaceSearchResult)] =
-      (listFragment ++ fr"where wr.id in (" ++ innerQuery(distinguishedName) ++ fr") and wr.single_user = '0'").query
+    def listQuery(userDN: DistinguishedName): Query0[(WorkspaceSearchResult)] =
+      (listFragment ++ fr"where wr.id in (" ++ innerQuery(userDN) ++ fr") and wr.single_user = '0'").query
+
+    def userAccessibleQuery(userDN: DistinguishedName): doobie.Query0[(Long)] = innerQuery(userDN).query
 
     def insert(workspaceRequest: WorkspaceRequest): Update0 =
       sql"""
