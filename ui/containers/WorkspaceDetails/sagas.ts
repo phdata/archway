@@ -44,9 +44,10 @@ import {
   setManageLoading,
   setNotificationStatus,
   clearNotificationStatus,
+  setWorkspaceFetching,
   setUserSuggestionsLoading,
 } from './actions';
-
+import { ErrorMessages } from './constants';
 import { RECENT_WORKSPACES_KEY, TOKEN_EXTRACTOR, NotificationType } from '../../constants';
 
 import { Workspace } from '../../models/Workspace';
@@ -79,28 +80,36 @@ function* userSuggestionsRequest() {
 function* fetchWorkspace({ id }: { type: string; id: number }) {
   const token = yield select(TOKEN_EXTRACTOR);
   const recent = (yield select((s: any) => s.getIn(['home', 'recent']))).toJS();
-  const workspace = yield call(Api.getWorkspace, token, id);
-  yield put(setWorkspace(workspace));
+  try {
+    const workspace = yield call(Api.getWorkspace, token, id);
+    yield put(setWorkspace(workspace));
 
-  const { provisioning } = yield call(Api.getProvisioning, token, id);
-  yield put(setProvisioning(provisioning));
+    const { provisioning } = yield call(Api.getProvisioning, token, id);
+    yield put(setProvisioning(provisioning));
 
-  const recentWorkspaces = [workspace, ...recent.filter((w: Workspace) => w.id !== workspace.id)];
-  localStorage.setItem(RECENT_WORKSPACES_KEY, JSON.stringify(recentWorkspaces.slice(0, 2)));
+    const recentWorkspaces = [workspace, ...recent.filter((w: Workspace) => w.id !== workspace.id)];
+    localStorage.setItem(RECENT_WORKSPACES_KEY, JSON.stringify(recentWorkspaces.slice(0, 2)));
 
-  const { members, resourcePools, infos } = yield all({
-    members: call(Api.getMembers, token, id),
-    resourcePools: call(Api.getYarnApplications, token, id),
-    infos: call(Api.getHiveTables, token, id),
-  });
+    const { members, resourcePools, infos } = yield all({
+      members: call(Api.getMembers, token, id),
+      resourcePools: call(Api.getYarnApplications, token, id),
+      infos: call(Api.getHiveTables, token, id),
+    });
 
-  yield all([put(setMembers(members)), put(setNamespaceInfo(infos)), put(setResourcePools(resourcePools))]);
+    yield all([put(setMembers(members)), put(setNamespaceInfo(infos)), put(setResourcePools(resourcePools))]);
 
-  if (workspace.topics.length > 0) {
-    yield put(setActiveTopic(workspace.topics[0]));
-  }
-  if (workspace.applications.length > 0) {
-    yield put(setActiveApplication(workspace.applications[0]));
+    if (workspace.topics.length > 0) {
+      yield put(setActiveTopic(workspace.topics[0]));
+    }
+    if (workspace.applications.length > 0) {
+      yield put(setActiveApplication(workspace.applications[0]));
+    }
+  } catch (err) {
+    if (err === 401) {
+      yield put(setNotificationStatus(NotificationType.Error, ErrorMessages.WorkspaceFetching));
+      yield put(clearNotificationStatus());
+      yield put(setWorkspaceFetching(false));
+    }
   }
 }
 
@@ -194,7 +203,7 @@ export function* simpleMemberRequested({ resource }: SimpleMemberRequestAction) 
     const members = yield call(Api.getMembers, token, workspace.id);
     yield put(setMembers(members));
   } catch (e) {
-    yield put(setNotificationStatus(NotificationType.Error, 'Failed to add user'));
+    yield put(setNotificationStatus(NotificationType.Error, ErrorMessages.AddingMember));
     yield put(simpleMemberRequestComplete());
   } finally {
     yield put(setMemberLoading(false));

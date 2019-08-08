@@ -143,6 +143,12 @@ export const getManageLoading = () =>
     workspaceState => workspaceState.get('manageLoading').toJS()
   );
 
+export const getFetching = () =>
+  createSelector(
+    workspaceSelector,
+    workspaceState => workspaceState.get('fetching')
+  );
+
 export const getUserSuggestionsLoading = () =>
   createSelector(
     workspaceSelector,

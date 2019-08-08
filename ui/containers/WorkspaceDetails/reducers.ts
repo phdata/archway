@@ -30,6 +30,7 @@ import {
   MANAGE_LOADING,
   SET_NOTIFICATION_STATUS,
   CLEAR_NOTIFICATION_STATUS,
+  SET_WORKSPACE_FETCHING,
   SET_USERSUGGESTIONS_LOADING,
 } from './actions';
 
@@ -245,6 +246,9 @@ const details = (state = initialState, action: any) => {
 
     case CLEAR_NOTIFICATION_STATUS:
       return state.set('notification', fromJS({ type: '', message: '' }));
+
+    case SET_WORKSPACE_FETCHING:
+      return state.set('fetching', action.fetching);
 
     case SET_USERSUGGESTIONS_LOADING:
       return state.set('userSuggestionsLoading', action.loading);

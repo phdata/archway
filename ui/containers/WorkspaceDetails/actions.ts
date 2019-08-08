@@ -319,6 +319,12 @@ export const setManageLoading = (manageType: string, loading: boolean) => ({
   payload: { manageType, loading },
 });
 
+export const SET_WORKSPACE_FETCHING = 'SET_WORKSPACE_FETCHING';
+export const setWorkspaceFetching = (fetching: boolean) => ({
+  type: SET_WORKSPACE_FETCHING,
+  fetching,
+});
+
 export const SET_USERSUGGESTIONS_LOADING = 'SET_USERSUGGESTIONS_LOADING';
 export const setUserSuggestionsLoading = (loading: boolean) => ({
   type: SET_USERSUGGESTIONS_LOADING,

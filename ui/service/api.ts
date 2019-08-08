@@ -31,15 +31,17 @@ const headers = (token?: string): RequestInit => {
   };
 };
 
-const get = (path: string, token?: string) =>
+const get = (path: string, token?: string, page?: string) =>
   fetch(`${BASE_URL}${path}`, headers(token)).then((response: Response) => {
     const json = response.json();
     if (response.status >= 200 && response.status < 300) {
       return json;
     } else {
-      if (response.status === 401) {
+      if (response.status === 401 && page === 'WorkspaceDetails') {
+        throw response.status;
+      } else if (response.status === 401) {
         logout();
-      } else if (response.status === 404 && path === '/account/workspace') {
+      } else if (response.status === 404 && page === 'PersonalWorkspace') {
         throw response.status;
       }
       return json.then(Promise.reject.bind(Promise));
@@ -77,7 +79,7 @@ export const cluster = () => get('/clusters');
 
 export const profile = (token: string) => get('/account/profile', token);
 
-export const getPersonalWorkspace = (token: string) => get(`/account/workspace`, token);
+export const getPersonalWorkspace = (token: string) => get(`/account/workspace`, token, 'PersonalWorkspace');
 
 export const getUserSuggestions = (token: string, filter: string) => get(`/members/${filter}`, token);
 
@@ -122,7 +124,7 @@ export const listRiskWorkspaces = (token: string) => get('/risk/workspaces', tok
 
 export const listOpsWorkspaces = (token: string) => get('/ops/workspaces', token);
 
-export const getWorkspace = (token: string, id: number) => get(`/workspaces/${id}`, token);
+export const getWorkspace = (token: string, id: number) => get(`/workspaces/${id}`, token, 'WorkspaceDetails');
 
 export const getProvisioning = (token: string, id: number) => get(`/workspaces/${id}/status`, token);
 

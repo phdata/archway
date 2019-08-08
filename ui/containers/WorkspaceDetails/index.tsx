@@ -38,6 +38,7 @@ import * as selectors from './selectors';
 import { FeatureFlagType, ProvisioningType, ModalType } from '../../constants';
 import { Provisioning } from '../../components';
 import { getFeatureFlags } from '../../redux/selectors';
+import { ErrorMessages } from './constants';
 
 interface DetailsRouteProps {
   id: any;
@@ -66,6 +67,7 @@ interface Props extends RouteComponentProps<DetailsRouteProps> {
   provisioning: ProvisioningType;
   manageLoading: ManageLoading;
   featureFlags: string[];
+  fetching: boolean;
   userSuggestionsLoading: boolean;
 
   clearDetails: () => void;
@@ -146,7 +148,11 @@ class WorkspaceDetails extends React.PureComponent<Props> {
     const { type, message } = notificationInfo;
 
     if (!!message && message !== this.props.notificationInfo.message) {
-      notification[type]({ message: type.toUpperCase(), description: message });
+      let duration = 5;
+      if (message === ErrorMessages.WorkspaceFetching) {
+        duration = 0;
+      }
+      notification[type]({ message: type.toUpperCase(), description: message, duration });
     }
   }
 
@@ -209,17 +215,14 @@ class WorkspaceDetails extends React.PureComponent<Props> {
       provisionWorkspace,
       manageLoading,
       featureFlags,
+      fetching,
       userSuggestionsLoading,
     } = this.props;
     const hasApplicationFlag = featureFlags.includes(FeatureFlagType.Application);
     const hasMessagingFlag = featureFlags.includes(FeatureFlagType.Messaging);
 
     if (!workspace) {
-      return (
-        <div style={{ textAlign: 'center', padding: 24 }}>
-          <Spin />
-        </div>
-      );
+      return <div style={{ textAlign: 'center', padding: 24 }}>{fetching && <Spin />}</div>;
     }
 
     return (
@@ -420,6 +423,7 @@ const mapStateToProps = () =>
     provisioning: selectors.getProvisioning(),
     manageLoading: selectors.getManageLoading(),
     featureFlags: getFeatureFlags(),
+    fetching: selectors.getFetching(),
     userSuggestionsLoading: selectors.getUserSuggestionsLoading(),
   });
 
