@@ -78,28 +78,6 @@
             }
         ]
       },
-      "commands": [
-              {
-                "name": "migrate_db",
-                "label": "Migrate Database",
-                "description": "Migrate the database using the Flyway migration tool",
-                "expectedExitCodes": [
-                  0
-                ],
-                "requiredRoleState": "stopped",
-                "commandRunner": {
-                  "program": "scripts/control-redirect.sh",
-                  "args": [
-                    "migrate_db"
-                  ],
-                  "environmentVariables": {
-                      "DB_URL": "${archway.db.meta.url}",
-                      "DB_USERNAME": "${archway.db.meta.username}",
-                      "DB_PASSWORD": "${archway.db.meta.password}"
-                  }
-                }
-              }
-            ],
       "sslServer": {
         "keyIdentifier": "archway_server",
         "enabledConfigName": "archway_server.ssl.enabled",
@@ -691,14 +669,17 @@
       "startRunner": {
         "program": "scripts/control-redirect.sh",
         "args": [
-          "api",
+          "server",
           "start"
         ],
         "environmentVariables": {
           "JAVA_TRUST_STORE_LOCATION": "${archway.java.truststore.location}",
           "JAVA_TRUST_STORE_PASSWORD": "${archway.java.truststore.password}",
           "ARCHWAY_ADDITIONAL_CLASSPATH": "${archway.additional.classpath}",
-          "JAVA_OPTS": "${archway.additional.java.options}"
+          "JAVA_OPTS": "${archway.additional.java.options}",
+          "DB_URL": "${archway.db.meta.url}",
+          "DB_USERNAME": "${archway.db.meta.username}",
+          "DB_PASSWORD": "${archway.db.meta.password}"
         }
       }
     }

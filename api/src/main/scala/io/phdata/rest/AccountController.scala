@@ -22,14 +22,14 @@ class AccountController[F[_]: Sync](
 ) extends Http4sDsl[F] with LazyLogging {
 
   private val heimdaliVersion: F[String] = {
-    sys.env.get("HEIMDALI_DIST") match {
+    sys.env.get("ARCHWAY_DIST") match {
       case Some(value) =>
         for {
           fileLines <- new DefaultFileReader[F].readLines(s"$value/version.txt")
           _ <- Sync[F].pure(logger.info(s"Archway version ${fileLines.head}"))
         } yield fileLines.head
       case None =>
-        logger.warn("System property HEIMDALI_DIST is not set, unable to retrieve version")
+        logger.warn("System property ARCHWAY_DIST is not set, unable to retrieve version")
         "".pure[F]
     }
   }

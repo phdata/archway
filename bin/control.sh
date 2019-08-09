@@ -1,5 +1,5 @@
 #!/bin/bash -x
-SYNTAX="Please use the following arguments: [server start|migrate_db]"
+SYNTAX="Please use the following arguments: [server start]"
 COMPONENT=$1
 CMD=$2
 
@@ -38,6 +38,22 @@ case ${COMPONENT} in
     (server)
         case ${CMD} in
             (start)
+                FLYWAY_DIR=$ARCHWAY_DIST/usr/lib/flyway/
+                DATABASE_SCRIPT_DIR=""
+
+                if [[ $DB_URL == *"mysql"* ]]; then
+                    DATABASE_SCRIPT_DIR="mysql"
+                elif [[ $DB_URL == *"postgres"* ]]; then
+                    DATABASE_SCRIPT_DIR="sql"
+                elif [[ $DB_URL == *"oracle"* ]]; then
+                    DATABASE_SCRIPT_DIR="oracle"
+                fi
+
+                FLYWAY_EXECUTABLE="$FLYWAY_DIR/flyway"
+                SCRIPTS_LOCATION="$FLYWAY_DIR/$DATABASE_SCRIPT_DIR"
+
+                env FLYWAY_LOCATIONS="filesystem:$SCRIPTS_LOCATION" "$FLYWAY_EXECUTABLE" migrate -url="$DB_URL" -user="$DB_USERNAME" -password="$DB_PASSWORD"
+
                 cp -f generated.conf runtime.conf
                 sed -i -E 's/([[:alpha:]\.]+)\=(.*)/\1\="\2"/g' runtime.conf
                 sed -i -E 's/([[:alpha:]\.]+)\="(true|false)"/\1\=\2/g' runtime.conf
@@ -55,23 +71,6 @@ case ${COMPONENT} in
                 echo ${SYNTAX}
                 ;;
         esac
-        ;;
-    (migrate_db)
-        FLYWAY_DIR=$ARCHWAY_DIST/usr/lib/flyway/
-        DATABASE_SCRIPT_DIR=""
-
-        if [[ $DB_URL == *"mysql"* ]]; then
-            DATABASE_SCRIPT_DIR="mysql"
-        elif [[ $DB_URL == *"postgres"* ]]; then
-            DATABASE_SCRIPT_DIR="sql"
-        elif [[ $DB_URL == *"oracle"* ]]; then
-            DATABASE_SCRIPT_DIR="oracle"
-        fi
-
-        FLYWAY_EXECUTABLE="$FLYWAY_DIR/flyway"
-        SCRIPTS_LOCATION="$FLYWAY_DIR/$DATABASE_SCRIPT_DIR"
-
-        exec env FLYWAY_LOCATIONS="filesystem:$SCRIPTS_LOCATION" "$FLYWAY_EXECUTABLE" migrate -url="$DB_URL" -user="$DB_USERNAME" -password="$DB_PASSWORD"
         ;;
     (*)
         echo ${SYNTAX}

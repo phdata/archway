@@ -1,15 +1,11 @@
 package io.phdata.clients
 
-import java.security.PrivilegedAction
-
 import cats.effect.{Effect, IO, Sync}
 import cats.implicits._
-import io.phdata.models._
-import io.phdata.services.LoginContextProvider
+
 import com.typesafe.scalalogging.LazyLogging
 import doobie._
 import doobie.implicits._
-import org.apache.hadoop.security.UserGroupInformation
 import org.apache.sentry.provider.db.generic.service.thrift.{SentryGenericServiceClient, TSentryPrivilege}
 import org.apache.sentry.provider.db.generic.tools.KafkaTSentryPrivilegeConverter
 import io.phdata.repositories.CustomLogHandler
@@ -111,7 +107,7 @@ class SentryClientImpl[F[_]](
   override def grantPrivilege(role: String, component: Component, grantString: String): F[Unit] =
     loginContextProvider.hadoopInteraction {
       F.delay(
-          client.grantPrivilege("heimdali_api", component.name, component.name, component.privilege(grantString))
+          client.grantPrivilege("archway", component.name, component.name, component.privilege(grantString))
         )
         .void
     }
@@ -153,7 +149,7 @@ class SentryClientImpl[F[_]](
   override def removePrivilege(role: String, component: Component, grantString: String): F[Unit] =
     loginContextProvider.hadoopInteraction {
       F.delay(
-          client.dropPrivilege("heimdali_api", component.name, component.privilege(grantString))
+          client.dropPrivilege("archway", component.name, component.privilege(grantString))
         )
         .void
     }

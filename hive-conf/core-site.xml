@@ -183,11 +183,11 @@
     <value>*</value>
   </property>
   <property>
-    <name>hadoop.proxyuser.heimdali_api.groups</name>
+    <name>hadoop.proxyuser.archway.groups</name>
     <value>*</value>
   </property>
   <property>
-    <name>hadoop.proxyuser.heimdali_api.hosts</name>
+    <name>hadoop.proxyuser.archway.hosts</name>
     <value>*</value>
   </property>
   <property>
