@@ -75,7 +75,7 @@ exports[`WorkspaceListItem renders correctly 1`] = `
         <div
           style={
             Object {
-              "color": "#0B7A75",
+              "color": "rgb(45, 116, 147)",
               "lineHeight": "24px",
             }
           }

@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { getClusterInfo, isClusterLoading } from '../../Home/selectors';
 import { Cluster, Status } from '../../../models/Cluster';
+import { Colors } from '../../../components';
 
 interface Props {
   cluster: Cluster;
@@ -43,12 +44,17 @@ const ClusterInfo = ({ cluster, loading }: Props) => {
         style={{
           padding: 10,
           color: 'white',
-          backgroundColor: status.statusColor().string(),
+          backgroundColor: Colors.Gray.toString(),
           textAlign: 'center',
         }}
       >
-        <a target="_blank" rel="noreferrer noopener" href={cluster.cm_url} style={{ color: 'white' }}>
-          {cluster.name} status : {status.statusText()}
+        <a
+          target="_blank"
+          rel="noreferrer noopener"
+          href={cluster.cm_url}
+          style={{ color: Colors.PrimaryColor.string() }}
+        >
+          {cluster.name} status : <span style={{ color: status.statusColor().toString() }}>{status.statusText()}</span>
         </a>
       </div>
     </Tooltip>

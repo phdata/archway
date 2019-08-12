@@ -17,7 +17,7 @@ exports[`ListCardToggle renders correctly 1`] = `
         "borderBottomColor": "transparent",
         "borderBottomStyle": "solid",
         "borderBottomWidth": 1,
-        "color": "#0B7A75",
+        "color": "rgb(45, 116, 147)",
         "cursor": "pointer",
         "margin": "0 4px",
         "paddingBottom": 4,
@@ -52,10 +52,10 @@ exports[`ListCardToggle renders correctly 1`] = `
     onClick={[Function]}
     style={
       Object {
-        "borderBottomColor": "#0B7A75",
+        "borderBottomColor": "rgb(45, 116, 147)",
         "borderBottomStyle": "solid",
         "borderBottomWidth": 1,
-        "color": "#0B7A75",
+        "color": "rgb(45, 116, 147)",
         "cursor": "pointer",
         "margin": "0 4px",
         "paddingBottom": 4,

@@ -10,7 +10,7 @@ exports[`TablesCard renders correctly 1`] = `
       onClick={[Function]}
       style={
         Object {
-          "color": "rgb(67, 170, 139)",
+          "color": "rgb(45, 116, 147)",
           "cursor": "pointer",
           "fontSize": 16,
           "marginLeft": 8,

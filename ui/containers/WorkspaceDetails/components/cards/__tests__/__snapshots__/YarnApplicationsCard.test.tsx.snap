@@ -16,7 +16,7 @@ exports[`YarnApplicationsCard renders correctly 1`] = `
       spin={false}
       style={
         Object {
-          "color": "rgb(67, 170, 139)",
+          "color": "rgb(45, 116, 147)",
           "cursor": "pointer",
           "fontSize": 16,
           "marginLeft": 8,

@@ -65,8 +65,10 @@ const WorkspaceListItem = ({ workspace, onSelected }: Props) => {
         label: false,
         data: [allocated - consumed, consumed],
         backgroundColor: [
-          total_disk_consumed_in_gb ? Colors.Green.string() : Colors.LightGray.string(),
-          total_disk_consumed_in_gb ? Colors.Green.lighten(0.5).string() : Colors.LightGray.lighten(0.5).string(),
+          total_disk_consumed_in_gb ? Colors.PrimaryColor.string() : Colors.LightGray.string(),
+          total_disk_consumed_in_gb
+            ? Colors.PrimaryColor.lighten(0.5).string()
+            : Colors.LightGray.lighten(0.5).string(),
         ],
       },
     ],
@@ -96,7 +98,7 @@ const WorkspaceListItem = ({ workspace, onSelected }: Props) => {
               &nbsp;
               <TruncateText text={`${behavior} dataset`} lineHeight={12} maxLine={1} />
             </div>
-            <div style={{ color: '#0B7A75', lineHeight: '24px' }}>DETAILS ></div>
+            <div style={{ color: Colors.PrimaryColor.string(), lineHeight: '24px' }}>DETAILS ></div>
           </div>
           <div style={{ flex: 3 }}>
             <div

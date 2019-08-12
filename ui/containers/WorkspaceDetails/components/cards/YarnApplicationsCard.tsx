@@ -17,7 +17,7 @@ const YarnApplicationsCard = ({ pools, rmURL, onRefreshPools }: Props) => {
       <CardHeader>
         RECENT YARN APPLICATIONS
         <Icon
-          style={{ fontSize: 16, color: Colors.Green.string(), marginLeft: 8, cursor: 'pointer' }}
+          style={{ fontSize: 16, color: Colors.PrimaryColor.string(), marginLeft: 8, cursor: 'pointer' }}
           type="sync"
           spin={pools && pools.loading}
           onClick={() => {

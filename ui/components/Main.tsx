@@ -36,7 +36,10 @@ const Main = ({ version }: Props) => (
       </Content>
 
       <Footer style={{ textAlign: 'center' }}>
-        Archway &copy; {new Date().getFullYear()} Created by phData
+        Archway &copy; {new Date().getFullYear()}{' '}
+        <a href="https://www.phdata.io" target="_blank" rel="noreferrer noopener">
+          Created by phData
+        </a>
         <br />
         {!!version && `Version ${version}`}
       </Footer>

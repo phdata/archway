@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Icon } from 'antd';
+import Colors from './Colors';
 
 interface Props {
   selectedMode: string;
@@ -24,10 +25,10 @@ const ListCardToggle = ({ selectedMode, style = {}, onSelect }: Props) => {
           style={{
             textAlign: 'center',
             width: 36,
-            color: '#0B7A75',
+            color: Colors.PrimaryColor.string(),
             borderBottomWidth: 1,
             borderBottomStyle: 'solid',
-            borderBottomColor: selectedMode === text ? '#0B7A75' : 'transparent',
+            borderBottomColor: selectedMode === text ? Colors.PrimaryColor.string() : 'transparent',
             paddingBottom: 4,
             margin: '0 4px',
             cursor: 'pointer',

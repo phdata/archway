@@ -7,6 +7,7 @@ export interface Colors {
   Orange: Color;
   Gray: Color;
   LightGray: Color;
+  PrimaryColor: Color;
 }
 
 export default {
@@ -16,4 +17,5 @@ export default {
   Orange: Color('#FF6F59'),
   Gray: Color('#bbb'),
   LightGray: Color('#F0F3F5'),
+  PrimaryColor: Color('#2D7493'),
 } as Colors;

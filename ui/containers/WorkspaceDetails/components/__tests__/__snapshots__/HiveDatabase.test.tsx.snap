@@ -30,8 +30,8 @@ exports[`HiveDatabase renders correctly 1`] = `
           "datasets": Array [
             Object {
               "backgroundColor": Array [
-                "rgb(67, 170, 139)",
-                "hsl(161.89999999999998, 43.5%, 69.7%)",
+                "rgb(45, 116, 147)",
+                "hsl(198.20000000000005, 53.1%, 56.5%)",
               ],
               "data": Array [
                 1000,
