@@ -2,20 +2,13 @@ package io.phdata.rest
 
 import java.time.Instant
 
-import cats.data.{NonEmptyList, OptionT}
 import cats.effect._
-import cats.implicits._
-import io.phdata.models._
 import io.phdata.provisioning.Message._
-import cats.implicits.catsSyntaxFlatMapIdOps
-import io.phdata.provisioning.{Message, _}
-import io.phdata.rest.authentication.TokenAuthService
-import io.phdata.services._
 import com.typesafe.scalalogging.LazyLogging
 import io.circe.Decoder
 import io.circe.generic.auto._
 import io.circe.syntax._
-import cats.syntax._
+import cats.implicits._
 import io.phdata.models._
 import io.phdata.provisioning.{Error, ExceptionMessage, NoOp, SimpleMessage, Success, Unknown}
 import io.phdata.rest.authentication.TokenAuthService
@@ -139,27 +132,26 @@ class WorkspaceController[F[_]: Sync: Timer: ContextShift: ConcurrentEffect](
           } yield response
 
         case GET -> Root / LongVar(id) as user => {
-          val maybeWorkspaceT =
+          val access =
             for {
-              userHasAccess <- OptionT.liftF(workspaceService.userAccessible(
-                DistinguishedName(user.distinguishedName),
-                id)) // TODO parse as a DN in the `User` object
-              _ <- if (userHasAccess || user.isSuperUser) {
-                OptionT.liftF(
-                  logger
-                    .debug(
-                      s"User $user granted access to workspace $id. Workspace access $userHasAccess, super user ${user.isSuperUser}")
-                    .pure[F])
-              } else {
-                OptionT.liftF(logger
-                  .info(
-                    s"User ${user.distinguishedName} denied access to workspace $id! Workspace access $userHasAccess, super user ${user.isSuperUser}")
-                  .pure[F])
-              }
-              maybeWorkspace <- workspaceService.find(id)
-            } yield maybeWorkspace
+              userHasAccess <- workspaceService
+                .userAccessible(DistinguishedName(user.distinguishedName), id) // TODO parse as a DN in the `User` object
+              wsAccess <- (userHasAccess || user.isSuperUser).pure[F]
+            } yield wsAccess
 
-          maybeWorkspaceT.value.flatMap(_.fold(NotFound())(workspace => Ok(workspace.asJson)))
+          val maybeWorkspaceT = access
+            .flatMap(x =>
+              if (x) { workspaceService.find(id).value } else {
+                None.asInstanceOf[Option[WorkspaceRequest]].pure[F]
+            })
+            .onError {
+              case e: Throwable =>
+                logger
+                  .error(s"Failed get workspace $id for user ${user.distinguishedName}: ${e.getLocalizedMessage}", e)
+                  .pure[F]
+            }
+
+          maybeWorkspaceT.flatMap(_.fold(Forbidden())(workspace => Ok(workspace.asJson)))
         }
 
         case GET -> Root / LongVar(id) / "members" as _ =>
@@ -189,7 +181,7 @@ class WorkspaceController[F[_]: Sync: Timer: ContextShift: ConcurrentEffect](
           implicit val roleDecoder: EntityDecoder[F, MemberRoleRequest] = jsonOf[F, MemberRoleRequest]
           for {
             memberRequest <- req.req.as[MemberRoleRequest]
-            removedMember <- memberService.removeMember(id, memberRequest).value.onError {
+            _ <- memberService.removeMember(id, memberRequest).value.onError {
               case e: Throwable =>
                 logger.error(s"Failed to remove member from workspace $id: ${e.getLocalizedMessage}", e).pure[F]
             }

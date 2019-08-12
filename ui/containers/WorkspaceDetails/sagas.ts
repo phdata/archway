@@ -105,7 +105,7 @@ function* fetchWorkspace({ id }: { type: string; id: number }) {
       yield put(setActiveApplication(workspace.applications[0]));
     }
   } catch (err) {
-    if (err === 401) {
+    if (err === 403) {
       yield put(setNotificationStatus(NotificationType.Error, ErrorMessages.WorkspaceFetching));
       yield put(clearNotificationStatus());
       yield put(setWorkspaceFetching(false));

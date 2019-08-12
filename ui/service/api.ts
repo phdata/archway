@@ -37,7 +37,7 @@ const get = (path: string, token?: string, page?: string) =>
     if (response.status >= 200 && response.status < 300) {
       return json;
     } else {
-      if (response.status === 401 && page === 'WorkspaceDetails') {
+      if (response.status === 403 && page === 'WorkspaceDetails') {
         throw response.status;
       } else if (response.status === 401) {
         logout();
