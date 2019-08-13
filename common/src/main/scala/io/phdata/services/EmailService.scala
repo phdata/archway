@@ -35,7 +35,7 @@ class EmailServiceImpl[F[_]: Effect](context: AppContext[F], workspaceService: W
         "workspaceId" -> workspaceId
       )
       email <- OptionT.liftF(Effect[F].delay(templateEngine.layout("/templates/emails/welcome.mustache", values)))
-      result <- OptionT.liftF(context.emailClient.send(s"Welcome to ${workspace.name}", email, fromAddress, toAddress))
+      result <- OptionT.liftF(context.emailClient.send(s"Archway Workspace: Welcome to ${workspace.name}", email, fromAddress, toAddress))
     } yield result
 
   override def newWorkspaceEmail(workspaceRequest: WorkspaceRequest): F[Unit] = {

@@ -18,7 +18,7 @@ class EmailServiceImplSpec extends FlatSpec with Matchers with MockFactory with 
 
     (workspaceService.find _).expects(id).returning(OptionT.some[IO](savedWorkspaceRequest))
     (context.lookupLDAPClient.findUser _).expects(newMember).returning(OptionT.some[IO](LDAPUser(personName, "username", newMember.value, Seq.empty, Some("username@phdata.io"))))
-    (context.emailClient.send _).expects(s"Welcome to $name", *, appConfig.smtp.fromEmail, "username@phdata.io").returning(IO.unit)
+    (context.emailClient.send _).expects(s"Archway Workspace: Welcome to ${name}", *, appConfig.smtp.fromEmail, "username@phdata.io").returning(IO.unit)
 
     emailService.newMemberEmail(id, MemberRoleRequest(newMember.value, "data", id, Some(Manager))).value.unsafeRunSync()
   }
