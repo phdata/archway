@@ -8,7 +8,7 @@ import cats.implicits._
 import doobie.implicits._
 import io.phdata.models.DistinguishedName
 
-case class GroupMember(ldapRegistrationId: Long, groupDN: String, distinguishedName: String)
+case class GroupMember(ldapRegistrationId: Long, groupDN: DistinguishedName, distinguishedName: String)
 
 object GroupMember {
 

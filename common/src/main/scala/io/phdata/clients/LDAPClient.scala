@@ -27,9 +27,9 @@ trait LDAPClient[F[_]] {
 
   def createGroup(groupName: String, attributes: List[(String, String)]): F[Unit]
 
-  def addUser(groupName: String, distinguishedName: DistinguishedName): OptionT[F, String]
+  def addUser(groupName: DistinguishedName, distinguishedName: DistinguishedName): OptionT[F, String]
 
-  def removeUser(groupName: String, distinguishedName: DistinguishedName): OptionT[F, String]
+  def removeUser(groupName: DistinguishedName, distinguishedName: DistinguishedName): OptionT[F, String]
 
   def groupMembers(groupDN: DistinguishedName): F[List[LDAPUser]]
 

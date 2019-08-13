@@ -29,8 +29,9 @@ class DefaultProvisioningServiceSpec
 
   it should "fire and forget" in new Context {
     // make sure we actually call provisioning code, but take "too long"
-    (context.hdfsClient.createDirectory _)
-      .expects(savedHive.location, None)
+    context.lookupLDAPClient.findUser _ expects (standardUserDN) returning OptionT.some(ldapUser)
+    (context.hdfsClient.createUserDirectory _)
+      .expects(standardUsername)
       .returning(
         for {
           _ <- IO(println("I still run though"))
@@ -51,8 +52,9 @@ class DefaultProvisioningServiceSpec
 
   it should "allow more than required approvals" in new Context {
     // make sure we actually call provisioning code, but take "too long"
-    (context.hdfsClient.createDirectory _)
-      .expects(savedHive.location, None)
+    context.lookupLDAPClient.findUser _ expects (standardUserDN) returning OptionT.some(ldapUser)
+    (context.hdfsClient.createUserDirectory _)
+      .expects(standardUsername)
       .returning(
         for {
           _ <- timer.sleep(1 second)
@@ -72,7 +74,10 @@ class DefaultProvisioningServiceSpec
   it should "provision a workspace" in new Context {
     inSequence {
       inSequence {
-        context.hdfsClient.createDirectory _ expects(savedHive.location, None) returning IO
+        context.lookupLDAPClient.findUser _ expects (standardUserDN) returning OptionT.some(ldapUser)
+        (context.hdfsClient.createUserDirectory _)
+          .expects(standardUsername) returning new Path(standardUsername).pure[IO]
+        context.hdfsClient.createHiveDirectory _ expects(savedHive.location) returning IO
           .pure(new Path(savedHive.location))
         context.databaseRepository.directoryCreated _ expects(id, *) returning 0.pure[ConnectionIO]
         context.hdfsClient.setQuota _ expects(savedHive.location, savedHive.sizeInGB) returning IO
@@ -131,6 +136,12 @@ class DefaultProvisioningServiceSpec
         context.memberRepository.complete _ expects(id, standardUserDN.value) returning 0.pure[ConnectionIO]
       }
 
+      inSequence {
+        context.databaseRepository.findByWorkspace _ expects id returning List(savedHive).pure[ConnectionIO]
+        context.hiveClient.createTable _ expects (savedHive.name, ImpalaService.TEMP_TABLE_NAME) returning 0.pure[IO]
+        context.impalaClient.get.invalidateMetadata _ expects (savedHive.name, ImpalaService.TEMP_TABLE_NAME) returning ().pure[IO]
+      }
+
       context.workspaceRequestRepository.markProvisioned _ expects(id, *) returning 0.pure[ConnectionIO]
     }
 
@@ -151,7 +162,7 @@ class DefaultProvisioningServiceSpec
         context.sentryClient.removePrivilege _ expects(*, *, *) returning IO.unit
         context.sentryClient.revokeGroup _ expects(savedLDAP.commonName, savedLDAP.sentryRole) returning IO.unit
         context.sentryClient.dropRole _ expects savedLDAP.sentryRole returning IO.unit
-        context.provisioningLDAPClient.deleteGroup _ expects DistinguishedName(savedLDAP.commonName) returning OptionT.some(standardUserDN.value)
+        context.provisioningLDAPClient.deleteGroup _ expects savedLDAP.distinguishedName returning OptionT.some(standardUserDN.value)
       }
 
       context.yarnClient.deletePool _ expects poolName returning IO.unit
@@ -163,13 +174,13 @@ class DefaultProvisioningServiceSpec
         context.sentryClient.revokeGroup _ expects(savedLDAP.commonName, savedLDAP.sentryRole) returning IO.unit
 
         context.sentryClient.dropRole _ expects savedLDAP.sentryRole returning IO.unit
-        context.provisioningLDAPClient.deleteGroup _ expects DistinguishedName(savedLDAP.commonName) returning OptionT.some(standardUserDN.value)
+        context.provisioningLDAPClient.deleteGroup _ expects savedLDAP.distinguishedName returning OptionT.some(standardUserDN.value)
         context.sentryClient.removeAccessToLocation _ expects(savedHive.location, savedLDAP.sentryRole) returning IO.unit
         context.sentryClient.removeAccessToDB _ expects(savedHive.name, savedLDAP.sentryRole, Manager) returning IO.unit
         context.sentryClient.revokeGroup _ expects(savedLDAP.commonName, savedLDAP.sentryRole) returning IO.unit
 
         context.sentryClient.dropRole _ expects savedLDAP.sentryRole returning IO.unit
-        context.provisioningLDAPClient.deleteGroup _ expects DistinguishedName(savedLDAP.commonName) returning OptionT.some(standardUserDN.value)
+        context.provisioningLDAPClient.deleteGroup _ expects savedLDAP.distinguishedName returning OptionT.some(standardUserDN.value)
         context.hiveClient.dropDatabase _ expects savedHive.name returning IO(1)
         context.hdfsClient.removeQuota _ expects savedHive.location returning IO.pure(HDFSAllocation(savedHive.location, savedHive.sizeInGB))
       }
@@ -188,6 +199,8 @@ class DefaultProvisioningServiceSpec
     implicit val timer: Timer[IO] = IO.timer(ExecutionContext.global)
 
     val context: AppContext[IO] = genMockContext()
+
+    val ldapUser = LDAPUser(personName, standardUsername, standardUserDN.value, Seq("cn=foo,dc=jotunn,dc=io"), Some("dude@email.com"))
 
     lazy val provisioningService = new DefaultProvisioningService[IO](context, ExecutionContext.global)
   }

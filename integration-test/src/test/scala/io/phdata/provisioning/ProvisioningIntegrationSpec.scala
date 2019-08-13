@@ -87,7 +87,7 @@ class ProvisioningIntegrationSpec extends FlatSpec with KerberosTest {
       for {
         workspaceRequest <- templateService.workspaceFor(templateRequest, templateName)
         workspace <- workspaceService.create(workspaceRequest).bracket {
-          case workspace =>
+          workspace =>
             for {
               // Get the workspace from the DB, the newly created workspace won't have all members filled
               // (like `HiveGrant.databaseName`, since it comes from the hive allocation)
@@ -96,7 +96,7 @@ class ProvisioningIntegrationSpec extends FlatSpec with KerberosTest {
               provisioned <- fiber.join
             } yield provisioned
         } {
-          case workspace =>
+          workspace =>
             for {
               _ <- logger.info("Deprovisioning workspace: " + workspace.id.get).pure[IO]
               fiber <- provisioning.attemptDeprovision(workspace)

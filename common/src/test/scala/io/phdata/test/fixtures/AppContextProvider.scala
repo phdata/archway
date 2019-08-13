@@ -5,13 +5,11 @@ import cats.effect.{ContextShift, IO}
 import io.phdata.AppContext
 import io.phdata.caching.{CacheEntry, Cached}
 import io.phdata.clients._
-import io.phdata.config.AppConfig
-import io.phdata.repositories.{ApplicationRepository, ApprovalRepository, ComplianceRepository, ConfigRepository, HiveAllocationRepository, HiveGrantRepository, KafkaTopicRepository, LDAPRepository, MemberRepository, TopicGrantRepository, WorkspaceRequestRepository, YarnRepository}
-import io.phdata.services.{Cluster, ClusterService, FeatureService, LoginContextProvider, ProvisioningService}
+import io.phdata.config.{AppConfig, AvailableFeatures}
+import io.phdata.services._
 import doobie.util.transactor.Strategy
 import doobie.{FC, Transactor}
-import io.phdata.repositories.{ApplicationRepository, ApprovalRepository, ComplianceRepository, ConfigRepository, HiveAllocationRepository, HiveGrantRepository, KafkaTopicRepository, LDAPRepository, MemberRepository, TopicGrantRepository, WorkspaceRequestRepository, YarnRepository}
-import io.phdata.services.{FeatureService, ProvisioningService}
+import io.phdata.repositories._
 import org.apache.sentry.provider.db.generic.service.thrift.SentryGenericServiceClient
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.FlatSpec
@@ -40,7 +38,7 @@ trait AppContextProvider {
                      emailClient: EmailClient[IO] = mock[EmailClient[IO]],
                      kerberosClient: KerberosClient[IO] = mock[KerberosClient[IO]],
                      clusterService: ClusterService[IO] = mock[ClusterService[IO]],
-                     featureService: FeatureService[IO] = mock[FeatureService[IO]],
+                     featureService: FeatureService[IO] = new FeatureServiceImpl[IO](AvailableFeatures.all),
                      sentryRawClient: SentryGenericServiceClient = mock[SentryGenericServiceClient],
                      workspaceRepository: WorkspaceRequestRepository = mock[WorkspaceRequestRepository],
                      complianceRepository: ComplianceRepository = mock[ComplianceRepository],

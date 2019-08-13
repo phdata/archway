@@ -1,6 +1,6 @@
 package io.phdata.repositories
 
-import io.phdata.models.DatabaseRole
+import io.phdata.models.{DatabaseRole, DistinguishedName}
 import doobie._
 
 trait MemberRepository {
@@ -10,7 +10,7 @@ trait MemberRepository {
 
   def get(id: Long): ConnectionIO[List[MemberRightsRecord]]
 
-  def find(workspaceRequestId: Long, distinguishedName: String): ConnectionIO[List[MemberRightsRecord]]
+  def find(workspaceRequestId: Long, distinguishedName: DistinguishedName): ConnectionIO[List[MemberRightsRecord]]
 
   def delete(ldapRegistrationId: Long, distinguishedName: String): ConnectionIO[Int]
 

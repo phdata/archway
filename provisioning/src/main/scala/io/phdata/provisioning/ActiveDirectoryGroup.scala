@@ -11,7 +11,7 @@ import io.phdata.models.DistinguishedName
 case class ActiveDirectoryGroup(
     groupId: Long,
     commonName: String,
-    distinguishedName: String,
+    distinguishedName: DistinguishedName,
     attributes: List[(String, String)]
 )
 
@@ -47,10 +47,7 @@ object ActiveDirectoryGroup {
         createLDAPGroup: ActiveDirectoryGroup,
         workspaceContext: WorkspaceContext[F]
     ): F[Unit] =
-      workspaceContext.context.provisioningLDAPClient
-        .deleteGroup(DistinguishedName(createLDAPGroup.commonName))
-        .value
-        .void
+      workspaceContext.context.provisioningLDAPClient.deleteGroup(createLDAPGroup.distinguishedName).value.void
 
   }
 

@@ -74,7 +74,7 @@ class AccountControllerSpec
 
   trait SharedContext {
 
-    val context = genMockContext(clusterService = new TestClusterService())
+    val context = genMockContext(clusterService = new TestClusterService()).copy(featureService = mock[io.phdata.services.FeatureService[IO]])
 
     val accountService = mock[AccountService[IO]]
     val tokenAuthService = new TestAuthService(platformApprover = true)

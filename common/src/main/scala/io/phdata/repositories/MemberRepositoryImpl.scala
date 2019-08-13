@@ -6,6 +6,7 @@ import io.phdata.repositories.syntax.SqlSyntax
 import doobie._
 import doobie.implicits._
 import doobie.util.fragments.whereAnd
+import io.phdata.models.DistinguishedName
 import io.phdata.repositories.syntax.SqlSyntax
 
 class MemberRepositoryImpl(sqlSyntax: SqlSyntax) extends MemberRepository {
@@ -28,7 +29,7 @@ class MemberRepositoryImpl(sqlSyntax: SqlSyntax) extends MemberRepository {
 
   override def find(
       workspaceRequestId: Long,
-      distinguishedName: String
+      distinguishedName: DistinguishedName
   ): doobie.ConnectionIO[List[MemberRightsRecord]] =
     Statements.find(workspaceRequestId, distinguishedName).to[List]
 
@@ -150,10 +151,10 @@ class MemberRepositoryImpl(sqlSyntax: SqlSyntax) extends MemberRepository {
     def get(id: Long): Query0[MemberRightsRecord] =
       (listSelect ++ whereAnd(fr"memberId = $id")).query
 
-    def find(workspaceRequestId: Long, distinguished_name: String): Query0[MemberRightsRecord] =
+    def find(workspaceRequestId: Long, distinguished_name: DistinguishedName): Query0[MemberRightsRecord] =
       (listSelect ++ whereAnd(
         fr"workspace_request_id = $workspaceRequestId",
-        fr"distinguished_name = $distinguished_name"
+        fr"distinguished_name = ${distinguished_name.value}"
       )).query
 
   }

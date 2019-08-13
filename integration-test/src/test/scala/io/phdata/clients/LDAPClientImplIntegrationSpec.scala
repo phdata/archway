@@ -17,7 +17,7 @@ class LDAPClientImplIntegrationSpec
     with IntegrationTest {
 
   val  groupName = "edh_sw_sesame"
-  val groupDN = s"cn=$groupName,${itestConfig.ldap.groupPath}"
+  val groupDN = DistinguishedName(s"cn=$groupName,${itestConfig.ldap.groupPath}")
 
   behavior of "LDAPClientImpl"
 
@@ -34,18 +34,18 @@ class LDAPClientImplIntegrationSpec
     provisioningClient.createGroup(groupName, attributes).unsafeRunSync()
     provisioningClient.createGroup(groupName, updated).unsafeRunSync()
 
-    Option(ldapConnectionPool.getConnection.getEntry(groupDN)) shouldBe defined
-    ldapConnectionPool.getConnection.delete(groupDN)
+    Option(ldapConnectionPool.getConnection.getEntry(groupDN.value)) shouldBe defined
+    ldapConnectionPool.getConnection.delete(groupDN.value)
   }
 
   it should "delete a group" in {
     val attributes = defaultLDAPAttributes(groupDN, groupName)
 
     provisioningClient.createGroup(groupName, attributes).unsafeRunSync()
-    Option(ldapConnectionPool.getConnection.getEntry(groupDN)) shouldBe defined
+    Option(ldapConnectionPool.getConnection.getEntry(groupDN.value)) shouldBe defined
 
-    provisioningClient.deleteGroup(DistinguishedName(groupDN)).value.unsafeRunSync()
-    Option(ldapConnectionPool.getConnection.getEntry(groupDN)) shouldBe None
+    provisioningClient.deleteGroup(DistinguishedName(groupDN.value)).value.unsafeRunSync()
+    Option(ldapConnectionPool.getConnection.getEntry(groupDN.value)) shouldBe None
   }
 
   it should "update a group's attributes" in {
@@ -53,10 +53,10 @@ class LDAPClientImplIntegrationSpec
     provisioningClient.createGroup(groupName, attributes).unsafeRunSync()
     provisioningClient.createGroup(groupName, attributes :+ ("description" -> "lorem ipsum")).unsafeRunSync()
 
-    val entry = Option(ldapConnectionPool.getConnection.getEntry(groupDN))
+    val entry = Option(ldapConnectionPool.getConnection.getEntry(groupDN.value))
 
     entry shouldBe defined
-    ldapConnectionPool.getConnection.delete(groupDN)
+    ldapConnectionPool.getConnection.delete(groupDN.value)
 
     val attribute = Option(entry.get.getAttribute("description"))
     attribute shouldBe defined
@@ -69,7 +69,7 @@ class LDAPClientImplIntegrationSpec
     provisioningClient.createGroup(groupName, defaultLDAPAttributes(groupDN, groupName)).unsafeRunSync()
     provisioningClient.addUser(groupDN, DistinguishedName(userDN)).value.unsafeRunSync()
 
-    ldapConnectionPool.getConnection.delete(groupDN)
+    ldapConnectionPool.getConnection.delete(groupDN.value)
   }
 
   it should "find a user" in {
@@ -80,15 +80,15 @@ class LDAPClientImplIntegrationSpec
   }
 
   it should "find all users" in {
-    def userDN(username: String) = s"cn=$username,${itestConfig.ldap.userPath.get}"
+    def userDN(username: String) = DistinguishedName(s"cn=$username,${itestConfig.ldap.userPath.get}")
 
     lookupClient.createGroup(groupName, defaultLDAPAttributes(groupDN, groupName)).unsafeRunSync()
-    lookupClient.addUser(groupDN, DistinguishedName(userDN("svc_heim_test1"))).value.unsafeRunSync()
-    lookupClient.addUser(groupDN, DistinguishedName(userDN("svc_heim_test2"))).value.unsafeRunSync()
+    lookupClient.addUser(groupDN, userDN("svc_heim_test1")).value.unsafeRunSync()
+    lookupClient.addUser(groupDN, userDN("svc_heim_test2")).value.unsafeRunSync()
 
-    val result = lookupClient.groupMembers(DistinguishedName(groupDN)).unsafeRunSync()
+    val result = lookupClient.groupMembers(DistinguishedName(groupDN.value)).unsafeRunSync()
 
-    ldapConnectionPool.getConnection.delete(groupDN)
+    ldapConnectionPool.getConnection.delete(groupDN.value)
 
     result.length shouldBe 2
   }
@@ -115,7 +115,7 @@ class LDAPClientImplIntegrationSpec
   }
 
   it should "generate a new request" in {
-    val actual = provisioningClient.groupRequest(groupDN, groupName, defaultLDAPAttributes(groupDN, groupName))
+    val actual = provisioningClient.groupRequest(groupDN.value, groupName, defaultLDAPAttributes(groupDN, groupName))
     actual.unsafeRunSync().get shouldBe an [AddRequest]
   }
 
@@ -124,19 +124,19 @@ class LDAPClientImplIntegrationSpec
 
     provisioningClient.createGroup(groupName, attributes).unsafeRunSync()
 
-    val actual = provisioningClient.groupRequest(groupDN, groupName, attributes.patch(attributes.length, List("something" -> "new"), 0))
+    val actual = provisioningClient.groupRequest(groupDN.value, groupName, attributes.patch(attributes.length, List("something" -> "new"), 0))
     actual.unsafeRunSync().get shouldBe a [ModifyRequest]
 
-    ldapConnectionPool.getConnection.delete(groupDN)
+    ldapConnectionPool.getConnection.delete(groupDN.value)
   }
 
   it should "not generate a request" in {
     val attributes = defaultLDAPAttributes(groupDN, groupName)
     provisioningClient.createGroup(groupName, attributes).unsafeRunSync()
-    val actual = provisioningClient.groupRequest(groupDN, groupName, List())
+    val actual = provisioningClient.groupRequest(groupDN.value, groupName, List())
     actual.unsafeRunSync() should not be defined
 
-    ldapConnectionPool.getConnection.delete(groupDN)
+    ldapConnectionPool.getConnection.delete(groupDN.value)
   }
 
   it should "generate only one attribute for multiple keys" in {

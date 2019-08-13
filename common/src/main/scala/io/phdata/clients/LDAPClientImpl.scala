@@ -76,12 +76,12 @@ class LDAPClientImpl[F[_]: Effect](ldapConfig: LDAPConfig, binding: LDAPConfig =
       searchResult.getSearchEntries.asScala.headOption
     })
 
-  def getEntry(dn: String): OptionT[F, SearchResultEntry] =
+  def getEntry(dn: DistinguishedName): OptionT[F, SearchResultEntry] =
     OptionT(
       Sync[F].delay(
         try {
           logger.debug(s"getting info for $dn")
-          Option(connectionPool.getEntry(dn))
+          Option(connectionPool.getEntry(dn.value))
         } catch {
           case exc: Throwable =>
             logger.info(s"Failed to get LDAP entry for dn '$dn'", exc)
@@ -91,7 +91,7 @@ class LDAPClientImpl[F[_]: Effect](ldapConfig: LDAPConfig, binding: LDAPConfig =
     )
 
   override def findUser(distinguishedName: DistinguishedName): OptionT[F, LDAPUser] =
-    getEntry(distinguishedName.value).map(ldapUser)
+    getEntry(distinguishedName).map(ldapUser)
 
   override def validateUser(username: String, password: String): OptionT[F, LDAPUser] =
     for {
@@ -154,8 +154,8 @@ class LDAPClientImpl[F[_]: Effect](ldapConfig: LDAPConfig, binding: LDAPConfig =
       }
     }
 
-  def requestGroup(groupDN: String, groupName: String, attributes: List[(String, String)]): F[Unit] =
-    groupRequest(groupDN, groupName, attributes).map {
+  def requestGroup(groupDN: DistinguishedName, groupName: String, attributes: List[(String, String)]): F[Unit] =
+    groupRequest(groupDN.value, groupName, attributes).map {
       case Some(request: AddRequest) =>
         logger.info("adding group with {}", request)
         connectionPool.add(request)
@@ -174,7 +174,7 @@ class LDAPClientImpl[F[_]: Effect](ldapConfig: LDAPConfig, binding: LDAPConfig =
       _ <- Sync[F].pure(logger.info("creating group {}", groupName))
       groupDN = attributes.find(_._1 == "dn").get._2
       rest = attributes.filterNot(_._1 == "dn")
-      _ <- requestGroup(groupDN, groupName, rest)
+      _ <- requestGroup(DistinguishedName(groupDN), groupName, rest)
       _ <- Sync[F].pure(logger.info("group {} created", groupName))
     } yield ()
 
@@ -190,7 +190,7 @@ class LDAPClientImpl[F[_]: Effect](ldapConfig: LDAPConfig, binding: LDAPConfig =
         }
       } else Option.empty[Unit].pure[F]
 
-  override def addUser(groupDN: String, distinguishedName: DistinguishedName): OptionT[F, String] =
+  override def addUser(groupDN: DistinguishedName, distinguishedName: DistinguishedName): OptionT[F, String] =
     for {
       _ <- OptionT.liftF(Sync[F].pure(logger.info("getting group {}", groupDN)))
       groupEntry <- getEntry(groupDN)
@@ -210,10 +210,10 @@ class LDAPClientImpl[F[_]: Effect](ldapConfig: LDAPConfig, binding: LDAPConfig =
       searchResult.getSearchEntries.asScala.map(ldapUser).toList
     }
 
-  override def removeUser(groupDN: String, memberDN: DistinguishedName): OptionT[F, String] =
+  override def removeUser(groupDN: DistinguishedName, memberDN: DistinguishedName): OptionT[F, String] =
     OptionT(getEntry(groupDN).value.map {
       case Some(group) if group.hasAttribute("member") && group.getAttributeValues("member").contains(memberDN) =>
-        connectionPool.modify(groupDN, new Modification(ModificationType.DELETE, "member", memberDN.value))
+        connectionPool.modify(groupDN.value, new Modification(ModificationType.DELETE, "member", memberDN.value))
         Some(memberDN.value)
       case _ => Some(memberDN.value) //no-op
     })
@@ -243,7 +243,7 @@ class LDAPClientImpl[F[_]: Effect](ldapConfig: LDAPConfig, binding: LDAPConfig =
 
   override def deleteGroup(groupDN: DistinguishedName): OptionT[F, String] =
     for {
-      _ <- getEntry(groupDN.value)
+      _ <- getEntry(groupDN)
       _ <- OptionT(Option(connectionPool.delete(groupDN.value)).pure[F])
     } yield groupDN.value
 }

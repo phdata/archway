@@ -20,6 +20,7 @@ pipelines:
             - './flyway/flyway migrate -url="jdbc:postgresql://localhost:5432/archway" -user=postgres -password=postgres'
             - ./sbt common/test
             - ./sbt api/test
+            - ./sbt provisioning/test
             - ./sbt "set every test in assembly := {}" api/assembly
             - ./sbt "set every test in assembly := {}" integration-test/assembly
             - ./sbt integration-test/test:package

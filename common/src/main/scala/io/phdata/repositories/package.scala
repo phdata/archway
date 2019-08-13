@@ -10,7 +10,7 @@ import doobie.util.log.{ExecFailure, LogHandler, ProcessingFailure, Success}
 package object repositories {
 
   case class LDAPRecord(
-      distinguishedName: String,
+      distinguishedName: DistinguishedName,
       commonName: String,
       sentryRole: String,
       id: Option[Long],

@@ -20,6 +20,8 @@ package object config extends StrictLogging {
   object AvailableFeatures {
     val messaging = "messaging"
     val applications = "applications"
+
+    val all = Seq(messaging, applications).mkString(",")
   }
 
   implicit final val finiteDurationDecoder: Decoder[Duration] =

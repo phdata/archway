@@ -23,11 +23,13 @@ class DefaultTopicGenerator[F[_]](appConfig: AppConfig, ldapGroupGenerator: LDAP
     val readonlyName = s"${workspaceSystemName}_${topicSystemName}_ro"
 
     for {
-      manager <- ldapGroupGenerator
-        .generate(managerName, s"cn=$managerName,${appConfig.ldap.groupPath}", s"role_$managerName", workspaceRequest)
+      manager <- ldapGroupGenerator.generate(managerName,
+                                             DistinguishedName(s"cn=$managerName,${appConfig.ldap.groupPath}"),
+                                             s"role_$managerName",
+                                             workspaceRequest)
       readonly <- ldapGroupGenerator.generate(
         readonlyName,
-        s"cn=$readonlyName,${appConfig.ldap.groupPath}",
+        DistinguishedName(s"cn=$readonlyName,${appConfig.ldap.groupPath}"),
         s"role_$readonlyName",
         workspaceRequest
       )

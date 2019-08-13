@@ -1,7 +1,7 @@
 package io.phdata.provisioning
 
 import cats.data.NonEmptyList
-import io.phdata.models.LDAPRegistration
+import io.phdata.models.{DistinguishedName, LDAPRegistration}
 
 trait LDAPRegistrationProvisioning {
 

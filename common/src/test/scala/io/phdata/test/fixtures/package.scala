@@ -40,7 +40,7 @@ package object fixtures {
   val keytabLocation: Option[String] = None
   val systemName: String = "sesame"
   val hdfsLocation: String = s"/data/shared_workspaces/$systemName"
-  val ldapDn: String = s"cn=edh_sw_$systemName,ou=hadoop,dc=example,dc=com"
+  val ldapDn: DistinguishedName = DistinguishedName(s"cn=edh_sw_$systemName,ou=hadoop,dc=example,dc=com")
   val environment = "dev"
   val maxCores = 4
   val maxMemoryInGB = 16
@@ -71,9 +71,9 @@ package object fixtures {
 
   val workspaceStatus = WorkspaceStatus(WorkspaceProvisioningStatus.COMPLETED)
 
-  def defaultLDAPAttributes(dn: String, cn: String): List[(String, String)] =
+  def defaultLDAPAttributes(dn: DistinguishedName, cn: String): List[(String, String)] =
     List(
-      "dn" -> dn,
+      "dn" -> dn.value,
       "objectClass" -> "group",
       "objectClass" -> "top",
       "sAMAccountName" -> cn,

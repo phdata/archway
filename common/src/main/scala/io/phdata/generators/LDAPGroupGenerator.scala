@@ -2,12 +2,12 @@ package io.phdata.generators
 
 import cats.effect.{Clock, Sync}
 import io.phdata.config.AppConfig
-import io.phdata.models.{LDAPRegistration, WorkspaceRequest}
+import io.phdata.models.{DistinguishedName, LDAPRegistration, WorkspaceRequest}
 import io.phdata.services.ConfigService
 
 trait LDAPGroupGenerator[F[_]] {
 
-  def generate(cn: String, dn: String, role: String, workspace: WorkspaceRequest): F[LDAPRegistration]
+  def generate(cn: String, dn: DistinguishedName, role: String, workspace: WorkspaceRequest): F[LDAPRegistration]
 
 }
 
