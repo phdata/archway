@@ -1,4 +1,4 @@
-## 1.8.0
+## 2.0.0
 
 ### Enhancements
 
@@ -11,6 +11,15 @@
 ### Bug Fixes
 
 - Users are now blocked from viewing workspaces that they aren't a member of. 2f07a16ec01e8b38fe519edd27f75a2ae3fcda64
+
+### Breaking Changes
+
+Archway 2.0.0 introduces a new kerberos principal name, so permissions will need to be added to the cluster for the 'archway' user
+in place of the 'heimdali_api' user.
+
+Templates will also need to be modified, replacing 'com.heimdali' with 'io.phdata'.
+
+All data created by Archway, workspaces, and the 'heimdali' database are fully compatible with Archway 2.0
 
 ## 1.7.2
 
