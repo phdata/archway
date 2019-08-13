@@ -1,3 +1,26 @@
+## 2.0.0
+
+### Enhancements
+
+- Rename to Archway. ef7c086e18f14af03cb5b6e2bd999b481f02aafd
+- Add a spinner in the user workspace member add search bar. 6ec147f78cf81e236c7bf7ae5e1d9741bb8e8ca2
+- Handle database creation/updates automatically on application start. There is no longer a need to download
+  any special packages (flyway) or run a role command. 11272d43c4a11a105d4830a5309616d9f2274570
+- Validate all templates, including custom templates, on startup. dca69a9715f02487be6cda64b66d9e55553c50c0
+
+### Bug Fixes
+
+- Users are now blocked from viewing workspaces that they aren't a member of. 2f07a16ec01e8b38fe519edd27f75a2ae3fcda64
+
+### Breaking Changes
+
+With the renaming, Archway 2.0.0 introduces a new kerberos principal name, so permissions will need to be added to the cluster for the 'archway' user
+in place of the 'heimdali_api' user. See the Archway install doc for details
+
+Templates will also need to be modified, replacing the package names at the head of the file 'com.heimdali' with 'io.phdata'.
+
+All data created by Archway, workspaces, and the 'heimdali' database are fully compatible with Archway 2.0
+
 ## 1.7.2
 
 - Fix bug where the UI would fail if a user didn't have a kafka topic. d2851bc290263c6d5d11a75e83b6bb9fc146b550
