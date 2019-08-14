@@ -7,9 +7,7 @@ import cats.effect.{Clock, Sync}
 import cats.implicits._
 import doobie.implicits._
 
-case class ResourcePoolRegistration(id: Long, name: String, cores: Int, memory: Int)
-
-object ResourcePoolRegistration {
+object ResourcePoolRegistrationProvisioning {
 
   implicit val show: Show[ResourcePoolRegistration] =
     Show.show(c => s"""resource pool "${c.name}" with ${c.cores} cores and ${c.memory}gb memory""")

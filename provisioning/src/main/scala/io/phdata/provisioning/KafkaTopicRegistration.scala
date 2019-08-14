@@ -7,9 +7,7 @@ import cats.effect.{Clock, Sync}
 import cats.implicits._
 import doobie.implicits._
 
-case class KafkaTopicRegistration(id: Long, name: String, partitions: Int, replicationFactor: Int)
-
-object KafkaTopicRegistration {
+object KafkaTopicRegistrationProvisioning {
 
   implicit val show: Show[KafkaTopicRegistration] =
     Show.show(k => s"""topic "${k.name}" (p: ${k.partitions}, rf: ${k.replicationFactor}""")

@@ -43,7 +43,7 @@ class HiveDatabaseRegistrationIntegrationSpec
 
     context.use { case (workspaceContext, hiveClient) =>
         for {
-          _ <- HiveDatabaseRegistration.HiveDatabaseRegistrationProvisioningTask.run(hiveDatabaseRegistration, workspaceContext)
+          _ <- HiveDatabaseRegistrationProvisioning.HiveDatabaseRegistrationProvisioningTask.run(hiveDatabaseRegistration, workspaceContext)
           _ <- hiveClient.dropDatabase(hiveDatabaseRegistration.name)
         } yield()
 

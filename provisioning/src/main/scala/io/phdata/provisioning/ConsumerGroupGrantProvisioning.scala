@@ -7,13 +7,8 @@ import cats.effect._
 import cats.implicits._
 import io.phdata.clients.Kafka
 import doobie.implicits._
-import org.apache.sentry.core.model.kafka.ConsumerGroup
 
-case class ConsumerGroupGrant(applicationId: Long, consumerGroup: String, roleName: String) {
-  val consumerGroupInstance: ConsumerGroup = new ConsumerGroup(consumerGroup)
-}
-
-object ConsumerGroupGrant {
+object ConsumerGroupGrantProvisioning {
 
   implicit val viewer: Show[ConsumerGroupGrant] =
     Show.show(g => s"""role "${g.roleName}" access to consumer group "${g.consumerGroup}"""")

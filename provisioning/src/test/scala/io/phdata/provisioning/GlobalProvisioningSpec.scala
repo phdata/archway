@@ -3,7 +3,6 @@ package io.phdata.provisioning
 import cats.effect.{ContextShift, IO, Timer}
 import cats.implicits._
 import io.phdata.clients.Kafka
-import io.phdata.provisioning.Provisionable.ops._
 import io.phdata.test.fixtures.{AppContextProvider, _}
 import doobie._
 import doobie.implicits._
@@ -31,7 +30,7 @@ class GlobalProvisioningSpec extends FlatSpec with MockFactory with AppContextPr
     context.sentryClient.grantPrivilege _ expects(savedLDAP.sentryRole, Kafka, "Topic=sesame.incoming->action=read") returning IO.unit
     context.topicGrantRepository.topicAccess _ expects(id, testTimer.instant) returning 123.pure[ConnectionIO] twice()
 
-    val (_, result) = savedTopic.provision[IO](WorkspaceContext(123L, context)).run.unsafeRunSync()
+    val (_, result) = KafkaTopicProvisionable.provision(savedTopic, WorkspaceContext(123L, context)).run.unsafeRunSync()
 
     result shouldBe Success
   }
@@ -41,7 +40,7 @@ class GlobalProvisioningSpec extends FlatSpec with MockFactory with AppContextPr
     context.kafkaClient.createTopic _ expects("sesame.incoming", 1, 1) returning IO.unit
     context.kafkaRepository.topicCreated _ expects(id, testTimer.instant) returning 123.pure[ConnectionIO]
 
-    val (_, result) = savedTopic.provision[IO](WorkspaceContext(123L, context)).run.unsafeRunSync()
+    val (_, result) = KafkaTopicProvisionable.provision(savedTopic, WorkspaceContext(123L, context)).run.unsafeRunSync()
 
     result shouldBe Success
   }

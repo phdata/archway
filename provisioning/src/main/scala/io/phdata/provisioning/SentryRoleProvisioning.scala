@@ -7,9 +7,7 @@ import cats.effect._
 import cats.implicits._
 import doobie.implicits._
 
-case class SentryRole(id: Long, name: String)
-
-object SentryRole {
+object SentryRoleProvisioning {
 
   implicit val show: Show[SentryRole] =
     Show.show(c => s"""sentry role "${c.name}"""")

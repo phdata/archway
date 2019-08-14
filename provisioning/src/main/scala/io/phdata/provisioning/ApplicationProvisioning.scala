@@ -10,10 +10,10 @@ trait ApplicationProvisioning {
       NonEmptyList.of(
         TypeWith[Provisionable, LDAPRegistration](
           application.group
-        ),
+        )(LDAPRegistrationProvisionable, LDAPRegistration.show),
         TypeWith[Provisionable, ConsumerGroupGrant](
           ConsumerGroupGrant(application.id.get, application.consumerGroup, application.group.sentryRole)
-        )
+        )(ConsumerGroupGrantProvisioning.provisionable, ConsumerGroupGrantProvisioning.viewer)
       )
     }
 

@@ -7,9 +7,7 @@ import cats.effect.{Clock, Sync}
 import cats.implicits._
 import doobie.implicits._
 
-case class GroupGrant(ldapId: Long, roleName: String, groupName: String)
-
-object GroupGrant {
+object GroupGrantProvisioning {
 
   implicit val show: Show[GroupGrant] =
     Show.show(g => s""""${g.roleName}" rights to AD group "${g.groupName}"""")

@@ -7,9 +7,7 @@ import cats.effect._
 import cats.implicits._
 import doobie.implicits._
 
-case class DatabaseDirectory(workspaceId: Long, location: String, onBehalfOf: Option[String])
-
-object DatabaseDirectory {
+object DatabaseDirectoryProvisioning {
 
   implicit val show: Show[DatabaseDirectory] =
     Show.show(c => s"""db directory "${c.location}"""")

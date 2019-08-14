@@ -1,6 +1,5 @@
 package io.phdata.provisioning
 
-import java.lang
 import java.time.Instant
 
 import cats.Show
@@ -9,9 +8,7 @@ import cats.effect._
 import cats.implicits._
 import io.phdata.config.AppConfig
 import com.typesafe.scalalogging.LazyLogging
-import simulacrum.typeclass
 
-@typeclass
 trait Provisionable[A] {
 
   def provision[F[_]: Clock: Sync](resource: A, workspaceContext: WorkspaceContext[F])(
@@ -72,8 +69,8 @@ object Provisionable {
           deprovisioningTask.run(resource, workspaceContext).attempt.map {
             case Left(exception: Exception) =>
               val messages = Error.message(resource, workspaceContext.workspaceId, exception)
+              logger.info("DEPROVISIONING FAILED!!: {}", resource)
               logger.error(messages.head.message, exception)
-              logger.info("DEPROVISIONING FINISHED: {}", resource)
               (messages, Error.asInstanceOf[ProvisionResult])
             case Right(_) =>
               val messages = Success.message(resource, workspaceContext.workspaceId)

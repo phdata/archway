@@ -10,7 +10,7 @@ trait YarnProvisioning {
       NonEmptyList.one(
         TypeWith[Provisionable, ResourcePoolRegistration](
           ResourcePoolRegistration(yarn.id.get, yarn.poolName, yarn.maxCores, yarn.maxMemoryInGB)
-        )
+        )(ResourcePoolRegistrationProvisioning.provisionable, ResourcePoolRegistrationProvisioning.show)
       )
     }
 

@@ -7,9 +7,9 @@ import cats.effect.{Clock, Sync}
 import cats.implicits._
 import io.phdata.config.AvailableFeatures
 import io.phdata.models.WorkspaceRequest
-import io.phdata.provisioning.Provisionable.ops._
 import doobie.implicits._
 import io.phdata.services.ImpalaService
+import io.phdata.provisioning.GroupMemberProvisioning.show
 
 trait WorkspaceRequestProvisioning {
 
@@ -46,32 +46,49 @@ trait WorkspaceRequestProvisioning {
 
       createUserWorkspace *>
         (for {
-          a <- workspace.data.traverse(a => a.provision[F](workspaceContext).run)
+          a <- workspace.data.traverse(a => HiveAllocationProvisionable.provision(a, workspaceContext).run)
           b <- workspace.data.traverse(
             d =>
-              GroupMember(d.id.get, d.managingGroup.ldapRegistration.distinguishedName, workspace.requestedBy.value)
-                .provision[F](workspaceContext)
+              GroupMemberProvisioning.provisionable
+                .provision(
+                  GroupMember(
+                    d.id.get,
+                    d.managingGroup.ldapRegistration.distinguishedName,
+                    workspace.requestedBy.value
+                  ),
+                  workspaceContext
+                )
                 .run
           )
-          c <- workspace.processing.traverse(_.provision[F](workspaceContext).run)
-          d <- workspace.applications.traverse(_.provision[F](workspaceContext).run)
+          c <- workspace.processing.traverse(x => YarnProvisionable.provision(x, workspaceContext).run)
+          d <- workspace.applications.traverse(x => ApplicationProvisionable.provision(x, workspaceContext).run)
           e <- workspace.applications.traverse(
             d =>
-              GroupMember(d.id.get, d.group.distinguishedName, workspace.requestedBy.value)
-                .provision[F](workspaceContext)
+              GroupMemberProvisioning.provisionable
+                .provision(
+                  GroupMember(d.id.get, d.group.distinguishedName, workspace.requestedBy.value),
+                  workspaceContext
+                )
                 .run
           )
           f <- workspaceContext.context.featureService.runIfEnabled(
             AvailableFeatures.messaging,
-            workspace.kafkaTopics.traverse(_.provision[F](workspaceContext).run),
+            workspace.kafkaTopics.traverse(x => KafkaTopicProvisionable.provision(x, workspaceContext).run),
             kafkaTopicsNotEnabledMessage
           )
           g <- workspaceContext.context.featureService.runIfEnabled(
             AvailableFeatures.messaging,
             workspace.kafkaTopics.traverse(
               d =>
-                GroupMember(d.id.get, d.managingRole.ldapRegistration.distinguishedName, workspace.requestedBy.value)
-                  .provision[F](workspaceContext)
+                GroupMemberProvisioning.provisionable
+                  .provision(
+                    GroupMember(
+                      d.id.get,
+                      d.managingRole.ldapRegistration.distinguishedName,
+                      workspace.requestedBy.value
+                    ),
+                    workspaceContext
+                  )
                   .run
             ),
             kafkaTopicsNotEnabledMessage
@@ -87,28 +104,38 @@ trait WorkspaceRequestProvisioning {
       for {
         g <- workspace.kafkaTopics.traverse(
           d =>
-            GroupMember(d.id.get, d.managingRole.ldapRegistration.distinguishedName, workspace.requestedBy.value)
-              .deprovision[F](workspaceContext)
+            GroupMemberProvisioning.provisionable
+              .deprovision(
+                GroupMember(d.id.get, d.managingRole.ldapRegistration.distinguishedName, workspace.requestedBy.value),
+                workspaceContext
+              )
               .run
         )
-        f <- workspace.kafkaTopics.traverse(_.deprovision[F](workspaceContext).run)
+        f <- workspace.kafkaTopics.traverse(x => KafkaTopicProvisionable.deprovision(x, workspaceContext).run)
         e <- workspace.applications.traverse(
           d =>
-            GroupMember(d.id.get, d.group.distinguishedName, workspace.requestedBy.value)
-              .deprovision[F](workspaceContext)
+            GroupMemberProvisioning.provisionable
+              .deprovision(
+                GroupMember(d.id.get, d.group.distinguishedName, workspace.requestedBy.value),
+                workspaceContext
+              )
               .run
         )
-        d <- workspace.applications.traverse(_.deprovision[F](workspaceContext).run)
-        c <- workspace.processing.traverse(_.deprovision[F](workspaceContext).run)
+        d <- workspace.applications.traverse(x => ApplicationProvisionable.deprovision(x, workspaceContext).run)
+        c <- workspace.processing.traverse(x => YarnProvisionable.deprovision(x, workspaceContext).run)
         b <- workspace.data.traverse(
           d =>
-            GroupMember(d.id.get, d.managingGroup.ldapRegistration.distinguishedName, workspace.requestedBy.value)
-              .deprovision[F](workspaceContext)
+            GroupMemberProvisioning.provisionable
+              .deprovision(
+                GroupMember(d.id.get, d.managingGroup.ldapRegistration.distinguishedName, workspace.requestedBy.value),
+                workspaceContext
+              )
               .run
         )
-        a <- workspace.data.traverse(a => a.deprovision[F](workspaceContext).run)
+        a <- workspace.data.traverse(a => HiveAllocationProvisionable.deprovision(a, workspaceContext).run)
       } yield a |+| b |+| c |+| d |+| e |+| f |+| g
   }
 
-  implicit val provisionable: Provisionable[WorkspaceRequest] = Provisionable.deriveFromTasks
+  implicit val workspaceRequestProvisionable: Provisionable[WorkspaceRequest] =
+    Provisionable.deriveFromTasks(WorkspaceRequestProvisioningTask, WorkspaceRequestDeprovisioningTask)
 }

@@ -9,9 +9,7 @@ import cats.implicits._
 import io.phdata.clients.Kafka
 import doobie.implicits._
 
-case class KafkaTopicGrant(id: Long, name: String, sentryRole: String, actions: NonEmptyList[String])
-
-object KafkaTopicGrant {
+object KafkaTopicGrantProvisioning {
 
   implicit val show: Show[KafkaTopicGrant] =
     Show.show(s => s"""${s.actions.mkString_(",")} permissions to role "${s.sentryRole}" for topic "${s.name}"""")

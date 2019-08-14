@@ -8,9 +8,7 @@ import cats.implicits._
 import doobie.implicits._
 import io.phdata.models.DistinguishedName
 
-case class GroupMember(ldapRegistrationId: Long, groupDN: DistinguishedName, distinguishedName: String)
-
-object GroupMember {
+object GroupMemberProvisioning {
 
   implicit val show: Show[GroupMember] =
     Show.show(am => s""""${am.distinguishedName}" as a member of "${am.groupDN}""")

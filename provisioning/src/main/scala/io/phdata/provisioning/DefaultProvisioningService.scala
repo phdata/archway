@@ -5,7 +5,6 @@ import cats.effect._
 import cats.implicits._
 import io.phdata.AppContext
 import io.phdata.models.{Application, KafkaTopic, WorkspaceRequest}
-import io.phdata.provisioning.Provisionable.ops._
 import doobie.implicits._
 import io.phdata.services.ProvisioningService
 
@@ -31,7 +30,10 @@ class DefaultProvisioningService[F[_]: ContextShift: ConcurrentEffect: Timer](
     val provisioning: F[NonEmptyList[Message]] = workspace.approvals match {
       case x if x.length >= requiredApprovals =>
         ContextShift[F].evalOn(provisionContext)(
-          workspace.provision[F](WorkspaceContext(workspace.id.get, appContext)).run.map(_._1)
+          workspaceRequestProvisionable
+            .provision(workspace, (WorkspaceContext(workspace.id.get, appContext)))
+            .run
+            .map(_._1)
         )
       case _ =>
         NonEmptyList
@@ -49,7 +51,10 @@ class DefaultProvisioningService[F[_]: ContextShift: ConcurrentEffect: Timer](
   override def attemptDeprovision(workspace: WorkspaceRequest): F[Fiber[F, NonEmptyList[Message]]] = {
     val provisioning: F[NonEmptyList[Message]] =
       ContextShift[F].evalOn(provisionContext)(
-        workspace.deprovision[F](WorkspaceContext(workspace.id.get, appContext)).run.map(_._1)
+        workspaceRequestProvisionable
+          .deprovision(workspace, WorkspaceContext(workspace.id.get, appContext))
+          .run
+          .map(_._1)
       )
     ConcurrentEffect[F].start(provisioning)
   }
@@ -59,8 +64,8 @@ class DefaultProvisioningService[F[_]: ContextShift: ConcurrentEffect: Timer](
   }
 
   override def provisionApplication(workspaceId: Long, application: Application): F[Unit] =
-    application.provision[F](WorkspaceContext(workspaceId, appContext)).run.void
+    ApplicationProvisionable.provision(application, WorkspaceContext(workspaceId, appContext)).run.void
 
   override def provisionTopic(workspaceId: Long, topic: KafkaTopic): F[Unit] =
-    topic.provision[F](WorkspaceContext(workspaceId, appContext)).run.void
+    KafkaTopicProvisionable.provision(topic, WorkspaceContext(workspaceId, appContext)).run.void
 }

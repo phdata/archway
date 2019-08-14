@@ -7,9 +7,7 @@ import cats.effect.{Clock, Sync}
 import cats.implicits._
 import doobie.implicits._
 
-case class LocationGrant(id: Long, roleName: String, location: String)
-
-object LocationGrant {
+object LocationGrantProvisioning {
 
   implicit val show: Show[LocationGrant] =
     Show.show(g => s"""role "${g.roleName}" access to "${g.location}"""")

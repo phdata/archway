@@ -9,9 +9,7 @@ import io.phdata.models.WorkspaceRequest
 import com.typesafe.scalalogging.LazyLogging
 import doobie.implicits._
 
-case class HiveDatabaseRegistration(workspaceId: Long, name: String, location: String)
-
-object HiveDatabaseRegistration extends LazyLogging {
+object HiveDatabaseRegistrationProvisioning extends LazyLogging {
 
   implicit val viewer: Show[HiveDatabaseRegistration] =
     Show.show(c => s"""Hive database "${c.name}" at "${c.location}"""")

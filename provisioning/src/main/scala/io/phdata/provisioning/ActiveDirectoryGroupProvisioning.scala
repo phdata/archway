@@ -8,14 +8,7 @@ import cats.implicits._
 import doobie.implicits._
 import io.phdata.models.DistinguishedName
 
-case class ActiveDirectoryGroup(
-    groupId: Long,
-    commonName: String,
-    distinguishedName: DistinguishedName,
-    attributes: List[(String, String)]
-)
-
-object ActiveDirectoryGroup {
+object ActiveDirectoryGroupProvisioning {
 
   implicit val show: Show[ActiveDirectoryGroup] =
     Show.show(c => s""""${c.commonName}" group ("${c.distinguishedName}")""")
@@ -51,6 +44,6 @@ object ActiveDirectoryGroup {
 
   }
 
-  implicit val provisionable: Provisionable[ActiveDirectoryGroup] = Provisionable.deriveFromTasks
+  val provisionable: Provisionable[ActiveDirectoryGroup] = Provisionable.deriveFromTasks
 
 }

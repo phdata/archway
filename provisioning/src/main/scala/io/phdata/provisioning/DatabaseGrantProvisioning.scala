@@ -5,12 +5,9 @@ import java.time.Instant
 import cats.Show
 import cats.effect.{Clock, Sync}
 import cats.implicits._
-import io.phdata.models.DatabaseRole
 import doobie.implicits._
 
-case class DatabaseGrant(id: Long, roleName: String, databaseName: String, databaseRole: DatabaseRole)
-
-object DatabaseGrant {
+object DatabaseGrantProvisioning {
 
   implicit val show: Show[DatabaseGrant] =
     Show.show(g => s""""${g.databaseRole}" grant for role "${g.roleName}" on "${g.databaseName}"""")
@@ -41,6 +38,6 @@ object DatabaseGrant {
 
   }
 
-  implicit val provisionable: Provisionable[DatabaseGrant] = Provisionable.deriveFromTasks
+  implicit val databaseGrantProvisionable: Provisionable[DatabaseGrant] = Provisionable.deriveFromTasks
 
 }

@@ -3,13 +3,11 @@ package io.phdata.provisioning
 import java.time.Instant
 
 import cats.Show
-import cats.effect.{Clock, Sync}
 import cats.implicits._
 import doobie.implicits._
+import cats.effect.{Clock, Sync}
 
-case class DiskQuota(workspaceId: Long, location: String, sizeInGB: Int)
-
-object DiskQuota {
+object DiskQuotaProvisioning {
 
   implicit val show: Show[DiskQuota] =
     Show.show(s => s"""setting disk quota of ${s.sizeInGB}GB to "${s.location}""")
