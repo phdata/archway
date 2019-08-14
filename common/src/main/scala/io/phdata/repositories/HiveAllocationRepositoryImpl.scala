@@ -201,8 +201,8 @@ class HiveAllocationRepositoryImpl extends HiveAllocationRepository {
 
     def list(workspaceId: Long): Query0[HiveResult] =
       (selectQuery ++ fr"inner join workspace_database wd on wd.hive_database_id = h.id" ++ whereAnd(
-        fr"wd.workspace_request_id = $workspaceId"
-      )).query[HiveResult]
+            fr"wd.workspace_request_id = $workspaceId"
+          )).query[HiveResult]
 
     def directoryCreated(id: Long, time: Instant): Update0 =
       sql"""

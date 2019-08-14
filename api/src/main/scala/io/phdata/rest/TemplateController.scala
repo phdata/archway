@@ -47,7 +47,8 @@ class TemplateController[F[_]: Sync](authService: TokenAuthService[F], templateG
                 case e: Throwable =>
                   logger
                     .error(
-                      s"Error parsing template request for user '${user.username}' using template '$templateName': ${e.getLocalizedMessage}")
+                      s"Error parsing template request for user '${user.username}' using template '$templateName': ${e.getLocalizedMessage}"
+                    )
                     .pure[F]
               }
             response <- Ok(workspaceRequest.asJson)

@@ -100,18 +100,17 @@ package object config extends StrictLogging {
         hiveServer2Port <- cursor.downField("hiveServer2Port").as[Int]
         admin <- cursor.downField("admin").as[CredentialsConfig]
         hueOverride <- cursor.downField("hueOverride").as[ServiceOverride]
-      } yield
-        ClusterConfig(
-          sessionRefresh,
-          url,
-          name,
-          nameservice,
-          environment,
-          beeswaxPort,
-          hiveServer2Port,
-          admin,
-          hueOverride
-        )
+      } yield ClusterConfig(
+        sessionRefresh,
+        url,
+        name,
+        nameservice,
+        environment,
+        beeswaxPort,
+        hiveServer2Port,
+        admin,
+        hueOverride
+      )
     }
 
     implicit val credentialsConfigEncoder: Encoder[CredentialsConfig] = deriveEncoder
@@ -171,8 +170,10 @@ package object config extends StrictLogging {
       ssl: Boolean
   ) {
     if (auth) {
-      assert(user.isDefined && pass.isDefined,
-             "Smtp authorization is enabled but username or password are not provided")
+      assert(
+        user.isDefined && pass.isDefined,
+        "Smtp authorization is enabled but username or password are not provided"
+      )
     }
   }
 

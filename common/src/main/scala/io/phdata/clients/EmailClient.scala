@@ -31,7 +31,8 @@ class EmailClientImpl[F[_]: Effect](appConfig: AppConfig, executionContext: Exec
         IO.pure {
           val result =
             mailer(Envelope.from(from.addr).to(to.addr).subject(subject).content(Multipart().html(htmlContent)))(
-              executionContext)
+              executionContext
+            )
 
           result.onComplete {
             case Success(value) => logger.debug(s"Sent notification mail from ${from.addr} to ${to.addr}")

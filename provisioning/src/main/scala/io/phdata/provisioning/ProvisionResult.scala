@@ -21,9 +21,8 @@ case object Error extends ProvisionResult {
 
   def message[A](resource: A, workspaceId: Long, exception: Exception)(implicit show: Show[A]): NonEmptyList[Message] =
     NonEmptyList.one(
-      ExceptionMessage(workspaceId,
-                       s"""FAILED: ${show.show(resource)} for workspace $workspaceId due to ${exception.getMessage}""",
-                       exception)
+      ExceptionMessage(workspaceId, s"""FAILED: ${show
+        .show(resource)} for workspace $workspaceId due to ${exception.getMessage}""", exception)
     )
 }
 

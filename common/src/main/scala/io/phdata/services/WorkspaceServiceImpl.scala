@@ -164,8 +164,8 @@ class WorkspaceServiceImpl[F[_]: ConcurrentEffect: ContextShift](
 
   override def yarnInfo(id: Long): F[List[YarnInfo]] =
     context.yarnRepository.findByWorkspaceId(id).transact(context.transactor).flatMap { workspace =>
-      workspace.traverse(yarn =>
-        context.yarnClient.applications(yarn.poolName).map(apps => YarnInfo(yarn.poolName, apps)))
+      workspace
+        .traverse(yarn => context.yarnClient.applications(yarn.poolName).map(apps => YarnInfo(yarn.poolName, apps)))
     }
 
   override def hiveDetails(id: Long): F[List[HiveDatabase]] =

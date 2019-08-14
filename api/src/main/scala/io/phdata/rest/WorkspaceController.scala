@@ -117,8 +117,8 @@ class WorkspaceController[F[_]: Sync: Timer: ContextShift: ConcurrentEffect](
                     .error(s"Failed to create workspace for id ${workspaceRequest.id}: ${e.getLocalizedMessage}", e)
                     .pure[F]
               }
-              _ <- ConcurrentEffect[F].start(
-                ContextShift[F].evalOn(emailEC)(emailService.newWorkspaceEmail(newWorkspace)))
+              _ <- ConcurrentEffect[F]
+                .start(ContextShift[F].evalOn(emailEC)(emailService.newWorkspaceEmail(newWorkspace)))
               response <- Created(newWorkspace.asJson)
             } yield response
           }
@@ -140,10 +140,14 @@ class WorkspaceController[F[_]: Sync: Timer: ContextShift: ConcurrentEffect](
             } yield wsAccess
 
           val maybeWorkspaceT = access
-            .flatMap(x =>
-              if (x) { workspaceService.find(id).value } else {
-                None.asInstanceOf[Option[WorkspaceRequest]].pure[F]
-            })
+            .flatMap(
+              x =>
+                if (x) {
+                  workspaceService.find(id).value
+                } else {
+                  None.asInstanceOf[Option[WorkspaceRequest]].pure[F]
+                }
+            )
             .onError {
               case e: Throwable =>
                 logger

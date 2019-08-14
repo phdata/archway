@@ -330,8 +330,8 @@ class WorkspaceRequestRepositoryImpl(sqlSyntax: SqlSyntax) extends WorkspaceRequ
 
     def pending(role: ApproverRole): Query0[WorkspaceSearchResult] =
       (listFragment ++ whereAnd(
-        fr"wr.single_user = '0'"
-      )).query
+            fr"wr.single_user = '0'"
+          )).query
 
   }
 

@@ -12,6 +12,6 @@ object Token {
         Json.obj(
           "access_token" -> token.accessToken.asJson,
           "refresh_token" -> token.refreshToken.asJson
-      )
+        )
     )
 }

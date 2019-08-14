@@ -61,8 +61,8 @@ class YarnRepositoryImpl extends YarnRepository {
 
     def findByWorkspace(id: Long): Query0[Yarn] =
       (selectQuery ++ fr"inner join workspace_pool wp on wp.resource_pool_id = rp.id" ++ whereAnd(
-        fr"wp.workspace_request_id= $id"
-      )).query[Yarn]
+            fr"wp.workspace_request_id= $id"
+          )).query[Yarn]
 
   }
 

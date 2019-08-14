@@ -27,9 +27,11 @@ object ImpalaService extends LazyLogging {
           case Right(_) => logger.info(s"Invalidate metadata for '$database' complete").pure[F]
           case Left(e)  => logger.error(s"Impala metadata invalidation failed: ${e.getLocalizedMessage}", e).pure[F]
         })
-        .getOrElse(logger
-          .warn(s"Skipped Impala invalidate metadata for database '$database' because ImpalaClient was not defined")
-          .pure[F])
+        .getOrElse(
+          logger
+            .warn(s"Skipped Impala invalidate metadata for database '$database' because ImpalaClient was not defined")
+            .pure[F]
+        )
     } yield ()
   }
 

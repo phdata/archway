@@ -34,12 +34,14 @@ class JSONTemplateService[F[_]: Effect: Clock](context: AppContext[F], configSer
 
       // creating empty object because it is not needed only required
       val templateRequest: TemplateRequest =
-        TemplateRequest("",
-                        "",
-                        "",
-                        Compliance(false, false, false),
-                        DistinguishedName("cn=admin,ou=heimdali,dc=io"),
-                        false)
+        TemplateRequest(
+          "",
+          "",
+          "",
+          Compliance(false, false, false),
+          DistinguishedName("cn=admin,ou=heimdali,dc=io"),
+          false
+        )
 
       customTemplates.traverse[F, (WorkspaceRequest, String)] { templatePath =>
         generateWorkspaceRequest(templateRequest, templatePath, extractTemplateName(templatePath))
@@ -64,7 +66,8 @@ class JSONTemplateService[F[_]: Effect: Clock](context: AppContext[F], configSer
           "appConfig" -> context.appConfig,
           "nextGid" -> (() => if (template.generateNextId) configService.getAndSetNextGid.toIO.unsafeRunSync() else 0),
           "template" -> template.copy(
-            requester = DistinguishedName(template.requester.value.replace("""\""", """\\"""))) // Handle backslash in a user DN
+                requester = DistinguishedName(template.requester.value.replace("""\""", """\\"""))
+              ) // Handle backslash in a user DN
         )
       )
     }
@@ -81,8 +84,12 @@ class JSONTemplateService[F[_]: Effect: Clock](context: AppContext[F], configSer
         data <- customTemplatesData
         templateInfo <- data
           .find(_._1.metadata.name == templateName)
-          .getOrElse(throw new Exception(s"Template with name $templateName could not be found at " +
-            s"${Paths.get(context.appConfig.templates.templateRoot, "custom")})"))
+          .getOrElse(
+            throw new Exception(
+              s"Template with name $templateName could not be found at " +
+                  s"${Paths.get(context.appConfig.templates.templateRoot, "custom")})"
+            )
+          )
           .pure[F]
         _ <- logger.info("generating {} from {}", templateName, templateInfo._2).pure[F]
         result <- generateWorkspaceRequest(template, templateInfo._2, templateName)
@@ -92,9 +99,11 @@ class JSONTemplateService[F[_]: Effect: Clock](context: AppContext[F], configSer
 
   override def customTemplates: F[List[WorkspaceRequest]] = customTemplatesData.map(_.map(_._1))
 
-  private def generateWorkspaceRequest(templateRequest: TemplateRequest,
-                                       templatePath: String,
-                                       templateName: String): F[WorkspaceRequest] = {
+  private def generateWorkspaceRequest(
+      templateRequest: TemplateRequest,
+      templatePath: String,
+      templateName: String
+  ): F[WorkspaceRequest] = {
     // remove the escape sequences added for json parsing
     for {
       workspaceText <- generateJSON(templateRequest, templatePath, templateName)
@@ -112,25 +121,31 @@ class JSONTemplateService[F[_]: Effect: Clock](context: AppContext[F], configSer
     val defaultCompliance = Compliance(false, false, false)
 
     val simpleTemplateRequest =
-      TemplateRequest("simple",
-                      "simple-summary",
-                      "simple-description",
-                      defaultCompliance,
-                      DistinguishedName("cn=admin,ou=heimdali,dc=io"),
-                      false)
-    val userTemplateRequest = TemplateRequest("user",
-                                              "user-summary",
-                                              "user-description",
-                                              defaultCompliance,
-                                              DistinguishedName("cn=admin,ou=heimdali,dc=io"),
-                                              false)
+      TemplateRequest(
+        "simple",
+        "simple-summary",
+        "simple-description",
+        defaultCompliance,
+        DistinguishedName("cn=admin,ou=heimdali,dc=io"),
+        false
+      )
+    val userTemplateRequest = TemplateRequest(
+      "user",
+      "user-summary",
+      "user-description",
+      defaultCompliance,
+      DistinguishedName("cn=admin,ou=heimdali,dc=io"),
+      false
+    )
     val structuredTemplateRequest =
-      TemplateRequest("structured",
-                      "structured-summary",
-                      "structured-description",
-                      defaultCompliance,
-                      DistinguishedName("cn=admin,ou=heimdali,dc=io"),
-                      false)
+      TemplateRequest(
+        "structured",
+        "structured-summary",
+        "structured-description",
+        defaultCompliance,
+        DistinguishedName("cn=admin,ou=heimdali,dc=io"),
+        false
+      )
 
     val defaultTemplatesRequests = List(simpleTemplateRequest, userTemplateRequest, structuredTemplateRequest)
 

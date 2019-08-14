@@ -27,11 +27,16 @@ trait WorkspaceRequestProvisioning {
 
     override def run[F[_]: Sync: Clock](workspace: WorkspaceRequest, workspaceContext: WorkspaceContext[F]): F[Unit] = {
       val kafkaTopicsNotEnabledMessage = List(
-        (NonEmptyList.one(SimpleMessage(
-           workspace.id.get,
-           s"Kafka topic creation not enabled. To enable topics set the '${AvailableFeatures.messaging}' feature flag")
-           .asInstanceOf[Message]),
-         NoOp.asInstanceOf[ProvisionResult])).pure[F]
+        (
+          NonEmptyList.one(
+            SimpleMessage(
+              workspace.id.get,
+              s"Kafka topic creation not enabled. To enable topics set the '${AvailableFeatures.messaging}' feature flag"
+            ).asInstanceOf[Message]
+          ),
+          NoOp.asInstanceOf[ProvisionResult]
+        )
+      ).pure[F]
 
       val createUserWorkspace =
         (for {
@@ -59,14 +64,16 @@ trait WorkspaceRequestProvisioning {
           f <- workspaceContext.context.featureService.runIfEnabled(
             AvailableFeatures.messaging,
             workspace.kafkaTopics.traverse(_.provision[F](workspaceContext).run),
-            kafkaTopicsNotEnabledMessage)
+            kafkaTopicsNotEnabledMessage
+          )
           g <- workspaceContext.context.featureService.runIfEnabled(
             AvailableFeatures.messaging,
             workspace.kafkaTopics.traverse(
               d =>
                 GroupMember(d.id.get, d.managingRole.ldapRegistration.distinguishedName, workspace.requestedBy.value)
                   .provision[F](workspaceContext)
-                  .run),
+                  .run
+            ),
             kafkaTopicsNotEnabledMessage
           )
           _ <- ImpalaService.invalidateMetadata(workspace.id.get)(workspaceContext.context)

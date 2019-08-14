@@ -69,12 +69,12 @@ object Cluster {
         "id" -> a.id.asJson,
         "name" -> a.name.asJson,
         "cm_url" -> a.cmURL.asJson,
-        "services" -> a.services.foldLeft(Json.obj())((existing, next) =>
-          existing.deepMerge(Json.obj(next.name -> next.asJson))),
+        "services" -> a.services
+              .foldLeft(Json.obj())((existing, next) => existing.deepMerge(Json.obj(next.name -> next.asJson))),
         "distribution" -> Json.obj(
-          "name" -> a.distribution.name.asJson,
-          "version" -> a.distribution.version.asJson
-        ),
+              "name" -> a.distribution.name.asJson,
+              "version" -> a.distribution.version.asJson
+            ),
         "status" -> a.status.asJson
       )
     }

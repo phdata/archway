@@ -98,31 +98,31 @@ object LDAPRepositoryImpl {
 
     def findAllApplications(resourceId: Long): doobie.Query0[LDAPRow] =
       (select ++ fr"inner join application a on a.ldap_registration_id = l.id inner join workspace_application wa on wa.application_id = a.id" ++ whereAnd(
-        fr"a.id = $resourceId"
-      )).query[LDAPRow]
+            fr"a.id = $resourceId"
+          )).query[LDAPRow]
 
     def findAllTopics(resourceId: Long): doobie.Query0[LDAPRow] =
       (select ++ fr"inner join topic_grant tg on tg.ldap_registration_id = l.id inner join kafka_topic t on tg.id IN (t.readonly_role_id, t.manager_role_id)" ++ whereAnd(
-        fr"t.id = $resourceId"
-      )).query[LDAPRow]
+            fr"t.id = $resourceId"
+          )).query[LDAPRow]
 
     def findAllData(resourceId: Long): doobie.Query0[LDAPRow] =
       (select ++ fr"inner join hive_grant hg on hg.ldap_registration_id = l.id inner join hive_database h on hg.id IN (h.readonly_group_id, h.readwrite_group_id, h.manager_group_id)" ++ whereAnd(
-        fr"h.id = $resourceId"
-      )).query[LDAPRow]
+            fr"h.id = $resourceId"
+          )).query[LDAPRow]
 
     def findApplications(resourceId: Long, role: String): doobie.Query0[LDAPRow] =
       (select ++ fr"inner join application a on a.ldap_registration_id = l.id inner join workspace_application wa on wa.application_id = a.id" ++ whereAnd(
-        fr"a.id = $resourceId"
-      )).query[LDAPRow]
+            fr"a.id = $resourceId"
+          )).query[LDAPRow]
 
     def findTopics(resourceId: Long, role: String): doobie.Query0[LDAPRow] =
       (select ++ fr"inner join topic_grant tg on tg.ldap_registration_id = l.id inner join kafka_topic t on " ++ Fragment
-        .const(s"t.${role}_role_id") ++ fr" = tg.id" ++ whereAnd(fr"t.id = $resourceId")).query[LDAPRow]
+            .const(s"t.${role}_role_id") ++ fr" = tg.id" ++ whereAnd(fr"t.id = $resourceId")).query[LDAPRow]
 
     def findData(resourceId: Long, role: String): doobie.Query0[LDAPRow] =
       (select ++ fr"inner join hive_grant hg on hg.ldap_registration_id = l.id inner join hive_database h on " ++ Fragment
-        .const(s"h.${role}_group_id") ++ fr" = hg.id" ++ whereAnd(fr"h.id = $resourceId")).query[LDAPRow]
+            .const(s"h.${role}_group_id") ++ fr" = hg.id" ++ whereAnd(fr"h.id = $resourceId")).query[LDAPRow]
 
     def insert(ldapRegistration: LDAPRegistration): Update0 =
       sql"""

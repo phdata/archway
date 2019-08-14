@@ -8,10 +8,12 @@ import io.phdata.services.ConfigService
 class DefaultLDAPGroupGenerator[F[_]](configService: ConfigService[F])(implicit clock: Clock[F], F: Sync[F])
     extends LDAPGroupGenerator[F] {
 
-  def attributes(cn: String,
-                 dn: DistinguishedName,
-                 role: String,
-                 workspace: WorkspaceRequest): F[List[(String, String)]] =
+  def attributes(
+      cn: String,
+      dn: DistinguishedName,
+      role: String,
+      workspace: WorkspaceRequest
+  ): F[List[(String, String)]] =
     configService.getAndSetNextGid.map { gid =>
       List(
         "dn" -> dn.value,

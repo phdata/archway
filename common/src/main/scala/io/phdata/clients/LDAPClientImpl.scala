@@ -182,9 +182,12 @@ class LDAPClientImpl[F[_]: Effect](ldapConfig: LDAPConfig, binding: LDAPConfig =
     if (!groupEntry.hasAttribute("member") || !groupEntry.getAttributeValues("member").contains(newMember))
       for {
         res <- Effect[F].delay(
-          connectionPool.modify(groupEntry.getDN, new Modification(ModificationType.ADD, "member", newMember)))
+          connectionPool.modify(groupEntry.getDN, new Modification(ModificationType.ADD, "member", newMember))
+        )
       } yield {
-        if (res.getResultCode.intValue() == 0) { Some(()) } else {
+        if (res.getResultCode.intValue() == 0) {
+          Some(())
+        } else {
           logger.error("Adding member failed ", res.getDiagnosticMessage)
           None
         }

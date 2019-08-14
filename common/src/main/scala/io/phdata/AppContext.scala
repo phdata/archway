@@ -109,7 +109,13 @@ object AppContext {
       impalaClient = config.db.impala.map(impalaXA => new ImpalaClientImpl[F](loginContextProvider, impalaXA.impalaTx))
       lookupLDAPClient = new LDAPClientImpl[F](
         config.ldap,
-        config => if (config.lookupBinding.server.isEmpty) { config.provisioningBinding } else { config.lookupBinding })
+        config =>
+          if (config.lookupBinding.server.isEmpty) {
+            config.provisioningBinding
+          } else {
+            config.lookupBinding
+          }
+      )
       provisioningLDAPClient = new LDAPClientImpl[F](config.ldap, _.provisioningBinding)
       hdfsClient = new HDFSClientImpl[F](hadoopConfiguration, loginContextProvider)
       yarnClient = new CDHYarnClient[F](httpClient, config.cluster, clusterService)
@@ -131,35 +137,34 @@ object AppContext {
       topicGrantRepository = new TopicGrantRepositoryImpl
       applicationRepository = new ApplicationRepositoryImpl
       configRepository = new ConfigRepositoryImpl
-    } yield
-      phdata.AppContext[F](
-        config,
-        clusterCache,
-        loginContextProvider,
-        sentryClient,
-        hiveClient,
-        impalaClient,
-        provisioningLDAPClient,
-        lookupLDAPClient,
-        hdfsClient,
-        yarnClient,
-        kafkaClient,
-        emailClient,
-        kerberosClient,
-        clusterService,
-        featureService,
-        metaXA,
-        hiveDatabaseRepository,
-        hiveGrantRepository,
-        ldapRepository,
-        memberRepository,
-        yarnRepository,
-        complianceRepository,
-        workspaceRepository,
-        topicRepository,
-        topicGrantRepository,
-        applicationRepository,
-        approvalRepository,
-        configRepository
-      )
+    } yield phdata.AppContext[F](
+      config,
+      clusterCache,
+      loginContextProvider,
+      sentryClient,
+      hiveClient,
+      impalaClient,
+      provisioningLDAPClient,
+      lookupLDAPClient,
+      hdfsClient,
+      yarnClient,
+      kafkaClient,
+      emailClient,
+      kerberosClient,
+      clusterService,
+      featureService,
+      metaXA,
+      hiveDatabaseRepository,
+      hiveGrantRepository,
+      ldapRepository,
+      memberRepository,
+      yarnRepository,
+      complianceRepository,
+      workspaceRepository,
+      topicRepository,
+      topicGrantRepository,
+      applicationRepository,
+      approvalRepository,
+      configRepository
+    )
 }

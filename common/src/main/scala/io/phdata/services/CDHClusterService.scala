@@ -109,54 +109,55 @@ class CDHClusterService[F[_]: ConcurrentEffect: Clock](
       resourceManagerRoles = yarnRoles.items.filter(_.`type` == CDHClusterService.ResourceManagerRole)
       yarnNodeManagerRoleProps <- yarnRoleConfigRequest(yarn.name, nodeManagerRoles.head.name)
       yarnResourceManagerRoleProps <- yarnRoleConfigRequest(yarn.name, resourceManagerRoles.head.name)
-    } yield
-      Cluster(
-        details.name,
-        details.displayName,
-        clusterConfig.url,
-        List(
-          ClusterApp(
-            "impala",
-            impala,
-            hosts,
-            Map(
-              "beeswax" -> (clusterConfig.beeswaxPort, impalaDaemonRoles),
-              "hiveServer2" -> (clusterConfig.hiveServer2Port, impalaDaemonRoles)
-            )
-          ),
-          ClusterApp(
-            "hive",
-            hive,
-            hosts,
-            Map("thrift" -> (hadoopConfiguration.get("hive.server2.thrift.port", "10000").toInt, hiveServer2Roles))
-          ),
-          hueApp(hue, hosts, hueLBRole),
-          ClusterApp(
-            "yarn",
-            yarn,
-            hosts,
-            Map(
-              "node_manager" -> (resolvePort(yarnNodeManagerRoleProps, 8042, "yarn.nodemanager.webapp.https.address"), resourceManagerRoles),
-              "resource_manager" -> (resolvePort(yarnResourceManagerRoleProps,
-                                                 8088,
-                                                 "yarn.resourcemanager.webapp.https.address"), resourceManagerRoles)
-            )
-          ),
-          ClusterApp(
-            "mgmt",
-            mgmt,
-            hosts,
-            Map(
-              "navigator" -> (mgmtRoleConfigGroups.items
-                .find(_.name == "navigator_server_port")
-                .map(p => p.value.getOrElse(p.default).toInt)
-                .getOrElse(7187), mgmtNavigatorRole)
-            )
+    } yield Cluster(
+      details.name,
+      details.displayName,
+      clusterConfig.url,
+      List(
+        ClusterApp(
+          "impala",
+          impala,
+          hosts,
+          Map(
+            "beeswax" -> (clusterConfig.beeswaxPort, impalaDaemonRoles),
+            "hiveServer2" -> (clusterConfig.hiveServer2Port, impalaDaemonRoles)
           )
         ),
-        CDH(details.fullVersion),
-        details.status
-      ) :: Nil
+        ClusterApp(
+          "hive",
+          hive,
+          hosts,
+          Map("thrift" -> (hadoopConfiguration.get("hive.server2.thrift.port", "10000").toInt, hiveServer2Roles))
+        ),
+        hueApp(hue, hosts, hueLBRole),
+        ClusterApp(
+          "yarn",
+          yarn,
+          hosts,
+          Map(
+            "node_manager" -> (resolvePort(yarnNodeManagerRoleProps, 8042, "yarn.nodemanager.webapp.https.address"), resourceManagerRoles),
+            "resource_manager" -> (resolvePort(
+                  yarnResourceManagerRoleProps,
+                  8088,
+                  "yarn.resourcemanager.webapp.https.address"
+                ), resourceManagerRoles)
+          )
+        ),
+        ClusterApp(
+          "mgmt",
+          mgmt,
+          hosts,
+          Map(
+            "navigator" -> (mgmtRoleConfigGroups.items
+                  .find(_.name == "navigator_server_port")
+                  .map(p => p.value.getOrElse(p.default).toInt)
+                  .getOrElse(7187), mgmtNavigatorRole)
+          )
+        )
+      ),
+      CDH(details.fullVersion),
+      details.status
+    ) :: Nil
 
   private def resolvePort(roleProperties: ListContainer[RoleProperty], defaultPort: Int, name: String): Int = {
     roleProperties.items

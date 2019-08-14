@@ -153,9 +153,9 @@ class MemberRepositoryImpl(sqlSyntax: SqlSyntax) extends MemberRepository {
 
     def find(workspaceRequestId: Long, distinguished_name: DistinguishedName): Query0[MemberRightsRecord] =
       (listSelect ++ whereAnd(
-        fr"workspace_request_id = $workspaceRequestId",
-        fr"distinguished_name = ${distinguished_name.value}"
-      )).query
+            fr"workspace_request_id = $workspaceRequestId",
+            fr"distinguished_name = ${distinguished_name.value}"
+          )).query
 
   }
 

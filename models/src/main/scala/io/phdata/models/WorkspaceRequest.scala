@@ -104,22 +104,21 @@ object WorkspaceRequest {
         applications <- json.downField("applications").as[List[Application]]
         topics <- json.downField("topics").as[List[KafkaTopic]]
         metadata <- json.downField("metadata").as[Metadata]
-      } yield
-        WorkspaceRequest(
-          name,
-          summary,
-          description,
-          behavior,
-          userDN,
-          instant,
-          compliance,
-          singleUser,
-          data = data,
-          processing = processing,
-          applications = applications,
-          kafkaTopics = topics,
-          metadata = metadata
-        )
+      } yield WorkspaceRequest(
+        name,
+        summary,
+        description,
+        behavior,
+        userDN,
+        instant,
+        compliance,
+        singleUser,
+        data = data,
+        processing = processing,
+        applications = applications,
+        kafkaTopics = topics,
+        metadata = metadata
+      )
   }
 
 }

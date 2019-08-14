@@ -23,23 +23,24 @@ class DefaultTopicGenerator[F[_]](appConfig: AppConfig, ldapGroupGenerator: LDAP
     val readonlyName = s"${workspaceSystemName}_${topicSystemName}_ro"
 
     for {
-      manager <- ldapGroupGenerator.generate(managerName,
-                                             DistinguishedName(s"cn=$managerName,${appConfig.ldap.groupPath}"),
-                                             s"role_$managerName",
-                                             workspaceRequest)
+      manager <- ldapGroupGenerator.generate(
+        managerName,
+        DistinguishedName(s"cn=$managerName,${appConfig.ldap.groupPath}"),
+        s"role_$managerName",
+        workspaceRequest
+      )
       readonly <- ldapGroupGenerator.generate(
         readonlyName,
         DistinguishedName(s"cn=$readonlyName,${appConfig.ldap.groupPath}"),
         s"role_$readonlyName",
         workspaceRequest
       )
-    } yield
-      KafkaTopic(
-        registeredName,
-        partitions,
-        replicationFactor,
-        TopicGrant(registeredName, manager, "read,describe"),
-        TopicGrant(registeredName, readonly, "read")
-      )
+    } yield KafkaTopic(
+      registeredName,
+      partitions,
+      replicationFactor,
+      TopicGrant(registeredName, manager, "read,describe"),
+      TopicGrant(registeredName, readonly, "read")
+    )
   }
 }

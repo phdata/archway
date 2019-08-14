@@ -15,10 +15,12 @@ class DefaultApplicationGenerator[F[_]](appConfig: AppConfig, ldapGroupGenerator
   override def applicationFor(application: ApplicationRequest, workspace: WorkspaceRequest): F[Application] = {
     val consumerGroup = s"${TemplateRequest.generateName(workspace.name)}_${application.name}_cg"
     ldapGroupGenerator
-      .generate(consumerGroup,
-                DistinguishedName(s"cn=$consumerGroup,${appConfig.ldap.groupPath}"),
-                s"role_$consumerGroup",
-                workspace)
+      .generate(
+        consumerGroup,
+        DistinguishedName(s"cn=$consumerGroup,${appConfig.ldap.groupPath}"),
+        s"role_$consumerGroup",
+        workspace
+      )
       .map { ldap =>
         Application(
           application.name,

@@ -68,7 +68,7 @@ class HiveClientImpl[F[_]](loginContextProvider: LoginContextProvider, transacto
   override def createTable(database: String, name: String): F[Int] = {
     loginContextProvider.hadoopInteraction[F, Int] {
       (sql"""CREATE TABLE IF NOT EXISTS """ ++ Fragment.const(database) ++ fr"." ++ Fragment.const(name) ++
-        fr"(id SMALLINT)").update.run.transact(transactor)
+          fr"(id SMALLINT)").update.run.transact(transactor)
     }
   }
 

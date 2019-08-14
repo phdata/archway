@@ -31,7 +31,7 @@ class CMClient[F[_]: Async: ConcurrentEffect](client: Resource[F, Client[F]], cl
         raw <- Async[F].pure(
           request.withHeaders(
             request.headers ++
-              Headers.of(Authorization(BasicCredentials(clusterConfig.admin.username, clusterConfig.admin.password)))
+                Headers.of(Authorization(BasicCredentials(clusterConfig.admin.username, clusterConfig.admin.password)))
           )
         )
         _ <- Async[F].pure(logger.debug("raw request to CM API. Enable trace logging for further information: {}", raw))

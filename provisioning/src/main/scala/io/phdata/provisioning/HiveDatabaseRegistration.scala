@@ -39,10 +39,12 @@ object HiveDatabaseRegistration extends LazyLogging {
           .value
           .transact(workspaceContext.context.transactor)
           .map(_.get)
-        _ <- workspaceContext.context.hiveClient.createDatabase(hiveDatabaseRegistration.name,
-                                                                hiveDatabaseRegistration.location,
-                                                                workspace.summary,
-                                                                createDBProperties(workspace))
+        _ <- workspaceContext.context.hiveClient.createDatabase(
+          hiveDatabaseRegistration.name,
+          hiveDatabaseRegistration.location,
+          workspace.summary,
+          createDBProperties(workspace)
+        )
       } yield ()
     }
   }

@@ -50,15 +50,15 @@ class CDHYarnClient[F[_]: Sync](http: HttpClient[F], clusterConfig: ClusterConfi
   def config(poolName: String, cores: Cores, memory: Memory): Json = Json.obj(
     "name" -> Json.fromString(poolName.split("\\.").last),
     "schedulablePropertiesList" -> Json.arr(
-      Json.obj(
-        "maxResources" -> Json.obj(
-          "memory" -> Json.fromDouble(memory * 1024).get,
-          "vcores" -> Json.fromInt(cores)
+          Json.obj(
+            "maxResources" -> Json.obj(
+                  "memory" -> Json.fromDouble(memory * 1024).get,
+                  "vcores" -> Json.fromInt(cores)
+                ),
+            "scheduleName" -> Json.fromString("default"),
+            "weight" -> Json.fromDouble(1.0).get
+          )
         ),
-        "scheduleName" -> Json.fromString("default"),
-        "weight" -> Json.fromDouble(1.0).get
-      )
-    ),
     "schedulingPolicy" -> Json.fromString("drf")
   )
 

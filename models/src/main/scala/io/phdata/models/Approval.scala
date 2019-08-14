@@ -22,9 +22,9 @@ object Approval {
   implicit val encoder: Encoder[Approval] = Encoder.instance { approval =>
     Json.obj(
       approval.role.toString.toLowerCase -> Json.obj(
-        "approver" -> approval.approver.asJson,
-        "approval_time" -> approval.approvalTime.asJson
-      )
+            "approver" -> approval.approver.asJson,
+            "approval_time" -> approval.approvalTime.asJson
+          )
     )
   }
 
