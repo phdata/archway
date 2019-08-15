@@ -81,8 +81,7 @@ ship()
 {
   pushd ${PUBLISH_DIR}
   READY_DIR=$(echo "${ARCHWAY_VERSION}")
-  curl -u${ARTIFACTORY_USER}:${ARTIFACTORY_TOKEN} -T manifest.json https://repository.phdata.io/artifactory/$DEPLOY_REPO/io/phdata/${ARCHWAY_VERSION}/manifest.json
-  curl -u${ARTIFACTORY_USER}:${ARTIFACTORY_TOKEN} -T ARCHWAY-${ARCHWAY_VERSION}.jar https://repository.phdata.io/artifactory/$DEPLOY_REPO/io/phdata/${ARCHWAY_VERSION}/ARCHWAY-${ARCHWAY_VERSION}.jar
+  curl -u${ARTIFACTORY_USER}:${ARTIFACTORY_TOKEN} -T manifest.json https://repository.phdata.io/artifactory/$DEPLOY_REPO/phdata/archway/${ARCHWAY_VERSION}/manifest.json
 
   push archway
 
@@ -93,12 +92,12 @@ push()
 {
   ARTIFACT=$1
   READY_DIR=$(echo "${ARTIFACT}-${ARCHWAY_VERSION}" | tr a-z A-Z)
-  curl -u${ARTIFACTORY_USER}:${ARTIFACTORY_TOKEN} -T ${READY_DIR}-el6.parcel https://repository.phdata.io/artifactory/$DEPLOY_REPO/io/phdata/${ARCHWAY_VERSION}/${READY_DIR}-el6.parcel
-  curl -u${ARTIFACTORY_USER}:${ARTIFACTORY_TOKEN} -T ${READY_DIR}-el7.parcel https://repository.phdata.io/artifactory/$DEPLOY_REPO/io/phdata/${ARCHWAY_VERSION}/${READY_DIR}-el7.parcel
-  curl -u${ARTIFACTORY_USER}:${ARTIFACTORY_TOKEN} -T ${READY_DIR}-xenial.parcel https://repository.phdata.io/artifactory/$DEPLOY_REPO/io/phdata/${ARCHWAY_VERSION}/${READY_DIR}-xenial.parcel
-  curl -u${ARTIFACTORY_USER}:${ARTIFACTORY_TOKEN} -T ${READY_DIR}-el6.parcel.sha https://repository.phdata.io/artifactory/$DEPLOY_REPO/io/phdata/${ARCHWAY_VERSION}/${READY_DIR}-el6.parcel.sha
-  curl -u${ARTIFACTORY_USER}:${ARTIFACTORY_TOKEN} -T ${READY_DIR}-el7.parcel.sha https://repository.phdata.io/artifactory/$DEPLOY_REPO/io/phdata/${ARCHWAY_VERSION}/${READY_DIR}-el7.parcel.sha
-  curl -u${ARTIFACTORY_USER}:${ARTIFACTORY_TOKEN} -T ${READY_DIR}-xenial.parcel.sha https://repository.phdata.io/artifactory/$DEPLOY_REPO/io/phdata/${ARCHWAY_VERSION}/${READY_DIR}-xenial.parcel.sha
+  curl -u${ARTIFACTORY_USER}:${ARTIFACTORY_TOKEN} -T ${READY_DIR}-el6.parcel https://repository.phdata.io/artifactory/$DEPLOY_REPO/phdata/archwya/${ARCHWAY_VERSION}/${READY_DIR}-el6.parcel
+  curl -u${ARTIFACTORY_USER}:${ARTIFACTORY_TOKEN} -T ${READY_DIR}-el7.parcel https://repository.phdata.io/artifactory/$DEPLOY_REPO/phdata/archway/${ARCHWAY_VERSION}/${READY_DIR}-el7.parcel
+  curl -u${ARTIFACTORY_USER}:${ARTIFACTORY_TOKEN} -T ${READY_DIR}-xenial.parcel https://repository.phdata.io/artifactory/$DEPLOY_REPO/phdata/archway/${ARCHWAY_VERSION}/${READY_DIR}-xenial.parcel
+  curl -u${ARTIFACTORY_USER}:${ARTIFACTORY_TOKEN} -T ${READY_DIR}-el6.parcel.sha https://repository.phdata.io/artifactory/$DEPLOY_REPO/phdata/archway/${ARCHWAY_VERSION}/${READY_DIR}-el6.parcel.sha
+  curl -u${ARTIFACTORY_USER}:${ARTIFACTORY_TOKEN} -T ${READY_DIR}-el7.parcel.sha https://repository.phdata.io/artifactory/$DEPLOY_REPO/phdata/archway/${ARCHWAY_VERSION}/${READY_DIR}-el7.parcel.sha
+  curl -u${ARTIFACTORY_USER}:${ARTIFACTORY_TOKEN} -T ${READY_DIR}-xenial.parcel.sha https://repository.phdata.io/artifactory/$DEPLOY_REPO/phdata/archway/${ARCHWAY_VERSION}/${READY_DIR}-xenial.parcel.sha
 }
 
 case $1 in

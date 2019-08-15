@@ -4,5 +4,5 @@ set -xeu
 SOURCE_REPO="${SOURCE_REPO:-parcels-dev}"
 TARGET_REPO="${TARGET_REPO:-parcels-release}"
 
-curl --fail -u${ARTIFACTORY_USER}:${ARTIFACTORY_TOKEN} -X POST "https://repository.phdata.io/artifactory/api/move/${SOURCE_REPO}/io/phdata/${SOURCE_VERSION}?to=/${TARGET_REPO}/phdata/archway/${TARGET_VERSION}"
+curl --fail -u${ARTIFACTORY_USER}:${ARTIFACTORY_TOKEN} -X POST "https://repository.phdata.io/artifactory/api/copy/${SOURCE_REPO}/phdata/archway/${SOURCE_VERSION}?to=/${TARGET_REPO}/phdata/archway/${TARGET_VERSION}"
 echo "Successfully moved the artifactory to ${TARGET_REPO}"
