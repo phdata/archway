@@ -37,7 +37,7 @@ class EmailClientImpl[F[_]: Effect](appConfig: AppConfig, executionContext: Exec
           result.onComplete {
             case Success(value) => logger.debug(s"Sent notification mail from ${from.addr} to ${to.addr}")
             case Failure(exception) =>
-              logger.error(s"Failed to send email to ${from.addr} ${exception.getLocalizedMessage}", exception)
+              logger.error(s"Failed to send email to ${to.addr} ${exception.getLocalizedMessage}", exception)
           }(executionContext)
 
           result
