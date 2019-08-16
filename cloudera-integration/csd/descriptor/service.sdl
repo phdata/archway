@@ -641,7 +641,7 @@
           "description": "The Mustache template used for displaying members when adding and showing existing members",
           "required": "false",
           "type": "string",
-          "default": "{{ name }} ({{ sAMAccountName }})"
+          "default": "{{ sAMAccountName }} ({{ name }})"
         },
         {
           "name": "archway.featureFlags",
