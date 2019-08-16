@@ -10,6 +10,7 @@ export const workspaceSelector = (state: any) => state.get('details');
 export const workspaceListSelector = (state: any) => state.get('listing');
 export const riskSelector = (state: any) => state.get('risk');
 export const opsSelector = (state: any) => state.get('operations');
+export const manageSelector = (state: any) => state.get('manage');
 export const homeSelector = (state: any) => state.get('home');
 export const templatesSelector = (state: any) => state.get('templates');
 export const configSelector = (state: any) => state.get('config');

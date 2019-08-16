@@ -23,6 +23,7 @@ export enum FeatureFlagType {
   Application = 'application',
   Messaging = 'messaging',
   DeleteWorkspace = 'workspace-delete',
+  ManageTab = 'manage-tab',
 }
 
 export enum ProvisioningType {
@@ -45,4 +46,10 @@ export enum NotificationType {
   Info = 'info',
   Warning = 'warning',
   Error = 'error',
+}
+
+export enum ComplianceType {
+  PCI = 'pci',
+  PII = 'pii',
+  PHI = 'phi',
 }

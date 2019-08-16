@@ -7,6 +7,7 @@ import listing from '../containers/WorkspaceListing/reducers';
 import risk from '../containers/RiskListing/reducers';
 import operations from '../containers/OpsListing/reducers';
 import request from '../containers/WorkspaceRequest/reducers';
+import manage from '../containers/Manage/reducers';
 import { reducer as form } from 'redux-form/immutable';
 import home from '../containers/Home/reducers';
 import templates from '../containers/CustomWorkspaces/reducers';
@@ -31,6 +32,7 @@ const reducers = combineReducers<any>({
   risk,
   operations,
   request,
+  manage,
   cluster,
   details,
   form,

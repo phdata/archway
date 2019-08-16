@@ -5,6 +5,7 @@ import workspace from '../containers/WorkspaceDetails/sagas';
 import listing from '../containers/WorkspaceListing/sagas';
 import risk from '../containers/RiskListing/sagas';
 import operations from '../containers/OpsListing/sagas';
+import manage from '../containers/Manage/sagas';
 import request from '../containers/WorkspaceRequest/sagas';
 import home from '../containers/Home/sagas';
 import templates from '../containers/CustomWorkspaces/sagas';
@@ -14,7 +15,7 @@ import * as actions from './actions';
 const { config = {} } = window as any;
 const isDevMode = config.isDevMode === 'true';
 
-const sagas = [login, cluster, request, workspace, listing, risk, operations, home, templates];
+const sagas = [login, cluster, request, workspace, listing, risk, operations, manage, home, templates];
 
 export const CANCEL_SAGAS_HMR = 'CANCEL_SAGAS_HMR';
 

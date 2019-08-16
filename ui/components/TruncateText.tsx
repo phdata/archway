@@ -4,9 +4,11 @@ interface Props {
   text: string;
   maxLine: number;
   lineHeight: number;
+  style?: React.CSSProperties;
 }
 
-const TruncateText = ({ text, maxLine, lineHeight }: Props) => (
+// tslint:disable-next-line: no-shadowed-variable
+const TruncateText = ({ text, maxLine, lineHeight, style }: Props) => (
   <div
     style={{
       overflow: 'hidden',
@@ -17,6 +19,7 @@ const TruncateText = ({ text, maxLine, lineHeight }: Props) => (
       WebkitLineClamp: maxLine,
       WebkitBoxOrient: 'vertical',
       wordBreak: 'break-all',
+      ...style,
     }}
   >
     {text}

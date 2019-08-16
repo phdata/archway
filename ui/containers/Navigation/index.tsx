@@ -6,6 +6,8 @@ import { NavLink, withRouter, RouteComponentProps, Link } from 'react-router-dom
 import { ClusterInfo, Profile } from './components';
 import * as selectors from '../../redux/selectors';
 import { Profile as UserProfile } from '../../models/Profile';
+import { Feature } from '../../components';
+import { FeatureFlagType } from '../../constants';
 
 function getKeyFromPath(path: string): string {
   if (path.startsWith('/home')) {
@@ -19,6 +21,9 @@ function getKeyFromPath(path: string): string {
   }
   if (path.startsWith('/risks')) {
     return 'risks';
+  }
+  if (path.startsWith('/manage')) {
+    return 'manage';
   }
   if (path.startsWith('/operations')) {
     return 'operations';
@@ -52,7 +57,7 @@ const Navigation = ({ location, profile }: Props) => (
       mode="inline"
     >
       <Menu.Item key="home">
-        <NavLink to="/">
+        <NavLink to="/home">
           <Icon type="home" style={{ fontSize: 18 }} /> Overview
         </NavLink>
       </Menu.Item>
@@ -75,6 +80,15 @@ const Navigation = ({ location, profile }: Props) => (
           </NavLink>
         </Menu.Item>
       )}
+      <Feature flag={FeatureFlagType.ManageTab}>
+        {profile && (profile.permissions.platform_operations || profile.permissions.risk_management) && (
+          <Menu.Item key="manage">
+            <NavLink to="/manage">
+              <Icon type="profile" style={{ fontSize: 18 }} /> Manage
+            </NavLink>
+          </Menu.Item>
+        )}
+      </Feature>
       <Menu.Item key="request">
         <NavLink to="/request">
           <Icon type="plus" style={{ fontSize: 18 }} /> New Workspace

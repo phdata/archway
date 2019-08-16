@@ -1,4 +1,5 @@
 import { Workspace } from '../models/Workspace';
+import { ComplianceContent } from '../models/Manage';
 import { SPNEGO } from '../constants';
 
 const { config = {} } = window as any;
@@ -142,6 +143,11 @@ export const getAuthtype = () => get('/auth-type');
 export const getFeatureFlags = (token: string) => get('/account/feature-flags', token);
 
 export const getCustomDescriptions = (token: string) => get('/templates/custom', token);
+
+export const getCompliances = (token: string) => get('/workspace/questions', token);
+
+export const requestCompliance = (token: string, compliance: ComplianceContent) =>
+  withBody('/workspace/questions', token, { compliance });
 
 export const requestTopic = (token: string, id: number, name: string, partitions: number, replication_factor: number) =>
   withBody(`/workspaces/${id}/topics`, token, { name, partitions, replication_factor });
