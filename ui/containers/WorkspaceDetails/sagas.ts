@@ -46,6 +46,8 @@ import {
   clearNotificationStatus,
   setWorkspaceFetching,
   setUserSuggestionsLoading,
+  REQUEST_CHANGE_WORKSPACE_OWNER,
+  setOwnerLoading,
 } from './actions';
 import { ErrorMessages } from './constants';
 import { RECENT_WORKSPACES_KEY, TOKEN_EXTRACTOR, NotificationType } from '../../constants';
@@ -57,6 +59,7 @@ const router = require('connected-react-router/immutable');
 
 export const detailExtractor = (s: any) => s.getIn(['details', 'details']);
 export const memberRequestFormExtractor = (s: any) => s.getIn(['form', 'simpleMemberRequest', 'values']);
+export const ownerDnExtractor = (s: any) => s.getIn(['form', 'changeOwnerRequest', 'values']);
 export const topicMemberRequestFormExtractor = (s: any) => s.getIn(['form', 'simpleTopicMemberRequest', 'values']);
 export const activeTopicExtractor = (s: any) => s.getIn(['details', 'activeTopic']);
 
@@ -352,6 +355,26 @@ function* provisionWorkspaceRequestedListener() {
   yield takeLatest(REQUEST_PROVISION_WORKSPACE, provisionWorkspaceRequested);
 }
 
+function* changeWorkspaceOwnerRequested() {
+  const token = yield select(TOKEN_EXTRACTOR);
+  const { id, name } = (yield select(detailExtractor)).toJS();
+  const ownerDn = (yield select(ownerDnExtractor)).toJS().username;
+  try {
+    yield put(setOwnerLoading(true));
+    yield call(Api.changeWorkspaceOwner, token, id, ownerDn);
+  } catch {
+    yield put(setNotificationStatus(NotificationType.Error, `Failed to change the owner of ${name}`));
+  } finally {
+    yield put(clearNotificationStatus());
+    yield put(setOwnerLoading(false));
+    yield put(setActiveModal(false));
+  }
+}
+
+function* changeWorkspaceOwnerRequestedListener() {
+  yield takeLatest(REQUEST_CHANGE_WORKSPACE_OWNER, changeWorkspaceOwnerRequested);
+}
+
 export default function* root() {
   yield all([
     fork(workspaceRequest),
@@ -367,5 +390,6 @@ export default function* root() {
     fork(deleteWorkspaceRequestedListener),
     fork(deprovisionWorkspaceRequestedListener),
     fork(provisionWorkspaceRequestedListener),
+    fork(changeWorkspaceOwnerRequestedListener),
   ]);
 }

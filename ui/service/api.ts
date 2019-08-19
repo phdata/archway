@@ -146,6 +146,9 @@ export const getCustomDescriptions = (token: string) => get('/templates/custom',
 
 export const getCompliances = (token: string) => get('/workspace/questions', token);
 
+export const changeWorkspaceOwner = (token: string, id: number, ownerDn: string) =>
+  withBody(`/workspace/${id}/owner/${ownerDn}`, token);
+
 export const requestCompliance = (token: string, compliance: ComplianceContent) =>
   withBody('/workspace/questions', token, { compliance });
 

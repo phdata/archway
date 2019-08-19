@@ -39,6 +39,7 @@ export enum ModalType {
   Kafka = 'kafka',
   SimpleTopicMember = 'simpleTopicMember',
   SimpleMember = 'simpleMember',
+  ChangeOwner = 'changeOwner',
 }
 
 export enum NotificationType {

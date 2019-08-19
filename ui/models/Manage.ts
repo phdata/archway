@@ -13,3 +13,8 @@ export interface ComplianceContent {
   description: string;
   questions: Question[];
 }
+
+export interface MemberForm {
+  username: string;
+  roles: object;
+}

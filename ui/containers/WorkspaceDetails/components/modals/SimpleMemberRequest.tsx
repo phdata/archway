@@ -1,10 +1,13 @@
 import * as React from 'react';
-import { AutoComplete, Row, Radio, Spin, Icon } from 'antd';
+import { Row, Radio } from 'antd';
 import { InjectedFormProps } from 'redux-form';
 import { Field } from 'redux-form/immutable';
 import { reduxForm } from 'redux-form/immutable';
 import FieldLabel from '../../../../components/FieldLabel';
-import { UserSuggestions, UserSuggestion, HiveAllocation } from './../../../../models/Workspace';
+import { UserSuggestions, HiveAllocation } from './../../../../models/Workspace';
+import { MemberForm } from '../../../../models/Manage';
+import MemberSearchBar from '../MemberSearchBar';
+import { ShowTypes } from '../../constants';
 
 /* tslint:disable:no-var-requires */
 const { createComponent, customMap } = require('redux-form-antd');
@@ -27,19 +30,6 @@ const RadioField = createComponent(
   }))
 );
 
-const ReduxAutoComplete = createComponent(
-  AutoComplete,
-  customMap((mapProps: any, { input: { onChange } }: any) => ({
-    ...mapProps,
-    onChange: (v: any) => onChange(v),
-  }))
-);
-
-interface SimpleMemberForm {
-  username: string;
-  roles: object;
-}
-
 interface SimpleMemberRequestProps {
   allocations: HiveAllocation[];
   suggestions?: UserSuggestions;
@@ -48,62 +38,20 @@ interface SimpleMemberRequestProps {
   handleSubmit?: () => void;
 }
 
-const renderGroup = (group: any) => (
-  <AutoComplete.OptGroup
-    key={group.title}
-    label={<span style={{ fontSize: '14px', fontWeight: 'bold' }}>{group.title}</span>}
-  >
-    {group.children.map((opt: any) => (
-      <AutoComplete.Option key={opt.value} value={opt.value}>
-        {opt.text}
-      </AutoComplete.Option>
-    ))}
-  </AutoComplete.OptGroup>
-);
-
 const SimpleMemberRequest = ({
   allocations,
   suggestions,
   loading,
   onSearch,
   handleSubmit,
-}: InjectedFormProps<SimpleMemberForm, {}> & SimpleMemberRequestProps) => (
-  <form style={{}} onSubmit={handleSubmit}>
-    <FieldLabel>MEMBER ID SEARCH</FieldLabel>
-    <div style={{ position: 'relative' }}>
-      <Field
-        name="username"
-        dataSource={
-          suggestions
-            ? [
-                renderGroup({
-                  title: 'Users',
-                  children: suggestions.users.map((item: UserSuggestion) => ({
-                    text: item.display,
-                    value: item.distinguished_name,
-                  })),
-                }),
-                renderGroup({
-                  title: 'Groups',
-                  children: suggestions.groups.map((item: UserSuggestion) => ({
-                    text: item.display,
-                    value: item.distinguished_name,
-                  })),
-                }),
-              ]
-            : []
-        }
-        onSearch={onSearch}
-        component={ReduxAutoComplete}
-        style={{ marginBottom: 0 }}
-      />
-      {loading && (
-        <Spin
-          indicator={<Icon type="sync" style={{ fontSize: 20 }} spin />}
-          style={{ position: 'absolute', top: 6, right: 6 }}
-        />
-      )}
-    </div>
+}: InjectedFormProps<MemberForm, {}> & SimpleMemberRequestProps) => (
+  <form onSubmit={handleSubmit}>
+    <MemberSearchBar
+      loading={loading}
+      suggestions={suggestions}
+      showTypes={[ShowTypes.Users, ShowTypes.Groups]}
+      onSearch={onSearch}
+    />
     {allocations.map((allocation: HiveAllocation) => {
       return (
         <div key={allocation.name}>
@@ -143,7 +91,7 @@ const SimpleMemberRequest = ({
   </form>
 );
 
-export default reduxForm<SimpleMemberForm, SimpleMemberRequestProps>({
+export default reduxForm<MemberForm, SimpleMemberRequestProps>({
   form: 'simpleMemberRequest',
   initialValues: {
     username: '',

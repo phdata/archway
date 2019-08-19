@@ -154,3 +154,9 @@ export const getUserSuggestionsLoading = () =>
     workspaceSelector,
     workspaceState => workspaceState.get('userSuggestionsLoading')
   );
+
+export const getOwnerLoading = () =>
+  createSelector(
+    workspaceSelector,
+    workspaceState => workspaceState.get('ownerLoading')
+  );

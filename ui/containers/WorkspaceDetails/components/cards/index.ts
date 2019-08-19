@@ -12,3 +12,4 @@ export { default as TopicPermissionsCard } from './TopicPermissionsCard';
 export { default as ApplicationCard } from './ApplicationCard';
 export { default as YarnResourceCard } from './YarnResourceCard';
 export { default as ManageCard } from './ManageCard';
+export { default as ChangeOwnerCard } from './ChangeOwnerCard';

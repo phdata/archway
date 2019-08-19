@@ -330,3 +330,14 @@ export const setUserSuggestionsLoading = (loading: boolean) => ({
   type: SET_USERSUGGESTIONS_LOADING,
   loading,
 });
+
+export const REQUEST_CHANGE_WORKSPACE_OWNER = 'CHANGE_WORKSPACE_OWNER';
+export const requestChangeWorkspaceOwner = () => ({
+  type: REQUEST_CHANGE_WORKSPACE_OWNER,
+});
+
+export const SET_OWNER_LOADING = 'SET_OWNER_LOADING';
+export const setOwnerLoading = (loading: boolean) => ({
+  type: SET_OWNER_LOADING,
+  loading,
+});

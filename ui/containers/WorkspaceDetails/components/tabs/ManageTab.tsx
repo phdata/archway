@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Row, Col } from 'antd';
 
-import { ManageCard } from '../cards';
+import { ManageCard, ChangeOwnerCard } from '../cards';
 import { ProvisioningType, ModalType, FeatureFlagType } from '../../../../constants';
 import { Feature } from '../../../../components';
 
@@ -12,7 +12,7 @@ interface Props {
 
 const ManageTab = ({ provisioning, showModal }: Props) => (
   <div style={{ padding: 16, fontSize: 17 }}>
-    <Row gutter={16} type="flex">
+    <Row gutter={16} type="flex" style={{ marginBottom: 16 }}>
       <Col style={{ flex: 1 }}>
         <ManageCard
           title="PROVISION"
@@ -52,6 +52,16 @@ const ManageTab = ({ provisioning, showModal }: Props) => (
           Deprovisioning a workspace will attempt to remove components of the workspace including Hive databases, AD
           groups, and Sentry roles. Deleting a workspace will not remove any data on HDFS.
         </ManageCard>
+      </Col>
+    </Row>
+    <Row gutter={16} type="flex" justify="center">
+      <Col sm={{ span: 24 }} lg={{ span: 8 }} style={{ textAlign: 'center' }}>
+        <ChangeOwnerCard
+          title="CHANGE WORKSPACE OWNER"
+          showModal={showModal}
+          modalType={ModalType.ChangeOwner}
+          buttonText="Change Owner"
+        />
       </Col>
     </Row>
   </div>

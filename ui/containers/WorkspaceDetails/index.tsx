@@ -20,6 +20,7 @@ import {
   ApplicationRequest,
   ManageTab,
   WarningText,
+  ChangeOwnerRequest,
 } from './components';
 import { Cluster } from '../../models/Cluster';
 import { Profile } from '../../models/Profile';
@@ -69,6 +70,7 @@ interface Props extends RouteComponentProps<DetailsRouteProps> {
   featureFlags: string[];
   fetching: boolean;
   userSuggestionsLoading: boolean;
+  ownerLoading: boolean;
 
   clearDetails: () => void;
   getWorkspaceDetails: (id: number) => void;
@@ -89,6 +91,7 @@ interface Props extends RouteComponentProps<DetailsRouteProps> {
   deleteWorkspace: () => void;
   deprovisionWorkspace: () => void;
   provisionWorkspace: () => void;
+  changeWorkspaceOwner: () => void;
 }
 
 class WorkspaceDetails extends React.PureComponent<Props> {
@@ -217,6 +220,8 @@ class WorkspaceDetails extends React.PureComponent<Props> {
       featureFlags,
       fetching,
       userSuggestionsLoading,
+      changeWorkspaceOwner,
+      ownerLoading,
     } = this.props;
     const hasApplicationFlag = featureFlags.includes(FeatureFlagType.Application);
     const hasMessagingFlag = featureFlags.includes(FeatureFlagType.Messaging);
@@ -399,6 +404,20 @@ class WorkspaceDetails extends React.PureComponent<Props> {
         >
           <WarningText message="Are you sure you want to reprovision this workspace? Provisioning can take up to 15 minutes. It is not necessary to keep this page open." />
         </Modal>
+        <Modal
+          visible={activeModal === ModalType.ChangeOwner}
+          title="Change Workspace Owner"
+          onCancel={clearModal}
+          onOk={changeWorkspaceOwner}
+          confirmLoading={ownerLoading}
+          okText="Confirm"
+        >
+          <ChangeOwnerRequest
+            loading={userSuggestionsLoading}
+            onSearch={this.handleMemberSearch}
+            suggestions={userSuggestions}
+          />
+        </Modal>
       </div>
     );
   }
@@ -425,6 +444,7 @@ const mapStateToProps = () =>
     featureFlags: getFeatureFlags(),
     fetching: selectors.getFetching(),
     userSuggestionsLoading: selectors.getUserSuggestionsLoading(),
+    ownerLoading: selectors.getOwnerLoading(),
   });
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
@@ -465,6 +485,7 @@ const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
   deleteWorkspace: () => dispatch(actions.requestDeleteWorkspace()),
   deprovisionWorkspace: () => dispatch(actions.requestDeprovisionWorkspace()),
   provisionWorkspace: () => dispatch(actions.requestProvisionWorkspace()),
+  changeWorkspaceOwner: () => dispatch(actions.requestChangeWorkspaceOwner()),
 });
 
 export default connect(
