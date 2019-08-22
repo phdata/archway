@@ -8,7 +8,7 @@ import { Cluster } from '../../../../models/Cluster';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { tomorrowNightEighties } from 'react-syntax-highlighter/dist/styles/hljs';
 import CardHeader from '../cards/CardHeader';
-import { ModalType } from '../../../../constants';
+import { ModalType, ProvisioningType } from '../../../../constants';
 
 interface Props {
   workspace?: Workspace;
@@ -18,6 +18,8 @@ interface Props {
   members?: Member[];
   selectedAllocation?: HiveAllocation;
   memberLoading: boolean;
+  provisioning: ProvisioningType;
+
   showModal: (e: React.MouseEvent, type: ModalType) => void;
   onChangeAllocation: (allocation: HiveAllocation) => void;
   onChangeMemberRole: (distinguished_name: string, roleId: number, role: string, resource: string) => void;
@@ -37,6 +39,7 @@ class DataTab extends React.Component<Props> {
       requestRefreshHiveTables,
       removeMember,
       memberLoading,
+      provisioning,
     } = this.props;
 
     if (!workspace) {
@@ -90,6 +93,7 @@ LOCATION '${allocation.location}/new_data/landing'`}
                       }}
                       removeMember={removeMember}
                       memberLoading={memberLoading}
+                      addMemberDisabled={provisioning === ProvisioningType.Pending}
                     />
                   </Col>
                 </Row>

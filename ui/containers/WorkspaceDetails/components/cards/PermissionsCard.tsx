@@ -9,6 +9,7 @@ interface Props {
   allocation: HiveAllocation;
   members?: Member[];
   memberLoading: boolean;
+  addMemberDisabled: boolean;
   showModal: (e: React.MouseEvent, type: ModalType) => void;
   onChangeMemberRole: (member: Member, id: number, role: string) => void;
   removeMember: (distinguished_name: string, roleId: number, resource: string) => void;
@@ -52,12 +53,18 @@ const PermissionsCard = ({
   showModal,
   onChangeMemberRole,
   removeMember,
+  addMemberDisabled,
 }: Props) => (
   <Card style={{ height: '100%' }} bordered>
     <CardHeader>
       Permissions
       {!readonly && (
-        <Button style={{ marginLeft: 'auto' }} type="primary" onClick={e => showModal(e, ModalType.SimpleMember)}>
+        <Button
+          style={{ marginLeft: 'auto' }}
+          type="primary"
+          onClick={e => showModal(e, ModalType.SimpleMember)}
+          disabled={addMemberDisabled}
+        >
           Add a Member
         </Button>
       )}

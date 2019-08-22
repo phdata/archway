@@ -301,6 +301,7 @@ class WorkspaceDetails extends React.PureComponent<Props> {
               onChangeMemberRole={changeMemberRoleRequest}
               requestRefreshHiveTables={requestRefreshHiveTables}
               memberLoading={memberLoading}
+              provisioning={provisioning}
             />
           </Tabs.TabPane>
           {hasApplicationFlag && (

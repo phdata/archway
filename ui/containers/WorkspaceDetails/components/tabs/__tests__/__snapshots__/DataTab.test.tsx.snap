@@ -193,6 +193,7 @@ LOCATION '/new_data/landing'
           span={12}
         >
           <PermissionsCard
+            addMemberDisabled={true}
             allocation={
               Object {
                 "consumed_in_gb": 0,

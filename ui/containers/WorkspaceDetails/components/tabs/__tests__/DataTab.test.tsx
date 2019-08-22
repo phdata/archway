@@ -6,6 +6,7 @@ import DataTab from '../DataTab';
 import { Workspace } from '../../../../../models/Workspace';
 import { Cluster } from '../../../../../models/Cluster';
 import { Profile } from '../../../../../models/Profile';
+import { ProvisioningType } from '../../../../../constants';
 
 describe('DataTab', () => {
   it('renders correctly', () => {
@@ -192,6 +193,7 @@ describe('DataTab', () => {
         status: 'GOOD_HEALTH',
       } as Cluster,
       memberLoading: false,
+      provisioning: ProvisioningType.Pending,
       showModal: () => null,
       onChangeAllocation: () => null,
       onChangeMemberRole: () => null,
