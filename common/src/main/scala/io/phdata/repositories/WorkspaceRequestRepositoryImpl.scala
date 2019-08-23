@@ -3,7 +3,6 @@ package io.phdata.repositories
 import java.time.Instant
 
 import cats.data.OptionT
-import cats.implicits._
 import io.phdata.models._
 import io.phdata.repositories.syntax.SqlSyntax
 import com.typesafe.scalalogging.LazyLogging
@@ -60,7 +59,7 @@ class WorkspaceRequestRepositoryImpl(sqlSyntax: SqlSyntax) extends WorkspaceRequ
     statements.pending(role).to[List]
 
   override def deleteWorkspace(workspaceId: Long): doobie.ConnectionIO[Int] =
-    statements.deleteWorkspace(workspaceId).update.run
+    statements.deleteWorkspace(workspaceId).run
 
   class DefaultStatements {
 
@@ -155,7 +154,7 @@ class WorkspaceRequestRepositoryImpl(sqlSyntax: SqlSyntax) extends WorkspaceRequ
         """
 
     def listQuery(userDN: DistinguishedName): Query0[(WorkspaceSearchResult)] =
-      (listFragment ++ fr"where wr.id in (" ++ innerQuery(userDN) ++ fr") and wr.single_user = '0'").query
+      (listFragment ++ fr"where wr.id in (" ++ innerQuery(userDN) ++ fr") and wr.single_user = '0' and wr.deleted != '1'").query
 
     def userAccessibleQuery(userDN: DistinguishedName): doobie.Query0[(Long)] = innerQuery(userDN).query
 
@@ -169,7 +168,8 @@ class WorkspaceRequestRepositoryImpl(sqlSyntax: SqlSyntax) extends WorkspaceRequ
             compliance_id,
             requested_by,
             request_date,
-            single_user
+            single_user,
+            deleted
           )
           values (
             ${workspaceRequest.name},
@@ -179,142 +179,13 @@ class WorkspaceRequestRepositoryImpl(sqlSyntax: SqlSyntax) extends WorkspaceRequ
             ${workspaceRequest.compliance.id},
             ${workspaceRequest.requestedBy},
             ${workspaceRequest.requestDate},
-            ${SqlSyntax.booleanToChar(workspaceRequest.singleUser).toString}
+            ${SqlSyntax.booleanToChar(workspaceRequest.singleUser).toString},
+            '0'
           )
       """.update
 
     def deleteWorkspace(workspaceId: Long) =
-      sql"""
-
-        begin;
-        /***************************/
-        /****** DATABSE ********/
-        /***************************/
-        /* data manager members */
-        delete m
-        from member m
-                 inner join ldap_registration lr on m.ldap_registration_id = lr.id
-                 inner join hive_grant hg on hg.ldap_registration_id = lr.id
-                 inner join hive_database hd on hd.manager_group_id = hg.id
-                 inner join workspace_database wd on wd.hive_database_id = hd.id
-        where wd.workspace_request_id = @workspace_request_id;
-        delete la
-        from ldap_attribute la
-                 inner join ldap_registration lr on la.ldap_registration_id = lr.id
-                 inner join hive_grant hg on hg.ldap_registration_id = lr.id
-                 inner join hive_database hd on hd.manager_group_id = hg.id
-                 inner join workspace_database wd on wd.hive_database_id = hd.id
-        where wd.workspace_request_id = @workspace_request_id;
-        /* data readonly members */
-        delete m
-        from member m
-                 inner join ldap_registration lr on m.ldap_registration_id = lr.id
-                 inner join hive_grant hg on hg.ldap_registration_id = lr.id
-                 inner join hive_database hd on hd.readonly_group_id = hg.id
-                 inner join workspace_database wd on wd.hive_database_id = hd.id
-        where wd.workspace_request_id = @workspace_request_id;
-        delete la
-        from ldap_attribute la
-                 inner join ldap_registration lr on la.ldap_registration_id = lr.id
-                 inner join hive_grant hg on hg.ldap_registration_id = lr.id
-                 inner join hive_database hd on hd.readonly_group_id = hg.id
-                 inner join workspace_database wd on wd.hive_database_id = hd.id
-        where wd.workspace_request_id = @workspace_request_id;
-        /* database */
-        delete wd, hd, mhg, mlr, rhg, rlr
-        from workspace_database wd
-                 inner join hive_database hd on wd.hive_database_id = hd.id
-                 left join hive_grant mhg on hd.manager_group_id = mhg.id
-                 left join ldap_registration mlr on mhg.ldap_registration_id = mlr.id
-                 left join hive_grant rhg on hd.readonly_group_id = rhg.id
-                 left join ldap_registration rlr on rhg.ldap_registration_id = rlr.id
-        where wd.workspace_request_id = @workspace_request_id;
-        /***************************/
-        /*********** APPS ********/
-        /***************************/
-        /* application members */
-        delete m
-        from member m
-                 inner join ldap_registration lr on m.ldap_registration_id = lr.id
-                 inner join application a on a.ldap_registration_id = lr.id
-                 inner join workspace_application wa on wa.application_id = a.id
-        where wa.workspace_request_id = @workspace_request_id;
-        delete la
-        from ldap_attribute la
-                 inner join ldap_registration lr on la.ldap_registration_id = lr.id
-                 inner join application a on a.ldap_registration_id = lr.id
-                 inner join workspace_application wa on wa.application_id = a.id
-        where wa.workspace_request_id = @workspace_request_id;
-        /* applications */
-        delete wa, a, wl
-        from application a
-                 inner join workspace_application wa on wa.application_id = a.id
-                 inner join ldap_registration wl on a.ldap_registration_id = wl.id
-        where wa.workspace_request_id = @workspace_request_id;
-        /***************************/
-        /******** TOPICS ********/
-        /***************************/
-        /* topic manager members */
-        delete m
-        from member m
-                 inner join ldap_registration lr on m.ldap_registration_id = lr.id
-                 inner join topic_grant tg on tg.ldap_registration_id = lr.id
-                 inner join kafka_topic kt on kt.manager_role_id = tg.id
-                 inner join workspace_topic wt on wt.kafka_topic_id = kt.id
-        where wt.workspace_request_id = @workspace_request_id;
-        delete la
-        from ldap_attribute la
-                 inner join ldap_registration lr on la.ldap_registration_id = lr.id
-                 inner join topic_grant tg on tg.ldap_registration_id = lr.id
-                 inner join kafka_topic kt on kt.manager_role_id = tg.id
-                 inner join workspace_topic wt on wt.kafka_topic_id = kt.id
-        where wt.workspace_request_id = @workspace_request_id;
-        /* topic readonly members */
-        delete m
-        from member m
-                 inner join ldap_registration lr on m.ldap_registration_id = lr.id
-                 inner join topic_grant tg on tg.ldap_registration_id = lr.id
-                 inner join kafka_topic kt on kt.readonly_role_id = tg.id
-                 inner join workspace_topic wt on wt.kafka_topic_id = kt.id
-        where wt.workspace_request_id = @workspace_request_id;
-        delete la
-        from ldap_attribute la
-                 inner join ldap_registration lr on la.ldap_registration_id = lr.id
-                 inner join topic_grant tg on tg.ldap_registration_id = lr.id
-                 inner join kafka_topic kt on kt.readonly_role_id = tg.id
-                 inner join workspace_topic wt on wt.kafka_topic_id = kt.id
-        where wt.workspace_request_id = @workspace_request_id;
-        /* topics */
-        delete wt, kt, mtg, mlr, rtg, rlr
-        from workspace_topic wt
-                 inner join kafka_topic kt on wt.kafka_topic_id = kt.id
-                 left join topic_grant mtg on kt.manager_role_id = mtg.id
-                 left join ldap_registration mlr on mtg.ldap_registration_id = mlr.id
-                 left join topic_grant rtg on kt.readonly_role_id = rtg.id
-                 left join ldap_registration rlr on rtg.ldap_registration_id = rlr.id
-        where wt.workspace_request_id = @workspace_request_id;
-        /****************************/
-        /********* POOLS ********/
-        /***************************/
-        delete wp, rp
-        from resource_pool rp
-                 inner join workspace_pool wp on wp.resource_pool_id = rp.id
-        where wp.workspace_request_id = @workspace_request_id;
-        /***************************/
-        /***** APPROVALS  ****/
-        /**************************/
-        delete
-        from approval
-        where workspace_request_id = @workspace_request_id;
-        /***************************/
-        /**** WORKSPACE *****/
-        /***************************/
-        delete c, wr
-        from workspace_request wr
-                 inner join compliance c on wr.compliance_id = c.id
-        where wr.id = $workspaceId;
-        commit;
-      """
+      sql"""update workspace_request SET deleted = '1' where id = $workspaceId""".update
 
     def find(id: Long): Query0[WorkspaceRequest] =
       (selectFragment ++ whereAnd(fr"wr.id = $id")).query[WorkspaceRequest]
@@ -329,9 +200,7 @@ class WorkspaceRequestRepositoryImpl(sqlSyntax: SqlSyntax) extends WorkspaceRequ
       (selectFragment ++ whereAnd(fr"wr.requested_by = $username", fr"wr.single_user = '1'")).query[WorkspaceRequest]
 
     def pending(role: ApproverRole): Query0[WorkspaceSearchResult] =
-      (listFragment ++ whereAnd(
-            fr"wr.single_user = '0'"
-          )).query
+      (listFragment ++ whereAnd(fr"wr.single_user = '0' AND wr.deleted != '1'")).query
 
   }
 
