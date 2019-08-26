@@ -40,7 +40,7 @@ class LDAPClientImpl[F[_]: Effect](ldapConfig: LDAPConfig, binding: LDAPConfig =
     val failoverSet = new FailoverServerSet(servers, ports, sslSocketFactory)
 
     val bindRequest: SimpleBindRequest =
-      new SimpleBindRequest(ldapBinding.bindDN, ldapBinding.bindPassword)
+      new SimpleBindRequest(ldapBinding.bindDN, ldapBinding.bindPassword.value)
 
     Try(new LDAPConnectionPool(failoverSet, bindRequest, 4)) match {
       case Success(value) => value
@@ -93,7 +93,7 @@ class LDAPClientImpl[F[_]: Effect](ldapConfig: LDAPConfig, binding: LDAPConfig =
   override def findUser(distinguishedName: DistinguishedName): OptionT[F, LDAPUser] =
     getEntry(distinguishedName).map(ldapUser)
 
-  override def validateUser(username: String, password: String): OptionT[F, LDAPUser] =
+  override def validateUser(username: String, password: Password): OptionT[F, LDAPUser] =
     for {
       result <- getUserEntry(username).map(ldapUser) // TODO switch order so search happens after validate
       _ <- OptionT(Sync[F].delay(ldapBindingAsOption(result.distinguishedName, password, username)))
@@ -101,8 +101,12 @@ class LDAPClientImpl[F[_]: Effect](ldapConfig: LDAPConfig, binding: LDAPConfig =
 
   override def getUser(username: String): OptionT[F, LDAPUser] = getUserEntry(username).map(ldapUser)
 
-  private def ldapBindingAsOption(distinguishedName: String, password: String, userName: String): Option[BindResult] = {
-    Try(connectionPool.bind(distinguishedName, password)) match {
+  private def ldapBindingAsOption(
+      distinguishedName: String,
+      password: Password,
+      userName: String
+  ): Option[BindResult] = {
+    Try(connectionPool.bind(distinguishedName, password.value)) match {
       case Success(value) => Some(value)
       case Failure(exception) => {
         logger.warn(s"Bind process failed for user $userName", exception)

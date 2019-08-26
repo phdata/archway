@@ -23,7 +23,7 @@ trait LDAPTest {
 
     val bindRequest: SimpleBindRequest =
       new SimpleBindRequest(itestConfig.ldap.lookupBinding.bindDN,
-        itestConfig.ldap.lookupBinding.bindPassword)
+        itestConfig.ldap.lookupBinding.bindPassword.value)
 
     new LDAPConnectionPool(failoverSet, bindRequest, 10)
   }

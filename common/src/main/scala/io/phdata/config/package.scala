@@ -31,7 +31,27 @@ package object config extends StrictLogging {
       } yield Duration(duration)
     }
 
-  case class CredentialsConfig(username: String, password: String)
+  case class Password(value: String) {
+    override def toString: String = "***********"
+  }
+
+  object Password {
+
+    implicit val passwordDecoder: Decoder[Password] =
+      (c: HCursor) => {
+        for {
+          value <- c.as[String]
+        } yield Password(value)
+      }
+
+    implicit val passwordEncoder: Encoder[Password] = new Encoder[Password] {
+      override def apply(a: Password): Json = Json.obj(
+        ("value", a.value.asJson)
+      )
+    }
+  }
+
+  case class CredentialsConfig(username: String, password: Password)
 
   case class ServiceOverride(host: Option[String], port: Int)
 
@@ -133,14 +153,14 @@ package object config extends StrictLogging {
 
   case class RestConfig(
       port: Int,
-      secret: String,
+      secret: Password,
       authType: String,
       principal: String,
       httpPrincipal: String,
       keytab: String,
       sslStore: Option[String] = None,
-      sslStorePassword: Option[String] = None,
-      sslKeyManagerPassword: Option[String] = None
+      sslStorePassword: Option[Password] = None,
+      sslKeyManagerPassword: Option[Password] = None
   )
 
   case class UIConfig(url: String, staticContentDir: String)
@@ -166,7 +186,7 @@ package object config extends StrictLogging {
       port: Int,
       auth: Boolean,
       user: Option[String],
-      pass: Option[String],
+      pass: Option[Password],
       ssl: Boolean
   ) {
     if (auth) {
@@ -206,8 +226,8 @@ package object config extends StrictLogging {
       dataset: WorkspaceConfigItem
   )
 
-  case class LDAPBinding(server: String, port: Int, bindDN: String, bindPassword: String) {
-    assert(bindPassword.nonEmpty && bindDN.nonEmpty, s"LDAPBinding bindPassword and bindDN need to be set")
+  case class LDAPBinding(server: String, port: Int, bindDN: String, bindPassword: Password) {
+    assert(bindPassword.value.nonEmpty && bindDN.nonEmpty, s"LDAPBinding bindPassword and bindDN need to be set")
   }
 
   case class LDAPConfig(
@@ -221,7 +241,7 @@ package object config extends StrictLogging {
       realm: String
   )
 
-  case class DatabaseConfigItem(driver: String, url: String, username: Option[String], password: Option[String]) {
+  case class DatabaseConfigItem(driver: String, url: String, username: Option[String], password: Option[Password]) {
 
     def hiveTx[F[_]: Async: ContextShift]: Transactor[F] = {
       Class.forName(driver)
@@ -265,7 +285,7 @@ package object config extends StrictLogging {
         driver,
         url,
         username.getOrElse(""),
-        password.getOrElse(""),
+        password.getOrElse(Password("")).value,
         connectionEC,
         transactionEC
       )

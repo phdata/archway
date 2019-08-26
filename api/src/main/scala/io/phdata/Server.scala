@@ -115,8 +115,8 @@ object Server extends IOApp with LazyLogging {
         .withIdleTimeout(10 minutes)
         .withResponseHeaderTimeout(10 minutes)
         .withSSL(
-          StoreInfo(context.appConfig.rest.sslStore.get, context.appConfig.rest.sslStorePassword.get),
-          context.appConfig.rest.sslKeyManagerPassword.get
+          StoreInfo(context.appConfig.rest.sslStore.get, context.appConfig.rest.sslStorePassword.get.value),
+          context.appConfig.rest.sslKeyManagerPassword.get.value
         )
         .resource
 

@@ -3,15 +3,14 @@ package io.phdata.services
 import cats.data._
 import cats.effect.{IO, Timer}
 import cats.implicits._
-import io.phdata.AppContext
-import io.phdata.clients.LDAPUser
-import io.phdata.config.ApprovalConfig
-import io.phdata.models.{TemplateRequest, DistinguishedName}
-import io.phdata.provisioning.{Message, SimpleMessage}
-import io.phdata.test.fixtures._
 import io.circe.Json
 import io.circe.syntax._
-import io.phdata.provisioning.Message
+import io.phdata.AppContext
+import io.phdata.clients.LDAPUser
+import io.phdata.config.{ApprovalConfig, Password}
+import io.phdata.models.{DistinguishedName, TemplateRequest}
+import io.phdata.provisioning.{Message, SimpleMessage}
+import io.phdata.test.fixtures._
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FlatSpec, Matchers}
 import pdi.jwt.{JwtAlgorithm, JwtCirce}
@@ -129,7 +128,7 @@ class AccountServiceSpec extends FlatSpec with MockFactory with Matchers with Ap
 
   trait Context {
     implicit val timer: Timer[IO] = testTimer
-    val (name, wrongUsername, username, actualPassword, wrongPassword) = ("Dude Doe", "user", "username", "password", "passw0rd")
+    val (name, wrongUsername, username, actualPassword, wrongPassword) = ("Dude Doe", "user", "username", Password("password"), Password("passw0rd"))
     val secret = "abc"
     val ldapUser = LDAPUser(personName, standardUsername, standardUserDN.value, Seq("cn=foo,dc=jotunn,dc=io"), Some("dude@email.com"))
 

@@ -7,7 +7,7 @@ import cats.effect._
 import cats.implicits._
 import io.phdata.AppContext
 import io.phdata.clients.LDAPUser
-import io.phdata.config.{ApprovalConfig, RestConfig}
+import io.phdata.config.{ApprovalConfig, Password, RestConfig}
 import io.phdata.models._
 import com.typesafe.scalalogging.LazyLogging
 import io.circe.Json
@@ -31,9 +31,7 @@ class AccountServiceImpl[F[_]: Sync: Timer](
 
   implicit def convertUser(ldapUser: LDAPUser): User = {
     def memberOf(check: ApprovalConfig => Option[String]) =
-      check(approvalConfig)
-        .map(r => ldapUser.memberships.map(_.toLowerCase()).contains(r.toLowerCase()))
-        .getOrElse(false)
+      check(approvalConfig).exists(r => ldapUser.memberships.map(_.toLowerCase()).contains(r.toLowerCase()))
 
     User(
       ldapUser.name,
@@ -46,13 +44,13 @@ class AccountServiceImpl[F[_]: Sync: Timer](
     )
   }
 
-  private def decode(token: String, secret: String, algo: JwtHmacAlgorithm): Either[Throwable, Json] =
-    JwtCirce.decodeJson(token, secret, Seq(algo)).attempt.get
+  private def decode(token: String, secret: Password, algo: JwtHmacAlgorithm): Either[Throwable, Json] =
+    JwtCirce.decodeJson(token, secret.value, Seq(algo)).attempt.get
 
-  private def encode(json: Json, secret: String, algo: JwtAlgorithm): F[String] =
-    Sync[F].delay(JwtCirce.encode(json, secret, algo))
+  private def encode(json: Json, secret: Password, algo: JwtAlgorithm): F[String] =
+    Sync[F].delay(JwtCirce.encode(json, secret.value, algo))
 
-  override def ldapAuth(username: String, password: String): OptionT[F, Token] =
+  override def ldapAuth(username: String, password: Password): OptionT[F, Token] =
     for {
       user <- context.lookupLDAPClient.validateUser(username, password)
       token <- OptionT.liftF(refresh(user))

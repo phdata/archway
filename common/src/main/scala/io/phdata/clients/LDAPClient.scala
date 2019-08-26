@@ -1,6 +1,7 @@
 package io.phdata.clients
 
 import cats.data.OptionT
+import io.phdata.config.Password
 import io.phdata.models.DistinguishedName
 import io.phdata.services.MemberSearchResult
 
@@ -21,7 +22,7 @@ case class LDAPUser(
 trait LDAPClient[F[_]] {
   def findUser(distinguishedName: DistinguishedName): OptionT[F, LDAPUser]
 
-  def validateUser(username: String, password: String): OptionT[F, LDAPUser]
+  def validateUser(username: String, password: Password): OptionT[F, LDAPUser]
 
   def getUser(username: String): OptionT[F, LDAPUser]
 
