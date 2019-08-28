@@ -82,6 +82,7 @@ ship()
   pushd ${PUBLISH_DIR}
   READY_DIR=$(echo "${ARCHWAY_VERSION}")
   curl -u${ARTIFACTORY_USER}:${ARTIFACTORY_TOKEN} -T manifest.json https://repository.phdata.io/artifactory/$DEPLOY_REPO/phdata/archway/${ARCHWAY_VERSION}/manifest.json
+  curl -u${ARTIFACTORY_USER}:${ARTIFACTORY_TOKEN} -T ARCHWAY-${ARCHWAY_VERSION}.jar https://repository.phdata.io/artifactory/$DEPLOY_REPO/phdata/archway/${ARCHWAY_VERSION}/ARCHWAY-${ARCHWAY_VERSION}.jar
 
   push archway
 
