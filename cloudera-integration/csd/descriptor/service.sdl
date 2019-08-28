@@ -423,7 +423,7 @@
           "name": "archway.ldap.lookupBinding.server",
           "label": "Lookup LDAP Host",
           "description": "THe LDAP/AD host for the 'lookup' LDAP connection. This should usually be set to the same value as the corresponding 'provisioning' value. If it is set to empty string 'provisioning' value is used instead",
-          "required": "true",
+          "required": "false",
           "type": "string",
           "default": ""
         },
@@ -431,7 +431,7 @@
           "name": "archway.ldap.lookupBinding.port",
           "label": "Lookup LDAP Port",
           "description": "The LDAP/AD port for the 'lookup' LDAP connection. This should usually be set to the same value as the corresponding 'provisioning' value",
-          "required": "true",
+          "required": "false",
           "type": "long",
           "default": 389
         },
@@ -439,7 +439,7 @@
           "name": "archway.ldap.lookupBinding.bindPassword",
           "label": "Lookup LDAP Admin Password",
           "description": "The password for the 'lookup' LDAP connection. This should usually be set to the same value as the corresponding 'provisioning' value",
-          "required": "true",
+          "required": "false",
           "type": "password",
           "default": ""
         },
