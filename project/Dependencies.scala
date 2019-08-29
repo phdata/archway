@@ -141,10 +141,6 @@ object Dependencies {
       ExclusionRule(organization = "commons-logging")
     )
 
-  val modelsDependencies =
-    (cats ++ catsEffect ++ circe ++ doobie)
-      .map(exclusions)
-
   val apiDependencies =
     (coreTest ++ dbCore ++ logging ++ bouncy ++ circeConfig ++
       http4s ++ doobie ++ cats ++ catsEffect ++ circe ++ hadoop)
