@@ -36,6 +36,21 @@ package object repositories {
         Map(key -> value)
     }
 
+  implicit val ldapRegistrationReader: Read[LDAPRegistration] =
+    Read[
+      (String, String, String, Option[Long], Option[Instant], Option[Instant])
+    ].map {
+      case (
+          distinguishedName,
+          commonName,
+          sentryRole,
+          id,
+          groupCreated,
+          roleCreated
+          ) =>
+        LDAPRegistration(DistinguishedName(distinguishedName), commonName, sentryRole, id, groupCreated, roleCreated)
+    }
+
   implicit val metadataReader: Read[Metadata] =
     Read[(String, String, Int, Map[String, String])].map {
       case (

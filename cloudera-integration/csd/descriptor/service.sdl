@@ -476,6 +476,13 @@
           "configurableInWizard": "true"
         },
         {
+          "name": "archway.ldap.syncInterval",
+          "label": "Synchronization interval",
+          "description": "The time interval how often should AD groups be synchronized with database",
+          "type": "string",
+          "default": "2 hour"
+        },
+        {
           "name": "archway.approvers.notificationEmail",
           "label": "Notification Email Address",
           "description": "The comma separated list of email addresses to send notification emails to",

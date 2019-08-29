@@ -4,11 +4,11 @@ import java.time.Instant
 
 import cats.data._
 import cats.implicits._
-import io.phdata.models.LDAPRegistration
 import com.typesafe.scalalogging.LazyLogging
 import doobie._
 import doobie.implicits._
 import doobie.util.fragments.whereAnd
+import io.phdata.models.LDAPRegistration
 
 class LDAPRepositoryImpl extends LDAPRepository with LazyLogging {
 
@@ -21,11 +21,14 @@ class LDAPRepositoryImpl extends LDAPRepository with LazyLogging {
       _ <- logger.debug("{}", ldapRegistration.attributes).pure[ConnectionIO]
       id <- insert(ldapRegistration).withUniqueGeneratedKeys[Long]("id")
       _ <- logger.debug("{}", id).pure[ConnectionIO]
-      _ <- ldapRegistration.attributes.map(a => insertAttribute(id, a._1, a._2).run).toList.sequence
+      _ <- ldapRegistration.attributes.map(a => insertAttribute(id, a._1, a._2).run).sequence
     } yield id
 
   override def create(ldapRegistration: LDAPRegistration): ConnectionIO[LDAPRegistration] =
     insertRecord(ldapRegistration).map(id => ldapRegistration.copy(id = Some(id)))
+
+  override def delete(ldapRegistration: LDAPRegistration): ConnectionIO[Unit] =
+    deleteRecord(ldapRegistration).run.void
 
   def reduce(data: List[LDAPRow]): List[LDAPRegistration] =
     data
@@ -133,6 +136,10 @@ object LDAPRepositoryImpl {
         ${ldapRegistration.sentryRole}
        )
       """.update
+
+    def deleteRecord(ldapRegistration: LDAPRegistration): Update0 =
+      sql"""
+       delete from ldap_registration where distinguished_name = ${ldapRegistration.distinguishedName.value}""".update
 
     def insertAttribute(ldapRegistrationId: Long, key: String, value: String): Update0 =
       sql"""

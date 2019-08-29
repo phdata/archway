@@ -238,8 +238,54 @@ package object config extends StrictLogging {
       baseDN: String,
       groupPath: String,
       userPath: Option[String],
-      realm: String
+      realm: String,
+      syncInterval: FiniteDuration
   )
+
+  object LDAPConfig {
+    import AppConfig._
+
+    implicit val decoder: Decoder[LDAPConfig] = Decoder.instance { cursor =>
+      for {
+        lookupBinding <- cursor.downField("lookupBinding").as[LDAPBinding]
+        provisioningBinding <- cursor.downField("provisioningBinding").as[LDAPBinding]
+        filterTemplate <- cursor.downField("filterTemplate").as[String]
+        memberDisplayTemplate <- cursor.downField("memberDisplayTemplate").as[String]
+        baseDN <- cursor.downField("baseDN").as[String]
+        groupPath <- cursor.downField("groupPath").as[String]
+        userPath <- cursor.downField("userPath").as[Option[String]]
+        realm <- cursor.downField("realm").as[String]
+        syncInterval <- cursor
+          .downField("syncInterval")
+          .as[String]
+          .map(d => Duration.apply(d).asInstanceOf[FiniteDuration])
+      } yield LDAPConfig(
+        lookupBinding,
+        provisioningBinding,
+        filterTemplate,
+        memberDisplayTemplate,
+        baseDN,
+        groupPath,
+        userPath,
+        realm,
+        syncInterval
+      )
+    }
+
+    implicit val encoder: Encoder[LDAPConfig] = new Encoder[LDAPConfig] {
+      override def apply(a: LDAPConfig): Json = Json.obj(
+        ("lookupBinding", a.lookupBinding.asJson),
+        ("provisioningBinding", a.provisioningBinding.asJson),
+        ("filterTemplate", a.filterTemplate.asJson),
+        ("memberDisplayTemplate", a.memberDisplayTemplate.asJson),
+        ("baseDN", a.baseDN.asJson),
+        ("groupPath", a.groupPath.asJson),
+        ("userPath", a.userPath.asJson),
+        ("realm", a.realm.asJson),
+        ("syncInterval", Json.fromString(a.syncInterval.toString))
+      )
+    }
+  }
 
   case class DatabaseConfigItem(driver: String, url: String, username: Option[String], password: Option[Password]) {
 
@@ -362,7 +408,7 @@ package object config extends StrictLogging {
     implicit val workspaceConfigItemDecoder: Decoder[WorkspaceConfigItem] = deriveDecoder
     implicit val workspaceConfigDecoder: Decoder[WorkspaceConfig] = deriveDecoder
     implicit val ldapBindingDecoder: Decoder[LDAPBinding] = deriveDecoder
-    implicit val lDAPConfigDecoder: Decoder[LDAPConfig] = deriveDecoder
+    implicit val lDAPConfigDecoder: Decoder[LDAPConfig] = LDAPConfig.decoder
     implicit val databaseConfigItemDecoder: Decoder[DatabaseConfigItem] = deriveDecoder
     implicit val kafkaConfigDecoder: Decoder[KafkaConfig] = deriveDecoder
     implicit val generatorConfigDecoder: Decoder[TemplateConfig] = deriveDecoder
@@ -376,7 +422,7 @@ package object config extends StrictLogging {
     implicit val workspaceConfigItemEncoder: Encoder[WorkspaceConfigItem] = deriveEncoder
     implicit val workspaceConfigEncoder: Encoder[WorkspaceConfig] = deriveEncoder
     implicit val ldapBindingEncoder: Encoder[LDAPBinding] = deriveEncoder
-    implicit val lDAPConfigEncoder: Encoder[LDAPConfig] = deriveEncoder
+    implicit val lDAPConfigEncoder: Encoder[LDAPConfig] = LDAPConfig.encoder
     implicit val databaseConfigItemEncoder: Encoder[DatabaseConfigItem] = deriveEncoder
     implicit val databaseConfigEncoder: Encoder[DatabaseConfig] = deriveEncoder
     implicit val kafkaConfigEncoder: Encoder[KafkaConfig] = deriveEncoder

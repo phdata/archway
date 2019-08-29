@@ -10,6 +10,8 @@ trait LDAPRepository {
 
   def create(lDAPRegistration: LDAPRegistration): ConnectionIO[LDAPRegistration]
 
+  def delete(ldapRegistration: LDAPRegistration): ConnectionIO[Unit]
+
   def findAll(resource: String, resourceId: Long): ConnectionIO[List[LDAPRegistration]]
 
   def find(resource: String, resourceId: Long, role: String): OptionT[ConnectionIO, LDAPRegistration]

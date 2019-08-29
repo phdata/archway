@@ -14,7 +14,7 @@ case class GeneralError(throwable: Throwable) extends GroupCreationError
 case class LDAPUser(
     name: String,
     username: String,
-    distinguishedName: String,
+    distinguishedName: DistinguishedName,
     memberships: Seq[String],
     email: Option[String]
 )

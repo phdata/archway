@@ -36,7 +36,7 @@ class AccountServiceImpl[F[_]: Sync: Timer](
     User(
       ldapUser.name,
       ldapUser.username,
-      ldapUser.distinguishedName,
+      ldapUser.distinguishedName.value,
       UserPermissions(
         riskManagement = memberOf(_.risk),
         platformOperations = memberOf(_.infrastructure)

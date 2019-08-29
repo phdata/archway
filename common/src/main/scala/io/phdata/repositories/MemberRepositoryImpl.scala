@@ -2,11 +2,10 @@ package io.phdata.repositories
 
 import java.time.Instant
 
-import io.phdata.repositories.syntax.SqlSyntax
 import doobie._
 import doobie.implicits._
 import doobie.util.fragments.whereAnd
-import io.phdata.models.DistinguishedName
+import io.phdata.models.{DistinguishedName, LDAPRegistration}
 import io.phdata.repositories.syntax.SqlSyntax
 
 class MemberRepositoryImpl(sqlSyntax: SqlSyntax) extends MemberRepository {
@@ -32,6 +31,23 @@ class MemberRepositoryImpl(sqlSyntax: SqlSyntax) extends MemberRepository {
       distinguishedName: DistinguishedName
   ): doobie.ConnectionIO[List[MemberRightsRecord]] =
     Statements.find(workspaceRequestId, distinguishedName).to[List]
+
+  override def listLDAPRegistrations: doobie.ConnectionIO[List[LDAPRegistration]] =
+    Statements.listLdapRegistrations().to[List]
+
+  override def groupMembers: doobie.ConnectionIO[Seq[Group]] = {
+    Statements
+      .memberGroupName()
+      .to[List]
+      .map(
+        _.groupBy(_.groupDN)
+          .mapValues(_.map(_.userDN))
+          .map {
+            case (key, values) => Group(DistinguishedName(key), values.map(v => DistinguishedName(v)))
+          }
+          .toSeq
+      )
+  }
 
   object Statements {
 
@@ -156,6 +172,28 @@ class MemberRepositoryImpl(sqlSyntax: SqlSyntax) extends MemberRepository {
             fr"workspace_request_id = $workspaceRequestId",
             fr"distinguished_name = ${distinguished_name.value}"
           )).query
+
+    def listLdapRegistrations(): Query0[LDAPRegistration] = {
+      sql"""
+        select
+          distinguished_name,
+          common_name,
+          sentry_role,
+          id,
+          group_created,
+          role_created
+         from ldap_registration
+      """.query[LDAPRegistration]
+    }
+
+    def memberGroupName(): Query0[GroupMembership] = {
+      sql"""
+          select
+          ld.distinguished_name group_dn,
+          m.distinguished_name as member_dn
+          from ldap_registration ld join member m on ld.id = m.ldap_registration_id
+      """.query[GroupMembership]
+    }
 
   }
 

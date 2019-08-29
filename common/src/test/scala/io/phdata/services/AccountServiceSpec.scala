@@ -130,7 +130,7 @@ class AccountServiceSpec extends FlatSpec with MockFactory with Matchers with Ap
     implicit val timer: Timer[IO] = testTimer
     val (name, wrongUsername, username, actualPassword, wrongPassword) = ("Dude Doe", "user", "username", Password("password"), Password("passw0rd"))
     val secret = "abc"
-    val ldapUser = LDAPUser(personName, standardUsername, standardUserDN.value, Seq("cn=foo,dc=jotunn,dc=io"), Some("dude@email.com"))
+    val ldapUser = LDAPUser(personName, standardUsername, standardUserDN, Seq("cn=foo,dc=jotunn,dc=io"), Some("dude@email.com"))
 
     val workspaceService = mock[WorkspaceService[IO]]
     val provisioningService = mock[ProvisioningService[IO]]

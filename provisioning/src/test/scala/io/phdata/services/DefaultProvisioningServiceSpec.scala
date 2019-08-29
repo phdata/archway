@@ -200,7 +200,7 @@ class DefaultProvisioningServiceSpec
 
     val context: AppContext[IO] = genMockContext()
 
-    val ldapUser = LDAPUser(personName, standardUsername, standardUserDN.value, Seq("cn=foo,dc=jotunn,dc=io"), Some("dude@email.com"))
+    val ldapUser = LDAPUser(personName, standardUsername, standardUserDN, Seq("cn=foo,dc=jotunn,dc=io"), Some("dude@email.com"))
 
     lazy val provisioningService = new DefaultProvisioningService[IO](context, ExecutionContext.global)
   }

@@ -61,7 +61,7 @@ class LDAPClientImpl[F[_]: Effect](ldapConfig: LDAPConfig, binding: LDAPConfig =
     LDAPUser(
       genDisplay(searchResultEntry),
       searchResultEntry.getAttributeValue("sAMAccountName"),
-      searchResultEntry.getDN,
+      DistinguishedName(searchResultEntry.getDN),
       Option(searchResultEntry.getAttributeValues("memberOf")).map(_.toSeq).getOrElse(Seq.empty),
       Option(searchResultEntry.getAttributeValue("mail"))
     )
@@ -96,7 +96,7 @@ class LDAPClientImpl[F[_]: Effect](ldapConfig: LDAPConfig, binding: LDAPConfig =
   override def validateUser(username: String, password: Password): OptionT[F, LDAPUser] =
     for {
       result <- getUserEntry(username).map(ldapUser) // TODO switch order so search happens after validate
-      _ <- OptionT(Sync[F].delay(ldapBindingAsOption(result.distinguishedName, password, username)))
+      _ <- OptionT(Sync[F].delay(ldapBindingAsOption(result.distinguishedName.value, password, username)))
     } yield result
 
   override def getUser(username: String): OptionT[F, LDAPUser] = getUserEntry(username).map(ldapUser)

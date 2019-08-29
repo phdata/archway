@@ -184,10 +184,10 @@ class LDAPClientImplIntegrationSpec
   }
 
   it should "create an LDAPUser" in {
-    val dn = "cn=john,dc=example,dc=com"
+    val dn = DistinguishedName("cn=john,dc=example,dc=com")
     val expected = LDAPUser("john (johndoe)", "johndoe", dn, Seq.empty, None)
 
-    val user = new SearchResultEntry(dn, Seq(
+    val user = new SearchResultEntry(dn.value, Seq(
       new Attribute("name", "john"),
       new Attribute("sAMAccountName", "johndoe")
     ).asJava)
