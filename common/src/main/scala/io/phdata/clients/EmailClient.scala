@@ -18,11 +18,11 @@ class EmailClientImpl[F[_]: Effect](appConfig: AppConfig, executionContext: Exec
 
   lazy val mailer: Mailer =
     appConfig.smtp match {
-      case SMTPConfig(_, host, port, true, Some(user), Some(pass), ssl) =>
+      case SMTPConfig(_, host, port, true, Some(user), Some(pass), ssl, smtps) =>
         Mailer(host, port).auth(true).as(user, pass.value).startTls(ssl)()
 
-      case SMTPConfig(_, host, port, _, _, _, ssl) =>
-        Mailer(host, port).startTls(ssl)()
+      case SMTPConfig(_, host, port, _, _, _, ssl, smtps) =>
+        Mailer(host, port).startTls(ssl).ssl(smtps)()
     }
 
   override def send(subject: String, htmlContent: String, from: String, to: String): F[Unit] =

@@ -548,10 +548,19 @@
         },
         {
           "name": "archway.smtp.ssl",
-          "label": "Enable SMTP SSL",
-          "description": "Enable SMTP SSL",
+          "label": "Enable SMTP starttls",
+          "description": "Enable SMTP starttls",
           "required": "true",
           "type": "boolean",
+          "configurableInWizard": "true"
+        },
+        {
+          "name": "archway.smtp.smtps",
+          "label": "Enable SMTPS",
+          "description": "Enable SMTPS (SSL)",
+          "required": "true",
+          "type": "boolean",
+          "default": false,
           "configurableInWizard": "true"
         },
         {

@@ -187,7 +187,8 @@ package object config extends StrictLogging {
       auth: Boolean,
       user: Option[String],
       pass: Option[Password],
-      ssl: Boolean
+      ssl: Boolean,
+      smtps: Boolean
   ) {
     if (auth) {
       assert(
