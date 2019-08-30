@@ -98,7 +98,7 @@ class WorkspaceControllerSpec
   }
 
   it should "add a user" in new Http4sClientDsl[IO] with Context {
-    val memberRequest = MemberRoleRequest(standardUserDN.value, "data", id, Some(Manager))
+    val memberRequest = MemberRoleRequest(standardUserDN, "data", id, Some(Manager))
     (memberService.addMember _)
       .expects(id, memberRequest)
       .returning(OptionT.some(
@@ -118,7 +118,7 @@ class WorkspaceControllerSpec
   }
 
   it should "return status 500 if adding member fails" in new Http4sClientDsl[IO] with Context {
-    val memberRequest = MemberRoleRequest(standardUserDN.value, "data", id, Some(Manager))
+    val memberRequest = MemberRoleRequest(standardUserDN, "data", id, Some(Manager))
 
     (memberService.addMember _).expects(id, memberRequest).returning(OptionT.none)
     (emailService.newMemberEmail _).expects(id, memberRequest).returning(OptionT.some(IO.unit))

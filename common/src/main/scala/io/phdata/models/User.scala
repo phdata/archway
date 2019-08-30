@@ -7,7 +7,7 @@ import io.circe.{Decoder, Encoder}
 case class User(
     name: String,
     username: String,
-    distinguishedName: String,
+    distinguishedName: DistinguishedName,
     permissions: UserPermissions = UserPermissions(riskManagement = false, platformOperations = false)
 ) {
   val canApprove: Boolean = permissions.platformOperations || permissions.riskManagement

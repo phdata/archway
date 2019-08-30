@@ -40,7 +40,7 @@ package object provisioning
 
   case class DatabaseGrant(id: Long, roleName: String, databaseName: String, databaseRole: DatabaseRole)
 
-  case class GroupMember(ldapRegistrationId: Long, groupDN: DistinguishedName, distinguishedName: String)
+  case class GroupMember(ldapRegistrationId: Long, groupDN: DistinguishedName, distinguishedName: DistinguishedName)
 
   case class DiskQuota(workspaceId: Long, location: String, sizeInGB: Int)
 

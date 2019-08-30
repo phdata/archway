@@ -51,7 +51,7 @@ class ADGroupsSynchronizerIntegrationSpec extends FlatSpec with KerberosTest wit
           case (context, synchronizer) =>
             for {
               ldapReg <- context.ldapRepository.create(ldapRegistration).transact(context.transactor)
-              _ <- context.memberRepository.create(userDN.value, ldapReg.id.get).transact(context.transactor)
+              _ <- context.memberRepository.create(userDN, ldapReg.id.get).transact(context.transactor)
               _ <- synchronizer.synchronize()
               groupMembers <- context.memberRepository.groupMembers.transact(context.transactor)
 
@@ -81,7 +81,7 @@ class ADGroupsSynchronizerIntegrationSpec extends FlatSpec with KerberosTest wit
               groupMembers <- context.memberRepository.groupMembers.transact(context.transactor)
 
             // cleaning DB
-            _ <- context.memberRepository.delete(ldapReg.id.get, userDN.value).transact(context.transactor)
+            _ <- context.memberRepository.delete(ldapReg.id.get, userDN).transact(context.transactor)
             _ <- context.ldapRepository.delete(ldapRegistration).transact(context.transactor)
             } yield {
               groupMembers.find { case Group(group, userDNs) =>

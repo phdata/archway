@@ -36,7 +36,7 @@ class AccountServiceImpl[F[_]: Sync: Timer](
     User(
       ldapUser.name,
       ldapUser.username,
-      ldapUser.distinguishedName.value,
+      ldapUser.distinguishedName,
       UserPermissions(
         riskManagement = memberOf(_.risk),
         platformOperations = memberOf(_.infrastructure)
@@ -67,14 +67,14 @@ class AccountServiceImpl[F[_]: Sync: Timer](
       maybeToken <- EitherT.fromEither[F](decode(token, restConfig.secret, algo))
       user <- EitherT.fromEither[F](maybeToken.as[User])
       result <- EitherT.fromOptionF(
-        context.lookupLDAPClient.findUser(DistinguishedName(user.distinguishedName)).value,
+        context.lookupLDAPClient.findUser(user.distinguishedName).value,
         new Throwable()
       ) // TODO `findUser` should return an Either
     } yield convertUser(result)
   }
 
   override def createWorkspace(user: User): OptionT[F, WorkspaceRequest] = {
-    OptionT(workspaceService.findByUsername(user.username).value.flatMap {
+    OptionT(workspaceService.findByUsername(user.distinguishedName).value.flatMap {
       case Some(_) => Sync[F].pure(None)
       case None =>
         for {
@@ -90,7 +90,7 @@ class AccountServiceImpl[F[_]: Sync: Timer](
     })
   }
 
-  override def getWorkspace(distinguishedName: String): OptionT[F, WorkspaceRequest] =
+  override def getWorkspace(distinguishedName: DistinguishedName): OptionT[F, WorkspaceRequest] =
     workspaceService.findByUsername(distinguishedName)
 
   override def spnegoAuth(header: String): F[Either[Throwable, Token]] = {

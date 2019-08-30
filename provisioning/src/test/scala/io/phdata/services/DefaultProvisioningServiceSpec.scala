@@ -112,7 +112,7 @@ class DefaultProvisioningServiceSpec
 
       inSequence {
         context.provisioningLDAPClient.addUser _ expects(savedLDAP.distinguishedName, standardUserDN) returning OptionT.some(standardUserDN.value)
-        context.memberRepository.complete _ expects(id, standardUserDN.value) returning 0.pure[ConnectionIO]
+        context.memberRepository.complete _ expects(id, standardUserDN) returning 0.pure[ConnectionIO]
       }
 
       inSequence {
@@ -133,7 +133,7 @@ class DefaultProvisioningServiceSpec
 
       inSequence {
         context.provisioningLDAPClient.addUser _ expects(savedLDAP.distinguishedName, standardUserDN) returning OptionT.some(standardUserDN.value)
-        context.memberRepository.complete _ expects(id, standardUserDN.value) returning 0.pure[ConnectionIO]
+        context.memberRepository.complete _ expects(id, standardUserDN) returning 0.pure[ConnectionIO]
       }
 
       inSequence {

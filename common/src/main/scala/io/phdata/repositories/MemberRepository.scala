@@ -4,15 +4,15 @@ import io.phdata.models.{DatabaseRole, DistinguishedName, LDAPRegistration}
 import doobie._
 
 trait MemberRepository {
-  def create(distinguishedName: String, ldapRegistrationId: Long): ConnectionIO[Long]
+  def create(distinguishedName: DistinguishedName, ldapRegistrationId: Long): ConnectionIO[Long]
 
-  def complete(id: Long, distinguishedName: String): ConnectionIO[Int]
+  def complete(id: Long, distinguishedName: DistinguishedName): ConnectionIO[Int]
 
   def get(id: Long): ConnectionIO[List[MemberRightsRecord]]
 
   def find(workspaceRequestId: Long, distinguishedName: DistinguishedName): ConnectionIO[List[MemberRightsRecord]]
 
-  def delete(ldapRegistrationId: Long, distinguishedName: String): ConnectionIO[Int]
+  def delete(ldapRegistrationId: Long, distinguishedName: DistinguishedName): ConnectionIO[Int]
 
   def list(workspaceId: Long): ConnectionIO[List[MemberRightsRecord]]
 

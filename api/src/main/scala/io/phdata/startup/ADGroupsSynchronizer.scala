@@ -60,7 +60,7 @@ class ADGroupsSynchronizer[F[_]: Sync: Timer: ContextShift](context: AppContext[
       if (!membersForLdapRegistration.contains(ldapUser.distinguishedName)) {
         logger.info(s"Adding member ${ldapUser.distinguishedName} to the database").pure[F] *>
           context.memberRepository
-            .create(ldapUser.distinguishedName.value, lDAPRegistration.id.get)
+            .create(ldapUser.distinguishedName, lDAPRegistration.id.get)
             .transact(context.transactor)
       } else {
         logger.debug(s"Member ${ldapUser.distinguishedName} already exists in the database")
@@ -73,7 +73,7 @@ class ADGroupsSynchronizer[F[_]: Sync: Timer: ContextShift](context: AppContext[
 
       if (notMemberOf) {
         logger.info(s"Removing member $member from the database").pure[F] *>
-          context.memberRepository.delete(lDAPRegistration.id.get, member.value).transact(context.transactor)
+          context.memberRepository.delete(lDAPRegistration.id.get, member).transact(context.transactor)
       } else {
         logger.debug(s"Member $member exists in AD and the database").pure[F] *>
           0.pure[F]

@@ -53,8 +53,7 @@ class JSONTemplateService[F[_]: Effect: Clock](context: AppContext[F], configSer
   }
 
   override def defaults(user: User): F[TemplateRequest] =
-    TemplateRequest(user.username, user.name, user.name, Compliance.empty, DistinguishedName(user.distinguishedName))
-      .pure[F]
+    TemplateRequest(user.username, user.name, user.name, Compliance.empty, user.distinguishedName).pure[F]
 
   private[services] def generateJSON(template: TemplateRequest, templatePath: String, templateName: String): F[String] =
     Sync[F].delay {

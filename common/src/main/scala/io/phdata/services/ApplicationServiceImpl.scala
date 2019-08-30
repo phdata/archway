@@ -3,7 +3,7 @@ package io.phdata.services
 import cats.effect._
 import cats.implicits._
 import io.phdata.AppContext
-import io.phdata.models.Application
+import io.phdata.models.{Application, DistinguishedName}
 import com.typesafe.scalalogging.LazyLogging
 import doobie.implicits._
 import io.phdata.generators.ApplicationGenerator
@@ -15,7 +15,11 @@ class ApplicationServiceImpl[F[_]](
 )(implicit F: Effect[F])
     extends ApplicationService[F] with LazyLogging {
 
-  override def create(username: String, workspaceId: Long, applicationRrequest: ApplicationRequest): F[Application] =
+  override def create(
+      username: DistinguishedName,
+      workspaceId: Long,
+      applicationRrequest: ApplicationRequest
+  ): F[Application] =
     for {
       workspace <- appContext.workspaceRequestRepository.find(workspaceId).value.transact(appContext.transactor)
 

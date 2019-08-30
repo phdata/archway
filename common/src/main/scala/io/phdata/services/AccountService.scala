@@ -2,7 +2,7 @@ package io.phdata.services
 
 import cats.data._
 import io.phdata.config.Password
-import io.phdata.models.{Token, User, WorkspaceRequest}
+import io.phdata.models.{DistinguishedName, Token, User, WorkspaceRequest}
 
 trait AccountService[F[_]] {
   def validate(token: String): EitherT[F, Throwable, User]
@@ -15,5 +15,5 @@ trait AccountService[F[_]] {
 
   def createWorkspace(user: User): OptionT[F, WorkspaceRequest]
 
-  def getWorkspace(distinguishedName: String): OptionT[F, WorkspaceRequest]
+  def getWorkspace(distinguishedName: DistinguishedName): OptionT[F, WorkspaceRequest]
 }

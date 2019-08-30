@@ -27,7 +27,7 @@ class EmailServiceImpl[F[_]: Effect](context: AppContext[F], workspaceService: W
     for {
       workspace <- workspaceService.find(workspaceId)
       fromAddress = context.appConfig.smtp.fromEmail
-      to <- context.lookupLDAPClient.findUser(DistinguishedName(memberRoleRequest.distinguishedName))
+      to <- context.lookupLDAPClient.findUser(memberRoleRequest.distinguishedName)
       toAddress <- OptionT(Effect[F].pure(to.email))
       values = Map(
         "roleName" -> memberRoleRequest.role.get.show,

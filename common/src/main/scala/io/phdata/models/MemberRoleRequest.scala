@@ -2,7 +2,12 @@ package io.phdata.models
 
 import io.circe._
 
-case class MemberRoleRequest(distinguishedName: String, resource: String, resourceId: Long, role: Option[DatabaseRole])
+case class MemberRoleRequest(
+    distinguishedName: DistinguishedName,
+    resource: String,
+    resourceId: Long,
+    role: Option[DatabaseRole]
+)
 
 object MemberRoleRequest {
 
@@ -13,7 +18,7 @@ object MemberRoleRequest {
         resource <- r.downField("resource").as[String]
         resourceId <- r.downField("resource_id").as[Long]
         role <- r.downField("role").as[String]
-      } yield MemberRoleRequest(dn, resource, resourceId, DatabaseRole.unapply(role))
+      } yield MemberRoleRequest(DistinguishedName(dn), resource, resourceId, DatabaseRole.unapply(role))
     }
 
   implicit val minDecoder: Decoder[MemberRoleRequest] =
@@ -22,7 +27,7 @@ object MemberRoleRequest {
         dn <- r.downField("distinguished_name").as[String]
         resource <- r.downField("resource").as[String]
         resourceId <- r.downField("resource_id").as[Long]
-      } yield MemberRoleRequest(dn, resource, resourceId, None)
+      } yield MemberRoleRequest(DistinguishedName(dn), resource, resourceId, None)
     }
 
 }

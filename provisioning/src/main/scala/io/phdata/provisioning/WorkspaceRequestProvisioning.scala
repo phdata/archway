@@ -54,7 +54,7 @@ trait WorkspaceRequestProvisioning {
                   GroupMember(
                     d.id.get,
                     d.managingGroup.ldapRegistration.distinguishedName,
-                    workspace.requestedBy.value
+                    workspace.requestedBy
                   ),
                   workspaceContext
                 )
@@ -66,7 +66,7 @@ trait WorkspaceRequestProvisioning {
             d =>
               GroupMemberProvisioning.provisionable
                 .provision(
-                  GroupMember(d.id.get, d.group.distinguishedName, workspace.requestedBy.value),
+                  GroupMember(d.id.get, d.group.distinguishedName, workspace.requestedBy),
                   workspaceContext
                 )
                 .run
@@ -85,7 +85,7 @@ trait WorkspaceRequestProvisioning {
                     GroupMember(
                       d.id.get,
                       d.managingRole.ldapRegistration.distinguishedName,
-                      workspace.requestedBy.value
+                      workspace.requestedBy
                     ),
                     workspaceContext
                   )
@@ -106,7 +106,7 @@ trait WorkspaceRequestProvisioning {
           d =>
             GroupMemberProvisioning.provisionable
               .deprovision(
-                GroupMember(d.id.get, d.managingRole.ldapRegistration.distinguishedName, workspace.requestedBy.value),
+                GroupMember(d.id.get, d.managingRole.ldapRegistration.distinguishedName, workspace.requestedBy),
                 workspaceContext
               )
               .run
@@ -116,7 +116,7 @@ trait WorkspaceRequestProvisioning {
           d =>
             GroupMemberProvisioning.provisionable
               .deprovision(
-                GroupMember(d.id.get, d.group.distinguishedName, workspace.requestedBy.value),
+                GroupMember(d.id.get, d.group.distinguishedName, workspace.requestedBy),
                 workspaceContext
               )
               .run
@@ -127,7 +127,7 @@ trait WorkspaceRequestProvisioning {
           d =>
             GroupMemberProvisioning.provisionable
               .deprovision(
-                GroupMember(d.id.get, d.managingGroup.ldapRegistration.distinguishedName, workspace.requestedBy.value),
+                GroupMember(d.id.get, d.managingGroup.ldapRegistration.distinguishedName, workspace.requestedBy),
                 workspaceContext
               )
               .run

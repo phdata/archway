@@ -43,7 +43,7 @@ class WorkspaceServiceImpl[F[_]: ConcurrentEffect: ContextShift](
       apps <- context.applicationRepository.findByWorkspaceId(workspace.id.get)
     } yield workspace.copy(data = datas, processing = yarns, approvals = appr, kafkaTopics = tops, applications = apps)
 
-  override def list(distinguishedName: String): F[List[WorkspaceSearchResult]] =
+  override def list(distinguishedName: DistinguishedName): F[List[WorkspaceSearchResult]] =
     context.workspaceRequestRepository.list(distinguishedName).transact(context.transactor)
 
   override def userAccessible(distinguishedName: DistinguishedName, id: Long): F[Boolean] =
@@ -63,7 +63,7 @@ class WorkspaceServiceImpl[F[_]: ConcurrentEffect: ContextShift](
           managerId <- context.databaseGrantRepository.create(managerLdap.id.get)
           manager = db.managingGroup.copy(id = Some(managerId), ldapRegistration = managerLdap)
 
-          _ <- context.memberRepository.create(workspace.requestedBy.value, managerLdap.id.get)
+          _ <- context.memberRepository.create(workspace.requestedBy, managerLdap.id.get)
 
           readwrite <- db.readWriteGroup
             .map { group =>
@@ -101,7 +101,7 @@ class WorkspaceServiceImpl[F[_]: ConcurrentEffect: ContextShift](
           appLdap <- context.ldapRepository.create(app.group)
           newApplicationId <- context.applicationRepository.create(app.copy(group = appLdap))
           _ <- context.workspaceRequestRepository.linkApplication(newWorkspaceId, newApplicationId)
-          _ <- context.memberRepository.create(workspace.requestedBy.value, appLdap.id.get)
+          _ <- context.memberRepository.create(workspace.requestedBy, appLdap.id.get)
         } yield ()
       }
 
@@ -111,7 +111,7 @@ class WorkspaceServiceImpl[F[_]: ConcurrentEffect: ContextShift](
           managerId <- context.topicGrantRepository.create(topic.managingRole.copy(ldapRegistration = managerLdap))
           manager = topic.managingRole.copy(id = Some(managerId), ldapRegistration = managerLdap)
 
-          _ <- context.memberRepository.create(workspace.requestedBy.value, managerLdap.id.get)
+          _ <- context.memberRepository.create(workspace.requestedBy, managerLdap.id.get)
 
           readonlyLdap <- context.ldapRepository.create(topic.readonlyRole.ldapRegistration)
           readonlyId <- context.topicGrantRepository.create(topic.readonlyRole.copy(ldapRegistration = readonlyLdap))
@@ -149,7 +149,7 @@ class WorkspaceServiceImpl[F[_]: ConcurrentEffect: ContextShift](
     }
   }
 
-  override def findByUsername(distinguishedName: String): OptionT[F, WorkspaceRequest] =
+  override def findByUsername(distinguishedName: DistinguishedName): OptionT[F, WorkspaceRequest] =
     OptionT(
       context.workspaceRequestRepository.findByUsername(distinguishedName).value.transact(context.transactor).flatMap {
         case Some(workspace) =>

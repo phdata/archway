@@ -107,7 +107,7 @@ class WorkspaceController[F[_]: Sync: Timer: ContextShift: ConcurrentEffect](
           /* explicit implicit declaration because of `user` variable */
           Clock[F].realTime(scala.concurrent.duration.MILLISECONDS).flatMap { time =>
             implicit val decoder: Decoder[WorkspaceRequest] =
-              WorkspaceRequest.decoder(DistinguishedName(user.distinguishedName), Instant.ofEpochMilli(time))
+              WorkspaceRequest.decoder(user.distinguishedName, Instant.ofEpochMilli(time))
             implicit val workspaceRequestEntityDecoder: EntityDecoder[F, WorkspaceRequest] = jsonOf[F, WorkspaceRequest]
             for {
               workspaceRequest <- req.req.as[WorkspaceRequest]
@@ -135,7 +135,7 @@ class WorkspaceController[F[_]: Sync: Timer: ContextShift: ConcurrentEffect](
           val access =
             for {
               userHasAccess <- workspaceService
-                .userAccessible(DistinguishedName(user.distinguishedName), id) // TODO parse as a DN in the `User` object
+                .userAccessible(user.distinguishedName, id)
               wsAccess <- (userHasAccess || user.isSuperUser).pure[F]
             } yield wsAccess
 
@@ -197,7 +197,7 @@ class WorkspaceController[F[_]: Sync: Timer: ContextShift: ConcurrentEffect](
           implicit val kafkaTopicDecoder: EntityDecoder[F, TopicRequest] = jsonOf[F, TopicRequest]
           for {
             topic <- req.req.as[TopicRequest]
-            result <- kafkaService.create(user.username, id, topic).onError {
+            result <- kafkaService.create(user.distinguishedName, id, topic).onError {
               case e: Throwable =>
                 logger.error(s"Failed to create topic for workspace $id: ${e.getLocalizedMessage}", e).pure[F]
             }
@@ -208,7 +208,7 @@ class WorkspaceController[F[_]: Sync: Timer: ContextShift: ConcurrentEffect](
           implicit val applicationDecoder: EntityDecoder[F, ApplicationRequest] = jsonOf[F, ApplicationRequest]
           for {
             request <- req.req.as[ApplicationRequest]
-            result <- applicationService.create(user.username, id, request).onError {
+            result <- applicationService.create(user.distinguishedName, id, request).onError {
               case e: Throwable =>
                 logger.error(s"Failed to get applications for workspace $id: ${e.getLocalizedMessage}", e).pure[F]
             }

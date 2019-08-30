@@ -7,11 +7,11 @@ import io.phdata.AppContext
 import com.typesafe.scalalogging.LazyLogging
 import doobie.implicits._
 import io.phdata.generators.TopicGenerator
-import io.phdata.models.TopicRequest
+import io.phdata.models.{DistinguishedName, TopicRequest}
 
 trait KafkaService[F[_]] {
 
-  def create(username: String, workspaceId: Long, kafkaTopic: TopicRequest): F[NonEmptyList[String]]
+  def create(username: DistinguishedName, workspaceId: Long, kafkaTopic: TopicRequest): F[NonEmptyList[String]]
 
 }
 
@@ -21,7 +21,11 @@ class KafkaServiceImpl[F[_]: Effect](
     topicGenerator: TopicGenerator[F]
 ) extends KafkaService[F] with LazyLogging {
 
-  override def create(username: String, workspaceId: Long, topicRequest: TopicRequest): F[NonEmptyList[String]] =
+  override def create(
+      username: DistinguishedName,
+      workspaceId: Long,
+      topicRequest: TopicRequest
+  ): F[NonEmptyList[String]] =
     (for {
       workspace <- OptionT(
         appContext.workspaceRequestRepository.find(workspaceId).value.transact(appContext.transactor)

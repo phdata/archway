@@ -11,16 +11,16 @@ import io.phdata.repositories.syntax.SqlSyntax
 class MemberRepositoryImpl(sqlSyntax: SqlSyntax) extends MemberRepository {
   implicit val han = CustomLogHandler.logHandler(this.getClass)
 
-  override def create(distinguishedName: String, ldapRegistrationId: Long): ConnectionIO[Long] =
+  override def create(distinguishedName: DistinguishedName, ldapRegistrationId: Long): ConnectionIO[Long] =
     Statements.create(distinguishedName, ldapRegistrationId).withUniqueGeneratedKeys("id")
 
-  override def complete(id: Long, distinguishedName: String): ConnectionIO[Int] =
+  override def complete(id: Long, distinguishedName: DistinguishedName): ConnectionIO[Int] =
     Statements.complete(id, distinguishedName).run
 
   override def get(id: Long): ConnectionIO[List[MemberRightsRecord]] =
     Statements.get(id).to[List]
 
-  override def delete(ldapRegistrationId: Long, distinguishedName: String): doobie.ConnectionIO[Int] =
+  override def delete(ldapRegistrationId: Long, distinguishedName: DistinguishedName): doobie.ConnectionIO[Int] =
     Statements.remove(ldapRegistrationId, distinguishedName).run
 
   override def list(workspaceId: Long): doobie.ConnectionIO[List[MemberRightsRecord]] =
@@ -152,17 +152,17 @@ class MemberRepositoryImpl(sqlSyntax: SqlSyntax) extends MemberRepository {
     def list(workspaceRequestId: Long): Query0[MemberRightsRecord] =
       (listSelect ++ whereAnd(fr"workspace_request_id = $workspaceRequestId")).query[MemberRightsRecord]
 
-    def create(distinguishedName: String, ldapRegistrationId: Long): Update0 =
+    def create(distinguishedName: DistinguishedName, ldapRegistrationId: Long): Update0 =
       sql"""
           insert into member (distinguished_name, ldap_registration_id)
-          values ($distinguishedName, $ldapRegistrationId)
+          values (${distinguishedName.value}, $ldapRegistrationId)
        """.update
 
-    def complete(ldapRegistrationId: Long, distinguishedName: String): Update0 =
-      sql"update member set created = ${Instant.now()} where distinguished_name = $distinguishedName and ldap_registration_id = $ldapRegistrationId".update
+    def complete(ldapRegistrationId: Long, distinguishedName: DistinguishedName): Update0 =
+      sql"update member set created = ${Instant.now()} where distinguished_name = ${distinguishedName.value} and ldap_registration_id = $ldapRegistrationId".update
 
-    def remove(ldapRegistrationId: Long, distinguishedName: String): Update0 =
-      sql"delete from member where ldap_registration_id = $ldapRegistrationId and distinguished_name = $distinguishedName".update
+    def remove(ldapRegistrationId: Long, distinguishedName: DistinguishedName): Update0 =
+      sql"delete from member where ldap_registration_id = $ldapRegistrationId and distinguished_name = ${distinguishedName.value}".update
 
     def get(id: Long): Query0[MemberRightsRecord] =
       (listSelect ++ whereAnd(fr"memberId = $id")).query

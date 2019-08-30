@@ -51,12 +51,11 @@ class MemberServiceImpl[F[_]](context: AppContext[F])(implicit val F: Effect[F])
         logger.info(s"adding ${memberRequest.distinguishedName} to ${registration.commonName} in ldap")
       )
 
-      user <- context.lookupLDAPClient.findUser(DistinguishedName(memberRequest.distinguishedName))
+      user <- context.lookupLDAPClient.findUser(memberRequest.distinguishedName)
 
       _ <- OptionT.liftF(context.hdfsClient.createUserDirectory(user.username))
 
-      _ <- context.provisioningLDAPClient
-        .addUser(registration.distinguishedName, DistinguishedName(memberRequest.distinguishedName))
+      _ <- context.provisioningLDAPClient.addUser(registration.distinguishedName, memberRequest.distinguishedName)
 
       _ <- OptionT.some[F](
         logger.info(s"adding ${memberRequest.distinguishedName} to ${registration.commonName} in db")
@@ -121,9 +120,7 @@ class MemberServiceImpl[F[_]](context: AppContext[F])(implicit val F: Effect[F])
         registration
           .map(
             reg =>
-              context.provisioningLDAPClient
-                .removeUser(reg.distinguishedName, DistinguishedName(memberRequest.distinguishedName))
-                .value
+              context.provisioningLDAPClient.removeUser(reg.distinguishedName, memberRequest.distinguishedName).value
           )
           .sequence
       )

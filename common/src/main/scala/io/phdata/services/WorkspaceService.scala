@@ -6,7 +6,7 @@ import io.phdata.models._
 trait WorkspaceService[F[_]] {
   def find(id: Long): OptionT[F, WorkspaceRequest]
 
-  def list(distinguishedName: String): F[List[WorkspaceSearchResult]]
+  def list(distinguishedName: DistinguishedName): F[List[WorkspaceSearchResult]]
 
   def userAccessible(distinguishedName: DistinguishedName, id: Long): F[Boolean]
 
@@ -16,7 +16,7 @@ trait WorkspaceService[F[_]] {
 
   def status(id: Long): F[WorkspaceStatus]
 
-  def findByUsername(distinguishedName: String): OptionT[F, WorkspaceRequest]
+  def findByUsername(distinguishedName: DistinguishedName): OptionT[F, WorkspaceRequest]
 
   def yarnInfo(id: Long): F[List[YarnInfo]]
 

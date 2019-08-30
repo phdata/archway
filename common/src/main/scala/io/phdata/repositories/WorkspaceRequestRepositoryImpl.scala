@@ -22,8 +22,8 @@ class WorkspaceRequestRepositoryImpl(sqlSyntax: SqlSyntax) extends WorkspaceRequ
 
   implicit val han = CustomLogHandler.logHandler(this.getClass)
 
-  override def list(username: String): ConnectionIO[List[WorkspaceSearchResult]] =
-    statements.listQuery(DistinguishedName(username)).to[List]
+  override def list(username: DistinguishedName): ConnectionIO[List[WorkspaceSearchResult]] =
+    statements.listQuery(username).to[List]
 
   override def userAccessible(userDn: DistinguishedName): ConnectionIO[List[Long]] =
     statements.userAccessibleQuery(userDn).to[List]
@@ -55,7 +55,7 @@ class WorkspaceRequestRepositoryImpl(sqlSyntax: SqlSyntax) extends WorkspaceRequ
   override def linkApplication(workspaceId: Long, applicationId: Long): doobie.ConnectionIO[Int] =
     statements.linkApplication(workspaceId, applicationId).run
 
-  override def findByUsername(distinguishedName: String): OptionT[doobie.ConnectionIO, WorkspaceRequest] =
+  override def findByUsername(distinguishedName: DistinguishedName): OptionT[doobie.ConnectionIO, WorkspaceRequest] =
     OptionT(statements.findByUsername(distinguishedName).option)
 
   override def pendingQueue(role: ApproverRole): ConnectionIO[List[WorkspaceSearchResult]] =
@@ -202,8 +202,9 @@ class WorkspaceRequestRepositoryImpl(sqlSyntax: SqlSyntax) extends WorkspaceRequ
     def markUnprovisioned(id: Long): Update0 =
       sql"update workspace_request SET workspace_created = null where id = $id".update
 
-    def findByUsername(username: String): Query0[WorkspaceRequest] =
-      (selectFragment ++ whereAnd(fr"wr.requested_by = $username", fr"wr.single_user = '1'")).query[WorkspaceRequest]
+    def findByUsername(distinguishedName: DistinguishedName): Query0[WorkspaceRequest] =
+      (selectFragment ++ whereAnd(fr"wr.requested_by = ${distinguishedName.value}", fr"wr.single_user = '1'"))
+        .query[WorkspaceRequest]
 
     def pending(role: ApproverRole): Query0[WorkspaceSearchResult] =
       (listFragment ++ whereAnd(fr"wr.single_user = '0' AND wr.deleted != '1'")).query

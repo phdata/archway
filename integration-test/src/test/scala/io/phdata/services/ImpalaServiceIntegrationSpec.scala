@@ -7,13 +7,14 @@ import io.phdata.AppContext
 import io.phdata.itest.fixtures.KerberosTest
 import io.phdata.test.fixtures.TestTimer
 import doobie.implicits._
+import io.phdata.models.DistinguishedName
 import org.scalatest.FlatSpec
 
 import scala.concurrent.ExecutionContext
 
 class ImpalaServiceIntegrationSpec extends FlatSpec with KerberosTest {
 
-  val requester = "CN=Tony Foerster,OU=users,OU=Hadoop,DC=phdata,DC=io"
+  val requester = DistinguishedName("CN=Tony Foerster,OU=users,OU=Hadoop,DC=phdata,DC=io")
 
   it should "Invalidate metadata" in new Context {
     context

@@ -7,11 +7,11 @@ import io.phdata.models.{ApproverRole, DistinguishedName, WorkspaceRequest, Work
 import doobie._
 
 trait WorkspaceRequestRepository {
-  def findByUsername(distinguishedName: String): OptionT[ConnectionIO, WorkspaceRequest]
+  def findByUsername(distinguishedName: DistinguishedName): OptionT[ConnectionIO, WorkspaceRequest]
 
   def create(workspaceRequest: WorkspaceRequest): ConnectionIO[Long]
 
-  def list(username: String): ConnectionIO[List[WorkspaceSearchResult]]
+  def list(username: DistinguishedName): ConnectionIO[List[WorkspaceSearchResult]]
 
   def userAccessible(distinguishedName: DistinguishedName): ConnectionIO[List[Long]]
 

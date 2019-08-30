@@ -26,10 +26,9 @@ class WorkspaceServiceImplSpec
   behavior of "Workspace Service"
 
   it should "list projects" in new Context {
-    val userDN = standardUserDN.value
-    context.workspaceRequestRepository.list _ expects userDN returning List(searchResult).pure[ConnectionIO]
+    context.workspaceRequestRepository.list _ expects standardUserDN returning List(searchResult).pure[ConnectionIO]
 
-    val projects = workspaceServiceImpl.list(userDN).unsafeRunSync()
+    val projects = workspaceServiceImpl.list(standardUserDN).unsafeRunSync()
     projects.length should be(1)
     projects.head should be(searchResult)
   }
@@ -56,7 +55,7 @@ class WorkspaceServiceImplSpec
 
       (context.ldapRepository.create _).expects(initialLDAP).returning(savedLDAP.pure[ConnectionIO])
       (context.databaseGrantRepository.create _).expects(id).returning(id.pure[ConnectionIO])
-      (context.memberRepository.create _).expects(standardUserDN.value, id).returning(id.pure[ConnectionIO])
+      (context.memberRepository.create _).expects(standardUserDN, id).returning(id.pure[ConnectionIO])
 
       // Read only
       (context.ldapRepository.create _).expects(initialLDAP).returning(savedLDAP.pure[ConnectionIO])
@@ -71,7 +70,7 @@ class WorkspaceServiceImplSpec
       (context.ldapRepository.create _).expects(initialLDAP).returning(savedLDAP.pure[ConnectionIO])
       (context.applicationRepository.create _).expects(initialApplication.copy(group = savedLDAP)).returning(id.pure[ConnectionIO])
       (context.workspaceRequestRepository.linkApplication _).expects(id, id).returning(1.pure[ConnectionIO])
-      (context.memberRepository.create _).expects(standardUserDN.value, id).returning(1L.pure[ConnectionIO])
+      (context.memberRepository.create _).expects(standardUserDN, id).returning(1L.pure[ConnectionIO])
       (context.workspaceRequestRepository.find _).expects(123).returning(OptionT.some(savedWorkspaceRequest))
       (context.databaseRepository.findByWorkspace _).expects(id)returning List(savedHive).pure[ConnectionIO]
       (context.yarnRepository.findByWorkspaceId _).expects(id)returning List(savedYarn).pure[ConnectionIO]
@@ -103,14 +102,14 @@ class WorkspaceServiceImplSpec
   }
 
   it should "find a user workspace" in new Context {
-    context.workspaceRequestRepository.findByUsername _ expects standardUsername returning OptionT.some(savedWorkspaceRequest)
+    context.workspaceRequestRepository.findByUsername _ expects standardUserDN returning OptionT.some(savedWorkspaceRequest)
     context.databaseRepository.findByWorkspace _ expects id returning List(savedHive).pure[ConnectionIO]
     context.yarnRepository.findByWorkspaceId _ expects id returning List(savedYarn).pure[ConnectionIO]
     context.approvalRepository.findByWorkspaceId _ expects id returning List.empty[Approval].pure[ConnectionIO]
     context.kafkaRepository.findByWorkspaceId _ expects id returning List.empty[KafkaTopic].pure[ConnectionIO]
     context.applicationRepository.findByWorkspaceId _ expects id returning List.empty[Application].pure[ConnectionIO]
 
-    val maybeWorkspace = workspaceServiceImpl.findByUsername(standardUsername).value.unsafeRunSync()
+    val maybeWorkspace = workspaceServiceImpl.findByUsername(standardUserDN).value.unsafeRunSync()
 
     maybeWorkspace shouldBe Some(savedWorkspaceRequest.copy(applications = List.empty))
   }

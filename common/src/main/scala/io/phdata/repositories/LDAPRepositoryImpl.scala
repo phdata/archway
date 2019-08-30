@@ -131,7 +131,7 @@ object LDAPRepositoryImpl {
       sql"""
        insert into ldap_registration (distinguished_name, common_name, sentry_role)
        values(
-        ${ldapRegistration.distinguishedName},
+        ${ldapRegistration.distinguishedName.value},
         ${ldapRegistration.commonName},
         ${ldapRegistration.sentryRole}
        )

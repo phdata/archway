@@ -38,9 +38,7 @@ class TemplateController[F[_]: Sync](authService: TokenAuthService[F], templateG
         case req @ POST -> Root / templateName as user =>
           implicit val templateEntityDecoder: EntityDecoder[F, TemplateRequest] = jsonOf[F, TemplateRequest]
           for {
-            simpleTemplate <- req.req
-              .as[TemplateRequest]
-              .map(_.copy(requester = DistinguishedName(user.distinguishedName)))
+            simpleTemplate <- req.req.as[TemplateRequest].map(_.copy(requester = user.distinguishedName))
             workspaceRequest <- templateGenerator
               .workspaceFor(simpleTemplate, URLDecoder.decode(templateName, "UTF-8"))
               .onError {
