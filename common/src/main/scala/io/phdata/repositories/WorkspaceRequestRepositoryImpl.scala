@@ -157,7 +157,7 @@ class WorkspaceRequestRepositoryImpl(sqlSyntax: SqlSyntax) extends WorkspaceRequ
         """
 
     def listQuery(userDN: DistinguishedName): Query0[(WorkspaceSearchResult)] =
-      (listFragment ++ fr"where wr.id in (" ++ innerQuery(userDN) ++ fr") and wr.single_user = '0' and wr.deleted != '1'").query
+      (listFragment ++ fr"where wr.id in (" ++ innerQuery(userDN) ++ fr") and wr.single_user = '0' and wr.deleted IS NULL OR wr.deleted != '1'").query
 
     def userAccessibleQuery(userDN: DistinguishedName): doobie.Query0[(Long)] = innerQuery(userDN).query
 
@@ -207,7 +207,7 @@ class WorkspaceRequestRepositoryImpl(sqlSyntax: SqlSyntax) extends WorkspaceRequ
         .query[WorkspaceRequest]
 
     def pending(role: ApproverRole): Query0[WorkspaceSearchResult] =
-      (listFragment ++ whereAnd(fr"wr.single_user = '0' AND wr.deleted != '1'")).query
+      (listFragment ++ whereAnd(fr"wr.single_user = '0' AND wr.deleted IS NULL OR wr.deleted != '1'")).query
 
   }
 
