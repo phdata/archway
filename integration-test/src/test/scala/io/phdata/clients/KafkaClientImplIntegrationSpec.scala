@@ -16,9 +16,10 @@ class KafkaClientImplIntegrationSpec extends FlatSpec with Matchers with Integra
     val KAFKA_TEST_TOPIC = s"heimdali_test_kafka_topic_${UUID.randomUUID().toString.take(8)}"
 
     client.createTopic(KAFKA_TEST_TOPIC, 10, 1).unsafeRunSync()
-
     AdminUtils.topicExists(client.zkUtils, KAFKA_TEST_TOPIC) shouldBe true
+
     AdminUtils.deleteTopic(client.zkUtils, KAFKA_TEST_TOPIC)
+    Thread.sleep(500)
     AdminUtils.topicExists(client.zkUtils, KAFKA_TEST_TOPIC) shouldBe false
   }
 
@@ -30,6 +31,7 @@ class KafkaClientImplIntegrationSpec extends FlatSpec with Matchers with Integra
     AdminUtils.topicExists(client.zkUtils, KAFKA_TEST_TOPIC) shouldBe true
 
     client.deleteTopic(KAFKA_TEST_TOPIC).unsafeRunSync()
+    Thread.sleep(500)
     AdminUtils.topicExists(client.zkUtils, KAFKA_TEST_TOPIC) shouldBe false
   }
 }
