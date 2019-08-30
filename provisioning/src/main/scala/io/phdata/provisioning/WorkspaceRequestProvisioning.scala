@@ -133,6 +133,10 @@ trait WorkspaceRequestProvisioning {
               .run
         )
         a <- workspace.data.traverse(a => HiveAllocationProvisionable.deprovision(a, workspaceContext).run)
+        _ <- workspaceContext.context.workspaceRequestRepository
+          .markUnprovisioned(workspaceContext.workspaceId)
+          .transact(workspaceContext.context.transactor)
+          .void
       } yield a |+| b |+| c |+| d |+| e |+| f |+| g
   }
 

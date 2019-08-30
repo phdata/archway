@@ -37,6 +37,9 @@ class WorkspaceRequestRepositoryImpl(sqlSyntax: SqlSyntax) extends WorkspaceRequ
   override def markProvisioned(workspaceId: Long, time: Instant): ConnectionIO[Int] =
     statements.markProvisioned(workspaceId, time).run
 
+  override def markUnprovisioned(workspaceId: Long): doobie.ConnectionIO[Int] =
+    statements.markUnprovisioned(workspaceId).run
+
   override def create(workspaceRequest: WorkspaceRequest): ConnectionIO[Long] =
     statements.insert(workspaceRequest).withUniqueGeneratedKeys[Long]("id")
 
@@ -195,6 +198,9 @@ class WorkspaceRequestRepositoryImpl(sqlSyntax: SqlSyntax) extends WorkspaceRequ
 
     def markProvisioned(id: Long, time: Instant): Update0 =
       sql"update workspace_request SET workspace_created = $time where id = $id".update
+
+    def markUnprovisioned(id: Long): Update0 =
+      sql"update workspace_request SET workspace_created = null where id = $id".update
 
     def findByUsername(username: String): Query0[WorkspaceRequest] =
       (selectFragment ++ whereAnd(fr"wr.requested_by = $username", fr"wr.single_user = '1'")).query[WorkspaceRequest]
