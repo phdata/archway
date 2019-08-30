@@ -512,7 +512,7 @@
           "description": "Full url for Archway UI in the format `https://host:port`. The default of this value should be auto generated and work without configuration",
           "required": "false",
           "type": "string",
-          "default": "${host}:${archway.rest.port}"
+          "default": ""
         },
         {
           "name": "archway.ui.staticContentDir",

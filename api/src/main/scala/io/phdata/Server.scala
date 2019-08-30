@@ -105,7 +105,9 @@ object Server extends IOApp with LazyLogging {
       cacheInitializer = new CacheInitializer[F](context)
       adGroupsSynchronizer = new ADGroupsSynchronizer[F](context)
       _ <- Resource.liftF(logger.info("Initializing ArchwayStartup class").pure[F])
-      startup = new ArchwayStartup[F](cacheInitializer, sessionMaintainer, provisioningJob, adGroupsSynchronizer)(startupEC)
+      startup = new ArchwayStartup[F](cacheInitializer, sessionMaintainer, provisioningJob, adGroupsSynchronizer)(
+        startupEC
+      )
 
       _ <- Resource.liftF(startup.begin())
       _ <- Resource.liftF(logger.info("Class ArchwayStartup has started").pure[F])
