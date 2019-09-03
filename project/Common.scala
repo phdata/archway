@@ -28,7 +28,8 @@ object Common {
 
   val compilerOptions = Seq(
     "-Ypartial-unification",
-    "-language:higherKinds"
+    "-language:higherKinds",
+    "-deprecation"
   )
 
   val settings = Seq(

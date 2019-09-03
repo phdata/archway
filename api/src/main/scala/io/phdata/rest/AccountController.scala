@@ -36,7 +36,7 @@ class AccountController[F[_]: Sync](
 
   val clientAuthRoutes: HttpRoutes[F] =
     authService.clientAuth {
-      AuthedService[Token, F] {
+      AuthedRoutes.of[Token, F] {
         case GET -> Root as token =>
           Ok(token.asJson)
         case GET -> Root / "version" as _ =>
@@ -56,7 +56,7 @@ class AccountController[F[_]: Sync](
 
   val tokenizedRoutes: HttpRoutes[F] =
     tokenAuthService.tokenAuth {
-      AuthedService[User, F] {
+      AuthedRoutes.of[User, F] {
         case GET -> Root / "profile" as user =>
           Ok(user.asJson)
 

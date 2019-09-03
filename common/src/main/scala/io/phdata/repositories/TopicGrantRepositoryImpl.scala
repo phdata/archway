@@ -4,7 +4,8 @@ import java.time.Instant
 
 import io.phdata.models.TopicGrant
 import doobie.LogHandler
-import doobie.imports._
+import doobie._
+import doobie.implicits._
 
 class TopicGrantRepositoryImpl extends TopicGrantRepository {
 

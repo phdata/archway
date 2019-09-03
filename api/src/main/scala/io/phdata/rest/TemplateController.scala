@@ -19,7 +19,7 @@ class TemplateController[F[_]: Sync](authService: TokenAuthService[F], templateG
 
   val route: HttpRoutes[F] =
     authService.tokenAuth {
-      AuthedService[User, F] {
+      AuthedRoutes.of[User, F] {
 
         case GET -> Root / "custom" as _ =>
           for {

@@ -30,8 +30,8 @@ class SpnegoAuthService[F[_]: Sync](accountService: AccountService[F]) extends A
       }
     }
 
-  val onFailure: AuthedService[Throwable, F] = Kleisli(
-    _ => OptionT.some(Response(Unauthorized, headers = Headers(NEGOTIATE_HEADER)))
+  val onFailure: AuthedRoutes[Throwable, F] = Kleisli(
+    _ => OptionT.some(Response(Unauthorized, headers = Headers.of(NEGOTIATE_HEADER)))
   )
 
   override def clientAuth = AuthMiddleware(authStore, onFailure)

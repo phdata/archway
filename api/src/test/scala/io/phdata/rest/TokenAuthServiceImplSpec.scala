@@ -21,7 +21,7 @@ class TokenAuthServiceImplSpec extends FlatSpec with Matchers with MockFactory {
 
     val authService = new TokenAuthServiceImpl[IO](accountService)
     val Some(result) = authService.validate(u => u.permissions.platformOperations || u.permissions.riskManagement)(
-      Request(uri = Uri.uri("/profile"), headers = Headers(Header("Authorization", infraApproverToken)))).value.unsafeRunSync()
+      Request(uri = Uri.uri("/profile"), headers = Headers.of(Header("Authorization", infraApproverToken)))).value.unsafeRunSync()
     result.permissions.platformOperations shouldBe true
   }
 
@@ -31,7 +31,7 @@ class TokenAuthServiceImplSpec extends FlatSpec with Matchers with MockFactory {
 
     val authService = new TokenAuthServiceImpl[IO](accountService)
     val result = authService.validate(u => u.permissions.platformOperations || u.permissions.riskManagement)(
-      Request(uri = Uri.uri("/profile"), headers = Headers(Header("Authorization", basicUserToken)))).value.unsafeRunSync()
+      Request(uri = Uri.uri("/profile"), headers = Headers.of(Header("Authorization", basicUserToken)))).value.unsafeRunSync()
     result should not be defined
   }
 

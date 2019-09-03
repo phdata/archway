@@ -39,7 +39,7 @@ class WorkspaceController[F[_]: Sync: Timer: ContextShift: ConcurrentEffect](
 
   val route: HttpRoutes[F] =
     authService.tokenAuth {
-      AuthedService[User, F] {
+      AuthedRoutes.of[User, F] {
         case req @ POST -> Root / LongVar(id) / "approve" as user =>
           if (user.canApprove) {
             Clock[F].realTime(scala.concurrent.duration.MILLISECONDS).flatMap { time =>

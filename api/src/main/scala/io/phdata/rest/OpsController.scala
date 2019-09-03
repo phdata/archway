@@ -15,7 +15,7 @@ class OpsController[F[_]: Sync](authService: TokenAuthService[F], workspaceServi
 
   val route: HttpRoutes[F] =
     authService.tokenRoleAuth(user => user.role == Infra || user.role == Full) {
-      AuthedService[User, F] {
+      AuthedRoutes.of[User, F] {
         case GET -> Root / "workspaces" as _ =>
           for {
             result <- workspaceService.reviewerList(Infra).onError {
