@@ -21,6 +21,7 @@ import {
   ManageTab,
   WarningText,
   ChangeOwnerRequest,
+  ModifyDiskQuota,
 } from './components';
 import { Cluster } from '../../models/Cluster';
 import { Profile } from '../../models/Profile';
@@ -71,6 +72,7 @@ interface Props extends RouteComponentProps<DetailsRouteProps> {
   fetching: boolean;
   userSuggestionsLoading: boolean;
   ownerLoading: boolean;
+  quotaLoading: boolean;
 
   clearDetails: () => void;
   getWorkspaceDetails: (id: number) => void;
@@ -92,6 +94,7 @@ interface Props extends RouteComponentProps<DetailsRouteProps> {
   deprovisionWorkspace: () => void;
   provisionWorkspace: () => void;
   changeWorkspaceOwner: () => void;
+  modifyDiskQuota: () => void;
 }
 
 class WorkspaceDetails extends React.PureComponent<Props> {
@@ -222,6 +225,8 @@ class WorkspaceDetails extends React.PureComponent<Props> {
       userSuggestionsLoading,
       changeWorkspaceOwner,
       ownerLoading,
+      modifyDiskQuota,
+      quotaLoading,
     } = this.props;
     const hasApplicationFlag = featureFlags.includes(FeatureFlagType.Application);
     const hasMessagingFlag = featureFlags.includes(FeatureFlagType.Messaging);
@@ -302,6 +307,7 @@ class WorkspaceDetails extends React.PureComponent<Props> {
               requestRefreshHiveTables={requestRefreshHiveTables}
               memberLoading={memberLoading}
               provisioning={provisioning}
+              isPlatformOperations={profile && profile.permissions.platform_operations}
             />
           </Tabs.TabPane>
           {hasApplicationFlag && (
@@ -419,6 +425,16 @@ class WorkspaceDetails extends React.PureComponent<Props> {
             suggestions={userSuggestions}
           />
         </Modal>
+        <Modal
+          visible={activeModal === ModalType.ModifyDiskQuota}
+          title="Modify Disk Quota"
+          onCancel={clearModal}
+          confirmLoading={quotaLoading}
+          onOk={modifyDiskQuota}
+          okText="Modify"
+        >
+          <ModifyDiskQuota allocations={workspace.data} />
+        </Modal>
       </div>
     );
   }
@@ -446,6 +462,7 @@ const mapStateToProps = () =>
     fetching: selectors.getFetching(),
     userSuggestionsLoading: selectors.getUserSuggestionsLoading(),
     ownerLoading: selectors.getOwnerLoading(),
+    quotaLoading: selectors.getQuotaLoading(),
   });
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
@@ -487,6 +504,7 @@ const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
   deprovisionWorkspace: () => dispatch(actions.requestDeprovisionWorkspace()),
   provisionWorkspace: () => dispatch(actions.requestProvisionWorkspace()),
   changeWorkspaceOwner: () => dispatch(actions.requestChangeWorkspaceOwner()),
+  modifyDiskQuota: () => dispatch(actions.requestModifyDiskQuota()),
 });
 
 export default connect(

@@ -341,3 +341,14 @@ export const setOwnerLoading = (loading: boolean) => ({
   type: SET_OWNER_LOADING,
   loading,
 });
+
+export const REQUEST_MODIFY_DISK_QUOTA = 'MODIFY_DISK_QUOTA';
+export const requestModifyDiskQuota = () => ({
+  type: REQUEST_MODIFY_DISK_QUOTA,
+});
+
+export const SET_QUOTA_LOADING = 'SET_QUOTA_LOADING';
+export const setQuotaLoading = (loading: boolean) => ({
+  type: SET_QUOTA_LOADING,
+  loading,
+});

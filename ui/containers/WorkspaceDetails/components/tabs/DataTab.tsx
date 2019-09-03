@@ -19,6 +19,7 @@ interface Props {
   selectedAllocation?: HiveAllocation;
   memberLoading: boolean;
   provisioning: ProvisioningType;
+  isPlatformOperations: boolean;
 
   showModal: (e: React.MouseEvent, type: ModalType) => void;
   onChangeAllocation: (allocation: HiveAllocation) => void;
@@ -40,6 +41,7 @@ class DataTab extends React.Component<Props> {
       removeMember,
       memberLoading,
       provisioning,
+      isPlatformOperations,
     } = this.props;
 
     if (!workspace) {
@@ -61,12 +63,16 @@ class DataTab extends React.Component<Props> {
             const roleData = currentMember && currentMember.data[allocation.name];
             const roleValue = roleData && roleData.role;
             const hasPermission = isLiaison || roleValue === 'manager';
-
             return (
               <Tabs.TabPane tab={allocation.name} key={allocation.id.toString()}>
                 <Row gutter={16} type="flex" justify="center" style={{ marginBottom: 16 }}>
                   <Col span={6}>
-                    <HiveDatabase data={allocation} isDefault />
+                    <HiveDatabase
+                      data={allocation}
+                      isDefault
+                      showModal={showModal}
+                      isPlatformOperations={isPlatformOperations}
+                    />
                   </Col>
                   <Col span={18}>
                     <Card style={{ height: '100%' }}>

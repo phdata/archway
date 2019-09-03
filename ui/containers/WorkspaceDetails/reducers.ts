@@ -33,6 +33,7 @@ import {
   SET_WORKSPACE_FETCHING,
   SET_USERSUGGESTIONS_LOADING,
   SET_OWNER_LOADING,
+  SET_QUOTA_LOADING,
 } from './actions';
 
 import { Member } from '../../models/Workspace';
@@ -54,6 +55,7 @@ const initialState = fromJS({
   },
   userSuggestionsLoading: false,
   ownerLoading: false,
+  quotaLoading: false,
 });
 
 const details = (state = initialState, action: any) => {
@@ -257,6 +259,9 @@ const details = (state = initialState, action: any) => {
 
     case SET_OWNER_LOADING:
       return state.set('ownerLoading', action.loading);
+
+    case SET_QUOTA_LOADING:
+      return state.set('quotaLoading', action.loading);
 
     default:
       return state;

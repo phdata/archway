@@ -194,6 +194,7 @@ describe('DataTab', () => {
       } as Cluster,
       memberLoading: false,
       provisioning: ProvisioningType.Pending,
+      isPlatformOperations: true,
       showModal: () => null,
       onChangeAllocation: () => null,
       onChangeMemberRole: () => null,

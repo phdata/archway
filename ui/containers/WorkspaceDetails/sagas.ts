@@ -48,6 +48,8 @@ import {
   setUserSuggestionsLoading,
   REQUEST_CHANGE_WORKSPACE_OWNER,
   setOwnerLoading,
+  REQUEST_MODIFY_DISK_QUOTA,
+  setQuotaLoading,
 } from './actions';
 import { ErrorMessages } from './constants';
 import { RECENT_WORKSPACES_KEY, TOKEN_EXTRACTOR, NotificationType } from '../../constants';
@@ -60,6 +62,7 @@ const router = require('connected-react-router/immutable');
 export const detailExtractor = (s: any) => s.getIn(['details', 'details']);
 export const memberRequestFormExtractor = (s: any) => s.getIn(['form', 'simpleMemberRequest', 'values']);
 export const ownerDnExtractor = (s: any) => s.getIn(['form', 'changeOwnerRequest', 'values']);
+export const quotaExtractor = (s: any) => s.getIn(['form', 'modifyDiskQuotaRequest', 'values']);
 export const topicMemberRequestFormExtractor = (s: any) => s.getIn(['form', 'simpleTopicMemberRequest', 'values']);
 export const activeTopicExtractor = (s: any) => s.getIn(['details', 'activeTopic']);
 
@@ -375,6 +378,26 @@ function* changeWorkspaceOwnerRequestedListener() {
   yield takeLatest(REQUEST_CHANGE_WORKSPACE_OWNER, changeWorkspaceOwnerRequested);
 }
 
+function* modifyDiskQuotaRequested() {
+  const token = yield select(TOKEN_EXTRACTOR);
+  const { id, name } = (yield select(detailExtractor)).toJS();
+  const quota = (yield select(quotaExtractor)).toJS().quota;
+  try {
+    yield put(setQuotaLoading(true));
+    yield call(Api.modifyDiskQuota, token, id, quota);
+  } catch {
+    yield put(setNotificationStatus(NotificationType.Error, `Failed to modify disk quota of ${name}`));
+  } finally {
+    yield put(clearNotificationStatus());
+    yield put(setQuotaLoading(false));
+    yield put(setActiveModal(false));
+  }
+}
+
+function* modifyDiskQuotaRequestedListener() {
+  yield takeLatest(REQUEST_MODIFY_DISK_QUOTA, modifyDiskQuotaRequested);
+}
+
 export default function* root() {
   yield all([
     fork(workspaceRequest),
@@ -391,5 +414,6 @@ export default function* root() {
     fork(deprovisionWorkspaceRequestedListener),
     fork(provisionWorkspaceRequestedListener),
     fork(changeWorkspaceOwnerRequestedListener),
+    fork(modifyDiskQuotaRequestedListener),
   ]);
 }

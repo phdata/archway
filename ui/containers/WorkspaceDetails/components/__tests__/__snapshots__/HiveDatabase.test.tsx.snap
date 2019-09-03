@@ -72,5 +72,27 @@ exports[`HiveDatabase renders correctly 1`] = `
     <br />
     AVAILABLE
   </div>
+  <Connect(Feature)
+    flag="disk-quota"
+  >
+    <div
+      style={
+        Object {
+          "textAlign": "center",
+        }
+      }
+    >
+      <Button
+        block={false}
+        ghost={false}
+        htmlType="button"
+        loading={false}
+        onClick={[Function]}
+        type="primary"
+      >
+        Modify
+      </Button>
+    </div>
+  </Connect(Feature)>
 </Card>
 `;

@@ -160,3 +160,9 @@ export const getOwnerLoading = () =>
     workspaceSelector,
     workspaceState => workspaceState.get('ownerLoading')
   );
+
+export const getQuotaLoading = () =>
+  createSelector(
+    workspaceSelector,
+    workspaceState => workspaceState.get('quotaLoading')
+  );

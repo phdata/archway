@@ -1,15 +1,20 @@
 import * as React from 'react';
 import { Doughnut } from 'react-chartjs-2';
-import { Colors } from '../../../components';
+
+import { Colors, Feature } from '../../../components';
 import { HiveAllocation } from '../../../models/Workspace';
-import { Card } from 'antd';
+import { Card, Button } from 'antd';
+import { ModalType, FeatureFlagType } from '../../../constants';
 
 interface Props {
   data: HiveAllocation;
   isDefault: boolean;
+  isPlatformOperations: boolean;
+
+  showModal: (e: React.MouseEvent, type: ModalType) => void;
 }
 
-const HiveDatabase = ({ data, isDefault }: Props) => {
+const HiveDatabase = ({ data, showModal, isPlatformOperations, isDefault }: Props) => {
   const total_disk_allocated_in_gb = data.size_in_gb;
   const total_disk_consumed_in_gb = data.consumed_in_gb;
   const allocated = total_disk_allocated_in_gb || 1;
@@ -44,6 +49,15 @@ const HiveDatabase = ({ data, isDefault }: Props) => {
         <br />
         AVAILABLE
       </div>
+      <Feature flag={FeatureFlagType.DiskQuota}>
+        {isPlatformOperations && (
+          <div style={{ textAlign: 'center' }}>
+            <Button type="primary" onClick={e => showModal(e, ModalType.ModifyDiskQuota)}>
+              Modify
+            </Button>
+          </div>
+        )}
+      </Feature>
     </Card>
   );
 };

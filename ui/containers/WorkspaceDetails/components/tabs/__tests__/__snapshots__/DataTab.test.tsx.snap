@@ -54,6 +54,8 @@ exports[`DataTab renders correctly 1`] = `
               }
             }
             isDefault={true}
+            isPlatformOperations={true}
+            showModal={[Function]}
           />
         </Col>
         <Col

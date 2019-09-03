@@ -24,6 +24,7 @@ export enum FeatureFlagType {
   Messaging = 'messaging',
   DeleteWorkspace = 'workspace-delete',
   ManageTab = 'manage-tab',
+  DiskQuota = 'disk-quota',
 }
 
 export enum ProvisioningType {
@@ -40,6 +41,7 @@ export enum ModalType {
   SimpleTopicMember = 'simpleTopicMember',
   SimpleMember = 'simpleMember',
   ChangeOwner = 'changeOwner',
+  ModifyDiskQuota = 'modifyDiskQuota',
 }
 
 export enum NotificationType {

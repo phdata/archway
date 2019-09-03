@@ -180,3 +180,6 @@ export const deprovisionWorkspace = (token: string, id: number) => withBody(`/wo
 export const provisionWorkspace = (token: string, id: number) => withBody(`/workspaces/${id}/provision`, token);
 
 export const versionInfo = (token: string) => get('/account/version', token);
+
+export const modifyDiskQuota = (token: string, id: number, value: number) =>
+  withBody(`/workspace/${id}/diskquota/${value}`, token);

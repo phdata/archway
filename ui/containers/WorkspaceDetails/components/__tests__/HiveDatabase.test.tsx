@@ -68,6 +68,8 @@ describe('HiveDatabase', () => {
     const props = {
       data: hiveAllocation,
       isDefault: true,
+      isPlatformOperations: true,
+      showModal: () => null,
     };
     const wrapper = shallow(<HiveDatabase {...props} />);
 
