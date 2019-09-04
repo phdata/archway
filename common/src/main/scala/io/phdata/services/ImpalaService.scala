@@ -8,7 +8,9 @@ import doobie.implicits._
 
 object ImpalaService extends LazyLogging {
 
-  val TEMP_TABLE_NAME = "heimdali_temp"
+  val TEMP_TABLE_NAME = "archway_temp"
+  // Leaving this to clean up old temp tables running older versions
+  val HEIMDALI_TEMP_TABLE_NAME = "heimdali_temp"
 
   def invalidateMetadata[F[_]: Sync](workspaceId: Long)(context: AppContext[F]): F[Unit] = {
     for {
@@ -32,6 +34,8 @@ object ImpalaService extends LazyLogging {
             .warn(s"Skipped Impala invalidate metadata for database '$database' because ImpalaClient was not defined")
             .pure[F]
         )
+      _ <- context.hiveClient.dropTable(database, TEMP_TABLE_NAME)
+      _ <- context.hiveClient.dropTable(database, HEIMDALI_TEMP_TABLE_NAME)
     } yield ()
   }
 

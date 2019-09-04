@@ -55,6 +55,8 @@ class MemberServiceSpec
     context.databaseRepository.findByWorkspace _ expects 123 returning List(savedHive).pure[ConnectionIO]
     context.hiveClient.createTable _ expects (savedHive.name, ImpalaService.TEMP_TABLE_NAME) returning 0.pure[IO]
     context.impalaClient.get.invalidateMetadata _ expects (savedHive.name, ImpalaService.TEMP_TABLE_NAME) returning ().pure[IO]
+    context.hiveClient.dropTable _ expects (savedHive.name, ImpalaService.TEMP_TABLE_NAME) returning ().pure[IO]
+    context.hiveClient.dropTable _ expects (savedHive.name, ImpalaService.HEIMDALI_TEMP_TABLE_NAME) returning ().pure[IO]
     memberService.addMember(123, MemberRoleRequest(newMember, "data", 123, Some(Manager))).value.unsafeRunSync()
   }
 
