@@ -8,7 +8,7 @@ import io.circe.Decoder
 
 package object fixtures {
 
-  case class SystemTestConfig(existingUser: String, existingPassword: Password, krb5FilePath: String)
+  case class SystemTestConfig(existingUser: String, existingPassword: Password, krb5FilePath: String, artifactoryToken: String)
 
   object SystemTestConfig {
     import io.circe.generic.semiauto._

@@ -40,6 +40,14 @@
       "type": "port",
       "default": 8080,
       "configurableInWizard": "true"
+    },
+    {
+       "name": "bundleToken",
+       "label": "Bundle Token",
+       "description": "Artifactory access token",
+       "required": "false",
+       "type": "string",
+       "default": ""
     }
   ],
   "roles": [
@@ -697,7 +705,21 @@
           "DB_USERNAME": "${archway.db.meta.username}",
           "DB_PASSWORD": "${archway.db.meta.password}"
         }
-      }
+      },
+      "commands": [
+        {
+          "name": "support_bundle",
+          "label": "Support Bundle",
+          "description": "Upload log file to phData servers",
+          "expectedExitCodes": [0],
+          "commandRunner": {
+            "program": "scripts/bundler.sh",
+            "environmentVariables": {
+              "ARTIFACTORY_TOKEN": "${bundleToken}"
+            }
+          }
+        }
+      ]
     }
   ]
 }

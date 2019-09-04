@@ -43,7 +43,7 @@ package()
   cp -R public/fonts ${READY_DIR}/usr/lib/archway-ui/
 
   # Control script
-  cp bin/control.sh ${READY_DIR}/usr/bin/
+  cp bin/* ${READY_DIR}/usr/bin/
 
   # flyway
   cp -r flyway/* ${READY_DIR}/usr/lib/flyway

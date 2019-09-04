@@ -75,7 +75,6 @@ object Dependencies {
       ExclusionRule("org.datanucleus"),
       ExclusionRule("commons-beanutils"),
       ExclusionRule("org.apache.hadoop", "hadoop-yarn-common"),
-      ExclusionRule("org.slf4j")
     ),
     "org.apache.hadoop" % "hadoop-client" % hadoopVersion % "provided",
     "org.apache.hive" % "hive-jdbc" % hiveVersion % "provided",
