@@ -103,6 +103,20 @@ class WorkspaceController[F[_]: Sync: Timer: ContextShift: ConcurrentEffect](
           } else
             Forbidden()
 
+        case POST -> Root / "workspaces" / LongVar(id) / "owner" / ownerDN as user =>
+          if (user.isSuperUser) {
+            for {
+              _ <- workspaceService.changeOwner(id, DistinguishedName(ownerDN)).onError {
+                case e: Throwable =>
+                  logger
+                    .error(s"Failed to reassign workspace id $id to user $ownerDN: ${e.getLocalizedMessage}", e)
+                    .pure[F]
+              }
+              response <- Ok()
+            } yield response
+          } else
+            Forbidden()
+
         case req @ POST -> Root as user =>
           /* explicit implicit declaration because of `user` variable */
           Clock[F].realTime(scala.concurrent.duration.MILLISECONDS).flatMap { time =>

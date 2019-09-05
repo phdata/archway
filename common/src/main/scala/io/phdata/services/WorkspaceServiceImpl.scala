@@ -11,6 +11,7 @@ import doobie.implicits._
 
 class WorkspaceServiceImpl[F[_]: ConcurrentEffect: ContextShift](
     provisioningService: ProvisioningService[F],
+    memberService: MemberService[F],
     context: AppContext[F]
 ) extends WorkspaceService[F] with LazyLogging {
 
@@ -185,6 +186,23 @@ class WorkspaceServiceImpl[F[_]: ConcurrentEffect: ContextShift](
 
   override def deleteWorkspace(workspaceId: Long): F[Unit] = {
     context.workspaceRequestRepository.deleteWorkspace(workspaceId).transact(context.transactor).void
+  }
+
+  override def changeOwner(workspaceId: Long, newOwnerDN: DistinguishedName): F[Unit] = {
+
+    val changeGroupMembership = for {
+      workspaceRequest <- context.workspaceRequestRepository.find(workspaceId)
+      members <- OptionT.liftF(context.memberRepository.find(workspaceId, workspaceRequest.requestedBy))
+    } yield {
+      members.foreach{ member =>
+        val removeMemberRequest = MemberRoleRequest(workspaceRequest.requestedBy.value, member.resource, member.id, member.role.some)
+        val addMemberRequest = MemberRoleRequest(newOwnerDN.value, member.resource, member.id, member.role.some)
+
+        memberService.removeMember(workspaceId, removeMemberRequest)
+        memberService.addMember(workspaceId, addMemberRequest)
+      }
+    }
+    (context.workspaceRequestRepository.changeOwner(workspaceId, newOwnerDN).transact(context.transactor) *> changeGroupMembership.pure[F]).void
   }
 
 }

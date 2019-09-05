@@ -9,8 +9,8 @@ import org.scalatest.FlatSpec
 import cats.effect.{ContextShift, IO, Timer}
 import cats.implicits._
 import io.phdata.config.TemplateNames
-import io.phdata.models.{Compliance, TemplateRequest, DistinguishedName}
-import io.phdata.services.{DBConfigService, JSONTemplateService, WorkspaceServiceImpl}
+import io.phdata.models.{Compliance, DistinguishedName, TemplateRequest}
+import io.phdata.services.{DBConfigService, JSONTemplateService, MemberServiceImpl, WorkspaceServiceImpl}
 import io.phdata.test.fixtures.TestTimer
 
 import scala.concurrent.ExecutionContext
@@ -117,7 +117,8 @@ class ProvisioningIntegrationSpec extends FlatSpec with KerberosTest {
     val services = for {
       context <- AppContext.default[IO]()
       provisionService = new DefaultProvisioningService[IO](context, provisionEC)
-      workspaceService = new WorkspaceServiceImpl[IO](provisionService, context)
+      memberService = new MemberServiceImpl[IO](context)
+      workspaceService = new WorkspaceServiceImpl[IO](provisionService, memberService, context)
       configService = new DBConfigService[IO](context)
       templateService = new JSONTemplateService[IO](context, configService)
     } yield (provisionService, workspaceService, templateService)

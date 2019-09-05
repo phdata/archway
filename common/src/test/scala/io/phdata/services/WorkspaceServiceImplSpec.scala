@@ -5,15 +5,12 @@ import java.time.Instant
 import cats.data.{NonEmptyList, OptionT}
 import cats.effect.{IO, Timer}
 import cats.syntax.applicative._
+import doobie._
+import doobie.implicits._
 import io.phdata.AppContext
 import io.phdata.models._
 import io.phdata.provisioning.{Message, SimpleMessage}
-import io.phdata.repositories._
 import io.phdata.test.fixtures.{id, _}
-import doobie._
-import doobie.implicits._
-import io.phdata.provisioning.Message
-import io.phdata.repositories.WorkspaceRequestRepository
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FlatSpec, Matchers}
 
@@ -208,9 +205,10 @@ class WorkspaceServiceImplSpec
     implicit val timer: Timer[IO] = testTimer
 
     val provisioningService: ProvisioningService[IO] = mock[ProvisioningService[IO]]
+    val memberService: MemberService[IO] = mock[MemberService[IO]]
     val context: AppContext[IO] = genMockContext()
 
-    lazy val workspaceServiceImpl = new WorkspaceServiceImpl[IO](provisioningService, context)
+    lazy val workspaceServiceImpl = new WorkspaceServiceImpl[IO](provisioningService, memberService, context)
   }
 
 }

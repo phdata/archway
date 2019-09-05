@@ -34,4 +34,6 @@ trait WorkspaceRequestRepository {
   def pendingQueue(role: ApproverRole): ConnectionIO[List[WorkspaceSearchResult]]
 
   def deleteWorkspace(workspaceId: Long): ConnectionIO[Int]
+
+  def changeOwner(workspaceId: Long, newOwnerDN: DistinguishedName): ConnectionIO[Int]
 }

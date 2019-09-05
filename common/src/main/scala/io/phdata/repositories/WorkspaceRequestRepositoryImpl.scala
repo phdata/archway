@@ -64,6 +64,9 @@ class WorkspaceRequestRepositoryImpl(sqlSyntax: SqlSyntax) extends WorkspaceRequ
   override def deleteWorkspace(workspaceId: Long): doobie.ConnectionIO[Int] =
     statements.deleteWorkspace(workspaceId).run
 
+  override def changeOwner(workspaceId: Long, newOwnerDN: DistinguishedName): doobie.ConnectionIO[Int] =
+    statements.changeOwner(workspaceId, newOwnerDN).run
+
   class DefaultStatements {
 
     def linkPool(workspaceId: Long, resourcePoolId: Long): Update0 =
@@ -208,6 +211,9 @@ class WorkspaceRequestRepositoryImpl(sqlSyntax: SqlSyntax) extends WorkspaceRequ
 
     def pending(role: ApproverRole): Query0[WorkspaceSearchResult] =
       (listFragment ++ whereAnd(fr"wr.single_user = '0' AND wr.deleted IS NULL OR wr.deleted != '1'")).query
+
+    def changeOwner(workspaceId: Long, newOwnerDN: DistinguishedName) =
+      sql"""update workspace_request SET requested_by = ${newOwnerDN.value} where id = $workspaceId""".update
 
   }
 

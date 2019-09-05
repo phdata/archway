@@ -47,9 +47,9 @@ object Server extends IOApp with LazyLogging {
       _ <- Resource.liftF(templateService.verifyCustomTemplates)
 
       provisionService = new DefaultProvisioningService[F](context, provisionEC)
-      workspaceService = new WorkspaceServiceImpl[F](provisionService, context)
-      accountService = new AccountServiceImpl[F](context, workspaceService, templateService, provisionService)
       memberService = new MemberServiceImpl[F](context)
+      workspaceService = new WorkspaceServiceImpl[F](provisionService, memberService, context)
+      accountService = new AccountServiceImpl[F](context, workspaceService, templateService, provisionService)
       kafkaService = new KafkaServiceImpl[F](context, provisionService, topicGenerator)
       applicationService = new ApplicationServiceImpl[F](context, provisionService, applicationGenerator)
       emailService = new EmailServiceImpl[F](context, workspaceService)

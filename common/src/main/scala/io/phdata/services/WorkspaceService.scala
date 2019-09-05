@@ -25,4 +25,6 @@ trait WorkspaceService[F[_]] {
   def reviewerList(role: ApproverRole): F[List[WorkspaceSearchResult]]
 
   def deleteWorkspace(workspaceId: Long): F[Unit]
+
+  def changeOwner(workspaceId: Long, newOwnerDN: DistinguishedName): F[Unit]
 }
