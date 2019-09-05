@@ -713,7 +713,7 @@
           "description": "Upload log file to phData servers",
           "expectedExitCodes": [0],
           "commandRunner": {
-            "program": "scripts/bundler.sh",
+            "program": "scripts/bundler-redirect.sh",
             "environmentVariables": {
               "ARTIFACTORY_TOKEN": "${bundleToken}"
             }
