@@ -22,7 +22,6 @@ export const behaviorProperties = {
 export enum FeatureFlagType {
   Application = 'application',
   Messaging = 'messaging',
-  DeleteWorkspace = 'workspace-delete',
   ManageTab = 'manage-tab',
   DiskQuota = 'disk-quota',
 }

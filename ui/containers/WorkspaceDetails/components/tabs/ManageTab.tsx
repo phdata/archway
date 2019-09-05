@@ -2,8 +2,7 @@ import * as React from 'react';
 import { Row, Col } from 'antd';
 
 import { ManageCard, ChangeOwnerCard } from '../cards';
-import { ProvisioningType, ModalType, FeatureFlagType } from '../../../../constants';
-import { Feature } from '../../../../components';
+import { ProvisioningType, ModalType } from '../../../../constants';
 
 interface Props {
   provisioning: ProvisioningType;
@@ -26,21 +25,18 @@ const ManageTab = ({ provisioning, showModal }: Props) => (
           reprovision a workspace that has already successfully provisioned.
         </ManageCard>
       </Col>
-      <Feature flag={FeatureFlagType.DeleteWorkspace}>
-        <Col style={{ flex: 1 }}>
-          <ManageCard
-            title="DELETE"
-            showModal={showModal}
-            modalType={ModalType.DeleteWorkspace}
-            buttonText="Delete Workspace"
-            disabled={false}
-          >
-            Deleting a workspace will delete the record of the workspace from Archway only. Deleting a workspace will
-            not affect the Hive database, AD groups, Sentry roles, or any other components of the workspace. Deleting a
-            workspace cannot be undone.
-          </ManageCard>
-        </Col>
-      </Feature>
+      <Col style={{ flex: 1 }}>
+        <ManageCard
+          title="HIDE"
+          showModal={showModal}
+          modalType={ModalType.DeleteWorkspace}
+          buttonText="Hide Workspace"
+          disabled={false}
+        >
+          After clicking this button users and approvers will not be able to see this workspace in any workspace
+          listings.
+        </ManageCard>
+      </Col>
       <Col style={{ flex: 1 }}>
         <ManageCard
           title="DEPROVISION"

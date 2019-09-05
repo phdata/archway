@@ -376,14 +376,14 @@ class WorkspaceDetails extends React.PureComponent<Props> {
         </Modal>
         <Modal
           visible={activeModal === ModalType.DeleteWorkspace}
-          title="Delete Workspace"
+          title="Hide Workspace"
           onCancel={clearModal}
           onOk={deleteWorkspace}
-          okText="Delete"
+          okText="Hide"
           okButtonProps={{ type: 'danger' }}
           confirmLoading={manageLoading.delete}
         >
-          <WarningText message="Deleting a workspace cannot be undone. Are you sure you want to delete this workspace?" />
+          <WarningText message="Are you sure you want to hide this workspace?" />
         </Modal>
         <Modal
           visible={activeModal === ModalType.DeprovisionWorkspace}
