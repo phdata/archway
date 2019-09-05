@@ -214,7 +214,6 @@ class WorkspaceRequestRepositoryImpl(sqlSyntax: SqlSyntax) extends WorkspaceRequ
 
     def changeOwner(workspaceId: Long, newOwnerDN: DistinguishedName) =
       sql"""update workspace_request SET requested_by = ${newOwnerDN.value} where id = $workspaceId""".update
-
   }
 
   class OracleStatements extends DefaultStatements {

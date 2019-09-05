@@ -103,7 +103,8 @@ class WorkspaceController[F[_]: Sync: Timer: ContextShift: ConcurrentEffect](
           } else
             Forbidden()
 
-        case POST -> Root / "workspaces" / LongVar(id) / "owner" / ownerDN as user =>
+
+        case POST -> Root / LongVar(id) / "owner" / ownerDN as user =>
           if (user.isSuperUser) {
             for {
               _ <- workspaceService.changeOwner(id, DistinguishedName(ownerDN)).onError {

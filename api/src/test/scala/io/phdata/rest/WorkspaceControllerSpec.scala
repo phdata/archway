@@ -177,7 +177,7 @@ class WorkspaceControllerSpec
 
   it should "reassign a workspace to new owner" in new client.dsl.Http4sClientDsl[IO] with Context {
     workspaceService.changeOwner _ expects (id, standardUserDN) returning ().pure[IO]
-    val response = restApi.route.orNotFound.run(POST(Uri.uri("workspaces/123/owner/cn=john.doe,ou=hadoop,dc=example,dc=com")).unsafeRunSync()).unsafeRunSync()
+    val response = restApi.route.orNotFound.run(POST(Uri.uri("/123/owner/cn=john.doe,ou=hadoop,dc=example,dc=com")).unsafeRunSync()).unsafeRunSync()
 
     response.status.code shouldBe 200
   }
