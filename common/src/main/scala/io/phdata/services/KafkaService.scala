@@ -25,14 +25,16 @@ class KafkaServiceImpl[F[_]: Effect](
       username: DistinguishedName,
       workspaceId: Long,
       topicRequest: TopicRequest
-  ): F[NonEmptyList[String]] =
+  ): F[NonEmptyList[String]] = {
+    val MIN_REPLICATION_FACTOR = 3
+    val replicationFactor = Math.max(topicRequest.replicationFactor, MIN_REPLICATION_FACTOR)
     (for {
       workspace <- OptionT(
         appContext.workspaceRequestRepository.find(workspaceId).value.transact(appContext.transactor)
       )
 
       kafkaTopic <- OptionT.liftF(
-        topicGenerator.topicFor(topicRequest.name, topicRequest.partitions, topicRequest.replicationFactor, workspace)
+        topicGenerator.topicFor(topicRequest.name, topicRequest.partitions, replicationFactor, workspace)
       )
 
       result <- OptionT.liftF {
@@ -63,4 +65,5 @@ class KafkaServiceImpl[F[_]: Effect](
       _ <- OptionT.liftF(provisioningService.provisionTopic(workspaceId, result))
 
     } yield NonEmptyList.one("")).value.map(_.get)
+  }
 }
