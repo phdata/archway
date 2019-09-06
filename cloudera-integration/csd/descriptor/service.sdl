@@ -42,7 +42,7 @@
       "configurableInWizard": "true"
     },
     {
-       "name": "bundleToken",
+       "name": "bundle.token",
        "label": "Bundle Token",
        "description": "Artifactory access token",
        "required": "false",
