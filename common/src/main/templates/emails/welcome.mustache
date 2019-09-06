@@ -1,12 +1,224 @@
-<div style="background-color: #f0f3f5; font-family: 'Helvetica Neue', Helvetica, 'Segoe UI', Arial, sans-serif; font-weight: 200;">
-    <div style="color: #ffffff; background-color: #2e4052; padding: 50px; text-align: center; text-transform: uppercase">
-        <div style="font-size: 24px">Welcome to Archway</div>
-    </div>
-    <div style="width: 50%; padding: 25px; margin: 50px auto; background-color: #fff">
-        <p>You've been added as a {{roleName}} to {{resourceType}} in {{workspaceName}}. Use the link below to view the workspace.</p>
-    </div>
-    <a style="background-color: #2e4052; text-decoration: none; padding: 10px 25px; margin: 50px auto; width: 250px; display: block; color: #ffffff; font-weight: 500; text-align: center"
-       href="{{uiUrl}}/#/workspaces/{{workspaceId}}">
-        VIEW WORKSPACE
-    </a>
-</div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARCHWAY</title>
+    <style type="text/css">
+        @media (max-width: 600px){
+            .full_width{
+                width: 100%!important;
+            }
+        }
+    </style>
+</head>
+<body style="margin: 0; padding: 0; background: #dfdfdf; font-family: arial;">
+<table class="full_width" cellspacing="0" cellpadding="0" border="0" align="center" width="600" style="margin: 0 auto; width: 600px; background: #fff;">
+    <tr>
+        <td>
+            <table class="full_width" cellspacing="0" cellpadding="0" border="0" width="600" style="width: 600px; background: #fff; border-top: 8px solid #2d7493;">
+                <tr>
+                    <td>
+                        <table class="full_width" cellspacing="0" cellpadding="0" border="0" width="600" style="width: 600px; background: #fff;">
+                            <tr>
+                                <td style="width: 20px;" width="20">&nbsp;</td>
+                                <td>
+                                    <table class="full_width" cellspacing="0" cellpadding="0" border="0" width="560" style="width: 560px; background: #fff;">
+                                        <tr>
+                                            <td style="height: 20px; line-height: 1px;" height="20">&nbsp;</td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <a href="{{uiUrl}}">
+                                                    <img src="https://www.phdata.io/wp-content/uploads/Archway-Logo-B1-e1565971432218.png" alt="" style="width: 170px;" width="170">
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="height: 20px; line-height: 1px;" height="20">&nbsp;</td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <table class="full_width" cellspacing="0" cellpadding="0" border="0" width="560" style="width: 560px; background: #fff;">
+                                                    <tr>
+                                                        <td style="width: 10px;" width="10">&nbsp;</td>
+                                                        <td>
+                                                            <p style="margin: 0; font-family: arial; font-size: 17.5px; color: #767676;">Welcome to Archway! You've been added as a</p>
+                                                            <p style="margin: 0; font-family: arial; font-size: 17.5px; color: #767676;">{{roleName}} to {{resourceType}} in {{workspaceName}}.</p>
+                                                            <p style="margin: 0; font-family: arial; font-size: 17.5px; color: #767676;">Click the button below to view the workspace.</p>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="height: 20px; line-height: 1px;" height="20">&nbsp;</td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <a href="{{uiUrl}}/#/workspaces/{{workspaceId}}" style="display: inline-block; color: #fff; background: #0095d7; padding: 10px 15px; border-radius: 5px; text-decoration: none; font-size: 14px;">View My Workspace</a>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="height: 20px; line-height: 1px;" height="20">&nbsp;</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="height: 20px; line-height: 1px;" height="20">&nbsp;</td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <table class="full_width" cellspacing="0" cellpadding="0" border="0" width="560" style="width: 560px; background: #fff;">
+                                                    <tr>
+                                                        <td style="width: 10px;" width="10">&nbsp;</td>
+                                                        <td>
+                                                            <p style="margin: 0; font-family: arial; font-size: 17.5px; color: #767676;">Below are some easy tips to help get you started.</p>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="height: 40px; line-height: 1px;" height="40">&nbsp;</td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <table class="full_width" cellspacing="0" cellpadding="0" border="0" width="560" style="width: 560px; background: #fff;">
+                                                    <tr>
+                                                        <td style="width: 50px;" width="50">&nbsp;</td>
+                                                        <td style="width: 50px; vertical-align: top;" width="50">
+                                                            <img src="https://www.phdata.io/wp-content/uploads/checkMark.png" alt="" style="width: 50px;" width="50">
+                                                        </td>
+                                                        <td style="width: 20px;" width="20">&nbsp;</td>
+                                                        <td style="width: 440px; vertical-align: top;" width="440">
+                                                            <table class="full_width" cellspacing="0" cellpadding="0" border="0" width="320" style="width: 320px; background: #fff;">
+                                                                <tr>
+                                                                    <td style="width: 10px;" width="10">&nbsp;</td>
+                                                                    <td>
+                                                                        <p style="margin: 0; font-family: arial; font-size: 17.5px; color: #6FABC1;"><a href="{{uiUrl}}#/home" style="color: #6FABC1;">Step 1: Create Your Personal Workspace</a></p>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td colspan="2" style="height: 20px; line-height: 1px;" height="20">&nbsp;</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td style="width: 10px;" width="10">&nbsp;</td>
+                                                                    <td>
+                                                                        <p style="margin: 0; font-family: arial; font-size: 14px; color: #767676;">If you haven't already, create your personal workspace by clicking on the 'Create One Now' on the Archway 'Overview' page</p>
+                                                                    </td>
+                                                                </tr>
+                                                            </table>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="height: 30px; line-height: 1px;" height="30">&nbsp;</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="width: 50px;" width="50">&nbsp;</td>
+                                                        <td style="width: 50px; vertical-align: top;" width="50">
+                                                            <img src="https://www.phdata.io/wp-content/uploads/checkMark.png" alt="" style="width: 50px;" width="50">
+                                                        </td>
+                                                        <td style="width: 20px;" width="20">&nbsp;</td>
+                                                        <td style="width: 440px; vertical-align: top;" width="440">
+                                                            <table class="full_width" cellspacing="0" cellpadding="0" border="0" width="320" style="width: 320px; background: #fff;">
+                                                                <tr>
+                                                                    <td style="width: 10px;" width="10">&nbsp;</td>
+                                                                    <td>
+                                                                        <p style="margin: 0; font-family: arial; font-size: 17.5px; color: #6FABC1;"><a href="{{uiUrl}}/#/workspaces" style="color: #6FABC1;">Step 2: View Your Workspaces</a></p>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td colspan="2" style="height: 20px; line-height: 1px;" height="20">&nbsp;</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td style="width: 10px;" width="10">&nbsp;</td>
+                                                                    <td>
+                                                                        <p style="margin: 0; font-family: arial; font-size: 14px; color: #767676;">View the workspaces you belong to in the 'My Workspaces' tab on the left navigation bar.</p>
+                                                                    </td>
+                                                                </tr>
+                                                            </table>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="height: 30px; line-height: 1px;" height="30">&nbsp;</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="width: 50px;" width="50">&nbsp;</td>
+                                                        <td style="width: 50px; vertical-align: top;" width="50">
+                                                            <img src="https://www.phdata.io/wp-content/uploads/checkMark.png" alt="" style="width: 50px;" width="50">
+                                                        </td>
+                                                        <td style="width: 20px;" width="20">&nbsp;</td>
+                                                        <td style="width: 440px; vertical-align: top;" width="440">
+                                                            <table class="full_width" cellspacing="0" cellpadding="0" border="0" width="320" style="width: 320px; background: #fff;">
+                                                                <tr>
+                                                                    <td style="width: 10px;" width="10">&nbsp;</td>
+                                                                    <td>
+                                                                        <p style="margin: 0; font-family: arial; font-size: 17.5px; color: #6FABC1;"><a href="{{uiUrl}}/#/request" style="color: #6FABC1;">Step 3: Request a New Workspace</a></p>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td colspan="2" style="height: 20px; line-height: 1px;" height="20">&nbsp;</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td style="width: 10px;" width="10">&nbsp;</td>
+                                                                    <td>
+                                                                        <p style="margin: 0; font-family: arial; font-size: 14px; color: #767676;">Request a new workspace on the left nav bar. New workspaces can be one of two types:</p>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td colspan="2" style="height: 20px; line-height: 1px;" height="20">&nbsp;</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td style="width: 10px;" width="10">&nbsp;</td>
+                                                                    <td>
+                                                                        <p style="margin: 0; font-family: arial; font-size: 14px; color: #767676;">1. Simple: a single database for collaboration or small applications</p>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td colspan="2" style="height: 20px; line-height: 1px;" height="20">&nbsp;</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td style="width: 10px;" width="10">&nbsp;</td>
+                                                                    <td>
+                                                                        <p style="margin: 0; font-family: arial; font-size: 14px; color: #767676;">2. 'Structured': a seris of database for managing data transformations in large applications</p>
+                                                                    </td>
+                                                                </tr>
+                                                            </table>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="height: 50px; line-height: 1px;" height="50">&nbsp;</td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <p style="margin: 0; font-family: arial; font-size: 14px; color: #767676; text-align: center;">phData</p>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="height: 5px; line-height: 1px;" height="5">&nbsp;</td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <p style="margin: 0; font-family: arial; font-size: 14px; color: #767676; text-align: center;">
+                                                    <a href="http://www.phdata.io" style="color: #767676; text-decoration: none;">www.phdata.io</a>
+                                                </p>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="height: 50px; line-height: 1px;" height="50">&nbsp;</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td style="width: 20px;" width="20">&nbsp;</td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

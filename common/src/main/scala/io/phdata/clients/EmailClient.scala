@@ -1,11 +1,11 @@
 package io.phdata.clients
 
 import cats.effect.{Effect, IO}
-import io.phdata.config.{AppConfig, SMTPConfig}
 import com.typesafe.scalalogging.StrictLogging
 import courier._
+import io.phdata.config.{AppConfig, SMTPConfig}
 
-import scala.concurrent.{Await, ExecutionContext}
+import scala.concurrent.ExecutionContext
 import scala.util.{Failure, Success}
 
 trait EmailClient[F[_]] extends StrictLogging {
@@ -35,7 +35,7 @@ class EmailClientImpl[F[_]: Effect](appConfig: AppConfig, executionContext: Exec
             )
 
           result.onComplete {
-            case Success(value) => logger.debug(s"Sent notification mail from ${from.addr} to ${to.addr}")
+            case Success(_) => logger.debug(s"Sent notification mail from ${from.addr} to ${to.addr}")
             case Failure(exception) =>
               logger.error(s"Failed to send email to ${to.addr} ${exception.getLocalizedMessage}", exception)
           }(executionContext)
