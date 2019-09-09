@@ -69,7 +69,7 @@ object Server extends IOApp with LazyLogging {
       tokenAuthService = new TokenAuthServiceImpl[F](accountService)
       accountController = new AccountController[F](authService, tokenAuthService, accountService, context)
       templateController = new TemplateController[F](tokenAuthService, templateService)
-      clusterController = new ClusterController[F](context)
+      clusterController = new ClusterController[F](tokenAuthService, context.clusterService)
       workspaceController = new WorkspaceController[F](
         tokenAuthService,
         workspaceService,
