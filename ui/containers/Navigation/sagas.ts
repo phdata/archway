@@ -1,13 +1,15 @@
-import { all, call, fork, put } from 'redux-saga/effects';
+import { all, call, fork, put, select } from 'redux-saga/effects';
 import { delay } from 'redux-saga';
 import * as Api from '../../service/api';
 import * as actions from './actions';
+import { TOKEN_EXTRACTOR } from '../../constants';
 
 function* clusterStatus() {
   while (true) {
+    const token = yield select(TOKEN_EXTRACTOR);
     yield put(actions.clusterLoading(true));
     try {
-      const cluster = yield call(Api.cluster);
+      const cluster = yield call(Api.cluster, token);
       yield put(actions.clusterInfo(cluster));
     } finally {
       yield put(actions.clusterLoading(false));
