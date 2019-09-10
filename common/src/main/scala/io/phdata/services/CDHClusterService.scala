@@ -167,7 +167,7 @@ class CDHClusterService[F[_]: ConcurrentEffect: Clock](
       .getOrElse(defaultPort)
   }
 
-  override def list: F[Seq[Cluster]] = cacheService.getOrRun[F, Seq[Cluster]](1 hour, clusterDetails, clusterCache)
+  override def list: F[Seq[Cluster]] = clusterDetails
 }
 
 object CDHClusterService {
