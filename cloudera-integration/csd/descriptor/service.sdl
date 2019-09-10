@@ -671,7 +671,7 @@
           "name": "archway.featureFlags",
           "label": "Feature flags",
           "description": "List of feature flags which are enabled",
-          "required": "true",
+          "required": "false",
           "type": "string_array",
           "default": []
         }
