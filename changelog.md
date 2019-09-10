@@ -1,3 +1,31 @@
+## 2.1.0
+
+### Enhancements
+
+- Restyled workspace 'Wecome' email.
+- Add a workspace 'hide' button in the workspace 'manage' section. This is a replacement for the crazy deletion scripts that were buggy. The hide button does a logical delete of the workspace so it is ignored in workspace listings. It deletes no data. A workspace can optionally be 'deprovisioned' before it is hidden to remove resources like AD groups and hive databases. 509c24186de7747dd63ed3ce864f76b1524c18d3
+- Ability to change workspace owners in the 'manage' section.
+- Send the log file back to phData using the 'support bundle' role command in the server role. 090fe04943319dfdc87f0c773df6f1e86357702e
+- AD Group synchronization. Archway keeps track of Active directory groups in its own database for performance reasons.
+  Previously, if a user was removed from AD outside of Archway, the user would still show up as a member of a workspace in
+  the Archway UI. Now, if a user is removed from AD or an Archway AD group they will be removed from the Archway database and
+  UI. In addition, if a user is added to an Archway managed AD group, they will automatically be added to the Archway database and
+  UI. Synchronizing groups runs as a scheduled job every 2 hours by default. d814a3d718ec8ee1f0a25d995f4bbf2c26af4c5b
+- Mask all passwords in the UI. It was possible for passwords to be printed to the UI during debug logging, this has been fixed and
+  now when a password would have been displayed '**\*\*\***' will be displayed in its place. 839e118c2e7f4ef29fa3ee20beaa0d3dbdfd6bf8
+- The 'Add Member' button in a workspace is now greyed out until the workspace is provisioned. 1e4c66e6768fbbde33eb7806be9c176d6ef79532
+- Modify the 'MEMBER ID SEARCH' box to show the user id first in the auto-completeion. 7fb08124eb8b899883a4c6f9c35c57ec4d7850d0
+- Option added for 'smtps' in addition to SSL. 2ba2e7f359f9f7bc963f8401b3d0ef3e1d06c4f8
+
+## Bug fixes
+
+- Make LDAP lookup bindings optional. Previously functionality was added to automatically fall back to the provisioning bindings
+  if no lookup bindings were provided, but CM was still asking for lookup bindings to be provided. This has been corrected. 46cfd972a3a1244b26375aeac0f610989efe9d59
+- Fix a bad logging message where the 'from' address was being logged as the 'to' address in email notifications. ad8a2523c06aa1fd572ee2859d97c87fd0ba5ec5
+- Reflect actual number of partitions in the UI when the minimum partition (3) is used. cac1b09adfab6e998a39e8520c32ea9eef1e2c21
+- Clean up all temporary tables after they are used (heimdali_temp). 2f776f16445298b12b308ce822f4ba98dadfa939
+- '/clusters' endpoint now requires authentication. 2a6117fb471c9020dae743847b2e000b0e35087c
+
 ## 2.0.0
 
 ### Enhancements
