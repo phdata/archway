@@ -94,6 +94,28 @@ package object repositories {
         )
     }
 
+  implicit val complianceQuestionReader: Read[ComplianceQuestion] =
+    Read[(Option[Long], String, String, Instant, Option[Long])].map {
+      case (
+          id,
+          question,
+          requester,
+          updated,
+          groupId
+          ) =>
+        ComplianceQuestion(question, requester, updated, groupId, id)
+    }
+
+  implicit val complianceGroupReader: Read[ComplianceGroup] =
+    Read[(Option[Long], String, String)].map {
+      case (
+          id,
+          name,
+          description
+          ) =>
+        ComplianceGroup(name, description, List.empty, id)
+    }
+
   implicit def fromRecord(ldap: LDAPRecord): LDAPRegistration =
     LDAPRegistration(
       ldap.distinguishedName,

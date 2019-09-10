@@ -3,15 +3,15 @@ package io.phdata
 import java.io.File
 
 import cats.effect._
-import io.phdata.caching.Cached
-import io.phdata.config.AppConfig
 import com.typesafe.config.{Config, ConfigFactory}
 import doobie.util.ExecutionContexts
 import doobie.util.transactor.Transactor
 import io.phdata
+import io.phdata.caching.Cached
 import io.phdata.clients._
-import io.phdata.repositories.syntax.SqlSyntax
+import io.phdata.config.AppConfig
 import io.phdata.repositories._
+import io.phdata.repositories.syntax.SqlSyntax
 import io.phdata.services._
 import org.apache.hadoop.conf.Configuration
 import org.apache.sentry.provider.db.generic.service.thrift.SentryGenericServiceClientFactory
@@ -47,7 +47,9 @@ case class AppContext[F[_]](
     topicGrantRepository: TopicGrantRepository,
     applicationRepository: ApplicationRepository,
     approvalRepository: ApprovalRepository,
-    configRepository: ConfigRepository
+    configRepository: ConfigRepository,
+    complianceGroupRepository: ComplianceGroupRepository,
+    complianceQuestionRepository: ComplianceQuestionRepository
 )
 
 object AppContext {
@@ -137,6 +139,8 @@ object AppContext {
       topicGrantRepository = new TopicGrantRepositoryImpl
       applicationRepository = new ApplicationRepositoryImpl
       configRepository = new ConfigRepositoryImpl
+      complianceGroupRepository = new ComplianceGroupRepositoryImpl
+      complianceQuestionRepository = new ComplianceQuestionRepositoryImpl
     } yield phdata.AppContext[F](
       config,
       clusterCache,
@@ -165,6 +169,8 @@ object AppContext {
       topicGrantRepository,
       applicationRepository,
       approvalRepository,
-      configRepository
+      configRepository,
+      complianceGroupRepository,
+      complianceQuestionRepository
     )
 }

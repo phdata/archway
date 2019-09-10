@@ -53,6 +53,8 @@ object Server extends IOApp with LazyLogging {
       kafkaService = new KafkaServiceImpl[F](context, provisionService, topicGenerator)
       applicationService = new ApplicationServiceImpl[F](context, provisionService, applicationGenerator)
       emailService = new EmailServiceImpl[F](context, workspaceService)
+      complianceService = new ComplianceGroupServiceImpl[F](context)
+      _ <- Resource.liftF(complianceService.loadDefaultComplianceQuestions)
 
       authService = context.appConfig.rest.authType match {
         case "spnego" =>
@@ -78,6 +80,7 @@ object Server extends IOApp with LazyLogging {
         applicationService,
         emailService,
         provisionService,
+        complianceService,
         emailEC
       )
       _ <- Resource.liftF(logger.debug("Workspace Controller has been initialized").pure[F])

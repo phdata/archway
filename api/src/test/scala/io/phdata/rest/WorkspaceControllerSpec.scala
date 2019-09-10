@@ -3,24 +3,19 @@ package io.phdata.rest
 import cats.data.{NonEmptyList, OptionT}
 import cats.effect._
 import cats.implicits._
-import io.phdata.models._
-import io.phdata.provisioning.{Error, SimpleMessage, Message => OurMessage}
-import io.phdata.services._
-import io.phdata.test.TestAuthService
-import io.phdata.test.fixtures._
 import io.circe.Json
 import io.circe.parser._
 import io.circe.syntax._
-import io.phdata.models.{Approval, HiveDatabase, HiveTable, Infra, Manager, MemberRoleRequest, WorkspaceMemberEntry, WorkspaceProvisioningStatus, YarnApplication, YarnInfo}
+import io.phdata.models._
 import io.phdata.provisioning
 import io.phdata.provisioning.SimpleMessage
-import io.phdata.services.{ApplicationService, EmailService, KafkaService, MemberService, ProvisioningService, WorkspaceService}
+import io.phdata.services.{ApplicationService, EmailService, KafkaService, MemberService, ProvisioningService, WorkspaceService, _}
 import io.phdata.test.TestAuthService
-import io.phdata.test.fixtures.HttpTest
-import org.http4s.{client, _}
+import io.phdata.test.fixtures.{HttpTest, _}
 import org.http4s.client.dsl.Http4sClientDsl
 import org.http4s.dsl.io._
 import org.http4s.implicits._
+import org.http4s.{client, _}
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach, FlatSpec, Matchers}
 
@@ -188,6 +183,99 @@ class WorkspaceControllerSpec
     check(response, Status.Ok, Some(Json.obj("provisioning" -> WorkspaceProvisioningStatus.COMPLETED.asJson)))
   }
 
+  it should "list all questions" in new Http4sClientDsl[IO] with Context {
+    complianceGroupService.list _ expects () returning List(complianceGroup(1L.some, 1L.some, 2L.some)).pure[IO]
+
+    val Right(json) = parse(
+      s"""
+         |[
+         |  {
+         |    "id": 1,
+         |    "name" : "pci",
+         |    "description" : "Abstraction is often one floor above you.",
+         |    "questions" : [
+         |      {
+         |        "question" : "Full or partial credit card numbers?",
+         |        "requester" : "Joe",
+         |        "updated" : "${testTimer.instant}",
+         |        "complianceGroupId" : 1,
+         |        "id": 1
+         |      },
+         |      {
+         |        "question" : "Full or partial bank account numbers?",
+         |        "requester" : "Tom",
+         |        "updated" : "${testTimer.instant}",
+         |        "complianceGroupId" : 1,
+         |        "id": 2
+         |      }
+         |    ]
+         |  }
+         |]
+      """.stripMargin)
+
+    val response = restApi.route.orNotFound.run(GET(Uri.uri("/questions")).unsafeRunSync())
+    check(response, Status.Ok, Some(json))
+  }
+
+  it should "create a new compliance group" in new Http4sClientDsl[IO] with Context {
+    complianceGroupService.createComplianceGroup _ expects complianceGroup() returning 1L.pure[IO]
+
+    val request = Json.obj("compliance" ->
+          ComplianceGroup("pci", "Abstraction is often one floor above you.",
+          List(
+            ComplianceQuestion(
+              "Full or partial credit card numbers?",
+              "Joe",
+              testTimer.instant
+            ),
+            ComplianceQuestion(
+              "Full or partial bank account numbers?",
+              "Tom",
+              testTimer.instant
+            )
+          )
+        ).asJson
+      )
+
+    val response = restApi.route.orNotFound.run(POST(request, Uri.uri("/questions")).unsafeRunSync()).unsafeRunSync()
+    response.status.code shouldBe 201
+  }
+
+  it should "update an existing compliance group" in new Http4sClientDsl[IO] with Context {
+    complianceGroupService.updateComplianceGroup _ expects (1L, complianceGroup(1L.some, 1L.some, 2L.some).copy(name = "pci-updated")) returning ().pure[IO]
+
+    val request = Json.obj("compliance" ->
+      ComplianceGroup("pci-updated", "Abstraction is often one floor above you.",
+        List(
+          ComplianceQuestion(
+            "Full or partial credit card numbers?",
+            "Joe",
+            testTimer.instant,
+            1L.some,
+            1L.some
+          ),
+          ComplianceQuestion(
+            "Full or partial bank account numbers?",
+            "Tom",
+            testTimer.instant,
+            1L.some,
+            2L.some
+          )
+        ), 1L.some
+      ).asJson
+    )
+
+    val response = restApi.route.orNotFound.run(PUT(request, Uri.uri("/questions/1")).unsafeRunSync()).unsafeRunSync()
+    response.status.code shouldBe 200
+  }
+
+  it should "delete an existing compliance group" in new Http4sClientDsl[IO] with Context {
+    complianceGroupService.deleteComplianceGroup _ expects 1 returning ().pure[IO]
+
+    val response = restApi.route.orNotFound.run(DELETE(Uri.uri("/questions/1")).unsafeRunSync()).unsafeRunSync()
+    response.status.code shouldBe 200
+  }
+
   trait Context {
     implicit val timer: Timer[IO] = testTimer
     implicit val contextShift = IO.contextShift(ExecutionContext.global)
@@ -199,6 +287,7 @@ class WorkspaceControllerSpec
     val applicationService: ApplicationService[IO] = mock[ApplicationService[IO]]
     val emailService: EmailService[IO] = mock[EmailService[IO]]
     val provisioningService: ProvisioningService[IO] = mock[ProvisioningService[IO]]
+    val complianceGroupService: ComplianceGroupService[IO] = mock[ComplianceGroupService[IO]]
 
     def restApi: WorkspaceController[IO] =
       new WorkspaceController[IO](
@@ -209,6 +298,7 @@ class WorkspaceControllerSpec
         applicationService,
         emailService,
         provisioningService,
+        complianceGroupService,
         ExecutionContext.global
       )
   }

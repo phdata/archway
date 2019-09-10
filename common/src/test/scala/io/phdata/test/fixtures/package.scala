@@ -212,6 +212,20 @@ package object fixtures {
        |}
        """.stripMargin)
 
+  def complianceGroup(
+   groupId: Option[Long] = None,
+   firstQuestionId: Option[Long] = None,
+   secondQuestionId: Option[Long] = None
+  ) = ComplianceGroup(
+    "pci",
+    "Abstraction is often one floor above you.",
+    List(
+      ComplianceQuestion("Full or partial credit card numbers?", "Joe", testTimer.instant, groupId, firstQuestionId),
+      ComplianceQuestion("Full or partial bank account numbers?", "Tom", testTimer.instant, groupId, secondQuestionId)
+    ),
+    groupId
+  )
+
   def fromResource(path: String): Json = {
     val json = Source.fromResource(path).getLines().mkString
     val Right(parsedJson) = parse(json)

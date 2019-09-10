@@ -53,7 +53,10 @@ trait AppContextProvider {
                      applicationRepository: ApplicationRepository = mock[ApplicationRepository],
                      provisioningService: ProvisioningService[IO] = mock[ProvisioningService[IO]],
                      approvalRepository: ApprovalRepository = mock[ApprovalRepository],
-                     configRepository: ConfigRepository = mock[ConfigRepository]): AppContext[IO] =
+                     configRepository: ConfigRepository = mock[ConfigRepository],
+                     complianceGroupRepository: ComplianceGroupRepository = mock[ComplianceGroupRepository],
+                     complianceQuestionRepository: ComplianceQuestionRepository = mock[ComplianceQuestionRepository]
+                    ): AppContext[IO] =
     AppContext(
       appConfig,
       clusterCache,
@@ -82,5 +85,8 @@ trait AppContextProvider {
       topicGrantRepository,
       applicationRepository,
       approvalRepository,
-      configRepository)
+      configRepository,
+      complianceGroupRepository,
+      complianceQuestionRepository
+    )
 }
