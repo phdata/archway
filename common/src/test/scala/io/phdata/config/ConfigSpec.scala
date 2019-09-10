@@ -9,4 +9,14 @@ class ConfigSpec extends PropSpec with Matchers {
     config.required shouldBe 1
   }
 
+  property("Password toString method should mask real password") {
+    val password = Password("secret")
+    password.toString shouldBe "***********"
+  }
+
+  property("Password value should return real password") {
+    val password = Password("secret")
+    password.value shouldBe "secret"
+  }
+
 }
