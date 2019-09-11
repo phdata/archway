@@ -37,7 +37,7 @@ class EmailClientImplIntegrationSpec extends FlatSpec {
       .send("Test welcome email",
         htmlContent,
         "valhalla@phdata.io",
-        "mmorek@phdata.io")
+        itestConfig.approvers.notificationEmail.head)
       .unsafeRunSync()
   }
 
