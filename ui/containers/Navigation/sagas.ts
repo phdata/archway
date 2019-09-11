@@ -4,7 +4,7 @@ import * as Api from '../../service/api';
 import * as actions from './actions';
 import { TOKEN_EXTRACTOR } from '../../constants';
 
-function* clusterStatus() {
+export function* clusterStatus() {
   while (true) {
     const token = yield select(TOKEN_EXTRACTOR);
     yield put(actions.clusterLoading(true));

@@ -4,6 +4,7 @@ import * as Api from '../../service/api';
 import * as actions from './actions';
 import { SPNEGO } from '../../constants';
 import { configSaga } from '../../redux/sagas';
+import { clusterStatus } from '../Navigation/sagas';
 
 const { config = {} } = window as any;
 const isDevMode = config.isDevMode === 'true';
@@ -77,6 +78,7 @@ function* requestLogin({ login }: any) {
     yield fork(tokenReady, { token: access_token });
     yield put(actions.tokenExtracted(access_token));
     yield put(actions.loginSuccess(access_token));
+    yield call(clusterStatus);
   } catch (error) {
     if (error.message.includes('NetworkError')) {
       yield put(actions.loginError('Error connecting to server.'));
