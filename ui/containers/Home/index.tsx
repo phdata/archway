@@ -63,7 +63,6 @@ class Home extends React.Component<Props, States> {
 
   public renderClusterStatus = () => {
     const { cluster } = this.props;
-    const clusterStatus = new Status<Cluster>(cluster);
 
     return cluster.name === 'Unknown' ? (
       <Spin
@@ -74,17 +73,6 @@ class Home extends React.Component<Props, States> {
     ) : (
       <React.Fragment>
         <h1 style={{ fontWeight: 100 }}>You are currently connected to {cluster.name}!</h1>
-        <h3 style={{ fontWeight: 100 }}>
-          The current status of {cluster.name} is{' '}
-          <span
-            style={{
-              fontWeight: 'bold',
-              color: clusterStatus.statusColor().string(),
-            }}
-          >
-            {clusterStatus.statusText()}
-          </span>
-        </h3>
         <h2>
           <a target="_blank" rel="noreferrer noopener" href={cluster.cm_url}>
             {cluster.name}&apos;s Cloudera Manager UI

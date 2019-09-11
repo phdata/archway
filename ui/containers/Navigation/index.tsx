@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { Layout, Menu, Icon } from 'antd';
 import { NavLink, withRouter, RouteComponentProps, Link } from 'react-router-dom';
-import { ClusterInfo, Profile } from './components';
+import { Profile } from './components';
 import * as selectors from '../../redux/selectors';
 import { Profile as UserProfile } from '../../models/Profile';
 import { Feature } from '../../components';
@@ -45,7 +45,6 @@ const Navigation = ({ location, profile }: Props) => (
         alt="Archway Logo"
       />
     </Link>
-    <ClusterInfo />
     <Menu
       style={{
         marginTop: 25,
