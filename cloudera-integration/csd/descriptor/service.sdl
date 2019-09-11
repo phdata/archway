@@ -715,7 +715,7 @@
           "commandRunner": {
             "program": "scripts/bundler-redirect.sh",
             "environmentVariables": {
-              "ARTIFACTORY_TOKEN": "${bundleToken}"
+              "ARTIFACTORY_TOKEN": "${bundle.token}"
             }
           }
         }
