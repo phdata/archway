@@ -1,3 +1,9 @@
+## 2.1.1
+
+### Bug Fixes
+
+- Fix a bug where users who were not in both risk and ops groups were denied permission to see workspaces.
+
 ## 2.1.0
 
 ### Enhancements
