@@ -20,6 +20,16 @@ test-jar: .make.test-jar
 test: 
 	sbt test
 
+test-postgres:
+	docker run -d --name archway_postgres -p 5432:5432 -e POSTGRES_DB=archway postgres:9.3
+	sleep 10
+	./flyway/flyway migrate -url="jdbc:postgresql://localhost:5432/archway" -user=postgres -password=postgres
+
+test-mysql:
+	docker run -d -e MYSQL_ROOT_PASSWORD=mysql -e MYSQL_DATABASE=archway -e MYSQL_USER=mysql -e MYSQL_PASSWORD=mysql -p 3306:3306 mariadb:10.1
+	sleep 20
+	env FLYWAY_LOCATIONS="filesystem:$(PWD)/flyway/mysql" ./flyway/flyway migrate -url="jdbc:mysql://localhost:3306/archway" -user=mysql -password=mysql
+
 itest-init:
 	ln -sf $(shell pwd)/itest-config/application.itest.conf api/src/main/resources/application.conf
 
