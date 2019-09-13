@@ -194,15 +194,18 @@ class WorkspaceServiceImpl[F[_]: ConcurrentEffect: ContextShift](
       workspaceRequest <- context.workspaceRequestRepository.find(workspaceId)
       members <- OptionT.liftF(context.memberRepository.find(workspaceId, workspaceRequest.requestedBy))
     } yield {
-      members.foreach{ member =>
-        val removeMemberRequest = MemberRoleRequest(workspaceRequest.requestedBy, member.resource, member.id, member.role.some)
+      members.foreach { member =>
+        val removeMemberRequest =
+          MemberRoleRequest(workspaceRequest.requestedBy, member.resource, member.id, member.role.some)
         val addMemberRequest = MemberRoleRequest(newOwnerDN, member.resource, member.id, member.role.some)
 
         memberService.removeMember(workspaceId, removeMemberRequest)
         memberService.addMember(workspaceId, addMemberRequest)
       }
     }
-    (context.workspaceRequestRepository.changeOwner(workspaceId, newOwnerDN).transact(context.transactor) *> changeGroupMembership.pure[F]).void
+    (context.workspaceRequestRepository
+      .changeOwner(workspaceId, newOwnerDN)
+      .transact(context.transactor) *> changeGroupMembership.pure[F]).void
   }
 
 }

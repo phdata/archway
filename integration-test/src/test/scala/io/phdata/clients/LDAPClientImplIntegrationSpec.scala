@@ -1,11 +1,13 @@
 package io.phdata.clients
 
+import cats.effect.IO
+import com.unboundid.ldap.sdk._
+import io.phdata.config.Password
 import io.phdata.itest.fixtures.{IntegrationTest, _}
 import io.phdata.models.DistinguishedName
 import io.phdata.test.fixtures.defaultLDAPAttributes
-import com.unboundid.ldap.sdk._
 import org.scalatest.mockito.MockitoSugar
-import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.{BeforeAndAfterEach, FlatSpec, Matchers}
 
 import scala.collection.JavaConverters._
 
@@ -14,16 +16,46 @@ class LDAPClientImplIntegrationSpec
     with Matchers
     with MockitoSugar
     with LDAPTest
-    with IntegrationTest {
+    with IntegrationTest
+    with BeforeAndAfterEach {
+
+  override def afterEach(): Unit = {
+    ldapConnectionPool.getConnection.delete(groupDN.value)
+  }
 
   val  groupName = "edh_sw_sesame"
   val groupDN = DistinguishedName(s"cn=$groupName,${itestConfig.ldap.groupPath}")
 
   behavior of "LDAPClientImpl"
 
-  it should "validate a user" in {
+  it should "validate a user without AD group authorization" in {
     val maybeUser = lookupClient.validateUser(systemTestConfig.existingUser, systemTestConfig.existingPassword).value.unsafeRunSync()
     maybeUser shouldBe defined
+  }
+
+  it should "not validate a user without AD group authorization" in {
+    val maybeUser = lookupClient.validateUser(systemTestConfig.existingUser, Password("invalid-password")).value.unsafeRunSync()
+    maybeUser shouldNot be (defined)
+  }
+
+  it should "validate a user which is a member AD group" in {
+    val attributes = defaultLDAPAttributes(groupDN, groupName)
+    val userDN = s"cn=${systemTestConfig.existingUser},${itestConfig.ldap.userPath.get}"
+
+    provisioningClient.createGroup(groupName, attributes).unsafeRunSync()
+    provisioningClient.addUser(groupDN, DistinguishedName(userDN)).value.unsafeRunSync()
+
+    val customConfigLookupClient = new LDAPClientImpl[IO](itestConfig.ldap.copy(authorizationDN = groupDN.value), _.lookupBinding)
+
+    val maybeUser = customConfigLookupClient.validateUser(systemTestConfig.existingUser, systemTestConfig.existingPassword).value.unsafeRunSync()
+    maybeUser shouldBe defined
+  }
+
+  it should "not validate a user which is not member of AD group" in {
+    val customConfigLookupClient = new LDAPClientImpl[IO](itestConfig.ldap.copy(authorizationDN = "cn=invalid-group"), _.lookupBinding)
+
+    val maybeUser = customConfigLookupClient.validateUser(systemTestConfig.existingUser, systemTestConfig.existingPassword).value.unsafeRunSync()
+    maybeUser shouldNot be (defined)
   }
 
   it should "create a group" in {
@@ -35,7 +67,6 @@ class LDAPClientImplIntegrationSpec
     provisioningClient.createGroup(groupName, updated).unsafeRunSync()
 
     Option(ldapConnectionPool.getConnection.getEntry(groupDN.value)) shouldBe defined
-    ldapConnectionPool.getConnection.delete(groupDN.value)
   }
 
   it should "delete a group" in {
@@ -56,7 +87,6 @@ class LDAPClientImplIntegrationSpec
     val entry = Option(ldapConnectionPool.getConnection.getEntry(groupDN.value))
 
     entry shouldBe defined
-    ldapConnectionPool.getConnection.delete(groupDN.value)
 
     val attribute = Option(entry.get.getAttribute("description"))
     attribute shouldBe defined
@@ -68,8 +98,6 @@ class LDAPClientImplIntegrationSpec
 
     provisioningClient.createGroup(groupName, defaultLDAPAttributes(groupDN, groupName)).unsafeRunSync()
     provisioningClient.addUser(groupDN, DistinguishedName(userDN)).value.unsafeRunSync()
-
-    ldapConnectionPool.getConnection.delete(groupDN.value)
   }
 
   it should "find a user" in {
@@ -87,8 +115,6 @@ class LDAPClientImplIntegrationSpec
     lookupClient.addUser(groupDN, userDN("svc_heim_test2")).value.unsafeRunSync()
 
     val result = lookupClient.groupMembers(DistinguishedName(groupDN.value)).unsafeRunSync()
-
-    ldapConnectionPool.getConnection.delete(groupDN.value)
 
     result.length shouldBe 2
   }
@@ -126,8 +152,6 @@ class LDAPClientImplIntegrationSpec
 
     val actual = provisioningClient.groupRequest(groupDN.value, groupName, attributes.patch(attributes.length, List("something" -> "new"), 0))
     actual.unsafeRunSync().get shouldBe a [ModifyRequest]
-
-    ldapConnectionPool.getConnection.delete(groupDN.value)
   }
 
   it should "not generate a request" in {
@@ -135,8 +159,6 @@ class LDAPClientImplIntegrationSpec
     provisioningClient.createGroup(groupName, attributes).unsafeRunSync()
     val actual = provisioningClient.groupRequest(groupDN.value, groupName, List())
     actual.unsafeRunSync() should not be defined
-
-    ldapConnectionPool.getConnection.delete(groupDN.value)
   }
 
   it should "generate only one attribute for multiple keys" in {

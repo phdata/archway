@@ -240,7 +240,8 @@ package object config extends StrictLogging {
       groupPath: String,
       userPath: Option[String],
       realm: String,
-      syncInterval: FiniteDuration
+      syncInterval: FiniteDuration,
+      authorizationDN: String
   )
 
   object LDAPConfig {
@@ -260,6 +261,7 @@ package object config extends StrictLogging {
           .downField("syncInterval")
           .as[String]
           .map(d => Duration.apply(d).asInstanceOf[FiniteDuration])
+        authorization <- cursor.downField("authorizationDN").as[String]
       } yield LDAPConfig(
         lookupBinding,
         provisioningBinding,
@@ -269,7 +271,8 @@ package object config extends StrictLogging {
         groupPath,
         userPath,
         realm,
-        syncInterval
+        syncInterval,
+        authorization
       )
     }
 
@@ -283,7 +286,8 @@ package object config extends StrictLogging {
         ("groupPath", a.groupPath.asJson),
         ("userPath", a.userPath.asJson),
         ("realm", a.realm.asJson),
-        ("syncInterval", Json.fromString(a.syncInterval.toString))
+        ("syncInterval", Json.fromString(a.syncInterval.toString)),
+        ("authorizationDN", a.authorizationDN.asJson)
       )
     }
   }

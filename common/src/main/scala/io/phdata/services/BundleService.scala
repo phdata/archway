@@ -18,7 +18,7 @@ import org.apache.http.entity.StringEntity
 object BundleService extends IOApp with LazyLogging {
   override def run(args: List[String]): IO[ExitCode] = {
     val bundleService = new BundleService[IO]
-    if(args(0).isEmpty) {
+    if (args(0).isEmpty) {
       logger.warn("Token is expected as the first argument to the application")
       sys.exit(1)
     } else {
@@ -36,9 +36,11 @@ class BundleService[F[_]: ConcurrentEffect]() extends LazyLogging {
     val logContents = Source.fromFile(logFileName).getLines().mkString
     val postRequest = Request(
       Method.PUT,
-      Uri.unsafeFromString(s"https://repository.phdata.io/artifactory/support-private/archway/${logFileName.split("/").last}+$currentTime"),
+      Uri.unsafeFromString(
+        s"https://repository.phdata.io/artifactory/support-private/archway/${logFileName.split("/").last}+$currentTime"
+      ),
       HttpVersion.`HTTP/1.0`,
-      Headers.of(Header("Authorization", s"Bearer ${bearerToken}")),
+      Headers.of(Header("Authorization", s"Bearer ${bearerToken}"))
     ).withEntity[String](logContents)(EntityEncoder[F, String])
 
     BlazeClientBuilder[F](global).resource.use { client =>

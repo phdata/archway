@@ -491,6 +491,15 @@
           "default": "2 hour"
         },
         {
+          "name": "archway.ldap.authorizationDN",
+          "label": "Archway Authorization Group DN",
+          "description": "The LDAP DN used for authorizing users into Archway. If no value is provided users will be authenticated using Active Directory but no authorization will happen.",
+          "required": "false",
+          "type": "string",
+          "default": "",
+          "configurableInWizard": "true"
+        },
+        {
           "name": "archway.approvers.notificationEmail",
           "label": "Notification Email Address",
           "description": "The comma separated list of email addresses to send notification emails to",

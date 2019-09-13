@@ -104,7 +104,6 @@ class WorkspaceController[F[_]: Sync: Timer: ContextShift: ConcurrentEffect](
           } else
             Forbidden()
 
-
         case POST -> Root / LongVar(id) / "owner" / ownerDN as user =>
           if (user.isSuperUser) {
             for {

@@ -94,10 +94,22 @@ class LDAPClientImpl[F[_]: Effect](ldapConfig: LDAPConfig, binding: LDAPConfig =
     getEntry(distinguishedName).map(ldapUser)
 
   override def validateUser(username: String, password: Password): OptionT[F, LDAPUser] =
-    for {
-      result <- getUserEntry(username).map(ldapUser) // TODO switch order so search happens after validate
-      _ <- OptionT(Sync[F].delay(ldapBindingAsOption(result.distinguishedName.value, password, username)))
-    } yield result
+    getUserEntry(username).map(ldapUser).flatMap { result =>
+      if (ldapConfig.authorizationDN.isEmpty) {
+        for {
+          _ <- OptionT(Sync[F].delay(ldapBindingAsOption(result.distinguishedName.value, password, username)))
+        } yield result
+      } else {
+        for {
+          groupUsers <- OptionT.liftF(groupMembers(DistinguishedName(ldapConfig.authorizationDN)))
+          _ <- if (groupUsers.map(_.username).contains(username)) {
+            OptionT(Sync[F].delay(ldapBindingAsOption(result.distinguishedName.value, password, username)))
+          } else {
+            OptionT.none[F, BindResult]
+          }
+        } yield result
+      }
+    }
 
   override def getUser(username: String): OptionT[F, LDAPUser] = getUserEntry(username).map(ldapUser)
 
