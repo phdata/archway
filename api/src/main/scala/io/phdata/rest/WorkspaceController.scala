@@ -150,7 +150,7 @@ class WorkspaceController[F[_]: Sync: Timer: ContextShift: ConcurrentEffect](
           val access =
             for {
               userHasAccess <- workspaceService.userAccessible(user.distinguishedName, id)
-              wsAccess <- (userHasAccess || user.isSuperUser).pure[F]
+              wsAccess <- (userHasAccess || user.canApprove ).pure[F]
             } yield wsAccess
 
           val maybeWorkspaceT = access
