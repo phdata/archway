@@ -1,34 +1,53 @@
 import * as React from 'react';
 import { Input, Form, Button } from 'antd';
 import { FormComponentProps } from 'antd/lib/form';
+import { Question } from '../../../models/Manage';
 
 interface Props extends FormComponentProps {
-  question: string;
+  question: Question;
   children?: any;
-  id: number;
+  index: number;
 
-  removeQuestion: (id: number) => void;
-  setQuestion: (id: number, date: Date, question: string, requester: string) => void;
+  removeQuestion: (index: number) => void;
+  setQuestion: (index: number, question: Question) => void;
 }
 
-class Question extends React.Component<Props> {
-  public handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { id, setQuestion } = this.props;
-    setQuestion(id, new Date(), e.target.value, 'tony');
-  };
+class QuestionWrapper extends React.Component<Props> {
+  public constructor(props: Props) {
+    super(props);
+
+    this.handleChange = this.handleChange.bind(this);
+    this.handleRemove = this.handleRemove.bind(this);
+  }
+
+  public handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const { index, setQuestion } = this.props;
+    const question: Question = {
+      ...this.props.question,
+      question: e.target.value,
+      updated: new Date(),
+    };
+    setQuestion(index, question);
+  }
+
+  public handleRemove(index: number) {
+    this.props.form.resetFields(['question']);
+    this.props.removeQuestion(index);
+  }
+
   public render() {
-    const { id, question, removeQuestion } = this.props;
+    const { index, question } = this.props;
     const { getFieldDecorator } = this.props.form;
     return (
-      <Form.Item label={`${id + 1}`}>
-        {getFieldDecorator(`question${id}`, {
+      <Form.Item label={`${index + 1}`}>
+        {getFieldDecorator(`question`, {
           rules: [{ required: true, message: 'Fill in the question!' }],
-          initialValue: question,
-        })(<Input name={`question${id}`} onChange={this.handleChange} style={{ marginRight: 10 }} />)}
-        <Button type="primary" shape="circle" icon="minus" size="large" onClick={() => removeQuestion(id)} />
+          initialValue: question.question,
+        })(<Input name={`question${index}`} onChange={this.handleChange} style={{ marginRight: 10 }} />)}
+        <Button type="primary" shape="circle" icon="minus" size="large" onClick={() => this.handleRemove(index)} />
       </Form.Item>
     );
   }
 }
 
-export default Form.create<Props>()(Question);
+export default Form.create<Props>()(QuestionWrapper);

@@ -17,22 +17,21 @@ interface Props {
   compliances: ComplianceContent[];
   selectedCompliance: ComplianceContent;
   loading: boolean;
+  requester: string;
 
-  removeQuestion: (id: number) => void;
-  clearCompliances: () => void;
+  removeQuestion: (index: number) => void;
   clearSelectedCompliance: () => void;
   fetchCompliances: () => void;
   requestNewCompliance: () => void;
   setSelectedCompliance: (compliance: ComplianceContent) => void;
-  setQuestion: (id: number, date: Date, question: string, requester: string) => void;
+  setQuestion: (index: number, question: Question) => void;
   addNewQuestion: (question: Question) => void;
+  addCompliance: () => void;
+  deleteCompliance: () => void;
+  updateCompliance: () => void;
 }
 
 class Manage extends React.Component<Props> {
-  public componentDidMount() {
-    this.props.clearCompliances();
-  }
-
   public render() {
     const {
       compliances,
@@ -44,6 +43,10 @@ class Manage extends React.Component<Props> {
       setQuestion,
       addNewQuestion,
       removeQuestion,
+      addCompliance,
+      deleteCompliance,
+      updateCompliance,
+      requester,
     } = this.props;
 
     return (
@@ -62,6 +65,10 @@ class Manage extends React.Component<Props> {
                 setQuestion={setQuestion}
                 addNewQuestion={addNewQuestion}
                 removeQuestion={removeQuestion}
+                addCompliance={addCompliance}
+                deleteCompliance={deleteCompliance}
+                updateCompliance={updateCompliance}
+                requester={requester}
               />
             </TabPane>
           </Tabs>
@@ -76,18 +83,20 @@ const mapStateToProps = () =>
     compliances: selectors.getCompliances(),
     selectedCompliance: selectors.getSelectedCompliance(),
     loading: selectors.isLoading(),
+    requester: selectors.getRequester(),
   });
 
 const mapDispatchToProps = (dispatch: any) => ({
   fetchCompliances: () => dispatch(actions.getCompliances()),
   requestNewCompliance: () => dispatch(actions.requestNewCompliance()),
-  clearCompliances: () => dispatch(actions.clearCompliances()),
   clearSelectedCompliance: () => dispatch(actions.clearSelectedCompliance()),
   setSelectedCompliance: (compliance: ComplianceContent) => dispatch(actions.setSelectedCompliance(compliance)),
-  setQuestion: (id: number, date: Date, question: string, requester: string) =>
-    dispatch(actions.setQuestion(id, date, question, requester)),
+  setQuestion: (index: number, question: Question) => dispatch(actions.setQuestion(index, question)),
   addNewQuestion: (question: Question) => dispatch(actions.addNewQuestion(question)),
-  removeQuestion: (id: number) => dispatch(actions.removeQuestion(id)),
+  removeQuestion: (index: number) => dispatch(actions.removeQuestion(index)),
+  addCompliance: () => dispatch(actions.requestNewCompliance()),
+  updateCompliance: () => dispatch(actions.requestUpdateCompliance()),
+  deleteCompliance: () => dispatch(actions.requestDeleteCompliance()),
 });
 
 export default connect(

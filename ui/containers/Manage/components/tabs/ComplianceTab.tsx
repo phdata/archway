@@ -11,14 +11,18 @@ interface Props extends RouteComponentProps<any> {
   compliances: ComplianceContent[];
   loading: boolean;
   match: any;
+  requester: string;
   selectedCompliance: ComplianceContent;
 
   fetchCompliances: () => void;
   clearSelectedCompliance: () => void;
   setRequest: (compliance: ComplianceContent) => void;
-  setQuestion: (id: number, date: Date, question: string, requester: string) => void;
+  setQuestion: (index: number, question: Question) => void;
   addNewQuestion: (question: Question) => void;
   removeQuestion: (id: number) => void;
+  addCompliance: () => void;
+  deleteCompliance: () => void;
+  updateCompliance: () => void;
 }
 
 class CompliancesTab extends React.Component<Props> {
@@ -36,8 +40,25 @@ class CompliancesTab extends React.Component<Props> {
       setQuestion,
       addNewQuestion,
       removeQuestion,
+      addCompliance,
+      deleteCompliance,
+      updateCompliance,
+      requester,
     } = this.props;
     const { url } = this.props.match;
+    const complianceDetailsProps = {
+      setRequest,
+      selectedCompliance,
+      compliances,
+      setQuestion,
+      addNewQuestion,
+      removeQuestion,
+      addCompliance,
+      deleteCompliance,
+      updateCompliance,
+      requester,
+    };
+
     return (
       <div style={{ padding: 16 }}>
         <Switch>
@@ -60,16 +81,7 @@ class CompliancesTab extends React.Component<Props> {
               loading ? (
                 <Spin />
               ) : (
-                <ComplianceDetails
-                  openFor={OpenType.Update}
-                  setRequest={setRequest}
-                  selectedCompliance={selectedCompliance}
-                  compliances={compliances}
-                  setQuestion={setQuestion}
-                  addNewQuestion={addNewQuestion}
-                  removeQuestion={removeQuestion}
-                  {...props}
-                />
+                <ComplianceDetails openFor={OpenType.Update} {...props} {...complianceDetailsProps} />
               )
             }
           />
@@ -77,20 +89,7 @@ class CompliancesTab extends React.Component<Props> {
             exact
             path={`${url}/addcompliance`}
             render={props =>
-              loading ? (
-                <Spin />
-              ) : (
-                <ComplianceDetails
-                  openFor={OpenType.Add}
-                  setRequest={setRequest}
-                  selectedCompliance={selectedCompliance}
-                  compliances={compliances}
-                  setQuestion={setQuestion}
-                  addNewQuestion={addNewQuestion}
-                  removeQuestion={removeQuestion}
-                  {...props}
-                />
-              )
+              loading ? <Spin /> : <ComplianceDetails openFor={OpenType.Add} {...props} {...complianceDetailsProps} />
             }
           />
           <Redirect to={`${url}`} />

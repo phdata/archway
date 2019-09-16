@@ -3,8 +3,9 @@ import { ComplianceType } from '../constants';
 export interface Question {
   question: string;
   requester: string;
-  date: Date;
+  updated: Date;
   id?: number;
+  complianceGroupId?: number;
 }
 
 export interface ComplianceContent {

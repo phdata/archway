@@ -12,12 +12,16 @@ import NewQuestion from './NewQuestion';
 interface Props extends FormComponentProps<any>, RouteComponentProps<any> {
   openFor: OpenType;
   compliances: ComplianceContent[];
+  requester: string;
   selectedCompliance: ComplianceContent;
 
   setRequest: (compliance: ComplianceContent | any) => void;
-  setQuestion: (id: number, date: Date, question: string, requester: string) => void;
+  setQuestion: (index: number, question: Question) => void;
   addNewQuestion: (question: Question) => void;
-  removeQuestion: (id: number) => void;
+  removeQuestion: (index: number) => void;
+  addCompliance: () => void;
+  deleteCompliance: () => void;
+  updateCompliance: () => void;
 }
 
 export const formLayout = {
@@ -38,6 +42,7 @@ class ComplianceDetails extends React.Component<Props> {
 
     this.handleChange = this.handleChange.bind(this);
     this.handleSelectChange = this.handleSelectChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   public componentDidMount() {
@@ -64,32 +69,66 @@ class ComplianceDetails extends React.Component<Props> {
     setRequest({ ...selectedCompliance, name: value });
   }
 
+  public handleSubmit(e: React.SyntheticEvent, buttonType: OpenType) {
+    const { updateCompliance, deleteCompliance, addCompliance, form } = this.props;
+    form.validateFields(err => {
+      if (err) {
+        return;
+      }
+      switch (buttonType) {
+        case OpenType.Update:
+          updateCompliance();
+          break;
+        case OpenType.Delete:
+          deleteCompliance();
+          break;
+        case OpenType.Add:
+          addCompliance();
+          break;
+      }
+    });
+  }
+
   public render() {
-    const { selectedCompliance, setQuestion, openFor, addNewQuestion, removeQuestion } = this.props;
+    const { selectedCompliance, setQuestion, openFor, addNewQuestion, removeQuestion, requester } = this.props;
     const { getFieldDecorator } = this.props.form;
+
     return (
       <div style={{ textAlign: 'left' }} className="question-details">
-        <Row style={{ marginBottom: 15 }}>
-          <Col
-            xs={{ span: 24, offset: 0 }}
-            sm={{ span: 20, offset: 4 }}
-            lg={{ span: 16, offset: 4 }}
-            style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
-          >
-            <h3 style={{ fontSize: 24, fontWeight: 300, marginBottom: 0 }}>Group Details</h3>
-            <div>
-              <Button type="primary" style={{ marginRight: 20 }} onClick={() => this.props.history.push('/manage')}>
-                Cancel
-              </Button>
-              {openFor === OpenType.Update ? (
-                <Button type="primary">Update</Button>
-              ) : (
-                <Button type="primary">Add</Button>
-              )}
-            </div>
-          </Col>
-        </Row>
         <Form {...formLayout}>
+          <Row style={{ marginBottom: 15 }}>
+            <Col
+              xs={{ span: 24, offset: 0 }}
+              sm={{ span: 20, offset: 4 }}
+              lg={{ span: 16, offset: 4 }}
+              style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
+            >
+              <h3 style={{ fontSize: 24, fontWeight: 300, marginBottom: 0 }}>Group Details</h3>
+              <div>
+                <Button type="primary" style={{ marginRight: 20 }} onClick={() => this.props.history.push('/manage')}>
+                  Cancel
+                </Button>
+                {openFor === OpenType.Update ? (
+                  <React.Fragment>
+                    <Button
+                      type="primary"
+                      style={{ marginRight: 20 }}
+                      onClick={e => this.handleSubmit(e, OpenType.Delete)}
+                    >
+                      Delete
+                    </Button>
+                    <Button type="primary" onClick={e => this.handleSubmit(e, OpenType.Update)}>
+                      Update
+                    </Button>
+                  </React.Fragment>
+                ) : (
+                  <Button type="primary" onClick={e => this.handleSubmit(e, OpenType.Add)}>
+                    Add
+                  </Button>
+                )}
+              </div>
+            </Col>
+          </Row>
           <Form.Item label="Name">
             {getFieldDecorator('name', {
               rules: [{ required: true, message: 'Name is required!' }],
@@ -118,20 +157,24 @@ class ComplianceDetails extends React.Component<Props> {
             })(<Input name="description" onChange={this.handleChange} />)}
           </Form.Item>
           <Form.Item label="Questions" />
-
           {!!selectedCompliance &&
             !!selectedCompliance.questions &&
             selectedCompliance.questions.map((item, index) => (
               <QuestionWrapper
-                question={item.question}
+                question={item}
                 setQuestion={setQuestion}
-                id={index}
+                index={index}
                 key={index}
                 removeQuestion={removeQuestion}
               />
             ))}
         </Form>
-        <NewQuestion addNewQuestion={addNewQuestion} />
+        <NewQuestion
+          addNewQuestion={addNewQuestion}
+          requester={requester}
+          hasComplianceGroupId={!!selectedCompliance && !!selectedCompliance.id}
+          compliance={selectedCompliance}
+        />
       </div>
     );
   }

@@ -1,6 +1,6 @@
 import { createSelector } from 'reselect';
 
-import { manageSelector } from '../../redux/selectors';
+import { manageSelector, authSelector } from '../../redux/selectors';
 
 export const getCompliances = () =>
   createSelector(
@@ -18,4 +18,10 @@ export const isLoading = () =>
   createSelector(
     manageSelector,
     manageState => manageState.get('loading')
+  );
+
+export const getRequester = () =>
+  createSelector(
+    authSelector,
+    authState => authState.get('profile') && authState.get('profile').username
   );

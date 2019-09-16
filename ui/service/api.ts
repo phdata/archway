@@ -144,13 +144,13 @@ export const getFeatureFlags = (token: string) => get('/account/feature-flags', 
 
 export const getCustomDescriptions = (token: string) => get('/templates/custom', token);
 
-export const getCompliances = (token: string) => get('/workspace/questions', token);
+export const getCompliances = (token: string) => get('/workspaces/questions', token);
 
 export const changeWorkspaceOwner = (token: string, id: number, ownerDn: string) =>
   withBody(`/workspaces/${id}/owner/${ownerDn}`, token, null, 'POST', false, false);
 
 export const requestCompliance = (token: string, compliance: ComplianceContent) =>
-  withBody('/workspace/questions', token, { compliance });
+  withBody('/workspaces/questions', token, { compliance });
 
 export const requestTopic = (token: string, id: number, name: string, partitions: number, replication_factor: number) =>
   withBody(`/workspaces/${id}/topics`, token, { name, partitions, replication_factor });
@@ -183,3 +183,9 @@ export const versionInfo = (token: string) => get('/account/version', token);
 
 export const modifyDiskQuota = (token: string, id: number, value: number) =>
   withBody(`/workspace/${id}/diskquota/${value}`, token);
+
+export const updateCompliance = (token: string, id: number, compliance: ComplianceContent) =>
+  withBody(`/workspaces/questions/${id}`, token, { compliance }, 'PUT');
+
+export const deleteCompliance = (token: string, id: number, compliance: ComplianceContent) =>
+  withBody(`/workspaces/questions/${id}`, token, { compliance }, 'DELETE');
