@@ -51,7 +51,6 @@ import {
   REQUEST_MODIFY_DISK_QUOTA,
   setQuotaLoading,
 } from './actions';
-import { ErrorMessages } from './constants';
 import { RECENT_WORKSPACES_KEY, TOKEN_EXTRACTOR, NotificationType } from '../../constants';
 
 import { Workspace } from '../../models/Workspace';
@@ -112,7 +111,7 @@ function* fetchWorkspace({ id }: { type: string; id: number }) {
     }
   } catch (err) {
     if (err === 403) {
-      yield put(setNotificationStatus(NotificationType.Error, ErrorMessages.WorkspaceFetching));
+      yield put(setNotificationStatus(NotificationType.Error, 'You do not have permission to view this workspace'));
       yield put(clearNotificationStatus());
       yield put(setWorkspaceFetching(false));
     }
@@ -208,8 +207,8 @@ export function* simpleMemberRequested({ resource }: SimpleMemberRequestAction) 
     }
     const members = yield call(Api.getMembers, token, workspace.id);
     yield put(setMembers(members));
-  } catch (e) {
-    yield put(setNotificationStatus(NotificationType.Error, ErrorMessages.AddingMember));
+  } catch (err) {
+    yield put(setNotificationStatus(NotificationType.Error, `Failed to add a member: ${err.toString()}`));
     yield put(simpleMemberRequestComplete());
   } finally {
     yield put(setMemberLoading(false));
@@ -305,8 +304,8 @@ function* deleteWorkspaceRequested() {
     yield call(Api.deleteWorkspace, token, id);
     yield put(setNotificationStatus(NotificationType.Success, `Success: Delete workspace ${id}`));
     yield put(router.push({ pathname: '/operations' }));
-  } catch {
-    yield put(setNotificationStatus(NotificationType.Error, `Failed to delete workspace ${id}`));
+  } catch (err) {
+    yield put(setNotificationStatus(NotificationType.Error, `Failed to delete workspace ${id}: ${err.toString()}`));
   } finally {
     yield put(setManageLoading('delete', false));
     yield put(setActiveModal(false));
@@ -325,8 +324,10 @@ function* deprovisionWorkspaceRequested() {
     yield put(setManageLoading('deprovision', true));
     yield call(Api.deprovisionWorkspace, token, id);
     yield put(setNotificationStatus(NotificationType.Success, `Success: Deprovision workspace ${id}`));
-  } catch {
-    yield put(setNotificationStatus(NotificationType.Error, `Failed to deprovision workspace ${id}`));
+  } catch (err) {
+    yield put(
+      setNotificationStatus(NotificationType.Error, `Failed to deprovision workspace ${id}: ${err.toString()}`)
+    );
   } finally {
     yield put(setManageLoading('deprovision', false));
     yield put(setActiveModal(false));
@@ -345,8 +346,8 @@ function* provisionWorkspaceRequested() {
     yield put(setManageLoading('provision', true));
     yield call(Api.provisionWorkspace, token, id);
     yield put(setNotificationStatus(NotificationType.Success, `Success: Provision workspace ${id}`));
-  } catch {
-    yield put(setNotificationStatus(NotificationType.Error, `Failed to provision workspace ${id}`));
+  } catch (err) {
+    yield put(setNotificationStatus(NotificationType.Error, `Failed to provision workspace ${id}: ${err.toString()}`));
   } finally {
     yield put(setManageLoading('provision', false));
     yield put(setActiveModal(false));
@@ -365,8 +366,10 @@ function* changeWorkspaceOwnerRequested() {
   try {
     yield put(setOwnerLoading(true));
     yield call(Api.changeWorkspaceOwner, token, id, ownerDn);
-  } catch {
-    yield put(setNotificationStatus(NotificationType.Error, `Failed to change the owner of ${name}`));
+  } catch (err) {
+    yield put(
+      setNotificationStatus(NotificationType.Error, `Failed to change the owner of ${name}: ${err.toString()}`)
+    );
   } finally {
     yield put(clearNotificationStatus());
     yield put(setOwnerLoading(false));
@@ -385,8 +388,10 @@ function* modifyDiskQuotaRequested() {
   try {
     yield put(setQuotaLoading(true));
     yield call(Api.modifyDiskQuota, token, id, quota);
-  } catch {
-    yield put(setNotificationStatus(NotificationType.Error, `Failed to modify disk quota of ${name}`));
+  } catch (err) {
+    yield put(
+      setNotificationStatus(NotificationType.Error, `Failed to modify disk quota of ${name}: ${err.toString()}`)
+    );
   } finally {
     yield put(clearNotificationStatus());
     yield put(setQuotaLoading(false));

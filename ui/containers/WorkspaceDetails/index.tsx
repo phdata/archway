@@ -40,7 +40,6 @@ import * as selectors from './selectors';
 import { FeatureFlagType, ProvisioningType, ModalType } from '../../constants';
 import { Provisioning } from '../../components';
 import { getFeatureFlags } from '../../redux/selectors';
-import { ErrorMessages } from './constants';
 
 interface DetailsRouteProps {
   id: any;
@@ -154,11 +153,7 @@ class WorkspaceDetails extends React.PureComponent<Props> {
     const { type, message } = notificationInfo;
 
     if (!!message && message !== this.props.notificationInfo.message) {
-      let duration = 5;
-      if (message === ErrorMessages.WorkspaceFetching) {
-        duration = 0;
-      }
-      notification[type]({ message: type.toUpperCase(), description: message, duration });
+      notification[type]({ message: type.toUpperCase(), description: message, duration: 0 });
     }
   }
 
