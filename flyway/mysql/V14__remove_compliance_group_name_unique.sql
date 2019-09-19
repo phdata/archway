@@ -1,0 +1,1 @@
+ALTER TABLE compliance_group DROP INDEX name
