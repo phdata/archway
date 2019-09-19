@@ -76,7 +76,7 @@ function* deleteComplianceRequest() {
   const compliance = (yield select(currentComplianceExtractor)).toJS();
   try {
     yield put(setLoadingStatus(true));
-    yield call(Api.deleteCompliance, token, compliance.id, compliance);
+    yield call(Api.deleteCompliance, token, compliance.id);
   } catch {
     // tslint:disable-next-line: no-empty
   } finally {

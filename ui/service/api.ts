@@ -187,5 +187,5 @@ export const modifyDiskQuota = (token: string, id: number, value: number) =>
 export const updateCompliance = (token: string, id: number, compliance: ComplianceContent) =>
   withBody(`/workspaces/questions/${id}`, token, { compliance }, 'PUT');
 
-export const deleteCompliance = (token: string, id: number, compliance: ComplianceContent) =>
-  withBody(`/workspaces/questions/${id}`, token, { compliance }, 'DELETE');
+export const deleteCompliance = (token: string, id: number) =>
+  withBody(`/workspaces/questions/${id}`, token, {}, 'DELETE');
