@@ -2,19 +2,18 @@ import * as React from 'react';
 import { Form, Button, Input } from 'antd';
 import { FormComponentProps } from 'antd/lib/form';
 
-import { Question, ComplianceContent } from '../../../models/Manage';
-import { formLayout } from './ComplianceDetails';
+import { Question } from '../../../models/Manage';
+import { formLayout } from '../constants';
 
 interface Props extends FormComponentProps {
   children?: any;
   requester: string;
-  compliance: ComplianceContent;
-  hasComplianceGroupId: boolean;
+  complianceGroupId: number | undefined;
 
   addNewQuestion: (question: Question) => void;
 }
 
-const NewQuestion = ({ addNewQuestion, form, requester, hasComplianceGroupId, compliance }: Props) => {
+const NewQuestion = ({ addNewQuestion, form, requester, complianceGroupId }: Props) => {
   const [value, setValue] = React.useState('');
 
   const handleClick = () => {
@@ -27,8 +26,8 @@ const NewQuestion = ({ addNewQuestion, form, requester, hasComplianceGroupId, co
         requester,
         updated: new Date(),
       };
-      if (hasComplianceGroupId) {
-        newQuestion = { ...newQuestion, complianceGroupId: compliance.id };
+      if (!!complianceGroupId) {
+        newQuestion = { ...newQuestion, complianceGroupId };
       }
       addNewQuestion(newQuestion);
       form.resetFields();

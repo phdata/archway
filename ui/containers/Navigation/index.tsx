@@ -6,6 +6,7 @@ import { NavLink, withRouter, RouteComponentProps, Link } from 'react-router-dom
 import { Profile } from './components';
 import * as selectors from '../../redux/selectors';
 import { Profile as UserProfile } from '../../models/Profile';
+import { ManagePage } from '../Manage/constants';
 import { Feature } from '../../components';
 import { FeatureFlagType } from '../../constants';
 
@@ -82,7 +83,7 @@ const Navigation = ({ location, profile }: Props) => (
       <Feature flag={FeatureFlagType.ManageTab}>
         {profile && (profile.permissions.platform_operations || profile.permissions.risk_management) && (
           <Menu.Item key="manage">
-            <NavLink to="/manage">
+            <NavLink to={`/manage/${ManagePage.ComplianceTab}`}>
               <Icon type="profile" style={{ fontSize: 18 }} /> Manage
             </NavLink>
           </Menu.Item>

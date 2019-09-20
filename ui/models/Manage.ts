@@ -19,3 +19,18 @@ export interface MemberForm {
   username: string;
   roles: object;
 }
+
+export interface Link {
+  name: string;
+  description: string;
+  url: string;
+  id?: number;
+  customLinkGroupId?: number;
+}
+
+export interface LinksGroup {
+  name: string;
+  description: string;
+  links: Link[];
+  id?: number;
+}

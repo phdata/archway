@@ -19,7 +19,7 @@ const ComplianceList = ({ loading, compliances, history, match, clearSelectedCom
       type="primary"
       onClick={() => {
         clearSelectedCompliance();
-        history.push(`${match.url}/addcompliance`);
+        history.push(`${match.url}/add`);
       }}
     >
       Add a new group

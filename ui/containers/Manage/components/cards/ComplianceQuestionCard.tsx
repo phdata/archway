@@ -28,7 +28,7 @@ const ComplianceQuestionCard = ({ compliance, history, match }: Props) => {
       hoverable
       style={{ height: 300 }}
       onClick={() => {
-        history.push(`${url}/compliance/${id}`);
+        history.push(`${url}/${id}`);
       }}
     >
       <div style={{ height: 252, overflow: 'hidden' }}>

@@ -7,6 +7,12 @@ import {
   SET_QUESTION,
   ADD_NEW_QUESTION,
   REMOVE_QUESTION,
+  SET_LINKSGROUPS,
+  SET_SELECTED_LINKSGROUP,
+  ADD_NEW_LINK,
+  SET_LINK,
+  REMOVE_LINK,
+  CLEAR_SELECTED_LINKSGROUP,
 } from './actions';
 
 const initialState = fromJS({
@@ -15,6 +21,12 @@ const initialState = fromJS({
     name: '',
     description: '',
     questions: [],
+  },
+  linksGroups: [],
+  selectedLinksGroup: {
+    name: '',
+    description: '',
+    links: [],
   },
   loading: true,
 });
@@ -50,6 +62,34 @@ function manage(state = initialState, action: any) {
           .slice(0, action.index)
           .concat(state.getIn(['selectedCompliance', 'questions']).slice(action.index + 1))
       );
+
+    case SET_LINKSGROUPS:
+      return state.set('linksGroups', fromJS(action.linksGroups));
+
+    case SET_SELECTED_LINKSGROUP:
+      return state.set('selectedLinksGroup', fromJS(action.linksGroup));
+
+    case ADD_NEW_LINK:
+      console.log(state.getIn(['selectedLinksGroup', 'links']));
+      return state.setIn(
+        ['selectedLinksGroup', 'links'],
+        state.getIn(['selectedLinksGroup', 'links']).push(action.link)
+      );
+
+    case SET_LINK:
+      return state.setIn(['selectedLinksGroup', 'links', action.objLink.index], action.objLink.link);
+
+    case REMOVE_LINK:
+      return state.setIn(
+        ['selectedLinksGroup', 'links'],
+        state
+          .getIn(['selectedLinksGroup', 'links'])
+          .slice(0, action.index)
+          .concat(state.getIn(['selectedLinksGroup', 'links']).slice(action.index + 1))
+      );
+
+    case CLEAR_SELECTED_LINKSGROUP:
+      return state.set('selectedLinksGroup', initialState.get('selectedLinksGroup'));
 
     default:
       return state;

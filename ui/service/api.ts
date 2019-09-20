@@ -1,5 +1,5 @@
 import { Workspace } from '../models/Workspace';
-import { ComplianceContent } from '../models/Manage';
+import { ComplianceContent, LinksGroup } from '../models/Manage';
 import { SPNEGO } from '../constants';
 
 const { config = {} } = window as any;
@@ -186,6 +186,16 @@ export const modifyDiskQuota = (token: string, id: number, value: number) =>
 
 export const updateCompliance = (token: string, id: number, compliance: ComplianceContent) =>
   withBody(`/workspaces/questions/${id}`, token, { compliance }, 'PUT');
+
+export const getLinksGroups = (token: string) => get('/ops/custom-links', token);
+
+export const createLinksGroup = (token: string, linksGroup: LinksGroup) =>
+  withBody(`/ops/custom-links`, token, linksGroup);
+
+export const updateLinksGroup = (token: string, linksGroup: LinksGroup, id: number) =>
+  withBody(`/ops/custom-links/${id}`, token, linksGroup, 'PUT');
+
+export const deleteLinksGroup = (token: string, id: number) => withBody(`/ops/custom-links/${id}`, token, {}, 'DELETE');
 
 export const deleteCompliance = (token: string, id: number) =>
   withBody(`/workspaces/questions/${id}`, token, {}, 'DELETE');

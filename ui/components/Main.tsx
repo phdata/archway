@@ -29,7 +29,7 @@ const Main = ({ version }: Props) => (
             <Route exact path="/risks" component={RiskListing} />
             <Route exact path="/operations" component={OpsListing} />
             <Route exact path="/request" component={WorkspaceRequest} />
-            <Route path="/manage" component={Manage} />
+            <Route path="/manage/:tab" component={Manage} />
             <Route exact path="/request/customworkspaces" component={CustomWorkspaces} />
             <Route path="/workspaces/:id" component={WorkspaceDetails} />
             <Redirect to="/home" />

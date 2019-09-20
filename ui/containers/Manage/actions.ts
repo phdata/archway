@@ -1,4 +1,4 @@
-import { ComplianceContent, Question } from '../../models/Manage';
+import { ComplianceContent, Question, LinksGroup, Link } from '../../models/Manage';
 
 export const REQUEST_NEW_COMPLIANCE = 'REQUEST_NEW_COMPLIANCE';
 export const requestNewCompliance = () => ({
@@ -61,5 +61,63 @@ export const addNewQuestion = (question: Question) => ({
 export const REMOVE_QUESTION = 'REMOVE_QUESTION';
 export const removeQuestion = (index: number) => ({
   type: REMOVE_QUESTION,
+  index,
+});
+
+export const GET_LINKSGROUPS = 'GET_LINKSGROUPS';
+export const getLinksGroups = () => ({
+  type: GET_LINKSGROUPS,
+});
+
+export const SET_LINKSGROUPS = 'SET_LINKSGROUPS';
+export const setLinksGroups = (linksGroups: LinksGroup[]) => ({
+  type: SET_LINKSGROUPS,
+  linksGroups,
+});
+
+export const REQUEST_NEW_LINKSGROUP = 'REQUEST_NEW_LINKSGROUP';
+export const requestNewLinksGroup = () => ({
+  type: REQUEST_NEW_LINKSGROUP,
+});
+
+export const REQUEST_UPDATE_LINKSGROUP = 'REQUEST_UPDATE_LINKSGROUP';
+export const requestUpdateLinksGroup = () => ({
+  type: REQUEST_UPDATE_LINKSGROUP,
+});
+
+export const REQUEST_DELETE_LINKSGROUP = 'REQUEST_DELETE_LINKSGROUP';
+export const requestDeleteLinksGroup = () => ({
+  type: REQUEST_DELETE_LINKSGROUP,
+});
+
+export const CLEAR_SELECTED_LINKSGROUP = 'CLEAR_SELECTED_LINKSGROUP';
+export const clearSelectedLinksGroup = () => ({
+  type: CLEAR_SELECTED_LINKSGROUP,
+});
+
+export const SET_SELECTED_LINKSGROUP = 'SET_SELECTED_LINKSGROUP';
+export const setSelectedLinksGroup = (linksGroup: LinksGroup) => ({
+  type: SET_SELECTED_LINKSGROUP,
+  linksGroup,
+});
+
+export const SET_LINK = 'SET_LINK';
+export const setLink = (index: number, link: Link) => ({
+  type: SET_LINK,
+  objLink: {
+    index,
+    link,
+  },
+});
+
+export const ADD_NEW_LINK = 'ADD_NEW_LINK';
+export const addNewLink = (link: Link) => ({
+  type: ADD_NEW_LINK,
+  link,
+});
+
+export const REMOVE_LINK = 'REMOVE_LINK';
+export const removeLink = (index: number) => ({
+  type: REMOVE_LINK,
   index,
 });

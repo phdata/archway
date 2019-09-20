@@ -4,3 +4,7 @@ export { default as ComplianceList } from './ComplianceList';
 export { default as ComplianceDetails } from './ComplianceDetails';
 export { default as NewQuestion } from './NewQuestion';
 export { default as QuestionWrapper } from './QuestionWrapper';
+export { default as LinksGroupDetails } from './LinksGroupDetails';
+export { default as LinksGroupsList } from './LinksGroupsList';
+export { default as LinkWrapper } from './LinkWrapper';
+export { default as NewLink } from './NewLink';

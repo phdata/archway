@@ -25,3 +25,15 @@ export const getRequester = () =>
     authSelector,
     authState => authState.get('profile') && authState.get('profile').username
   );
+
+export const getLinksGroups = () =>
+  createSelector(
+    manageSelector,
+    manageState => manageState.get('linksGroups').toJS()
+  );
+
+export const getSelectedLinksGroup = () =>
+  createSelector(
+    manageSelector,
+    manageState => manageState.get('selectedLinksGroup').toJS()
+  );

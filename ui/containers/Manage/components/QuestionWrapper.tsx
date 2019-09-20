@@ -1,12 +1,13 @@
 import * as React from 'react';
 import { Input, Form, Button } from 'antd';
-import { FormComponentProps } from 'antd/lib/form';
 import { Question } from '../../../models/Manage';
+import { WrappedFormUtils } from 'antd/lib/form/Form';
 
-interface Props extends FormComponentProps {
+interface Props {
   question: Question;
   children?: any;
   index: number;
+  form: WrappedFormUtils<any>;
 
   removeQuestion: (index: number) => void;
   setQuestion: (index: number, question: Question) => void;
@@ -31,7 +32,7 @@ class QuestionWrapper extends React.Component<Props> {
   }
 
   public handleRemove(index: number) {
-    this.props.form.resetFields(['question']);
+    this.props.form.resetFields([`question${index}`]);
     this.props.removeQuestion(index);
   }
 
@@ -40,7 +41,7 @@ class QuestionWrapper extends React.Component<Props> {
     const { getFieldDecorator } = this.props.form;
     return (
       <Form.Item label={`${index + 1}`}>
-        {getFieldDecorator(`question`, {
+        {getFieldDecorator(`question${index}`, {
           rules: [{ required: true, message: 'Fill in the question!' }],
           initialValue: question.question,
         })(<Input name={`question${index}`} onChange={this.handleChange} style={{ marginRight: 10 }} />)}
@@ -50,4 +51,4 @@ class QuestionWrapper extends React.Component<Props> {
   }
 }
 
-export default Form.create<Props>()(QuestionWrapper);
+export default QuestionWrapper;

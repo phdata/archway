@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { Spin } from 'antd';
-import { Route, Switch, RouteComponentProps, withRouter, Redirect } from 'react-router-dom';
+import { Route, Switch, RouteComponentProps, withRouter } from 'react-router-dom';
 
 import { ComplianceList } from '../';
 import { ComplianceContent, Question } from '../../../../models/Manage';
 import ComplianceDetails from '../ComplianceDetails';
-import { OpenType } from '../../constants';
+import { OpenType, ManagePage } from '../../constants';
 
 interface Props extends RouteComponentProps<any> {
   compliances: ComplianceContent[];
@@ -45,7 +45,7 @@ class CompliancesTab extends React.Component<Props> {
       updateCompliance,
       requester,
     } = this.props;
-    const { url } = this.props.match;
+    const url = `/manage/${ManagePage.ComplianceTab}`;
     const complianceDetailsProps = {
       setRequest,
       selectedCompliance,
@@ -76,7 +76,14 @@ class CompliancesTab extends React.Component<Props> {
           />
           <Route
             exact
-            path={`${url}/compliance/:id`}
+            path={`${url}/add`}
+            render={props =>
+              loading ? <Spin /> : <ComplianceDetails openFor={OpenType.Add} {...props} {...complianceDetailsProps} />
+            }
+          />
+          <Route
+            exact
+            path={`${url}/:id`}
             render={props =>
               loading ? (
                 <Spin />
@@ -85,14 +92,6 @@ class CompliancesTab extends React.Component<Props> {
               )
             }
           />
-          <Route
-            exact
-            path={`${url}/addcompliance`}
-            render={props =>
-              loading ? <Spin /> : <ComplianceDetails openFor={OpenType.Add} {...props} {...complianceDetailsProps} />
-            }
-          />
-          <Redirect to={`${url}`} />
         </Switch>
       </div>
     );
