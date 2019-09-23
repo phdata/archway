@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Form, Input, Select, Row, Col, Button } from 'antd';
+import { Form, Input, Select, Row, Col, Button, Alert } from 'antd';
 import { RouteComponentProps } from 'react-router-dom';
 
 import { OpenType, ManagePage, formLayout } from '../constants';
@@ -57,9 +57,10 @@ class ComplianceDetails extends React.Component<Props> {
   }
 
   public handleSubmit(e: React.SyntheticEvent, buttonType: OpenType) {
-    const { updateCompliance, deleteCompliance, addCompliance, form } = this.props;
+    const { updateCompliance, deleteCompliance, addCompliance, form, selectedCompliance } = this.props;
+    const isCompliancesGroupEmpty = selectedCompliance.questions.length === 0;
     form.validateFields(err => {
-      if (err) {
+      if (err || isCompliancesGroupEmpty) {
         return;
       }
       switch (buttonType) {
@@ -127,6 +128,7 @@ class ComplianceDetails extends React.Component<Props> {
   public render() {
     const { selectedCompliance, addNewQuestion, requester } = this.props;
     const { getFieldDecorator } = this.props.form;
+    const isCompliancesGroupEmpty = selectedCompliance.questions.length === 0;
 
     return (
       <div style={{ textAlign: 'left' }} className="question-details">
@@ -169,6 +171,7 @@ class ComplianceDetails extends React.Component<Props> {
               initialValue: selectedCompliance.description,
             })(<Input name="description" onChange={this.handleChange} />)}
           </Form.Item>
+          {isCompliancesGroupEmpty && <Alert message="You must add at least one question." type="warning" showIcon />}
           <Form.Item label="Questions" />
           {this.renderQuestions()}
         </Form>
