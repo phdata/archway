@@ -1,7 +1,6 @@
-## Service: ARCHWAY
+## Service Installation Parameters
 
 Description: The Archway Service
-Version: 1.3.13
 
 ### Parameters
 
@@ -11,6 +10,13 @@ Version: 1.3.13
 - Description: Archway REST API Port
 - Required: true
 - Default: 8080
+
+**bundle.token**
+
+- Label: Bundle Token
+- Description: Artifactory access token
+- Required: false
+- Default:
 
 ### Roles
 
@@ -291,21 +297,21 @@ Version: 1.3.13
 
 - Label: Lookup LDAP Host
 - Description: THe LDAP/AD host for the 'lookup' LDAP connection. This should usually be set to the same value as the corresponding 'provisioning' value. If it is set to empty string 'provisioning' value is used instead
-- Required: true
+- Required: false
 - Default:
 
 **archway.ldap.lookupBinding.port**
 
 - Label: Lookup LDAP Port
 - Description: The LDAP/AD port for the 'lookup' LDAP connection. This should usually be set to the same value as the corresponding 'provisioning' value
-- Required: true
+- Required: false
 - Default: 389
 
 **archway.ldap.lookupBinding.bindPassword**
 
 - Label: Lookup LDAP Admin Password
 - Description: The password for the 'lookup' LDAP connection. This should usually be set to the same value as the corresponding 'provisioning' value
-- Required: true
+- Required: false
 - Default:
 
 **archway.ldap.baseDN**
@@ -336,6 +342,20 @@ Version: 1.3.13
 - Required: true
 - Default:
 
+**archway.ldap.syncInterval**
+
+- Label: Synchronization interval
+- Description: The time interval how often should AD groups be synchronized with database
+- Required:
+- Default: 2 hour
+
+**archway.ldap.authorizationDN**
+
+- Label: Archway Authorization Group DN
+- Description: The LDAP DN used for authorizing users into Archway. If no value is provided users will be authenticated using Active Directory but no authorization will happen.
+- Required: false
+- Default:
+
 **archway.approvers.notificationEmail**
 
 - Label: Notification Email Address
@@ -362,7 +382,7 @@ Version: 1.3.13
 - Label: Archway UI
 - Description: Full url for Archway UI in the format `https://host:port`. The default of this value should be auto generated and work without configuration
 - Required: false
-- Default: ${host}:${archway.rest.port}
+- Default:
 
 **archway.ui.staticContentDir**
 
@@ -394,10 +414,17 @@ Version: 1.3.13
 
 **archway.smtp.ssl**
 
-- Label: Enable SMTP SSL
-- Description: Enable SMTP SSL
+- Label: Enable SMTP starttls
+- Description: Enable SMTP starttls
 - Required: true
 - Default:
+
+**archway.smtp.smtps**
+
+- Label: Enable SMTPS
+- Description: Enable SMTPS (SSL)
+- Required: true
+- Default: False
 
 **archway.smtp.auth**
 
@@ -481,11 +508,11 @@ Version: 1.3.13
 - Label: Member Display Template
 - Description: The Mustache template used for displaying members when adding and showing existing members
 - Required: false
-- Default: {{ name }} ({{ sAMAccountName }})
+- Default: {{ sAMAccountName }} ({{ name }})
 
 **archway.featureFlags**
 
 - Label: Feature flags
 - Description: List of feature flags which are enabled
-- Required: true
+- Required: false
 - Default: []

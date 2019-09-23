@@ -1,10 +1,13 @@
 # Installation
 
+The Archway parcel repositories are located here:
+<https://repository.phdata.io/artifactory/list/parcels-release/phdata/archway/>
+
 ## Installation with cm_tool
 
 cm_tool is a python library to assist installing CDH services.
 
-To install cm_tool run
+To install cm_tool, run:
 
 ```bash
 

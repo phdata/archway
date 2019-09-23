@@ -1,3 +1,4 @@
+site
 src/main/resources/*-site.xml
 src/main/resources/log4j.xml
 **/target
