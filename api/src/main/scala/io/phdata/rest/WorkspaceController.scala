@@ -108,6 +108,7 @@ class WorkspaceController[F[_]: Sync: Timer: ContextShift: ConcurrentEffect](
         case POST -> Root / LongVar(id) / "owner" / ownerDN as user =>
           if (user.isSuperUser) {
             for {
+              _ <- logger.info(s"Changing workspace ower for workspace '$id' to owner $ownerDN").pure[F]
               _ <- workspaceService.changeOwner(id, DistinguishedName(ownerDN)).onError {
                 case e: Throwable =>
                   logger
@@ -151,7 +152,7 @@ class WorkspaceController[F[_]: Sync: Timer: ContextShift: ConcurrentEffect](
           val access =
             for {
               userHasAccess <- workspaceService.userAccessible(user.distinguishedName, id)
-              wsAccess <- (userHasAccess || user.canApprove ).pure[F]
+              wsAccess <- (userHasAccess || user.canApprove).pure[F]
             } yield wsAccess
 
           val maybeWorkspaceT = access
