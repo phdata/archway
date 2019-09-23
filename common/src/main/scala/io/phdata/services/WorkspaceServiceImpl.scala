@@ -191,21 +191,20 @@ class WorkspaceServiceImpl[F[_]: ConcurrentEffect: ContextShift](
   override def changeOwner(workspaceId: Long, newOwnerDN: DistinguishedName): F[Unit] = {
 
     val changeGroupMembership = for {
-      workspaceRequest <- context.workspaceRequestRepository.find(workspaceId)
-      members <- OptionT.liftF(context.memberRepository.find(workspaceId, workspaceRequest.requestedBy))
-    } yield {
-      members.foreach { member =>
-        val removeMemberRequest =
-          MemberRoleRequest(workspaceRequest.requestedBy, member.resource, member.id, member.role.some)
-        val addMemberRequest = MemberRoleRequest(newOwnerDN, member.resource, member.id, member.role.some)
-
-        memberService.removeMember(workspaceId, removeMemberRequest)
+      workspaceRequest <- find(workspaceId)
+      memberRightsRecords <- OptionT.liftF(
+        context.memberRepository.find(workspaceId, workspaceRequest.requestedBy).transact(context.transactor)
+      )
+      _ <- OptionT.liftF(
+        context.workspaceRequestRepository.changeOwner(workspaceId, newOwnerDN).transact(context.transactor)
+      )
+      _ <- memberRightsRecords.traverse { memberRecord =>
+        val addMemberRequest =
+          MemberRoleRequest(newOwnerDN, memberRecord.resource, memberRecord.id, memberRecord.role.some)
         memberService.addMember(workspaceId, addMemberRequest)
       }
-    }
-    (context.workspaceRequestRepository
-      .changeOwner(workspaceId, newOwnerDN)
-      .transact(context.transactor) *> changeGroupMembership.pure[F]).void
-  }
+    } yield ()
 
+    changeGroupMembership.value.void
+  }
 }
