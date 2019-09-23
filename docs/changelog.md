@@ -1,3 +1,9 @@
+## 2.1.2
+
+### Bug Fixes
+
+- Fix change-owner functionality to properly add new owner to workspace. 66484e23d9b87cb60de6495999fbbdcf5cca28ee
+
 ## 2.1.1
 
 ### Bug Fixes
