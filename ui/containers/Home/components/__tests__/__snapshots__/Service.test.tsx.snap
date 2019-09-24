@@ -31,7 +31,7 @@ exports[`Service renders correctly 1`] = `
         size="small"
         style={
           Object {
-            "backgroundColor": "rgb(187, 187, 187)",
+            "backgroundColor": "rgb(67, 170, 139)",
             "boxShadow": "0 0 5px 2px hsl(0, 0%, 73.3%)",
           }
         }
