@@ -91,17 +91,19 @@ object Server extends IOApp with LazyLogging {
       opsController = new OpsController[F](tokenAuthService, workspaceService, customLinkService)
       staticContentController = new StaticContentController[F](context, staticContentEC)
 
+      defaultResponseMiddleware = new DefaultResponseMiddleware[F]
+
       httpApp = Router(
-        "/token" -> accountController.clientAuthRoutes,
-        "/account" -> accountController.tokenizedRoutes,
-        "/auth-type" -> accountController.noAuthRoutes,
-        "/templates" -> templateController.route,
-        "/clusters" -> clusterController.route,
-        "/workspaces" -> workspaceController.route,
-        "/members" -> memberController.route,
-        "/risk" -> riskController.route,
-        "/ops" -> opsController.route,
-        "/" -> staticContentController.route
+        "/token" -> defaultResponseMiddleware.apply(accountController.clientAuthRoutes),
+        "/account" -> defaultResponseMiddleware.apply(accountController.tokenizedRoutes),
+        "/auth-type" -> defaultResponseMiddleware.apply(accountController.noAuthRoutes),
+        "/templates" -> defaultResponseMiddleware.apply(templateController.route),
+        "/clusters" -> defaultResponseMiddleware.apply(clusterController.route),
+        "/workspaces" -> defaultResponseMiddleware.apply(workspaceController.route),
+        "/members" -> defaultResponseMiddleware.apply(memberController.route),
+        "/risk" -> defaultResponseMiddleware.apply(riskController.route),
+        "/ops" -> defaultResponseMiddleware.apply(opsController.route),
+        "/" -> defaultResponseMiddleware.apply(staticContentController.route)
       ).orNotFound
 
       provisioningJob = new Provisioning[F](context, provisionService)
