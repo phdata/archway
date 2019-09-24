@@ -116,6 +116,28 @@ package object repositories {
         ComplianceGroup(name, description, List.empty, id)
     }
 
+  implicit val customLinkReader: Read[CustomLink] =
+    Read[(Option[Long], String, String, String, Option[Long])].map {
+      case (
+          id,
+          name,
+          description,
+          url,
+          groupId
+          ) =>
+        CustomLink(name, description, url, groupId, id)
+    }
+
+  implicit val customLinkGroupReader: Read[CustomLinkGroup] =
+    Read[(Option[Long], String, String)].map {
+      case (
+          id,
+          name,
+          description
+          ) =>
+        CustomLinkGroup(name, description, List.empty, id)
+    }
+
   implicit def fromRecord(ldap: LDAPRecord): LDAPRegistration =
     LDAPRegistration(
       ldap.distinguishedName,

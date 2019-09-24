@@ -55,7 +55,9 @@ trait AppContextProvider {
                      approvalRepository: ApprovalRepository = mock[ApprovalRepository],
                      configRepository: ConfigRepository = mock[ConfigRepository],
                      complianceGroupRepository: ComplianceGroupRepository = mock[ComplianceGroupRepository],
-                     complianceQuestionRepository: ComplianceQuestionRepository = mock[ComplianceQuestionRepository]
+                     complianceQuestionRepository: ComplianceQuestionRepository = mock[ComplianceQuestionRepository],
+                     customLinkGroupRepository: CustomLinkGroupRepository = mock[CustomLinkGroupRepository],
+                     customLinkRepository: CustomLinkRepository = mock[CustomLinkRepository]
                     ): AppContext[IO] =
     AppContext(
       appConfig,
@@ -87,6 +89,8 @@ trait AppContextProvider {
       approvalRepository,
       configRepository,
       complianceGroupRepository,
-      complianceQuestionRepository
+      complianceQuestionRepository,
+      customLinkGroupRepository,
+      customLinkRepository
     )
 }

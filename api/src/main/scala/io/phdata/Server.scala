@@ -55,6 +55,7 @@ object Server extends IOApp with LazyLogging {
       emailService = new EmailServiceImpl[F](context, workspaceService)
       complianceService = new ComplianceGroupServiceImpl[F](context)
       _ <- Resource.liftF(complianceService.loadDefaultComplianceQuestions)
+      customLinkService = new CustomLinkGroupServiceImpl[F](context)
 
       authService = context.appConfig.rest.authType match {
         case "spnego" =>
@@ -87,7 +88,7 @@ object Server extends IOApp with LazyLogging {
 
       memberController = new MemberController[F](tokenAuthService, memberService)
       riskController = new RiskController[F](tokenAuthService, workspaceService)
-      opsController = new OpsController[F](tokenAuthService, workspaceService)
+      opsController = new OpsController[F](tokenAuthService, workspaceService, customLinkService)
       staticContentController = new StaticContentController[F](context, staticContentEC)
 
       httpApp = Router(

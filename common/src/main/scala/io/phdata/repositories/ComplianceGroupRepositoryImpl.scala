@@ -1,7 +1,5 @@
 package io.phdata.repositories
 
-import java.time.Instant
-
 import cats.implicits._
 import doobie._
 import doobie.free.connection.ConnectionIO

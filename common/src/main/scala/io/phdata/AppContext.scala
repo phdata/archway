@@ -49,7 +49,9 @@ case class AppContext[F[_]](
     approvalRepository: ApprovalRepository,
     configRepository: ConfigRepository,
     complianceGroupRepository: ComplianceGroupRepository,
-    complianceQuestionRepository: ComplianceQuestionRepository
+    complianceQuestionRepository: ComplianceQuestionRepository,
+    customLinkGroupRepository: CustomLinkGroupRepository,
+    customLinkRepository: CustomLinkRepository
 )
 
 object AppContext {
@@ -141,6 +143,8 @@ object AppContext {
       configRepository = new ConfigRepositoryImpl
       complianceGroupRepository = new ComplianceGroupRepositoryImpl
       complianceQuestionRepository = new ComplianceQuestionRepositoryImpl
+      customLinkGroupRepository = new CustomLinkGroupRepositoryImpl
+      customLinkRepository = new CustomLinkRepositoryImpl
     } yield phdata.AppContext[F](
       config,
       clusterCache,
@@ -171,6 +175,8 @@ object AppContext {
       approvalRepository,
       configRepository,
       complianceGroupRepository,
-      complianceQuestionRepository
+      complianceQuestionRepository,
+      customLinkGroupRepository,
+      customLinkRepository
     )
 }

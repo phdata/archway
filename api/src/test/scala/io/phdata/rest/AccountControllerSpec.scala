@@ -2,13 +2,10 @@ package io.phdata.rest
 
 import cats.data._
 import cats.effect.IO
-import io.phdata.services.AccountService
-import io.phdata.test.fixtures.{HttpTest, _}
-import io.phdata.test.{TestAuthService, TestClusterService}
 import io.phdata.rest.authentication.SpnegoAuthService
 import io.phdata.services.AccountService
+import io.phdata.test.fixtures.{AppContextProvider, HttpTest, _}
 import io.phdata.test.{TestAuthService, TestClusterService}
-import io.phdata.test.fixtures.{AppContextProvider, HttpTest}
 import org.http4s._
 import org.http4s.client.dsl.Http4sClientDsl
 import org.http4s.dsl.io._

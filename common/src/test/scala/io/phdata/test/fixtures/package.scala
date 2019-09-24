@@ -226,6 +226,21 @@ package object fixtures {
     groupId
   )
 
+  def customLinkGroup(
+                       groupId: Option[Long] = None,
+                       firstLinkId: Option[Long] = None,
+                       secondLinkId: Option[Long] = None
+  ) =
+    CustomLinkGroup (
+      "First group",
+      "First custom link group",
+      List(
+        CustomLink("First link", "First custom link", "http://localhost", groupId, firstLinkId),
+        CustomLink("Second link", "Second custom link", "http://localhost", groupId, secondLinkId)
+      ),
+      groupId,
+    )
+
   def fromResource(path: String): Json = {
     val json = Source.fromResource(path).getLines().mkString
     val Right(parsedJson) = parse(json)
