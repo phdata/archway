@@ -1,3 +1,7 @@
+## 2.1.3
+
+- Don't show cluster status, it is difficult for users to interpret. 72f134b3cb15fe8b99a02cf600780e1b56bd393e
+
 ## 2.1.2
 
 ### Bug Fixes
