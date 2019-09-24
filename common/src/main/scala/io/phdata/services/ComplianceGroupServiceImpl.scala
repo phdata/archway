@@ -27,7 +27,7 @@ class ComplianceGroupServiceImpl[F[_]: ConcurrentEffect: ContextShift: Clock](
   override def updateComplianceGroup(complianceGroupId: Long, complianceGroup: ComplianceGroup): F[Unit] = {
     val result = for {
       dbQuestions <- context.complianceQuestionRepository.findByComplianceGroupId(complianceGroupId)
-      _ <- updateComplianceQuestions(complianceGroup, dbQuestions)
+      _ <- updateComplianceQuestions(complianceGroupId, complianceGroup.questions, dbQuestions)
       _ <- context.complianceGroupRepository.update(complianceGroupId, complianceGroup)
     } yield ()
 
@@ -57,18 +57,22 @@ class ComplianceGroupServiceImpl[F[_]: ConcurrentEffect: ContextShift: Clock](
     }
 
   private def updateComplianceQuestions(
-      complianceGroup: ComplianceGroup,
+      groupId: Long,
+      complianceGroupQuestions: List[ComplianceQuestion],
       dbQuestions: List[ComplianceQuestion]
   ) = {
-    val dbQuestionIds = dbQuestions.map(_.id.get)
-    val requestQuestionIds = complianceGroup.questions.map(_.id.get)
+    val dbQuestionIds: List[Long] = dbQuestions.map(_.id.get)
+    val requestQuestionIds: List[Long] = complianceGroupQuestions.filter(_.id.isDefined).map(_.id.get)
+
+    val questionsToRemove: List[Long] = dbQuestionIds.diff(requestQuestionIds)
+    val questionsToUpdate: List[ComplianceQuestion] = dbQuestionIds.intersect(requestQuestionIds)
+      .map(id => complianceGroupQuestions.filter(question => question.id.isDefined && question.id.get == id).head)
+    val questionsToCreate: List[ComplianceQuestion] = complianceGroupQuestions.filter(_.id.isEmpty)
 
     for {
-      _ <- dbQuestionIds.diff(requestQuestionIds).traverse(id => context.complianceQuestionRepository.delete(id))
-      _ <- complianceGroup.questions.traverse(question => context.complianceQuestionRepository.update(question))
-      _ <- complianceGroup.questions.traverse(
-        question => context.complianceQuestionRepository.create(complianceGroup.id.get, question)
-      )
+      _ <- questionsToRemove.traverse(id => context.complianceQuestionRepository.delete(id))
+      _ <- questionsToUpdate.traverse(question => context.complianceQuestionRepository.update(question))
+      _ <- questionsToCreate.traverse(question => context.complianceQuestionRepository.create(groupId, question))
     } yield ()
   }
 }
