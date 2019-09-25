@@ -65,7 +65,8 @@ class ComplianceGroupServiceImpl[F[_]: ConcurrentEffect: ContextShift: Clock](
     val requestQuestionIds: List[Long] = complianceGroupQuestions.filter(_.id.isDefined).map(_.id.get)
 
     val questionsToRemove: List[Long] = dbQuestionIds.diff(requestQuestionIds)
-    val questionsToUpdate: List[ComplianceQuestion] = dbQuestionIds.intersect(requestQuestionIds)
+    val questionsToUpdate: List[ComplianceQuestion] = dbQuestionIds
+      .intersect(requestQuestionIds)
       .map(id => complianceGroupQuestions.filter(question => question.id.isDefined && question.id.get == id).head)
     val questionsToCreate: List[ComplianceQuestion] = complianceGroupQuestions.filter(_.id.isEmpty)
 
