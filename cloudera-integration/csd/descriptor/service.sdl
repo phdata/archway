@@ -723,6 +723,7 @@
           "expectedExitCodes": [0],
           "commandRunner": {
             "program": "scripts/bundler-redirect.sh",
+            "args":[],
             "environmentVariables": {
               "ARTIFACTORY_TOKEN": "${bundle.token}"
             }
