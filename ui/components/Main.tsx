@@ -10,16 +10,15 @@ import OpsListing from '../containers/OpsListing';
 import WorkspaceRequest from '../containers/WorkspaceRequest';
 import Manage from '../containers/Manage';
 import CustomWorkspaces from '../containers/CustomWorkspaces';
-import { Profile } from '../models/Profile';
+import { RiskRoute, OpsRoute } from './Routes';
 
 const { Content, Footer } = Layout;
 
 interface Props {
   version: string;
-  profile: Profile;
 }
 
-const Main = ({ version, profile }: Props) => (
+const Main = ({ version }: Props) => (
   <Layout style={{ minHeight: '100%' }}>
     <Navigation />
     <Layout style={{ minHeight: '100%', marginLeft: 250, backgroundColor: '#F0F3F5' }}>
@@ -28,10 +27,10 @@ const Main = ({ version, profile }: Props) => (
           <Switch>
             <Route path="/home" component={Home} />
             <Route exact path="/workspaces" component={WorkspaceListing} />
-            <Route exact path="/risks" component={RiskListing} />
-            <Route exact path="/operations" component={OpsListing} />
+            <RiskRoute exact path="/risks" component={RiskListing} />
+            <OpsRoute exact path="/operations" component={OpsListing} />
             <Route exact path="/request" component={WorkspaceRequest} />
-            {profile && profile.permissions.platform_operations && <Route path="/manage/:tab" component={Manage} />}
+            <OpsRoute path="/manage/:tab" component={Manage} />
             <Route exact path="/request/customworkspaces" component={CustomWorkspaces} />
             <Route path="/workspaces/:id" component={WorkspaceDetails} />
             <Redirect to="/home" />
