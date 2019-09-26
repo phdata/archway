@@ -9,8 +9,6 @@ import * as selectors from './selectors';
 import { ComplianceContent, Question, LinksGroup, Link } from '../../models/Manage';
 import { ComplianceTab, LinksTab } from './components/tabs';
 import { ManagePage } from './constants';
-import { Feature } from '../../components';
-import { FeatureFlagType } from '../../constants';
 
 const { TabPane } = Tabs;
 
@@ -94,48 +92,46 @@ class Manage extends React.Component<Props> {
     return (
       <div style={{ textAlign: 'center', color: 'black' }}>
         <h1 style={{ padding: 24, margin: 0 }}>MANAGE</h1>
-        <Feature flag={FeatureFlagType.ManageTab}>
-          <Tabs
-            tabBarStyle={{ textAlign: 'center' }}
-            defaultActiveKey={ManagePage.ComplianceTab}
-            activeKey={tab}
-            onChange={this.handleTabsClick}
-          >
-            <TabPane tab="Compliances" key={ManagePage.ComplianceTab}>
-              <ComplianceTab
-                compliances={compliances}
-                loading={loading}
-                fetchCompliances={fetchCompliances}
-                setRequest={setSelectedCompliance}
-                selectedCompliance={selectedCompliance}
-                clearSelectedCompliance={clearSelectedCompliance}
-                setQuestion={setQuestion}
-                addNewQuestion={addNewQuestion}
-                removeQuestion={removeQuestion}
-                addCompliance={addCompliance}
-                deleteCompliance={deleteCompliance}
-                updateCompliance={updateCompliance}
-                requester={requester}
-              />
-            </TabPane>
-            <TabPane tab="Links" key={ManagePage.LinksTab}>
-              <LinksTab
-                loading={loading}
-                linksGroups={linksGroups}
-                selectedLinksGroup={selectedLinksGroup}
-                fetchLinksGroups={fetchLinksGroups}
-                clearSelectedLinksGroup={clearSelectedLinksGroup}
-                setSelectedLinksGroup={setSelectedLinksGroup}
-                addLinksGroup={addLinksGroup}
-                updateLinksGroup={updateLinksGroup}
-                deleteLinksGroup={deleteLinksGroup}
-                setLink={setLink}
-                addNewLink={addNewLink}
-                removeLink={removeLink}
-              />
-            </TabPane>
-          </Tabs>
-        </Feature>
+        <Tabs
+          tabBarStyle={{ textAlign: 'center' }}
+          defaultActiveKey={ManagePage.ComplianceTab}
+          activeKey={tab}
+          onChange={this.handleTabsClick}
+        >
+          <TabPane tab="Compliances" key={ManagePage.ComplianceTab}>
+            <ComplianceTab
+              compliances={compliances}
+              loading={loading}
+              fetchCompliances={fetchCompliances}
+              setRequest={setSelectedCompliance}
+              selectedCompliance={selectedCompliance}
+              clearSelectedCompliance={clearSelectedCompliance}
+              setQuestion={setQuestion}
+              addNewQuestion={addNewQuestion}
+              removeQuestion={removeQuestion}
+              addCompliance={addCompliance}
+              deleteCompliance={deleteCompliance}
+              updateCompliance={updateCompliance}
+              requester={requester}
+            />
+          </TabPane>
+          <TabPane tab="Links" key={ManagePage.LinksTab}>
+            <LinksTab
+              loading={loading}
+              linksGroups={linksGroups}
+              selectedLinksGroup={selectedLinksGroup}
+              fetchLinksGroups={fetchLinksGroups}
+              clearSelectedLinksGroup={clearSelectedLinksGroup}
+              setSelectedLinksGroup={setSelectedLinksGroup}
+              addLinksGroup={addLinksGroup}
+              updateLinksGroup={updateLinksGroup}
+              deleteLinksGroup={deleteLinksGroup}
+              setLink={setLink}
+              addNewLink={addNewLink}
+              removeLink={removeLink}
+            />
+          </TabPane>
+        </Tabs>
       </div>
     );
   }

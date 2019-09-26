@@ -22,7 +22,6 @@ export const behaviorProperties = {
 export enum FeatureFlagType {
   Application = 'application',
   Messaging = 'messaging',
-  ManageTab = 'manage-tab',
   DiskQuota = 'disk-quota',
 }
 

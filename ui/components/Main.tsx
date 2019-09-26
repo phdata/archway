@@ -10,14 +10,16 @@ import OpsListing from '../containers/OpsListing';
 import WorkspaceRequest from '../containers/WorkspaceRequest';
 import Manage from '../containers/Manage';
 import CustomWorkspaces from '../containers/CustomWorkspaces';
+import { Profile } from '../models/Profile';
 
 const { Content, Footer } = Layout;
 
 interface Props {
   version: string;
+  profile: Profile;
 }
 
-const Main = ({ version }: Props) => (
+const Main = ({ version, profile }: Props) => (
   <Layout style={{ minHeight: '100%' }}>
     <Navigation />
     <Layout style={{ minHeight: '100%', marginLeft: 250, backgroundColor: '#F0F3F5' }}>
@@ -29,7 +31,7 @@ const Main = ({ version }: Props) => (
             <Route exact path="/risks" component={RiskListing} />
             <Route exact path="/operations" component={OpsListing} />
             <Route exact path="/request" component={WorkspaceRequest} />
-            <Route path="/manage/:tab" component={Manage} />
+            {profile && profile.permissions.platform_operations && <Route path="/manage/:tab" component={Manage} />}
             <Route exact path="/request/customworkspaces" component={CustomWorkspaces} />
             <Route path="/workspaces/:id" component={WorkspaceDetails} />
             <Redirect to="/home" />

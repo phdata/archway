@@ -7,8 +7,6 @@ import { Profile } from './components';
 import * as selectors from '../../redux/selectors';
 import { Profile as UserProfile } from '../../models/Profile';
 import { ManagePage } from '../Manage/constants';
-import { Feature } from '../../components';
-import { FeatureFlagType } from '../../constants';
 
 function getKeyFromPath(path: string): string {
   if (path.startsWith('/home')) {
@@ -80,15 +78,13 @@ const Navigation = ({ location, profile }: Props) => (
           </NavLink>
         </Menu.Item>
       )}
-      <Feature flag={FeatureFlagType.ManageTab}>
-        {profile && (profile.permissions.platform_operations || profile.permissions.risk_management) && (
-          <Menu.Item key="manage">
-            <NavLink to={`/manage/${ManagePage.ComplianceTab}`}>
-              <Icon type="profile" style={{ fontSize: 18 }} /> Manage
-            </NavLink>
-          </Menu.Item>
-        )}
-      </Feature>
+      {profile && profile.permissions.platform_operations && (
+        <Menu.Item key="manage">
+          <NavLink to={`/manage/${ManagePage.ComplianceTab}`}>
+            <Icon type="profile" style={{ fontSize: 18 }} /> Manage
+          </NavLink>
+        </Menu.Item>
+      )}
       <Menu.Item key="request">
         <NavLink to="/request">
           <Icon type="plus" style={{ fontSize: 18 }} /> New Workspace
