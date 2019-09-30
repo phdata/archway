@@ -50,6 +50,7 @@ import {
   setOwnerLoading,
   REQUEST_MODIFY_DISK_QUOTA,
   setQuotaLoading,
+  updateSelectedAllocation,
 } from './actions';
 import { RECENT_WORKSPACES_KEY, TOKEN_EXTRACTOR, NotificationType } from '../../constants';
 
@@ -62,6 +63,7 @@ export const detailExtractor = (s: any) => s.getIn(['details', 'details']);
 export const memberRequestFormExtractor = (s: any) => s.getIn(['form', 'simpleMemberRequest', 'values']);
 export const ownerDnExtractor = (s: any) => s.getIn(['form', 'changeOwnerRequest', 'values']);
 export const quotaExtractor = (s: any) => s.getIn(['form', 'modifyDiskQuotaRequest', 'values']);
+export const selectedAllocationExtractor = (s: any) => s.getIn(['details', 'selectedAllocation']);
 export const topicMemberRequestFormExtractor = (s: any) => s.getIn(['form', 'simpleTopicMemberRequest', 'values']);
 export const activeTopicExtractor = (s: any) => s.getIn(['details', 'activeTopic']);
 
@@ -86,8 +88,11 @@ function* fetchWorkspace({ id }: { type: string; id: number }) {
   const token = yield select(TOKEN_EXTRACTOR);
   const recent = (yield select((s: any) => s.getIn(['home', 'recent']))).toJS();
   try {
-    const workspace = yield call(Api.getWorkspace, token, id);
+    const workspace: Workspace = yield call(Api.getWorkspace, token, id);
     yield put(setWorkspace(workspace));
+    if (!!workspace.data) {
+      yield put(updateSelectedAllocation(workspace.data[0]));
+    }
 
     const { provisioning } = yield call(Api.getProvisioning, token, id);
     yield put(setProvisioning(provisioning));
@@ -385,9 +390,10 @@ function* modifyDiskQuotaRequested() {
   const token = yield select(TOKEN_EXTRACTOR);
   const { id, name } = (yield select(detailExtractor)).toJS();
   const quota = (yield select(quotaExtractor)).toJS().quota;
+  const resourceId = (yield select(selectedAllocationExtractor)).toJS().id;
   try {
     yield put(setQuotaLoading(true));
-    yield call(Api.modifyDiskQuota, token, id, quota);
+    yield call(Api.modifyDiskQuota, token, id, resourceId, quota);
   } catch (err) {
     yield put(
       setNotificationStatus(NotificationType.Error, `Failed to modify disk quota of ${name}: ${err.toString()}`)

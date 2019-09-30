@@ -9,22 +9,18 @@ import { HiveAllocation } from '../../../../models/Workspace';
 // const { createComponent, customMap } = require('redux-form-antd');
 
 interface Props {
-  allocations: HiveAllocation[];
+  allocation: HiveAllocation;
 }
 
 const QuotaInput = ({ input: { value, onChange } }: any) => (
   <InputNumber min={1} onChange={onChange} value={value} autoFocus />
 );
 
-const ModifyDiskQuota = ({ allocations }: Props) => (
-  <div>
-    {allocations.map((allocation: HiveAllocation, index: number) => (
-      <div style={{ fontSize: 16 }} key={index}>
-        <label>Modify disk quota for {allocation.location} </label>
-        <Field name="quota" component={QuotaInput} style={{ marginBottom: 0 }} />
-        <label>GB</label>
-      </div>
-    ))}
+const ModifyDiskQuota = ({ allocation }: Props) => (
+  <div style={{ fontSize: 16 }}>
+    <label>Modify disk quota for {allocation.location} </label>
+    <Field name="quota" component={QuotaInput} style={{ marginBottom: 0 }} />
+    <label>GB</label>
   </div>
 );
 

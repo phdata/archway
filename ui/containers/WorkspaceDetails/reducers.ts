@@ -56,6 +56,7 @@ const initialState = fromJS({
   userSuggestionsLoading: false,
   ownerLoading: false,
   quotaLoading: false,
+  selectedAllocation: false,
 });
 
 const details = (state = initialState, action: any) => {

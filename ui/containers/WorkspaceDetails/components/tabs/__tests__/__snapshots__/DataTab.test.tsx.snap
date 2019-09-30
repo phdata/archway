@@ -10,10 +10,11 @@ exports[`DataTab renders correctly 1`] = `
 >
   <Tabs
     hideAdd={false}
+    onChange={[Function]}
     tabPosition="top"
   >
     <TabPane
-      key="1"
+      key="0"
       placeholder={null}
       tab=""
     >

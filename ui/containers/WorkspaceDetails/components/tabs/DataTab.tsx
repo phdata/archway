@@ -16,7 +16,6 @@ interface Props {
   cluster: Cluster;
   infos?: NamespaceInfoList;
   members?: Member[];
-  selectedAllocation?: HiveAllocation;
   memberLoading: boolean;
   provisioning: ProvisioningType;
   isPlatformOperations: boolean;
@@ -37,6 +36,7 @@ class DataTab extends React.Component<Props> {
       members,
       showModal,
       onChangeMemberRole,
+      onChangeAllocation,
       requestRefreshHiveTables,
       removeMember,
       memberLoading,
@@ -58,13 +58,13 @@ class DataTab extends React.Component<Props> {
 
     return (
       <div style={{ padding: 16 }}>
-        <Tabs>
+        <Tabs onChange={activeKey => onChangeAllocation(workspace.data[activeKey])}>
           {workspace.data.map((allocation: HiveAllocation, index: number) => {
             const roleData = currentMember && currentMember.data[allocation.name];
             const roleValue = roleData && roleData.role;
             const hasPermission = isLiaison || roleValue === 'manager';
             return (
-              <Tabs.TabPane tab={allocation.name} key={allocation.id.toString()}>
+              <Tabs.TabPane tab={allocation.name} key={index.toString()}>
                 <Row gutter={16} type="flex" justify="center" style={{ marginBottom: 16 }}>
                   <Col span={6}>
                     <HiveDatabase

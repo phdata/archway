@@ -59,7 +59,7 @@ interface Props extends RouteComponentProps<DetailsRouteProps> {
   infos?: NamespaceInfoList;
   activeApplication?: Application;
   activeModal?: string;
-  selectedAllocation?: HiveAllocation;
+  selectedAllocation: HiveAllocation;
   userSuggestions?: UserSuggestions;
   liasion?: Member;
   members?: Member[];
@@ -296,7 +296,6 @@ class WorkspaceDetails extends React.PureComponent<Props> {
               members={members}
               showModal={showModal}
               removeMember={removeMember}
-              selectedAllocation={selectedAllocation}
               onChangeAllocation={updateSelectedAllocation}
               onChangeMemberRole={changeMemberRoleRequest}
               requestRefreshHiveTables={requestRefreshHiveTables}
@@ -428,7 +427,7 @@ class WorkspaceDetails extends React.PureComponent<Props> {
           onOk={modifyDiskQuota}
           okText="Modify"
         >
-          <ModifyDiskQuota allocations={workspace.data} />
+          <ModifyDiskQuota allocation={selectedAllocation} />
         </Modal>
       </div>
     );
