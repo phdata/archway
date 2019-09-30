@@ -70,7 +70,6 @@ function manage(state = initialState, action: any) {
       return state.set('selectedLinksGroup', fromJS(action.linksGroup));
 
     case ADD_NEW_LINK:
-      console.log(state.getIn(['selectedLinksGroup', 'links']));
       return state.setIn(
         ['selectedLinksGroup', 'links'],
         state.getIn(['selectedLinksGroup', 'links']).push(action.link)

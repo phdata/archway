@@ -54,3 +54,8 @@ export enum ComplianceType {
   PII = 'pii',
   PHI = 'phi',
 }
+
+export enum LinksGroupCardPage {
+  Overview = 'home',
+  Manage = 'manage',
+}

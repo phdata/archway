@@ -4,6 +4,7 @@ import { withRouter, RouteComponentProps } from 'react-router-dom';
 
 import { LinksGroupCard } from './cards';
 import { LinksGroup } from '../../../models/Manage';
+import { LinksGroupCardPage } from '../../../constants';
 
 interface Props extends RouteComponentProps<any> {
   loading: boolean;
@@ -30,7 +31,7 @@ const LinksGroupsList = ({ loading, linksGroups, history, match, clearSelectedLi
       loading={loading}
       renderItem={(linksGroup: LinksGroup) => (
         <List.Item>
-          <LinksGroupCard linksGroup={linksGroup} />
+          <LinksGroupCard linksGroup={linksGroup} page={LinksGroupCardPage.Manage} />
         </List.Item>
       )}
     />
