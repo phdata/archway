@@ -100,13 +100,19 @@ function* fetchWorkspace({ id }: { type: string; id: number }) {
     const recentWorkspaces = [workspace, ...recent.filter((w: Workspace) => w.id !== workspace.id)];
     localStorage.setItem(RECENT_WORKSPACES_KEY, JSON.stringify(recentWorkspaces.slice(0, 2)));
 
-    const { members, resourcePools, infos } = yield all({
+    try {
+      const infos = yield call(Api.getHiveTables, token, id);
+      yield put(setNamespaceInfo(infos));
+    } catch {
+      //
+    }
+
+    const { members, resourcePools } = yield all({
       members: call(Api.getMembers, token, id),
       resourcePools: call(Api.getYarnApplications, token, id),
-      infos: call(Api.getHiveTables, token, id),
     });
 
-    yield all([put(setMembers(members)), put(setNamespaceInfo(infos)), put(setResourcePools(resourcePools))]);
+    yield all([put(setMembers(members)), put(setResourcePools(resourcePools))]);
 
     if (workspace.topics.length > 0) {
       yield put(setActiveTopic(workspace.topics[0]));
