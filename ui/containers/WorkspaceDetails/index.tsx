@@ -38,7 +38,7 @@ import {
 import * as actions from './actions';
 import * as selectors from './selectors';
 import { FeatureFlagType, ProvisioningType, ModalType } from '../../constants';
-import { Provisioning } from '../../components';
+import { Provisioning, FeatureTab } from '../../components';
 import { getFeatureFlags } from '../../redux/selectors';
 
 interface DetailsRouteProps {
@@ -215,7 +215,6 @@ class WorkspaceDetails extends React.PureComponent<Props> {
       deprovisionWorkspace,
       provisionWorkspace,
       manageLoading,
-      featureFlags,
       fetching,
       userSuggestionsLoading,
       changeWorkspaceOwner,
@@ -223,8 +222,6 @@ class WorkspaceDetails extends React.PureComponent<Props> {
       modifyDiskQuota,
       quotaLoading,
     } = this.props;
-    const hasApplicationFlag = featureFlags.includes(FeatureFlagType.Application);
-    const hasMessagingFlag = featureFlags.includes(FeatureFlagType.Messaging);
 
     if (!workspace) {
       return <div style={{ textAlign: 'center', padding: 24 }}>{fetching && <Spin />}</div>;
@@ -304,31 +301,27 @@ class WorkspaceDetails extends React.PureComponent<Props> {
               isPlatformOperations={profile && profile.permissions.platform_operations}
             />
           </Tabs.TabPane>
-          {hasApplicationFlag && (
-            <Tabs.TabPane tab="APPLICATIONS" key="applications">
-              <ApplicationsTab
-                workspace={workspace}
-                yarn={cluster.services && cluster.services.yarn}
-                pools={pools}
-                selectedApplication={activeApplication}
-                showModal={showModal}
-                onRefreshPools={requestRefreshYarnApps}
-                onSelectApplication={selectApplication}
-              />
-            </Tabs.TabPane>
-          )}
-          {hasMessagingFlag && (
-            <Tabs.TabPane tab="MESSAGING" key="messaging">
-              <MessagingTab
-                workspace={workspace}
-                profile={profile}
-                members={members}
-                showModal={showModal}
-                onChangeMemberRole={changeMemberRoleRequest}
-                removeMember={removeMember}
-              />
-            </Tabs.TabPane>
-          )}
+          <FeatureTab flag={FeatureFlagType.Messaging} tab="APPLICATIONS" key="applications">
+            <ApplicationsTab
+              workspace={workspace}
+              yarn={cluster.services && cluster.services.yarn}
+              pools={pools}
+              selectedApplication={activeApplication}
+              showModal={showModal}
+              onRefreshPools={requestRefreshYarnApps}
+              onSelectApplication={selectApplication}
+            />
+          </FeatureTab>
+          <FeatureTab flag={FeatureFlagType.Messaging} tab="MESSAGING" key="messaging">
+            <MessagingTab
+              workspace={workspace}
+              profile={profile}
+              members={members}
+              showModal={showModal}
+              onChangeMemberRole={changeMemberRoleRequest}
+              removeMember={removeMember}
+            />
+          </FeatureTab>
           {profile && profile.permissions.platform_operations && profile.permissions.risk_management && (
             <Tabs.TabPane tab="MANAGE" key="manage">
               <ManageTab showModal={showModal} provisioning={provisioning} />
