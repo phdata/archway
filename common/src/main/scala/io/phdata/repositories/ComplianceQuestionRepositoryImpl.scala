@@ -36,9 +36,10 @@ object ComplianceQuestionRepositoryImpl {
     def updateRecord(complianceQuestion: ComplianceQuestion): Update0 =
       sql"""
           update compliance_question set
-          question = ${complianceQuestion.question},
-          requester = ${complianceQuestion.requester},
-          updated = ${complianceQuestion.updated}
+            question = ${complianceQuestion.question},
+            requester = ${complianceQuestion.requester},
+            updated = ${complianceQuestion.updated}
+          where id = ${complianceQuestion.id}
       """.update
 
     def deleteRecord(complianceQuestionId: Long): Update0 =
