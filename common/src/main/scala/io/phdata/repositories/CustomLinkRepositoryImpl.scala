@@ -37,9 +37,10 @@ object CustomLinkRepositoryImpl {
     def updateRecord(customLink: CustomLink): Update0 =
       sql"""
           update custom_link set
-          name = ${customLink.name},
-          description = ${customLink.description},
-          url = ${customLink.url}
+            name = ${customLink.name},
+            description = ${customLink.description},
+            url = ${customLink.url}
+          where id = ${customLink.id}
       """.update
 
     def deleteRecord(customLinkId: Long): Update0 =

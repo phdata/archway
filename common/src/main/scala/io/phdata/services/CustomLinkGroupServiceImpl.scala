@@ -53,9 +53,8 @@ class CustomLinkGroupServiceImpl[F[_]: ConcurrentEffect: ContextShift](
     val requestLinkIds = requestLinks.filter(_.id.isDefined).map(_.id.get)
 
     val linksToRemove: List[Long] = dbLinkIds.diff(requestLinkIds)
-    val linksToUpdate: List[CustomLink] = dbLinkIds
-      .intersect(requestLinkIds)
-      .map(id => requestLinks.filter(link => link.id.isDefined && link.id.get == id).head)
+    val linksToUpdate: List[CustomLink] =
+      requestLinks.filter(link => link.id.isDefined && dbLinkIds.intersect(requestLinkIds).contains(link.id.get))
     val linksToCreate: List[CustomLink] = requestLinks.filter(_.id.isEmpty)
 
     for {
