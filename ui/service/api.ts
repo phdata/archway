@@ -182,7 +182,7 @@ export const provisionWorkspace = (token: string, id: number) => withBody(`/work
 export const versionInfo = (token: string) => get('/account/version', token);
 
 export const modifyDiskQuota = (token: string, id: number, resourceId: number, size: number) =>
-  withBody(`/workspace/${id}/diskquota/${resourceId}/${size}`, token);
+  withBody(`/workspaces/${id}/disk-quota/${resourceId}/${size}`, token);
 
 export const updateCompliance = (token: string, id: number, compliance: ComplianceContent) =>
   withBody(`/workspaces/questions/${id}`, token, { compliance }, 'PUT');
