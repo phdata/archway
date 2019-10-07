@@ -26,6 +26,7 @@ class WorkspaceController[F[_]: Sync: Timer: ContextShift: ConcurrentEffect](
     applicationService: ApplicationService[F],
     emailService: EmailService[F],
     provisioningService: ProvisioningService[F],
+    hdfsService: HDFSService[F],
     complianceGroupService: ComplianceGroupService[F],
     emailEC: ExecutionContext
 ) extends Http4sDsl[F] with LazyLogging {
@@ -312,6 +313,21 @@ class WorkspaceController[F[_]: Sync: Timer: ContextShift: ConcurrentEffect](
             }
             response <- Ok()
           } yield response
+
+        case POST -> Root / LongVar(id) / "disk-quota" / LongVar(resourceId) / IntVar(size) as user =>
+          if (user.isSuperUser) {
+            for {
+              workspace <- workspaceService.find(id).value
+              _ <- hdfsService
+                .setQuota(workspace.get.data.find(hiveAllocation => hiveAllocation.id.get == resourceId).get.location, size, id, Instant.now())
+                .onError {
+                  case e: Throwable =>
+                    logger.error(s"Failed to modify disk-quota of workspace $id: ${e.getLocalizedMessage}", e).pure[F]
+                }
+              response <- Ok()
+            } yield response
+          } else
+            Forbidden()
       }
     }
 

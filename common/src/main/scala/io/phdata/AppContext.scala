@@ -35,6 +35,7 @@ case class AppContext[F[_]](
     kerberosClient: KerberosClient[F],
     clusterService: ClusterService[F],
     featureService: FeatureService[F],
+    hdfsService: HDFSService[F],
     transactor: Transactor[F],
     databaseRepository: HiveAllocationRepository,
     databaseGrantRepository: HiveGrantRepository,
@@ -143,6 +144,7 @@ object AppContext {
       configRepository = new ConfigRepositoryImpl
       complianceGroupRepository = new ComplianceGroupRepositoryImpl
       complianceQuestionRepository = new ComplianceQuestionRepositoryImpl
+      hdfsService = new HDFSServiceImpl[F](hdfsClient, hiveDatabaseRepository, hiveXA)
       customLinkGroupRepository = new CustomLinkGroupRepositoryImpl
       customLinkRepository = new CustomLinkRepositoryImpl
     } yield phdata.AppContext[F](
@@ -161,6 +163,7 @@ object AppContext {
       kerberosClient,
       clusterService,
       featureService,
+      hdfsService,
       metaXA,
       hiveDatabaseRepository,
       hiveGrantRepository,

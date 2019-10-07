@@ -81,6 +81,7 @@ object Server extends IOApp with LazyLogging {
         applicationService,
         emailService,
         provisionService,
+        context.hdfsService,
         complianceService,
         emailEC
       )

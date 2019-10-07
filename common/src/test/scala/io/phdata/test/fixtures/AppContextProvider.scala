@@ -19,6 +19,7 @@ import scala.concurrent.ExecutionContext
 trait AppContextProvider {
   this: FlatSpec with MockFactory =>
 
+
   implicit def contextShift: ContextShift[IO] = IO.contextShift(ExecutionContext.global)
 
   val emptyTransactor = Transactor.fromConnection[IO](null, ExecutionContext.global).copy(strategy0 = Strategy(FC.unit, FC.unit, FC.unit, FC.unit))
@@ -38,6 +39,7 @@ trait AppContextProvider {
                      emailClient: EmailClient[IO] = mock[EmailClient[IO]],
                      kerberosClient: KerberosClient[IO] = mock[KerberosClient[IO]],
                      clusterService: ClusterService[IO] = mock[ClusterService[IO]],
+                     hdfsService: HDFSService[IO] = mock[HDFSService[IO]],
                      featureService: FeatureService[IO] = new FeatureServiceImpl[IO](AvailableFeatures.all),
                      sentryRawClient: SentryGenericServiceClient = mock[SentryGenericServiceClient],
                      workspaceRepository: WorkspaceRequestRepository = mock[WorkspaceRequestRepository],
@@ -59,38 +61,38 @@ trait AppContextProvider {
                      customLinkGroupRepository: CustomLinkGroupRepository = mock[CustomLinkGroupRepository],
                      customLinkRepository: CustomLinkRepository = mock[CustomLinkRepository]
                     ): AppContext[IO] =
-    AppContext(
-      appConfig,
-      clusterCache,
-      loginContextProvider,
-      sentryClient,
-      hiveClient,
-      Some(impalaClient),
-      provisioningLDAPClient,
-      lookupLDAPClient,
-      hdfsClient,
-      yarnClient,
-      kafkaClient,
-      emailClient,
-      kerberosClient,
-      clusterService,
-      featureService,
-      transactor,
-      hiveDatabaseRepository,
-      grantRepository,
-      ldapRepository,
-      memberRepository,
-      yarnRepository,
-      complianceRepository,
-      workspaceRepository,
-      topicRepository,
-      topicGrantRepository,
-      applicationRepository,
-      approvalRepository,
-      configRepository,
-      complianceGroupRepository,
-      complianceQuestionRepository,
-      customLinkGroupRepository,
-      customLinkRepository
-    )
-}
+        AppContext(
+          appConfig,
+          clusterCache,
+          loginContextProvider,
+          sentryClient,
+          hiveClient,
+          Some(impalaClient),
+          provisioningLDAPClient,
+          lookupLDAPClient,
+          hdfsClient,
+          yarnClient,
+          kafkaClient,
+          emailClient,
+          kerberosClient,
+          clusterService,
+          featureService,
+          hdfsService,
+          transactor,
+          hiveDatabaseRepository,
+          grantRepository,
+          ldapRepository,
+          memberRepository,
+          yarnRepository,
+          complianceRepository,
+          workspaceRepository,
+          topicRepository,
+          topicGrantRepository,
+          applicationRepository,
+          approvalRepository,
+          configRepository,
+          complianceGroupRepository,
+          complianceQuestionRepository,
+          customLinkGroupRepository,
+          customLinkRepository
+        )}

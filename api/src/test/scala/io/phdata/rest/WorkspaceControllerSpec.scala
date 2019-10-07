@@ -276,6 +276,14 @@ class WorkspaceControllerSpec
     response.status.code shouldBe 200
   }
 
+  it should "set quota for the given size and resource id" in new Http4sClientDsl[IO] with Context {
+    workspaceService.find _ expects id returning OptionT.some(savedWorkspaceRequest)
+    hdfsService.setQuota _ expects ("/shared_workspaces/sw_sesame", hdfsRequestedSize, id, *) returning ().pure[IO]
+
+    val response = restApi.route.orNotFound.run(POST(Uri.uri("/123/disk-quota/123/250")).unsafeRunSync()).unsafeRunSync()
+    response.status.code shouldBe 200
+  }
+
   trait Context {
     implicit val timer: Timer[IO] = testTimer
     implicit val contextShift = IO.contextShift(ExecutionContext.global)
@@ -284,6 +292,7 @@ class WorkspaceControllerSpec
     val memberService: MemberService[IO] = mock[MemberService[IO]]
     val kafkaService: KafkaService[IO] = mock[KafkaService[IO]]
     val workspaceService: WorkspaceService[IO] = mock[WorkspaceService[IO]]
+    val hdfsService: HDFSService[IO] = mock[HDFSService[IO]]
     val applicationService: ApplicationService[IO] = mock[ApplicationService[IO]]
     val emailService: EmailService[IO] = mock[EmailService[IO]]
     val provisioningService: ProvisioningService[IO] = mock[ProvisioningService[IO]]
@@ -298,6 +307,7 @@ class WorkspaceControllerSpec
         applicationService,
         emailService,
         provisioningService,
+        hdfsService,
         complianceGroupService,
         ExecutionContext.global
       )

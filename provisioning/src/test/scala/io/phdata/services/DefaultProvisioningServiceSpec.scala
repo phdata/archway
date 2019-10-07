@@ -80,9 +80,7 @@ class DefaultProvisioningServiceSpec
         context.hdfsClient.createHiveDirectory _ expects(savedHive.location) returning IO
           .pure(new Path(savedHive.location))
         context.databaseRepository.directoryCreated _ expects(id, *) returning 0.pure[ConnectionIO]
-        context.hdfsClient.setQuota _ expects(savedHive.location, savedHive.sizeInGB) returning IO
-          .pure(HDFSAllocation(savedHive.location, savedHive.sizeInGB))
-        context.databaseRepository.quotaSet _ expects(id, *) returning 0.pure[ConnectionIO]
+        context.hdfsService.setQuota _ expects(savedHive.location, savedHive.sizeInGB, id, *) returning IO.unit
         context.workspaceRequestRepository.find _ expects id returning OptionT.some(savedWorkspaceRequest)
         context.hiveClient.createDatabase _ expects(savedHive.name, savedHive.location, "Sesame", Map("phi_data" -> "false", "pci_data" -> "false", "pii_data" -> "false")) returning IO.unit
         context.databaseRepository.databaseCreated _ expects(id, *) returning 0.pure[ConnectionIO]
@@ -184,7 +182,7 @@ class DefaultProvisioningServiceSpec
         context.sentryClient.dropRole _ expects savedLDAP.sentryRole returning IO.unit
         context.provisioningLDAPClient.deleteGroup _ expects savedLDAP.distinguishedName returning OptionT.some(standardUserDN.value)
         context.hiveClient.dropDatabase _ expects savedHive.name returning IO(1)
-        context.hdfsClient.removeQuota _ expects savedHive.location returning IO.pure(HDFSAllocation(savedHive.location, savedHive.sizeInGB))
+        context.hdfsService.removeQuota _ expects(savedHive.location) returning IO.unit
       }
 
     }

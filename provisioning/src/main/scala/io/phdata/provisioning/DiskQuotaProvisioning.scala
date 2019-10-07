@@ -3,9 +3,8 @@ package io.phdata.provisioning
 import java.time.Instant
 
 import cats.Show
-import cats.implicits._
-import doobie.implicits._
 import cats.effect.{Clock, Sync}
+import cats.implicits._
 
 object DiskQuotaProvisioning {
 
@@ -13,26 +12,25 @@ object DiskQuotaProvisioning {
     Show.show(s => s"""setting disk quota of ${s.sizeInGB}GB to "${s.location}""")
 
   implicit object DiskQuotaProvisioningTask extends ProvisioningTask[DiskQuota] {
+    override def run[F[_]: Sync: Clock](diskQuota: DiskQuota, workspaceContext: WorkspaceContext[F]): F[Unit] = {
+      workspaceContext.context.hdfsService
+        .setQuota(diskQuota.location, diskQuota.sizeInGB, workspaceContext.workspaceId, Instant.now())
+    }
 
     override def complete[F[_]: Sync](
         diskQuota: DiskQuota,
         instant: Instant,
         workspaceContext: WorkspaceContext[F]
-    ): F[Unit] =
-      workspaceContext.context.databaseRepository
-        .quotaSet(diskQuota.workspaceId, instant)
-        .transact(workspaceContext.context.transactor)
-        .void
-
-    override def run[F[_]: Sync: Clock](diskQuota: DiskQuota, workspaceContext: WorkspaceContext[F]): F[Unit] =
-      workspaceContext.context.hdfsClient.setQuota(diskQuota.location, diskQuota.sizeInGB).void
-
+    ): F[Unit] = {
+      ().pure[F]
+    }
   }
 
   implicit object DiskQuotaDeprovisioningTask extends DeprovisioningTask[DiskQuota] {
 
-    override def run[F[_]: Sync: Clock](diskQuota: DiskQuota, workspaceContext: WorkspaceContext[F]): F[Unit] =
-      workspaceContext.context.hdfsClient.removeQuota(diskQuota.location)
+    override def run[F[_]: Sync: Clock](diskQuota: DiskQuota, workspaceContext: WorkspaceContext[F]): F[Unit] = {
+      workspaceContext.context.hdfsService.removeQuota(diskQuota.location)
+    }
 
   }
 
