@@ -192,7 +192,7 @@
           "label": "Hue Override Port",
           "description": "Optionally specify the port for Hue's alternative location",
           "required": "false",
-          "type": "port",
+          "type": "long",
           "configurableInWizard": "true"
         },
         {
@@ -200,7 +200,7 @@
           "label": "Impala Beeswax Port",
           "description": "The port for Impala's beeswax port used by impala-shell",
           "required": "false",
-          "type": "port",
+          "type": "long",
           "configurableInWizard": "true"
         },
         {
@@ -208,7 +208,7 @@
           "label": "Impala HiveServer2 Port",
           "description": "The port for Impala's hiveserver2 port used by clients",
           "required": "false",
-          "type": "port",
+          "type": "long",
           "configurableInWizard": "true"
         },
         {
@@ -560,7 +560,7 @@
           "label": "SMTP Port",
           "description": "SMTP Port",
           "required": "true",
-          "type": "port",
+          "type": "long",
           "configurableInWizard": "true"
         },
         {
