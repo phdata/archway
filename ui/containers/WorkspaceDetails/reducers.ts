@@ -9,7 +9,6 @@ import {
   SET_NAMESPACE_INFO,
   SET_RESOURCE_POOLS,
   SET_ACTIVE_TOPIC,
-  SET_ACTIVE_APPLICATION,
   SET_ACTIVE_MODAL,
   REQUEST_APPROVAL,
   APPROVAL_SUCCESS,
@@ -34,6 +33,7 @@ import {
   SET_USERSUGGESTIONS_LOADING,
   SET_OWNER_LOADING,
   SET_QUOTA_LOADING,
+  UPDATE_SELECTED_APPLICATION,
 } from './actions';
 
 import { Member } from '../../models/Workspace';
@@ -57,6 +57,7 @@ const initialState = fromJS({
   ownerLoading: false,
   quotaLoading: false,
   selectedAllocation: false,
+  selectedApplication: false,
 });
 
 const details = (state = initialState, action: any) => {
@@ -82,6 +83,9 @@ const details = (state = initialState, action: any) => {
     case UPDATE_SELECTED_ALLOCATION:
       return state.set('selectedAllocation', fromJS(action.allocation));
 
+    case UPDATE_SELECTED_APPLICATION:
+      return state.set('selectedApplication', fromJS(action.application));
+
     case SET_MEMBERS:
       return state.set('members', fromJS(action.members));
 
@@ -105,9 +109,6 @@ const details = (state = initialState, action: any) => {
 
     case SET_ACTIVE_TOPIC:
       return state.set('activeTopic', action.activeTopic);
-
-    case SET_ACTIVE_APPLICATION:
-      return state.set('activeApplication', action.activeApplication);
 
     case SET_ACTIVE_MODAL:
       return state.set('activeModal', action.activeModal);

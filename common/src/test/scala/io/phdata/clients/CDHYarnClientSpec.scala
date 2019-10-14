@@ -21,11 +21,11 @@ class CDHYarnClientSpec extends FlatSpec with MockFactory with Matchers with Htt
 
   behavior of "CDHYarnClientSpec"
 
-  it should "createPool" in new HttpContext {
+  it should "setupPool" in new HttpContext {
     val yarnHttpClient = new CMClient[IO](yarnClient, appConfig.cluster)
     val clusterService = new TestClusterService()
     val client = new CDHYarnClient(yarnHttpClient, appConfig.cluster, clusterService)
-    client.createPool("root.pool", 1, 1).unsafeRunSync()
+    client.setupPool("root.pool", 1, 1).unsafeRunSync()
   }
 
   it should "evaluate the correct json" in {

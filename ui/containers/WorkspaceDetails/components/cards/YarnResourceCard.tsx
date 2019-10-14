@@ -1,15 +1,17 @@
 import * as React from 'react';
-import { Card, Row, Col } from 'antd';
+import { Card, Row, Col, Button } from 'antd';
 
 import { ResourcePool } from '../../../../models/Workspace';
+import { ModalType } from '../../../../constants';
 
 interface Props {
   resource: ResourcePool;
+  showModal: (e: React.MouseEvent, type: ModalType) => void;
 }
 
-const YarnResourceCard = ({ resource }: Props) => (
+const YarnResourceCard = ({ resource, showModal }: Props) => (
   <Card bordered bodyStyle={{ padding: 8 }}>
-    <Row style={{ textAlign: 'center', height: 120 }} type="flex" align="middle">
+    <Row style={{ textAlign: 'center', height: 150 }} type="flex" align="middle">
       <Col span={24}>YARN RESOURCES</Col>
       <Col span={24}>
         <b style={{ fontSize: 12 }}>{resource.pool_name}</b>
@@ -25,6 +27,11 @@ const YarnResourceCard = ({ resource }: Props) => (
         <b>{resource.max_memory_in_gb}GB</b>
         <br />
         MAX MEMORY
+      </Col>
+      <Col span={24}>
+        <Button type="primary" onClick={e => showModal(e, ModalType.ModifyCoreMemory)}>
+          Update
+        </Button>
       </Col>
     </Row>
   </Card>

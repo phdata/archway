@@ -14,7 +14,7 @@ exports[`ApplicationCard renders correctly 1`] = `
     gutter={0}
     style={
       Object {
-        "height": 120,
+        "height": 150,
         "textAlign": "center",
       }
     }

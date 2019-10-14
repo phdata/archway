@@ -29,7 +29,7 @@ object ResourcePoolRegistrationProvisioning {
         workspaceContext: WorkspaceContext[F]
     ): F[Unit] =
       workspaceContext.context.yarnClient
-        .createPool(resourcePoolRegistration.name, resourcePoolRegistration.cores, resourcePoolRegistration.memory)
+        .setupPool(resourcePoolRegistration.name, resourcePoolRegistration.cores, resourcePoolRegistration.memory)
 
   }
 

@@ -14,7 +14,7 @@ exports[`YarnResourceCard renders correctly 1`] = `
     gutter={0}
     style={
       Object {
-        "height": 120,
+        "height": 150,
         "textAlign": "center",
       }
     }
@@ -58,6 +58,34 @@ exports[`YarnResourceCard renders correctly 1`] = `
       </b>
       <br />
       MAX MEMORY
+    </Col>
+    <Col
+      span={12}
+    >
+      <Button
+        block={false}
+        ghost={false}
+        htmlType="button"
+        loading={false}
+        onClick={[Function]}
+        type="primary"
+      >
+        Update
+      </Button>
+    </Col>
+    <Col
+      span={12}
+    >
+      <Button
+        block={false}
+        ghost={false}
+        htmlType="button"
+        loading={false}
+        onClick={[Function]}
+        type="primary"
+      >
+        Update
+      </Button>
     </Col>
   </Row>
 </Card>

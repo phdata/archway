@@ -23,6 +23,9 @@ class YarnRepositoryImpl extends YarnRepository {
   override def create(yarn: Yarn): ConnectionIO[Long] =
     Statements.insert(yarn).withUniqueGeneratedKeys[Long]("id")
 
+  override def update(yarn: Yarn, id: Long, time: Instant): ConnectionIO[Int] =
+    Statements.update(yarn, id, time).run
+
   override def findByWorkspaceId(id: Long): ConnectionIO[List[Yarn]] =
     Statements.findByWorkspace(id).to[List]
 
@@ -53,6 +56,13 @@ class YarnRepositoryImpl extends YarnRepository {
       sql"""
          update resource_pool
          set created = $time
+         where id = $id
+         """.update
+
+    def update(yarn: Yarn, id: Long, time: Instant): Update0 =
+      sql"""
+         update resource_pool
+         set created = $time, max_cores = ${yarn.maxCores}, max_memory = ${yarn.maxMemoryInGB}
          where id = $id
          """.update
 

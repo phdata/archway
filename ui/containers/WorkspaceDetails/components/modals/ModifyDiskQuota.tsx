@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Field, reduxForm } from 'redux-form/immutable';
 import { InputNumber } from 'antd';
 
-import { QuotaForm } from '../../../../models/Data';
+import { QuotaForm } from '../../../../models/Form';
 import { HiveAllocation } from '../../../../models/Workspace';
 
 // /* tslint:disable:no-var-requires */

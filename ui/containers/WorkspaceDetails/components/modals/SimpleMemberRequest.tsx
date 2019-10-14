@@ -5,7 +5,7 @@ import { Field } from 'redux-form/immutable';
 import { reduxForm } from 'redux-form/immutable';
 import FieldLabel from '../../../../components/FieldLabel';
 import { UserSuggestions, HiveAllocation } from './../../../../models/Workspace';
-import { MemberForm } from '../../../../models/Manage';
+import { MemberForm } from '../../../../models/Form';
 import MemberSearchBar from '../MemberSearchBar';
 import { ShowTypes } from '../../constants';
 

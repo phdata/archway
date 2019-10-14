@@ -26,6 +26,7 @@ class WorkspaceController[F[_]: Sync: Timer: ContextShift: ConcurrentEffect](
     applicationService: ApplicationService[F],
     emailService: EmailService[F],
     provisioningService: ProvisioningService[F],
+    yarnService: YarnService[F],
     hdfsService: HDFSService[F],
     complianceGroupService: ComplianceGroupService[F],
     emailEC: ExecutionContext
@@ -314,12 +315,36 @@ class WorkspaceController[F[_]: Sync: Timer: ContextShift: ConcurrentEffect](
             response <- Ok()
           } yield response
 
+        case req @ POST -> Root / LongVar(id) / "yarn" as user =>
+          if (user.isOpsUser) {
+            implicit val yarnDecoder: EntityDecoder[F, Yarn] = jsonOf[F, Yarn]
+            for {
+              request <- req.req.as[Yarn]
+              _ <- yarnService.updateYarnResources(request, id, Instant.now()).onError {
+                case e: Throwable =>
+                  logger
+                    .error(
+                      s"Failed to update the number of cores and memories in ${request.poolName}: ${e.getLocalizedMessage()}",
+                      e
+                    )
+                    .pure[F]
+              }
+              response <- Ok()
+            } yield response
+          } else
+            Forbidden()
+
         case POST -> Root / LongVar(id) / "disk-quota" / LongVar(resourceId) / IntVar(size) as user =>
-          if (user.isSuperUser) {
+          if (user.isOpsUser) {
             for {
               workspace <- workspaceService.find(id).value
               _ <- hdfsService
-                .setQuota(workspace.get.data.find(hiveAllocation => hiveAllocation.id.get == resourceId).get.location, size, id, Instant.now())
+                .setQuota(
+                  workspace.get.data.find(hiveAllocation => hiveAllocation.id.get == resourceId).get.location,
+                  size,
+                  id,
+                  Instant.now()
+                )
                 .onError {
                   case e: Throwable =>
                     logger.error(s"Failed to modify disk-quota of workspace $id: ${e.getLocalizedMessage}", e).pure[F]

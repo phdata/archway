@@ -1,12 +1,7 @@
 package io.phdata.models
 
 import cats.Show
-import cats.data.Kleisli
-import cats.effect._
-import cats.implicits._
 import io.circe._
-import io.circe.generic.semiauto._
-import io.circe.syntax._
 
 case class Yarn(poolName: String, maxCores: Int, maxMemoryInGB: Int, id: Option[Long] = None)
 

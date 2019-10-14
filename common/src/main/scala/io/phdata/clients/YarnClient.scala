@@ -2,13 +2,12 @@ package io.phdata.clients
 
 import cats.effect._
 import cats.implicits._
+import com.typesafe.scalalogging.LazyLogging
+import io.circe._
+import io.circe.parser._
 import io.phdata.config.ClusterConfig
 import io.phdata.models.{YarnApplication, YarnApplicationList}
 import io.phdata.services.ClusterService
-import com.typesafe.scalalogging.LazyLogging
-import io.circe.parser._
-import io.circe._
-import io.phdata.models.{YarnApplication, YarnApplicationList}
 import org.http4s.Method._
 import org.http4s._
 import org.http4s.circe._
@@ -20,7 +19,7 @@ case class YarnPool(name: String, maxCores: Int, maxMemoryInGB: Double)
 
 trait YarnClient[F[_]] {
 
-  def createPool(poolName: String, cores: Int, memory: Int): F[Unit]
+  def setupPool(poolName: String, cores: Int, memory: Int): F[Unit]
 
   def applications(poolName: String): F[List[YarnApplication]]
 
@@ -154,7 +153,7 @@ class CDHYarnClient[F[_]: Sync](http: HttpClient[F], clusterConfig: ClusterConfi
     Queue(parents: _*)
   }
 
-  override def createPool(poolName: String, cores: Int, memory: Int): F[Unit] =
+  override def setupPool(poolName: String, cores: Int, memory: Int): F[Unit] =
     for {
       parentPools <- getParents(poolName)
       config <- yarnConfig

@@ -40,6 +40,7 @@ export enum ModalType {
   SimpleMember = 'simpleMember',
   ChangeOwner = 'changeOwner',
   ModifyDiskQuota = 'modifyDiskQuota',
+  ModifyCoreMemory = 'modifyCoreMemory',
 }
 
 export enum NotificationType {

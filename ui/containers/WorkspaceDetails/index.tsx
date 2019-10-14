@@ -22,6 +22,7 @@ import {
   WarningText,
   ChangeOwnerRequest,
   ModifyDiskQuota,
+  ModifyCoreMemory,
 } from './components';
 import { Cluster } from '../../models/Cluster';
 import { Profile } from '../../models/Profile';
@@ -57,9 +58,9 @@ interface Props extends RouteComponentProps<DetailsRouteProps> {
   profile: Profile;
   pools?: ResourcePoolsInfo;
   infos?: NamespaceInfoList;
-  activeApplication?: Application;
   activeModal?: string;
   selectedAllocation: HiveAllocation;
+  selectedApplication: Application;
   userSuggestions?: UserSuggestions;
   liasion?: Member;
   members?: Member[];
@@ -75,7 +76,6 @@ interface Props extends RouteComponentProps<DetailsRouteProps> {
 
   clearDetails: () => void;
   getWorkspaceDetails: (id: number) => void;
-  selectApplication: (application: Application) => void;
   showModal: (e: React.MouseEvent, type: ModalType) => void;
   clearModal: () => void;
   approveRisk: (e: React.MouseEvent) => void;
@@ -85,6 +85,7 @@ interface Props extends RouteComponentProps<DetailsRouteProps> {
   changeMemberRoleRequest: (distinguished_name: string, roleId: number, role: string, resource: string) => void;
   requestApplication: () => void;
   updateSelectedAllocation: (allocation: HiveAllocation) => void;
+  updateSelectedApplication: (application: Application) => void;
   requestRefreshYarnApps: () => void;
   requestRefreshHiveTables: () => void;
   getUserSuggestions: (filter: string) => void;
@@ -94,6 +95,7 @@ interface Props extends RouteComponentProps<DetailsRouteProps> {
   provisionWorkspace: () => void;
   changeWorkspaceOwner: () => void;
   modifyDiskQuota: () => void;
+  modifyCoreMemory: () => void;
 }
 
 class WorkspaceDetails extends React.PureComponent<Props> {
@@ -190,9 +192,7 @@ class WorkspaceDetails extends React.PureComponent<Props> {
       pools,
       infos,
       members,
-      activeApplication,
       activeModal,
-      selectApplication,
       showModal,
       clearModal,
       approveRisk,
@@ -204,6 +204,7 @@ class WorkspaceDetails extends React.PureComponent<Props> {
       requestApplication,
       selectedAllocation,
       updateSelectedAllocation,
+      updateSelectedApplication,
       requestRefreshYarnApps,
       requestRefreshHiveTables,
       userSuggestions,
@@ -221,6 +222,7 @@ class WorkspaceDetails extends React.PureComponent<Props> {
       ownerLoading,
       modifyDiskQuota,
       quotaLoading,
+      modifyCoreMemory,
     } = this.props;
 
     if (!workspace) {
@@ -301,15 +303,14 @@ class WorkspaceDetails extends React.PureComponent<Props> {
               isPlatformOperations={profile && profile.permissions.platform_operations}
             />
           </Tabs.TabPane>
-          <FeatureTab flag={FeatureFlagType.Messaging} tab="APPLICATIONS" key="applications">
+          <FeatureTab flag={FeatureFlagType.Application} tab="APPLICATIONS" key="applications">
             <ApplicationsTab
               workspace={workspace}
               yarn={cluster.services && cluster.services.yarn}
               pools={pools}
-              selectedApplication={activeApplication}
               showModal={showModal}
               onRefreshPools={requestRefreshYarnApps}
-              onSelectApplication={selectApplication}
+              onSelectApplication={updateSelectedApplication}
             />
           </FeatureTab>
           <FeatureTab flag={FeatureFlagType.Messaging} tab="MESSAGING" key="messaging">
@@ -422,6 +423,15 @@ class WorkspaceDetails extends React.PureComponent<Props> {
         >
           <ModifyDiskQuota allocation={selectedAllocation} />
         </Modal>
+        <Modal
+          visible={activeModal === ModalType.ModifyCoreMemory}
+          title="Modify Number of Cores and Memories"
+          onCancel={clearModal}
+          okText="Modify"
+          onOk={modifyCoreMemory}
+        >
+          <ModifyCoreMemory poolName={workspace.processing[0].pool_name} />
+        </Modal>
       </div>
     );
   }
@@ -432,11 +442,11 @@ const mapStateToProps = () =>
     workspace: selectors.getWorkspace(),
     cluster: selectors.getClusterDetails(),
     selectedAllocation: selectors.getSelectedAllocation(),
+    selectedApplication: selectors.getSelectedApplication(),
     profile: selectors.getProfile(),
     infos: selectors.getNamespaceInfo(),
     pools: selectors.getPoolInfo(),
     activeTopic: selectors.getActiveTopic(),
-    activeApplication: selectors.getActiveApplication(),
     activeModal: selectors.getActiveModal(),
     userSuggestions: selectors.getUserSuggestions(),
     liasion: selectors.getLiaison(),
@@ -457,9 +467,9 @@ const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
   getWorkspaceDetails: (id: number) => dispatch(actions.getWorkspace(id)),
 
   updateSelectedAllocation: (allocation: HiveAllocation) => dispatch(actions.updateSelectedAllocation(allocation)),
+  updateSelectedApplication: (application: Application) => dispatch(actions.updateSelectedApplication(application)),
 
   selectTopic: (topic: KafkaTopic) => dispatch(actions.setActiveTopic(topic)),
-  selectApplication: (application: Application) => dispatch(actions.setActiveApplication(application)),
 
   showModal: (e: React.MouseEvent, type: ModalType) => {
     e.preventDefault();
@@ -491,7 +501,9 @@ const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
   deprovisionWorkspace: () => dispatch(actions.requestDeprovisionWorkspace()),
   provisionWorkspace: () => dispatch(actions.requestProvisionWorkspace()),
   changeWorkspaceOwner: () => dispatch(actions.requestChangeWorkspaceOwner()),
+
   modifyDiskQuota: () => dispatch(actions.requestModifyDiskQuota()),
+  modifyCoreMemory: () => dispatch(actions.requestModifyCoreMemory()),
 });
 
 export default connect(

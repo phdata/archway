@@ -8,6 +8,7 @@ import {
   Workspace,
   UserSuggestions,
   HiveAllocation,
+  Application,
 } from '../../models/Workspace';
 import { Cluster } from '../../models/Cluster';
 import { Profile } from '../../models/Profile';
@@ -38,6 +39,15 @@ export const getSelectedAllocation = () =>
       (workspaceState.get('selectedAllocation') &&
         (workspaceState.get('selectedAllocation').toJS() as HiveAllocation)) ||
       (workspaceState.getIn(['details', 'data', 0], fromJS({})).toJS() as HiveAllocation)
+  );
+
+export const getSelectedApplication = () =>
+  createSelector(
+    workspaceSelector,
+    workspaceState =>
+      (workspaceState.get('selectedApplication') &&
+        (workspaceState.get('selectedApplication').toJS() as Application)) ||
+      (workspaceState.getIn(['details', 'applications', 0], fromJS({})).toJS() as Application)
   );
 
 export const getProfile = () =>
@@ -90,12 +100,6 @@ export const getActiveTopic = () =>
   createSelector(
     workspaceSelector,
     workspaceState => workspaceState.get('activeTopic')
-  );
-
-export const getActiveApplication = () =>
-  createSelector(
-    workspaceSelector,
-    workspaceState => workspaceState.get('activeApplication')
   );
 
 export const getActiveModal = () =>

@@ -15,11 +15,6 @@ export interface ComplianceContent {
   questions: Question[];
 }
 
-export interface MemberForm {
-  username: string;
-  roles: object;
-}
-
 export interface Link {
   name: string;
   description: string;

@@ -20,7 +20,6 @@ import {
   setNamespaceInfo,
   setResourcePools,
   setActiveTopic,
-  setActiveApplication,
   ApprovalRequestAction,
   approvalSuccess,
   topicRequestSuccess,
@@ -51,6 +50,8 @@ import {
   REQUEST_MODIFY_DISK_QUOTA,
   setQuotaLoading,
   updateSelectedAllocation,
+  updateSelectedApplication,
+  REQUEST_MODIFY_CORE_MEMORY,
 } from './actions';
 import { RECENT_WORKSPACES_KEY, TOKEN_EXTRACTOR, NotificationType } from '../../constants';
 
@@ -63,7 +64,9 @@ export const detailExtractor = (s: any) => s.getIn(['details', 'details']);
 export const memberRequestFormExtractor = (s: any) => s.getIn(['form', 'simpleMemberRequest', 'values']);
 export const ownerDnExtractor = (s: any) => s.getIn(['form', 'changeOwnerRequest', 'values']);
 export const quotaExtractor = (s: any) => s.getIn(['form', 'modifyDiskQuotaRequest', 'values']);
+export const coreMemoryExtractor = (s: any) => s.getIn(['form', 'modifyCoreMemoryRequest', 'values']);
 export const selectedAllocationExtractor = (s: any) => s.getIn(['details', 'selectedAllocation']);
+export const selectedApplicationExtractor = (s: any) => s.getIn(['details', 'selectedApplication']);
 export const topicMemberRequestFormExtractor = (s: any) => s.getIn(['form', 'simpleTopicMemberRequest', 'values']);
 export const activeTopicExtractor = (s: any) => s.getIn(['details', 'activeTopic']);
 
@@ -93,6 +96,9 @@ function* fetchWorkspace({ id }: { type: string; id: number }) {
     if (!!workspace.data) {
       yield put(updateSelectedAllocation(workspace.data[0]));
     }
+    if (!!workspace.applications) {
+      yield put(updateSelectedApplication(workspace.applications[0]));
+    }
 
     const { provisioning } = yield call(Api.getProvisioning, token, id);
     yield put(setProvisioning(provisioning));
@@ -116,9 +122,6 @@ function* fetchWorkspace({ id }: { type: string; id: number }) {
 
     if (workspace.topics.length > 0) {
       yield put(setActiveTopic(workspace.topics[0]));
-    }
-    if (workspace.applications.length > 0) {
-      yield put(setActiveApplication(workspace.applications[0]));
     }
   } catch (err) {
     if (err === 403) {
@@ -415,6 +418,30 @@ function* modifyDiskQuotaRequestedListener() {
   yield takeLatest(REQUEST_MODIFY_DISK_QUOTA, modifyDiskQuotaRequested);
 }
 
+function* modifyCoreMemoryRequested() {
+  const token = yield select(TOKEN_EXTRACTOR);
+  const { id, processing } = (yield select(detailExtractor)).toJS();
+  const { core, memory } = (yield select(coreMemoryExtractor)).toJS();
+  const { pool_name } = processing[0];
+  try {
+    yield call(Api.modifyCoreMemorySize, token, id, pool_name, core, memory);
+  } catch (err) {
+    yield put(
+      setNotificationStatus(
+        NotificationType.Error,
+        `Failed to modify the number of cores and memory in ${pool_name}: ${err.toString()}`
+      )
+    );
+  } finally {
+    yield put(clearNotificationStatus());
+    yield put(setActiveModal(false));
+  }
+}
+
+function* modifyCoreMemoryRequestedListener() {
+  yield takeLatest(REQUEST_MODIFY_CORE_MEMORY, modifyCoreMemoryRequested);
+}
+
 export default function* root() {
   yield all([
     fork(workspaceRequest),
@@ -432,5 +459,6 @@ export default function* root() {
     fork(provisionWorkspaceRequestedListener),
     fork(changeWorkspaceOwnerRequestedListener),
     fork(modifyDiskQuotaRequestedListener),
+    fork(modifyCoreMemoryRequestedListener),
   ]);
 }

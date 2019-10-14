@@ -199,3 +199,11 @@ export const deleteLinksGroup = (token: string, id: number) => withBody(`/ops/cu
 
 export const deleteCompliance = (token: string, id: number) =>
   withBody(`/workspaces/questions/${id}`, token, {}, 'DELETE');
+
+export const modifyCoreMemorySize = (
+  token: string,
+  id: number,
+  pool_name: string,
+  max_cores: number,
+  max_memory_in_gb: number
+) => withBody(`/workspaces/${id}/yarn`, token, { pool_name, max_cores, max_memory_in_gb });

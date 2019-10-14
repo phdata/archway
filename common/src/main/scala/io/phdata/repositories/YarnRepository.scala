@@ -11,6 +11,8 @@ trait YarnRepository {
 
   def complete(id: Long, time: Instant): ConnectionIO[Int]
 
+  def update(yarn: Yarn, id: Long, time: Instant): ConnectionIO[Int]
+
   def find(id: Long): OptionT[ConnectionIO, Yarn]
 
   def findByWorkspaceId(id: Long): ConnectionIO[List[Yarn]]

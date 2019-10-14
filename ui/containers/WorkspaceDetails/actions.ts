@@ -46,6 +46,12 @@ export const updateSelectedAllocation = (allocation: HiveAllocation) => ({
   allocation,
 });
 
+export const UPDATE_SELECTED_APPLICATION = 'UPDATE_SELECTED_APPLICATION';
+export const updateSelectedApplication = (application: Application) => ({
+  type: UPDATE_SELECTED_APPLICATION,
+  application,
+});
+
 export const GET_MEMBERS = 'GET_MEMBERS';
 export const getMembers = (id: number) => ({
   type: GET_MEMBERS,
@@ -90,12 +96,6 @@ export const SET_ACTIVE_TOPIC = 'SET_ACTIVE_TOPIC';
 export const setActiveTopic = (activeTopic: KafkaTopic) => ({
   type: SET_ACTIVE_TOPIC,
   activeTopic,
-});
-
-export const SET_ACTIVE_APPLICATION = 'SET_ACTIVE_APPLICATION';
-export const setActiveApplication = (activeApplication: Application) => ({
-  type: SET_ACTIVE_APPLICATION,
-  activeApplication,
 });
 
 export const REQUEST_APPROVAL = 'REQUEST_APPROVAL';
@@ -351,4 +351,9 @@ export const SET_QUOTA_LOADING = 'SET_QUOTA_LOADING';
 export const setQuotaLoading = (loading: boolean) => ({
   type: SET_QUOTA_LOADING,
   loading,
+});
+
+export const REQUEST_MODIFY_CORE_MEMORY = 'REQUEST_MODIFY_CORE_MEMORY';
+export const requestModifyCoreMemory = () => ({
+  type: REQUEST_MODIFY_CORE_MEMORY,
 });

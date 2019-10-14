@@ -3,7 +3,7 @@ import { InjectedFormProps } from 'redux-form';
 import { reduxForm } from 'redux-form/immutable';
 
 import { UserSuggestions } from '../../../../models/Workspace';
-import { MemberForm } from '../../../../models/Manage';
+import { MemberForm } from '../../../../models/Form';
 import MemberSearchBar from '../MemberSearchBar';
 import { ShowTypes } from '../../constants';
 

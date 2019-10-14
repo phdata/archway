@@ -114,7 +114,7 @@ class DefaultProvisioningServiceSpec
       }
 
       inSequence {
-        context.yarnClient.createPool _ expects(poolName, maxCores, maxMemoryInGB) returning IO.unit
+        context.yarnClient.setupPool _ expects(poolName, maxCores, maxMemoryInGB) returning IO.unit
         context.yarnRepository.complete _ expects(id, *) returning 0.pure[ConnectionIO]
       }
 

@@ -13,6 +13,7 @@ describe('YarnResourceCard', () => {
         max_cores: 4,
         max_memory_in_gb: 4,
       },
+      showModal: () => null,
     };
     const wrapper = shallow(<YarnResourceCard {...props} />);
 

@@ -18,7 +18,7 @@ const repoName = (repo: string): string => {
 
 const ApplicationCard = ({ application }: Props) => (
   <Card bordered bodyStyle={{ padding: 8 }}>
-    <Row style={{ textAlign: 'center', height: 120 }} type="flex" align="middle">
+    <Row style={{ textAlign: 'center', height: 150 }} type="flex" align="middle">
       <Col span={24} style={{ paddingBottom: 8 }}>
         {application.logo && <img alt="logo" src={application.logo} style={{ height: 64, objectFit: 'contain' }} />}
         {!!!application.logo && <Icon style={{ fontSize: 35 }} type="code" />}

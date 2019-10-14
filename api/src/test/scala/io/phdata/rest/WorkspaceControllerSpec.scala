@@ -284,6 +284,19 @@ class WorkspaceControllerSpec
     response.status.code shouldBe 200
   }
 
+  it should "update the resource pools with given max cores and max memories" in new Http4sClientDsl[IO] with Context {
+    yarnService.updateYarnResources _ expects (initialYarn, id, *) returning ().pure[IO]
+
+    val request = Json.obj(
+      "pool_name" -> initialYarn.poolName.asJson,
+      "max_cores" -> initialYarn.maxCores.asJson,
+      "max_memory_in_gb" -> initialYarn.maxMemoryInGB.asJson
+    )
+
+    val response = restApi.route.orNotFound.run(POST(request, Uri.uri("/123/yarn")).unsafeRunSync()).unsafeRunSync()
+    response.status.code shouldBe 200
+  }
+
   trait Context {
     implicit val timer: Timer[IO] = testTimer
     implicit val contextShift = IO.contextShift(ExecutionContext.global)
@@ -293,6 +306,7 @@ class WorkspaceControllerSpec
     val kafkaService: KafkaService[IO] = mock[KafkaService[IO]]
     val workspaceService: WorkspaceService[IO] = mock[WorkspaceService[IO]]
     val hdfsService: HDFSService[IO] = mock[HDFSService[IO]]
+    val yarnService: YarnService[IO] = mock[YarnService[IO]]
     val applicationService: ApplicationService[IO] = mock[ApplicationService[IO]]
     val emailService: EmailService[IO] = mock[EmailService[IO]]
     val provisioningService: ProvisioningService[IO] = mock[ProvisioningService[IO]]
@@ -307,6 +321,7 @@ class WorkspaceControllerSpec
         applicationService,
         emailService,
         provisioningService,
+        yarnService,
         hdfsService,
         complianceGroupService,
         ExecutionContext.global
