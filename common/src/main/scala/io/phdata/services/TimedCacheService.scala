@@ -36,7 +36,8 @@ class TimedCacheService extends CacheService with LazyLogging {
       cache: Cached[F, A]
   ): F[A] =
     for {
-      existingCache <- cache.take
+      maybeCache <- cache.tryTake
+      existingCache <- maybeCache.getOrElse(throw new Exception("Cache is not initialized")).pure[F]
       valid <- cacheIsValid[F](cacheDuration, existingCache.cachedTime)
       _ <- logger.trace(s"Cache validity: $valid").pure[F]
       newCache <- if (valid) {

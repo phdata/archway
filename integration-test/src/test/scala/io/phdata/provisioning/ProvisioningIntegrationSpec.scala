@@ -3,19 +3,22 @@ package io.phdata.provisioning
 import java.util.concurrent.Executors
 
 import cats.data.NonEmptyList
-import io.phdata.AppContext
-import io.phdata.itest.fixtures.KerberosTest
-import org.scalatest.FlatSpec
-import cats.effect.{ContextShift, IO, Timer}
+import cats.effect.{ContextShift, IO, Resource, Timer}
 import cats.implicits._
+import io.phdata.AppContext
+import io.phdata.caching.CacheEntry
 import io.phdata.config.TemplateNames
+import io.phdata.itest.fixtures.KerberosTest
 import io.phdata.models.{Compliance, DistinguishedName, TemplateRequest}
 import io.phdata.services.{DBConfigService, JSONTemplateService, MemberServiceImpl, WorkspaceServiceImpl}
 import io.phdata.test.fixtures.TestTimer
+import org.scalatest.FlatSpec
 
 import scala.concurrent.ExecutionContext
 
 class ProvisioningIntegrationSpec extends FlatSpec with KerberosTest {
+  System.setProperty("javax.net.ssl.trustStore", "itest-config/valhalla.jks")
+
   implicit val timer: Timer[IO] = new TestTimer
   val requester = "CN=svc_heim_test1,OU=users,OU=Heimdali,DC=phdata,DC=io"
   val commonDescription = "Created by Archway integration tests."
@@ -121,6 +124,8 @@ class ProvisioningIntegrationSpec extends FlatSpec with KerberosTest {
       workspaceService = new WorkspaceServiceImpl[IO](provisionService, memberService, context)
       configService = new DBConfigService[IO](context)
       templateService = new JSONTemplateService[IO](context, configService)
+
+      _ <- Resource.liftF(context.clusterCache.put(CacheEntry(0L, Seq.empty)))
     } yield (provisionService, workspaceService, templateService)
   }
 
