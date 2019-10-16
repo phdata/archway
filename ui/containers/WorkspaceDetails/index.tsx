@@ -323,7 +323,7 @@ class WorkspaceDetails extends React.PureComponent<Props> {
               removeMember={removeMember}
             />
           </FeatureTab>
-          {profile && profile.permissions.platform_operations && profile.permissions.risk_management && (
+          {profile && (profile.permissions.platform_operations || profile.permissions.risk_management) && (
             <Tabs.TabPane tab="MANAGE" key="manage">
               <ManageTab showModal={showModal} provisioning={provisioning} />
             </Tabs.TabPane>

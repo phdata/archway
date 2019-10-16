@@ -61,7 +61,7 @@ class WorkspaceController[F[_]: Sync: Timer: ContextShift: ConcurrentEffect](
             Forbidden()
 
         case POST -> Root / LongVar(id) / "provision" as user =>
-          if (user.isSuperUser) {
+          if (user.isOpsUser) {
             for {
               workspace <- workspaceService.find(id).value
               provisionFiber <- provisioningService.attemptProvision(workspace.get, 0)
@@ -78,7 +78,7 @@ class WorkspaceController[F[_]: Sync: Timer: ContextShift: ConcurrentEffect](
             Forbidden()
 
         case POST -> Root / LongVar(id) / "deprovision" as user =>
-          if (user.isSuperUser) {
+          if (user.isOpsUser) {
             for {
               workspace <- workspaceService.find(id).value
               provisionFiber <- provisioningService.attemptDeprovision(workspace.get)
@@ -95,7 +95,7 @@ class WorkspaceController[F[_]: Sync: Timer: ContextShift: ConcurrentEffect](
             Forbidden()
 
         case DELETE -> Root / LongVar(id) as user =>
-          if (user.isSuperUser) {
+          if (user.isOpsUser) {
             for {
               _ <- workspaceService.deleteWorkspace(id).onError {
                 case e: Throwable =>
@@ -107,7 +107,7 @@ class WorkspaceController[F[_]: Sync: Timer: ContextShift: ConcurrentEffect](
             Forbidden()
 
         case POST -> Root / LongVar(id) / "owner" / ownerDN as user =>
-          if (user.isSuperUser) {
+          if (user.isOpsUser) {
             for {
               _ <- logger.info(s"Changing workspace ower for workspace '$id' to owner $ownerDN").pure[F]
               _ <- workspaceService.changeOwner(id, DistinguishedName(ownerDN)).onError {
