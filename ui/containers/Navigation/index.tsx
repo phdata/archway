@@ -35,6 +35,16 @@ interface Props extends RouteComponentProps<any> {
   profile: UserProfile;
 }
 
+const manageNavigation = (profile: UserProfile): string => {
+  if (profile.permissions.risk_management) {
+    return ManagePage.ComplianceTab;
+  } else if (profile.permissions.platform_operations) {
+    return ManagePage.LinksTab;
+  } else {
+    return ManagePage.ComplianceTab;
+  }
+};
+
 const Navigation = ({ location, profile }: Props) => (
   <Layout.Sider width={250} style={{ overflow: 'auto', height: '100vh', position: 'fixed', left: 0 }}>
     <Link to="/home">
@@ -78,9 +88,9 @@ const Navigation = ({ location, profile }: Props) => (
           </NavLink>
         </Menu.Item>
       )}
-      {profile && profile.permissions.platform_operations && (
+      {profile && (profile.permissions.platform_operations || profile.permissions.risk_management) && (
         <Menu.Item key="manage">
-          <NavLink to={`/manage/${ManagePage.ComplianceTab}`}>
+          <NavLink to={`/manage/${manageNavigation(profile)}`}>
             <Icon type="profile" style={{ fontSize: 18 }} /> Manage
           </NavLink>
         </Menu.Item>

@@ -9,6 +9,8 @@ import * as selectors from './selectors';
 import { ComplianceContent, Question, LinksGroup, Link } from '../../models/Manage';
 import { ComplianceTab, LinksTab } from './components/tabs';
 import { ManagePage } from './constants';
+import { Profile } from '../../models/Profile';
+import { getProfile } from '../../redux/selectors';
 
 const { TabPane } = Tabs;
 
@@ -20,6 +22,8 @@ interface Props extends RouteComponentProps<any> {
 
   linksGroups: LinksGroup[];
   selectedLinksGroup: LinksGroup;
+
+  profile: Profile;
 
   removeQuestion: (index: number) => void;
   clearSelectedCompliance: () => void;
@@ -86,6 +90,7 @@ class Manage extends React.Component<Props> {
       setLink,
       addNewLink,
       removeLink,
+      profile,
     } = this.props;
     const { tab } = this.props.match.params;
 
@@ -98,39 +103,43 @@ class Manage extends React.Component<Props> {
           activeKey={tab}
           onChange={this.handleTabsClick}
         >
-          <TabPane tab="Compliances" key={ManagePage.ComplianceTab}>
-            <ComplianceTab
-              compliances={compliances}
-              loading={loading}
-              fetchCompliances={fetchCompliances}
-              setRequest={setSelectedCompliance}
-              selectedCompliance={selectedCompliance}
-              clearSelectedCompliance={clearSelectedCompliance}
-              setQuestion={setQuestion}
-              addNewQuestion={addNewQuestion}
-              removeQuestion={removeQuestion}
-              addCompliance={addCompliance}
-              deleteCompliance={deleteCompliance}
-              updateCompliance={updateCompliance}
-              requester={requester}
-            />
-          </TabPane>
-          <TabPane tab="Links" key={ManagePage.LinksTab}>
-            <LinksTab
-              loading={loading}
-              linksGroups={linksGroups}
-              selectedLinksGroup={selectedLinksGroup}
-              fetchLinksGroups={fetchLinksGroups}
-              clearSelectedLinksGroup={clearSelectedLinksGroup}
-              setSelectedLinksGroup={setSelectedLinksGroup}
-              addLinksGroup={addLinksGroup}
-              updateLinksGroup={updateLinksGroup}
-              deleteLinksGroup={deleteLinksGroup}
-              setLink={setLink}
-              addNewLink={addNewLink}
-              removeLink={removeLink}
-            />
-          </TabPane>
+          {profile && profile.permissions.risk_management && (
+            <TabPane tab="Compliances" key={ManagePage.ComplianceTab}>
+              <ComplianceTab
+                compliances={compliances}
+                loading={loading}
+                fetchCompliances={fetchCompliances}
+                setRequest={setSelectedCompliance}
+                selectedCompliance={selectedCompliance}
+                clearSelectedCompliance={clearSelectedCompliance}
+                setQuestion={setQuestion}
+                addNewQuestion={addNewQuestion}
+                removeQuestion={removeQuestion}
+                addCompliance={addCompliance}
+                deleteCompliance={deleteCompliance}
+                updateCompliance={updateCompliance}
+                requester={requester}
+              />
+            </TabPane>
+          )}
+          {profile && profile.permissions.platform_operations && (
+            <TabPane tab="Links" key={ManagePage.LinksTab}>
+              <LinksTab
+                loading={loading}
+                linksGroups={linksGroups}
+                selectedLinksGroup={selectedLinksGroup}
+                fetchLinksGroups={fetchLinksGroups}
+                clearSelectedLinksGroup={clearSelectedLinksGroup}
+                setSelectedLinksGroup={setSelectedLinksGroup}
+                addLinksGroup={addLinksGroup}
+                updateLinksGroup={updateLinksGroup}
+                deleteLinksGroup={deleteLinksGroup}
+                setLink={setLink}
+                addNewLink={addNewLink}
+                removeLink={removeLink}
+              />
+            </TabPane>
+          )}
         </Tabs>
       </div>
     );
@@ -146,6 +155,8 @@ const mapStateToProps = () =>
 
     linksGroups: selectors.getLinksGroups(),
     selectedLinksGroup: selectors.getSelectedLinksGroup(),
+
+    profile: getProfile(),
   });
 
 const mapDispatchToProps = (dispatch: any) => ({

@@ -21,6 +21,7 @@ case class User(
 
   val isSuperUser: Boolean = permissions.platformOperations && permissions.riskManagement
   val isOpsUser: Boolean = permissions.platformOperations
+  val isRiskUser: Boolean = permissions.riskManagement
 }
 
 object User {

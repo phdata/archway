@@ -261,59 +261,71 @@ class WorkspaceController[F[_]: Sync: Timer: ContextShift: ConcurrentEffect](
             response <- Ok(workspaceStatus.asJson)
           } yield response
 
-        case GET -> Root / "questions" as _ =>
-          for {
-            groups <- complianceGroupService.list.onError {
-              case e: Throwable =>
-                logger.error(s"Failed to get list of compliance groups: ${e.getLocalizedMessage}", e).pure[F]
-            }
-            response <- Ok(groups.asJson)
-          } yield response
-
-        case req @ POST -> Root / "questions" as _ =>
-          Clock[F].realTime(scala.concurrent.duration.MILLISECONDS).flatMap { time =>
-            implicit val decoder: Decoder[ComplianceGroup] =
-              ComplianceGroup.decoder(Instant.ofEpochMilli(time))
-            implicit val complianceGroupDecoder: EntityDecoder[F, ComplianceGroup] =
-              jsonOf[F, ComplianceGroup]
-
+        case GET -> Root / "questions" as user =>
+          if (user.isRiskUser) {
             for {
-              request <- req.req.as[ComplianceGroup]
-              _ <- complianceGroupService.createComplianceGroup(request).onError {
+              groups <- complianceGroupService.list.onError {
                 case e: Throwable =>
-                  logger.error(s"Failed to create compliance group: ${e.getLocalizedMessage}", e).pure[F]
+                  logger.error(s"Failed to get list of compliance groups: ${e.getLocalizedMessage}", e).pure[F]
               }
-              response <- Created()
+              response <- Ok(groups.asJson)
             } yield response
-          }
+          } else
+            Forbidden()
 
-        case req @ PUT -> Root / "questions" / LongVar(id) as _ =>
-          Clock[F].realTime(scala.concurrent.duration.MILLISECONDS).flatMap { time =>
-            implicit val decoder: Decoder[ComplianceGroup] =
-              ComplianceGroup.decoder(Instant.ofEpochMilli(time))
-            implicit val complianceGroupDecoder: EntityDecoder[F, ComplianceGroup] =
-              jsonOf[F, ComplianceGroup]
+        case req @ POST -> Root / "questions" as user =>
+          if (user.isRiskUser) {
+            Clock[F].realTime(scala.concurrent.duration.MILLISECONDS).flatMap { time =>
+              implicit val decoder: Decoder[ComplianceGroup] =
+                ComplianceGroup.decoder(Instant.ofEpochMilli(time))
+              implicit val complianceGroupDecoder: EntityDecoder[F, ComplianceGroup] =
+                jsonOf[F, ComplianceGroup]
 
+              for {
+                request <- req.req.as[ComplianceGroup]
+                _ <- complianceGroupService.createComplianceGroup(request).onError {
+                  case e: Throwable =>
+                    logger.error(s"Failed to create compliance group: ${e.getLocalizedMessage}", e).pure[F]
+                }
+                response <- Created()
+              } yield response
+            }
+          } else
+            Forbidden()
+
+        case req @ PUT -> Root / "questions" / LongVar(id) as user =>
+          if (user.isRiskUser) {
+            Clock[F].realTime(scala.concurrent.duration.MILLISECONDS).flatMap { time =>
+              implicit val decoder: Decoder[ComplianceGroup] =
+                ComplianceGroup.decoder(Instant.ofEpochMilli(time))
+              implicit val complianceGroupDecoder: EntityDecoder[F, ComplianceGroup] =
+                jsonOf[F, ComplianceGroup]
+
+              for {
+                request <- req.req.as[ComplianceGroup]
+                _ <- complianceGroupService.updateComplianceGroup(id, request).onError {
+                  case e: Throwable =>
+                    logger
+                      .error(s"Failed to update compliance group ${request.id.get}: ${e.getLocalizedMessage}", e)
+                      .pure[F]
+                }
+                response <- Ok()
+              } yield response
+            }
+          } else
+            Forbidden()
+
+        case DELETE -> Root / "questions" / LongVar(id) as user =>
+          if (user.isRiskUser) {
             for {
-              request <- req.req.as[ComplianceGroup]
-              _ <- complianceGroupService.updateComplianceGroup(id, request).onError {
+              _ <- complianceGroupService.deleteComplianceGroup(id).onError {
                 case e: Throwable =>
-                  logger
-                    .error(s"Failed to update compliance group ${request.id.get}: ${e.getLocalizedMessage}", e)
-                    .pure[F]
+                  logger.error(s"Failed to remove compliance group: ${e.getLocalizedMessage}", e).pure[F]
               }
               response <- Ok()
             } yield response
-          }
-
-        case DELETE -> Root / "questions" / LongVar(id) as _ =>
-          for {
-            _ <- complianceGroupService.deleteComplianceGroup(id).onError {
-              case e: Throwable =>
-                logger.error(s"Failed to remove compliance group: ${e.getLocalizedMessage}", e).pure[F]
-            }
-            response <- Ok()
-          } yield response
+          } else
+            Forbidden()
 
         case req @ POST -> Root / LongVar(id) / "yarn" as user =>
           if (user.isOpsUser) {
