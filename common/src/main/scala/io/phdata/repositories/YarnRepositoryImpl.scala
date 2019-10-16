@@ -62,7 +62,7 @@ class YarnRepositoryImpl extends YarnRepository {
     def update(yarn: Yarn, id: Long, time: Instant): Update0 =
       sql"""
          update resource_pool
-         set created = $time, max_cores = ${yarn.maxCores}, max_memory = ${yarn.maxMemoryInGB}
+         set created = $time, max_cores = ${yarn.maxCores}, max_memory_in_gb = ${yarn.maxMemoryInGB}
          where id = $id
          """.update
 
