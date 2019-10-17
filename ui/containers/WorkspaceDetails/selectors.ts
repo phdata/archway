@@ -170,3 +170,9 @@ export const getQuotaLoading = () =>
     workspaceSelector,
     workspaceState => workspaceState.get('quotaLoading')
   );
+
+export const getResourcePoolLoading = () =>
+  createSelector(
+    workspaceSelector,
+    workspaceState => workspaceState.get('resourcePoolLoading')
+  );

@@ -73,6 +73,7 @@ interface Props extends RouteComponentProps<DetailsRouteProps> {
   userSuggestionsLoading: boolean;
   ownerLoading: boolean;
   quotaLoading: boolean;
+  resourcePoolLoading: boolean;
 
   clearDetails: () => void;
   getWorkspaceDetails: (id: number) => void;
@@ -222,6 +223,7 @@ class WorkspaceDetails extends React.PureComponent<Props> {
       ownerLoading,
       modifyDiskQuota,
       quotaLoading,
+      resourcePoolLoading,
       modifyCoreMemory,
     } = this.props;
 
@@ -311,6 +313,7 @@ class WorkspaceDetails extends React.PureComponent<Props> {
               showModal={showModal}
               onRefreshPools={requestRefreshYarnApps}
               onSelectApplication={updateSelectedApplication}
+              resourcePoolLoading={resourcePoolLoading}
             />
           </FeatureTab>
           <FeatureTab flag={FeatureFlagType.Messaging} tab="MESSAGING" key="messaging">
@@ -429,6 +432,7 @@ class WorkspaceDetails extends React.PureComponent<Props> {
           onCancel={clearModal}
           okText="Modify"
           onOk={modifyCoreMemory}
+          confirmLoading={resourcePoolLoading}
         >
           <ModifyCoreMemory poolName={workspace.processing[0].pool_name} />
         </Modal>
@@ -460,6 +464,7 @@ const mapStateToProps = () =>
     userSuggestionsLoading: selectors.getUserSuggestionsLoading(),
     ownerLoading: selectors.getOwnerLoading(),
     quotaLoading: selectors.getQuotaLoading(),
+    resourcePoolLoading: selectors.getResourcePoolLoading(),
   });
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({

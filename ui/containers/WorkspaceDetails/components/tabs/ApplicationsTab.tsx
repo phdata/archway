@@ -10,12 +10,21 @@ interface Props {
   workspace?: Workspace;
   yarn?: YarnService;
   pools?: ResourcePoolsInfo;
+  resourcePoolLoading: boolean;
   showModal: (e: React.MouseEvent, type: ModalType) => void;
   onRefreshPools?: () => void;
   onSelectApplication: (application: Application) => void;
 }
 
-const ApplicationsTab = ({ workspace, yarn, pools, showModal, onRefreshPools, onSelectApplication }: Props) => {
+const ApplicationsTab = ({
+  workspace,
+  yarn,
+  pools,
+  resourcePoolLoading,
+  showModal,
+  onRefreshPools,
+  onSelectApplication,
+}: Props) => {
   const rmURL = yarn && `${yarn.resource_manager[0].host}:${yarn.resource_manager[0].port}`;
 
   return (
@@ -36,7 +45,11 @@ const ApplicationsTab = ({ workspace, yarn, pools, showModal, onRefreshPools, on
                   <ApplicationCard application={application} />
                 </Col>
                 <Col key="resource" span={12} style={{ marginBottom: 12 }}>
-                  <YarnResourceCard resource={workspace.processing[0]} showModal={showModal} />
+                  <YarnResourceCard
+                    resource={workspace.processing[0]}
+                    showModal={showModal}
+                    resourcePoolLoading={resourcePoolLoading}
+                  />
                 </Col>
               </Row>
               <Row gutter={16} type="flex" justify="center">

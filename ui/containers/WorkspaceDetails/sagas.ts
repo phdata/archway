@@ -52,6 +52,7 @@ import {
   updateSelectedAllocation,
   updateSelectedApplication,
   REQUEST_MODIFY_CORE_MEMORY,
+  setResourcePoolLoading,
 } from './actions';
 import { RECENT_WORKSPACES_KEY, TOKEN_EXTRACTOR, NotificationType } from '../../constants';
 
@@ -424,7 +425,11 @@ function* modifyCoreMemoryRequested() {
   const { core, memory } = (yield select(coreMemoryExtractor)).toJS();
   const { pool_name } = processing[0];
   try {
+    yield put(setResourcePoolLoading(true));
     yield call(Api.modifyCoreMemorySize, token, id, pool_name, core, memory);
+
+    const workspace: Workspace = yield call(Api.getWorkspace, token, id);
+    yield put(setWorkspace(workspace));
   } catch (err) {
     yield put(
       setNotificationStatus(
@@ -435,6 +440,7 @@ function* modifyCoreMemoryRequested() {
   } finally {
     yield put(clearNotificationStatus());
     yield put(setActiveModal(false));
+    yield put(setResourcePoolLoading(false));
   }
 }
 

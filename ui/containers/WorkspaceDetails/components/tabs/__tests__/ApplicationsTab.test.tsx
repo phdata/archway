@@ -50,6 +50,7 @@ describe('ApplicationsTab', () => {
         topics: [],
         applications: [],
       } as Workspace,
+      resourcePoolLoading: false,
       onSelectApplication: () => null,
       showModal: () => null,
     };

@@ -353,6 +353,12 @@ export const setQuotaLoading = (loading: boolean) => ({
   loading,
 });
 
+export const SET_RESOURCE_POOL_LOADING = 'SET_RESOURCE_POOL_LOADING';
+export const setResourcePoolLoading = (loading: boolean) => ({
+  type: SET_RESOURCE_POOL_LOADING,
+  loading,
+});
+
 export const REQUEST_MODIFY_CORE_MEMORY = 'REQUEST_MODIFY_CORE_MEMORY';
 export const requestModifyCoreMemory = () => ({
   type: REQUEST_MODIFY_CORE_MEMORY,

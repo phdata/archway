@@ -27,6 +27,7 @@ exports[`ApplicationsTab renders correctly 1`] = `
   </Button>
   <Tabs
     hideAdd={false}
+    onChange={[Function]}
     tabPosition="top"
   />
 </div>
