@@ -285,6 +285,7 @@ class WorkspaceControllerSpec
   }
 
   it should "update the resource pools with given max cores and max memories" in new Http4sClientDsl[IO] with Context {
+    yarnService.list _ expects (id) returning List(savedYarn).pure[IO]
     yarnService.updateYarnResources _ expects (initialYarn, id, *) returning ().pure[IO]
 
     val request = Json.obj(

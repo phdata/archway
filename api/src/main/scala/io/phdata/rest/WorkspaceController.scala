@@ -332,7 +332,8 @@ class WorkspaceController[F[_]: Sync: Timer: ContextShift: ConcurrentEffect](
             implicit val yarnDecoder: EntityDecoder[F, Yarn] = jsonOf[F, Yarn]
             for {
               request <- req.req.as[Yarn]
-              _ <- yarnService.updateYarnResources(request, id, Instant.now()).onError {
+              currentYarn <- yarnService.list(id)
+              _ <- yarnService.updateYarnResources(request, currentYarn.get(0).get.id.get, Instant.now()).onError {
                 case e: Throwable =>
                   logger
                     .error(

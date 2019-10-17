@@ -1,18 +1,18 @@
 package io.phdata.services
 
+import java.io._
+import java.net.InetAddress
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+
 import cats.effect._
+import io.phdata.itest.fixtures._
+import org.http4s.client.blaze.BlazeClientBuilder
+import org.http4s.{Header, Headers, HttpVersion, Method, Request, Uri}
+import org.scalatest.{FlatSpec, Matchers}
 
 import scala.concurrent.ExecutionContext
 import scala.concurrent.ExecutionContext.Implicits.global
-import org.scalatest.{FlatSpec, Matchers}
-import org.http4s.client.blaze.BlazeClientBuilder
-import org.http4s.{EntityEncoder, Header, Headers, HttpVersion, Method, Request, Uri}
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import java.io._
-import java.net.InetAddress
-
-import io.phdata.itest.fixtures._
 
 
 class BundleServiceIntegration extends FlatSpec with Matchers{
