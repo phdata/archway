@@ -1,3 +1,27 @@
+## 2.2.0
+
+### Enhancements
+
+- Add optional configuration 'Archway Authorization Group DN'. If this is set, only users in this group
+  will be allowed to log into Archway. 4390c028ef887e312b0c99658212112e57ad2e89
+- Customizable links. Links can be customized by the operations users in the 'manage' tab of the application.
+  Links can be organized into groups, updated, or deleted. Automatic resolution of links (like Hue and Yarn RM)
+  has been removed because much of the time it would have to be overridden anyways. Automatic link resolution may be added
+  at a later time. 444d20530b7fd9877c20170bb6cc376b05014203
+- Yarn resource pool cores/memory can now be updated by operations users with the 'update' button below a resource pool
+  info box. 2a502eb4726cde920d4e6b40da63556d33a2eda7
+- Disk quota is configurable in the UI by the operations users. a717c13771f46b478cd5e8f9bd4c12cf9b8c9b84
+- Set the X-Frame-Options to DENY to disallow any type of clickjacking attacks. 95f2bd06749df630b5068b7e9e68a53a54e3f5bf
+
+### Bug Fixes
+
+- Fix a bug where users weren't removed from Sentry AD groups when removed from a workspace. 79f85ff3f15ca376967c35c986b8b5211b868c04
+- Removed the concept of a 'superuser'. The superuser had extra permissions if they were in both 'operations' and
+  'compliance' groups. The permissions have been transferred to the operations users because they users need the ability
+  to view all workspaces and do administrative actions like provision or deprovision workspaces. 198863e16175581a64b60cb71a9119b5ef412c40
+- Fix a bug where CM would show duplicate port errors, even when there was no real port conflict. 562d897bff76121bbeb13e3aaaac1bcc90201994
+- Fix a bug where some elements failed to render when fetching hive tables failed in a workspace. 078cb02a3fdcd0593a8b062f011df18911a430bc
+
 ## 2.1.3
 
 - Don't show cluster status, it is difficult for users to interpret. 72f134b3cb15fe8b99a02cf600780e1b56bd393e
