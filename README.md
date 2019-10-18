@@ -1,4 +1,16 @@
-<img src="images/logo.svg" width=200 height=200/>
+<p align="center">
+  <img src="logo.svg" alt="logo" width=200 height=20 />
+
+  <h3 align="center"></h3>
+
+  <p align="center">
+    Archway
+    <br>
+
+  </p>
+</p>
+
+<br>
 
 Archway is a self-service resource provisioning and management tool for Hadoop clusters. It takes care of creating
 Hive databases, Kafka topics, and Yarn resource pools in a structured manner. It will also centrally manage role based
