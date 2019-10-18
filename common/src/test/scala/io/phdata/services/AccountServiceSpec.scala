@@ -83,13 +83,13 @@ class AccountServiceSpec extends FlatSpec with MockFactory with Matchers with Ap
     val spnegoHeader = "Negotiate fDcadfaeRadfcX"
 
     context.kerberosClient.spnegoUsername _ expects spnegoHeader returning EitherT.rightT(username)
-    context.lookupLDAPClient.getUser _ expects username returning OptionT.some(ldapUser)
+    context.lookupLDAPClient.findUserByUserName _ expects username returning OptionT.some(ldapUser)
 
     val Right(token) = accountService.spnegoAuth(spnegoHeader).unsafeRunSync()
   }
 
   it should "validate a valid token" in new Context {
-    context.lookupLDAPClient.findUser _ expects standardUserDN returning OptionT.some(ldapUser)
+    context.lookupLDAPClient.findUserByDN _ expects standardUserDN returning OptionT.some(ldapUser)
     val maybeUser = accountService.validate(infraApproverToken).value.unsafeRunSync()
     maybeUser.isRight shouldBe true
     maybeUser.right.get should be(infraApproverUser)

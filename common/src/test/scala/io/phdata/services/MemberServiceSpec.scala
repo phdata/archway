@@ -30,7 +30,7 @@ class MemberServiceSpec
   it should "list members" in new Context {
     val dataPermissions = MemberRightsRecord("data", standardUserDN.value, systemName, id, Manager)
     context.memberRepository.list _ expects id returning List(dataPermissions).pure[ConnectionIO]
-    context.lookupLDAPClient.findUser _ expects standardUserDN returning OptionT.some(LDAPUser(personName, standardUsername, standardUserDN, Seq.empty, None))
+    context.lookupLDAPClient.findUserByDN _ expects standardUserDN returning OptionT.some(LDAPUser(personName, standardUsername, standardUserDN, Seq.empty, None))
 
     val members = memberService.members(id).unsafeRunSync()
 
@@ -47,10 +47,10 @@ class MemberServiceSpec
     val newMember = DistinguishedName(s"cn=username,${appConfig.ldap.userPath.get}")
     context.ldapRepository.find _ expects("data", id, "manager") returning OptionT[ConnectionIO, LDAPRegistration](Option(savedLDAP).pure[ConnectionIO])
     context.memberRepository.create _ expects(newMember, id) returning id.pure[ConnectionIO]
-    context.provisioningLDAPClient.addUser _ expects(savedLDAP.distinguishedName, newMember) returning OptionT.some(newMember.value)
+    context.provisioningLDAPClient.addUserToGroup _ expects(savedLDAP.distinguishedName, newMember) returning OptionT.some(newMember.value)
     context.memberRepository.complete _ expects(id, newMember) returning id.toInt.pure[ConnectionIO]
     context.memberRepository.get _ expects id returning List(MemberRightsRecord("data", newMember.value, savedHive.name, id, Manager)).pure[ConnectionIO]
-    (context.lookupLDAPClient.findUser _).expects(newMember).returning(OptionT.some(LDAPUser(personName, "username", newMember, Seq.empty, Some("username@phdata.io")))).repeated(2)
+    (context.lookupLDAPClient.findUserByDN _).expects(newMember).returning(OptionT.some(LDAPUser(personName, "username", newMember, Seq.empty, Some("username@phdata.io")))).repeated(2)
     context.hdfsClient.createUserDirectory _ expects "username" returning new Path(s"/user/username").pure[IO]
     context.databaseRepository.findByWorkspace _ expects 123 returning List(savedHive).pure[ConnectionIO]
     context.hiveClient.createTable _ expects (savedHive.name, ImpalaService.TEMP_TABLE_NAME) returning 0.pure[IO]

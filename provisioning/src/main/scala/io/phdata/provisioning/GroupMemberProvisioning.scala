@@ -28,7 +28,7 @@ object GroupMemberProvisioning {
     override def run[F[_]: Sync: Clock](groupMember: GroupMember, workspaceContext: WorkspaceContext[F]): F[Unit] =
       for {
         _ <- workspaceContext.context.provisioningLDAPClient
-          .addUser(groupMember.groupDN, groupMember.distinguishedName)
+          .addUserToGroup(groupMember.groupDN, groupMember.distinguishedName)
           .value
           .void
       } yield ()
@@ -38,7 +38,7 @@ object GroupMemberProvisioning {
 
     override def run[F[_]: Sync: Clock](groupMember: GroupMember, workspaceContext: WorkspaceContext[F]): F[Unit] =
       workspaceContext.context.provisioningLDAPClient
-        .removeUser(groupMember.groupDN, groupMember.distinguishedName)
+        .removeUserFromGroup(groupMember.groupDN, groupMember.distinguishedName)
         .value
         .void
 

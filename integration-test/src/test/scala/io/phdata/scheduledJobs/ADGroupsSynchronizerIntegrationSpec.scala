@@ -76,7 +76,7 @@ class ADGroupsSynchronizerIntegrationSpec extends FlatSpec with KerberosTest wit
           case (context, synchronizer) =>
             for {
               ldapReg <- context.ldapRepository.create(ldapRegistration).transact(context.transactor)
-              _ <- context.provisioningLDAPClient.addUser(groupDN, userDN).value
+              _ <- context.provisioningLDAPClient.addUserToGroup(groupDN, userDN).value
               _ <- synchronizer.synchronize()
               groupMembers <- context.memberRepository.groupMembers.transact(context.transactor)
 

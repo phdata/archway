@@ -25,8 +25,34 @@ class LDAPClientImplIntegrationSpec
 
   val  groupName = "edh_sw_sesame"
   val groupDN = DistinguishedName(s"cn=$groupName,${itestConfig.ldap.groupPath}")
+  val userDN = DistinguishedName(s"CN=${systemTestConfig.existingUser},${itestConfig.ldap.userPath.get}")
 
   behavior of "LDAPClientImpl"
+
+  it should "find a user by DN" in {
+    val maybeUser = lookupClient.findUserByDN(userDN).value.unsafeRunSync()
+
+    maybeUser shouldBe defined
+  }
+
+  it should "not find a user by DN when user with that DN does not exist" in {
+    val userDN = DistinguishedName(s"cn=NotExistingUserName},${itestConfig.ldap.userPath.get}")
+    val maybeUser = lookupClient.findUserByDN(userDN).value.unsafeRunSync()
+
+    maybeUser shouldNot be (defined)
+  }
+
+  it should "find a user by username" in {
+    val maybeUser = lookupClient.findUserByUserName(systemTestConfig.existingUser).value.unsafeRunSync()
+
+    maybeUser shouldBe defined
+  }
+
+  it should "not find a user by username if user with that username does not exist" in {
+    val maybeUser = lookupClient.findUserByUserName("notExistingUserName").value.unsafeRunSync()
+
+    maybeUser shouldNot be (defined)
+  }
 
   it should "validate a user without AD group authorization" in {
     val maybeUser = lookupClient.validateUser(systemTestConfig.existingUser, systemTestConfig.existingPassword).value.unsafeRunSync()
@@ -43,7 +69,7 @@ class LDAPClientImplIntegrationSpec
     val userDN = s"cn=${systemTestConfig.existingUser},${itestConfig.ldap.userPath.get}"
 
     provisioningClient.createGroup(groupName, attributes).unsafeRunSync()
-    provisioningClient.addUser(groupDN, DistinguishedName(userDN)).value.unsafeRunSync()
+    provisioningClient.addUserToGroup(groupDN, DistinguishedName(userDN)).value.unsafeRunSync()
 
     val customConfigLookupClient = new LDAPClientImpl[IO](itestConfig.ldap.copy(authorizationDN = groupDN.value), _.lookupBinding)
 
@@ -61,7 +87,6 @@ class LDAPClientImplIntegrationSpec
   it should "create a group" in {
     val attributes = defaultLDAPAttributes(groupDN, groupName)
     val updated = attributes.patch(attributes.length - 1, List("gidNumber" -> "124"), 1)
-    println(updated)
 
     provisioningClient.createGroup(groupName, attributes).unsafeRunSync()
     provisioningClient.createGroup(groupName, updated).unsafeRunSync()
@@ -93,30 +118,45 @@ class LDAPClientImplIntegrationSpec
     attribute.get.getValue shouldBe "lorem ipsum"
   }
 
-  it should "add a user" in {
-    val userDN = s"cn=${systemTestConfig.existingUser},${itestConfig.ldap.userPath.get}"
-
+  it should "add a user to a group" in {
     provisioningClient.createGroup(groupName, defaultLDAPAttributes(groupDN, groupName)).unsafeRunSync()
-    provisioningClient.addUser(groupDN, DistinguishedName(userDN)).value.unsafeRunSync()
+    val initGroupMembers = provisioningClient.groupMembers(groupDN).unsafeRunSync()
+
+    provisioningClient.addUserToGroup(groupDN, userDN).value.unsafeRunSync()
+    val finalGroupMembers = provisioningClient.groupMembers(groupDN).unsafeRunSync()
+
+    initGroupMembers shouldBe empty
+    finalGroupMembers.size shouldBe 1
+    finalGroupMembers.head.distinguishedName shouldBe userDN
   }
 
-  it should "find a user" in {
-    val userDN = DistinguishedName(s"cn=${systemTestConfig.existingUser},${itestConfig.ldap.userPath.get}")
-    val maybeUser = lookupClient.findUser(userDN).value.unsafeRunSync()
-    println(maybeUser.get)
-    maybeUser shouldBe defined
-  }
+  it should "remove a user from a group" in {
+    provisioningClient.createGroup(groupName, defaultLDAPAttributes(groupDN, groupName)).unsafeRunSync()
+    val initGroupMembers = provisioningClient.groupMembers(groupDN).unsafeRunSync()
 
+    provisioningClient.addUserToGroup(groupDN, userDN).value.unsafeRunSync()
+    val addedGroupMembers = provisioningClient.groupMembers(groupDN).unsafeRunSync()
+
+    provisioningClient.removeUserFromGroup(groupDN, userDN).value.unsafeRunSync()
+    val finalGroupMembers = provisioningClient.groupMembers(groupDN).unsafeRunSync()
+
+    initGroupMembers shouldBe empty
+    addedGroupMembers.size shouldBe 1
+    addedGroupMembers.head.distinguishedName shouldBe userDN
+    finalGroupMembers shouldBe empty
+  }
+  
   it should "find all users" in {
     def userDN(username: String) = DistinguishedName(s"cn=$username,${itestConfig.ldap.userPath.get}")
 
     lookupClient.createGroup(groupName, defaultLDAPAttributes(groupDN, groupName)).unsafeRunSync()
-    lookupClient.addUser(groupDN, userDN("svc_heim_test1")).value.unsafeRunSync()
-    lookupClient.addUser(groupDN, userDN("svc_heim_test2")).value.unsafeRunSync()
+    // FIXME: Currently not working because ldap user "svc_heim_test1" was accidentally deleted, when user is created this should be uncommented
+    // lookupClient.addUserToGroup(groupDN, userDN("svc_heim_test1")).value.unsafeRunSync()
+    lookupClient.addUserToGroup(groupDN, userDN("svc_heim_test2")).value.unsafeRunSync()
 
     val result = lookupClient.groupMembers(DistinguishedName(groupDN.value)).unsafeRunSync()
 
-    result.length shouldBe 2
+    result.length shouldBe 1
   }
 
   it should "generate the correct modifications" in {

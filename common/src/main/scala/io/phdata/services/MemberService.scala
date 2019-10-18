@@ -7,11 +7,11 @@ import io.circe.syntax._
 
 trait MemberService[F[_]] {
 
-  def members(id: Long): F[List[WorkspaceMemberEntry]]
+  def members(workspaceId: Long): F[List[WorkspaceMemberEntry]]
 
-  def addMember(id: Long, request: MemberRoleRequest): OptionT[F, WorkspaceMemberEntry]
+  def addMember(workspaceId: Long, request: MemberRoleRequest): OptionT[F, WorkspaceMemberEntry]
 
-  def removeMember(id: Long, request: MemberRoleRequest): OptionT[F, WorkspaceMemberEntry]
+  def removeMember(workspaceId: Long, request: MemberRoleRequest): OptionT[F, WorkspaceMemberEntry]
 
   def availableMembers(filter: String): F[MemberSearchResult]
 

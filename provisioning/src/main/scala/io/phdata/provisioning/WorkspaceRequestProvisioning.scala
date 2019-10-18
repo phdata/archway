@@ -40,7 +40,7 @@ trait WorkspaceRequestProvisioning {
 
       val createUserWorkspace =
         (for {
-          user <- workspaceContext.context.lookupLDAPClient.findUser(workspace.requestedBy)
+          user <- workspaceContext.context.lookupLDAPClient.findUserByDN(workspace.requestedBy)
           _ <- OptionT.liftF(workspaceContext.context.hdfsClient.createUserDirectory(user.username))
         } yield ()).value
 

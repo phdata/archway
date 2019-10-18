@@ -90,7 +90,7 @@ class LDAPClientImpl[F[_]: Effect](ldapConfig: LDAPConfig, binding: LDAPConfig =
       )
     )
 
-  override def findUser(distinguishedName: DistinguishedName): OptionT[F, LDAPUser] =
+  override def findUserByDN(distinguishedName: DistinguishedName): OptionT[F, LDAPUser] =
     getEntry(distinguishedName).map(ldapUser)
 
   override def validateUser(username: String, password: Password): OptionT[F, LDAPUser] =
@@ -111,7 +111,7 @@ class LDAPClientImpl[F[_]: Effect](ldapConfig: LDAPConfig, binding: LDAPConfig =
       }
     }
 
-  override def getUser(username: String): OptionT[F, LDAPUser] = getUserEntry(username).map(ldapUser)
+  override def findUserByUserName(username: String): OptionT[F, LDAPUser] = getUserEntry(username).map(ldapUser)
 
   private def ldapBindingAsOption(
       distinguishedName: String,
@@ -209,7 +209,7 @@ class LDAPClientImpl[F[_]: Effect](ldapConfig: LDAPConfig, binding: LDAPConfig =
         }
       } else Option.empty[Unit].pure[F]
 
-  override def addUser(groupDN: DistinguishedName, distinguishedName: DistinguishedName): OptionT[F, String] =
+  override def addUserToGroup(groupDN: DistinguishedName, distinguishedName: DistinguishedName): OptionT[F, String] =
     for {
       _ <- OptionT.liftF(Sync[F].pure(logger.info("getting group {}", groupDN)))
       groupEntry <- getEntry(groupDN)
@@ -229,12 +229,16 @@ class LDAPClientImpl[F[_]: Effect](ldapConfig: LDAPConfig, binding: LDAPConfig =
       searchResult.getSearchEntries.asScala.map(ldapUser).toList
     }
 
-  override def removeUser(groupDN: DistinguishedName, memberDN: DistinguishedName): OptionT[F, String] =
+  override def removeUserFromGroup(groupDN: DistinguishedName, memberDN: DistinguishedName): OptionT[F, String] =
     OptionT(getEntry(groupDN).value.map {
-      case Some(group) if group.hasAttribute("member") && group.getAttributeValues("member").contains(memberDN) =>
+      case Some(group) if group.hasAttribute("member") && group.getAttributeValues("member").contains(memberDN.value) =>
+        logger.info(s"Removing member: $memberDN from group $groupDN")
         connectionPool.modify(groupDN.value, new Modification(ModificationType.DELETE, "member", memberDN.value))
         Some(memberDN.value)
-      case _ => Some(memberDN.value) //no-op
+      case _ => {
+        logger.info("Removing member: No action is needed")
+        Some(memberDN.value)
+      } //no-op
     })
 
   def lookup(filter: String): F[List[SearchResultEntry]] =

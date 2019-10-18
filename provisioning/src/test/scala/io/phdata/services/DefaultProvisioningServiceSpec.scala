@@ -29,7 +29,7 @@ class DefaultProvisioningServiceSpec
 
   it should "fire and forget" in new Context {
     // make sure we actually call provisioning code, but take "too long"
-    context.lookupLDAPClient.findUser _ expects (standardUserDN) returning OptionT.some(ldapUser)
+    context.lookupLDAPClient.findUserByDN _ expects (standardUserDN) returning OptionT.some(ldapUser)
     (context.hdfsClient.createUserDirectory _)
       .expects(standardUsername)
       .returning(
@@ -52,7 +52,7 @@ class DefaultProvisioningServiceSpec
 
   it should "allow more than required approvals" in new Context {
     // make sure we actually call provisioning code, but take "too long"
-    context.lookupLDAPClient.findUser _ expects (standardUserDN) returning OptionT.some(ldapUser)
+    context.lookupLDAPClient.findUserByDN _ expects (standardUserDN) returning OptionT.some(ldapUser)
     (context.hdfsClient.createUserDirectory _)
       .expects(standardUsername)
       .returning(
@@ -74,7 +74,7 @@ class DefaultProvisioningServiceSpec
   it should "provision a workspace" in new Context {
     inSequence {
       inSequence {
-        context.lookupLDAPClient.findUser _ expects (standardUserDN) returning OptionT.some(ldapUser)
+        context.lookupLDAPClient.findUserByDN _ expects (standardUserDN) returning OptionT.some(ldapUser)
         (context.hdfsClient.createUserDirectory _)
           .expects(standardUsername) returning new Path(standardUsername).pure[IO]
         context.hdfsClient.createHiveDirectory _ expects(savedHive.location) returning IO
@@ -109,7 +109,7 @@ class DefaultProvisioningServiceSpec
       }
 
       inSequence {
-        context.provisioningLDAPClient.addUser _ expects(savedLDAP.distinguishedName, standardUserDN) returning OptionT.some(standardUserDN.value)
+        context.provisioningLDAPClient.addUserToGroup _ expects(savedLDAP.distinguishedName, standardUserDN) returning OptionT.some(standardUserDN.value)
         context.memberRepository.complete _ expects(id, standardUserDN) returning 0.pure[ConnectionIO]
       }
 
@@ -130,7 +130,7 @@ class DefaultProvisioningServiceSpec
       }
 
       inSequence {
-        context.provisioningLDAPClient.addUser _ expects(savedLDAP.distinguishedName, standardUserDN) returning OptionT.some(standardUserDN.value)
+        context.provisioningLDAPClient.addUserToGroup _ expects(savedLDAP.distinguishedName, standardUserDN) returning OptionT.some(standardUserDN.value)
         context.memberRepository.complete _ expects(id, standardUserDN) returning 0.pure[ConnectionIO]
       }
 
@@ -156,7 +156,7 @@ class DefaultProvisioningServiceSpec
 
   it should "deprovision a workspace" in new Context {
     inSequence {
-      context.provisioningLDAPClient.removeUser _ expects(savedLDAP.distinguishedName, standardUserDN) returning OptionT.some(standardUserDN.value)
+      context.provisioningLDAPClient.removeUserFromGroup _ expects(savedLDAP.distinguishedName, standardUserDN) returning OptionT.some(standardUserDN.value)
 
       inSequence {
         context.sentryClient.removePrivilege _ expects(*, *, *) returning IO.unit
@@ -166,7 +166,7 @@ class DefaultProvisioningServiceSpec
       }
 
       context.yarnClient.deletePool _ expects poolName returning IO.unit
-      context.provisioningLDAPClient.removeUser _ expects(savedLDAP.distinguishedName, standardUserDN) returning OptionT.some(standardUserDN.value)
+      context.provisioningLDAPClient.removeUserFromGroup _ expects(savedLDAP.distinguishedName, standardUserDN) returning OptionT.some(standardUserDN.value)
 
       inSequence {
         context.sentryClient.removeAccessToLocation _ expects(savedHive.location, savedLDAP.sentryRole) returning IO.unit

@@ -19,7 +19,7 @@ class MemberServiceImpl[F[_]](context: AppContext[F])(implicit val F: Effect[F])
     memberRightsRecord
       .groupBy(_.distinguishedName)
       .map { e =>
-        context.lookupLDAPClient.findUser(DistinguishedName(e._1)).map { user =>
+        context.lookupLDAPClient.findUserByDN(DistinguishedName(e._1)).map { user =>
           WorkspaceMemberEntry(
             e._1,
             user.name,
@@ -35,10 +35,10 @@ class MemberServiceImpl[F[_]](context: AppContext[F])(implicit val F: Effect[F])
       .traverse(_.value)
       .map(_.flatten)
 
-  def members(id: Long): F[List[WorkspaceMemberEntry]] =
-    context.memberRepository.list(id).transact(context.transactor).flatMap(convertRecord)
+  def members(workspaceId: Long): F[List[WorkspaceMemberEntry]] =
+    context.memberRepository.list(workspaceId).transact(context.transactor).flatMap(convertRecord)
 
-  def addMember(id: Long, memberRequest: MemberRoleRequest): OptionT[F, WorkspaceMemberEntry] =
+  def addMember(workspaceId: Long, memberRequest: MemberRoleRequest): OptionT[F, WorkspaceMemberEntry] =
     for {
       registration <- OptionT(
         context.ldapRepository
@@ -51,11 +51,12 @@ class MemberServiceImpl[F[_]](context: AppContext[F])(implicit val F: Effect[F])
         logger.info(s"adding ${memberRequest.distinguishedName} to ${registration.commonName} in ldap")
       )
 
-      user <- context.lookupLDAPClient.findUser(memberRequest.distinguishedName)
+      user <- context.lookupLDAPClient.findUserByDN(memberRequest.distinguishedName)
 
       _ <- OptionT.liftF(context.hdfsClient.createUserDirectory(user.username))
 
-      _ <- context.provisioningLDAPClient.addUser(registration.distinguishedName, memberRequest.distinguishedName)
+      _ <- context.provisioningLDAPClient
+        .addUserToGroup(registration.distinguishedName, memberRequest.distinguishedName)
 
       _ <- OptionT.some[F](
         logger.info(s"adding ${memberRequest.distinguishedName} to ${registration.commonName} in db")
@@ -78,12 +79,12 @@ class MemberServiceImpl[F[_]](context: AppContext[F])(implicit val F: Effect[F])
 
       result <- OptionT.liftF(convertRecord(member))
 
-      _ <- OptionT.liftF(ImpalaService.invalidateMetadata(id)(context))
+      _ <- OptionT.liftF(ImpalaService.invalidateMetadata(workspaceId)(context))
 
       _ <- OptionT.some[F](logger.info(result.toString()))
     } yield result.head
 
-  def removeMember(id: Long, memberRequest: MemberRoleRequest): OptionT[F, WorkspaceMemberEntry] =
+  def removeMember(workspaceId: Long, memberRequest: MemberRoleRequest): OptionT[F, WorkspaceMemberEntry] =
     for {
       _ <- OptionT.some[F](
         logger.info(
@@ -106,7 +107,7 @@ class MemberServiceImpl[F[_]](context: AppContext[F])(implicit val F: Effect[F])
 
       member <- OptionT.liftF(
         registration
-          .map(reg => context.memberRepository.find(id, reg.distinguishedName))
+          .map(reg => context.memberRepository.find(workspaceId, reg.distinguishedName))
           .sequence
           .transact(context.transactor)
           .map(_.toList.flatten)
@@ -120,15 +121,27 @@ class MemberServiceImpl[F[_]](context: AppContext[F])(implicit val F: Effect[F])
         registration
           .map(
             reg =>
-              context.provisioningLDAPClient.removeUser(reg.distinguishedName, memberRequest.distinguishedName).value
+              for {
+                _ <- context.provisioningLDAPClient
+                  .removeUserFromGroup(reg.distinguishedName, memberRequest.distinguishedName)
+                  .value
+                groupMembers <- context.provisioningLDAPClient.groupMembers(reg.distinguishedName)
+                _ <- if (groupMembers.map(_.distinguishedName).contains(memberRequest.distinguishedName)) {
+                  logger.error(
+                    s"[REMOVING MEMBER] ${memberRequest.distinguishedName} wasn't properly removed from ${registration
+                      .map(_.commonName)}"
+                  )
+                  throw new Exception()
+                  ().pure[F]
+                } else
+                  logger
+                    .info(
+                      s"[REMOVING MEMBER] removed ${memberRequest.distinguishedName} from ${registration.map(_.commonName)}"
+                    )
+                    .pure[F]
+              } yield ()
           )
           .sequence
-      )
-
-      _ <- OptionT.some[F](
-        logger.info(
-          s"[REMOVING MEMBER] removed ${memberRequest.distinguishedName} from ${registration.map(_.commonName)}"
-        )
       )
 
       _ <- OptionT.liftF(

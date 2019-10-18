@@ -67,7 +67,7 @@ class AccountServiceImpl[F[_]: Sync: Timer](
       maybeToken <- EitherT.fromEither[F](decode(token, restConfig.secret, algo))
       user <- EitherT.fromEither[F](maybeToken.as[User])
       result <- EitherT.fromOptionF(
-        context.lookupLDAPClient.findUser(user.distinguishedName).value,
+        context.lookupLDAPClient.findUserByDN(user.distinguishedName).value,
         new Throwable()
       ) // TODO `findUser` should return an Either
     } yield convertUser(result)
@@ -97,7 +97,7 @@ class AccountServiceImpl[F[_]: Sync: Timer](
     val token: EitherT[F, Throwable, Token] = for {
       username <- context.kerberosClient.spnegoUsername(header)
       maybeUser <- EitherT
-        .fromOptionF(context.lookupLDAPClient.getUser(username).value, new Exception("LDAP user not found"))
+        .fromOptionF(context.lookupLDAPClient.findUserByUserName(username).value, new Exception("LDAP user not found"))
       token <- EitherT.liftF(refresh(maybeUser))
     } yield token
 

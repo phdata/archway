@@ -20,21 +20,21 @@ case class LDAPUser(
 )
 
 trait LDAPClient[F[_]] {
-  def findUser(distinguishedName: DistinguishedName): OptionT[F, LDAPUser]
+  def findUserByDN(distinguishedName: DistinguishedName): OptionT[F, LDAPUser]
+
+  def findUserByUserName(username: String): OptionT[F, LDAPUser]
 
   def validateUser(username: String, password: Password): OptionT[F, LDAPUser]
 
-  def getUser(username: String): OptionT[F, LDAPUser]
-
   def createGroup(groupName: String, attributes: List[(String, String)]): F[Unit]
 
-  def addUser(groupName: DistinguishedName, distinguishedName: DistinguishedName): OptionT[F, String]
+  def deleteGroup(groupDN: DistinguishedName): OptionT[F, String]
 
-  def removeUser(groupName: DistinguishedName, distinguishedName: DistinguishedName): OptionT[F, String]
+  def addUserToGroup(groupName: DistinguishedName, distinguishedName: DistinguishedName): OptionT[F, String]
+
+  def removeUserFromGroup(groupName: DistinguishedName, distinguishedName: DistinguishedName): OptionT[F, String]
 
   def groupMembers(groupDN: DistinguishedName): F[List[LDAPUser]]
 
   def search(filter: String): F[MemberSearchResult]
-
-  def deleteGroup(groupDN: DistinguishedName): OptionT[F, String]
 }
