@@ -7,6 +7,7 @@ import { Profile } from './components';
 import * as selectors from '../../redux/selectors';
 import { Profile as UserProfile } from '../../models/Profile';
 import { ManagePage } from '../Manage/constants';
+import { FeatureFlagType } from '../../constants';
 
 function getKeyFromPath(path: string): string {
   if (path.startsWith('/home')) {
@@ -33,10 +34,11 @@ function getKeyFromPath(path: string): string {
 
 interface Props extends RouteComponentProps<any> {
   profile: UserProfile;
+  featureFlags: string[];
 }
 
-const manageNavigation = (profile: UserProfile): string => {
-  if (profile.permissions.risk_management) {
+const manageNavigation = (profile: UserProfile, featureFlags: string[]): string => {
+  if (profile.permissions.risk_management && featureFlags.includes(FeatureFlagType.ComplianceBuilder)) {
     return ManagePage.ComplianceTab;
   } else if (profile.permissions.platform_operations) {
     return ManagePage.LinksTab;
@@ -45,7 +47,7 @@ const manageNavigation = (profile: UserProfile): string => {
   }
 };
 
-const Navigation = ({ location, profile }: Props) => (
+const Navigation = ({ location, profile, featureFlags }: Props) => (
   <Layout.Sider width={250} style={{ overflow: 'auto', height: '100vh', position: 'fixed', left: 0 }}>
     <Link to="/home">
       <img
@@ -88,13 +90,15 @@ const Navigation = ({ location, profile }: Props) => (
           </NavLink>
         </Menu.Item>
       )}
-      {profile && (profile.permissions.platform_operations || profile.permissions.risk_management) && (
-        <Menu.Item key="manage">
-          <NavLink to={`/manage/${manageNavigation(profile)}`}>
-            <Icon type="profile" style={{ fontSize: 18 }} /> Manage
-          </NavLink>
-        </Menu.Item>
-      )}
+      {profile &&
+        (profile.permissions.platform_operations ||
+          (profile.permissions.risk_management && featureFlags.includes(FeatureFlagType.ComplianceBuilder))) && (
+          <Menu.Item key="manage">
+            <NavLink to={`/manage/${manageNavigation(profile, featureFlags)}`}>
+              <Icon type="profile" style={{ fontSize: 18 }} /> Manage
+            </NavLink>
+          </Menu.Item>
+        )}
       <Menu.Item key="request">
         <NavLink to="/request">
           <Icon type="plus" style={{ fontSize: 18 }} /> New Workspace
@@ -108,6 +112,7 @@ const Navigation = ({ location, profile }: Props) => (
 const mapStateToProps = () =>
   createStructuredSelector({
     profile: selectors.getProfile(),
+    featureFlags: selectors.getFeatureFlags(),
   });
 
 export default withRouter(connect(mapStateToProps)(Navigation));

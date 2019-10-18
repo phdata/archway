@@ -10,7 +10,8 @@ import { ComplianceContent, Question, LinksGroup, Link } from '../../models/Mana
 import { ComplianceTab, LinksTab } from './components/tabs';
 import { ManagePage } from './constants';
 import { Profile } from '../../models/Profile';
-import { getProfile } from '../../redux/selectors';
+import { getProfile, getFeatureFlags } from '../../redux/selectors';
+import { FeatureFlagType } from '../../constants';
 
 const { TabPane } = Tabs;
 
@@ -24,6 +25,7 @@ interface Props extends RouteComponentProps<any> {
   selectedLinksGroup: LinksGroup;
 
   profile: Profile;
+  featureFlags: string[];
 
   removeQuestion: (index: number) => void;
   clearSelectedCompliance: () => void;
@@ -91,6 +93,7 @@ class Manage extends React.Component<Props> {
       addNewLink,
       removeLink,
       profile,
+      featureFlags,
     } = this.props;
     const { tab } = this.props.match.params;
 
@@ -103,7 +106,7 @@ class Manage extends React.Component<Props> {
           activeKey={tab}
           onChange={this.handleTabsClick}
         >
-          {profile && profile.permissions.risk_management && (
+          {profile && profile.permissions.risk_management && featureFlags.includes(FeatureFlagType.ComplianceBuilder) && (
             <TabPane tab="Compliances" key={ManagePage.ComplianceTab}>
               <ComplianceTab
                 compliances={compliances}
@@ -157,6 +160,7 @@ const mapStateToProps = () =>
     selectedLinksGroup: selectors.getSelectedLinksGroup(),
 
     profile: getProfile(),
+    featureFlags: getFeatureFlags(),
   });
 
 const mapDispatchToProps = (dispatch: any) => ({

@@ -23,6 +23,7 @@ export enum FeatureFlagType {
   Application = 'application',
   Messaging = 'messaging',
   DiskQuota = 'disk-quota',
+  ComplianceBuilder = 'compliance-builder',
 }
 
 export enum ProvisioningType {
