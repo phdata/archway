@@ -23,7 +23,7 @@ const LinksGroupsList = ({ loading, linksGroups, history, match, clearSelectedLi
         history.push(`${match.url}/add`);
       }}
     >
-      Add a new custom links
+      Add new link group
     </Button>
     <List
       grid={{ gutter: 16, lg: 3, md: 2, sm: 1 }}
