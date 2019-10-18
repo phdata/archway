@@ -10,7 +10,7 @@ import io.phdata.models.Yarn
 
 trait YarnService[F[_]] {
 
-  def updateYarnResources(yarn: Yarn, workspaceId: Long, instant: Instant): F[Unit]
+  def updateYarnResources(yarn: Yarn, resourcePoolId: Long, instant: Instant): F[Unit]
 
   def list(workspaceId: Long): F[List[Yarn]]
 }

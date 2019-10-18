@@ -206,4 +206,4 @@ export const modifyCoreMemorySize = (
   pool_name: string,
   max_cores: number,
   max_memory_in_gb: number
-) => withBody(`/workspaces/${id}/yarn`, token, { pool_name, max_cores, max_memory_in_gb });
+) => withBody(`/workspaces/${id}/yarn`, token, { pool_name, max_cores, max_memory_in_gb }, 'POST', true, false);

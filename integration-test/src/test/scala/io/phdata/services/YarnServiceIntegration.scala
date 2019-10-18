@@ -1,7 +1,6 @@
 package io.phdata.services
 
 import cats.effect.{ContextShift, IO, Resource}
-import cats.implicits._
 import io.phdata.AppContext
 import io.phdata.caching.CacheEntry
 import io.phdata.models.Yarn
@@ -19,14 +18,14 @@ class YarnServiceIntegration extends FlatSpec with Matchers {
     val result = resources.use { service =>
       for {
         currentYarn <- service.list(workspaceId)
-        _ <- service.updateYarnResources(updateYarn, currentYarn.get(0).get.id.get, timer.instant)
+        _ <- service.updateYarnResources(updateYarn, currentYarn.head.id.get, timer.instant)
         dbGroups <- service.list(workspaceId)
       } yield dbGroups
     }.unsafeRunSync()
 
-    assert(result.get(0).get.poolName == updateYarn.poolName)
-    assert(result.get(0).get.maxCores == updateYarn.maxCores)
-    assert(result.get(0).get.maxMemoryInGB == updateYarn.maxMemoryInGB)
+    assert(result.head.poolName == updateYarn.poolName)
+    assert(result.head.maxCores == updateYarn.maxCores)
+    assert(result.head.maxMemoryInGB == updateYarn.maxMemoryInGB)
   }
 
   trait Context{

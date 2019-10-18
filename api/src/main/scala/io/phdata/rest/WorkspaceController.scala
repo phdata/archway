@@ -333,7 +333,7 @@ class WorkspaceController[F[_]: Sync: Timer: ContextShift: ConcurrentEffect](
             for {
               request <- req.req.as[Yarn]
               currentYarn <- yarnService.list(id)
-              _ <- yarnService.updateYarnResources(request, currentYarn.get(0).get.id.get, Instant.now()).onError {
+              _ <- yarnService.updateYarnResources(request, currentYarn.head.id.get, Instant.now()).onError {
                 case e: Throwable =>
                   logger
                     .error(
