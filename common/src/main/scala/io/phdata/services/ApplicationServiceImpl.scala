@@ -18,14 +18,14 @@ class ApplicationServiceImpl[F[_]](
   override def create(
       username: DistinguishedName,
       workspaceId: Long,
-      applicationRrequest: ApplicationRequest
+      applicationRequest: ApplicationRequest
   ): F[Application] =
     for {
       workspace <- appContext.workspaceRequestRepository.find(workspaceId).value.transact(appContext.transactor)
 
       _ <- F.pure(logger.warn("found {}", workspace))
 
-      app <- applicationGenerator.applicationFor(applicationRrequest, workspace.get)
+      app <- applicationGenerator.applicationFor(applicationRequest, workspace.get)
 
       saved <- (for {
         ldap <- appContext.ldapRepository.create(app.group)
