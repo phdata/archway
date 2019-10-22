@@ -55,8 +55,13 @@ class WorkspaceRequestRepositoryImpl(sqlSyntax: SqlSyntax) extends WorkspaceRequ
   override def linkApplication(workspaceId: Long, applicationId: Long): doobie.ConnectionIO[Int] =
     statements.linkApplication(workspaceId, applicationId).run
 
-  override def findByUsername(distinguishedName: DistinguishedName): OptionT[doobie.ConnectionIO, WorkspaceRequest] =
-    OptionT(statements.findByUsername(distinguishedName).option)
+  override def findByDistinguishedName(
+      distinguishedName: DistinguishedName
+  ): OptionT[doobie.ConnectionIO, WorkspaceRequest] =
+    OptionT(statements.findByDistinguishedName(distinguishedName).option)
+
+  override def findByName(name: String): OptionT[ConnectionIO, WorkspaceRequest] =
+    OptionT(statements.findName(name).option)
 
   override def pendingQueue(role: ApproverRole): ConnectionIO[List[WorkspaceSearchResult]] =
     statements.pending(role).to[List]
@@ -205,9 +210,12 @@ class WorkspaceRequestRepositoryImpl(sqlSyntax: SqlSyntax) extends WorkspaceRequ
     def markUnprovisioned(id: Long): Update0 =
       sql"update workspace_request SET workspace_created = null where id = $id".update
 
-    def findByUsername(distinguishedName: DistinguishedName): Query0[WorkspaceRequest] =
+    def findByDistinguishedName(distinguishedName: DistinguishedName): Query0[WorkspaceRequest] =
       (selectFragment ++ whereAnd(fr"wr.requested_by = ${distinguishedName.value}", fr"wr.single_user = '1'"))
         .query[WorkspaceRequest]
+
+    def findName(workspaceName: String): Query0[WorkspaceRequest] =
+      (selectFragment ++ whereAnd(fr"wr.name = $workspaceName")).query[WorkspaceRequest]
 
     def pending(role: ApproverRole): Query0[WorkspaceSearchResult] =
       (listFragment ++ whereAnd(fr"wr.single_user = '0' AND wr.deleted IS NULL OR wr.deleted != '1'")).query

@@ -4,7 +4,11 @@ import cats.data._
 import io.phdata.models._
 
 trait WorkspaceService[F[_]] {
-  def find(id: Long): OptionT[F, WorkspaceRequest]
+  def findById(id: Long): OptionT[F, WorkspaceRequest]
+
+  def findByDistinguishedName(distinguishedName: DistinguishedName): OptionT[F, WorkspaceRequest]
+
+  def findByName(name: String): OptionT[F, WorkspaceRequest]
 
   def list(distinguishedName: DistinguishedName): F[List[WorkspaceSearchResult]]
 
@@ -15,8 +19,6 @@ trait WorkspaceService[F[_]] {
   def approve(id: Long, approval: Approval): F[Approval]
 
   def status(id: Long): F[WorkspaceStatus]
-
-  def findByUsername(distinguishedName: DistinguishedName): OptionT[F, WorkspaceRequest]
 
   def yarnInfo(id: Long): F[List[YarnInfo]]
 

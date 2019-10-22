@@ -16,7 +16,7 @@ class EmailServiceImplSpec extends FlatSpec with Matchers with MockFactory with 
   it should "send a welcome email" in new Context {
     val newMember = DistinguishedName(s"cn=username,${appConfig.ldap.userPath.get}")
 
-    (workspaceService.find _).expects(id).returning(OptionT.some[IO](savedWorkspaceRequest))
+    (workspaceService.findById _).expects(id).returning(OptionT.some[IO](savedWorkspaceRequest))
     (context.lookupLDAPClient.findUserByDN _).expects(newMember).returning(OptionT.some[IO](LDAPUser(personName, "username", newMember, Seq.empty, Some("username@phdata.io"))))
     (context.emailClient.send _).expects(s"Archway Workspace: Welcome to ${name}", *, appConfig.smtp.fromEmail, "username@phdata.io").returning(IO.unit)
 

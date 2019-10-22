@@ -5,7 +5,7 @@ import java.time.Instant
 import cats.effect.{Clock, IO}
 import io.phdata.AppContext
 import io.phdata.clients.HDFSAllocation
-import io.phdata.test.fixtures.{AppContextProvider}
+import io.phdata.test.fixtures.AppContextProvider
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FlatSpec, Matchers}
 import io.phdata.test.fixtures._

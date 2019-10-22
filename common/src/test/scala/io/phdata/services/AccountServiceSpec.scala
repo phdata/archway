@@ -104,7 +104,7 @@ class AccountServiceSpec extends FlatSpec with MockFactory with Matchers with Ap
   }
 
   it should "return a workspace if one exists" in new Context {
-    workspaceService.findByUsername _ expects standardUserDN returning OptionT.some(savedWorkspaceRequest)
+    workspaceService.findByDistinguishedName _ expects standardUserDN returning OptionT.some(savedWorkspaceRequest)
 
     val maybeWorkspace = accountService.getWorkspace(standardUserDN).value.unsafeRunSync()
 
@@ -115,9 +115,9 @@ class AccountServiceSpec extends FlatSpec with MockFactory with Matchers with Ap
     val templateRequest = TemplateRequest(infraApproverUser.username, infraApproverUser.username, infraApproverUser.username, initialCompliance, infraApproverUser.distinguishedName)
     templateService.defaults _ expects infraApproverUser returning templateRequest.pure[IO]
     templateService.workspaceFor _ expects(templateRequest, "user") returning initialWorkspaceRequest.pure[IO]
-    workspaceService.findByUsername _ expects standardUserDN returning OptionT.none
+    workspaceService.findByDistinguishedName _ expects standardUserDN returning OptionT.none
     workspaceService.create _ expects initialWorkspaceRequest returning IO.pure(savedWorkspaceRequest)
-    workspaceService.find _ expects id returning OptionT.some(savedWorkspaceRequest)
+    workspaceService.findById _ expects id returning OptionT.some(savedWorkspaceRequest)
 
     provisioningService.attemptProvision _ expects(savedWorkspaceRequest, 0) returning NonEmptyList.one(SimpleMessage(1l, "").asInstanceOf[Message]).pure[IO].start(contextShift)
 

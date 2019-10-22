@@ -74,7 +74,7 @@ class AccountServiceImpl[F[_]: Sync: Timer](
   }
 
   override def createWorkspace(user: User): OptionT[F, WorkspaceRequest] = {
-    OptionT(workspaceService.findByUsername(user.distinguishedName).value.flatMap {
+    OptionT(workspaceService.findByDistinguishedName(user.distinguishedName).value.flatMap {
       case Some(_) => Sync[F].pure(None)
       case None =>
         for {
@@ -85,13 +85,13 @@ class AccountServiceImpl[F[_]: Sync: Timer](
             .map(_.copy(requestDate = Instant.ofEpochMilli(time)))
           savedWorkspace <- workspaceService.create(workspace)
           _ <- provisionService.attemptProvision(savedWorkspace, 0)
-          completed <- workspaceService.find(savedWorkspace.id.get).value
+          completed <- workspaceService.findById(savedWorkspace.id.get).value
         } yield completed
     })
   }
 
   override def getWorkspace(distinguishedName: DistinguishedName): OptionT[F, WorkspaceRequest] =
-    workspaceService.findByUsername(distinguishedName)
+    workspaceService.findByDistinguishedName(distinguishedName)
 
   override def spnegoAuth(header: String): F[Either[Throwable, Token]] = {
     val token: EitherT[F, Throwable, Token] = for {

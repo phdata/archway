@@ -15,34 +15,16 @@ class WorkspaceServiceImpl[F[_]: ConcurrentEffect: ContextShift](
     context: AppContext[F]
 ) extends WorkspaceService[F] with LazyLogging {
 
-  def fillHive(dbs: List[HiveAllocation]): F[List[HiveAllocation]] =
-    dbs.map {
-      case hive if hive.directoryCreated.isDefined =>
-        context.hdfsClient.getConsumption(hive.location).map(consumed => hive.copy(consumedInGB = Some(consumed)))
-      case hive => Effect[F].pure(hive)
-    }.sequence
+  override def findById(id: Long): OptionT[F, WorkspaceRequest] =
+    processFindResult(context.workspaceRequestRepository.find(id).value.transact(context.transactor))
 
-  override def find(id: Long): OptionT[F, WorkspaceRequest] =
-    OptionT(
-      context.workspaceRequestRepository.find(id).value.transact(context.transactor).flatMap {
-        case Some(workspace) =>
-          for {
-            full <- fill(workspace).transact(context.transactor)
-            hive <- fillHive(full.data)
-          } yield Some(full.copy(data = hive))
-        case None =>
-          None.asInstanceOf[Option[WorkspaceRequest]].pure[F]
-      }
+  override def findByDistinguishedName(distinguishedName: DistinguishedName): OptionT[F, WorkspaceRequest] =
+    processFindResult(
+      context.workspaceRequestRepository.findByDistinguishedName(distinguishedName).value.transact(context.transactor)
     )
 
-  private def fill(workspace: WorkspaceRequest): ConnectionIO[WorkspaceRequest] =
-    for {
-      datas <- context.databaseRepository.findByWorkspace(workspace.id.get)
-      yarns <- context.yarnRepository.findByWorkspaceId(workspace.id.get)
-      appr <- context.approvalRepository.findByWorkspaceId(workspace.id.get)
-      tops <- context.kafkaRepository.findByWorkspaceId(workspace.id.get)
-      apps <- context.applicationRepository.findByWorkspaceId(workspace.id.get)
-    } yield workspace.copy(data = datas, processing = yarns, approvals = appr, kafkaTopics = tops, applications = apps)
+  override def findByName(name: String): OptionT[F, WorkspaceRequest] =
+    processFindResult(context.workspaceRequestRepository.findByName(name).value.transact(context.transactor))
 
   override def list(distinguishedName: DistinguishedName): F[List[WorkspaceSearchResult]] =
     context.workspaceRequestRepository.list(distinguishedName).transact(context.transactor)
@@ -125,13 +107,13 @@ class WorkspaceServiceImpl[F[_]: ConcurrentEffect: ContextShift](
       }
     } yield newWorkspaceId
 
-    createResult.transact(context.transactor).flatMap(workspaceId => find(workspaceId).value.map(_.get))
+    createResult.transact(context.transactor).flatMap(workspaceId => findById(workspaceId).value.map(_.get))
   }
 
   override def approve(id: Long, approval: Approval): F[Approval] =
     for {
       approval <- context.approvalRepository.create(id, approval).transact(context.transactor)
-      maybeWorkspace <- find(id).value
+      maybeWorkspace <- findById(id).value
       _ <- maybeWorkspace
         .map(provisioningService.attemptProvision(_, context.appConfig.approvers.required))
         .getOrElse(().pure[F])
@@ -149,19 +131,6 @@ class WorkspaceServiceImpl[F[_]: ConcurrentEffect: ContextShift](
       }
     }
   }
-
-  override def findByUsername(distinguishedName: DistinguishedName): OptionT[F, WorkspaceRequest] =
-    OptionT(
-      context.workspaceRequestRepository.findByUsername(distinguishedName).value.transact(context.transactor).flatMap {
-        case Some(workspace) =>
-          for {
-            full <- fill(workspace).transact(context.transactor)
-            hive <- fillHive(full.data)
-          } yield Some(full.copy(data = hive))
-        case None =>
-          None.asInstanceOf[Option[WorkspaceRequest]].pure[F]
-      }
-    )
 
   override def yarnInfo(id: Long): F[List[YarnInfo]] =
     context.yarnRepository.findByWorkspaceId(id).transact(context.transactor).flatMap { workspace =>
@@ -191,7 +160,7 @@ class WorkspaceServiceImpl[F[_]: ConcurrentEffect: ContextShift](
   override def changeOwner(workspaceId: Long, newOwnerDN: DistinguishedName): F[Unit] = {
 
     val changeGroupMembership = for {
-      workspaceRequest <- find(workspaceId)
+      workspaceRequest <- findById(workspaceId)
       memberRightsRecords <- OptionT.liftF(
         context.memberRepository.find(workspaceId, workspaceRequest.requestedBy).transact(context.transactor)
       )
@@ -207,4 +176,34 @@ class WorkspaceServiceImpl[F[_]: ConcurrentEffect: ContextShift](
 
     changeGroupMembership.value.void
   }
+
+  private def processFindResult(findResult: F[Option[WorkspaceRequest]]): OptionT[F, WorkspaceRequest] = {
+    OptionT(
+      findResult.flatMap {
+        case Some(workspace) =>
+          for {
+            full <- fill(workspace).transact(context.transactor)
+            hive <- fillHive(full.data)
+          } yield Some(full.copy(data = hive))
+        case None =>
+          None.asInstanceOf[Option[WorkspaceRequest]].pure[F]
+      }
+    )
+  }
+
+  private def fill(workspace: WorkspaceRequest): ConnectionIO[WorkspaceRequest] =
+    for {
+      datas <- context.databaseRepository.findByWorkspace(workspace.id.get)
+      yarns <- context.yarnRepository.findByWorkspaceId(workspace.id.get)
+      appr <- context.approvalRepository.findByWorkspaceId(workspace.id.get)
+      tops <- context.kafkaRepository.findByWorkspaceId(workspace.id.get)
+      apps <- context.applicationRepository.findByWorkspaceId(workspace.id.get)
+    } yield workspace.copy(data = datas, processing = yarns, approvals = appr, kafkaTopics = tops, applications = apps)
+
+  private def fillHive(dbs: List[HiveAllocation]): F[List[HiveAllocation]] =
+    dbs.map {
+      case hive if hive.directoryCreated.isDefined =>
+        context.hdfsClient.getConsumption(hive.location).map(consumed => hive.copy(consumedInGB = Some(consumed)))
+      case hive => Effect[F].pure(hive)
+    }.sequence
 }

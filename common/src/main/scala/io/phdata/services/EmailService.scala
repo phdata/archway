@@ -25,7 +25,7 @@ class EmailServiceImpl[F[_]: Effect](context: AppContext[F], workspaceService: W
 
   override def newMemberEmail(workspaceId: Long, memberRoleRequest: MemberRoleRequest): OptionT[F, Unit] =
     for {
-      workspace <- workspaceService.find(workspaceId)
+      workspace <- workspaceService.findById(workspaceId)
       fromAddress = context.appConfig.smtp.fromEmail
       to <- context.lookupLDAPClient.findUserByDN(memberRoleRequest.distinguishedName)
       toAddress <- OptionT(Effect[F].pure(to.email))

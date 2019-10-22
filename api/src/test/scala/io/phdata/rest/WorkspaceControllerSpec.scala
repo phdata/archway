@@ -130,7 +130,7 @@ class WorkspaceControllerSpec
   }
 
   it should "provision workspace" in new Http4sClientDsl[IO] with Context {
-    workspaceService.find _ expects id returning OptionT.some(savedWorkspaceRequest)
+    workspaceService.findById _ expects id returning OptionT.some(savedWorkspaceRequest)
     provisioningService.attemptProvision _ expects(savedWorkspaceRequest, 0) returning NonEmptyList.one(SimpleMessage(id, "nothing to see here").asInstanceOf[provisioning.Message]).pure[IO].start(contextShift)
 
     val response = restApi.route.orNotFound.run(POST(Uri.uri("/123/provision")).unsafeRunSync())
@@ -139,7 +139,7 @@ class WorkspaceControllerSpec
 
   it should "return a 500 on a failed provision" in new Http4sClientDsl[IO] with Context {
     val error = provisioning.Error.message("", 1, new Exception())
-    workspaceService.find _ expects id returning OptionT.some(savedWorkspaceRequest)
+    workspaceService.findById _ expects id returning OptionT.some(savedWorkspaceRequest)
     provisioningService.attemptProvision _ expects(savedWorkspaceRequest, 0) returning error.pure[IO].start(contextShift)
 
     val response = restApi.route.orNotFound.run(POST(Uri.uri("/123/provision")).unsafeRunSync())
@@ -147,7 +147,7 @@ class WorkspaceControllerSpec
   }
 
   it should "deprovision workspace" in new Http4sClientDsl[IO] with Context {
-    workspaceService.find _ expects id returning OptionT.some(savedWorkspaceRequest)
+    workspaceService.findById _ expects id returning OptionT.some(savedWorkspaceRequest)
     provisioningService.attemptDeprovision _ expects(savedWorkspaceRequest) returning NonEmptyList.one(SimpleMessage(id, "nothing to see here").asInstanceOf[provisioning.Message]).pure[IO].start(contextShift)
 
     val response = restApi.route.orNotFound.run(POST(Uri.uri("/123/deprovision")).unsafeRunSync())
@@ -156,7 +156,7 @@ class WorkspaceControllerSpec
 
   it should "return a 500 on a failed deprovision" in new Http4sClientDsl[IO] with Context {
     val error = provisioning.Error.message("", 1, new Exception())
-    workspaceService.find _ expects id returning OptionT.some(savedWorkspaceRequest)
+    workspaceService.findById _ expects id returning OptionT.some(savedWorkspaceRequest)
     provisioningService.attemptDeprovision _ expects(savedWorkspaceRequest) returning error.pure[IO].start(contextShift)
 
     val response = restApi.route.orNotFound.run(POST(Uri.uri("/123/deprovision")).unsafeRunSync())
@@ -277,7 +277,7 @@ class WorkspaceControllerSpec
   }
 
   it should "set quota for the given size and resource id" in new Http4sClientDsl[IO] with Context {
-    workspaceService.find _ expects id returning OptionT.some(savedWorkspaceRequest)
+    workspaceService.findById _ expects id returning OptionT.some(savedWorkspaceRequest)
     hdfsService.setQuota _ expects ("/shared_workspaces/sw_sesame", hdfsRequestedSize, id, *) returning ().pure[IO]
 
     val response = restApi.route.orNotFound.run(POST(Uri.uri("/123/disk-quota/123/250")).unsafeRunSync()).unsafeRunSync()

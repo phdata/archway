@@ -63,7 +63,7 @@ class WorkspaceController[F[_]: Sync: Timer: ContextShift: ConcurrentEffect](
         case POST -> Root / LongVar(id) / "provision" as user =>
           if (user.isOpsUser) {
             for {
-              workspace <- workspaceService.find(id).value
+              workspace <- workspaceService.findById(id).value
               provisionFiber <- provisioningService.attemptProvision(workspace.get, 0)
               provisionResult <- provisionFiber.join.onError {
                 case e: Throwable =>
@@ -80,7 +80,7 @@ class WorkspaceController[F[_]: Sync: Timer: ContextShift: ConcurrentEffect](
         case POST -> Root / LongVar(id) / "deprovision" as user =>
           if (user.isOpsUser) {
             for {
-              workspace <- workspaceService.find(id).value
+              workspace <- workspaceService.findById(id).value
               provisionFiber <- provisioningService.attemptDeprovision(workspace.get)
               provisionResult <- provisionFiber.join.onError {
                 case e: Throwable =>
@@ -160,7 +160,7 @@ class WorkspaceController[F[_]: Sync: Timer: ContextShift: ConcurrentEffect](
             .flatMap(
               x =>
                 if (x) {
-                  workspaceService.find(id).value
+                  workspaceService.findById(id).value
                 } else {
                   None.asInstanceOf[Option[WorkspaceRequest]].pure[F]
                 }
@@ -350,7 +350,7 @@ class WorkspaceController[F[_]: Sync: Timer: ContextShift: ConcurrentEffect](
         case POST -> Root / LongVar(id) / "disk-quota" / LongVar(resourceId) / IntVar(size) as user =>
           if (user.isOpsUser) {
             for {
-              workspace <- workspaceService.find(id).value
+              workspace <- workspaceService.findById(id).value
               _ <- hdfsService
                 .setQuota(
                   workspace.get.data.find(hiveAllocation => hiveAllocation.id.get == resourceId).get.location,

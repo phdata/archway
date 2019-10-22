@@ -6,7 +6,7 @@ import io.phdata.models.HiveAllocation
 import doobie.free.connection.ConnectionIO
 
 trait HiveAllocationRepository {
-  def databaseCreated(workspaceId: Long, Instant: Any) = ???
+
   def find(id: Long): ConnectionIO[Option[HiveAllocation]]
 
   def create(hiveDatabase: HiveAllocation): ConnectionIO[Long]
@@ -18,4 +18,5 @@ trait HiveAllocationRepository {
   def quotaSet(id: Long, time: Instant): ConnectionIO[Int]
 
   def databaseCreated(id: Long, time: Instant): ConnectionIO[Int]
+
 }

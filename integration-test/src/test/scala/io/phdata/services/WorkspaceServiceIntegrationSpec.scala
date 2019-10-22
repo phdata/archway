@@ -46,7 +46,7 @@ class WorkspaceServiceIntegrationSpec extends FlatSpec with Matchers with Kerber
         workspaceRequest <- workspaceService.create(templateWorkspaceRequest)
         _ <- workspaceService.changeOwner(workspaceRequest.id.get, newDN)
         members <- memberService.members(workspaceRequest.id.get)
-        updatedWorkspaceRequest <- workspaceService.find(workspaceRequest.id.get).value
+        updatedWorkspaceRequest <- workspaceService.findById(workspaceRequest.id.get).value
         _ <- workspaceService.deleteWorkspace(workspaceRequest.id.get)
       } yield (members, updatedWorkspaceRequest)
     }.unsafeRunSync()
