@@ -8,7 +8,7 @@ import cats.implicits._
 import io.phdata.AppContext
 import io.phdata.caching.CacheEntry
 import io.phdata.config.TemplateNames
-import io.phdata.itest.fixtures.KerberosTest
+import io.phdata.itest.fixtures.{KerberosTest, SSLTest}
 import io.phdata.models.{Compliance, DistinguishedName, TemplateRequest}
 import io.phdata.services.{DBConfigService, JSONTemplateService, MemberServiceImpl, WorkspaceServiceImpl}
 import io.phdata.test.fixtures.TestTimer
@@ -16,8 +16,7 @@ import org.scalatest.FlatSpec
 
 import scala.concurrent.ExecutionContext
 
-class ProvisioningIntegrationSpec extends FlatSpec with KerberosTest {
-  System.setProperty("javax.net.ssl.trustStore", "itest-config/valhalla.jks")
+class ProvisioningIntegrationSpec extends FlatSpec with KerberosTest with SSLTest{
 
   implicit val timer: Timer[IO] = new TestTimer
   val requester = "CN=svc_heim_test1,OU=users,OU=Heimdali,DC=phdata,DC=io"

@@ -14,9 +14,7 @@ import io.phdata.itest.fixtures._
 import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext
 
-class CDHClusterServiceIntegrationSpec extends FlatSpec with Matchers {
-
-  System.setProperty("javax.net.ssl.trustStore", "itest-config/valhalla.jks")
+class CDHClusterServiceIntegrationSpec extends FlatSpec with Matchers with SSLTest {
 
   it should "return a cluster" in new Context {
 
