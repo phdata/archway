@@ -130,6 +130,7 @@ object Server extends IOApp with LazyLogging {
           StoreInfo(context.appConfig.rest.sslStore.get, context.appConfig.rest.sslStorePassword.get.value),
           context.appConfig.rest.sslKeyManagerPassword.get.value
         )
+        .withNio2(true)
         .resource
 
       _ <- Resource.liftF(logger.info("Server has started").pure[F])
