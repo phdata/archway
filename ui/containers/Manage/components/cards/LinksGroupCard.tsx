@@ -56,7 +56,7 @@ const LinksGroupCard: React.FunctionComponent<Props> = ({ linksGroup, match, pag
           borderTop: '1px solid #e8e8e8',
           padding: '15px 24px',
           height: cardHeight[page],
-          overflow: 'overlay',
+          overflow: 'auto',
           textAlign: 'left',
           fontSize: 15,
         }}
