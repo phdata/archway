@@ -3,10 +3,9 @@ package io.phdata.provisioning
 import java.util.concurrent.Executors
 
 import cats.data.NonEmptyList
-import cats.effect.{ContextShift, IO, Resource, Timer}
+import cats.effect.{ContextShift, IO, Timer}
 import cats.implicits._
 import io.phdata.AppContext
-import io.phdata.caching.CacheEntry
 import io.phdata.config.TemplateNames
 import io.phdata.itest.fixtures.{KerberosTest, SSLTest}
 import io.phdata.models.{Compliance, DistinguishedName, TemplateRequest}
@@ -151,8 +150,6 @@ class ProvisioningIntegrationSpec extends FlatSpec with KerberosTest with Before
       workspaceService = new WorkspaceServiceImpl[IO](provisionService, memberService, context)
       configService = new DBConfigService[IO](context)
       templateService = new JSONTemplateService[IO](context, configService)
-
-      _ <- Resource.liftF(context.clusterCache.put(CacheEntry(0L, Seq.empty)))
     } yield (provisionService, workspaceService, templateService)
   }
 

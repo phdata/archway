@@ -7,7 +7,7 @@ import com.typesafe.config.{Config, ConfigFactory}
 import doobie.util.ExecutionContexts
 import doobie.util.transactor.Transactor
 import io.phdata
-import io.phdata.caching.Cached
+import io.phdata.caching.{CacheEntry, Cached}
 import io.phdata.clients._
 import io.phdata.config.AppConfig
 import io.phdata.repositories._
@@ -98,6 +98,8 @@ object AppContext {
 
       cacheService = new TimedCacheService()
       clusterCache <- Resource.liftF(cacheService.initial[F, Seq[Cluster]])
+      _ <- Resource.liftF(clusterCache.put(CacheEntry(0L, Seq.empty)))
+
       clusterService = new CDHClusterService[F](
         httpClient,
         config.cluster,

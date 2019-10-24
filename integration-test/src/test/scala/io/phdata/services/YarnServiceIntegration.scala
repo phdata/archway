@@ -1,8 +1,7 @@
 package io.phdata.services
 
-import cats.effect.{ContextShift, IO, Resource}
+import cats.effect.{ContextShift, IO}
 import io.phdata.AppContext
-import io.phdata.caching.CacheEntry
 import io.phdata.itest.fixtures.SSLTest
 import io.phdata.models.Yarn
 import io.phdata.test.fixtures._
@@ -10,7 +9,7 @@ import org.scalatest.{FlatSpec, Matchers}
 
 import scala.concurrent.ExecutionContext
 
-class YarnServiceIntegration extends FlatSpec with Matchers with SSLTest{
+class YarnServiceIntegration extends FlatSpec with Matchers with SSLTest {
 
   it should "create resource pool, and update that resource pool" in new Context {
     val workspaceId: Long = 246
@@ -33,7 +32,6 @@ class YarnServiceIntegration extends FlatSpec with Matchers with SSLTest{
     implicit def timer = new TestTimer
     val resources = for {
       ctx <- AppContext.default[IO]()
-      _ <- Resource.liftF(ctx.clusterCache.put(CacheEntry(0L, Seq.empty)))
     } yield new YarnServiceImpl[IO](ctx)
   }
 }
