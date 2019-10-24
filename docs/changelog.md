@@ -1,3 +1,8 @@
+## 2.2.1
+
+- Fixes bug where some user workspaces would show up in the operations or risk/compliance tabs.
+  Workspace provisioning was not affected by this bug. 796ec84c4e1b1719040123625842924773f23ea0
+
 ## 2.2.0
 
 ### Enhancements
