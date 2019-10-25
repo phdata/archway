@@ -218,7 +218,7 @@ class WorkspaceRequestRepositoryImpl(sqlSyntax: SqlSyntax) extends WorkspaceRequ
       (selectFragment ++ whereAnd(fr"wr.name = $workspaceName")).query[WorkspaceRequest]
 
     def pending(role: ApproverRole): Query0[WorkspaceSearchResult] =
-      (listFragment ++ whereAnd(fr"wr.single_user = '0' AND wr.deleted IS NULL OR wr.deleted != '1'")).query
+      (listFragment ++ whereAnd(fr"wr.single_user = '0' AND (wr.deleted IS NULL OR wr.deleted != '1')")).query
 
     def changeOwner(workspaceId: Long, newOwnerDN: DistinguishedName) =
       sql"""update workspace_request SET requested_by = ${newOwnerDN.value} where id = $workspaceId""".update
