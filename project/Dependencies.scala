@@ -123,9 +123,6 @@ object Dependencies {
   val pac4jKerberosVersion = "3.7.0"
   val pac4jKerberos = Seq("org.pac4j" % "pac4j-kerberos" % pac4jKerberosVersion)
 
-  val kerb4jClientVersion = "0.0.8"
-  val kerb4jClient = Seq("com.kerb4j" % "kerb4j-client" % kerb4jClientVersion % "test")
-
   val simulacrumVersion = "0.17.0"
   val simulacrum = Seq(
     "com.github.mpilquist" %% "simulacrum" % simulacrumVersion
@@ -147,7 +144,7 @@ object Dependencies {
 
   val commonDependencies =
     (scalate ++ unbound ++ mailer ++ logging ++ doobie ++ cats ++ catsEffect ++ circeConfig ++ circe ++
-      scalatags ++ hadoop ++ http4s ++ jwt ++ iniConfig ++ coreTest ++ bouncy ++ atto ++ pac4jKerberos  ++ kerb4jClient
+      scalatags ++ hadoop ++ http4s ++ jwt ++ iniConfig ++ coreTest ++ bouncy ++ atto ++ pac4jKerberos
       ++ Seq("org.typelevel" %% "jawn-parser" % "0.14.0"))
       .map(exclusions)
 
@@ -156,7 +153,7 @@ object Dependencies {
       .map(exclusions)
   
   val integrationTestDependencies =
-    (dbCore ++ kerb4jClient ++
+    (dbCore ++
     Seq("org.tpolecat" %% "doobie-scalatest" % doobieVersion,
         "org.mockito" % "mockito-core" % "2.18.3" % "test",
         "org.scalamock" %% "scalamock-scalatest-support" % "3.6.0",
