@@ -20,7 +20,7 @@ export const behaviorProperties = {
 };
 
 export enum FeatureFlagType {
-  Application = 'application',
+  Application = 'applications',
   Messaging = 'messaging',
   DiskQuota = 'disk-quota',
   ComplianceBuilder = 'compliance-builder',

@@ -39,7 +39,7 @@ import {
 import * as actions from './actions';
 import * as selectors from './selectors';
 import { FeatureFlagType, ProvisioningType, ModalType } from '../../constants';
-import { Provisioning, FeatureTab } from '../../components';
+import { Provisioning } from '../../components';
 import { getFeatureFlags } from '../../redux/selectors';
 
 interface DetailsRouteProps {
@@ -225,6 +225,7 @@ class WorkspaceDetails extends React.PureComponent<Props> {
       quotaLoading,
       resourcePoolLoading,
       modifyCoreMemory,
+      featureFlags,
     } = this.props;
 
     if (!workspace) {
@@ -305,27 +306,31 @@ class WorkspaceDetails extends React.PureComponent<Props> {
               isPlatformOperations={profile && profile.permissions.platform_operations}
             />
           </Tabs.TabPane>
-          <FeatureTab flag={FeatureFlagType.Application} tab="APPLICATIONS" key="applications">
-            <ApplicationsTab
-              workspace={workspace}
-              yarn={cluster.services && cluster.services.yarn}
-              pools={pools}
-              showModal={showModal}
-              onRefreshPools={requestRefreshYarnApps}
-              onSelectApplication={updateSelectedApplication}
-              resourcePoolLoading={resourcePoolLoading}
-            />
-          </FeatureTab>
-          <FeatureTab flag={FeatureFlagType.Messaging} tab="MESSAGING" key="messaging">
-            <MessagingTab
-              workspace={workspace}
-              profile={profile}
-              members={members}
-              showModal={showModal}
-              onChangeMemberRole={changeMemberRoleRequest}
-              removeMember={removeMember}
-            />
-          </FeatureTab>
+          {featureFlags.includes(FeatureFlagType.Application) && (
+            <Tabs.TabPane tab="APPLICATIONS" key="applications">
+              <ApplicationsTab
+                workspace={workspace}
+                yarn={cluster.services && cluster.services.yarn}
+                pools={pools}
+                showModal={showModal}
+                onRefreshPools={requestRefreshYarnApps}
+                onSelectApplication={updateSelectedApplication}
+                resourcePoolLoading={resourcePoolLoading}
+              />
+            </Tabs.TabPane>
+          )}
+          {featureFlags.includes(FeatureFlagType.Messaging) && (
+            <Tabs.TabPane tab="MESSAGING" key="messsaging">
+              <MessagingTab
+                workspace={workspace}
+                profile={profile}
+                members={members}
+                showModal={showModal}
+                onChangeMemberRole={changeMemberRoleRequest}
+                removeMember={removeMember}
+              />
+            </Tabs.TabPane>
+          )}
           {profile && (profile.permissions.platform_operations || profile.permissions.risk_management) && (
             <Tabs.TabPane tab="MANAGE" key="manage">
               <ManageTab showModal={showModal} provisioning={provisioning} />
