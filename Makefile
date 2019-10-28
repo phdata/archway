@@ -32,6 +32,7 @@ test-mysql:
 
 itest-init:
 	ln -sf $(shell pwd)/itest-config/application.itest.conf api/src/main/resources/application.conf
+	ln -sf $(shell pwd)/itest-config/hive-conf ./hive-conf
 
 itest-config:
 	git clone git@bitbucket.org:phdata/archway-itest.git itest-config

@@ -35,11 +35,11 @@ The metadata for Archway is broken up into two main parts: workspace metadata an
 
 All workspaces can contain a collection of topics, applications, databases, and resource pools. Depending on the template
 used, a workspace is stored and when applied, timestamps on the related entity are updated to indicate progress.
-![](metadata.png)
+![](images/metadata.png)
 
 #### Configuration
 
-![](config.png)
+![](images/config.png)
 
 ### Integration test package
 
