@@ -149,7 +149,7 @@ object Dependencies {
       .map(exclusions)
 
   val provisioningDependencies =
-    (coreTest ++ hadoop ++ simulacrum)
+    (coreTest ++ hadoop)
       .map(exclusions)
   
   val integrationTestDependencies =
