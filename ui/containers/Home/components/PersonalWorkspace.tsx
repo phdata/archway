@@ -39,7 +39,7 @@ const PersonalWorkspace = ({
       </div>
     );
   }
-
+  const queue = !!workspace.processing[0] ? workspace.processing[0].pool_name : '';
   return (
     <div style={{ flex: 1 }}>
       {workspace && workspace.data ? (
@@ -91,7 +91,7 @@ const PersonalWorkspace = ({
                 />
               </Col>
               <Col span={24} xl={8} style={{ marginTop: 10 }}>
-                <RunHelp queue={workspace.processing[0].pool_name} />
+                <RunHelp queue={queue} />
               </Col>
             </Row>
           </div>
