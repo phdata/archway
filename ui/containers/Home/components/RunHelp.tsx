@@ -23,8 +23,7 @@ const RunHelp = ({ queue }: Props) => (
       {`$ spark-submit --class org.apache.spark.examples.SparkPi \\
   --master yarn \\
   --deploy-mode cluster \\
-  --queue ${queue} \\
-  examples/jars/spark-examples*.jar \\
+  ${!!queue ? `--queue ${queue} \\\n` : ''}examples/jars/spark-examples*.jar \\
   10'`}
     </SyntaxHighlighter>
   </div>
