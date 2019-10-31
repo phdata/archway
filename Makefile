@@ -12,9 +12,9 @@ ui: .make.ui
 
 test-jar: .make.test-jar
 .make.test-jar:
-	sbt -mem 4096 "set every test in assembly := {}" integration-test/assembly
-	sbt -mem 4096 integration-test/test:package
-	sbt -mem 4096 common/test:package
+	sbt "set every test in assembly := {}" integration-test/assembly
+	sbt integration-test/test:package
+	sbt common/test:package
 	touch $@
 
 test: 
