@@ -34,9 +34,6 @@ itest-init:
 	ln -sf $(shell pwd)/itest-config/application.itest.conf api/src/main/resources/application.conf
 	ln -sf $(shell pwd)/itest-config/hive-conf ./hive-conf
 
-itest-config:
-	git clone git@bitbucket.org:phdata/archway-itest.git itest-config
-
 serve-api:
 	echo "using TRUST_STORE: $${TRUST_STORE:?}"
 	sbt -Djavax.net.ssl.trustStore=$$TRUST_STORE "api/runMain io.phdata.Server"

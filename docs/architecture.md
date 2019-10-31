@@ -1,6 +1,6 @@
 ## Archway API
 
-Archway API is the REST interface primally enabling functionality to it's UI counterpart but also a means for automation.
+Archway API is the REST interface primaly enabling functionality to it's UI counterpart but also a means for automation.
 
 ### Code
 
@@ -20,12 +20,6 @@ The code is comprised of a few primary packages:
   Responsible for managing interactions with the meta database.
 - Provisioning - `io.phdata.provisioning`
   Responsible for applying metadata to the cluster and resources requested.
-
-#### Functional Programming/Cats
-
-Some projects are based on AKKA, Play, Spark (in the case of batch), or some other "pattern library." Archway is built
-on Cats, Cats Effect, Http4s, Circe, and Doobie, all in the [Typelevel](http://typelevel.org) stack. These libraries
-are all built on Cats and encourage functional programming.
 
 ### Database
 
