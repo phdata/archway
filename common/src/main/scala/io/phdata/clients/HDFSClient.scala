@@ -102,6 +102,7 @@ class HDFSClientImpl[F[_]: Async](hadoopConfiguration: Configuration, loginConte
 
   override def setQuota(path: String, maxSizeInGB: Double): F[HDFSAllocation] =
     loginContextProvider.elevate("hdfs") { () =>
+      logger.info(s"Setting disk quota for $path to $maxSizeInGB GB")
       hdfsAdmin.setSpaceQuota(new Path(path), (maxSizeInGB * 1024 * 1024 * 1024).toLong)
       HDFSAllocation(path.toUri.getPath, maxSizeInGB)
     }
@@ -145,6 +146,7 @@ class HDFSClientImpl[F[_]: Async](hadoopConfiguration: Configuration, loginConte
   override def removeQuota(path: String): F[Unit] =
     loginContextProvider
       .elevate("hdfs") { () =>
+        logger.info(s"Removing disk quota for $path")
         hdfsAdmin.clearQuota(new Path(path))
       }
       .void

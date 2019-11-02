@@ -120,14 +120,14 @@ class CDHYarnClient[F[_]: Sync](http: HttpClient[F], clusterConfig: ClusterConfi
   def yarnConfigUpdate(updatedJson: Json): F[Json] =
     for {
       url <- configURL
-      _ <- Sync[F].pure(logger.debug("updating yarn at {}", url))
+      _ <- logger.debug("updating yarn at {}", url).pure[F]
       request <- PUT(updatedJson, Uri.fromString(url).right.get)
       response <- http.request[Json](request)
     } yield response
 
   def yarnConfigRefresh: F[Json] =
     for {
-      _ <- Sync[F].pure(logger.info("refreshing the resource pools via {}", clusterConfig.refreshUrl))
+      _ <- logger.info("refreshing the resource pools via {}", clusterConfig.refreshUrl).pure[F]
       response <- http.request[Json](Request[F](Method.POST, Uri.fromString(clusterConfig.refreshUrl).right.get))
     } yield response
 

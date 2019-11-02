@@ -237,14 +237,6 @@ class LDAPClientImplIntegrationSpec
     actual shouldBe expected
   }
 
-  it should "groupObjectClass" in {
-    val expected = "group"
-
-    val actual = lookupClient.groupObjectClass
-
-    actual shouldBe expected
-  }
-
   it should "create an LDAPUser" in {
     val dn = DistinguishedName("cn=john,dc=example,dc=com")
     val expected = LDAPUser("john (johndoe)", "johndoe", dn, Seq.empty, None)

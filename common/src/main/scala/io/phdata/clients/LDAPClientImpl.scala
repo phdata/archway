@@ -66,29 +66,13 @@ class LDAPClientImpl[F[_]: Effect](ldapConfig: LDAPConfig, binding: LDAPConfig =
       Option(searchResultEntry.getAttributeValue("mail"))
     )
 
-  def groupObjectClass: String =
-    "group"
-
   def getUserEntry(username: String): OptionT[F, SearchResultEntry] =
     OptionT(Sync[F].delay {
+      logger.debug(s"Getting user entry for $username")
       val searchResult =
         connectionPool.search(ldapConfig.baseDN, SearchScope.SUB, searchQuery(username))
       searchResult.getSearchEntries.asScala.headOption
     })
-
-  def getEntry(dn: DistinguishedName): OptionT[F, SearchResultEntry] =
-    OptionT(
-      Sync[F].delay(
-        try {
-          logger.debug(s"getting info for $dn")
-          Option(connectionPool.getEntry(dn.value))
-        } catch {
-          case exc: Throwable =>
-            logger.info(s"Failed to get LDAP entry for dn '$dn'", exc)
-            None
-        }
-      )
-    )
 
   override def findUserByDN(distinguishedName: DistinguishedName): OptionT[F, LDAPUser] =
     getEntry(distinguishedName).map(ldapUser)
@@ -112,20 +96,6 @@ class LDAPClientImpl[F[_]: Effect](ldapConfig: LDAPConfig, binding: LDAPConfig =
     }
 
   override def findUserByUserName(username: String): OptionT[F, LDAPUser] = getUserEntry(username).map(ldapUser)
-
-  private def ldapBindingAsOption(
-      distinguishedName: String,
-      password: Password,
-      userName: String
-  ): Option[BindResult] = {
-    Try(connectionPool.bind(distinguishedName, password.value)) match {
-      case Success(value) => Some(value)
-      case Failure(exception) => {
-        logger.warn(s"Bind process failed for user $userName", exception)
-        None
-      }
-    }
-  }
 
   def attributeConvert(attributes: List[(String, String)]): List[Attribute] =
     attributes
@@ -157,6 +127,7 @@ class LDAPClientImpl[F[_]: Effect](ldapConfig: LDAPConfig, binding: LDAPConfig =
       attributes: List[(String, String)]
   ): F[Option[_ <: LDAPRequest]] =
     Sync[F].delay {
+      logger.debug(s"Getting entry for $groupDN")
       Option(connectionPool.getEntry(groupDN)) match {
         case Some(entry) =>
           val existing = entry.getAttributes.asScala.map(a => a.getName -> a.getValue).toList
@@ -187,27 +158,12 @@ class LDAPClientImpl[F[_]: Effect](ldapConfig: LDAPConfig, binding: LDAPConfig =
 
   override def createGroup(groupName: String, attributes: List[(String, String)]): F[Unit] =
     for {
-      _ <- Sync[F].pure(logger.info("creating group {}", groupName))
+      _ <- logger.info("creating group {}", groupName).pure[F]
       groupDN = attributes.find(_._1 == "dn").get._2
       rest = attributes.filterNot(_._1 == "dn")
       _ <- requestGroup(DistinguishedName(groupDN), groupName, rest)
-      _ <- Sync[F].pure(logger.info("group {} created", groupName))
+      _ <- logger.info("group {} created", groupName).pure[F]
     } yield ()
-
-  def createMemberAttribute(groupEntry: SearchResultEntry, newMember: String): F[Option[Unit]] =
-    if (!groupEntry.hasAttribute("member") || !groupEntry.getAttributeValues("member").contains(newMember))
-      for {
-        res <- Effect[F].delay(
-          connectionPool.modify(groupEntry.getDN, new Modification(ModificationType.ADD, "member", newMember))
-        )
-      } yield {
-        if (res.getResultCode.intValue() == 0) {
-          Some(())
-        } else {
-          logger.error("Adding member failed ", res.getDiagnosticMessage)
-          None
-        }
-      } else Option.empty[Unit].pure[F]
 
   override def addUserToGroup(groupDN: DistinguishedName, distinguishedName: DistinguishedName): OptionT[F, String] =
     for {
@@ -241,21 +197,6 @@ class LDAPClientImpl[F[_]: Effect](ldapConfig: LDAPConfig, binding: LDAPConfig =
       } //no-op
     })
 
-  def lookup(filter: String): F[List[SearchResultEntry]] =
-    Effect[F].delay {
-      val filterText = templateEngine.layout(filterTemplate.source, Map("filter" -> filter))
-      logger.debug("looking up users with \"{}\"", filterText)
-      connectionPool.search(ldapConfig.baseDN, SearchScope.SUB, filterText).getSearchEntries.asScala.toList
-    }
-
-  def genDisplay(searchResultEntry: SearchResultEntry): String = {
-    val attributes = searchResultEntry.getAttributes.asScala.map(e => e.getName -> e.getValue).toMap
-    templateEngine.layout(displayTemplate.source, attributes)
-  }
-
-  def generateSearchResult(searchResultEntry: SearchResultEntry): MemberSearchResultItem =
-    MemberSearchResultItem(genDisplay(searchResultEntry), searchResultEntry.getDN)
-
   override def search(filter: String): F[MemberSearchResult] =
     lookup(filter).map { results =>
       MemberSearchResult(
@@ -268,5 +209,64 @@ class LDAPClientImpl[F[_]: Effect](ldapConfig: LDAPConfig, binding: LDAPConfig =
     for {
       _ <- getEntry(groupDN)
       _ <- OptionT(Option(connectionPool.delete(groupDN.value)).pure[F])
+      _ <- OptionT(logger.info(s"Deleting LDAP group $groupDN").some.pure[F])
     } yield groupDN.value
+
+  private def getEntry(dn: DistinguishedName): OptionT[F, SearchResultEntry] = {
+    val result: Option[SearchResultEntry] = Try(connectionPool.getEntry(dn.value)) match {
+      case Success(value) =>
+        logger.debug(s"Got info for $dn")
+        Some(value)
+      case Failure(e) =>
+        logger.info(s"Failed to get LDAP entry for dn '$dn'", e)
+        None
+    }
+
+    OptionT.fromOption[F](result)
+  }
+
+  private def ldapBindingAsOption(
+      distinguishedName: String,
+      password: Password,
+      userName: String
+  ): Option[BindResult] = {
+    Try(connectionPool.bind(distinguishedName, password.value)) match {
+      case Success(value) => Some(value)
+      case Failure(exception) => {
+        logger.warn(s"Bind process failed for user $userName", exception)
+        None
+      }
+    }
+  }
+
+  private def lookup(filter: String): F[List[SearchResultEntry]] =
+    Effect[F].delay {
+      val filterText = templateEngine.layout(filterTemplate.source, Map("filter" -> filter))
+      logger.debug(s"""looking up users with $filterText""")
+      connectionPool.search(ldapConfig.baseDN, SearchScope.SUB, filterText).getSearchEntries.asScala.toList
+    }
+
+  private def genDisplay(searchResultEntry: SearchResultEntry): String = {
+    val attributes = searchResultEntry.getAttributes.asScala.map(e => e.getName -> e.getValue).toMap
+    templateEngine.layout(displayTemplate.source, attributes)
+  }
+
+  private def generateSearchResult(searchResultEntry: SearchResultEntry): MemberSearchResultItem =
+    MemberSearchResultItem(genDisplay(searchResultEntry), searchResultEntry.getDN)
+
+  private def createMemberAttribute(groupEntry: SearchResultEntry, newMember: String): F[Option[Unit]] =
+    if (!groupEntry.hasAttribute("member") || !groupEntry.getAttributeValues("member").contains(newMember))
+      for {
+        res <- Effect[F].delay(
+          connectionPool.modify(groupEntry.getDN, new Modification(ModificationType.ADD, "member", newMember))
+        )
+      } yield {
+        if (res.getResultCode.intValue() == 0) {
+          logger.debug(s"Member $newMember was successfully added")
+          Some(())
+        } else {
+          logger.error("Adding member failed ", res.getDiagnosticMessage)
+          None
+        }
+      } else Option.empty[Unit].pure[F]
 }

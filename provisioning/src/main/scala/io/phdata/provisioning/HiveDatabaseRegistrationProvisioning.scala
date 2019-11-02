@@ -52,8 +52,10 @@ object HiveDatabaseRegistrationProvisioning extends LazyLogging {
     override def run[F[_]: Sync: Clock](
         hiveDatabaseRegistration: HiveDatabaseRegistration,
         workspaceContext: WorkspaceContext[F]
-    ): F[Unit] =
+    ): F[Unit] = {
+      logger.info(s"Dropping database ${hiveDatabaseRegistration.name}")
       workspaceContext.context.hiveClient.dropDatabase(hiveDatabaseRegistration.name).void
+    }
 
   }
 

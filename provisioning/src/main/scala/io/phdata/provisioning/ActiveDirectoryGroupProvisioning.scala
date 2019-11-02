@@ -6,7 +6,6 @@ import cats.Show
 import cats.effect.{Clock, Sync}
 import cats.implicits._
 import doobie.implicits._
-import io.phdata.models.DistinguishedName
 
 object ActiveDirectoryGroupProvisioning {
 

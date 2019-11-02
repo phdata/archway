@@ -2,12 +2,12 @@ package io.phdata.clients
 
 import cats.effect.{Effect, Sync}
 import cats.implicits._
+import com.typesafe.scalalogging.LazyLogging
+import doobie._
+import doobie.implicits._
 import io.phdata.models.{HiveDatabase, HiveTable}
 import io.phdata.repositories.CustomLogHandler
 import io.phdata.services.LoginContextProvider
-import doobie._
-import doobie.implicits._
-import io.phdata.models.HiveDatabase
 
 trait HiveClient[F[_]] {
 
@@ -29,7 +29,7 @@ trait HiveClient[F[_]] {
 
 class HiveClientImpl[F[_]](loginContextProvider: LoginContextProvider, transactor: Transactor[F])(
     implicit val F: Effect[F]
-) extends HiveClient[F] {
+) extends HiveClient[F] with LazyLogging {
 
   implicit val logHandler = CustomLogHandler.logHandler(this.getClass)
 
@@ -42,7 +42,8 @@ class HiveClientImpl[F[_]](loginContextProvider: LoginContextProvider, transacto
     loginContextProvider.hadoopInteraction {
       showDatabases().flatMap {
         case databases if !databases.contains(name) =>
-          (createDatabaseStatement(name, location, comment, dbProperties).update.run.transact(transactor).void)
+          logger.info(s"Creating database $name on location $location").pure[F]
+          createDatabaseStatement(name, location, comment, dbProperties).update.run.transact(transactor).void
         case _ =>
           Sync[F].unit
       }

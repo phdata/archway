@@ -30,11 +30,13 @@ class KafkaClientImpl[F[_]: Sync](appConfig: AppConfig) extends KafkaClient[F] w
   val zkUtils = new ZkUtils(zkClient, new ZkConnection(appConfig.kafka.zookeeperConnect), false)
 
   override def createTopic(name: String, partitions: Int, replicationFactor: Int): F[Unit] = {
-    logger.warn("creating {} via {}", name, zkUtils)
+    logger.info(s"Creating topic $name, with $partitions partitions and replicator factor $replicationFactor")
     Sync[F].delay(AdminUtils.createTopic(zkUtils, name, partitions, replicationFactor))
   }
 
-  override def deleteTopic(name: String): F[Unit] =
+  override def deleteTopic(name: String): F[Unit] = {
+    logger.info(s"Deleting topic $name")
     Sync[F].delay(AdminUtils.deleteTopic(zkUtils, name))
+  }
 
 }
