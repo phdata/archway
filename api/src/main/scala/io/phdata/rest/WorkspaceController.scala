@@ -3,13 +3,13 @@ package io.phdata.rest
 import java.time.Instant
 
 import cats.effect._
-import io.phdata.provisioning.Message._
+import cats.implicits._
 import com.typesafe.scalalogging.LazyLogging
 import io.circe.Decoder
 import io.circe.generic.auto._
 import io.circe.syntax._
-import cats.implicits._
 import io.phdata.models._
+import io.phdata.provisioning.Message._
 import io.phdata.provisioning.{Error, ExceptionMessage, NoOp, SimpleMessage, Success, Unknown}
 import io.phdata.rest.authentication.TokenAuthService
 import io.phdata.services._
@@ -184,11 +184,16 @@ class WorkspaceController[F[_]: Sync: Timer: ContextShift: ConcurrentEffect](
             response <- Ok(members.asJson)
           } yield response
 
-        case req @ POST -> Root / LongVar(id) / "members" as _ =>
+        case req @ POST -> Root / LongVar(id) / "members" as user =>
           import MemberRoleRequest.decoder
           implicit val roleDecoder: EntityDecoder[F, MemberRoleRequest] = jsonOf[F, MemberRoleRequest]
           for {
             memberRequest <- req.req.as[MemberRoleRequest]
+            _ <- logger
+              .info(
+                s"${user.name} is requesting to add a new member ${memberRequest.distinguishedName} in workspace ${id}"
+              )
+              .pure[F]
             newMember <- memberService.addMember(id, memberRequest).value.onError {
               case e: Throwable =>
                 logger.error(s"Failed to add member to workspace $id: ${e.getLocalizedMessage}", e).pure[F]
@@ -197,11 +202,16 @@ class WorkspaceController[F[_]: Sync: Timer: ContextShift: ConcurrentEffect](
             response <- newMember.fold(InternalServerError())(member => Created(member.asJson))
           } yield response
 
-        case req @ DELETE -> Root / LongVar(id) / "members" as _ =>
+        case req @ DELETE -> Root / LongVar(id) / "members" as user =>
           import MemberRoleRequest.minDecoder
           implicit val roleDecoder: EntityDecoder[F, MemberRoleRequest] = jsonOf[F, MemberRoleRequest]
           for {
             memberRequest <- req.req.as[MemberRoleRequest]
+            _ <- logger
+              .info(
+                s"${user.name} is requesting to remove a member ${memberRequest.distinguishedName} in workspace ${id}"
+              )
+              .pure[F]
             _ <- memberService.removeMember(id, memberRequest).value.onError {
               case e: Throwable =>
                 logger.error(s"Failed to remove member from workspace $id: ${e.getLocalizedMessage}", e).pure[F]

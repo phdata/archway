@@ -38,7 +38,8 @@ class MemberServiceImpl[F[_]](context: AppContext[F])(implicit val F: Effect[F])
   def members(workspaceId: Long): F[List[WorkspaceMemberEntry]] =
     context.memberRepository.list(workspaceId).transact(context.transactor).flatMap(convertRecord)
 
-  def addMember(workspaceId: Long, memberRequest: MemberRoleRequest): OptionT[F, WorkspaceMemberEntry] =
+  def addMember(workspaceId: Long, memberRequest: MemberRoleRequest): OptionT[F, WorkspaceMemberEntry] = {
+    logger.info(s"Adding a new member in resource of ${memberRequest.resourceId}")
     for {
       registration <- OptionT(
         context.ldapRepository
@@ -83,8 +84,11 @@ class MemberServiceImpl[F[_]](context: AppContext[F])(implicit val F: Effect[F])
 
       _ <- OptionT.some[F](logger.info(result.toString()))
     } yield result.head
+  }
 
-  def removeMember(workspaceId: Long, memberRequest: MemberRoleRequest): OptionT[F, WorkspaceMemberEntry] =
+  def removeMember(workspaceId: Long, memberRequest: MemberRoleRequest): OptionT[F, WorkspaceMemberEntry] = {
+    logger.info(s"Removing a new member in resource of ${memberRequest.resourceId}")
+
     for {
       _ <- OptionT.some[F](
         logger.info(
@@ -155,6 +159,7 @@ class MemberServiceImpl[F[_]](context: AppContext[F])(implicit val F: Effect[F])
 
       result <- OptionT(convertRecord(member).map(_.headOption))
     } yield result
+  }
 
   override def availableMembers(filter: String): F[MemberSearchResult] =
     context.lookupLDAPClient.search(filter).onError {
