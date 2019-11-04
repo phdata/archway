@@ -75,8 +75,8 @@ class HiveAllocationRepositoryImpl extends HiveAllocationRepository {
   override def directoryCreated(id: Long, time: Instant): ConnectionIO[Int] =
     Statements.directoryCreated(id, time).run
 
-  override def quotaSet(id: Long, time: Instant): ConnectionIO[Int] =
-    Statements.quotaSet(id, time).run
+  override def setQuota(id: Long, sizeInGB: Int, time: Instant): ConnectionIO[Int] =
+    Statements.setQuota(id, sizeInGB, time).run
 
   override def databaseCreated(id: Long, time: Instant): ConnectionIO[Int] =
     Statements.databaseCreated(id, time).run
@@ -211,10 +211,10 @@ class HiveAllocationRepositoryImpl extends HiveAllocationRepository {
           where id = $id
           """.update
 
-    def quotaSet(id: Long, time: Instant): Update0 =
+    def setQuota(id: Long, sizeInGB: Int, time: Instant): Update0 =
       sql"""
           update hive_database
-          set quota_set = $time
+          set quota_set = $time, size_in_gb = $sizeInGB
           where id = $id
           """.update
 

@@ -11,7 +11,7 @@ import io.phdata.repositories.HiveAllocationRepository
 
 trait HDFSService[F[_]] {
 
-  def setQuota(path: String, sizeInGB: Int, workspaceId: Long, instant: Instant): F[Unit]
+  def setQuota(path: String, sizeInGB: Int, resourceId: Long, instant: Instant): F[Unit]
 
   def removeQuota(path: String): F[Unit]
 }
@@ -22,9 +22,9 @@ class HDFSServiceImpl[F[_]: Sync: Clock](
     transactor: Transactor[F]
 ) extends HDFSService[F] {
 
-  override def setQuota(path: String, sizeInGB: Int, workspaceId: Long, instant: Instant): F[Unit] = {
+  override def setQuota(path: String, sizeInGB: Int, resourceId: Long, instant: Instant): F[Unit] = {
     hdfsClient.setQuota(path, sizeInGB).void *>
-      hiveAllocationRepository.quotaSet(workspaceId, instant).transact(transactor).void
+      hiveAllocationRepository.setQuota(resourceId, sizeInGB, instant).transact(transactor).void
   }
 
   override def removeQuota(path: String): F[Unit] = {

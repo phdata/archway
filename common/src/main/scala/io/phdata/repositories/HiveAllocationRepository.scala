@@ -15,7 +15,7 @@ trait HiveAllocationRepository {
 
   def directoryCreated(id: Long, time: Instant): ConnectionIO[Int]
 
-  def quotaSet(id: Long, time: Instant): ConnectionIO[Int]
+  def setQuota(id: Long, sizeInGB: Int, time: Instant): ConnectionIO[Int]
 
   def databaseCreated(id: Long, time: Instant): ConnectionIO[Int]
 

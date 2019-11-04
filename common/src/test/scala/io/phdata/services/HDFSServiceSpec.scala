@@ -18,7 +18,7 @@ class HDFSServiceSpec extends FlatSpec with Matchers with MockFactory with AppCo
   it should "set a quota" in new Context {
     inSequence {
       context.hdfsClient.setQuota _ expects(hdfsPathString, hdfsRequestedSize) returning hdfsAllocation.pure[IO]
-      context.databaseRepository.quotaSet _ expects(id, now) returning 1.pure[ConnectionIO]
+      context.databaseRepository.setQuota _ expects(id, hdfsRequestedSize, now) returning 1.pure[ConnectionIO]
     }
 
     hdfsService.setQuota(hdfsPathString, hdfsRequestedSize, id, now)

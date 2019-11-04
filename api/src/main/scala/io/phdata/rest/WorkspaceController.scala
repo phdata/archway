@@ -355,7 +355,7 @@ class WorkspaceController[F[_]: Sync: Timer: ContextShift: ConcurrentEffect](
                 .setQuota(
                   workspace.get.data.find(hiveAllocation => hiveAllocation.id.get == resourceId).get.location,
                   size,
-                  id,
+                  resourceId,
                   Instant.now()
                 )
                 .onError {
