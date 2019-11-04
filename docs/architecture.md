@@ -4,7 +4,17 @@ Archway API is the REST interface primaly enabling functionality to it's UI coun
 
 ### Code
 
-#### Packages
+All backend code is written in Scala with support of scala libraries.
+
+#### What's Being Used?
+
+- [Cats](https://typelevel.org/cats/) for better abstractions for functional programming.
+- [Cats effect](https://github.com/typelevel/cats-effect) for handling side effects.
+- [Circe](https://github.com/circe/circe) for parsing JSON.
+- [Doobie](https://tpolecat.github.io/doobie/) for providing pure functional connection with database.
+- [Http4s](https://http4s.org) for handling http requests.
+
+#### Structure
 
 The code is comprised of a few primary packages:
 
@@ -12,18 +22,21 @@ The code is comprised of a few primary packages:
   Responsible for serving requests via HTTP.
 - Startup - `io.phdata.startup`
   Responsible for managing initial (and often repeating) tasks.
-- Services - `io.phdata.services`
-  Responsible for providing business logic.
 - Clients - `io.phdata.clients`
   Responsible for interacting with third party integrations like CM API.
-- Repositories - `io.phdata.repositories`
-  Responsible for managing interactions with the meta database.
+- Config - `io.phdata.config` Responsible for parsing configuration into case classes.
+- Generators - `io.phdata.generators` Responsible for automation of creating specific application objects.
+- Models - `io.phdata.models` Responsible for representing the domain model of the application.
 - Provisioning - `io.phdata.provisioning`
   Responsible for applying metadata to the cluster and resources requested.
+- Repositories - `io.phdata.repositories`
+  Responsible for managing interactions with the meta database.
+- Services - `io.phdata.services`
+  Responsible for providing business logic.
 
 ### Database
 
-The metadata for Archway is broken up into two main parts: workspace metadata and application configuration.
+The metadata for Archway is broken up into two main parts: workspace metadata and application configuration. Visualization of database schema can be found in `Archway.mwb` (can be open with [MySQL Workbench](https://www.mysql.com/products/workbench/)).
 
 #### Workspace Metadata
 
@@ -35,7 +48,9 @@ used, a workspace is stored and when applied, timestamps on the related entity a
 
 ![](images/config.png)
 
-### Integration test package
+### Integration test module
+
+An Integration test module contains test for verifying application crucial parts, those tests use real services.
 
 An integration test jar is included in the parcel at \$PARCELS_ROOT/ARCHWAY/usr/lib/archway-server/archway-test.jar
 

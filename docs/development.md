@@ -1,29 +1,25 @@
 ## Running Locally
 
-_NOTE_ Make sure you have `npm` and IntelliJ installed.
+_NOTE_ Make sure you have [npm](https://www.npmjs.com) and [IntelliJ](https://www.jetbrains.com/idea/) installed. For running project and integration tests locally is also recommended to have installed [Docker](https://www.docker.com).
 
 ### Configuration
 
 In order to run the API locally, you'll need to prepare your development environment.
 
-This will download the integration test repository which contains credentials and place them in `itest-config`, as well
-as softlink the application config to the API resources so the application can be run locally.
-
-```bash
-$ make itest-init
-```
+Create your `application.conf` file in `api/src/main/resources/` and initialize properties based on description in file [Service.md](service.md).
 
 ### Run The App (API-focused development)
 
 - Open the project in IntelliJ
-- Open `io.phdata.Server` and click the green "play" button next to the `object` definition
-- The first run won't work, because we need to change the newly created run configuration
-- Open the run configuration drop down and click "Edit Configurations..."
-- Select the "Server" configuration and enable "Include dependencies with 'Provided' scope"
-- Restart the app
+- Open the run configuration drop down and click "Add Configurations" / "Edit Configurations..."
+- Click on plus "Add New Configuration" or hit CMD+N/Ctrl+N
+- Select "Application" from dropdown
+- Set `io.phdata.Server` as a "Main class"
+- Set `api` for "Use classpath of module"
+- Check "Include dependencies with 'Provided' scope"
 - Open the "Terminal" tab
-- Run `npm i` which will install the npm dependencies
-- Run `npm start` which will spin up the UI
+- Run `make init-ui` which will install the npm dependencies
+- Run `serve-ui` which will spin up the UI
 
 ### Run The App (UI-focused development)
 
@@ -42,43 +38,51 @@ Archway API is the REST interface primally enabling functionality to it's UI cou
 
 ### Code
 
-#### Packages
+All backend code is written in Scala and follows [Scala stylistic guidelines](https://docs.scala-lang.org/style/). Project structure can be find in [Architecture description](architecture.md).
 
-The code is comprised of a few primary packages:
-
-- REST API - `io.phdata.rest`
-  Responsible for serving requests via HTTP.
-- Startup - `io.phdata.startup`
-  Responsible for managing initial (and often repeating) tasks.
-- Services - `io.phdata.services`
-  Responsible for providing business logic.
-- Clients - `io.phdata.clients`
-  Responsible for interacting with third party integrations like CM API.
-- Repositories - `io.phdata.repositories`
-  Responsible for managing interactions with the meta database.
-- Provisioning - `io.phdata.provisioning`
-  Responsible for applying metadata to the cluster and resources requested.
-- Models - `io.phdata.models`
-  Responsible for representing the domain model of the application.
+For code formation is used [Scalafmt](https://scalameta.org/scalafmt/). To format current file press `Opt + Cmd + L`(macOS) or `Ctrl + Alt + L`(other), to format whole codebase run in terminal `sbt scalafmt`.
 
 #### Functional Programming/Cats
 
-Some projects are based on AKKA, Play, Spark (in the case of batch), or some other "pattern library." Archway is built on Cats, Cats Effect, Http4s, Circe, and Doobie, all in the [Typelevel](http://typelevel.org) stack. These libraries are all built on Cats and encourage functional programming. If you've never used Cats or done functional programming, the good thing is, most patterns are already established and can just be repeated. All of these libraries have excellent documentation, and even better people in Gitter ready and willing to answer questions (just like us on ##archway-dev in Slack).
+Some projects are based on AKKA, Play, Spark (in the case of batch), or some other "pattern library." Archway is built on Cats, Cats Effect, Http4s, Circe, and Doobie, all in the [Typelevel](http://typelevel.org) stack. These libraries are all built on Cats and encourage functional programming. If you've never used Cats or done functional programming, the good thing is, most patterns are already established and can just be repeated. All of these libraries have excellent documentation, and even better people in Gitter ready and willing to answer questions.
 
-### Database
+#### Database
 
-The metadata for Archway is broken up into two main parts: workspace metadata and application configuration.
+Database overview can be found in [Architecture desctiption](architecture.md).
 
-#### Workspace Metadata
+Archway support three databases:
 
-All workspaces can contain a collection of topics, applications, databases, and resource pools. Depending on the template used, a workspace is stored and when applied, timestamps on the related entity are updated to indicate progress.
-![](metadata.png)
+- [Postgresql](https://www.postgresql.org)
+- [MySQL](https://www.mysql.com)
+- [Oracle](https://www.oracle.com/database/)
 
-#### Configuration
+For better database schema management and schema version control is used [Flyway](https://flywaydb.org). Migration scripts are localized in `flyway` directory in specific subdirectory for each database because each one requires its own migration script.
 
-![](config.png)
+Before running the database migrations, database instance has to be running. The easiest way how to locally run a database instance is using [Docker](https://www.docker.com). To run database migration manually run in terminal: `./flyway/flyway migrate -url=... -user=... -password=...`, however recommended way is to use preprepared commands in [Makefile](development.md#makefile).
 
-### Integration test package
+#### Makefile
+
+Most of the terminal scripts don't have to be run manually but can be run using Makefile, which simplifies process because it usually groups multiple commands under single one.
+
+##### How to run makefile command:
+
+- open terminal
+- choose command from [Makefile](../Makefile)
+- run `make <command name>` e.g. `make test`
+
+### Tests
+
+Archway contains two type of tests: unit and integration tests.
+
+#### Unit tests
+
+Unit tests represent simple tests which verify specific functionality. Those tests are short running and use mocks instead of real services. The tests are located in `test` directory of each module and flow the same package structure as a real implementation.
+
+To run one specific unit test click right on the test name and select `Run "test-name"` from context menu. To run all unit tests for one class, right click on class name and select `Run "class-name"`.
+
+#### Integration tests
+
+Integration tests represent complex tests which verify functionality against real services and it usually takes them longer time to finish. All integration tests are located in separated module `integration-test`. Those tests require [configuration](development.md#configuration) to run. To run one specific unit test click right on the test name and select `Run "test-name"` from context menu. To run all unit tests for one class, right click on class name and select `Run "class-name"`.
 
 An integration test jar is included in the parcel at \$PARCELS_ROOT/ARCHWAY/usr/lib/archway-server/archway-test.jar
 
@@ -96,10 +100,8 @@ java -cp "common/src/test/resources/application.test.conf:integration-test/targe
 Build the test jar locally with
 
 ```bash
-make package-tests
+make test-jar
 ```
-
-Create integration tests with `make package-tests`.
 
 ## Building a CSD and Parcel locally
 
