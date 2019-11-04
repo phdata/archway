@@ -1,0 +1,53 @@
+language: generic
+sudo: true
+
+stages:
+  - test-ui      
+
+addons:
+ postgresql: "9.6"
+env:
+  global:
+  - PGPORT=5432
+
+jobs:
+  include:
+    - stage: test-ui
+      name: "Build, Test and Package UI"
+      install:
+        - nvm install 9 
+      language: scala
+      scala:
+        - 2.12
+      jdk: openjdk8
+      services:
+        - postgresql
+      cache:
+        - sbt
+        - ivy2
+      before_script:  
+        - psql -c 'create database archway;' -U postgres  
+      script:
+        - export ARCHWAY_VERSION=$(date +%Y-%m-%d)-${TRAVIS_COMMIT}  
+        - npm i -g typescript || travis_terminate 1;
+        - npm i || travis_terminate 1;
+        - npm run-script prepare || travis_terminate 1;
+        - './flyway/flyway migrate -url="jdbc:postgresql://localhost:5432/archway" -user=postgres -password=postgres' 
+        - ./sbt common/test || travis_terminate 1;
+        - ./sbt api/test || travis_terminate 1;
+        - ./sbt provisioning/test || travis_terminate 1;
+        - './sbt "set every test in assembly := {}" api/assembly' 
+        - './sbt "set every test in assembly := {}" integration-test/assembly' 
+        - ./sbt integration-test/test:package || travis_terminate 1;
+        - ./sbt common/test:package || travis_terminate 1;
+        - java -jar ./cloudera-integration/validator.jar -p $TRAVIS_BUILD_DIR/cloudera-integration/parcel/archway-meta/parcel.json || travis_terminate 1;
+        - java -jar ./cloudera-integration/validator.jar -r $TRAVIS_BUILD_DIR/cloudera-integration/parcel/archway-meta/permissions.json || travis_terminate 1;
+        - java -jar ./cloudera-integration/validator.jar -s $TRAVIS_BUILD_DIR/cloudera-integration/csd/descriptor/service.sdl || travis_terminate 1;
+        - echo $ARCHWAY_VERSION
+      deploy:
+        skip_cleanup: true
+        provider: script
+        script:  export ARCHWAY_VERSION=${TRAVIS_TAG} &&./publish.sh parcel archway && ./publish.sh manifest  && ./publish.sh csd  && ./publish.sh ship
+        on:
+          tags: true
+          all_branches: true

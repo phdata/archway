@@ -74,7 +74,7 @@ csd()
 
 manifest()
 {
-  python /usr/src/make_manifest.py ${PUBLISH_DIR} || build-support/bin/manifest ${PUBLISH_DIR}
+  python build-support/bin/manifest.py ${PUBLISH_DIR}
 }
 
 ship()
