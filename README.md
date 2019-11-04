@@ -1,13 +1,6 @@
 <p align="center">
-  <img src="logo.svg" alt="logo" width=200 height=20 />
+  <img src="docs/images/logo.svg" alt="logo" width=400 height=400 />
 
-  <h3 align="center"></h3>
-
-  <p align="center">
-    Archway
-    <br>
-
-  </p>
 </p>
 
 <br>
