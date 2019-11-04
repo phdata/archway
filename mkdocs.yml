@@ -7,9 +7,7 @@ pages:
   - installation.md
   - changelog.md
   - cloudera.md
-  - contributing.md
   - development.md
-  - introduction.md
   - releases.md
   - service.md
   - architecture.md
