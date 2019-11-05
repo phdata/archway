@@ -94,7 +94,7 @@ const SimpleMemberRequest = ({
 export default reduxForm<MemberForm, SimpleMemberRequestProps>({
   form: 'simpleMemberRequest',
   initialValues: {
-    username: '',
+    distinguishedName: '',
     roles: {},
   },
 })(SimpleMemberRequest);

@@ -206,18 +206,20 @@ export function* simpleMemberRequested({ resource }: SimpleMemberRequestAction) 
   try {
     yield put(setMemberLoading(true));
     if (resource === 'data') {
-      const { username, roles } = (yield select(memberRequestFormExtractor)).toJS();
+      const { distinguishedName, roles } = (yield select(memberRequestFormExtractor)).toJS();
       yield all(
         workspace.data.map(({ id, name }: { id: number; name: string }) => {
           const role = roles[name] || 'readonly';
-          return role !== 'none' && call(Api.newWorkspaceMember, token, workspace.id, resource, id, role, username);
+          return (
+            role !== 'none' && call(Api.newWorkspaceMember, token, workspace.id, resource, id, role, distinguishedName)
+          );
         })
       );
       yield put(simpleMemberRequestComplete());
     } else if (resource === 'topics') {
       const { id } = yield select(activeTopicExtractor);
-      const { username, role } = (yield select(topicMemberRequestFormExtractor)).toJS();
-      yield call(Api.newWorkspaceMember, token, workspace.id, resource, id, role, username);
+      const { distinguishedName, role } = (yield select(topicMemberRequestFormExtractor)).toJS();
+      yield call(Api.newWorkspaceMember, token, workspace.id, resource, id, role, distinguishedName);
       yield put(simpleMemberRequestComplete());
     }
     const members = yield call(Api.getMembers, token, workspace.id);
@@ -377,7 +379,7 @@ function* provisionWorkspaceRequestedListener() {
 function* changeWorkspaceOwnerRequested() {
   const token = yield select(TOKEN_EXTRACTOR);
   const { id, name } = (yield select(detailExtractor)).toJS();
-  const ownerDn = (yield select(ownerDnExtractor)).toJS().username;
+  const ownerDn = (yield select(ownerDnExtractor)).toJS().distinguishedName;
   try {
     yield put(setOwnerLoading(true));
     yield call(Api.changeWorkspaceOwner, token, id, ownerDn);
