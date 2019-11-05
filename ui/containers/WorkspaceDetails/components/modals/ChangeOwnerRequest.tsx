@@ -27,5 +27,5 @@ const ChangeOwnerRequest = ({
 
 export default reduxForm<MemberForm, ChangeOwnerRequestProps>({
   form: 'changeOwnerRequest',
-  initialValues: { username: '', roles: {} },
+  initialValues: { distinguishedName: '', roles: {} },
 })(ChangeOwnerRequest);

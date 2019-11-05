@@ -5,6 +5,7 @@ import { Field } from 'redux-form/immutable';
 import { reduxForm } from 'redux-form/immutable';
 import FieldLabel from '../../../../components/FieldLabel';
 import { UserSuggestions, UserSuggestion } from './../../../../models/Workspace';
+import { SimpleTopicMemberForm } from '../../../../models/Form';
 
 /* tslint:disable:no-var-requires */
 const { createComponent, customMap } = require('redux-form-antd');
@@ -35,11 +36,6 @@ const ReduxAutoComplete = createComponent(
   }))
 );
 
-interface SimpleTopicMemberForm {
-  username: string;
-  role: string;
-}
-
 interface SimpleTopicMemberRequestProps {
   suggestions?: UserSuggestions;
   onSearch?: (v: string) => void;
@@ -66,7 +62,7 @@ const SimpleTopicMemberRequest = ({
   <form style={{}} onSubmit={handleSubmit}>
     <FieldLabel>member</FieldLabel>
     <Field
-      name="username"
+      name="distinguishedName"
       dataSource={
         suggestions
           ? [
@@ -114,7 +110,7 @@ const SimpleTopicMemberRequest = ({
 export default reduxForm<SimpleTopicMemberForm, SimpleTopicMemberRequestProps>({
   form: 'simpleTopicMemberRequest',
   initialValues: {
-    username: '',
+    distinguishedName: '',
     role: 'readonly',
   },
 })(SimpleTopicMemberRequest);

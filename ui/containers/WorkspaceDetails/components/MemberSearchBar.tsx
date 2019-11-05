@@ -53,7 +53,7 @@ const MemberSearchBar = ({ loading, suggestions, showTypes, onSearch }: Props) =
     <FieldLabel>MEMBER ID SEARCH</FieldLabel>
     <div style={{ position: 'relative' }}>
       <Field
-        name="username"
+        name="distinguishedName"
         dataSource={suggestions ? options(showTypes, suggestions) : []}
         onSearch={onSearch}
         component={ReduxAutoComplete}
