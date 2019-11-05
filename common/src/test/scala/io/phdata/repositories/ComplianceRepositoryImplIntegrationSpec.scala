@@ -9,11 +9,10 @@ class ComplianceRepositoryImplIntegrationSpec extends FlatSpec with Matchers wit
 
   it should "create" in {
 
-    val complianceRepository = new ComplianceRepositoryImpl
+    val complianceRepository = new ComplianceRepositoryImpl()
 
-    complianceRepository.create(savedCompliance).map { newRecord =>
-      newRecord.id shouldBe defined
+    complianceRepository.create(savedCompliance, id).map { newRecordId =>
+      newRecordId shouldBe defined
     }
-
   }
 }

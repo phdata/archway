@@ -3,13 +3,12 @@ package io.phdata.test
 import java.time.Instant
 
 import cats.effect.{IO, Resource}
-import io.phdata.clients.CMClient
+import com.typesafe.config.ConfigFactory
+import io.circe._
+import io.circe.parser._
 import io.phdata.config.AppConfig
 import io.phdata.models.{Manager, ReadOnly, _}
 import io.phdata.services.{CDH, Cluster, ClusterApp}
-import com.typesafe.config.{Config, ConfigFactory}
-import io.circe._
-import io.circe.parser._
 import org.http4s.HttpRoutes
 import org.http4s.circe._
 import org.http4s.client.Client
@@ -32,9 +31,6 @@ package object fixtures {
   val id = 123L
   val name = "Sesame"
   val purpose = "World Peace"
-  val phiCompliance = false
-  val piiCompliance = false
-  val pciCompliance = false
   val hdfsRequestedSize: Int = 250
   val actualGB: None.type = None
   val keytabLocation: Option[String] = None
@@ -45,8 +41,10 @@ package object fixtures {
   val maxCores = 4
   val maxMemoryInGB = 16
   val poolName: String = "root.workspaces.pool"
-  val savedCompliance = Compliance(phiCompliance, pciCompliance, piiCompliance, Some(id))
-  val initialCompliance = savedCompliance.copy(id = None)
+  val savedCompliance = List(
+      ComplianceQuestion("Full or partial credit card numbers?", "Joe", testTimer.instant, Some(123L), Some(1))
+  )
+
   val savedLDAP = LDAPRegistration(ldapDn, s"edh_sw_$systemName", "role_sesame", Some(id))
   val initialLDAP = savedLDAP.copy(id = None)
   val savedGrant = HiveGrant("sw_sesame", "/shared_workspaces/sw_sesame", savedLDAP, Manager, id = Some(id))
@@ -60,7 +58,7 @@ package object fixtures {
   val savedApplication = Application("Tiller", s"${systemName}_cg", savedLDAP, None, None, None, None, Some(id))
   val initialApplication = savedApplication.copy(id = None, group = initialLDAP)
   val testTimer = new TestTimer
-  val searchResult = WorkspaceSearchResult(id, name, name, "simple", "Approved", piiCompliance, pciCompliance, phiCompliance, testTimer.instant, Some(testTimer.instant), 0, 0, 0)
+  val searchResult = WorkspaceSearchResult(id, name, name, "simple", "Approved", testTimer.instant, Some(testTimer.instant), 0, 0, 0)
 
   val yarnApp = ClusterApp("yarn", "yarn", "GOOD_HExALTH", "STARTED", Map())
   val cluster = Cluster("cluster", "Cluster", "", List(yarnApp), CDH(""), "GOOD_HEALTH")
@@ -99,7 +97,7 @@ package object fixtures {
   val initialWorkspaceRequest =
     savedWorkspaceRequest.copy(
       id = None,
-      compliance = initialCompliance,
+      compliance = savedCompliance,
       data = List(initialHive),
       processing = List(initialYarn),
       applications = List(initialApplication)
@@ -110,11 +108,9 @@ package object fixtures {
        | {
        |   "name": "$name",
        |   "purpose": "$purpose",
-       |   "compliance": {
-       |     "pii_data": $piiCompliance,
-       |     "phi_data": $phiCompliance,
-       |     "pci_data": $pciCompliance
-       |   }
+       |   "compliance": [
+       |
+       |   ]
        | }
       """.stripMargin)
 
@@ -126,9 +122,6 @@ package object fixtures {
        |    "summary" : "$name",
        |    "behavior" : "simple",
        |    "status" : "Approved",
-       |    "pii_data": $piiCompliance,
-       |    "pci_data": $pciCompliance,
-       |    "phi_data": $phiCompliance,
        |    "date_requested" : "${testTimer.instant.toString}",
        |    "date_fully_approved" : "${testTimer.instant.toString}",
        |    "total_disk_allocated_in_gb" : 0,
@@ -148,11 +141,7 @@ package object fixtures {
        |  "behavior" : "simple",
        |  "single_user" : ${initialWorkspaceRequest.singleUser},
        |  "status": "Pending",
-       |  "compliance" : {
-       |    "phi_data" : ${savedCompliance.phiData},
-       |    "pci_data" : ${savedCompliance.pciData},
-       |    "pii_data" : ${savedCompliance.piiData}
-       |  },
+       |  "compliance" : ${savedCompliance}
        |  "processing" : [
        |    {
        |      "pool_name" : "${savedYarn.poolName}",

@@ -1,12 +1,14 @@
 package io.phdata.models
 
+import java.time.Instant
+
 import io.circe.{Decoder, Encoder}
 
 case class TemplateRequest(
     name: String,
     summary: String,
     description: String,
-    compliance: Compliance,
+    compliance: List[ComplianceQuestion],
     requester: DistinguishedName,
     generateNextId: Boolean = true
 ) {
@@ -27,14 +29,16 @@ object TemplateRequest {
       r => (r.name, r.summary, r.description, r.compliance, r.requester)
     )
 
-  implicit val decoder: Decoder[TemplateRequest] = Decoder.instance { cursor =>
-    for {
-      name <- cursor.downField("name").as[String]
-      summary <- cursor.downField("summary").as[String]
-      description <- cursor.downField("description").as[String]
-      compliance <- cursor.downField("compliance").as[Compliance]
-      requester <- cursor.downField("requester").as[DistinguishedName]
-    } yield TemplateRequest(name, summary, description, compliance, requester)
-
+  implicit def decoder(instant: Instant): Decoder[TemplateRequest] = {
+    implicit val complianceQuestionDecoder = ComplianceQuestion.decoder(instant)
+    Decoder.instance { cursor =>
+      for {
+        name <- cursor.downField("name").as[String]
+        summary <- cursor.downField("summary").as[String]
+        description <- cursor.downField("description").as[String]
+        compliance <- cursor.downField("compliance").as[List[ComplianceQuestion]]
+        requester <- cursor.downField("requester").as[DistinguishedName]
+      } yield TemplateRequest(name, summary, description, compliance, requester)
+    }
   }
 }

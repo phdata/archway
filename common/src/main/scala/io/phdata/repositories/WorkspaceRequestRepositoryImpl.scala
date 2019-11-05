@@ -107,10 +107,6 @@ class WorkspaceRequestRepositoryImpl(sqlSyntax: SqlSyntax) extends WorkspaceRequ
           wr.behavior,
           wr.requested_by,
           wr.request_date,
-          c.phi_data,
-          c.pci_data,
-          c.pii_data,
-          c.id,
           wr.single_user,
           wr.id
         from workspace_request wr
@@ -128,9 +124,6 @@ class WorkspaceRequestRepositoryImpl(sqlSyntax: SqlSyntax) extends WorkspaceRequ
             when s.approvals = 2 then 'approved'
             else 'pending'
           end as status,
-          c.phi_data,
-          c.pci_data,
-          c.pii_data,
           wr.request_date as requested,
           case
             when s.approvals = 2 then s.latestApproval
@@ -140,7 +133,6 @@ class WorkspaceRequestRepositoryImpl(sqlSyntax: SqlSyntax) extends WorkspaceRequ
           res.cores as maxCores,
           COALESCE(res.mem, 0.0) as maxMemoryInGB
         from workspace_request wr
-        inner join compliance c on wr.compliance_id = c.id
         left join (select workspace_request_id, sum(case when role = 'risk' then 1 else 0 end) as risk_approved, sum(case when role = 'infra' then 1 else 0 end) as infra_approved, count(*) as approvals, max(approval_time) as latestApproval from approval group by workspace_request_id) as s on s.workspace_request_id = wr.id
         left join (select wd.workspace_request_id, sum(size_in_gb) as size from workspace_database as wd inner join hive_database as hd on wd.hive_database_id = hd.id group by wd.workspace_request_id) as db on db.workspace_request_id = wr.id
         left join (select wp.workspace_request_id, sum(max_cores) as cores, sum(max_memory_in_gb) as mem from workspace_pool wp inner join resource_pool rp on wp.resource_pool_id = rp.id group by wp.workspace_request_id) as res on res.workspace_request_id = wr.id
@@ -187,7 +179,7 @@ class WorkspaceRequestRepositoryImpl(sqlSyntax: SqlSyntax) extends WorkspaceRequ
             ${workspaceRequest.summary},
             ${workspaceRequest.description},
             ${workspaceRequest.behavior},
-            ${workspaceRequest.compliance.id},
+            0,
             ${workspaceRequest.requestedBy},
             ${workspaceRequest.requestDate},
             ${SqlSyntax.booleanToChar(workspaceRequest.singleUser).toString},
@@ -235,9 +227,6 @@ class WorkspaceRequestRepositoryImpl(sqlSyntax: SqlSyntax) extends WorkspaceRequ
                    when s.approvals = 2 then 'approved'
                    else 'pending'
                    end                as status,
-               c.phi_data,
-               c.pci_data,
-               c.pii_data,
                wr.request_date        as requested,
                case
                    when s.approvals = 2 then s.latestApproval
@@ -247,7 +236,6 @@ class WorkspaceRequestRepositoryImpl(sqlSyntax: SqlSyntax) extends WorkspaceRequ
                res.cores              as maxCores,
                COALESCE(res.mem, 0.0) as maxMemoryInGB
         from workspace_request wr
-                 inner join compliance c on wr.compliance_id = c.id
                  left join (select workspace_request_id,
                                    sum(case when role = 'risk' then 1 else 0 end)  as risk_approved,
                                    sum(case when role = 'infra' then 1 else 0 end) as infra_approved,

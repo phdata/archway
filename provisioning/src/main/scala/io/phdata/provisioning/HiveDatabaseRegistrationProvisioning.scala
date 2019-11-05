@@ -65,7 +65,7 @@ object HiveDatabaseRegistrationProvisioning extends LazyLogging {
     val compliance = workspaceRequest.compliance
     Map(
       "phi_data" -> compliance.phiData.toString,
-      "pci_data" -> compliance.phiData.toString,
+      "pci_data" -> compliance.pciData.toString,
       "pii_data" -> compliance.piiData.toString
     )
   }

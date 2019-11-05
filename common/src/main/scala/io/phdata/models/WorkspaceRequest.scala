@@ -46,7 +46,7 @@ case class WorkspaceRequest(
     behavior: String,
     requestedBy: DistinguishedName,
     requestDate: Instant,
-    compliance: Compliance,
+    compliance: List[ComplianceQuestion] = List.empty,
     singleUser: Boolean,
     id: Option[Long] = None,
     approvals: List[Approval] = List.empty,
@@ -90,14 +90,15 @@ object WorkspaceRequest {
     )((initial, approvals) => initial deepMerge Json.obj("approvals" -> approvals.asJson))
   }
 
-  implicit def decoder(userDN: DistinguishedName, instant: Instant): Decoder[WorkspaceRequest] = Decoder.instance {
-    json =>
+  implicit def decoder(userDN: DistinguishedName, instant: Instant): Decoder[WorkspaceRequest] = {
+    implicit val complianceQuestionDecoder = ComplianceQuestion.decoder(instant)
+    Decoder.instance { json =>
       for {
         name <- json.downField("name").as[String]
         summary <- json.downField("summary").as[String]
         description <- json.downField("description").as[String]
         behavior <- json.downField("behavior").as[String]
-        compliance <- json.downField("compliance").as[Compliance]
+        compliance <- json.downField("compliance").as[List[ComplianceQuestion]]
         singleUser <- json.downField("single_user").as[Boolean]
         data <- json.downField("data").as[List[HiveAllocation]]
         processing <- json.downField("processing").as[List[Yarn]]
@@ -119,6 +120,7 @@ object WorkspaceRequest {
         kafkaTopics = topics,
         metadata = metadata
       )
+    }
   }
 
 }

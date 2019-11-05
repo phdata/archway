@@ -112,7 +112,7 @@ class AccountServiceSpec extends FlatSpec with MockFactory with Matchers with Ap
   }
 
   it should "save and create a workspace" in new Context {
-    val templateRequest = TemplateRequest(infraApproverUser.username, infraApproverUser.username, infraApproverUser.username, initialCompliance, infraApproverUser.distinguishedName)
+    val templateRequest = TemplateRequest(infraApproverUser.username, infraApproverUser.username, infraApproverUser.username, savedCompliance, infraApproverUser.distinguishedName)
     templateService.defaults _ expects infraApproverUser returning templateRequest.pure[IO]
     templateService.workspaceFor _ expects(templateRequest, "user") returning initialWorkspaceRequest.pure[IO]
     workspaceService.findByDistinguishedName _ expects standardUserDN returning OptionT.none

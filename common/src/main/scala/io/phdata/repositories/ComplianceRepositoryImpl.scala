@@ -1,6 +1,6 @@
 package io.phdata.repositories
 
-import io.phdata.models.Compliance
+import io.phdata.models.{ComplianceQuestion}
 import doobie._
 import doobie.implicits._
 
@@ -8,40 +8,17 @@ class ComplianceRepositoryImpl extends ComplianceRepository {
 
   implicit val han = CustomLogHandler.logHandler(this.getClass)
 
-  def insertRecord(compliance: Compliance): ConnectionIO[Long] =
+  def insertRecord(questionId: Long, workspaceId: Long, groupId: Long): ConnectionIO[Long] =
     sql"""
-       insert into compliance (phi_data, pci_data, pii_data)
+       insert into compliance (workspace_id, question_id, group_id)
        values(
-        ${toChar(compliance.phiData).toString},
-        ${toChar(compliance.pciData).toString},
-        ${toChar(compliance.piiData).toString}
+        $workspaceId,
+        $questionId,
+        $groupId
        )
       """.update.withUniqueGeneratedKeys[Long]("id")
 
-  def find(id: Long): ConnectionIO[Compliance] =
-    sql"""
-       select
-         phi_data,
-         pci_data,
-         pii_data,
-         id
-       from
-         compliance
-       where
-         id = $id
-      """.query[Compliance].unique
-
-  override def create(compliance: Compliance): ConnectionIO[Compliance] =
-    for {
-      id <- insertRecord(compliance)
-      result <- find(id)
-    } yield result
-
-  private def toChar(boolean: Boolean): Char = {
-    boolean match {
-      case true  => '1'
-      case false => '0'
-    }
-  }
+  override def create(compliance: List[ComplianceQuestion], workspaceId: Long): List[ConnectionIO[Long]] =
+    compliance.map(question => insertRecord(question.id.get, workspaceId, question.complianceGroupId.get))
 
 }

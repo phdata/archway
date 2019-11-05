@@ -36,10 +36,8 @@ class WorkspaceServiceImpl[F[_]: ConcurrentEffect: ContextShift](
 
   def create(workspace: WorkspaceRequest): F[WorkspaceRequest] = {
     val createResult = for {
-      compliance <- context.complianceRepository.create(workspace.compliance)
-      updatedWorkspace = workspace.copy(compliance = compliance)
-      newWorkspaceId <- context.workspaceRequestRepository.create(updatedWorkspace)
-
+      newWorkspaceId <- context.workspaceRequestRepository.create(workspace)
+      _ <- context.complianceRepository.create(workspace.compliance, newWorkspaceId).head
       _ <- workspace.data.traverse[ConnectionIO, Unit] { db =>
         for {
           managerLdap <- context.ldapRepository.create(db.managingGroup.ldapRegistration)

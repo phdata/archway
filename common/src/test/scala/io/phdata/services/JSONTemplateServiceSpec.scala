@@ -16,7 +16,7 @@ class JSONTemplateServiceSpec extends FlatSpec with Matchers with MockFactory wi
     val context = genMockContext()
     val configService: ConfigService[IO] = new TestConfigService()
     val generator = new JSONTemplateService[IO](context, configService)
-    val template = TemplateRequest(name, purpose, purpose, initialCompliance, standardUserDN)
+    val template = TemplateRequest(name, purpose, purpose, savedCompliance, standardUserDN)
     val result = generator.workspaceFor(template, "simple").unsafeRunSync()
     println(result)
   }
@@ -28,7 +28,7 @@ class JSONTemplateServiceSpec extends FlatSpec with Matchers with MockFactory wi
     val context = genMockContext()
     val configService: ConfigService[IO] = new TestConfigService()
     val generator = new JSONTemplateService[IO](context, configService)
-    val template = TemplateRequest(name, purpose, purpose, initialCompliance, DistinguishedName(crazyDN))
+    val template = TemplateRequest(name, purpose, purpose, savedCompliance, DistinguishedName(crazyDN))
     val result = generator.workspaceFor(template, "user").unsafeRunSync()
     result.requestedBy.value shouldBe crazyDN
   }

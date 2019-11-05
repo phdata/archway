@@ -8,7 +8,7 @@ import cats.effect._
 import cats.effect.implicits._
 import cats.implicits._
 import io.phdata.AppContext
-import io.phdata.models.{Compliance, DistinguishedName, TemplateRequest, User, WorkspaceRequest}
+import io.phdata.models.{ComplianceQuestion, DistinguishedName, TemplateRequest, User, WorkspaceRequest}
 import com.typesafe.scalalogging.LazyLogging
 import org.fusesource.scalate.TemplateEngine
 
@@ -38,7 +38,7 @@ class JSONTemplateService[F[_]: Effect: Clock](context: AppContext[F], configSer
           "",
           "",
           "",
-          Compliance(false, false, false),
+          List.empty,
           DistinguishedName("cn=admin,ou=heimdali,dc=io"),
           false
         )
@@ -53,7 +53,7 @@ class JSONTemplateService[F[_]: Effect: Clock](context: AppContext[F], configSer
   }
 
   override def defaults(user: User): F[TemplateRequest] =
-    TemplateRequest(user.username, user.name, user.name, Compliance.empty, user.distinguishedName).pure[F]
+    TemplateRequest(user.username, user.name, user.name, List.empty, user.distinguishedName).pure[F]
 
   private[services] def generateJSON(template: TemplateRequest, templatePath: String, templateName: String): F[String] =
     Sync[F].delay {
@@ -117,7 +117,9 @@ class JSONTemplateService[F[_]: Effect: Clock](context: AppContext[F], configSer
   }
 
   def verifyDefaultTemplates: F[Unit] = {
-    val defaultCompliance = Compliance(false, false, false)
+    val defaultCompliance = List(
+      ComplianceQuestion("Full or partial credit card numbers?", "Joe", Instant.now(), Some(123L), Some(1))
+    )
 
     val simpleTemplateRequest =
       TemplateRequest(

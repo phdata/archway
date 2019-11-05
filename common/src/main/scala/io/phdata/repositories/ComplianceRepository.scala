@@ -1,8 +1,8 @@
 package io.phdata.repositories
 
-import io.phdata.models.Compliance
-import doobie.free.connection.ConnectionIO
+import doobie.ConnectionIO
+import io.phdata.models.ComplianceQuestion
 
 trait ComplianceRepository {
-  def create(compliance: Compliance): ConnectionIO[Compliance]
+  def create(compliance: List[ComplianceQuestion], workspaceId: Long): List[ConnectionIO[Long]]
 }

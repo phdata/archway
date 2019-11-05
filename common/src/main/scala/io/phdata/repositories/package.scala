@@ -64,7 +64,7 @@ package object repositories {
 
   implicit val workspaceReader: Read[WorkspaceRequest] =
     Read[
-      (String, String, String, String, String, Instant, Boolean, Boolean, Boolean, Option[Long], Boolean, Option[Long])
+      (String, String, String, String, String, Instant, Boolean, Option[Long])
     ].map {
       case (
           name,
@@ -73,10 +73,6 @@ package object repositories {
           behavior,
           requestedBy,
           requestDate,
-          phiData,
-          pciData,
-          piiData,
-          complianceId,
           singleUser,
           id
           ) =>
@@ -87,7 +83,7 @@ package object repositories {
           behavior,
           DistinguishedName(requestedBy),
           requestDate,
-          Compliance(phiData, pciData, piiData, complianceId),
+          List.empty,
           singleUser,
           id,
           metadata = Metadata(name, description, 0, Map.empty)

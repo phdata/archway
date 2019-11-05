@@ -47,7 +47,7 @@ class WorkspaceServiceImplSpec
 
   it should "create a workspace" in new Context {
     inSequence {
-      (context.complianceRepository.create _).expects(initialCompliance).returning(savedCompliance.pure[ConnectionIO])
+      (context.complianceRepository.create _).expects(savedCompliance, id).returning(List(id.pure[ConnectionIO]))
       (context.workspaceRequestRepository.create _).expects(initialWorkspaceRequest.copy(compliance = savedCompliance)).returning(id.pure[ConnectionIO])
 
       (context.ldapRepository.create _).expects(initialLDAP).returning(savedLDAP.pure[ConnectionIO])
