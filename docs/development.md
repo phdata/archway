@@ -78,11 +78,17 @@ Archway contains two type of tests: unit and integration tests.
 
 Unit tests represent simple tests which verify specific functionality. Those tests are short running and use mocks instead of real services. The tests are located in `test` directory of each module and flow the same package structure as a real implementation.
 
-To run one specific unit test click right on the test name and select `Run "test-name"` from context menu. To run all unit tests for one class, right click on class name and select `Run "class-name"`.
+- To run one specific unit test click right on the test name and select `Run "test-name"` from context menu. 
+- To run all unit tests for one class, right click on class name and select `Run "class-name"`.
+- To run all unit tests the project run `sbt test` in a terminal.
 
 #### Integration tests
 
-Integration tests represent complex tests which verify functionality against real services and it usually takes them longer time to finish. All integration tests are located in separated module `integration-test`. Those tests require [configuration](development.md#configuration) to run. To run one specific unit test click right on the test name and select `Run "test-name"` from context menu. To run all unit tests for one class, right click on class name and select `Run "class-name"`.
+Integration tests represent complex tests which verify functionality against real services and it usually takes them longer time to finish. All integration tests are located in separated module `integration-test`. Those tests require [configuration](development.md#configuration) to run. 
+
+- To run one specific unit test click right on the test name and select `Run "test-name"` from context menu. 
+- To run all unit tests for one class, right click on class name and select `Run "class-name"`.
+- To run all integration tests run `sbt it:test` in a terminal.
 
 An integration test jar is included in the parcel at \$PARCELS_ROOT/ARCHWAY/usr/lib/archway-server/archway-test.jar
 

@@ -3,7 +3,7 @@ package io.phdata.services
 import cats.effect.IO
 import org.scalatest.{FlatSpec, Matchers}
 
-class FeatureServiceImplTest extends FlatSpec with Matchers {
+class FeatureServiceImplSpec extends FlatSpec with Matchers {
 
   behavior of "Feature Service"
 
