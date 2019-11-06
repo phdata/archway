@@ -7,7 +7,7 @@ import io.phdata.services.ConfigService
 
 trait LDAPGroupGenerator[F[_]] {
 
-  def generate(cn: String, dn: DistinguishedName, role: String, workspace: WorkspaceRequest): F[LDAPRegistration]
+  def generate(cn: String, dn: DistinguishedName, role: String): F[LDAPRegistration]
 
 }
 

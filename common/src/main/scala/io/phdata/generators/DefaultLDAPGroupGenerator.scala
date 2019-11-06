@@ -2,7 +2,7 @@ package io.phdata.generators
 
 import cats.effect.{Clock, Sync}
 import cats.implicits._
-import io.phdata.models.{DistinguishedName, LDAPRegistration, WorkspaceRequest}
+import io.phdata.models.{DistinguishedName, LDAPRegistration}
 import io.phdata.services.ConfigService
 
 class DefaultLDAPGroupGenerator[F[_]](configService: ConfigService[F])(implicit clock: Clock[F], F: Sync[F])
@@ -11,10 +11,9 @@ class DefaultLDAPGroupGenerator[F[_]](configService: ConfigService[F])(implicit 
   def attributes(
       cn: String,
       dn: DistinguishedName,
-      role: String,
-      workspace: WorkspaceRequest
+      role: String
   ): F[List[(String, String)]] =
-    configService.getAndSetNextGid.map { gid =>
+    configService.getAndSetNextGid.map { _ =>
       List(
         "dn" -> dn.value,
         "objectClass" -> "group",
@@ -24,7 +23,7 @@ class DefaultLDAPGroupGenerator[F[_]](configService: ConfigService[F])(implicit 
       )
     }
 
-  def generate(cn: String, dn: DistinguishedName, role: String, workspace: WorkspaceRequest): F[LDAPRegistration] =
-    attributes(cn, dn, role, workspace).map(result => LDAPRegistration(dn, cn, role, attributes = result))
+  def generate(cn: String, dn: DistinguishedName, role: String): F[LDAPRegistration] =
+    attributes(cn, dn, role).map(result => LDAPRegistration(dn, cn, role, attributes = result))
 
 }

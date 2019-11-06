@@ -42,8 +42,7 @@ class JsonApplicationGenerator[F[_]: Effect](
       .generate(
         consumerGroup,
         DistinguishedName(s"cn=$consumerGroup,${appConfig.ldap.groupPath}"),
-        consumerGroup,
-        workspace
+        consumerGroup
       )
       .map { ldapGroup =>
         templateEngine.layout(

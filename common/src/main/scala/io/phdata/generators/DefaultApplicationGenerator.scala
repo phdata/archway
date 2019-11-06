@@ -18,8 +18,7 @@ class DefaultApplicationGenerator[F[_]](appConfig: AppConfig, ldapGroupGenerator
       .generate(
         consumerGroup,
         DistinguishedName(s"cn=$consumerGroup,${appConfig.ldap.groupPath}"),
-        s"role_$consumerGroup",
-        workspace
+        s"role_$consumerGroup"
       )
       .map { ldap =>
         Application(
