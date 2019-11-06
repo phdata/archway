@@ -39,7 +39,7 @@ const PersonalWorkspace = ({
       </div>
     );
   }
-  const queue = !!workspace.processing[0] ? workspace.processing[0].pool_name : '';
+  const queue = !!workspace && !!workspace.processing[0] ? workspace.processing[0].pool_name : '';
   return (
     <div style={{ flex: 1 }}>
       {workspace && workspace.data ? (
