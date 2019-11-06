@@ -26,14 +26,12 @@ class DefaultTopicGenerator[F[_]](appConfig: AppConfig, ldapGroupGenerator: LDAP
       manager <- ldapGroupGenerator.generate(
         managerName,
         DistinguishedName(s"cn=$managerName,${appConfig.ldap.groupPath}"),
-        s"role_$managerName",
-        workspaceRequest
+        s"role_$managerName"
       )
       readonly <- ldapGroupGenerator.generate(
         readonlyName,
         DistinguishedName(s"cn=$readonlyName,${appConfig.ldap.groupPath}"),
-        s"role_$readonlyName",
-        workspaceRequest
+        s"role_$readonlyName"
       )
     } yield KafkaTopic(
       registeredName,
