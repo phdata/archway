@@ -6,7 +6,7 @@ _NOTE_ Make sure you have [npm](https://www.npmjs.com) and [IntelliJ](https://ww
 
 In order to run the API locally, you'll need to prepare your development environment.
 
-Create your `application.conf` file in `api/src/main/resources/` and initialize properties based on description in file [Service.md](service.md).
+Create your `application.conf` file in `api/src/main/resources/` and initialize properties based on description in file [Service.md](service.md). File `application-template.conf` serves as an empty template for configuration file.
 
 ### Run The App (API-focused development)
 
