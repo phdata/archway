@@ -500,6 +500,14 @@
           "configurableInWizard": "true"
         },
         {
+          "name": "archway.ldap.ignoreSSLCert",
+          "label": "Archway SSL Certification setting",
+          "description": "Use default TrustAllTrustManager",
+          "required": "false",
+          "type": "boolean",
+          "default": false
+        },
+        {
           "name": "archway.approvers.notificationEmail",
           "label": "Notification Email Address",
           "description": "The comma separated list of email addresses to send notification emails to",

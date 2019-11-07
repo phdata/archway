@@ -3,10 +3,10 @@ package io.phdata.clients
 import cats.data.OptionT
 import cats.effect.{Effect, Sync}
 import cats.implicits._
-import io.phdata.config._
 import com.typesafe.scalalogging.LazyLogging
 import com.unboundid.ldap.sdk._
-import com.unboundid.util.ssl.{SSLUtil, TrustAllTrustManager}
+import com.unboundid.util.ssl.{SSLUtil, TrustAllTrustManager, TrustStoreTrustManager}
+import io.phdata.config._
 import io.phdata.models.DistinguishedName
 import io.phdata.services.{MemberSearchResult, MemberSearchResultItem}
 import org.fusesource.scalate.{Template, TemplateEngine}
@@ -31,7 +31,12 @@ class LDAPClientImpl[F[_]: Effect](ldapConfig: LDAPConfig, binding: LDAPConfig =
   val ldapBinding: LDAPBinding = binding(ldapConfig)
 
   val connectionPool: LDAPConnectionPool = {
-    val sslUtil = new SSLUtil(new TrustAllTrustManager)
+    val sslUtil = if(ldapConfig.ignoreSslCert.getOrElse(false)) {
+      new SSLUtil(new TrustAllTrustManager)
+    } else {
+      new SSLUtil(new TrustStoreTrustManager(System.getProperty("javax.net.ssl.trustStore")))
+    }
+
     val sslSocketFactory = sslUtil.createSSLSocketFactory
 
     val servers: Array[String] = ldapBinding.server.split(",")
