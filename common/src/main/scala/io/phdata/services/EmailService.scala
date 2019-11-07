@@ -7,6 +7,7 @@ import cats.effect._
 import cats.implicits._
 import com.typesafe.scalalogging.LazyLogging
 import io.phdata.AppContext
+import io.phdata.clients.LDAPUser
 import io.phdata.models.{DistinguishedName, MemberRoleRequest, WorkspaceRequest}
 import org.fusesource.scalate.TemplateEngine
 
@@ -45,11 +46,18 @@ class EmailServiceImpl[F[_]: Effect](context: AppContext[F], workspaceService: W
   override def newWorkspaceEmail(workspaceRequest: WorkspaceRequest): F[Unit] = {
     val values = Map(
       "uiUrl" -> resolveUiUrl,
-      "workspaceId" -> workspaceRequest.id.get
+      "workspaceId" -> workspaceRequest.id.get,
+      "workspaceName" -> workspaceRequest.name
     )
 
     for {
-      email <- Effect[F].delay(templateEngine.layout("/templates/emails/incoming.mustache", values))
+      user <- context.lookupLDAPClient.findUserByDN(workspaceRequest.requestedBy).value
+      email <- Effect[F].delay(
+        templateEngine.layout(
+          "/templates/emails/incoming.mustache",
+          values + ("userName" -> s"${user.getOrElse(LDAPUser("Unknown", "Unknown", DistinguishedName("cn=Unknown"), Seq.empty, None)).name}")
+        )
+      )
       addressList = context.appConfig.approvers.notificationEmail
       fromAddress = context.appConfig.smtp.fromEmail
     } yield {
