@@ -2,9 +2,10 @@ package io.phdata.services
 
 import cats.data._
 import cats.effect._
+import cats.implicits._
 import io.phdata.AppContext
 import io.phdata.clients.LDAPUser
-import io.phdata.models.{Manager, MemberRoleRequest, DistinguishedName}
+import io.phdata.models.{DistinguishedName, Manager, MemberRoleRequest}
 import io.phdata.test.fixtures._
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FlatSpec, Matchers}
@@ -24,6 +25,8 @@ class EmailServiceImplSpec extends FlatSpec with Matchers with MockFactory with 
   }
 
   it should "send a new workspace email to all recipients" in new Context {
+    (context.lookupLDAPClient.findUserByDN _).expects(savedWorkspaceRequest.requestedBy)
+      .returning(OptionT.fromOption[IO](LDAPUser("John Doe", "john.doe", savedWorkspaceRequest.requestedBy, Seq.empty, None).some))
     (context.emailClient.send _).expects(s"A New Workspace Is Waiting", *, appConfig.smtp.fromEmail, appConfig.approvers.notificationEmail(0)).returning(IO.unit)
     (context.emailClient.send _).expects(s"A New Workspace Is Waiting", *, appConfig.smtp.fromEmail, appConfig.approvers.notificationEmail(1)).returning(IO.unit)
 
