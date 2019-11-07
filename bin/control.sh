@@ -59,7 +59,7 @@ case ${COMPONENT} in
                 sed -i -E 's/([[:alpha:]\.]+)\="(true|false)"/\1\=\2/g' runtime.conf
                 sed -i -E 's/([[:alpha:]\.]+)\="[:digit:]+"/\1\=\2/g' runtime.conf
                 exec $JAVA_HOME/bin/java -Djavax.security.auth.useSubjectCredsOnly=false \
-                          -Dscalate.workdir=. \ 
+                          -Dscalate.workdir=. \
                           -Djava.security.auth.login.config="${CONF_DIR}/jaas.conf" \
                           -Dconfig.resource=production.conf \
                           -Dlog4j.properties=file:"${CONF_DIR}/log4j.properties" \
