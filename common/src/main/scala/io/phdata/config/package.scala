@@ -241,7 +241,8 @@ package object config extends StrictLogging {
       userPath: Option[String],
       realm: String,
       syncInterval: FiniteDuration,
-      authorizationDN: String
+      authorizationDN: String,
+      ignoreSslCert: Option[Boolean]
   )
 
   object LDAPConfig {
@@ -262,6 +263,7 @@ package object config extends StrictLogging {
           .as[String]
           .map(d => Duration.apply(d).asInstanceOf[FiniteDuration])
         authorization <- cursor.downField("authorizationDN").as[String]
+        ignoreSslCert <- cursor.downField("ignoreSSLCert").as[Option[Boolean]]
       } yield LDAPConfig(
         lookupBinding,
         provisioningBinding,
@@ -272,7 +274,8 @@ package object config extends StrictLogging {
         userPath,
         realm,
         syncInterval,
-        authorization
+        authorization,
+        ignoreSslCert
       )
     }
 
