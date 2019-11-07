@@ -62,6 +62,7 @@ lazy val templates = (project in file("templates"))
 lazy val `integration-test` = (project in file("integration-test"))
   .configs(ItTest)
   .settings(IntegrationTest.settings: _*)
+  .settings(testSettings: _*)
   .settings(
     inConfig(ItTest)(Defaults.testTasks)
   )
