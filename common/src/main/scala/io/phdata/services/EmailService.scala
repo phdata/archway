@@ -69,7 +69,7 @@ class EmailServiceImpl[F[_]: Effect](context: AppContext[F], workspaceService: W
 
   private def resolveUiUrl = {
     if (context.appConfig.ui.url.isEmpty) {
-      s"${InetAddress.getLocalHost.getCanonicalHostName}:${context.appConfig.rest.port}"
+      s"https://${InetAddress.getLocalHost.getCanonicalHostName}:${context.appConfig.rest.port}"
     } else {
       context.appConfig.ui.url
     }
