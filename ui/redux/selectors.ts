@@ -14,6 +14,7 @@ export const manageSelector = (state: any) => state.get('manage');
 export const homeSelector = (state: any) => state.get('home');
 export const templatesSelector = (state: any) => state.get('templates');
 export const configSelector = (state: any) => state.get('config');
+export const formSelector = (state: any) => state.get('form');
 
 export const isLoading = () =>
   createSelector(

@@ -74,6 +74,7 @@ interface Props extends RouteComponentProps<DetailsRouteProps> {
   ownerLoading: boolean;
   quotaLoading: boolean;
   resourcePoolLoading: boolean;
+  distinguishedName: string;
 
   clearDetails: () => void;
   getWorkspaceDetails: (id: number) => void;
@@ -107,7 +108,6 @@ class WorkspaceDetails extends React.PureComponent<Props> {
   public componentDidMount() {
     // clear previous details data
     this.props.clearDetails();
-
     const {
       match: {
         params: { id },
@@ -186,6 +186,11 @@ class WorkspaceDetails extends React.PureComponent<Props> {
     return base64Workspace;
   };
 
+  public isOKButtonDisabled = (v: string) => {
+    const regexValue = v && v.match(/(?=.*?(CN=))(?=.*?(OU=))(?=.*?(DC=))/is);
+    return !regexValue;
+  };
+
   public render() {
     const {
       workspace,
@@ -226,6 +231,7 @@ class WorkspaceDetails extends React.PureComponent<Props> {
       resourcePoolLoading,
       modifyCoreMemory,
       featureFlags,
+      distinguishedName,
     } = this.props;
 
     if (!workspace) {
@@ -339,10 +345,11 @@ class WorkspaceDetails extends React.PureComponent<Props> {
         </Tabs>
         <Modal
           visible={activeModal === ModalType.SimpleMember}
-          title="Add A Member"
+          title={'Add A Member'}
           onCancel={clearModal}
           onOk={() => simpleMemberRequest('data')}
           confirmLoading={memberLoading}
+          okButtonProps={{ disabled: this.isOKButtonDisabled(distinguishedName) }}
         >
           <SimpleMemberRequest
             allocations={workspace.data}
@@ -470,6 +477,7 @@ const mapStateToProps = () =>
     ownerLoading: selectors.getOwnerLoading(),
     quotaLoading: selectors.getQuotaLoading(),
     resourcePoolLoading: selectors.getResourcePoolLoading(),
+    distinguishedName: selectors.getDistinguishName(),
   });
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
