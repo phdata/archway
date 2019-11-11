@@ -196,7 +196,8 @@ class WorkspaceServiceImpl[F[_]: ConcurrentEffect: ContextShift](
       appr <- context.approvalRepository.findByWorkspaceId(workspace.id.get)
       tops <- context.kafkaRepository.findByWorkspaceId(workspace.id.get)
       apps <- context.applicationRepository.findByWorkspaceId(workspace.id.get)
-    } yield workspace.copy(data = datas, processing = yarns, approvals = appr, kafkaTopics = tops, applications = apps)
+      comps <- context.complianceRepository.findByWorkspaceId(workspace.id.get)
+    } yield workspace.copy(data = datas, processing = yarns, approvals = appr, kafkaTopics = tops, applications = apps, compliance = comps)
 
   private def fillHive(dbs: List[HiveAllocation]): F[List[HiveAllocation]] =
     dbs.map {
