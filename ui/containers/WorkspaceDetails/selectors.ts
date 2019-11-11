@@ -1,6 +1,6 @@
 import { fromJS } from 'immutable';
 import { createSelector } from 'reselect';
-import { authSelector, clusterSelector, workspaceSelector } from '../../redux/selectors';
+import { authSelector, clusterSelector, workspaceSelector, formSelector } from '../../redux/selectors';
 import {
   Member,
   NamespaceInfoList,
@@ -175,4 +175,10 @@ export const getResourcePoolLoading = () =>
   createSelector(
     workspaceSelector,
     workspaceState => workspaceState.get('resourcePoolLoading')
+  );
+
+export const getDistinguishName = () =>
+  createSelector(
+    formSelector,
+    formState => formState.getIn(['simpleMemberRequest', 'values', 'distinguishedName'])
   );
