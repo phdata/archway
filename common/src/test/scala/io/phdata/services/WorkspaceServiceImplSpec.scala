@@ -143,6 +143,24 @@ class WorkspaceServiceImplSpec
     foundWorkspace.get.processing should not be empty
   }
 
+  it should "get default value for consumed space if hdfs is not used" in new Context {
+    val withCreated: HiveAllocation = savedHive.copy(directoryCreated = Some(testTimer.instant), location = "s3a://bucket/temp")
+
+    context.workspaceRequestRepository.find _ expects id returning OptionT.some(savedWorkspaceRequest)
+    context.databaseRepository.findByWorkspace _ expects id returning List(withCreated).pure[ConnectionIO]
+    context.yarnRepository.findByWorkspaceId _ expects id returning List(savedYarn).pure[ConnectionIO]
+    context.approvalRepository.findByWorkspaceId _ expects id returning List(approval()).pure[ConnectionIO]
+    context.kafkaRepository.findByWorkspaceId _ expects id returning List(savedTopic).pure[ConnectionIO]
+    context.applicationRepository.findByWorkspaceId _ expects id returning List(savedApplication).pure[ConnectionIO]
+
+    val foundWorkspace = workspaceServiceImpl.findById(id).value.unsafeRunSync()
+
+    foundWorkspace shouldBe defined
+    foundWorkspace.get.data should not be empty
+    foundWorkspace.get.data.head.consumedInGB shouldBe Some(-1.0)
+    foundWorkspace.get.processing should not be empty
+  }
+
   it should "approve the workspace" in new Context {
     val instant = Instant.now()
     context.approvalRepository.create _ expects(id, approval(instant)) returning approval(instant).copy(id = Some(id)).pure[ConnectionIO]

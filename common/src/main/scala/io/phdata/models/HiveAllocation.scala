@@ -15,8 +15,19 @@ case class HiveAllocation(
     readonlyGroup: Option[HiveGrant] = None,
     id: Option[Long] = None,
     directoryCreated: Option[Instant] = None,
-    databaseCreated: Option[Instant] = None
-)
+    databaseCreated: Option[Instant] = None,
+    protocol: Option[String] = None
+) {
+
+  def getProtocol: String =
+    if (protocol.isDefined)
+      protocol.get
+    else {
+      if (location.contains("://"))
+        location.split("://").head
+      else "hdfs"
+    }
+}
 
 object HiveAllocation {
 

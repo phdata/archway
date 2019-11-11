@@ -10,30 +10,30 @@ import org.fusesource.scalate.TemplateEngine
 
 //TODO: LDAPGroupGenerator can be removed when we switch to this topic generator, now it's here only for backward compatibility
 class JsonTopicGenerator[F[_]](appConfig: AppConfig, ldapGroupGenerator: LDAPGroupGenerator[F])(
-  implicit clock: Clock[F],
-  F: Sync[F]
+    implicit clock: Clock[F],
+    F: Sync[F]
 ) extends TopicGenerator[F] with LazyLogging {
 
   val templateEngine = new TemplateEngine()
 
   override def topicFor(
-                         name: String,
-                         partitions: Int,
-                         replicationFactor: Int,
-                         workspaceRequest: WorkspaceRequest
-                       ): F[KafkaTopic] = {
+      name: String,
+      partitions: Int,
+      replicationFactor: Int,
+      workspaceRequest: WorkspaceRequest
+  ): F[KafkaTopic] = {
     val templatePath = Paths.get(appConfig.templates.templateRoot, "topic.ssp")
 
     generateTopic(name, partitions, replicationFactor, workspaceRequest, templatePath.toString)
   }
 
   private def generateTopic(
-                             name: String,
-                             partitions: Int,
-                             replicationFactor: Int,
-                             workspaceRequest: WorkspaceRequest,
-                             templatePath: String
-                           ): F[KafkaTopic] = {
+      name: String,
+      partitions: Int,
+      replicationFactor: Int,
+      workspaceRequest: WorkspaceRequest,
+      templatePath: String
+  ): F[KafkaTopic] = {
     val workspaceSystemName = TemplateRequest.generateName(workspaceRequest.name)
     val topicSystemName = TemplateRequest.generateName(name)
 
@@ -48,12 +48,12 @@ class JsonTopicGenerator[F[_]](appConfig: AppConfig, ldapGroupGenerator: LDAPGro
   }
 
   def generateJSON(
-                    templatePath: String,
-                    partitions: Int,
-                    replicationFactor: Int,
-                    workspaceRequest: WorkspaceRequest,
-                    name: String
-                  ): F[String] = {
+      templatePath: String,
+      partitions: Int,
+      replicationFactor: Int,
+      workspaceRequest: WorkspaceRequest,
+      name: String
+  ): F[String] = {
 
     Sync[F].delay {
       logger.info("Using template path {}", templatePath)

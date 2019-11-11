@@ -276,9 +276,16 @@ class WorkspaceControllerSpec
     response.status.code shouldBe 200
   }
 
-  it should "set quota for the given size and resource id" in new Http4sClientDsl[IO] with Context {
+  it should "set quota for the given size and resource id if HDFS is used" in new Http4sClientDsl[IO] with Context {
     workspaceService.findById _ expects id returning OptionT.some(savedWorkspaceRequest)
-    hdfsService.setQuota _ expects ("/shared_workspaces/sw_sesame", hdfsRequestedSize, id, *) returning ().pure[IO]
+    hdfsService.setQuota _ expects (savedHive.location, hdfsRequestedSize, id, *) returning ().pure[IO]
+
+    val response = restApi.route.orNotFound.run(POST(Uri.uri("/123/disk-quota/123/250")).unsafeRunSync()).unsafeRunSync()
+    response.status.code shouldBe 200
+  }
+
+  it should "skip setting quota if HDFS is not used" in new Http4sClientDsl[IO] with Context {
+    workspaceService.findById _ expects id returning OptionT.some(savedWorkspaceRequest.copy(data = List(savedHive.copy(location = "s3a://phdata-bdr-bucket/archway-itest"))))
 
     val response = restApi.route.orNotFound.run(POST(Uri.uri("/123/disk-quota/123/250")).unsafeRunSync()).unsafeRunSync()
     response.status.code shouldBe 200

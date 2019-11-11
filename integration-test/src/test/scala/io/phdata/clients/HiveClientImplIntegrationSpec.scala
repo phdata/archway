@@ -31,8 +31,15 @@ class HiveClientImplIntegrationSpec
     runUpdate(Fragment.const(s"drop database if exists $FOO_DB_NAME cascade"))
   }
 
-  it should "Create a database" in {
+  it should "Create a database at HDFS" in {
     hiveClient.createDatabase(FOO_DB_NAME, "/tmp", "a comment", Map("pii_data" -> "true", "pci_data" -> "false"))
+      .unsafeRunSync()
+
+    assert(hiveClient.showDatabases().unsafeRunSync().contains(FOO_DB_NAME))
+  }
+
+  it should "Create a database at S3" in {
+    hiveClient.createDatabase(FOO_DB_NAME, "s3a://phdata-bdr-bucket/archway-itest", "a comment", Map("pii_data" -> "true", "pci_data" -> "false"))
       .unsafeRunSync()
 
     assert(hiveClient.showDatabases().unsafeRunSync().contains(FOO_DB_NAME))
