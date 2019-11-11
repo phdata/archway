@@ -38,16 +38,21 @@ class HiveClientImpl[F[_]](loginContextProvider: LoginContextProvider, transacto
       location: String,
       comment: String,
       dbProperties: Map[String, String]
-  ): F[Unit] =
+  ): F[Unit] = {
+    val formattedLocation =
+      // S3 requires a trailing slash
+      if (!location.startsWith("hdfs://") && !location.endsWith("/")) location ++ "/" else location
+
     loginContextProvider.hadoopInteraction {
       showDatabases().flatMap {
         case databases if !databases.contains(name) =>
-          logger.info(s"Creating database $name on location $location").pure[F]
-          createDatabaseStatement(name, location, comment, dbProperties).update.run.transact(transactor).void
+          logger.info(s"Creating database $name on location $formattedLocation").pure[F]
+          createDatabaseStatement(name, formattedLocation, comment, dbProperties).update.run.transact(transactor).void
         case _ =>
           Sync[F].unit
       }
     }
+  }
 
   override def showDatabases() = {
     sql"""SHOW DATABASES""".query[String].to[Seq].transact(transactor)

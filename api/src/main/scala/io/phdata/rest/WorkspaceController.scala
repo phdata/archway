@@ -361,17 +361,22 @@ class WorkspaceController[F[_]: Sync: Timer: ContextShift: ConcurrentEffect](
           if (user.isOpsUser) {
             for {
               workspace <- workspaceService.findById(id).value
-              _ <- hdfsService
-                .setQuota(
-                  workspace.get.data.find(hiveAllocation => hiveAllocation.id.get == resourceId).get.location,
-                  size,
-                  resourceId,
-                  Instant.now()
-                )
-                .onError {
-                  case e: Throwable =>
-                    logger.error(s"Failed to modify disk-quota of workspace $id: ${e.getLocalizedMessage}", e).pure[F]
-                }
+              hiveAllocation <- workspace.get.data.find(_.id.get == resourceId).get.pure[F]
+              _ <- if (hiveAllocation.getProtocol == "hdfs") {
+                hdfsService
+                  .setQuota(
+                    hiveAllocation.location,
+                    size,
+                    resourceId,
+                    Instant.now()
+                  )
+                  .onError {
+                    case e: Throwable =>
+                      logger.error(s"Failed to modify disk-quota of workspace $id: ${e.getLocalizedMessage}", e).pure[F]
+                  }
+              } else {
+                ().pure[F]
+              }
               response <- Ok()
             } yield response
           } else
