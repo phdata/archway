@@ -110,6 +110,23 @@ class WorkspaceRequestRepositoryImpl(sqlSyntax: SqlSyntax) extends WorkspaceRequ
           wr.single_user,
           wr.id
         from workspace_request wr
+        """
+
+    val selectLegacyFragment: Fragment =
+      fr"""
+        select
+          wr.name,
+          wr.summary,
+          wr.description,
+          wr.behavior,
+          c.phi_data,
+          c.pii_data,
+          c.pci_data,
+          wr.requested_by,
+          wr.request_date,
+          wr.single_user,
+          wr.id
+        from workspace_request wr
         inner join compliance c on wr.compliance_id = c.id
         """
 
