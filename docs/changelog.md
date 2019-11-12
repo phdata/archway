@@ -1,3 +1,8 @@
+## 2.2.3
+
+- Fix a condition where the provisioningLDAPClient was used for a lookup operation,
+  causing issues at clients where the operations need to be separated
+
 ## 2.2.2
 
 - Fix bug where tabs under the workspace view didn't show correctly for ops users. 9a9934c8ef3de845b72b11ddc66a8afee173267e
