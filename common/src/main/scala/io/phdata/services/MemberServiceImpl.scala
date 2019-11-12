@@ -125,7 +125,7 @@ class MemberServiceImpl[F[_]](context: AppContext[F])(implicit val F: Effect[F])
                 _ <- context.provisioningLDAPClient
                   .removeUserFromGroup(reg.distinguishedName, memberRequest.distinguishedName)
                   .value
-                groupMembers <- context.provisioningLDAPClient.groupMembers(reg.distinguishedName)
+                groupMembers <- context.lookupLDAPClient.groupMembers(reg.distinguishedName)
                 _ <- if (groupMembers.map(_.distinguishedName).contains(memberRequest.distinguishedName)) {
                   logger.error(
                     s"[REMOVING MEMBER] ${memberRequest.distinguishedName} wasn't properly removed from ${registration
