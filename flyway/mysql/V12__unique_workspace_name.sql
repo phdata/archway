@@ -1,1 +1,0 @@
-ALTER TABLE workspace_request ADD UNIQUE (name);
