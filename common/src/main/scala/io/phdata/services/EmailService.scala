@@ -6,6 +6,7 @@ import cats.data._
 import cats.effect._
 import cats.implicits._
 import com.typesafe.scalalogging.LazyLogging
+import courier.Multipart
 import io.phdata.AppContext
 import io.phdata.clients.LDAPUser
 import io.phdata.models.{DistinguishedName, MemberRoleRequest, WorkspaceRequest}
@@ -16,7 +17,6 @@ trait EmailService[F[_]] {
   def newMemberEmail(workspaceId: Long, memberRoleRequest: MemberRoleRequest): OptionT[F, Unit]
 
   def newWorkspaceEmail(workspaceRequest: WorkspaceRequest): F[Unit]
-
 }
 
 class EmailServiceImpl[F[_]: Effect](context: AppContext[F], workspaceService: WorkspaceService[F])
@@ -24,7 +24,8 @@ class EmailServiceImpl[F[_]: Effect](context: AppContext[F], workspaceService: W
 
   lazy val templateEngine: TemplateEngine = new TemplateEngine()
 
-  override def newMemberEmail(workspaceId: Long, memberRoleRequest: MemberRoleRequest): OptionT[F, Unit] =
+  override def newMemberEmail(workspaceId: Long, memberRoleRequest: MemberRoleRequest): OptionT[F, Unit] = {
+
     for {
       workspace <- workspaceService.findById(workspaceId)
       fromAddress = context.appConfig.smtp.fromEmail
@@ -39,9 +40,11 @@ class EmailServiceImpl[F[_]: Effect](context: AppContext[F], workspaceService: W
       )
       email <- OptionT.liftF(Effect[F].delay(templateEngine.layout("/templates/emails/welcome.mustache", values)))
       result <- OptionT.liftF(
-        context.emailClient.send(s"Archway Workspace: Welcome to ${workspace.name}", email, fromAddress, toAddress)
+        context.emailClient
+          .send(s"Archway Workspace: Welcome to ${workspace.name}", Multipart().text(email), fromAddress, toAddress)
       )
     } yield result
+  }
 
   override def newWorkspaceEmail(workspaceRequest: WorkspaceRequest): F[Unit] = {
     val values = Map(
@@ -62,7 +65,13 @@ class EmailServiceImpl[F[_]: Effect](context: AppContext[F], workspaceService: W
       fromAddress = context.appConfig.smtp.fromEmail
     } yield {
       addressList.map(
-        recipient => context.emailClient.send("A New Workspace Is Waiting", email, fromAddress, recipient)
+        recipient =>
+          context.emailClient.send(
+            "A New Workspace is Waiting",
+            EmbeddedImageEmail.create(email, "images/logo_big.png", "logo"),
+            fromAddress,
+            recipient
+          )
       )
     }
   }

@@ -3,13 +3,12 @@ package io.phdata.test
 import java.time.Instant
 
 import cats.effect.{IO, Resource}
-import io.phdata.clients.CMClient
+import com.typesafe.config.ConfigFactory
+import io.circe._
+import io.circe.parser._
 import io.phdata.config.AppConfig
 import io.phdata.models.{Manager, ReadOnly, _}
 import io.phdata.services.{CDH, Cluster, ClusterApp}
-import com.typesafe.config.{Config, ConfigFactory}
-import io.circe._
-import io.circe.parser._
 import org.http4s.HttpRoutes
 import org.http4s.circe._
 import org.http4s.client.Client
