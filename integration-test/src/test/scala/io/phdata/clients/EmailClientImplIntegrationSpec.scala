@@ -15,7 +15,7 @@ class EmailClientImplIntegrationSpec extends FlatSpec {
       .send("test email",
             "<div>Hello from Archway.EmailClientImplIntegrationSpec</div>",
             "valhalla@phdata.io",
-            "tony@phdata.io")
+            "rkaland@phdata.io")
       .unsafeRunSync()
   }
 
