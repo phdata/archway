@@ -27,8 +27,8 @@ class EmailServiceImplSpec extends FlatSpec with Matchers with MockFactory with 
   it should "send a new workspace email to all recipients" in new Context {
     (context.lookupLDAPClient.findUserByDN _).expects(savedWorkspaceRequest.requestedBy)
       .returning(OptionT.fromOption[IO](LDAPUser("John Doe", "john.doe", savedWorkspaceRequest.requestedBy, Seq.empty, None).some))
-    (context.emailClient.send _).expects(s"A New Workspace Is Waiting", *, appConfig.smtp.fromEmail, appConfig.approvers.notificationEmail(0)).returning(IO.unit)
-    (context.emailClient.send _).expects(s"A New Workspace Is Waiting", *, appConfig.smtp.fromEmail, appConfig.approvers.notificationEmail(1)).returning(IO.unit)
+    (context.emailClient.send _).expects("A New Workspace is Waiting", *, appConfig.smtp.fromEmail, appConfig.approvers.notificationEmail(0)).returning(IO.unit)
+    (context.emailClient.send _).expects("A New Workspace is Waiting", *, appConfig.smtp.fromEmail, appConfig.approvers.notificationEmail(1)).returning(IO.unit)
 
     emailService.newWorkspaceEmail(savedWorkspaceRequest).unsafeRunSync()
   }

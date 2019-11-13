@@ -1,9 +1,13 @@
 package io.phdata.clients
 
+
 import cats.effect.IO
-import org.scalatest.FlatSpec
+import courier.Multipart
 import io.phdata.itest.fixtures._
+import io.phdata.test.fixtures._
+import io.phdata.services.EmbeddedImageEmail
 import org.fusesource.scalate.TemplateEngine
+import org.scalatest.FlatSpec
 
 import scala.concurrent.ExecutionContext
 
@@ -13,9 +17,9 @@ class EmailClientImplIntegrationSpec extends FlatSpec {
 
     val result = mailClient
       .send("test email",
-            "<div>Hello from Archway.EmailClientImplIntegrationSpec</div>",
-            "valhalla@phdata.io",
-            "tony@phdata.io")
+        Multipart().html("<div>Hello from Archway.EmailClientImplIntegrationSpec</div>"),
+        appConfig.smtp.fromEmail,
+        itestConfig.approvers.notificationEmail.head)
       .unsafeRunSync()
   }
 
@@ -35,8 +39,30 @@ class EmailClientImplIntegrationSpec extends FlatSpec {
 
     val result = mailClient
       .send("Test welcome email",
-        htmlContent,
-        "valhalla@phdata.io",
+        Multipart().html(htmlContent),
+        appConfig.smtp.fromEmail,
+        itestConfig.approvers.notificationEmail.head)
+      .unsafeRunSync()
+  }
+
+  it should "Send a new workspace email" in new Context{
+    System.setProperty("mail.debug", "true")
+
+    val htmlContent = templateEngine.layout(
+      "common/src/main/templates/emails/incoming.mustache",
+      Map(
+        "roleName" -> "manager",
+        "resourceType" -> "data",
+        "workspaceName" -> "Test workspace",
+        "uiUrl" -> "https://edge1.valhalla.phdata.io:8080",
+        "workspaceId" -> "123",
+        "userName" -> "TestUser"
+      )
+    )
+    val result = mailClient
+      .send("Test new workspace email",
+        EmbeddedImageEmail.create(htmlContent, "images/logo_big.png", "logo"),
+        appConfig.smtp.fromEmail,
         itestConfig.approvers.notificationEmail.head)
       .unsafeRunSync()
   }

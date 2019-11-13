@@ -10,7 +10,7 @@ import scala.util.{Failure, Success}
 
 trait EmailClient[F[_]] extends StrictLogging {
 
-  def send(subject: String, content: String, from: String, to: String): F[Unit]
+  def send(subject: String, content: Multipart, from: String, to: String): F[Unit]
 
 }
 
@@ -25,12 +25,12 @@ class EmailClientImpl[F[_]: Effect](appConfig: AppConfig, executionContext: Exec
         Mailer(host, port).startTls(ssl).ssl(smtps)()
     }
 
-  override def send(subject: String, htmlContent: String, from: String, to: String): F[Unit] =
+  override def send(subject: String, htmlContent: Multipart, from: String, to: String): F[Unit] =
     Effect[F].liftIO(
       IO.fromFuture(
         IO.pure {
           val result =
-            mailer(Envelope.from(from.addr).to(to.addr).subject(subject).content(Multipart().html(htmlContent)))(
+            mailer(Envelope.from(from.addr).to(to.addr).subject(subject).content(htmlContent))(
               executionContext
             )
 

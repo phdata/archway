@@ -34,6 +34,8 @@ HADOOP_JARS=`hadoop classpath`
 SENTRY_JARS="${SENTRY_JARS:-$PARCELS_ROOT/CDH/lib/sentry/lib/*}"
 ARCHWAY_CLASSPATH="${ARCHWAY_CLASSPATH:-${CONF_DIR}:${MYSQL_JAR}:${BOUNCY_JAR}:${PG_JAR}:${HIVE_JARS}:${SENTRY_JARS}:${HADOOP_JARS}:${ARCHWAY_ADDITIONAL_CLASSPATH}:${ARCHWAY_SERVER_HOME}/archway-server.jar}"
 
+cp -r $PARCELS_ROOT/ARCHWAY/usr/lib/archway-ui/images images
+
 case ${COMPONENT} in
     (server)
         case ${CMD} in

@@ -1,12 +1,25 @@
-<div style="background-color: #f0f3f5; font-family: 'Helvetica Neue', Helvetica, 'Segoe UI', Arial, sans-serif; font-weight: 200;">
-    <div style="color: #ffffff; background-color: #2e4052; padding: 50px; text-align: center; text-transform: uppercase">
-        <div style="font-size: 24px">NEW WORKSPACE REQUEST</div>
-    </div>
-    <div style="width: 50%; padding: 25px; margin: 50px auto; background-color: #fff">
-        <p>A new workspace '{{workspaceName}}' has been requested by '{{userName}}' and is waiting for your review. Click below to view it.</p>
-    </div>
-    <a style="background-color: #2e4052; text-decoration: none; padding: 10px 25px; margin: 50px auto; width: 250px; display: block; color: #ffffff; font-weight: 500; text-align: center"
-       href="{{uiUrl}}/#/workspaces/{{workspaceId}}">
-        GO THERE
-    </a>
+<div style="background-color: #f0f3f5; font-family: 'Helvetica Neue', Helvetica, 'Segoe UI', Arial, sans-serif; font-weight: 200; padding-bottom: 80px">
+    <center>
+        <img alt="logo" style="width: 150px; height: 150px" src="cid:logo" />
+    </center>
+    <table style="max-width: 600px; margin: 0 auto; width: 100%; background: white">
+        <tr>
+            <td style="color: #ffffff; background-color: #2d7493; padding: 30px; text-align: center; font-size: 24px">
+                New Archway Workspace Request
+            </td>
+        </tr>
+        <tr style="margin: 20px">
+            <td style="padding: 50px; color: #2d7493">
+                A new workspace '{{workspaceName}}' has been requested by '{{userName}}' and is waiting for your review. Click below to view it.
+            </td>
+        </tr>
+        <tr>
+            <td style="padding: 30px">
+                <a style="background-color: #2d7493; text-decoration: none; padding: 10px 25px; margin: 0px auto; width: 250px; display: block; color: #ffffff; font-weight: 500; text-align: center"
+                href="{{uiUrl}}/#/workspaces/{{workspaceId}}">
+                    View Workspace
+                </a>
+            </td>
+        </tr>
+    </table>
 </div>
