@@ -144,7 +144,7 @@ object AppContext {
       configRepository = new ConfigRepositoryImpl
       complianceGroupRepository = new ComplianceGroupRepositoryImpl
       complianceQuestionRepository = new ComplianceQuestionRepositoryImpl
-      hdfsService = new HDFSServiceImpl[F](hdfsClient, hiveDatabaseRepository, hiveXA)
+      hdfsService = new HDFSServiceImpl[F](hdfsClient, hiveDatabaseRepository, metaXA)
       customLinkGroupRepository = new CustomLinkGroupRepositoryImpl
       customLinkRepository = new CustomLinkRepositoryImpl
     } yield phdata.AppContext[F](
