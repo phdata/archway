@@ -41,6 +41,7 @@ import * as selectors from './selectors';
 import { FeatureFlagType, ProvisioningType, ModalType } from '../../constants';
 import { Provisioning } from '../../components';
 import { getFeatureFlags } from '../../redux/selectors';
+import { distinguishedNameRegEx } from './constants';
 
 interface DetailsRouteProps {
   id: any;
@@ -187,7 +188,14 @@ class WorkspaceDetails extends React.PureComponent<Props> {
   };
 
   public isOKButtonDisabled = (v: string) => {
-    const regexValue = v && v.match(/(?=.*?(CN=))(?=.*?(OU=))(?=.*?(DC=))/is);
+    let regexValue = v && v.match(distinguishedNameRegEx) ? true : false;
+    if (this.props.userSuggestions && !regexValue) {
+      const { users = [], groups = [] } = this.props.userSuggestions;
+      const selectedArr = [...users, ...groups].filter(member => member.display === v.trim());
+      if (selectedArr.length) {
+        regexValue = true;
+      }
+    }
     return !regexValue;
   };
 
@@ -345,7 +353,7 @@ class WorkspaceDetails extends React.PureComponent<Props> {
         </Tabs>
         <Modal
           visible={activeModal === ModalType.SimpleMember}
-          title={'Add A Member'}
+          title="Add A Member"
           onCancel={clearModal}
           onOk={() => simpleMemberRequest('data')}
           confirmLoading={memberLoading}
