@@ -55,8 +55,8 @@ import {
   setResourcePoolLoading,
 } from './actions';
 import { RECENT_WORKSPACES_KEY, TOKEN_EXTRACTOR, NotificationType } from '../../constants';
-
 import { Workspace } from '../../models/Workspace';
+import { distinguishedNameRegEx } from './constants';
 
 /* tslint:disable:no-var-requires */
 const router = require('connected-react-router/immutable');
@@ -67,6 +67,7 @@ export const ownerDnExtractor = (s: any) => s.getIn(['form', 'changeOwnerRequest
 export const quotaExtractor = (s: any) => s.getIn(['form', 'modifyDiskQuotaRequest', 'values']);
 export const coreMemoryExtractor = (s: any) => s.getIn(['form', 'modifyCoreMemoryRequest', 'values']);
 export const selectedAllocationExtractor = (s: any) => s.getIn(['details', 'selectedAllocation']);
+export const selectedUserSuggestionExtractor = (s: any) => s.getIn(['details', 'userSuggestions']);
 export const selectedApplicationExtractor = (s: any) => s.getIn(['details', 'selectedApplication']);
 export const topicMemberRequestFormExtractor = (s: any) => s.getIn(['form', 'simpleTopicMemberRequest', 'values']);
 export const activeTopicExtractor = (s: any) => s.getIn(['details', 'activeTopic']);
@@ -206,11 +207,18 @@ export function* simpleMemberRequested({ resource }: SimpleMemberRequestAction) 
   try {
     yield put(setMemberLoading(true));
     if (resource === 'data') {
-      const { username, roles } = (yield select(memberRequestFormExtractor)).toJS();
+      let { distinguishedName, roles } = (yield select(memberRequestFormExtractor)).toJS();
+      const { users = [], groups = [] } = (yield select(selectedUserSuggestionExtractor)).toJS();
       yield all(
         workspace.data.map(({ id, name }: { id: number; name: string }) => {
           const role = roles[name] || 'readonly';
-          return role !== 'none' && call(Api.newWorkspaceMember, token, workspace.id, resource, id, role, username);
+          if (distinguishedName && !distinguishedName.match(distinguishedNameRegEx)) {
+            distinguishedName = [...users, ...groups].filter(member => member.display === distinguishedName.trim())[0]
+              .distinguished_name;
+          }
+          return (
+            role !== 'none' && call(Api.newWorkspaceMember, token, workspace.id, resource, id, role, distinguishedName)
+          );
         })
       );
       yield put(simpleMemberRequestComplete());

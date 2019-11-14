@@ -41,6 +41,7 @@ import * as selectors from './selectors';
 import { FeatureFlagType, ProvisioningType, ModalType } from '../../constants';
 import { Provisioning } from '../../components';
 import { getFeatureFlags } from '../../redux/selectors';
+import { distinguishedNameRegEx } from './constants';
 
 interface DetailsRouteProps {
   id: any;
@@ -184,6 +185,18 @@ class WorkspaceDetails extends React.PureComponent<Props> {
     const { workspace } = this.props;
     const base64Workspace = btoa(JSON.stringify(workspace, null, 4));
     return base64Workspace;
+  };
+
+  public isOKButtonDisabled = (v: string) => {
+    let regexValue = v && v.match(distinguishedNameRegEx) ? true : false;
+    if (this.props.userSuggestions && !regexValue) {
+      const { users = [], groups = [] } = this.props.userSuggestions;
+      const selectedArr = [...users, ...groups].filter(member => member.display === v.trim());
+      if (selectedArr.length) {
+        regexValue = true;
+      }
+    }
+    return !regexValue;
   };
 
   public render() {
