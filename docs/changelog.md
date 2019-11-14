@@ -1,3 +1,11 @@
+## 2.2.4
+
+- Changes scalate workdir to workaround a 'resource not found' exception when scalate pre-compiled classes get cleaned up. 7460c0e9feee33be52403598f8892d27af549c0a
+- Log additional information when adding or removing a user from a workspace . 3464f3189d80fe5a9d4f26ade37a1ab3bd133134
+- Render workspace example when a user workspace is created without a yarn queue. cb2f42f197bafd6ea1a19d4e4f718c6b800080a7, 6282f0f24db03dad861dced0ad21a93b91e0794e
+- Revert unique workspace names. This causes issues with creating similar named workspaces in different environments within a cluster.
+- Validate member id when adding a user, only showing 'OK' button when a member has been picked. 7f141d903222cdbfa53d6dab10bece15251fe646
+
 ## 2.2.3
 
 - Fix a condition where the provisioningLDAPClient was used for a lookup operation,
