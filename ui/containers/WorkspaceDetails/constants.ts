@@ -3,4 +3,4 @@ export enum ShowTypes {
   Groups = 'Groups',
 }
 
-export const distinguishedNameRegEx = /(?=.*?(CN=))(?=.*?(OU=))(?=.*?(DC=))/is;
+export const distinguishedNameRegEx = /(?=.*?(CN=))(?=.*?(OU=))(?=.*?(DC=))/i;
