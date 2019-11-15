@@ -61,6 +61,9 @@ class ADGroupsSynchronizer[F[_]: Sync: Timer: ContextShift](context: AppContext[
         logger.info(s"Adding member ${ldapUser.distinguishedName} to the database").pure[F] *>
           context.memberRepository
             .create(ldapUser.distinguishedName, lDAPRegistration.id.get)
+            .transact(context.transactor) <*
+          context.memberRepository
+            .complete(lDAPRegistration.id.get, ldapUser.distinguishedName)
             .transact(context.transactor)
       } else {
         logger.debug(s"Member ${ldapUser.distinguishedName} already exists in the database")

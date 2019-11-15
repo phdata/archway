@@ -14,8 +14,8 @@ class MemberRepositoryImpl(sqlSyntax: SqlSyntax) extends MemberRepository {
   override def create(distinguishedName: DistinguishedName, ldapRegistrationId: Long): ConnectionIO[Long] =
     Statements.create(distinguishedName, ldapRegistrationId).withUniqueGeneratedKeys("id")
 
-  override def complete(id: Long, distinguishedName: DistinguishedName): ConnectionIO[Int] =
-    Statements.complete(id, distinguishedName).run
+  override def complete(ldapRegistrationId: Long, distinguishedName: DistinguishedName): ConnectionIO[Int] =
+    Statements.complete(ldapRegistrationId, distinguishedName).run
 
   override def get(id: Long): ConnectionIO[List[MemberRightsRecord]] =
     Statements.get(id).to[List]

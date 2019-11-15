@@ -6,7 +6,7 @@ import doobie._
 trait MemberRepository {
   def create(distinguishedName: DistinguishedName, ldapRegistrationId: Long): ConnectionIO[Long]
 
-  def complete(id: Long, distinguishedName: DistinguishedName): ConnectionIO[Int]
+  def complete(ldapRegistrationId: Long, distinguishedName: DistinguishedName): ConnectionIO[Int]
 
   def get(id: Long): ConnectionIO[List[MemberRightsRecord]]
 

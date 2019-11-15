@@ -6,7 +6,6 @@ import cats._
 import cats.effect._
 import cats.implicits._
 import doobie.implicits._
-import io.phdata.models.DistinguishedName
 
 object GroupMemberProvisioning {
 
