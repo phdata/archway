@@ -1,3 +1,7 @@
+## 2.2.5
+
+- Fix syntax error in control startup script. 65229341580701bf755941b4fd36faa53a133ad9
+
 ## 2.2.4
 
 - Changes scalate workdir to workaround a 'resource not found' exception when scalate pre-compiled classes get cleaned up. 7460c0e9feee33be52403598f8892d27af549c0a
