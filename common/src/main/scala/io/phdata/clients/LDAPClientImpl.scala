@@ -31,7 +31,7 @@ class LDAPClientImpl[F[_]: Effect](ldapConfig: LDAPConfig, binding: LDAPConfig =
   val ldapBinding: LDAPBinding = binding(ldapConfig)
 
   val connectionPool: LDAPConnectionPool = {
-    val sslUtil = if(ldapConfig.ignoreSslCert.getOrElse(false)) {
+    val sslUtil = if (ldapConfig.ignoreSslCert.getOrElse(false)) {
       new SSLUtil(new TrustAllTrustManager)
     } else {
       new SSLUtil(new TrustStoreTrustManager(System.getProperty("javax.net.ssl.trustStore")))

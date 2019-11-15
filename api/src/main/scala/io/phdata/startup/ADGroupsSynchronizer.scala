@@ -5,7 +5,7 @@ import cats.implicits._
 import com.typesafe.scalalogging.LazyLogging
 import doobie.implicits._
 import io.phdata.AppContext
-import io.phdata.clients.{LDAPClient, LDAPUser}
+import io.phdata.clients.LDAPUser
 import io.phdata.config.LDAPConfig
 import io.phdata.models.LDAPRegistration
 import io.phdata.repositories.Group
@@ -37,10 +37,10 @@ class ADGroupsSynchronizer[F[_]: Sync: Timer: ContextShift](context: AppContext[
   def synchronize(): F[Unit] = {
     for {
       registrations <- ldapRegistrations
+      members <- membersWithGroup
       _ <- registrations.traverse { lDAPRegistration =>
         for {
           lDAPUsers <- context.provisioningLDAPClient.groupMembers(lDAPRegistration.distinguishedName)
-          members <- membersWithGroup
           _ <- internalSync(lDAPRegistration, members, lDAPUsers)
         } yield ()
       }

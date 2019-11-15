@@ -1,5 +1,6 @@
 package io.phdata.scheduledJobs
 
+import java.util.UUID
 import java.util.concurrent.Executors
 
 import cats.effect.{ContextShift, IO}
@@ -16,7 +17,7 @@ import scala.concurrent.ExecutionContext
 
 class ADGroupsSynchronizerIntegrationSpec extends FlatSpec with KerberosTest with BeforeAndAfterAll{
 
-  val groupName = "test_group_name_pxr"
+  val groupName = s"test_group_name_${UUID.randomUUID().toString.take(6)}"
   val groupDN = DistinguishedName(s"cn=$groupName,${itestConfig.ldap.groupPath}")
   val userDN = DistinguishedName(s"CN=${systemTestConfig.existingUser},${itestConfig.ldap.userPath.get}")
   val ldapRegistration = LDAPRegistration(groupDN, "commonName", "sentryRole")
