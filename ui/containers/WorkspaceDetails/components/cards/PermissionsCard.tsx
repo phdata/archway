@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Card, Table, Icon, Dropdown, Menu, Button, Spin } from 'antd';
+import { Card, Table, Icon, Dropdown, Menu, Button } from 'antd';
 import CardHeader from './CardHeader';
 import { Member, HiveAllocation } from '../../../../models/Workspace';
 import { ModalType } from '../../../../constants';
@@ -69,45 +69,40 @@ const PermissionsCard = ({
         </Button>
       )}
     </CardHeader>
-    {memberLoading ? (
-      <div style={{ textAlign: 'center', padding: '50px' }}>
-        <Spin />
-      </div>
-    ) : (
-      <Table
-        dataSource={members && members.filter(m => m.data.hasOwnProperty(allocation.name))}
-        pagination={false}
-        rowKey="distinguished_name"
-      >
-        <Table.Column title="Name" dataIndex="name" key="name" />
-        <Table.Column
-          title="Role"
-          render={renderRoleColumn(
-            allocation.name,
-            readonly
-              ? undefined
-              : (member: Member, role: string) => {
-                  onChangeMemberRole(member, allocation.id, role);
-                }
-          )}
-        />
-        <Table.Column
-          title="Remove"
-          render={member =>
-            readonly ? (
-              <span />
-            ) : (
-              <Button
-                type="danger"
-                shape="circle"
-                icon="delete"
-                onClick={_ => removeMember(member.distinguished_name, allocation.id, 'data')}
-              />
-            )
-          }
-        />
-      </Table>
-    )}
+    <Table
+      dataSource={members && members.filter(m => m.data.hasOwnProperty(allocation.name))}
+      pagination={false}
+      rowKey="distinguished_name"
+      loading={{ spinning: memberLoading }}
+    >
+      <Table.Column title="Name" dataIndex="name" key="name" />
+      <Table.Column
+        title="Role"
+        render={renderRoleColumn(
+          allocation.name,
+          readonly
+            ? undefined
+            : (member: Member, role: string) => {
+                onChangeMemberRole(member, allocation.id, role);
+              }
+        )}
+      />
+      <Table.Column
+        title="Remove"
+        render={member =>
+          readonly ? (
+            <span />
+          ) : (
+            <Button
+              type="danger"
+              shape="circle"
+              icon="delete"
+              onClick={_ => removeMember(member.distinguished_name, allocation.id, 'data')}
+            />
+          )
+        }
+      />
+    </Table>
   </Card>
 );
 

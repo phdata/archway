@@ -127,7 +127,7 @@ exports[`RunHelp renders correctly 1`] = `
   --master yarn \\
   --deploy-mode cluster \\
   --queue root.users.ruud_kaland_rkaland \\
-  examples/jars/spark-examples*.jar \\
+examples/jars/spark-examples*.jar \\
   10'
   </SyntaxHighlighter>
 </div>
