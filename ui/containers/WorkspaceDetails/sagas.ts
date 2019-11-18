@@ -250,12 +250,29 @@ export function* changeMemberRoleRequested({
 }: ChangeMemberRoleRequestAction) {
   const token = yield select(TOKEN_EXTRACTOR);
   const workspace = (yield select(detailExtractor)).toJS();
-  yield call(Api.removeWorkspaceMember, token, workspace.id, resource, roleId, 'none', distinguished_name);
-  yield call(Api.newWorkspaceMember, token, workspace.id, resource, roleId, role, distinguished_name);
-
-  yield put(changeMemberRoleRequestComplete());
-  const members = yield call(Api.getMembers, token, workspace.id);
-  yield put(setMembers(members));
+  const distinguishedName = distinguished_name.split(/,/)[0].split(/CN=/)[1];
+  try {
+    yield put(setMemberLoading(true));
+    yield call(Api.removeWorkspaceMember, token, workspace.id, resource, roleId, 'none', distinguished_name);
+    yield call(Api.newWorkspaceMember, token, workspace.id, resource, roleId, role, distinguished_name);
+    yield put(
+      setNotificationStatus(NotificationType.Success, `Success: Changed member ${distinguishedName}'s role`, 3)
+    );
+  } catch (e) {
+    yield put(
+      setNotificationStatus(
+        NotificationType.Error,
+        `Failed to change member ${distinguishedName}'s role: ${e.toString()}`,
+        3
+      )
+    );
+  } finally {
+    yield put(changeMemberRoleRequestComplete());
+    const members = yield call(Api.getMembers, token, workspace.id);
+    yield put(setMembers(members));
+    yield put(setMemberLoading(false));
+    yield put(clearNotificationStatus());
+  }
 }
 
 function* changeMemberRoleRequestedListener() {
@@ -265,13 +282,22 @@ function* changeMemberRoleRequestedListener() {
 export function* removeMemberRequested({ distinguished_name, roleId, resource }: RemoveMemberRequestAction) {
   const token = yield select(TOKEN_EXTRACTOR);
   const workspace = (yield select(detailExtractor)).toJS();
+  const distinguishedName = distinguished_name.split(/,/)[0].split(/CN=/)[1];
   try {
+    yield put(setMemberLoading(true));
     yield call(Api.removeWorkspaceMember, token, workspace.id, resource, roleId, 'none', distinguished_name);
     yield put(removeMemberSuccess(distinguished_name));
     const members = yield call(Api.getMembers, token, workspace.id);
     yield put(setMembers(members));
+    yield put(setNotificationStatus(NotificationType.Success, `Success: Deleted member ${distinguishedName}`, 3));
   } catch (e) {
     yield put(removeMemberFailure(distinguished_name, e.toString()));
+    yield put(
+      setNotificationStatus(NotificationType.Error, `Failed to delete member ${distinguishedName}: ${e.toString()}`, 3)
+    );
+  } finally {
+    yield put(setMemberLoading(false));
+    yield put(clearNotificationStatus());
   }
 }
 

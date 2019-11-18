@@ -295,11 +295,12 @@ export const requestDeprovisionWorkspace = () => ({
 });
 
 export const SET_NOTIFICATION_STATUS = 'SET_NOTIFICATION_STATUS';
-export const setNotificationStatus = (type: NotificationType, message: string) => ({
+export const setNotificationStatus = (type: NotificationType, message: string, duration: number = 0) => ({
   type: SET_NOTIFICATION_STATUS,
   payload: {
     type,
     message,
+    duration,
   },
 });
 

@@ -18,7 +18,11 @@ exports[`PermissionCard renders correctly 1`] = `
     className=""
     dataSource={Array []}
     indentSize={20}
-    loading={false}
+    loading={
+      Object {
+        "spinning": false,
+      }
+    }
     locale={Object {}}
     pagination={false}
     rowKey="distinguished_name"

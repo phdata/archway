@@ -10,8 +10,8 @@ exports[`SimpleTopicMemberRequest renders correctly 1`] = `
   getFormState={[Function]}
   initialValues={
     Object {
+      "distinguishedName": "",
       "role": "readonly",
-      "username": "",
     }
   }
   keepDirtyOnReinitialize={false}

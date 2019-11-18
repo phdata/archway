@@ -1,7 +1,13 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`HiveDatabase renders correctly 1`] = `
-<Card>
+<Card
+  style={
+    Object {
+      "minHeight": 165,
+    }
+  }
+>
   <div
     style={
       Object {
@@ -13,6 +19,18 @@ exports[`HiveDatabase renders correctly 1`] = `
     }
   >
     sw_test_workspace
+  </div>
+  <div
+    style={
+      Object {
+        "alignItems": "center",
+        "display": "flex",
+        "justifyContent": "center",
+        "marginTop": 12,
+      }
+    }
+  >
+    Protocol: hdfs
   </div>
   <div
     style={

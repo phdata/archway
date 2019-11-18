@@ -154,10 +154,10 @@ class WorkspaceDetails extends React.PureComponent<Props> {
       }
     }
 
-    const { type, message } = notificationInfo;
+    const { type, message, duration } = notificationInfo;
 
     if (!!message && message !== this.props.notificationInfo.message) {
-      notification[type]({ message: type.toUpperCase(), description: message, duration: 0 });
+      notification[type]({ message: type.toUpperCase(), description: message, duration: duration });
     }
   }
 
