@@ -8,6 +8,19 @@ In order to run the API locally, you'll need to prepare your development environ
 
 Create your `application.conf` file in `api/src/main/resources/` and initialize properties based on description in file [Service.md](service.md). File `application-template.conf` serves as an empty template for configuration file.
 
+Except main configuratin file: `application.conf`, special configuration file `system-test.conf` is necessary to provide sensitive credentials. This file consist only of four properties: `existingUser`, `existingPassword`, `krb5FilePath` and `artifactoryToken`. More details can be found in package object `fixtures` in `io.phdata.itest` package.
+
+To connect to `hive` specific configuration is needed. Archway expects it in subdirectory `/hive-conf` in base directory.
+
+List of necessary configuration files:
+
+- `core-site.xml`
+- `hdfs-site.xml`
+- `hive-site.xml`
+- `mapred-site.xml`
+- `ssl-client.xml`
+- `yarn-site.xml`
+
 ### Run The App (API-focused development)
 
 - Open the project in IntelliJ
