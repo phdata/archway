@@ -9,7 +9,8 @@ import io.phdata.models.DistinguishedName
 import io.phdata.services.MemberSearchResult
 
 class LDAPClientAlternativeImpl[F[_]: Effect](ldapConfig: LDAPConfig, binding: LDAPConfig => LDAPBinding)
-    extends LDAPClient[F] with LazyLogging {
+    extends ProvisioningLDAPClient[F] with LookupLDAPClient[F] with LazyLogging {
+
   override def findUserByDN(distinguishedName: DistinguishedName): OptionT[F, LDAPUser] =
     throw new NotImplementedError()
 

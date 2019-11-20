@@ -44,7 +44,7 @@ class ADGroupsSynchronizer[F[_]: Sync: Timer: ContextShift](context: AppContext[
       members <- membersWithGroup
       _ <- registrations.traverse { lDAPRegistration =>
         for {
-          lDAPUsers <- context.provisioningLDAPClient.groupMembers(lDAPRegistration.distinguishedName)
+          lDAPUsers <- context.lookupLDAPClient.groupMembers(lDAPRegistration.distinguishedName)
           _ <- internalSync(lDAPRegistration, members, lDAPUsers)
         } yield ()
       }
