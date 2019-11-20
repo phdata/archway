@@ -508,6 +508,14 @@
           "default": false
         },
         {
+          "name": "archway.ldap.sync",
+          "label": "LDAP group synchronization",
+          "description": "Enable LDAP group synchronization",
+          "required": "false",
+          "type": "boolean",
+          "default": true
+        },
+        {
           "name": "archway.approvers.notificationEmail",
           "label": "Notification Email Address",
           "description": "The comma separated list of email addresses to send notification emails to",
