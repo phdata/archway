@@ -25,13 +25,17 @@ class ADGroupsSynchronizer[F[_]: Sync: Timer: ContextShift](context: AppContext[
   }
 
   override def work: F[Unit] = {
-    for {
-      _ <- logger.info("Synchronizing AD groups").pure[F]
-      _ <- synchronize()
-      _ <- logger.info("Synchronizing AD groups going to sleep for {}", ldapConfig.syncInterval).pure[F]
-      _ <- Timer[F].sleep(ldapConfig.syncInterval)
-      _ <- work
-    } yield ()
+    if (context.appConfig.ldap.sync.getOrElse(true)) {
+      for {
+        _ <- logger.info("Synchronizing AD groups").pure[F]
+        _ <- synchronize()
+        _ <- logger.info("Synchronizing AD groups going to sleep for {}", ldapConfig.syncInterval).pure[F]
+        _ <- Timer[F].sleep(ldapConfig.syncInterval)
+        _ <- work
+      } yield ()
+    } else {
+      logger.info("AD group synchronization is disabled").pure[F]
+    }
   }
 
   def synchronize(): F[Unit] = {
