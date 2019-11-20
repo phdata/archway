@@ -207,7 +207,8 @@ export function* simpleMemberRequested({ resource }: SimpleMemberRequestAction) 
   try {
     yield put(setMemberLoading(true));
     if (resource === 'data') {
-      let { distinguishedName, roles } = (yield select(memberRequestFormExtractor)).toJS();
+      let { distinguishedName } = (yield select(memberRequestFormExtractor)).toJS();
+      const { roles } = (yield select(memberRequestFormExtractor)).toJS();
       const { users = [], groups = [] } = (yield select(selectedUserSuggestionExtractor)).toJS();
       yield all(
         workspace.data.map(({ id, name }: { id: number; name: string }) => {
