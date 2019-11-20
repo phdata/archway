@@ -8,6 +8,6 @@ export interface CoreMemoryForm {
 }
 
 export interface MemberForm {
-  username: string;
+  distinguishedName: string;
   roles: object;
 }
