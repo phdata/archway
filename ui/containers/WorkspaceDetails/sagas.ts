@@ -385,7 +385,7 @@ function* provisionWorkspaceRequestedListener() {
 function* changeWorkspaceOwnerRequested() {
   const token = yield select(TOKEN_EXTRACTOR);
   const { id, name } = (yield select(detailExtractor)).toJS();
-  const ownerDn = (yield select(ownerDnExtractor)).toJS().username;
+  const { distinguishedName: ownerDn } = (yield select(ownerDnExtractor)).toJS();
   try {
     yield put(setOwnerLoading(true));
     yield call(Api.changeWorkspaceOwner, token, id, ownerDn);
