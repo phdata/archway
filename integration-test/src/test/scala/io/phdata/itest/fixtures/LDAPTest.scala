@@ -3,11 +3,12 @@ package io.phdata.itest.fixtures
 import cats.effect.IO
 import com.unboundid.ldap.sdk.{FailoverServerSet, LDAPConnectionPool, SimpleBindRequest}
 import com.unboundid.util.ssl.{SSLUtil, TrustAllTrustManager, TrustStoreTrustManager}
-import io.phdata.clients.LDAPClientImpl
+import io.phdata.clients.{LDAPClientImpl, LookupLDAPClient, ProvisioningLDAPClient}
 
 trait LDAPTest {
-  val lookupClient = new LDAPClientImpl[IO](itestConfig.ldap, _.lookupBinding)
-  val provisioningClient = new LDAPClientImpl[IO](itestConfig.ldap, _.provisioningBinding)
+  val lookupClient: LookupLDAPClient[IO] = new LDAPClientImpl[IO](itestConfig.ldap, _.lookupBinding)
+  val provisioningClient: ProvisioningLDAPClient[IO] = new LDAPClientImpl[IO](itestConfig.ldap, _.provisioningBinding)
+  val helperLDAPClient = new LDAPClientImpl[IO](itestConfig.ldap, _.provisioningBinding)
 
   val ldapConnectionPool: LDAPConnectionPool = {
     val sslUtil = if(itestConfig.ldap.ignoreSslCert.getOrElse(false)) {
