@@ -1,7 +1,13 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`HiveDatabase renders correctly 1`] = `
-<Card>
+<Card
+  style={
+    Object {
+      "minHeight": 165,
+    }
+  }
+>
   <div
     style={
       Object {
@@ -13,6 +19,28 @@ exports[`HiveDatabase renders correctly 1`] = `
     }
   >
     sw_test_workspace
+  </div>
+  <div
+    style={
+      Object {
+        "alignItems": "center",
+        "display": "flex",
+        "justifyContent": "center",
+        "marginTop": 12,
+      }
+    }
+  >
+    <Badge
+      count="Protocol: hdfs"
+      dot={false}
+      overflowCount={99}
+      showZero={false}
+      style={
+        Object {
+          "backgroundColor": "#2D7493",
+        }
+      }
+    />
   </div>
   <div
     style={
