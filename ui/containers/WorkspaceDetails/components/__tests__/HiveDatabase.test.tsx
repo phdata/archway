@@ -11,6 +11,7 @@ describe('HiveDatabase', () => {
       id: 161,
       name: 'sw_test_workspace',
       location: 'hdfs://valhalla/data/shared_workspace/test_workspace',
+      protocol: 'hdfs',
       size_in_gb: 1000,
       consumed_in_gb: 0,
       managing_group: {
