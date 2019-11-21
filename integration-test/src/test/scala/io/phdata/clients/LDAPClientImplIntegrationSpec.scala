@@ -181,7 +181,7 @@ class LDAPClientImplIntegrationSpec
   }
 
   it should "generate a new request" in {
-    val actual = provisioningClient.groupRequest(groupDN.value, groupName, defaultLDAPAttributes(groupDN, groupName))
+    val actual = provisioningClient.generateGroupRequest(groupDN.value, groupName, defaultLDAPAttributes(groupDN, groupName))
     actual.unsafeRunSync().get shouldBe an [AddRequest]
   }
 
@@ -190,14 +190,14 @@ class LDAPClientImplIntegrationSpec
 
     provisioningClient.createGroup(groupName, attributes).unsafeRunSync()
 
-    val actual = provisioningClient.groupRequest(groupDN.value, groupName, attributes.patch(attributes.length, List("something" -> "new"), 0))
+    val actual = provisioningClient.generateGroupRequest(groupDN.value, groupName, attributes.patch(attributes.length, List("something" -> "new"), 0))
     actual.unsafeRunSync().get shouldBe a [ModifyRequest]
   }
 
   it should "not generate a request" in {
     val attributes = defaultLDAPAttributes(groupDN, groupName)
     provisioningClient.createGroup(groupName, attributes).unsafeRunSync()
-    val actual = provisioningClient.groupRequest(groupDN.value, groupName, List())
+    val actual = provisioningClient.generateGroupRequest(groupDN.value, groupName, List())
     actual.unsafeRunSync() should not be defined
   }
 
@@ -219,14 +219,6 @@ class LDAPClientImplIntegrationSpec
     val results = provisioningClient.search(systemTestConfig.existingUser).unsafeRunSync()
     results.users.length should be > 0
     results.users.foreach(println)
-  }
-
-  it should "fullUsername" in {
-    val expected = "johndoe@PHDATA.IO"
-
-    val actual = lookupClient.fullUsername("johndoe")
-
-    actual shouldBe expected
   }
 
   it should "searchQuery" in {
