@@ -4,3 +4,7 @@ export enum ShowTypes {
 }
 
 export const distinguishedNameRegEx = /(?=.*?(CN=))(?=.*?(OU=))(?=.*?(DC=))/i;
+
+export enum ProtocolTypes {
+  HDFS = 'hdfs',
+}

@@ -5,6 +5,7 @@ import { Colors, Feature } from '../../../components';
 import { HiveAllocation } from '../../../models/Workspace';
 import { Card, Button } from 'antd';
 import { ModalType, FeatureFlagType } from '../../../constants';
+import { ProtocolTypes } from '../constants';
 
 interface Props {
   data: HiveAllocation;
@@ -15,7 +16,7 @@ interface Props {
 }
 
 const HiveDatabase = ({ data, showModal, isPlatformOperations, isDefault }: Props) => {
-  const protocol = data.protocol || 'hdfs';
+  const protocol = data.protocol || ProtocolTypes.HDFS;
   const total_disk_allocated_in_gb = data.size_in_gb;
   const total_disk_consumed_in_gb = data.consumed_in_gb;
   const allocated = total_disk_allocated_in_gb || 1;
@@ -37,7 +38,7 @@ const HiveDatabase = ({ data, showModal, isPlatformOperations, isDefault }: Prop
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: 12 }}>
         {'Protocol: ' + protocol}
       </div>
-      {protocol === 'hdfs' && (
+      {protocol === ProtocolTypes.HDFS && (
         <React.Fragment>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: 12 }}>
             <Doughnut
