@@ -106,6 +106,7 @@ export interface HiveAllocation {
   id: number;
   name: string;
   location: string;
+  protocol: string;
   size_in_gb: number;
   consumed_in_gb: number;
   managing_group: DatabaseGrant;
