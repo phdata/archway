@@ -30,17 +30,7 @@ exports[`HiveDatabase renders correctly 1`] = `
       }
     }
   >
-    <Badge
-      count="Protocol: hdfs"
-      dot={false}
-      overflowCount={99}
-      showZero={false}
-      style={
-        Object {
-          "backgroundColor": "#2D7493",
-        }
-      }
-    />
+    Protocol: hdfs
   </div>
   <div
     style={
