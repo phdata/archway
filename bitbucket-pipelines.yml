@@ -36,6 +36,7 @@ pipelines:
             - npm i -g typescript
             - npm i
             - npm run-script prepare
+            - npm test
       - step: &validate-parcel
           name: 'Validate Parcel and CSD'
           image: jotunn/cm-validator
