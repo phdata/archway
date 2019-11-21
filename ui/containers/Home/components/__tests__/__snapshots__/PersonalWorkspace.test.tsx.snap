@@ -71,7 +71,7 @@ exports[`PersonalWorkspace renders correctly 1`] = `
           />
         </div>
         <Connect(Feature)
-          flag="application"
+          flag="applications"
         >
           <div
             style={

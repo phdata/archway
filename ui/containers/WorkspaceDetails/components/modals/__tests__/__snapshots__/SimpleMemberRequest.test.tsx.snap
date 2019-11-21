@@ -21,8 +21,8 @@ exports[`SimpleMemberRequest renders correctly 1`] = `
   getFormState={[Function]}
   initialValues={
     Object {
+      "distinguishedName": "",
       "roles": Object {},
-      "username": "",
     }
   }
   keepDirtyOnReinitialize={false}
