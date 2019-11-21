@@ -3,7 +3,7 @@ import { Doughnut } from 'react-chartjs-2';
 
 import { Colors, Feature } from '../../../components';
 import { HiveAllocation } from '../../../models/Workspace';
-import { Card, Button, Badge } from 'antd';
+import { Card, Button } from 'antd';
 import { ModalType, FeatureFlagType } from '../../../constants';
 
 interface Props {
@@ -35,7 +35,7 @@ const HiveDatabase = ({ data, showModal, isPlatformOperations, isDefault }: Prop
     <Card style={{ minHeight: 165 }}>
       <div style={{ fontSize: 14, overflow: 'hidden', textOverflow: 'ellipsis', textAlign: 'center' }}>{data.name}</div>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: 12 }}>
-        <Badge count={'Protocol: ' + protocol} style={{ backgroundColor: '#2D7493' }} />
+        {'Protocol: ' + protocol}
       </div>
       {protocol === 'hdfs' && (
         <React.Fragment>
