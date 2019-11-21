@@ -26,6 +26,7 @@ describe('DatabaseSummary', () => {
           id: 1,
           name: '',
           location: '',
+          protocol: '',
           size_in_gb: 0,
           consumed_in_gb: 0,
           managing_group: {
