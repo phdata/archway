@@ -1,3 +1,7 @@
+## 2.2.6
+
+- Use jaas for Impala authentication. c58c71f1874a530bbc712147feff4e341a13af76
+
 ## 2.2.5
 
 - Fix syntax error in control startup script. 65229341580701bf755941b4fd36faa53a133ad9
