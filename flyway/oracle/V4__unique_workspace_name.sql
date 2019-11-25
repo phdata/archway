@@ -1,0 +1,2 @@
+-- Not having the sql file is causing issues at the customer.
+-- To get them back to a clean migration we either have to put an empty file where V12 was or modify the database.
