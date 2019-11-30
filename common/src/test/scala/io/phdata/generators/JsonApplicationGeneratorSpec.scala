@@ -19,7 +19,7 @@ class JsonApplicationGeneratorSpec extends FlatSpec with Matchers with MockFacto
     val configService: ConfigService[IO] = new TestConfigService()
     val ldapGroupGenerator = new DefaultLDAPGroupGenerator[IO](configService)
 
-    val generator: ApplicationGenerator[IO] = new JsonApplicationGenerator[IO](context, appConfig, ldapGroupGenerator)
+    val generator: ApplicationGenerator[IO] = new JsonApplicationGenerator[IO](context, ldapGroupGenerator)
     val applicationRequest = ApplicationRequest("Test application")
 
     val consumerGroup = s"${TemplateRequest.generateName(savedWorkspaceRequest.name)}_${applicationRequest.name}_cg"

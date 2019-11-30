@@ -23,7 +23,7 @@ class ApplicationServiceImpl[F[_]](
     for {
       workspace <- appContext.workspaceRequestRepository.find(workspaceId).value.transact(appContext.transactor)
 
-      _ <- F.pure(logger.warn("found {}", workspace))
+      _ <- F.pure(logger.info("found {}", workspace))
 
       app <- applicationGenerator.applicationFor(applicationRequest, workspace.get)
 
