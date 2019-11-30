@@ -6,14 +6,12 @@ import cats.effect.Effect
 import cats.implicits._
 import com.typesafe.scalalogging.LazyLogging
 import io.phdata.AppContext
-import io.phdata.config.AppConfig
 import io.phdata.models.{Application, DistinguishedName, TemplateRequest, WorkspaceRequest}
 import io.phdata.services.ApplicationRequest
 import org.fusesource.scalate.TemplateEngine
 
 class JsonApplicationGenerator[F[_]: Effect](
     context: AppContext[F],
-    appConfig: AppConfig,
     ldapGroupGenerator: LDAPGroupGenerator[F]
 ) extends ApplicationGenerator[F] with LazyLogging {
 
@@ -41,7 +39,7 @@ class JsonApplicationGenerator[F[_]: Effect](
     ldapGroupGenerator
       .generate(
         consumerGroup,
-        DistinguishedName(s"cn=$consumerGroup,${appConfig.ldap.groupPath}"),
+        DistinguishedName(s"cn=$consumerGroup,${context.appConfig.ldap.groupPath}"),
         consumerGroup
       )
       .map { ldapGroup =>
