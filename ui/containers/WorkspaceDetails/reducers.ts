@@ -247,7 +247,10 @@ const details = (state = initialState, action: any) => {
       return state.set('provisioning', action.provisioning);
 
     case SET_NOTIFICATION_STATUS:
-      return state.set('notification', fromJS({ type: action.payload.type, message: action.payload.message }));
+      return state.set(
+        'notification',
+        fromJS({ type: action.payload.type, message: action.payload.message, duration: action.payload.duration })
+      );
 
     case MANAGE_LOADING:
       return state.setIn(['manageLoading', action.payload.manageType], action.payload.loading);

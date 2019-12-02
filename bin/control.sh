@@ -12,7 +12,16 @@ com.sun.security.jgss.krb5.initiate {
    storeKey=true
    keyTab=\"$KEYTAB_FILE\"
    principal=\"$ARCHWAY_SERVICE_PRINCIPAL\";
-};"
+};
+Client {
+   com.sun.security.auth.module.Krb5LoginModule required
+   doNotPrompt=true
+   useKeyTab=true
+   storeKey=true
+   keyTab=\"$KEYTAB_FILE\"
+   principal=\"$ARCHWAY_SERVICE_PRINCIPAL\";
+};
+"
 
 echo $JAAS_CONFIGS > ${CONF_DIR}/jaas.conf
 

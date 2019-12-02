@@ -15,7 +15,7 @@ import scala.collection.JavaConverters._
 import scala.util.{Failure, Success, Try}
 
 class LDAPClientImpl[F[_]: Effect](ldapConfig: LDAPConfig, binding: LDAPConfig => LDAPBinding)
-    extends LDAPClient[F] with LazyLogging {
+    extends ProvisioningLDAPClient[F] with LookupLDAPClient[F] with LazyLogging {
 
   // Enable unbound debug logging at application debug level. https://docs.ldap.com/ldap-sdk/docs/getting-started/debug.html
   private val UNBOUND_DEBUG_LOGGING_PROPERTY = "com.unboundid.ldap.sdk.debug.enabled"
@@ -218,11 +218,14 @@ class LDAPClientImpl[F[_]: Effect](ldapConfig: LDAPConfig, binding: LDAPConfig =
 
   private def getEntry(dn: DistinguishedName): OptionT[F, SearchResultEntry] = {
     val result: Option[SearchResultEntry] = Try(connectionPool.getEntry(dn.value)) match {
-      case Success(value) =>
+      case Success(value: Any) =>
         logger.debug(s"Got info for $dn")
         Some(value)
       case Failure(e) =>
-        logger.info(s"Failed to get LDAP entry for dn '$dn'", e)
+        logger.info(s"Problem occurred for dn '$dn'", e)
+        None
+      case _ =>
+        logger.info(s"Failed to get LDAP entry for dn '$dn'")
         None
     }
 

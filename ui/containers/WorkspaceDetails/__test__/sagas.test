@@ -49,6 +49,7 @@ const details: Workspace = {
       id: 2,
       name: 'sw_social_media_aggregation',
       location: '/data/shared_workspace/social_media_aggregation',
+      protocol: 'hdfs',
       size_in_gb: 1,
       consumed_in_gb: 0,
       managing_group: {

@@ -48,6 +48,7 @@ exports[`RecentWorkspaces renders correctly 1`] = `
                 },
               },
               "name": "",
+              "protocol": "",
               "size_in_gb": 0,
             },
           ],

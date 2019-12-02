@@ -51,6 +51,7 @@ exports[`DataTab renders correctly 1`] = `
                   },
                 },
                 "name": "",
+                "protocol": "",
                 "size_in_gb": 0,
               }
             }
@@ -216,6 +217,7 @@ LOCATION '/new_data/landing'
                   },
                 },
                 "name": "",
+                "protocol": "",
                 "size_in_gb": 0,
               }
             }

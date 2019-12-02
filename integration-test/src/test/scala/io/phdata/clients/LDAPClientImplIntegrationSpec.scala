@@ -23,7 +23,7 @@ class LDAPClientImplIntegrationSpec
     ldapConnectionPool.getConnection.delete(groupDN.value)
   }
 
-  val  groupName = "edh_sw_sesame"
+  val groupName = "edh_sw_sesame"
   val groupDN = DistinguishedName(s"cn=$groupName,${itestConfig.ldap.groupPath}")
   val userDN = DistinguishedName(s"CN=${systemTestConfig.existingUser},${itestConfig.ldap.userPath.get}")
 
@@ -120,10 +120,10 @@ class LDAPClientImplIntegrationSpec
 
   it should "add a user to a group" in {
     provisioningClient.createGroup(groupName, defaultLDAPAttributes(groupDN, groupName)).unsafeRunSync()
-    val initGroupMembers = provisioningClient.groupMembers(groupDN).unsafeRunSync()
+    val initGroupMembers = lookupClient.groupMembers(groupDN).unsafeRunSync()
 
     provisioningClient.addUserToGroup(groupDN, userDN).value.unsafeRunSync()
-    val finalGroupMembers = provisioningClient.groupMembers(groupDN).unsafeRunSync()
+    val finalGroupMembers = lookupClient.groupMembers(groupDN).unsafeRunSync()
 
     initGroupMembers shouldBe empty
     finalGroupMembers.size shouldBe 1
@@ -132,13 +132,13 @@ class LDAPClientImplIntegrationSpec
 
   it should "remove a user from a group" in {
     provisioningClient.createGroup(groupName, defaultLDAPAttributes(groupDN, groupName)).unsafeRunSync()
-    val initGroupMembers = provisioningClient.groupMembers(groupDN).unsafeRunSync()
+    val initGroupMembers = lookupClient.groupMembers(groupDN).unsafeRunSync()
 
     provisioningClient.addUserToGroup(groupDN, userDN).value.unsafeRunSync()
-    val addedGroupMembers = provisioningClient.groupMembers(groupDN).unsafeRunSync()
+    val addedGroupMembers = lookupClient.groupMembers(groupDN).unsafeRunSync()
 
     provisioningClient.removeUserFromGroup(groupDN, userDN).value.unsafeRunSync()
-    val finalGroupMembers = provisioningClient.groupMembers(groupDN).unsafeRunSync()
+    val finalGroupMembers = lookupClient.groupMembers(groupDN).unsafeRunSync()
 
     initGroupMembers shouldBe empty
     addedGroupMembers.size shouldBe 1
@@ -149,10 +149,10 @@ class LDAPClientImplIntegrationSpec
   it should "find all users" in {
     def userDN(username: String) = DistinguishedName(s"cn=$username,${itestConfig.ldap.userPath.get}")
 
-    lookupClient.createGroup(groupName, defaultLDAPAttributes(groupDN, groupName)).unsafeRunSync()
+    provisioningClient.createGroup(groupName, defaultLDAPAttributes(groupDN, groupName)).unsafeRunSync()
     // FIXME: Currently not working because ldap user "svc_heim_test1" was accidentally deleted, when user is created this should be uncommented
     // lookupClient.addUserToGroup(groupDN, userDN("svc_heim_test1")).value.unsafeRunSync()
-    lookupClient.addUserToGroup(groupDN, userDN("svc_heim_test2")).value.unsafeRunSync()
+    provisioningClient.addUserToGroup(groupDN, userDN("svc_heim_test2")).value.unsafeRunSync()
 
     val result = lookupClient.groupMembers(DistinguishedName(groupDN.value)).unsafeRunSync()
 
@@ -172,7 +172,7 @@ class LDAPClientImplIntegrationSpec
       "ignore" -> "me",
       "add" -> "me",
     )
-    val result = lookupClient.modificationsFor(existing, updated)
+    val result = helperLDAPClient.modificationsFor(existing, updated)
 
     result should contain theSameElementsAs List(
       new Modification(ModificationType.REPLACE, "update", "new"),
@@ -181,7 +181,7 @@ class LDAPClientImplIntegrationSpec
   }
 
   it should "generate a new request" in {
-    val actual = provisioningClient.generateGroupRequest(groupDN.value, groupName, defaultLDAPAttributes(groupDN, groupName))
+    val actual = helperLDAPClient.generateGroupRequest(groupDN.value, groupName, defaultLDAPAttributes(groupDN, groupName))
     actual.unsafeRunSync().get shouldBe an [AddRequest]
   }
 
@@ -190,14 +190,15 @@ class LDAPClientImplIntegrationSpec
 
     provisioningClient.createGroup(groupName, attributes).unsafeRunSync()
 
-    val actual = provisioningClient.generateGroupRequest(groupDN.value, groupName, attributes.patch(attributes.length, List("something" -> "new"), 0))
+    val actual = helperLDAPClient.generateGroupRequest(groupDN.value, groupName, attributes.patch(attributes.length, List("something" -> "new"), 0))
     actual.unsafeRunSync().get shouldBe a [ModifyRequest]
   }
 
   it should "not generate a request" in {
     val attributes = defaultLDAPAttributes(groupDN, groupName)
     provisioningClient.createGroup(groupName, attributes).unsafeRunSync()
-    val actual = provisioningClient.generateGroupRequest(groupDN.value, groupName, List())
+
+    val actual = helperLDAPClient.generateGroupRequest(groupDN.value, groupName, List())
     actual.unsafeRunSync() should not be defined
   }
 
@@ -211,12 +212,12 @@ class LDAPClientImplIntegrationSpec
       new Attribute("objectClass", "group", "top"),
       new Attribute("cn", "user_johnny")
     )
-    val actual = provisioningClient.attributeConvert(input)
+    val actual = helperLDAPClient.attributeConvert(input)
     actual should contain theSameElementsAs expected
   }
 
   it should "search" in {
-    val results = provisioningClient.search(systemTestConfig.existingUser).unsafeRunSync()
+    val results = lookupClient.search(systemTestConfig.existingUser).unsafeRunSync()
     results.users.length should be > 0
     results.users.foreach(println)
   }
@@ -224,7 +225,7 @@ class LDAPClientImplIntegrationSpec
   it should "searchQuery" in {
     val expected = "(sAMAccountName=johndoe)"
 
-    val actual = lookupClient.searchQuery("johndoe")
+    val actual = helperLDAPClient.searchQuery("johndoe")
 
     actual shouldBe expected
   }
@@ -238,7 +239,7 @@ class LDAPClientImplIntegrationSpec
       new Attribute("sAMAccountName", "johndoe")
     ).asJava)
 
-    val actual = lookupClient.ldapUser(user)
+    val actual = helperLDAPClient.ldapUser(user)
 
     actual shouldBe expected
   }
