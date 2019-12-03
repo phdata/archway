@@ -61,7 +61,11 @@ case ${COMPONENT} in
                 FLYWAY_EXECUTABLE="$FLYWAY_DIR/flyway"
                 SCRIPTS_LOCATION="$FLYWAY_DIR/$DATABASE_SCRIPT_DIR"
 
-                env FLYWAY_LOCATIONS="filesystem:$SCRIPTS_LOCATION" "$FLYWAY_EXECUTABLE" migrate -url="$DB_URL" -user="$DB_USERNAME" -password="$DB_PASSWORD" || exit 1
+                # To hide the db password, the flyway command is displayed with all arguments except password and then executed with password in hidden mode
+                FLYWAY_COMMAND="env FLYWAY_LOCATIONS=filesystem:$SCRIPTS_LOCATION $FLYWAY_EXECUTABLE migrate -url=$DB_URL -user=$DB_USERNAME -password="
+                set +x
+                $FLYWAY_COMMAND$DB_PASSWORD || exit 1
+                set -x
 
                 cp -f generated.conf runtime.conf
                 sed -i -E 's/([[:alpha:]\.]+)\=(.*)/\1\="\2"/g' runtime.conf
