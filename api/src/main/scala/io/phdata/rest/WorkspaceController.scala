@@ -4,6 +4,7 @@ import java.time.Instant
 
 import cats.effect._
 import cats.implicits._
+import com.cloudera.impala.support.exceptions.ExceptionType
 import com.typesafe.scalalogging.LazyLogging
 import io.circe.Decoder
 import io.circe.generic.auto._
@@ -198,7 +199,12 @@ class WorkspaceController[F[_]: Sync: Timer: ContextShift: ConcurrentEffect](
               case e: Throwable =>
                 logger.error(s"Failed to add member to workspace $id: ${e.getLocalizedMessage}", e).pure[F]
             }
-            _ <- emailService.newMemberEmail(id, memberRequest).value
+            emailResult = try {
+              emailService.newMemberEmail(id, memberRequest).value
+            } catch{
+              case e: Exception =>
+                logger.error(s"Failed to send welcoming message, due to this reason:", e)
+            }
             response <- newMember.fold(InternalServerError())(member => Created(member.asJson))
           } yield response
 
