@@ -5,6 +5,7 @@ import java.time.Instant
 import cats.effect.{IO, Resource}
 import com.typesafe.config.ConfigFactory
 import io.circe._
+import cats.implicits._
 import io.circe.parser._
 import io.phdata.config.AppConfig
 import io.phdata.models.{Manager, ReadOnly, _}
@@ -59,7 +60,7 @@ package object fixtures {
   val savedApplication = Application("Tiller", s"${systemName}_cg", savedLDAP, None, None, None, None, Some(id))
   val initialApplication = savedApplication.copy(id = None, group = initialLDAP)
   val testTimer = new TestTimer
-  val searchResult = WorkspaceSearchResult(id, name, name, "simple", "Approved", piiCompliance, pciCompliance, phiCompliance, testTimer.instant, Some(testTimer.instant), 0, 0, 0)
+  val searchResult = WorkspaceSearchResult(id, name, name, "simple", "Approved", piiCompliance, pciCompliance, phiCompliance, testTimer.instant, Some(testTimer.instant), 0, 0L.some, BigDecimal(0).some)
 
   val yarnApp = ClusterApp("yarn", "yarn", "GOOD_HExALTH", "STARTED", Map())
   val cluster = Cluster("cluster", "Cluster", "", List(yarnApp), CDH(""), "GOOD_HEALTH")
