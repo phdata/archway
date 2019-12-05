@@ -18,8 +18,8 @@ case class WorkspaceSearchResult(
     requested: Instant,
     fullyApproved: Option[Instant],
     diskAllocatedInGB: BigDecimal,
-    maxCores: Long,
-    maxMemoryInGB: BigDecimal
+    maxCores: Option[Long],
+    maxMemoryInGB: Option[BigDecimal]
 )
 
 object WorkspaceSearchResult {
