@@ -54,9 +54,11 @@ package()
   cp ${BUILD_BASE}/${BUILD_NAME}-el6.parcel ${PUBLISH_DIR}
   pushd ${PUBLISH_DIR}
   ln -sf ${BUILD_NAME}-el6.parcel ${BUILD_NAME}-el7.parcel
+  ln -sf ${BUILD_NAME}-el6.parcel ${BUILD_NAME}-sles12.parcel
   ln -sf ${BUILD_NAME}-el6.parcel ${BUILD_NAME}-xenial.parcel
   sha1sum $BUILD_NAME-el6.parcel | cut -d' ' -f1  > ${BUILD_NAME}-el6.parcel.sha
   sha1sum $BUILD_NAME-el7.parcel | cut -d' ' -f1  > ${BUILD_NAME}-el7.parcel.sha
+  sha1sum $BUILD_NAME-sles12.parcel | cut -d' ' -f1  > ${BUILD_NAME}-sles12.parcel.sha
   sha1sum $BUILD_NAME-xenial.parcel | cut -d' ' -f1  > ${BUILD_NAME}-xenial.parcel.sha
 
   popd
@@ -95,9 +97,11 @@ push()
   READY_DIR=$(echo "${ARTIFACT}-${ARCHWAY_VERSION}" | tr a-z A-Z)
   curl -u${ARTIFACTORY_USER}:${ARTIFACTORY_TOKEN} -T ${READY_DIR}-el6.parcel https://repository.phdata.io/artifactory/$DEPLOY_REPO/phdata/archway/${ARCHWAY_VERSION}/${READY_DIR}-el6.parcel
   curl -u${ARTIFACTORY_USER}:${ARTIFACTORY_TOKEN} -T ${READY_DIR}-el7.parcel https://repository.phdata.io/artifactory/$DEPLOY_REPO/phdata/archway/${ARCHWAY_VERSION}/${READY_DIR}-el7.parcel
+  curl -u${ARTIFACTORY_USER}:${ARTIFACTORY_TOKEN} -T ${READY_DIR}-sles12.parcel https://repository.phdata.io/artifactory/$DEPLOY_REPO/phdata/archway/${ARCHWAY_VERSION}/${READY_DIR}-sles12.parcel
   curl -u${ARTIFACTORY_USER}:${ARTIFACTORY_TOKEN} -T ${READY_DIR}-xenial.parcel https://repository.phdata.io/artifactory/$DEPLOY_REPO/phdata/archway/${ARCHWAY_VERSION}/${READY_DIR}-xenial.parcel
   curl -u${ARTIFACTORY_USER}:${ARTIFACTORY_TOKEN} -T ${READY_DIR}-el6.parcel.sha https://repository.phdata.io/artifactory/$DEPLOY_REPO/phdata/archway/${ARCHWAY_VERSION}/${READY_DIR}-el6.parcel.sha
   curl -u${ARTIFACTORY_USER}:${ARTIFACTORY_TOKEN} -T ${READY_DIR}-el7.parcel.sha https://repository.phdata.io/artifactory/$DEPLOY_REPO/phdata/archway/${ARCHWAY_VERSION}/${READY_DIR}-el7.parcel.sha
+  curl -u${ARTIFACTORY_USER}:${ARTIFACTORY_TOKEN} -T ${READY_DIR}-sles12.parcel.sha https://repository.phdata.io/artifactory/$DEPLOY_REPO/phdata/archway/${ARCHWAY_VERSION}/${READY_DIR}-sles12.parcel.sha
   curl -u${ARTIFACTORY_USER}:${ARTIFACTORY_TOKEN} -T ${READY_DIR}-xenial.parcel.sha https://repository.phdata.io/artifactory/$DEPLOY_REPO/phdata/archway/${ARCHWAY_VERSION}/${READY_DIR}-xenial.parcel.sha
 }
 
