@@ -346,7 +346,8 @@
           "validValues": [
             "org.postgresql.Driver",
             "com.mysql.cj.jdbc.Driver",
-            "com.mysql.jdbc.Driver"
+            "com.mysql.jdbc.Driver",
+            "oracle.jdbc.driver.OracleDriver"
           ],
           "configurableInWizard": "true"
         },
