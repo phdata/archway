@@ -1,3 +1,28 @@
+## 2.2.7
+
+- Add Oracle driver option in service setup. 065b02b6799afc6b82afee0e1adeee822ee44e55
+
+## 2.2.6
+
+- Use jaas for Impala authentication. c58c71f1874a530bbc712147feff4e341a13af76
+
+## 2.2.5
+
+- Fix syntax error in control startup script. 65229341580701bf755941b4fd36faa53a133ad9
+
+## 2.2.4
+
+- Changes scalate workdir to workaround a 'resource not found' exception when scalate pre-compiled classes get cleaned up. 7460c0e9feee33be52403598f8892d27af549c0a
+- Log additional information when adding or removing a user from a workspace . 3464f3189d80fe5a9d4f26ade37a1ab3bd133134
+- Render workspace example when a user workspace is created without a yarn queue. cb2f42f197bafd6ea1a19d4e4f718c6b800080a7, 6282f0f24db03dad861dced0ad21a93b91e0794e
+- Revert unique workspace names. This causes issues with creating similar named workspaces in different environments within a cluster.
+- Validate member id when adding a user, only showing 'OK' button when a member has been picked. 7f141d903222cdbfa53d6dab10bece15251fe646
+
+## 2.2.3
+
+- Fix a condition where the provisioningLDAPClient was used for a lookup operation,
+  causing issues at clients where the operations need to be separated
+
 ## 2.2.2
 
 - Fix bug where tabs under the workspace view didn't show correctly for ops users. 9a9934c8ef3de845b72b11ddc66a8afee173267e
