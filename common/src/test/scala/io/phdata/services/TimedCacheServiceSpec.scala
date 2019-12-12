@@ -1,6 +1,6 @@
 package io.phdata.services
 
-import java.util.concurrent.{Executors, TimeUnit}
+import java.util.concurrent.{Executors, TimeUnit, TimeoutException}
 
 import cats.effect.concurrent.MVar
 import cats.effect.{IO, _}
@@ -29,8 +29,8 @@ class TimedCacheServiceSpec extends FlatSpec with Matchers {
     val service = new TimedCacheService
     val newCacheValue = service.run[IO, Int](1.pure[IO]).unsafeRunSync
 
-    newCacheValue.cachedTime should be(testTimer.instant.toEpochMilli)
-    newCacheValue.value should be(1)
+    newCacheValue._1 should be(testTimer.instant.toEpochMilli)
+    newCacheValue._2.right.get should be(1)
   }
 
   it should "return cached value when cache is valid" in new Context {
@@ -55,6 +55,18 @@ class TimedCacheServiceSpec extends FlatSpec with Matchers {
       } yield result).unsafeRunSync
 
     actual should be(2)
+  }
+
+  it should "return previously cached value if cache refresh failed" in new Context {
+    val actual =
+      (for {
+        time <- timer.clock.realTime(TimeUnit.MILLISECONDS)
+        cachedValue <- MVar.of[IO, CacheEntry[Int]](CacheEntry(time, 1))
+        _ <- timer.sleep(200 millis)
+        result <- service.getOrRun[IO, Int](50 millis, IO.raiseError[Int](new TimeoutException()), cachedValue)
+      } yield result).unsafeRunSync
+
+    actual should be(1)
   }
 
   trait Context {
