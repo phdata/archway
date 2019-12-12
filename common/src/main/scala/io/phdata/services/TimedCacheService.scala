@@ -22,13 +22,11 @@ class TimedCacheService extends CacheService with LazyLogging {
       (currentTime - lifetime.toMillis) < createdTime
     }
 
-  def run[F[_]: Concurrent: Clock, A](work: F[A]): F[CacheEntry[A]] =
+  def run[F[_]: Concurrent: Clock, A](work: F[A]): F[(Long, Either[Throwable, A])] =
     for {
       time <- Clock[F].realTime(TimeUnit.MILLISECONDS)
-      readyToCache <- work.onError {
-        case e: Throwable => logger.error(s"Work failed $work", e).pure[F]
-      }
-    } yield CacheEntry(time, readyToCache)
+      readyToCache <- work.attempt
+    } yield (time, readyToCache)
 
   override def getOrRun[F[_]: Concurrent: Clock, A](
       cacheDuration: FiniteDuration,
@@ -44,7 +42,13 @@ class TimedCacheService extends CacheService with LazyLogging {
         CacheEntry(existingCache.cachedTime, existingCache.value).pure[F]
       } else {
         logger.debug(s"Starting cache refresh")
-        val result = run(work)
+
+        val result = run(work).flatMap {
+          case (time, Right(value)) => CacheEntry(time, value).pure[F]
+          case (time, Left(e)) =>
+            logger.error(s"Work failed $work, updating cache with previous value", e).pure[F]
+            CacheEntry(time, existingCache.value).pure[F]
+        }
         logger.debug(s"Finished cache refresh")
         result
       }
