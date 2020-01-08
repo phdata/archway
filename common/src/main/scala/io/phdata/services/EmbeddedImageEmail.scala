@@ -3,16 +3,23 @@ package io.phdata.services
 import courier.Multipart
 import javax.mail.internet.MimeBodyPart
 
+import scala.collection.mutable.ListBuffer
+
 object EmbeddedImageEmail {
 
-  def create(htmlContent: String, imageUrl: String, cid: String): Multipart = {
+  def create(htmlContent: String, imageInfos: List[(String, String)]): Multipart = {
     val htmlPart = new MimeBodyPart()
-    htmlPart.setText(htmlContent, "UTF-8", "html")
+    var bodyParts = new ListBuffer[MimeBodyPart]()
 
-    val imagePart: MimeBodyPart = new MimeBodyPart()
-    imagePart.attachFile(imageUrl)
-    imagePart.setContentID(s"<$cid>")
-    imagePart.setDisposition("INLINE")
-    Multipart(List(htmlPart, imagePart))
+    htmlPart.setText(htmlContent, "UTF-8", "html")
+    bodyParts += htmlPart
+    for ((imageUrl, cid) <- imageInfos) {
+      var imagePart: MimeBodyPart = new MimeBodyPart()
+      imagePart.attachFile(imageUrl)
+      imagePart.setContentID(s"<$cid>")
+      imagePart.setDisposition("INLINE")
+      bodyParts += imagePart
+    }
+    Multipart(bodyParts.toList)
   }
 }

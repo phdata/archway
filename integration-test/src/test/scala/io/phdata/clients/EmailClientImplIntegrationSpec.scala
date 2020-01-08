@@ -27,7 +27,7 @@ class EmailClientImplIntegrationSpec extends FlatSpec {
     System.setProperty("mail.debug", "true")
 
     val htmlContent = templateEngine.layout(
-      "/templates/emails/welcome.mustache",
+      "common/src/main/templates/emails/welcome.mustache",
       Map(
         "roleName" -> "manager",
         "resourceType" -> "data",
@@ -39,7 +39,7 @@ class EmailClientImplIntegrationSpec extends FlatSpec {
 
     val result = mailClient
       .send("Test welcome email",
-        Multipart().html(htmlContent),
+        EmbeddedImageEmail.create(htmlContent, List(("images/logo_big.png", "logo"), ("images/check_mark.png", "checkMark"))),
         appConfig.smtp.fromEmail,
         itestConfig.approvers.notificationEmail.head)
       .unsafeRunSync()
@@ -61,7 +61,7 @@ class EmailClientImplIntegrationSpec extends FlatSpec {
     )
     val result = mailClient
       .send("Test new workspace email",
-        EmbeddedImageEmail.create(htmlContent, "images/logo_big.png", "logo"),
+        EmbeddedImageEmail.create(htmlContent, List(("images/logo_big.png", "logo"))),
         appConfig.smtp.fromEmail,
         itestConfig.approvers.notificationEmail.head)
       .unsafeRunSync()

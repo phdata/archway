@@ -201,7 +201,7 @@ class WorkspaceController[F[_]: Sync: Timer: ContextShift: ConcurrentEffect](
             }
             emailResult = try {
               emailService.newMemberEmail(id, memberRequest).value
-            } catch{
+            } catch {
               case e: Exception =>
                 logger.error(s"Failed to send welcoming message, due to this reason:", e)
             }
