@@ -40,8 +40,13 @@ class EmailServiceImpl[F[_]: Effect](context: AppContext[F], workspaceService: W
       )
       email <- OptionT.liftF(Effect[F].delay(templateEngine.layout("/templates/emails/welcome.mustache", values)))
       result <- OptionT.liftF(
-        context.emailClient
-          .send(s"Archway Workspace: Welcome to ${workspace.name}", Multipart().text(email), fromAddress, toAddress)
+        context.emailClient.send(
+          s"Archway Workspace: Welcome to ${workspace.name}",
+          EmbeddedImageEmail
+            .create(email, List(("images/logo_big.png", "logo"), ("images/check_mark.png", "checkMark"))),
+          fromAddress,
+          toAddress
+        )
       )
     } yield result
   }
@@ -68,7 +73,7 @@ class EmailServiceImpl[F[_]: Effect](context: AppContext[F], workspaceService: W
         recipient =>
           context.emailClient.send(
             "A New Workspace is Waiting",
-            EmbeddedImageEmail.create(email, "images/logo_big.png", "logo"),
+            EmbeddedImageEmail.create(email, List(("images/logo_big.png", "logo"))),
             fromAddress,
             recipient
           )
