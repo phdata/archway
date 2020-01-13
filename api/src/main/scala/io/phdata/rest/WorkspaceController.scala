@@ -17,6 +17,7 @@ import io.phdata.services._
 import org.http4s._
 import org.http4s.dsl.Http4sDsl
 
+import scala.collection.mutable.ListBuffer
 import scala.concurrent.ExecutionContext
 
 class WorkspaceController[F[_]: Sync: Timer: ContextShift: ConcurrentEffect](
@@ -206,6 +207,37 @@ class WorkspaceController[F[_]: Sync: Timer: ContextShift: ConcurrentEffect](
                 logger.error(s"Failed to send welcoming message, due to this reason:", e)
             }
             response <- newMember.fold(InternalServerError())(member => Created(member.asJson))
+          } yield response
+
+        case req @ POST -> Root / LongVar(id) / "members" / "batch" as user =>
+          import MemberRoleRequest.decoder
+          implicit val roleDecoder: EntityDecoder[F, List[MemberRoleRequest]] = jsonOf[F, List[MemberRoleRequest]]
+
+          val errors = new ListBuffer[MemberRoleRequest]()
+
+          for {
+            memberRequests <- req.req.as[List[MemberRoleRequest]]
+
+            _ <- logger.info(
+              s"${user.name} is requesting to add a new members: ${memberRequests.map(r => r.distinguishedName.value)} in workspace ${id}"
+            ).pure[F]
+
+            _ <- memberRequests.traverse { request =>
+              for {
+                newMember <- memberService.addMember(id, request).value.onError {
+                  case e: Throwable =>
+                    errors += request
+                    logger.error(s"Failed to add member to workspace $id: ${e.getLocalizedMessage}", e).pure[F]
+                }
+                emailResult = try {
+                  emailService.newMemberEmail(id, request).value
+                } catch {
+                  case e: Exception =>
+                    logger.error(s"Failed to send welcoming message, due to this reason:", e)
+                }
+              } yield(newMember)
+            }
+          response <- if(errors.isEmpty) Created() else InternalServerError()
           } yield response
 
         case req @ DELETE -> Root / LongVar(id) / "members" as user =>
