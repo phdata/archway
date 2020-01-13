@@ -129,6 +129,28 @@ class WorkspaceControllerSpec
     response.status.code shouldBe 500
   }
 
+  it should "add a multiple users" in new Http4sClientDsl[IO] with Context {
+    val memberRequest = MemberRoleRequest(standardUserDN, "data", id, Some(Manager))
+    (memberService.addMember _)
+      .expects(id, memberRequest)
+      .returning(OptionT.some(
+        WorkspaceMemberEntry(standardUserDN.value, name, Some("johndoe@phdata.io"), List.empty, List.empty, List.empty, List.empty)
+      ))
+    (emailService.newMemberEmail _).expects(id, memberRequest).returning(OptionT.some(IO.unit))
+
+    val request = Json.arr(
+      Json.obj(
+        "distinguished_name" -> standardUserDN.asJson,
+        "resource" -> "data".asJson,
+        "resource_id" -> id.asJson,
+        "role" -> "manager".asJson
+      )
+    )
+
+    val response = restApi.route.orNotFound.run(POST(request, Uri.uri("/123/members/batch")).unsafeRunSync()).unsafeRunSync()
+    response.status.code shouldBe 201
+  }
+
   it should "provision workspace" in new Http4sClientDsl[IO] with Context {
     workspaceService.findById _ expects id returning OptionT.some(savedWorkspaceRequest)
     provisioningService.attemptProvision _ expects(savedWorkspaceRequest, 0) returning NonEmptyList.one(SimpleMessage(id, "nothing to see here").asInstanceOf[provisioning.Message]).pure[IO].start(contextShift)
