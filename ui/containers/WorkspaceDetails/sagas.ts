@@ -209,23 +209,26 @@ export function* simpleMemberRequested({ resource }: SimpleMemberRequestAction) 
     if (resource === 'data') {
       let { distinguishedName, roles } = (yield select(memberRequestFormExtractor)).toJS();
       const { users = [], groups = [] } = (yield select(selectedUserSuggestionExtractor)).toJS();
-      yield all(
-        workspace.data.map(({ id, name }: { id: number; name: string }) => {
-          const role = roles[name] || 'readonly';
-          if (distinguishedName && !distinguishedName.match(distinguishedNameRegEx)) {
-            distinguishedName = [...users, ...groups].filter(member => member.display === distinguishedName.trim())[0]
-              .distinguished_name;
-          }
-          return (
-            role !== 'none' && call(Api.newWorkspaceMember, token, workspace.id, resource, id, role, distinguishedName)
-          );
-        })
-      );
+      const workspaceMemberList: any[] = [];
+      workspace.data.forEach(({ id, name }: { id: number; name: string }) => {
+        const role = roles[name] || 'readonly';
+        if (distinguishedName && !distinguishedName.match(distinguishedNameRegEx)) {
+          distinguishedName = [...users, ...groups].filter(member => member.display === distinguishedName.trim())[0]
+            .distinguished_name;
+        }
+        workspaceMemberList.push({ resource, resource_id: id, role, distinguished_name: distinguishedName });
+      });
+
+      if (workspaceMemberList && workspaceMemberList.length) {
+        yield call(Api.newWorkspaceMember, token, workspaceMemberList[0].resource_id, workspaceMemberList);
+      }
       yield put(simpleMemberRequestComplete());
     } else if (resource === 'topics') {
       const { id } = yield select(activeTopicExtractor);
       const { distinguishedName, role } = (yield select(topicMemberRequestFormExtractor)).toJS();
-      yield call(Api.newWorkspaceMember, token, workspace.id, resource, id, role, distinguishedName);
+      yield call(Api.newWorkspaceMember, token, workspace.id, [
+        { resource, resource_id: id, role, distinguished_name: distinguishedName },
+      ]);
       yield put(simpleMemberRequestComplete());
     }
     const members = yield call(Api.getMembers, token, workspace.id);
@@ -254,7 +257,9 @@ export function* changeMemberRoleRequested({
   try {
     yield put(setMemberLoading(true));
     yield call(Api.removeWorkspaceMember, token, workspace.id, resource, roleId, 'none', distinguished_name);
-    yield call(Api.newWorkspaceMember, token, workspace.id, resource, roleId, role, distinguished_name);
+    yield call(Api.newWorkspaceMember, token, workspace.id, [
+      { resource, resource_id: roleId, role, distinguished_name },
+    ]);
     yield put(
       setNotificationStatus(NotificationType.Success, `Success: Changed member ${distinguishedName}'s role`, 3)
     );

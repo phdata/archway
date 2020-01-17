@@ -88,14 +88,8 @@ export const createWorkspace = (token: string) => withBody(`/account/workspace`,
 
 export const requestWorkspace = (token: string, workspace: Workspace) => withBody('/workspaces', token, workspace);
 
-export const newWorkspaceMember = (
-  token: string,
-  id: number,
-  resource: string,
-  resource_id: number,
-  role: string,
-  distinguished_name: string
-) => withBody(`/workspaces/${id}/members`, token, { distinguished_name, resource, resource_id, role }, 'POST', true);
+export const newWorkspaceMember = (token: string, id: number, membersList: any) =>
+  withBody(`/workspaces/${id}/members/batch`, token, membersList, 'POST', true);
 
 export const removeWorkspaceMember = (
   token: string,
