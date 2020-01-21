@@ -371,6 +371,7 @@ class WorkspaceDetails extends React.PureComponent<Props> {
           title="Add A Member"
           onCancel={clearModal}
           onOk={() => simpleMemberRequest('topics')}
+          okButtonProps={{ disabled: this.isOKButtonDisabled(distinguishedName) }}
         >
           <SimpleTopicMemberRequest suggestions={userSuggestions} onSearch={this.handleMemberSearch} />
         </Modal>
