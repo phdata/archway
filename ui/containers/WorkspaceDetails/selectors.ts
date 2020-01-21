@@ -180,5 +180,8 @@ export const getResourcePoolLoading = () =>
 export const getDistinguishName = () =>
   createSelector(
     formSelector,
-    formState => formState.getIn(['simpleMemberRequest', 'values', 'distinguishedName'])
+    formState =>
+      formState.getIn(['simpleMemberRequest', 'values', 'distinguishedName'])
+        ? formState.getIn(['simpleMemberRequest', 'values', 'distinguishedName'])
+        : formState.getIn(['simpleTopicMemberRequest', 'values', 'distinguishedName'])
   );
