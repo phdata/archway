@@ -443,6 +443,8 @@ function* modifyDiskQuotaRequested() {
   try {
     yield put(setQuotaLoading(true));
     yield call(Api.modifyDiskQuota, token, id, resourceId, quota);
+    const workspace = yield call(Api.getWorkspace, token, id);
+    yield put(setWorkspace(workspace));
   } catch (err) {
     yield put(
       setNotificationStatus(NotificationType.Error, `Failed to modify disk quota of ${name}: ${err.toString()}`)
