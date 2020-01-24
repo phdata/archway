@@ -189,7 +189,7 @@ class WorkspaceDetails extends React.PureComponent<Props> {
 
   public isOKButtonDisabled = (v: string) => {
     let regexValue = v && v.match(distinguishedNameRegEx) ? true : false;
-    if (this.props.userSuggestions && !regexValue) {
+    if (this.props.userSuggestions && !regexValue && v) {
       const { users = [], groups = [] } = this.props.userSuggestions;
       const selectedArr = [...users, ...groups].filter(member => member.display === v.trim());
       if (selectedArr.length) {
