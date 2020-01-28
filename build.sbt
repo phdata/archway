@@ -22,7 +22,7 @@ val testSettings = Seq(
 )
 
 val settings = Seq(
-  scalaVersion := "2.12.5",
+  scalaVersion := "2.12.10",
   organization := "io.phdata",
   version := "2018.08.01",
   resolvers ++= customResolvers,
