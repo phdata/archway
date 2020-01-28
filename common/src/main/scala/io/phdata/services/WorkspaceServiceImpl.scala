@@ -172,6 +172,12 @@ class WorkspaceServiceImpl[F[_]: ConcurrentEffect: ContextShift](
           MemberRoleRequest(newOwnerDN, memberRecord.resource, memberRecord.id, memberRecord.role.some)
         memberService.addMember(workspaceId, addMemberRequest)
       }
+      _ <- OptionT.liftF(ImpalaServiceImpl.invalidateMetadata(workspaceId)(context).onError {
+        case e: Throwable =>
+          logger
+            .error(s"Failed to invalidate impala metadata for workspace $workspaceId: ${e.getLocalizedMessage}", e)
+            .pure[F]
+      })
     } yield ()
 
     changeGroupMembership.value.void

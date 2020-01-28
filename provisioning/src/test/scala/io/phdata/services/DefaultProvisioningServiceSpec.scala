@@ -136,10 +136,10 @@ class DefaultProvisioningServiceSpec
 
       inSequence {
         context.databaseRepository.findByWorkspace _ expects id returning List(savedHive).pure[ConnectionIO]
-        context.hiveClient.createTable _ expects (savedHive.name, ImpalaService.TEMP_TABLE_NAME) returning 0.pure[IO]
-        context.impalaClient.get.invalidateMetadata _ expects (savedHive.name, ImpalaService.TEMP_TABLE_NAME) returning ().pure[IO]
-        context.hiveClient.dropTable _ expects (savedHive.name, ImpalaService.TEMP_TABLE_NAME) returning ().pure[IO]
-        context.hiveClient.dropTable _ expects (savedHive.name, ImpalaService.HEIMDALI_TEMP_TABLE_NAME) returning ().pure[IO]
+        context.hiveClient.createTable _ expects (savedHive.name, ImpalaServiceImpl.TEMP_TABLE_NAME) returning 0.pure[IO]
+        context.impalaClient.get.invalidateMetadata _ expects (savedHive.name, ImpalaServiceImpl.TEMP_TABLE_NAME) returning ().pure[IO]
+        context.hiveClient.dropTable _ expects (savedHive.name, ImpalaServiceImpl.TEMP_TABLE_NAME) returning ().pure[IO]
+        context.hiveClient.dropTable _ expects (savedHive.name, ImpalaServiceImpl.HEIMDALI_TEMP_TABLE_NAME) returning ().pure[IO]
       }
 
       context.workspaceRequestRepository.markProvisioned _ expects(id, *) returning 0.pure[ConnectionIO]

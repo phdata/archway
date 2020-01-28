@@ -75,6 +75,7 @@ object Server extends IOApp with LazyLogging {
       templateController = new TemplateController[F](tokenAuthService, templateService)
       clusterController = new ClusterController[F](tokenAuthService, context.clusterService)
       workspaceController = new WorkspaceController[F](
+        context,
         tokenAuthService,
         workspaceService,
         memberService,
@@ -85,7 +86,8 @@ object Server extends IOApp with LazyLogging {
         yarnService,
         context.hdfsService,
         complianceService,
-        emailEC
+        emailEC,
+        ImpalaServiceImpl
       )
       _ <- Resource.liftF(logger.debug("Workspace Controller has been initialized").pure[F])
 

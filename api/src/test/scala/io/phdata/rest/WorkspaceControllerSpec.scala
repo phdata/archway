@@ -7,11 +7,11 @@ import io.circe.Json
 import io.circe.parser._
 import io.circe.syntax._
 import io.phdata.models._
-import io.phdata.provisioning
 import io.phdata.provisioning.SimpleMessage
 import io.phdata.services.{ApplicationService, EmailService, KafkaService, MemberService, ProvisioningService, WorkspaceService, _}
 import io.phdata.test.TestAuthService
 import io.phdata.test.fixtures.{HttpTest, _}
+import io.phdata.{AppContext, provisioning}
 import org.http4s.client.dsl.Http4sClientDsl
 import org.http4s.dsl.io._
 import org.http4s.implicits._
@@ -27,7 +27,8 @@ class WorkspaceControllerSpec
     with BeforeAndAfterAll
     with MockFactory
     with BeforeAndAfterEach
-    with HttpTest {
+    with HttpTest
+    with AppContextProvider {
 
   behavior of "Workspace Controller"
 
@@ -99,6 +100,7 @@ class WorkspaceControllerSpec
       .returning(OptionT.some(
         WorkspaceMemberEntry(standardUserDN.value, name, Some("johndoe@phdata.io"), List.empty, List.empty, List.empty, List.empty)
       ))
+    (impalaService.invalidateMetadata(_: Long)(_: AppContext[IO])(_: Sync[IO])).expects(123L, context, *).returning(IO.unit)
     (emailService.newMemberEmail _).expects(id, memberRequest).returning(OptionT.some(IO.unit))
 
     val request = Json.obj(
@@ -116,6 +118,7 @@ class WorkspaceControllerSpec
     val memberRequest = MemberRoleRequest(standardUserDN, "data", id, Some(Manager))
 
     (memberService.addMember _).expects(id, memberRequest).returning(OptionT.none)
+    (impalaService.invalidateMetadata(_: Long)(_: AppContext[IO])(_: Sync[IO])).expects(123L, context, *).returning(IO.unit)
     (emailService.newMemberEmail _).expects(id, memberRequest).returning(OptionT.some(IO.unit))
 
     val request = Json.obj(
@@ -136,6 +139,7 @@ class WorkspaceControllerSpec
       .returning(OptionT.some(
         WorkspaceMemberEntry(standardUserDN.value, name, Some("johndoe@phdata.io"), List.empty, List.empty, List.empty, List.empty)
       ))
+    (impalaService.invalidateMetadata(_: Long)(_: AppContext[IO])(_: Sync[IO])).expects(123L, context, *).returning(IO.unit)
     (emailService.newMemberEmail _).expects(id, memberRequest).returning(OptionT.some(IO.unit))
 
     val request = Json.arr(
@@ -331,6 +335,7 @@ class WorkspaceControllerSpec
     implicit val timer: Timer[IO] = testTimer
     implicit val contextShift = IO.contextShift(ExecutionContext.global)
     implicit val concurrentEffect = IO.ioConcurrentEffect(contextShift)
+    val context: AppContext[IO]  = genMockContext()
     val authService: TestAuthService = new TestAuthService(riskApprover = true, platformApprover = true)
     val memberService: MemberService[IO] = mock[MemberService[IO]]
     val kafkaService: KafkaService[IO] = mock[KafkaService[IO]]
@@ -341,9 +346,11 @@ class WorkspaceControllerSpec
     val emailService: EmailService[IO] = mock[EmailService[IO]]
     val provisioningService: ProvisioningService[IO] = mock[ProvisioningService[IO]]
     val complianceGroupService: ComplianceGroupService[IO] = mock[ComplianceGroupService[IO]]
+    val impalaService: ImpalaService = mock[ImpalaService]
 
     def restApi: WorkspaceController[IO] =
       new WorkspaceController[IO](
+        context,
         authService,
         workspaceService,
         memberService,
@@ -354,7 +361,8 @@ class WorkspaceControllerSpec
         yarnService,
         hdfsService,
         complianceGroupService,
-        ExecutionContext.global
+        ExecutionContext.global,
+        impalaService
       )
   }
 }
