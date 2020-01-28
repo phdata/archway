@@ -8,7 +8,7 @@ import cats.implicits._
 import io.phdata.config.AvailableFeatures
 import io.phdata.models.WorkspaceRequest
 import doobie.implicits._
-import io.phdata.services.ImpalaService
+import io.phdata.services.ImpalaServiceImpl
 import io.phdata.provisioning.GroupMemberProvisioning.show
 
 trait WorkspaceRequestProvisioning {
@@ -93,7 +93,7 @@ trait WorkspaceRequestProvisioning {
             ),
             kafkaTopicsNotEnabledMessage
           )
-          _ <- ImpalaService.invalidateMetadata(workspace.id.get)(workspaceContext.context)
+          _ <- ImpalaServiceImpl.invalidateMetadata(workspace.id.get)(workspaceContext.context)
         } yield a |+| b |+| c |+| d |+| e |+| f |+| g)
     }
 

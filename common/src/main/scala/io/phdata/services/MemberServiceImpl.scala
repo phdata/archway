@@ -80,8 +80,6 @@ class MemberServiceImpl[F[_]](context: AppContext[F])(implicit val F: Effect[F])
 
       result <- OptionT.liftF(convertRecord(member))
 
-      _ <- OptionT.liftF(ImpalaService.invalidateMetadata(workspaceId)(context))
-
       _ <- OptionT.some[F](logger.info(result.toString()))
     } yield result.head
   }

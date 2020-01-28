@@ -22,7 +22,7 @@ class ImpalaServiceIntegrationSpec extends FlatSpec with KerberosTest {
         context =>
           for {
             workspaceId <- context.workspaceRequestRepository.list(requester).transact(context.transactor)
-            _ <- ImpalaService.invalidateMetadata(workspaceId.head.id)(context)
+            _ <- ImpalaServiceImpl.invalidateMetadata(workspaceId.head.id)(context)
           } yield ()
       }
       .unsafeRunSync()

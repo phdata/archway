@@ -4,11 +4,11 @@ import java.time.Instant
 
 import cats.effect._
 import cats.implicits._
-import com.cloudera.impala.support.exceptions.ExceptionType
 import com.typesafe.scalalogging.LazyLogging
 import io.circe.Decoder
 import io.circe.generic.auto._
 import io.circe.syntax._
+import io.phdata.AppContext
 import io.phdata.models._
 import io.phdata.provisioning.Message._
 import io.phdata.provisioning.{Error, ExceptionMessage, NoOp, SimpleMessage, Success, Unknown}
@@ -21,6 +21,7 @@ import scala.collection.mutable.ListBuffer
 import scala.concurrent.ExecutionContext
 
 class WorkspaceController[F[_]: Sync: Timer: ContextShift: ConcurrentEffect](
+    appContext: AppContext[F],
     authService: TokenAuthService[F],
     workspaceService: WorkspaceService[F],
     memberService: MemberService[F],
@@ -31,7 +32,8 @@ class WorkspaceController[F[_]: Sync: Timer: ContextShift: ConcurrentEffect](
     yarnService: YarnService[F],
     hdfsService: HDFSService[F],
     complianceGroupService: ComplianceGroupService[F],
-    emailEC: ExecutionContext
+    emailEC: ExecutionContext,
+    impalaService: ImpalaService
 ) extends Http4sDsl[F] with LazyLogging {
 
   implicit val memberRequestEntityDecoder: EntityDecoder[F, MemberRequest] = jsonOf[F, MemberRequest]
@@ -111,7 +113,7 @@ class WorkspaceController[F[_]: Sync: Timer: ContextShift: ConcurrentEffect](
         case POST -> Root / LongVar(id) / "owner" / ownerDN as user =>
           if (user.isOpsUser) {
             for {
-              _ <- logger.info(s"Changing workspace ower for workspace '$id' to owner $ownerDN").pure[F]
+              _ <- logger.info(s"Changing workspace owner for workspace '$id' to owner $ownerDN").pure[F]
               _ <- workspaceService.changeOwner(id, DistinguishedName(ownerDN)).onError {
                 case e: Throwable =>
                   logger
@@ -186,22 +188,31 @@ class WorkspaceController[F[_]: Sync: Timer: ContextShift: ConcurrentEffect](
             response <- Ok(members.asJson)
           } yield response
 
-        case req @ POST -> Root / LongVar(id) / "members" as user =>
+        case req @ POST -> Root / LongVar(workspaceId) / "members" as user =>
           import MemberRoleRequest.decoder
           implicit val roleDecoder: EntityDecoder[F, MemberRoleRequest] = jsonOf[F, MemberRoleRequest]
           for {
             memberRequest <- req.req.as[MemberRoleRequest]
             _ <- logger
               .info(
-                s"${user.name} is requesting to add a new member ${memberRequest.distinguishedName} in workspace ${id}"
+                s"${user.name} is requesting to add a new member ${memberRequest.distinguishedName} in workspace ${workspaceId}"
               )
               .pure[F]
-            newMember <- memberService.addMember(id, memberRequest).value.onError {
+            newMember <- memberService.addMember(workspaceId, memberRequest).value.onError {
               case e: Throwable =>
-                logger.error(s"Failed to add member to workspace $id: ${e.getLocalizedMessage}", e).pure[F]
+                logger.error(s"Failed to add member to workspace $workspaceId: ${e.getLocalizedMessage}", e).pure[F]
+            }
+            _ <- impalaService.invalidateMetadata(workspaceId)(appContext).onError {
+              case e: Throwable =>
+                logger
+                  .error(
+                    s"Failed to invalidate impala metadata for workspace $workspaceId: ${e.getLocalizedMessage}",
+                    e
+                  )
+                  .pure[F]
             }
             emailResult = try {
-              emailService.newMemberEmail(id, memberRequest).value
+              emailService.newMemberEmail(workspaceId, memberRequest).value
             } catch {
               case e: Exception =>
                 logger.error(s"Failed to send welcoming message, due to this reason:", e)
@@ -209,7 +220,7 @@ class WorkspaceController[F[_]: Sync: Timer: ContextShift: ConcurrentEffect](
             response <- newMember.fold(InternalServerError())(member => Created(member.asJson))
           } yield response
 
-        case req @ POST -> Root / LongVar(id) / "members" / "batch" as user =>
+        case req @ POST -> Root / LongVar(workspaceId) / "members" / "batch" as user =>
           import MemberRoleRequest.decoder
           implicit val roleDecoder: EntityDecoder[F, List[MemberRoleRequest]] = jsonOf[F, List[MemberRoleRequest]]
 
@@ -218,26 +229,37 @@ class WorkspaceController[F[_]: Sync: Timer: ContextShift: ConcurrentEffect](
           for {
             memberRequests <- req.req.as[List[MemberRoleRequest]]
 
-            _ <- logger.info(
-              s"${user.name} is requesting to add a new members: ${memberRequests.map(r => r.distinguishedName.value)} in workspace ${id}"
-            ).pure[F]
+            _ <- logger
+              .info(
+                s"${user.name} is requesting to add a new members: ${memberRequests.map(r => r.distinguishedName.value)} in workspace ${workspaceId}"
+              )
+              .pure[F]
 
             _ <- memberRequests.traverse { request =>
               for {
-                newMember <- memberService.addMember(id, request).value.onError {
+                newMember <- memberService.addMember(workspaceId, request).value.onError {
                   case e: Throwable =>
                     errors += request
-                    logger.error(s"Failed to add member to workspace $id: ${e.getLocalizedMessage}", e).pure[F]
+                    logger.error(s"Failed to add member to workspace $workspaceId: ${e.getLocalizedMessage}", e).pure[F]
                 }
                 emailResult = try {
-                  emailService.newMemberEmail(id, request).value
+                  emailService.newMemberEmail(workspaceId, request).value
                 } catch {
                   case e: Exception =>
                     logger.error(s"Failed to send welcoming message, due to this reason:", e)
                 }
-              } yield(newMember)
+              } yield (newMember)
             }
-          response <- if(errors.isEmpty) Created() else InternalServerError()
+            _ <- impalaService.invalidateMetadata(workspaceId)(appContext).onError {
+              case e: Throwable =>
+                logger
+                  .error(
+                    s"Failed to invalidate impala metadata for workspace $workspaceId: ${e.getLocalizedMessage}",
+                    e
+                  )
+                  .pure[F]
+            }
+            response <- if (errors.isEmpty) Created() else InternalServerError()
           } yield response
 
         case req @ DELETE -> Root / LongVar(id) / "members" as user =>
