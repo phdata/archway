@@ -236,7 +236,7 @@ class WorkspaceRequestRepositoryImpl(sqlSyntax: SqlSyntax) extends WorkspaceRequ
                    else null
                    end                as fullyApproved,
                COALESCE(db.total_size, 0.0) as allocatedInGB,
-               res.cores              as maxCores,
+               COALESCE(res.cores, 0.0)     as maxCores,
                COALESCE(res.mem, 0.0) as maxMemoryInGB
         from workspace_request wr
                  inner join compliance c on wr.compliance_id = c.id
