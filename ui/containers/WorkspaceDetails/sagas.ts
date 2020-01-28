@@ -220,7 +220,7 @@ export function* simpleMemberRequested({ resource }: SimpleMemberRequestAction) 
       });
 
       if (workspaceMemberList && workspaceMemberList.length) {
-        yield call(Api.newWorkspaceMember, token, workspaceMemberList[0].resource_id, workspaceMemberList);
+        yield call(Api.newWorkspaceMember, token, workspace.id, workspaceMemberList);
       }
       yield put(simpleMemberRequestComplete());
     } else if (resource === 'topics') {
