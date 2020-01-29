@@ -1,3 +1,7 @@
+## 2.2.8
+
+- Add default value for yarn pools in case none are created. c168ce6764f9b368f3fa6c2e19ce4b398569aabc
+
 ## 2.2.7
 
 - Add Oracle driver option in service setup
