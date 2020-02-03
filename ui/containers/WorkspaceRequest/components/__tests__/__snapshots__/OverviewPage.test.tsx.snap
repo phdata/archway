@@ -1,68 +1,42 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`OverviewPage renders correctly 1`] = `
-<Col
-  offset={6}
-  span={12}
->
-  <Form
-    colon={true}
-    hideRequiredMark={false}
-    layout="vertical"
-    onSubmit={[Function]}
-  >
-    <FormItem
-      hasFeedback={false}
-      label={
-        <FieldLabel>
-          Workspace Name
-        </FieldLabel>
-      }
-    >
-      <Input
-        disabled={false}
-        name="name"
-        onChange={[Function]}
-        placeholder="Loan Modification Group (LMG)"
-        size="large"
-        type="text"
-        value=""
-      />
-    </FormItem>
-    <FormItem
-      hasFeedback={false}
-      label={
-        <FieldLabel>
-          Summary
-        </FieldLabel>
-      }
-    >
-      <Input
-        disabled={false}
-        name="summary"
-        onChange={[Function]}
-        placeholder="LMG's place to evaluate modification algorithms"
-        size="large"
-        type="text"
-        value=""
-      />
-    </FormItem>
-    <FormItem
-      hasFeedback={false}
-      label={
-        <FieldLabel>
-          Purpose for workspace
-        </FieldLabel>
-      }
-    >
-      <TextArea
-        name="description"
-        onChange={[Function]}
-        placeholder="(Use this area to fully describe to reviewers and future users why this workspace is needed.)"
-        rows={5}
-        value=""
-      />
-    </FormItem>
-  </Form>
-</Col>
+<OverviewPage
+  form={
+    Object {
+      "getFieldDecorator": [Function],
+      "getFieldError": [Function],
+      "getFieldInstance": [Function],
+      "getFieldProps": [Function],
+      "getFieldValue": [Function],
+      "getFieldsError": [Function],
+      "getFieldsValue": [Function],
+      "isFieldTouched": [Function],
+      "isFieldValidating": [Function],
+      "isFieldsTouched": [Function],
+      "isFieldsValidating": [Function],
+      "isSubmitting": [Function],
+      "resetFields": [Function],
+      "setFields": [Function],
+      "setFieldsInitialValue": [Function],
+      "setFieldsValue": [Function],
+      "submit": [Function],
+      "validateFields": [Function],
+      "validateFieldsAndScroll": [Function],
+    }
+  }
+  request={
+    Object {
+      "compliance": Object {
+        "pci_data": false,
+        "phi_data": false,
+        "pii_data": false,
+      },
+      "description": "",
+      "name": "",
+      "summary": "",
+    }
+  }
+  setRequest={[Function]}
+/>
 `;
