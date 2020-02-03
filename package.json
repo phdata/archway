@@ -53,6 +53,7 @@
     "@types/react-test-renderer": "^16.8.2",
     "@types/redux-form": "^7.4.15",
     "@types/redux-immutable": "^4.0.0",
+    "@types/url-parse": "^1.4.3",
     "@types/yup": "^0.26.4",
     "babel-jest": "^24.8.0",
     "babel-plugin-import": "^1.12.0",
