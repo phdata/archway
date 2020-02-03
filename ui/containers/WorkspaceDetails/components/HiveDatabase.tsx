@@ -16,7 +16,8 @@ interface Props {
 }
 
 const HiveDatabase = ({ data, showModal, isPlatformOperations, isDefault }: Props) => {
-  const protocol = data.protocol || ProtocolTypes.HDFS;
+  const _protocol = urlParse(data.location).protocol.replace(/:/, '');
+  const protocol = ProtocolTypes[(data.protocol ? data.protocol : _protocol).toUpperCase()];
   const total_disk_allocated_in_gb = data.size_in_gb;
   const total_disk_consumed_in_gb = data.consumed_in_gb;
   const allocated = total_disk_allocated_in_gb || 1;
