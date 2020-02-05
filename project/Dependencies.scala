@@ -1,8 +1,9 @@
-import sbt._
+import sbt.{ExclusionRule, _}
 
 object Dependencies {
 
   val http4sVersion = "0.20.6"
+
   val http4s = Seq(
     "org.http4s" %% "http4s-dsl" % http4sVersion,
     "org.http4s" %% "http4s-blaze-server" % http4sVersion,
@@ -11,20 +12,22 @@ object Dependencies {
   )
 
   val scalatagsVersion = "0.6.7"
+
   val scalatags = Seq(
     "com.lihaoyi" %% "scalatags" % scalatagsVersion
   )
 
   val mailerVersion = "1.0.0"
-  val mailer = Seq(
-    "com.github.daddykotex" %% "courier" % mailerVersion)
-  
+  val mailer = Seq("com.github.daddykotex" %% "courier" % mailerVersion)
+
   val attoVersion = "0.6.5"
+
   val atto = Seq(
     "org.tpolecat" %% "atto-core" % attoVersion
   )
 
   val doobieVersion = "0.6.0"
+
   val doobie = Seq(
     "org.tpolecat" %% "doobie-core" % doobieVersion,
     "org.tpolecat" %% "doobie-postgres" % doobieVersion,
@@ -33,16 +36,19 @@ object Dependencies {
   )
 
   val catsVersion = "1.3.1"
+
   val cats = Seq(
-    "org.typelevel" %% "cats-core" % catsVersion withSources()
+    "org.typelevel" %% "cats-core" % catsVersion withSources ()
   )
 
   val catsEffectVersion = "1.3.1"
+
   val catsEffect = Seq(
-    "org.typelevel" %% "cats-effect" % catsEffectVersion withSources()
+    "org.typelevel" %% "cats-effect" % catsEffectVersion withSources ()
   )
 
   val circeVersion = "0.11.0"
+
   val circe = Seq(
     "io.circe" %% "circe-core" % circeVersion,
     "io.circe" %% "circe-generic" % circeVersion,
@@ -53,11 +59,13 @@ object Dependencies {
   )
 
   val circeConfigVersion = "0.6.1"
+
   val circeConfig = Seq(
     "io.circe" %% "circe-config" % circeConfigVersion
   )
 
   val jwtVersion = "2.1.0"
+
   val jwt = Seq(
     "com.pauldijou" %% "jwt-core" % jwtVersion,
     "com.pauldijou" %% "jwt-circe" % jwtVersion
@@ -67,14 +75,15 @@ object Dependencies {
   val hiveVersion = s"1.1.0-$cdhVersion"
   val hadoopVersion = s"2.6.0-$cdhVersion"
   val sentryVersion = s"1.5.1-$cdhVersion"
+
   val hadoop = Seq(
-    "org.apache.sentry" % "sentry-provider-db" % sentryVersion excludeAll(
-      ExclusionRule("org.apache.hive"),
-      ExclusionRule("org.eclipse.jetty.orbit"),
-      ExclusionRule("commons-beanutils", "commons-beanutils-core"),
-      ExclusionRule("org.datanucleus"),
-      ExclusionRule("commons-beanutils"),
-      ExclusionRule("org.apache.hadoop", "hadoop-yarn-common"),
+    "org.apache.sentry" % "sentry-provider-db" % sentryVersion excludeAll (
+          ExclusionRule("org.apache.hive"),
+          ExclusionRule("org.eclipse.jetty.orbit"),
+          ExclusionRule("commons-beanutils", "commons-beanutils-core"),
+          ExclusionRule("org.datanucleus"),
+          ExclusionRule("commons-beanutils"),
+          ExclusionRule("org.apache.hadoop", "hadoop-yarn-common")
     ),
     "org.apache.hadoop" % "hadoop-client" % hadoopVersion % "provided",
     "org.apache.hive" % "hive-jdbc" % hiveVersion % "provided",
@@ -91,21 +100,25 @@ object Dependencies {
   )
 
   val scalateVersion = "1.9.4"
+
   val scalate = Seq(
     "org.scalatra.scalate" %% "scalate-core" % scalateVersion
   )
-  
+
   val bouncyVersion = "1.57"
+
   val bouncy = Seq(
     "org.bouncycastle" % "bcpkix-jdk15on" % bouncyVersion % "provided"
   )
 
   val loggingVersion = "3.8.0"
+
   val logging = Seq(
     "com.typesafe.scala-logging" %% "scala-logging" % loggingVersion
   )
 
   val unboundIdVersion = "4.0.11"
+
   val unbound = Seq(
     "com.unboundid" % "unboundid-ldapsdk" % unboundIdVersion
   )
@@ -116,14 +129,16 @@ object Dependencies {
   )
 
   val iniVersion = "0.5.1"
+
   val iniConfig = Seq(
     "org.ini4j" % "ini4j" % iniVersion
   )
-  
+
   val pac4jKerberosVersion = "3.7.0"
   val pac4jKerberos = Seq("org.pac4j" % "pac4j-kerberos" % pac4jKerberosVersion)
 
   val simulacrumVersion = "0.17.0"
+
   val simulacrum = Seq(
     "com.github.mpilquist" %% "simulacrum" % simulacrumVersion
   )
@@ -134,29 +149,29 @@ object Dependencies {
       ExclusionRule(organization = "com.sun.jmx"),
       ExclusionRule(organization = "javax.jms"),
       ExclusionRule(organization = "commons-beanutils"),
-      ExclusionRule(organization = "commons-logging")
+      ExclusionRule(organization = "commons-logging"),
+      ExclusionRule(organization = "org.apache.derby")
     )
 
   val apiDependencies =
     (coreTest ++ dbCore ++ logging ++ bouncy ++ circeConfig ++
-      http4s ++ doobie ++ cats ++ catsEffect ++ circe ++ hadoop)
-      .map(exclusions)
+        http4s ++ doobie ++ cats ++ catsEffect ++ circe ++ hadoop).map(exclusions)
 
   val commonDependencies =
     (scalate ++ unbound ++ mailer ++ logging ++ doobie ++ cats ++ catsEffect ++ circeConfig ++ circe ++
-      scalatags ++ hadoop ++ http4s ++ jwt ++ iniConfig ++ coreTest ++ bouncy ++ atto ++ pac4jKerberos
-      ++ Seq("org.typelevel" %% "jawn-parser" % "0.14.0"))
-      .map(exclusions)
+        scalatags ++ hadoop ++ http4s ++ jwt ++ iniConfig ++ coreTest ++ bouncy ++ atto ++ pac4jKerberos
+      ++ Seq("org.typelevel" %% "jawn-parser" % "0.14.0")).map(exclusions)
 
   val provisioningDependencies =
-    (coreTest ++ hadoop)
-      .map(exclusions)
-  
+    (coreTest ++ hadoop).map(exclusions)
+
   val integrationTestDependencies =
     (dbCore ++
-    Seq("org.tpolecat" %% "doobie-scalatest" % doobieVersion,
-        "org.mockito" % "mockito-core" % "2.18.3" % "test",
-        "org.scalamock" %% "scalamock-scalatest-support" % "3.6.0",
-        "org.powermock" % "powermock-core" % "1.7.4",
-        "org.apache.hive" % "hive-jdbc" % hiveVersion % "provided")).map(exclusions)
+        Seq(
+          "org.tpolecat" %% "doobie-scalatest" % doobieVersion,
+          "org.mockito" % "mockito-core" % "2.18.3" % "test",
+          "org.scalamock" %% "scalamock-scalatest-support" % "3.6.0",
+          "org.powermock" % "powermock-core" % "1.7.4",
+          "org.apache.hive" % "hive-jdbc" % hiveVersion % "provided"
+        )).map(exclusions)
 }
