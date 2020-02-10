@@ -1,3 +1,17 @@
+## 2.3.0
+
+- Validate users added a description and summary when requesting workspaces. 6f1d3e3f55a0efed55a73cb188081100f07b8aad
+- Support alternative storage backends like S3 and ADLS. 67f5e4f3b9e5b87de79fb185f96f05869602d000
+- Improve the efficiency of the Impala `invalidate metadata` calls. This should reduce the wait time when adding users to workspaces. d142126fe525473eecf50d49bcf6c85ce39cfaed
+- Automatically set the default core value so a workspace can still render if no yarn queue exists. 98b792c3f56b24e7eecd80924025c6a96927a436
+- Fix an issue where a modified disk quota wasn't immediately shown in the UI. dc15a679bd769a324ec749904eaa9cd78cfd15de
+- Fix an issue when adding users to Kafka topics. 1efb25eac276d66da22bf0d743c3539cfe9f2627
+- Batch user-add requests to reduce number of cores used. 340e277b196dc6bdd5235372f00d11c377babbfa
+- Embed welcome images in emails instead of fetching them from the phdata domain. fa5e7353317ae45e6ee0409a351a29b249d172ed
+- Return previously cached value if cache update fails. 32d1f6873fd05f49ffef4c8fb195e7426fe5b053
+- Allow processing simple template with empty processing section. 92b0b8c33ec510e49a4685fdafc23b7650346404
+- Hides credentials printed to stdout. d3e22ab3b21e72da4adba34f7c3fa449313ac076
+
 ## 2.2.7
 
 - Add Oracle driver option in service setup. 065b02b6799afc6b82afee0e1adeee822ee44e55
