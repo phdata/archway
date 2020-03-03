@@ -100,3 +100,4 @@ definitions:
       image: postgres:9
       environment:
         POSTGRES_DB: archway
+        POSTGRES_PASSWORD: postgres
