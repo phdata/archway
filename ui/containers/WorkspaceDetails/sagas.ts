@@ -216,7 +216,9 @@ export function* simpleMemberRequested({ resource }: SimpleMemberRequestAction) 
           distinguishedName = [...users, ...groups].filter(member => member.display === distinguishedName.trim())[0]
             .distinguished_name;
         }
-        workspaceMemberList.push({ resource, resource_id: id, role, distinguished_name: distinguishedName });
+        if (role !== 'none') {
+          workspaceMemberList.push({ resource, resource_id: id, role, distinguished_name: distinguishedName });
+        }
       });
 
       if (workspaceMemberList && workspaceMemberList.length) {
