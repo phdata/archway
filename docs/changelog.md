@@ -1,3 +1,7 @@
+## 2.3.1
+
+- Fix issue where adding a user to a workspace database with 'NONE' privilege faails. a9f2a2ef817a117f32de532da0be2b3321f4b1fd
+
 ## 2.3.0
 
 - Validate users added a description and summary when requesting workspaces. 6f1d3e3f55a0efed55a73cb188081100f07b8aad
