@@ -31,12 +31,15 @@ class EmailServiceImpl[F[_]: Effect](context: AppContext[F], workspaceService: W
       fromAddress = context.appConfig.smtp.fromEmail
       to <- context.lookupLDAPClient.findUserByDN(memberRoleRequest.distinguishedName)
       toAddress <- OptionT(Effect[F].pure(to.email))
+      owner <- context.lookupLDAPClient.findUserByDN(workspace.requestedBy)
       values = Map(
         "roleName" -> memberRoleRequest.role.get.show,
         "resourceType" -> memberRoleRequest.resource,
         "workspaceName" -> workspace.name,
         "uiUrl" -> resolveUiUrl,
-        "workspaceId" -> workspaceId
+        "workspaceId" -> workspaceId,
+        "ownerName" -> owner.name,
+        "ownerEmail" -> owner.email.getOrElse("Email not provided")
       )
       email <- OptionT.liftF(Effect[F].delay(templateEngine.layout("/templates/emails/welcome.mustache", values)))
       result <- OptionT.liftF(
