@@ -33,7 +33,9 @@ class EmailClientImplIntegrationSpec extends FlatSpec {
         "resourceType" -> "data",
         "workspaceName" -> "Test workspace",
         "uiUrl" -> "https://edge1.valhalla.phdata.io:8080",
-        "workspaceId" -> "123"
+        "workspaceId" -> "123",
+        "ownerName" -> "owner",
+        "ownerEmail" -> "owner@email.com"
       )
     )
 
