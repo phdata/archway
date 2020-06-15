@@ -6,7 +6,6 @@ import cats.data._
 import cats.effect._
 import cats.implicits._
 import com.typesafe.scalalogging.LazyLogging
-import courier.Multipart
 import io.phdata.AppContext
 import io.phdata.clients.LDAPUser
 import io.phdata.models.{DistinguishedName, MemberRoleRequest, WorkspaceRequest}
@@ -39,14 +38,21 @@ class EmailServiceImpl[F[_]: Effect](context: AppContext[F], workspaceService: W
         "uiUrl" -> resolveUiUrl,
         "workspaceId" -> workspaceId,
         "ownerName" -> owner.name,
-        "ownerEmail" -> owner.email.getOrElse("Email not provided")
+        "ownerEmail" -> {
+          if (owner.email.isDefined) {
+            owner.email.get
+          } else {
+            logger.error("Owner's email is not provided")
+            "[Owner's email is not provided]"
+          }
+        }
       )
       email <- OptionT.liftF(Effect[F].delay(templateEngine.layout("/templates/emails/welcome.mustache", values)))
       result <- OptionT.liftF(
         context.emailClient.send(
           s"Archway Workspace: Welcome to ${workspace.name}",
           EmbeddedImageEmail
-            .create(email, List(("images/logo_big.png", "logo"), ("images/check_mark.png", "checkMark"))),
+            .create(email, List(("public/images/logo_big.png", "logo"), ("public/images/check_mark.png", "checkMark"))),
           fromAddress,
           toAddress
         )

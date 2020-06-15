@@ -63,7 +63,7 @@ class EmailClientImplIntegrationSpec extends FlatSpec {
     )
     val result = mailClient
       .send("Test new workspace email",
-        EmbeddedImageEmail.create(htmlContent, List(("images/logo_big.png", "logo"))),
+        EmbeddedImageEmail.create(htmlContent, List(("public/images/logo_big.png", "logo"))),
         appConfig.smtp.fromEmail,
         itestConfig.approvers.notificationEmail.head)
       .unsafeRunSync()
