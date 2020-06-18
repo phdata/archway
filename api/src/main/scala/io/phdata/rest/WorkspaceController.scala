@@ -211,12 +211,8 @@ class WorkspaceController[F[_]: Sync: Timer: ContextShift: ConcurrentEffect](
                   )
                   .pure[F]
             }
-            emailResult = try {
-              emailService.newMemberEmail(workspaceId, memberRequest).value
-            } catch {
-              case e: Exception =>
-                logger.error(s"Failed to send welcoming message, due to this reason:", e)
-            }
+            _ <- ConcurrentEffect[F]
+              .start(ContextShift[F].evalOn(emailEC)(emailService.newMemberEmail(workspaceId, memberRequest).value))
             response <- newMember.fold(InternalServerError())(member => Created(member.asJson))
           } yield response
 
@@ -242,12 +238,8 @@ class WorkspaceController[F[_]: Sync: Timer: ContextShift: ConcurrentEffect](
                     errors += request
                     logger.error(s"Failed to add member to workspace $workspaceId: ${e.getLocalizedMessage}", e).pure[F]
                 }
-                emailResult = try {
-                  emailService.newMemberEmail(workspaceId, request).value
-                } catch {
-                  case e: Exception =>
-                    logger.error(s"Failed to send welcoming message, due to this reason:", e)
-                }
+                _ <- ConcurrentEffect[F]
+                  .start(ContextShift[F].evalOn(emailEC)(emailService.newMemberEmail(workspaceId, request).value))
               } yield (newMember)
             }
             _ <- impalaService.invalidateMetadata(workspaceId)(appContext).onError {
