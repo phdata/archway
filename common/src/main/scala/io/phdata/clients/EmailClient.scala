@@ -18,7 +18,7 @@ class EmailClientImpl[F[_]: Effect](appConfig: AppConfig, executionContext: Exec
 
   lazy val mailer: Mailer =
     appConfig.smtp match {
-      case SMTPConfig(_, host, port, true, Some(user), Some(pass), ssl, smtps) =>
+      case SMTPConfig(_, host, port, true, Some(user), Some(pass), ssl, _) =>
         Mailer(host, port).auth(true).as(user, pass.value).startTls(ssl)()
 
       case SMTPConfig(_, host, port, _, _, _, ssl, smtps) =>
