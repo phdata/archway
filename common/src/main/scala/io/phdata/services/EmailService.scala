@@ -39,23 +39,37 @@ class EmailServiceImpl[F[_]: Effect](context: AppContext[F], workspaceService: W
         "workspaceId" -> workspaceId,
         "ownerName" -> owner.name,
         "ownerEmail" -> {
-          if (owner.email.isDefined) {
-            owner.email.get
-          } else {
-            logger.error("Owner's email is not provided")
-            "[Owner's email is not provided]"
+            if (owner.email.isDefined) {
+              owner.email.get
+            } else {
+              logger.error("Owner's email is not provided")
+              "[Owner's email is not provided]"
+            }
           }
-        }
       )
       email <- OptionT.liftF(Effect[F].delay(templateEngine.layout("/templates/emails/welcome.mustache", values)))
+      _ <- OptionT.some[F](logger.debug(s"Sending email: $email"))
       result <- OptionT.liftF(
-        context.emailClient.send(
-          s"Archway Workspace: Welcome to ${workspace.name}",
-          EmbeddedImageEmail
-            .create(email, List(("public/images/logo_big.png", "logo"), ("public/images/check_mark.png", "checkMark"))),
-          fromAddress,
-          toAddress
-        )
+        context.emailClient
+          .send(
+            s"Archway Workspace: Welcome to ${workspace.name}",
+            EmbeddedImageEmail.create(
+              email,
+              List(("public/images/logo_big.png", "logo"), ("public/images/check_mark.png", "checkMark"))
+            ),
+            fromAddress,
+            toAddress
+          )
+          .onError {
+            case e: Throwable =>
+              logger
+                .error(
+                  s"Failed to send an email with subject 'Archway Workspace: Welcome to ${workspace.name}', " +
+                      s"from address $fromAddress to address $toAddress, ${e.getLocalizedMessage}",
+                  e
+                )
+                .pure[F]
+          }
       )
     } yield result
   }
@@ -75,17 +89,29 @@ class EmailServiceImpl[F[_]: Effect](context: AppContext[F], workspaceService: W
           values + ("userName" -> s"${user.getOrElse(LDAPUser("Unknown", "Unknown", DistinguishedName("cn=Unknown"), Seq.empty, None)).name}")
         )
       )
+      _ <- logger.debug(s"Sending email: $email").pure[F]
       addressList = context.appConfig.approvers.notificationEmail
       fromAddress = context.appConfig.smtp.fromEmail
     } yield {
       addressList.map(
         recipient =>
-          context.emailClient.send(
-            "A New Workspace is Waiting",
-            EmbeddedImageEmail.create(email, List(("images/logo_big.png", "logo"))),
-            fromAddress,
-            recipient
-          )
+          context.emailClient
+            .send(
+              "A New Workspace is Waiting",
+              EmbeddedImageEmail.create(email, List(("images/logo_big.png", "logo"))),
+              fromAddress,
+              recipient
+            )
+            .onError {
+              case e: Throwable =>
+                logger
+                  .error(
+                    s"Failed to send an email with subject 'A New Workspace is Waiting', " +
+                        s"from address $fromAddress to address $recipient, ${e.getLocalizedMessage}",
+                    e
+                  )
+                  .pure[F]
+            }
       )
     }
   }
