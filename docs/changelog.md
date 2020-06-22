@@ -1,3 +1,8 @@
+## 2.4.0
+
+- Fix an issue where new workspace emails would not be sent. 6e4f87bcfe0f407cd126420ccba1748818845179
+- Add workspace owner email to new workspace emails. d124ac12fa6d3530e10e73a0ca526404d035207f
+
 ## 2.3.1
 
 - Fix issue where adding a user to a workspace database with 'NONE' privilege faails. a9f2a2ef817a117f32de532da0be2b3321f4b1fd
