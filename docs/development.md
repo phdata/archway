@@ -22,17 +22,23 @@ List of necessary configuration files:
 - `yarn-site.xml`
 
 ### Run The App (API-focused development)
-
-- Open the project in IntelliJ
-- Open the run configuration drop down and click "Add Configurations" / "Edit Configurations..."
-- Click on plus "Add New Configuration" or hit CMD+N/Ctrl+N
-- Select "Application" from dropdown
-- Set `io.phdata.Server` as a "Main class"
-- Set `api` for "Use classpath of module"
-- Check "Include dependencies with 'Provided' scope"
-- Open the "Terminal" tab
-- Run `make init-ui` which will install the npm dependencies
-- Run `serve-ui` which will spin up the UI
+1.
+    - Open the project in IntelliJ
+    - Open the run configuration drop down and click "Add Configurations" / "Edit Configurations..."
+    - Click on plus "Add New Configuration" or hit CMD+N/Ctrl+N
+    - Select "Application" from dropdown
+    - Set `io.phdata.Server` as a "Main class"
+    - Set `api` for "Use classpath of module"
+    - Check "Include dependencies with 'Provided' scope"
+    - Open the "Terminal" tab
+    - Run `make init-ui` which will install the npm dependencies
+    - Run `make serve-ui` which will spin up the UI
+2.
+    - Open terminal and run `make serve-api`
+    - In another terminal window run `make init-ui` which will install the npm dependencies
+    - Run `make serve-ui` which will spin up the UI
+    
+For both methods it's necessary to have a running database configured as specified in `application.conf`. 
 
 ### Run The App (UI-focused development)
 
