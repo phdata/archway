@@ -28,8 +28,11 @@ object DatabaseDirectoryProvisioning {
         createDatabaseDirectory: DatabaseDirectory,
         workspaceContext: WorkspaceContext[F]
     ): F[Unit] =
-      workspaceContext.context.hdfsClient.createHiveDirectory(createDatabaseDirectory.location).void
-
+      if (!createDatabaseDirectory.location.startsWith("s3a")) {
+        workspaceContext.context.hdfsClient.createHiveDirectory(createDatabaseDirectory.location).void
+      } else {
+        Sync[F].unit
+      }
   }
 
   implicit object DatabaseDirectoryDeprovisioningTask extends DeprovisioningTask[DatabaseDirectory] {

@@ -76,6 +76,16 @@ class HDFSClientImplIntegrationSpec
     elevatedFS.delete(new Path(hiveDirLocation), true)
   }
 
+  it should "not create a hive directory in s3" in new Context {
+    val result =
+      client.createHiveDirectory("s3a://foo").unsafeRunSync()
+
+    result.toUri.getPath shouldBe hiveDirLocation
+    elevatedFS.exists(new Path(hiveDirLocation)) shouldBe true
+    elevatedFS.getFileStatus(new Path(hiveDirLocation)).getOwner shouldBe HIVE_USER
+    elevatedFS.delete(new Path(hiveDirLocation), true)
+  }
+
   it should "set quota" in new Context {
     elevatedFS.mkdirs(new Path(tmpLocation))
 
