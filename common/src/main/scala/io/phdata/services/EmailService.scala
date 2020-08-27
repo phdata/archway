@@ -55,7 +55,7 @@ class EmailServiceImpl[F[_]: Effect](context: AppContext[F], workspaceService: W
             s"Archway Workspace: Welcome to ${workspace.name}",
             EmbeddedImageEmail.create(
               email,
-              List(("public/images/logo_big.png", "logo"), ("public/images/check_mark.png", "checkMark"))
+              List(("/opt/cloudera/parcels/ARCHWAY/usr/lib/archway-ui/images/logo_big.png", "logo"), ("/opt/cloudera/parcels/ARCHWAY/usr/lib/archway-ui/images/check_mark.png", "checkMark"))
             ),
             fromAddress,
             toAddress
