@@ -45,6 +45,9 @@ ARCHWAY_CLASSPATH="${ARCHWAY_CLASSPATH:-${CONF_DIR}:${MYSQL_JAR}:${BOUNCY_JAR}:$
 
 cp -r $PARCELS_ROOT/ARCHWAY/usr/lib/archway-ui/images images
 
+mkdir public
+cp -r $PARCELS_ROOT/ARCHWAY/usr/lib/archway-ui/images public/images
+
 case ${COMPONENT} in
     (server)
         case ${CMD} in
