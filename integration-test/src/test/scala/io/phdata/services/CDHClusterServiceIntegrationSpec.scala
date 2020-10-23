@@ -40,10 +40,6 @@ class CDHClusterServiceIntegrationSpec extends FlatSpec with Matchers with SSLTe
     val hue = details.services.find(_.name == "hue").get
     hue.capabilities("load_balancer").head.port shouldBe 8088
 
-    val yarn = details.services.find(_.name == "yarn").get
-    yarn.capabilities("node_manager").head.port shouldBe 8044
-    yarn.capabilities("resource_manager").head.port shouldBe 8090
-
     val mgmt = details.services.find(_.name == "mgmt").get
     mgmt.capabilities("navigator").head.port shouldBe 7187
 

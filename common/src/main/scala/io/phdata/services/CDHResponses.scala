@@ -69,18 +69,4 @@ object CDHResponses {
         RoleConfigGroup(name, value, default.getOrElse(""))
       }
   }
-
-  implicit val decodeYarnRoleProperty: Decoder[RoleProperty] =
-    Decoder.forProduct10(
-      "name",
-      "required",
-      "displayName",
-      "description",
-      "relatedName",
-      "sensitive",
-      "validationState",
-      "validationWarningsSuppressed",
-      "value",
-      "default"
-    )(RoleProperty.apply)
 }

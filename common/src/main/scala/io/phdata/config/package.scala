@@ -80,8 +80,6 @@ package object config extends StrictLogging {
 
     def serviceConfigUrl(service: String) = s"${serviceUrl(service)}/config"
 
-    def yarnApplications(service: String) = s"${serviceUrl(service)}/yarnApplications"
-
     def serviceRoleListUrl(service: String) = s"${serviceUrl(service)}/roles"
 
     def serviceRoleUrl(service: String, roleId: String) = s"${serviceRoleListUrl(service)}/$roleId"
@@ -92,9 +90,6 @@ package object config extends StrictLogging {
 
     def mgmtRoleConfigGroups(roleConfigGroupName: String) =
       s"$mgmtServiceUrl/roleConfigGroups/$roleConfigGroupName/config?view=full"
-
-    def yarnRoleConfig(serviceName: String, role: String) =
-      s"${serviceUrl(serviceName)}/roles/$role/config?view=full"
 
     val refreshUrl = s"$clusterUrl/commands/poolsRefresh"
   }

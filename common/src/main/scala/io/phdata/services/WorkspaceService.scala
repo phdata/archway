@@ -20,8 +20,6 @@ trait WorkspaceService[F[_]] {
 
   def status(id: Long): F[WorkspaceStatus]
 
-  def yarnInfo(id: Long): F[List[YarnInfo]]
-
   def hiveDetails(id: Long): F[List[HiveDatabase]]
 
   def reviewerList(role: ApproverRole): F[List[WorkspaceSearchResult]]

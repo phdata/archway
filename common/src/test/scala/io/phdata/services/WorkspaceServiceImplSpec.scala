@@ -61,16 +61,12 @@ class WorkspaceServiceImplSpec
       (context.databaseRepository.create _).expects(initialHive.copy(managingGroup = initialGrant.copy(id = Some(id), ldapRegistration = savedLDAP), readonlyGroup = Some(initialGrant.copy(id = Some(id), ldapRegistration = savedLDAP)))).returning(id.pure[ConnectionIO])
       (context.workspaceRequestRepository.linkHive _).expects(id, id).returning(1.pure[ConnectionIO])
 
-      (context.yarnRepository.create _).expects(initialYarn).returning(id.pure[ConnectionIO])
-      (context.workspaceRequestRepository.linkPool _).expects(id, id).returning(1.pure[ConnectionIO])
-
       (context.ldapRepository.create _).expects(initialLDAP).returning(savedLDAP.pure[ConnectionIO])
       (context.applicationRepository.create _).expects(initialApplication.copy(group = savedLDAP)).returning(id.pure[ConnectionIO])
       (context.workspaceRequestRepository.linkApplication _).expects(id, id).returning(1.pure[ConnectionIO])
       (context.memberRepository.create _).expects(standardUserDN, id).returning(1L.pure[ConnectionIO])
       (context.workspaceRequestRepository.find _).expects(123).returning(OptionT.some(savedWorkspaceRequest))
       (context.databaseRepository.findByWorkspace _).expects(id)returning List(savedHive).pure[ConnectionIO]
-      (context.yarnRepository.findByWorkspaceId _).expects(id)returning List(savedYarn).pure[ConnectionIO]
       (context.approvalRepository.findByWorkspaceId _).expects(id)returning List(approval()).pure[ConnectionIO]
       (context.kafkaRepository.findByWorkspaceId _).expects(id)returning List(savedTopic).pure[ConnectionIO]
       (context.applicationRepository.findByWorkspaceId _).expects(id).returning(List(savedApplication).pure[ConnectionIO])
@@ -78,14 +74,12 @@ class WorkspaceServiceImplSpec
 
     val newWorkspace = workspaceServiceImpl.create(initialWorkspaceRequest).unsafeRunSync()
 
-    newWorkspace.processing should not be empty
     newWorkspace.data should not be empty
   }
 
   it should "find a record by id" in new Context {
     context.workspaceRequestRepository.find _ expects id returning OptionT.some(savedWorkspaceRequest)
     context.databaseRepository.findByWorkspace _ expects id returning List(savedHive).pure[ConnectionIO]
-    context.yarnRepository.findByWorkspaceId _ expects id returning List(savedYarn).pure[ConnectionIO]
     context.approvalRepository.findByWorkspaceId _ expects id returning List(approval()).pure[ConnectionIO]
     context.kafkaRepository.findByWorkspaceId _ expects id returning List(savedTopic).pure[ConnectionIO]
     context.applicationRepository.findByWorkspaceId _ expects id returning List(savedApplication).pure[ConnectionIO]
@@ -95,13 +89,11 @@ class WorkspaceServiceImplSpec
     foundWorkspace shouldBe defined
     foundWorkspace.get.data should not be empty
     foundWorkspace.get.data.head.consumedInGB should not be defined
-    foundWorkspace.get.processing should not be empty
   }
 
   it should "find a user workspace" in new Context {
     context.workspaceRequestRepository.findByDistinguishedName _ expects standardUserDN returning OptionT.some(savedWorkspaceRequest)
     context.databaseRepository.findByWorkspace _ expects id returning List(savedHive).pure[ConnectionIO]
-    context.yarnRepository.findByWorkspaceId _ expects id returning List(savedYarn).pure[ConnectionIO]
     context.approvalRepository.findByWorkspaceId _ expects id returning List.empty[Approval].pure[ConnectionIO]
     context.kafkaRepository.findByWorkspaceId _ expects id returning List.empty[KafkaTopic].pure[ConnectionIO]
     context.applicationRepository.findByWorkspaceId _ expects id returning List.empty[Application].pure[ConnectionIO]
@@ -114,7 +106,6 @@ class WorkspaceServiceImplSpec
   it should "find a workspace by name" in new Context {
     context.workspaceRequestRepository.findByName _ expects savedWorkspaceRequest.name returning OptionT.some(savedWorkspaceRequest)
     context.databaseRepository.findByWorkspace _ expects id returning List(savedHive).pure[ConnectionIO]
-    context.yarnRepository.findByWorkspaceId _ expects id returning List(savedYarn).pure[ConnectionIO]
     context.approvalRepository.findByWorkspaceId _ expects id returning List.empty[Approval].pure[ConnectionIO]
     context.kafkaRepository.findByWorkspaceId _ expects id returning List.empty[KafkaTopic].pure[ConnectionIO]
     context.applicationRepository.findByWorkspaceId _ expects id returning List.empty[Application].pure[ConnectionIO]
@@ -129,7 +120,6 @@ class WorkspaceServiceImplSpec
 
     context.workspaceRequestRepository.find _ expects id returning OptionT.some(savedWorkspaceRequest)
     context.databaseRepository.findByWorkspace _ expects id returning List(withCreated).pure[ConnectionIO]
-    context.yarnRepository.findByWorkspaceId _ expects id returning List(savedYarn).pure[ConnectionIO]
     context.approvalRepository.findByWorkspaceId _ expects id returning List(approval()).pure[ConnectionIO]
     context.kafkaRepository.findByWorkspaceId _ expects id returning List(savedTopic).pure[ConnectionIO]
     context.applicationRepository.findByWorkspaceId _ expects id returning List(savedApplication).pure[ConnectionIO]
@@ -140,7 +130,6 @@ class WorkspaceServiceImplSpec
     foundWorkspace shouldBe defined
     foundWorkspace.get.data should not be empty
     foundWorkspace.get.data.head.consumedInGB shouldBe Some(1.0)
-    foundWorkspace.get.processing should not be empty
   }
 
   it should "get default value for consumed space if hdfs is not used" in new Context {
@@ -148,7 +137,6 @@ class WorkspaceServiceImplSpec
 
     context.workspaceRequestRepository.find _ expects id returning OptionT.some(savedWorkspaceRequest)
     context.databaseRepository.findByWorkspace _ expects id returning List(withCreated).pure[ConnectionIO]
-    context.yarnRepository.findByWorkspaceId _ expects id returning List(savedYarn).pure[ConnectionIO]
     context.approvalRepository.findByWorkspaceId _ expects id returning List(approval()).pure[ConnectionIO]
     context.kafkaRepository.findByWorkspaceId _ expects id returning List(savedTopic).pure[ConnectionIO]
     context.applicationRepository.findByWorkspaceId _ expects id returning List(savedApplication).pure[ConnectionIO]
@@ -158,7 +146,6 @@ class WorkspaceServiceImplSpec
     foundWorkspace shouldBe defined
     foundWorkspace.get.data should not be empty
     foundWorkspace.get.data.head.consumedInGB shouldBe Some(-1.0)
-    foundWorkspace.get.processing should not be empty
   }
 
   it should "approve the workspace" in new Context {
@@ -167,7 +154,6 @@ class WorkspaceServiceImplSpec
 
     context.workspaceRequestRepository.find _ expects id returning OptionT.some(savedWorkspaceRequest)
     context.databaseRepository.findByWorkspace _ expects id returning List(savedHive).pure[ConnectionIO]
-    context.yarnRepository.findByWorkspaceId _ expects id returning List(savedYarn).pure[ConnectionIO]
     context.approvalRepository.findByWorkspaceId _ expects id returning List(approval()).pure[ConnectionIO]
     context.kafkaRepository.findByWorkspaceId _ expects id returning List(savedTopic).pure[ConnectionIO]
     context.applicationRepository.findByWorkspaceId _ expects id returning List(savedApplication).pure[ConnectionIO]
@@ -188,17 +174,6 @@ class WorkspaceServiceImplSpec
     provisioningService.findUnprovisioned _ expects () returning List(savedWorkspaceRequest).pure[IO]
     val result = workspaceServiceImpl.status(unknownId).unsafeRunSync()
     result shouldBe WorkspaceStatus(WorkspaceProvisioningStatus.COMPLETED)
-  }
-
-  it should "get all yarn applications" in new Context {
-    context.yarnRepository.findByWorkspaceId _ expects id returning List(savedYarn).pure[ConnectionIO]
-    private val app = YarnApplication("application123", "MyApp")
-
-    context.yarnClient.applications _ expects savedYarn.poolName returning List(app).pure[IO]
-
-    val result = workspaceServiceImpl.yarnInfo(id).unsafeRunSync()
-
-    result.head shouldBe YarnInfo(savedYarn.poolName, List(app))
   }
 
   it should "get details for hive" in new Context {

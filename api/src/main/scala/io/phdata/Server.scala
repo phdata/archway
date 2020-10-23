@@ -56,7 +56,6 @@ object Server extends IOApp with LazyLogging {
       complianceService = new ComplianceGroupServiceImpl[F](context)
       _ <- Resource.liftF(complianceService.loadDefaultComplianceQuestions)
       customLinkService = new CustomLinkGroupServiceImpl[F](context)
-      yarnService = new YarnServiceImpl[F](context)
 
       authService = context.appConfig.rest.authType match {
         case "spnego" =>
@@ -83,7 +82,6 @@ object Server extends IOApp with LazyLogging {
         applicationService,
         emailService,
         provisionService,
-        yarnService,
         context.hdfsService,
         complianceService,
         emailEC,

@@ -46,9 +46,6 @@ class WorkspaceRequestRepositoryImpl(sqlSyntax: SqlSyntax) extends WorkspaceRequ
   override def linkHive(workspaceId: Long, hiveDatabaseId: Long): doobie.ConnectionIO[Int] =
     statements.linkHive(workspaceId, hiveDatabaseId).run
 
-  override def linkPool(workspaceId: Long, resourcePoolId: Long): doobie.ConnectionIO[Int] =
-    statements.linkPool(workspaceId, resourcePoolId).run
-
   override def linkTopic(workspaceId: Long, KafkaTopicId: Long): ConnectionIO[Int] =
     statements.linkTopic(workspaceId, KafkaTopicId).run
 
@@ -73,12 +70,6 @@ class WorkspaceRequestRepositoryImpl(sqlSyntax: SqlSyntax) extends WorkspaceRequ
     statements.changeOwner(workspaceId, newOwnerDN).run
 
   class DefaultStatements {
-
-    def linkPool(workspaceId: Long, resourcePoolId: Long): Update0 =
-      sql"""
-        insert into workspace_pool (workspace_request_id, resource_pool_id)
-        values ($workspaceId, $resourcePoolId)
-        """.update
 
     def linkHive(workspaceId: Long, hiveDatabaseId: Long): Update0 =
       sql"""

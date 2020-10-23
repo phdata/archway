@@ -29,7 +29,6 @@ case class AppContext[F[_]](
     provisioningLDAPClient: ProvisioningLDAPClient[F],
     lookupLDAPClient: LookupLDAPClient[F],
     hdfsClient: HDFSClient[F],
-    yarnClient: YarnClient[F],
     kafkaClient: KafkaClient[F],
     emailClient: EmailClient[F],
     kerberosClient: KerberosClient[F],
@@ -41,7 +40,6 @@ case class AppContext[F[_]](
     databaseGrantRepository: HiveGrantRepository,
     ldapRepository: LDAPRepository,
     memberRepository: MemberRepository,
-    yarnRepository: YarnRepository,
     complianceRepository: ComplianceRepository,
     workspaceRequestRepository: WorkspaceRequestRepository,
     kafkaRepository: KafkaTopicRepository,
@@ -125,7 +123,6 @@ object AppContext {
       )
       provisioningLDAPClient = new LDAPClientImpl[F](config.ldap, _.provisioningBinding)
       hdfsClient = new HDFSClientImpl[F](hadoopConfiguration, loginContextProvider)
-      yarnClient = new CDHYarnClient[F](httpClient, config.cluster, clusterService)
       kafkaClient = new KafkaClientImpl[F](config)
       emailClient = new EmailClientImpl[F](config, emailEC)
       kerberosClient = new KerberosClientImpl[F](config)
@@ -135,7 +132,6 @@ object AppContext {
       complianceRepository = new ComplianceRepositoryImpl
       ldapRepository = new LDAPRepositoryImpl
       hiveDatabaseRepository = new HiveAllocationRepositoryImpl
-      yarnRepository = new YarnRepositoryImpl
       workspaceRepository = new WorkspaceRequestRepositoryImpl(sqlSyntax)
       approvalRepository = new ApprovalRepositoryImpl
       memberRepository = new MemberRepositoryImpl(sqlSyntax)
@@ -159,7 +155,6 @@ object AppContext {
       provisioningLDAPClient,
       lookupLDAPClient,
       hdfsClient,
-      yarnClient,
       kafkaClient,
       emailClient,
       kerberosClient,
@@ -171,7 +166,6 @@ object AppContext {
       hiveGrantRepository,
       ldapRepository,
       memberRepository,
-      yarnRepository,
       complianceRepository,
       workspaceRepository,
       topicRepository,

@@ -48,7 +48,7 @@ class WorkspaceControllerSpec
   }
 
   it should "list all members" in new Http4sClientDsl[IO] with Context {
-    memberService.members _ expects id returning IO.pure(List(WorkspaceMemberEntry(standardUserDN.value, "John Doe", Some("johndoe@email.com"), List.empty, List.empty, List.empty, List.empty)))
+    memberService.members _ expects id returning IO.pure(List(WorkspaceMemberEntry(standardUserDN.value, "John Doe", Some("johndoe@email.com"), List.empty, List.empty, List.empty)))
 
     val response = restApi.route.orNotFound.run(GET(Uri.uri("/123/members")).unsafeRunSync())
     val Right(json) = parse(
@@ -59,7 +59,6 @@ class WorkspaceControllerSpec
          |     "name": "John Doe",
          |     "email": "johndoe@email.com",
          |     "data": {},
-         |     "processing": {},
          |     "topics": {},
          |     "applications": {}
          |   }
@@ -79,13 +78,6 @@ class WorkspaceControllerSpec
     check(response, Created, Some(Json.obj("risk" -> Json.obj("approver" -> standardUsername.asJson, "approval_time" -> testTimer.instant.asJson))))
   }
 
-  it should "list yarn applications" in new Http4sClientDsl[IO] with Context {
-    workspaceService.yarnInfo _ expects id returning List(YarnInfo("pool", List(YarnApplication("application123", "MyApp")))).pure[IO]
-
-    val response = restApi.route.orNotFound.run(GET(Uri.uri("/123/yarn")).unsafeRunSync())
-    check(response, Status.Ok, Some(fromResource("rest/workspaces.yarn.expected.json")))
-  }
-
   it should "list hive information" in new Http4sClientDsl[IO] with Context {
     workspaceService.hiveDetails _ expects id returning List(HiveDatabase("test", List(HiveTable("table1")))).pure[IO]
 
@@ -98,7 +90,7 @@ class WorkspaceControllerSpec
     (memberService.addMember _)
       .expects(id, memberRequest)
       .returning(OptionT.some(
-        WorkspaceMemberEntry(standardUserDN.value, name, Some("johndoe@phdata.io"), List.empty, List.empty, List.empty, List.empty)
+        WorkspaceMemberEntry(standardUserDN.value, name, Some("johndoe@phdata.io"), List.empty, List.empty, List.empty)
       ))
     (impalaService.invalidateMetadata(_: Long)(_: AppContext[IO])(_: Sync[IO])).expects(123L, context, *).returning(IO.unit)
     (emailService.newMemberEmail _).expects(id, memberRequest).returning(OptionT.some(IO.unit))
@@ -137,7 +129,7 @@ class WorkspaceControllerSpec
     (memberService.addMember _)
       .expects(id, memberRequest)
       .returning(OptionT.some(
-        WorkspaceMemberEntry(standardUserDN.value, name, Some("johndoe@phdata.io"), List.empty, List.empty, List.empty, List.empty)
+        WorkspaceMemberEntry(standardUserDN.value, name, Some("johndoe@phdata.io"), List.empty, List.empty, List.empty)
       ))
     (impalaService.invalidateMetadata(_: Long)(_: AppContext[IO])(_: Sync[IO])).expects(123L, context, *).returning(IO.unit)
     (emailService.newMemberEmail _).expects(id, memberRequest).returning(OptionT.some(IO.unit))
@@ -317,20 +309,6 @@ class WorkspaceControllerSpec
     response.status.code shouldBe 200
   }
 
-  it should "update the resource pools with given max cores and max memories" in new Http4sClientDsl[IO] with Context {
-    yarnService.list _ expects (id) returning List(savedYarn).pure[IO]
-    yarnService.updateYarnResources _ expects (initialYarn, id, *) returning ().pure[IO]
-
-    val request = Json.obj(
-      "pool_name" -> initialYarn.poolName.asJson,
-      "max_cores" -> initialYarn.maxCores.asJson,
-      "max_memory_in_gb" -> initialYarn.maxMemoryInGB.asJson
-    )
-
-    val response = restApi.route.orNotFound.run(POST(request, Uri.uri("/123/yarn")).unsafeRunSync()).unsafeRunSync()
-    response.status.code shouldBe 200
-  }
-
   trait Context {
     implicit val timer: Timer[IO] = testTimer
     implicit val contextShift = IO.contextShift(ExecutionContext.global)
@@ -341,7 +319,6 @@ class WorkspaceControllerSpec
     val kafkaService: KafkaService[IO] = mock[KafkaService[IO]]
     val workspaceService: WorkspaceService[IO] = mock[WorkspaceService[IO]]
     val hdfsService: HDFSService[IO] = mock[HDFSService[IO]]
-    val yarnService: YarnService[IO] = mock[YarnService[IO]]
     val applicationService: ApplicationService[IO] = mock[ApplicationService[IO]]
     val emailService: EmailService[IO] = mock[EmailService[IO]]
     val provisioningService: ProvisioningService[IO] = mock[ProvisioningService[IO]]
@@ -358,7 +335,6 @@ class WorkspaceControllerSpec
         applicationService,
         emailService,
         provisioningService,
-        yarnService,
         hdfsService,
         complianceGroupService,
         ExecutionContext.global,

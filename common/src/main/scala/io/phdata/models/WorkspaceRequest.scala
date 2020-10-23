@@ -51,7 +51,6 @@ case class WorkspaceRequest(
     id: Option[Long] = None,
     approvals: List[Approval] = List.empty,
     data: List[HiveAllocation] = List.empty,
-    processing: List[Yarn] = List.empty,
     applications: List[Application] = List.empty,
     kafkaTopics: List[KafkaTopic] = List.empty,
     metadata: Metadata
@@ -78,7 +77,6 @@ object WorkspaceRequest {
         "name" -> request.name.asJson,
         "compliance" -> request.compliance.asJson,
         "data" -> request.data.asJson,
-        "processing" -> request.processing.asJson,
         "applications" -> request.applications.asJson,
         "topics" -> request.kafkaTopics.asJson,
         "single_user" -> request.singleUser.asJson,
@@ -100,7 +98,6 @@ object WorkspaceRequest {
         compliance <- json.downField("compliance").as[Compliance]
         singleUser <- json.downField("single_user").as[Boolean]
         data <- json.downField("data").as[List[HiveAllocation]]
-        processing <- json.downField("processing").as[List[Yarn]]
         applications <- json.downField("applications").as[List[Application]]
         topics <- json.downField("topics").as[List[KafkaTopic]]
         metadata <- json.downField("metadata").as[Metadata]
@@ -114,7 +111,6 @@ object WorkspaceRequest {
         compliance,
         singleUser,
         data = data,
-        processing = processing,
         applications = applications,
         kafkaTopics = topics,
         metadata = metadata

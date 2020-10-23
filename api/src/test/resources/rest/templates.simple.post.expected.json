@@ -19,27 +19,12 @@
           "distinguished_name": "cn=edh_sw_sesame,ou=heimdali,dc=jotunn,dc=io",
           "common_name": "edh_sw_sesame",
           "sentry_role": "role_sw_sesame",
-          "attributes" : [
-            [
-              "dn",
-              "cn=edh_sw_sesame,ou=heimdali,dc=jotunn,dc=io"
-            ],
-            [
-              "objectClass",
-              "group"
-            ],
-            [
-              "objectClass",
-              "top"
-            ],
-            [
-              "sAMAccountName",
-              "edh_sw_sesame"
-            ],
-            [
-              "cn",
-              "edh_sw_sesame"
-            ]
+          "attributes": [
+            ["dn", "cn=edh_sw_sesame,ou=heimdali,dc=jotunn,dc=io"],
+            ["objectClass", "group"],
+            ["objectClass", "top"],
+            ["sAMAccountName", "edh_sw_sesame"],
+            ["cn", "edh_sw_sesame"]
           ]
         }
       },
@@ -48,66 +33,29 @@
           "distinguished_name": "cn=edh_sw_sesame_rw,ou=heimdali,dc=jotunn,dc=io",
           "common_name": "edh_sw_sesame_rw",
           "sentry_role": "role_sw_sesame_rw",
-          "attributes" : [
-            [
-              "dn",
-              "cn=edh_sw_sesame_rw,ou=heimdali,dc=jotunn,dc=io"
-            ],
-            [
-              "objectClass",
-              "group"
-            ],
-            [
-              "objectClass",
-              "top"
-            ],
-            [
-              "sAMAccountName",
-              "edh_sw_sesame_rw"
-            ],
-            [
-              "cn",
-              "edh_sw_sesame_rw"
-            ]
+          "attributes": [
+            ["dn", "cn=edh_sw_sesame_rw,ou=heimdali,dc=jotunn,dc=io"],
+            ["objectClass", "group"],
+            ["objectClass", "top"],
+            ["sAMAccountName", "edh_sw_sesame_rw"],
+            ["cn", "edh_sw_sesame_rw"]
           ]
         }
       },
-      "readonly_group" : {
-        "group" : {
-          "common_name" : "edh_sw_sesame_ro",
-          "distinguished_name" : "cn=edh_sw_sesame_ro,ou=heimdali,dc=jotunn,dc=io",
-          "sentry_role" : "role_sw_sesame_ro",
-          "attributes" : [
-            [
-              "dn",
-              "cn=edh_sw_sesame_ro,ou=heimdali,dc=jotunn,dc=io"
-            ],
-            [
-              "objectClass",
-              "group"
-            ],
-            [
-              "objectClass",
-              "top"
-            ],
-            [
-              "sAMAccountName",
-              "edh_sw_sesame_ro"
-            ],
-            [
-              "cn",
-              "edh_sw_sesame_ro"
-            ]
+      "readonly_group": {
+        "group": {
+          "common_name": "edh_sw_sesame_ro",
+          "distinguished_name": "cn=edh_sw_sesame_ro,ou=heimdali,dc=jotunn,dc=io",
+          "sentry_role": "role_sw_sesame_ro",
+          "attributes": [
+            ["dn", "cn=edh_sw_sesame_ro,ou=heimdali,dc=jotunn,dc=io"],
+            ["objectClass", "group"],
+            ["objectClass", "top"],
+            ["sAMAccountName", "edh_sw_sesame_ro"],
+            ["cn", "edh_sw_sesame_ro"]
           ]
         }
       }
-    }
-  ],
-  "processing": [
-    {
-      "pool_name": "root.sw_sesame",
-      "max_cores": 4,
-      "max_memory_in_gb": 16
     }
   ],
   "applications": [
@@ -118,32 +66,17 @@
         "distinguished_name": "cn=sesame_default_cg,ou=heimdali,dc=jotunn,dc=io",
         "common_name": "sesame_default_cg",
         "sentry_role": "role_sesame_default_cg",
-        "attributes" : [
-          [
-            "dn",
-            "cn=sesame_default_cg,ou=heimdali,dc=jotunn,dc=io"
-          ],
-          [
-            "objectClass",
-            "group"
-          ],
-          [
-            "objectClass",
-            "top"
-          ],
-          [
-            "sAMAccountName",
-            "sesame_default_cg"
-          ],
-          [
-            "cn",
-            "sesame_default_cg"
-          ]
+        "attributes": [
+          ["dn", "cn=sesame_default_cg,ou=heimdali,dc=jotunn,dc=io"],
+          ["objectClass", "group"],
+          ["objectClass", "top"],
+          ["sAMAccountName", "sesame_default_cg"],
+          ["cn", "sesame_default_cg"]
         ]
       }
     }
   ],
   "topics": [],
   "single_user": false,
-  "requester" : "john.doe"
+  "requester": "john.doe"
 }

@@ -170,13 +170,6 @@
       }
     }
   ],
-  "processing": [
-    {
-      "pool_name": "root.governed_${template.generatedName}",
-      "max_cores": 1,
-      "max_memory_in_gb": 1
-    }
-  ],
   "applications": [
     {
       "name": "default",

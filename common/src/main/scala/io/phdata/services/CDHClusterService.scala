@@ -58,17 +58,6 @@ class CDHClusterService[F[_]: ConcurrentEffect: Clock](
     }
   }
 
-  def yarnRoleConfigRequest(serviceName: String, roleName: String): F[ListContainer[RoleProperty]] = {
-    Uri.fromString(clusterConfig.yarnRoleConfig(serviceName, roleName)) match {
-      case Right(uri) =>
-        http.request[ListContainer[RoleProperty]](Request(Method.GET, uri))
-      case Left(failure) => {
-        logger.error("Uri cannot be parsed {}", failure)
-        ListContainer(List.empty[RoleProperty]).pure[F]
-      }
-    }
-  }
-
   def hueApp(hue: ServiceInfo, hosts: ListContainer[HostInfo], hueLBRole: List[AppRole]): ClusterApp =
     clusterConfig.hueOverride match {
       case ServiceOverride(Some(host), port) =>
@@ -95,9 +84,6 @@ class CDHClusterService[F[_]: ConcurrentEffect: Clock](
       hueLBRole <- serviceRoleListRequest(hue.name)
         .map(_.items.filter(_.`type` == CDHClusterService.HueLoadBalancerRole))
 
-      yarn = services.items.find(_.`type` == CDHClusterService.YARN_SERVICE_TYPE).get
-      yarnRoles <- serviceRoleListRequest(yarn.name)
-
       mgmt <- mgmtServicesRequest
       mgmtNavigatorRole <- mgmtRoleListRequest.map(_.items.filter(_.`type` == CDHClusterService.MgmtNavigatorRole))
       mgmtNavigatorMetaServerRole <- mgmtRoleListRequest.map(
@@ -105,10 +91,6 @@ class CDHClusterService[F[_]: ConcurrentEffect: Clock](
       )
       mgmtRoleConfigGroups <- mgmtRoleConfigGroupsRequest(mgmtNavigatorMetaServerRole.headOption)
 
-      nodeManagerRoles = yarnRoles.items.filter(_.`type` == CDHClusterService.NodeManagerRole)
-      resourceManagerRoles = yarnRoles.items.filter(_.`type` == CDHClusterService.ResourceManagerRole)
-      yarnNodeManagerRoleProps <- yarnRoleConfigRequest(yarn.name, nodeManagerRoles.head.name)
-      yarnResourceManagerRoleProps <- yarnRoleConfigRequest(yarn.name, resourceManagerRoles.head.name)
     } yield Cluster(
       details.name,
       details.displayName,
@@ -130,19 +112,6 @@ class CDHClusterService[F[_]: ConcurrentEffect: Clock](
           Map("thrift" -> (hadoopConfiguration.get("hive.server2.thrift.port", "10000").toInt, hiveServer2Roles))
         ),
         hueApp(hue, hosts, hueLBRole),
-        ClusterApp(
-          "yarn",
-          yarn,
-          hosts,
-          Map(
-            "node_manager" -> (resolvePort(yarnNodeManagerRoleProps, 8042, "yarn.nodemanager.webapp.https.address"), resourceManagerRoles),
-            "resource_manager" -> (resolvePort(
-                  yarnResourceManagerRoleProps,
-                  8088,
-                  "yarn.resourcemanager.webapp.https.address"
-                ), resourceManagerRoles)
-          )
-        ),
         ClusterApp(
           "mgmt",
           mgmt,
@@ -174,7 +143,6 @@ object CDHClusterService {
   val IMPALA_SERVICE_TYPE = "IMPALA"
   val HIVE_SERVICE_TYPE = "HIVE"
   val HUE_SERVICE_TYPE = "HUE"
-  val YARN_SERVICE_TYPE = "YARN"
 
   val ImpalaDaemonRole: String = "IMPALAD"
   val HiveServer2Role: String = "HIVESERVER2"

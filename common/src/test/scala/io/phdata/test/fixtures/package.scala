@@ -53,17 +53,12 @@ package object fixtures {
   val initialGrant = savedGrant.copy(id = None, ldapRegistration = initialLDAP)
   val savedHive = HiveAllocation("sw_sesame", "/shared_workspaces/sw_sesame", hdfsRequestedSize, None, savedGrant, readonlyGroup = Some(savedGrant.copy(databaseRole = ReadOnly)), id = Some(id))
   val initialHive = savedHive.copy(id = None, managingGroup = initialGrant, readonlyGroup = Some(initialGrant))
-  val savedYarn = Yarn(poolName, maxCores, maxMemoryInGB, Some(id))
-  val initialYarn = savedYarn.copy(id = None)
   val savedTopic = KafkaTopic(s"$systemName.incoming", 1, 1, TopicGrant(s"$systemName.incoming", savedLDAP, "all", Some(id)), TopicGrant(s"$systemName.incoming", savedLDAP, "read", Some(id)), Some(id))
   val initialTopic = savedTopic.copy(id = None, managingRole = savedTopic.managingRole.copy(id = None, ldapRegistration = initialLDAP), readonlyRole = savedTopic.readonlyRole.copy(id = None, ldapRegistration = initialLDAP))
   val savedApplication = Application("Tiller", s"${systemName}_cg", savedLDAP, None, None, None, None, Some(id))
   val initialApplication = savedApplication.copy(id = None, group = initialLDAP)
   val testTimer = new TestTimer
   val searchResult = WorkspaceSearchResult(id, name, name, "simple", "Approved", piiCompliance, pciCompliance, phiCompliance, testTimer.instant, Some(testTimer.instant), 0, 0L.some, BigDecimal(0).some)
-
-  val yarnApp = ClusterApp("yarn", "yarn", "GOOD_HExALTH", "STARTED", Map())
-  val cluster = Cluster("cluster", "Cluster", "", List(yarnApp), CDH(""), "GOOD_HEALTH")
 
   def approval(instant: Instant = testTimer.instant) = Approval(Risk, standardUsername, instant)
   val config = ConfigFactory.parseResources(sys.env.getOrElse("TEST_CONFIG_FILE", "application.test.conf"))
@@ -91,7 +86,6 @@ package object fixtures {
     singleUser = false,
     id = Some(id),
     data = List(savedHive),
-    processing = List(savedYarn),
     applications = List(savedApplication),
     metadata = Metadata(name, name, 0, Map.empty)
   )
@@ -101,7 +95,6 @@ package object fixtures {
       id = None,
       compliance = initialCompliance,
       data = List(initialHive),
-      processing = List(initialYarn),
       applications = List(initialApplication)
     )
 
@@ -153,13 +146,6 @@ package object fixtures {
        |    "pci_data" : ${savedCompliance.pciData},
        |    "pii_data" : ${savedCompliance.piiData}
        |  },
-       |  "processing" : [
-       |    {
-       |      "pool_name" : "${savedYarn.poolName}",
-       |      "max_cores" : ${savedYarn.maxCores},
-       |      "max_memory_in_gb" : ${savedYarn.maxMemoryInGB}
-       |    }
-       |  ],
        |  "data" : [
        |    {
        |      "id" : ${savedHive.id.get},

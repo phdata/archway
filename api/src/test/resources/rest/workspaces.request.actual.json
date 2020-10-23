@@ -29,13 +29,6 @@
       }
     }
   ],
-  "processing": [
-    {
-      "pool_name": "sesame",
-      "max_cores": 1,
-      "max_memory_in_gb": 1
-    }
-  ],
   "applications": [
     {
       "name": "default",

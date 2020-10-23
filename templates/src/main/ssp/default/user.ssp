@@ -40,13 +40,6 @@
       }
     }
   ],
-  "processing": [
-    {
-      "pool_name": "root.users.${template.generatedName}",
-      "max_cores": ${appConfig.workspaces.user.defaultCores},
-      "max_memory_in_gb": ${appConfig.workspaces.user.defaultMemory.toString}
-    }
-  ],
   "applications": [],
   "topics": [
     {

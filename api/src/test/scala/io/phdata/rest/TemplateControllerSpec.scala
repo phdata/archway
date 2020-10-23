@@ -3,11 +3,6 @@ package io.phdata.rest
 import java.net.URLEncoder
 
 import cats.effect.{IO, Timer}
-import io.phdata.AppContext
-import io.phdata.generators._
-import io.phdata.models.TemplateRequest
-import io.phdata.services.{ConfigService, JSONTemplateService, TemplateService}
-import io.phdata.test.TestAuthService
 import io.phdata.test.fixtures._
 import io.circe.Json
 import io.circe.java8.time._

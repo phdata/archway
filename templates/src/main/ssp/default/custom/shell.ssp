@@ -1,0 +1,434 @@
+<%@ var templateName: String %>
+<%@ var appConfig: io.phdata.config.AppConfig %>
+<%@ var nextGid: Function0[Long] %>
+<%@ var template: io.phdata.models.TemplateRequest %>
+{
+  "metadata": {
+    "name": "Structured (Test env)",
+    "description": "",
+    "ordering": 1,
+    "tags": {}
+  },
+  "summary": "${template.summary}",
+  "description": "${template.description}",
+  "behavior": "${templateName}",
+  "name": "${template.name}",
+  "compliance": {
+    "phi_data": ${template.compliance.phiData},
+    "pci_data": ${template.compliance.pciData},
+    "pii_data": ${template.compliance.piiData}
+  },
+  "data": [
+    {
+      "name": "t_dev_raw_${template.generatedName}",
+      "location": "hdfs://valhalla/data/governed/shell/${template.generatedName}",
+      "size_in_gb": ${appConfig.workspaces.dataset.defaultSize.toString},
+      "managing_group": {
+        "group": {
+          "common_name": "sg_ts_t_dev_raw_${template.generatedName}_rwg",
+          "distinguished_name": "cn=sg_ts_t_dev_raw_${template.generatedName}_rwg,${appConfig.ldap.groupPath}",
+          "sentry_role": "sg_ts_t_dev_raw_${template.generatedName}_role_rwg",
+          "attributes": [
+            [ "dn", "cn=sg_ts_t_dev_raw_${template.generatedName}_rwg,${appConfig.ldap.groupPath}" ],
+            [ "objectClass", "group" ],
+            [ "objectClass", "top" ],
+            [ "groupType", "-2147483640" ],
+            [ "sAMAccountName", "sg_ts_t_dev_raw_${template.generatedName}_rwg" ],
+            [ "cn", "sg_ts_t_dev_raw_${template.generatedName}_rwg" ]
+          ]
+        }
+      },
+      "readwrite_group": {
+        "group": {
+          "common_name": "sg_ts_t_dev_raw_${template.generatedName}_rw",
+          "distinguished_name": "cn=sg_ts_t_dev_raw_${template.generatedName}_rw,${appConfig.ldap.groupPath}",
+          "sentry_role": "sg_ts_t_dev_raw_${template.generatedName}_role_rw",
+          "attributes": [
+            [ "dn", "cn=sg_ts_t_dev_raw_${template.generatedName}_rw,${appConfig.ldap.groupPath}" ],
+            [ "objectClass", "group" ],
+            [ "objectClass", "top" ],
+            [ "groupType", "-2147483640" ],
+            [ "sAMAccountName", "sg_ts_t_dev_raw_${template.generatedName}_rw" ],
+            [ "cn", "sg_ts_t_dev_raw_${template.generatedName}_rw" ]
+          ]
+        }
+      },
+      "readonly_group": {
+        "group": {
+          "common_name": "sg_ts_t_dev_raw_${template.generatedName}_ro",
+          "distinguished_name": "cn=sg_ts_t_dev_raw_${template.generatedName}_ro,${appConfig.ldap.groupPath}",
+          "sentry_role": "sg_ts_t_dev_raw_${template.generatedName}_role_ro",
+          "attributes": [
+            [ "dn", "cn=sg_ts_t_dev_raw_${template.generatedName}_ro,${appConfig.ldap.groupPath}" ],
+            [ "objectClass", "group" ],
+            [ "objectClass", "top" ],
+            [ "groupType", "-2147483640" ],
+            [ "sAMAccountName", "sg_ts_t_dev_raw_${template.generatedName}_ro" ],
+            [ "cn", "sg_ts_t_dev_raw_${template.generatedName}_ro" ]
+          ]
+        }
+      }
+    },
+    {
+      "name": "t_dev_system_${template.generatedName}",
+      "location": "hdfs://valhalla/data/governed/shellsystem/${template.generatedName}",
+      "size_in_gb": ${appConfig.workspaces.dataset.defaultSize.toString},
+      "managing_group": {
+        "group": {
+          "common_name": "sg_ts_t_dev_system_${template.generatedName}_rwg",
+          "distinguished_name": "cn=sg_ts_t_dev_system_${template.generatedName}_rwg,${appConfig.ldap.groupPath}",
+          "sentry_role": "sg_ts_t_dev_system_${template.generatedName}_role_rwg",
+          "attributes": [
+            [ "dn", "cn=sg_ts_t_dev_system_${template.generatedName}_rwg,${appConfig.ldap.groupPath}" ],
+            [ "objectClass", "group" ],
+            [ "objectClass", "top" ],
+            [ "groupType", "-2147483640" ],
+            [ "sAMAccountName", "sg_ts_t_dev_system_${template.generatedName}_rwg" ],
+            [ "cn", "sg_ts_t_dev_system_${template.generatedName}_rwg" ]
+          ]
+        }
+      },
+      "readwrite_group": {
+        "group": {
+          "common_name": "sg_ts_t_dev_system_${template.generatedName}_rw",
+          "distinguished_name": "cn=sg_ts_t_dev_system_${template.generatedName}_rw,${appConfig.ldap.groupPath}",
+          "sentry_role": "sg_ts_t_dev_system_${template.generatedName}_role_rw",
+          "attributes": [
+            [ "dn", "cn=sg_ts_t_dev_system_${template.generatedName}_rw,${appConfig.ldap.groupPath}" ],
+            [ "objectClass", "group" ],
+            [ "objectClass", "top" ],
+            [ "groupType", "-2147483640" ],
+            [ "sAMAccountName", "sg_ts_t_dev_system_${template.generatedName}_rw" ],
+            [ "cn", "sg_ts_t_dev_system_${template.generatedName}_rw" ]
+          ]
+        }
+      },
+      "readonly_group": {
+        "group": {
+          "common_name": "sg_ts_t_dev_system_${template.generatedName}_ro",
+          "distinguished_name": "cn=sg_ts_t_dev_system_${template.generatedName}_ro,${appConfig.ldap.groupPath}",
+          "sentry_role": "sg_ts_t_dev_system_${template.generatedName}_role_ro",
+          "attributes": [
+            [ "dn", "cn=sg_ts_t_dev_system_${template.generatedName}_ro,${appConfig.ldap.groupPath}" ],
+            [ "objectClass", "group" ],
+            [ "objectClass", "top" ],
+            [ "groupType", "-2147483640" ],
+            [ "sAMAccountName", "sg_ts_t_dev_system_${template.generatedName}_ro" ],
+            [ "cn", "sg_ts_t_dev_system_${template.generatedName}_ro" ]
+          ]
+        }
+      }
+    },
+    {
+      "name": "t_dev_raw_${template.generatedName}_files",
+      "location": "hdfs://valhalla/data/governed/shellraw/${template.generatedName}_files",
+      "size_in_gb": ${appConfig.workspaces.dataset.defaultSize.toString},
+      "managing_group": {
+        "group": {
+          "common_name": "sg_ts_t_dev_raw_${template.generatedName}_files_rwg",
+          "distinguished_name": "cn=sg_ts_t_dev_raw_${template.generatedName}_files_rwg,${appConfig.ldap.groupPath}",
+          "sentry_role": "sg_ts_t_dev_raw_${template.generatedName}_files_role_rwg",
+          "attributes": [
+            [ "dn", "cn=sg_ts_t_dev_raw_${template.generatedName}_files_rwg,${appConfig.ldap.groupPath}" ],
+            [ "objectClass", "group" ],
+            [ "objectClass", "top" ],
+            [ "groupType", "-2147483640" ],
+            [ "sAMAccountName", "sg_ts_t_dev_raw_${template.generatedName}_files_rwg" ],
+            [ "cn", "sg_ts_t_dev_raw_${template.generatedName}_files_rwg" ]
+          ]
+        }
+      },
+      "readwrite_group": {
+        "group": {
+          "common_name": "sg_ts_t_dev_raw_${template.generatedName}_files_rw",
+          "distinguished_name": "cn=sg_ts_t_dev_raw_${template.generatedName}_files_rw,${appConfig.ldap.groupPath}",
+          "sentry_role": "sg_ts_t_dev_raw_${template.generatedName}_files_role_rw",
+          "attributes": [
+            [ "dn", "cn=sg_ts_t_dev_raw_${template.generatedName}_files_rw,${appConfig.ldap.groupPath}" ],
+            [ "objectClass", "group" ],
+            [ "objectClass", "top" ],
+            [ "groupType", "-2147483640" ],
+            [ "sAMAccountName", "sg_ts_t_dev_raw_${template.generatedName}_files_rw" ],
+            [ "cn", "sg_ts_t_dev_raw_${template.generatedName}_files_rw" ]
+          ]
+        }
+      },
+      "readonly_group": {
+        "group": {
+          "common_name": "sg_ts_t_dev_raw_${template.generatedName}_files_ro",
+          "distinguished_name": "cn=sg_ts_t_dev_raw_${template.generatedName}_files_ro,${appConfig.ldap.groupPath}",
+          "sentry_role": "sg_ts_t_dev_raw_${template.generatedName}_files_role_ro",
+          "attributes": [
+            [ "dn", "cn=sg_ts_t_dev_raw_${template.generatedName}_files_ro,${appConfig.ldap.groupPath}" ],
+            [ "objectClass", "group" ],
+            [ "objectClass", "top" ],
+            [ "groupType", "-2147483640" ],
+            [ "sAMAccountName", "sg_ts_t_dev_raw_${template.generatedName}_files_ro" ],
+            [ "cn", "sg_ts_t_dev_raw_${template.generatedName}_files_ro" ]
+          ]
+        }
+      }
+    },
+    {
+      "name": "t_dev_trf_${template.generatedName}",
+      "location": "hdfs://valhalla/data/governed/shelltrf/${template.generatedName}",
+      "size_in_gb": ${appConfig.workspaces.dataset.defaultSize.toString},
+      "managing_group": {
+        "group": {
+          "common_name": "sg_ts_t_dev_trf_${template.generatedName}_rwg",
+          "distinguished_name": "cn=sg_ts_t_dev_trf_${template.generatedName}_rwg,${appConfig.ldap.groupPath}",
+          "sentry_role": "sg_ts_t_dev_trf_${template.generatedName}_role_rwg",
+          "attributes": [
+            [ "dn", "cn=sg_ts_t_dev_trf_${template.generatedName}_rwg,${appConfig.ldap.groupPath}" ],
+            [ "objectClass", "group" ],
+            [ "objectClass", "top" ],
+            [ "groupType", "-2147483640" ],
+            [ "sAMAccountName", "sg_ts_t_dev_trf_${template.generatedName}_rwg" ],
+            [ "cn", "sg_ts_t_dev_trf_${template.generatedName}_rwg" ]
+          ]
+        }
+      },
+      "readwrite_group": {
+        "group": {
+          "common_name": "sg_ts_t_dev_trf_${template.generatedName}_rw",
+          "distinguished_name": "cn=sg_ts_t_dev_trf_${template.generatedName}_rw,${appConfig.ldap.groupPath}",
+          "sentry_role": "sg_ts_t_dev_trf_${template.generatedName}_role_rw",
+          "attributes": [
+            [ "dn", "cn=sg_ts_t_dev_trf_${template.generatedName}_rw,${appConfig.ldap.groupPath}" ],
+            [ "objectClass", "group" ],
+            [ "objectClass", "top" ],
+            [ "groupType", "-2147483640" ],
+            [ "sAMAccountName", "sg_ts_t_dev_trf_${template.generatedName}_rw" ],
+            [ "cn", "sg_ts_t_dev_trf_${template.generatedName}_rw" ]
+          ]
+        }
+      },
+      "readonly_group": {
+        "group": {
+          "common_name": "sg_ts_t_dev_trf_${template.generatedName}_ro",
+          "distinguished_name": "cn=sg_ts_t_dev_trf_${template.generatedName}_ro,${appConfig.ldap.groupPath}",
+          "sentry_role": "sg_ts_t_dev_trf_${template.generatedName}_role_ro",
+          "attributes": [
+            [ "dn", "cn=sg_ts_t_dev_trf_${template.generatedName}_ro,${appConfig.ldap.groupPath}" ],
+            [ "objectClass", "group" ],
+            [ "objectClass", "top" ],
+            [ "groupType", "-2147483640" ],
+            [ "sAMAccountName", "sg_ts_t_dev_trf_${template.generatedName}_ro" ],
+            [ "cn", "sg_ts_t_dev_trf_${template.generatedName}_ro" ]
+          ]
+        }
+      }
+    },
+    {
+      "name": "t_dev_trf_${template.generatedName}_stage",
+      "location": "hdfs://valhalla/data/governed/shelltrf/${template.generatedName}_stage",
+      "size_in_gb": ${appConfig.workspaces.dataset.defaultSize.toString},
+      "managing_group": {
+        "group": {
+          "common_name": "sg_ts_t_dev_trf_${template.generatedName}_stage_rwg",
+          "distinguished_name": "cn=sg_ts_t_dev_trf_${template.generatedName}_stage_rwg,${appConfig.ldap.groupPath}",
+          "sentry_role": "sg_ts_t_dev_trf_${template.generatedName}_stage_role_rwg",
+          "attributes": [
+            [ "dn", "cn=sg_ts_t_dev_trf_${template.generatedName}_stage_rwg,${appConfig.ldap.groupPath}" ],
+            [ "objectClass", "group" ],
+            [ "objectClass", "top" ],
+            [ "groupType", "-2147483640" ],
+            [ "sAMAccountName", "sg_ts_t_dev_trf_${template.generatedName}_stage_rwg" ],
+            [ "cn", "sg_ts_t_dev_trf_${template.generatedName}_stage_rwg" ]
+          ]
+        }
+      },
+      "readwrite_group": {
+        "group": {
+          "common_name": "sg_ts_t_dev_trf_${template.generatedName}_stage_rw",
+          "distinguished_name": "cn=sg_ts_t_dev_trf_${template.generatedName}_stage_rw,${appConfig.ldap.groupPath}",
+          "sentry_role": "sg_ts_t_dev_trf_${template.generatedName}_stage_role_rw",
+          "attributes": [
+            [ "dn", "cn=sg_ts_t_dev_trf_${template.generatedName}_stage_rw,${appConfig.ldap.groupPath}" ],
+            [ "objectClass", "group" ],
+            [ "objectClass", "top" ],
+            [ "groupType", "-2147483640" ],
+            [ "sAMAccountName", "sg_ts_t_dev_trf_${template.generatedName}_stage_rw" ],
+            [ "cn", "sg_ts_t_dev_trf_${template.generatedName}_stage_rw" ]
+          ]
+        }
+      },
+      "readonly_group": {
+        "group": {
+          "common_name": "sg_ts_t_dev_trf_${template.generatedName}_stage_ro",
+          "distinguished_name": "cn=sg_ts_t_dev_trf_${template.generatedName}_stage_ro,${appConfig.ldap.groupPath}",
+          "sentry_role": "sg_ts_t_dev_trf_${template.generatedName}_stage_role_ro",
+          "attributes": [
+            [ "dn", "cn=sg_ts_t_dev_trf_${template.generatedName}_stage_ro,${appConfig.ldap.groupPath}" ],
+            [ "objectClass", "group" ],
+            [ "objectClass", "top" ],
+            [ "groupType", "-2147483640" ],
+            [ "sAMAccountName", "sg_ts_t_dev_trf_${template.generatedName}_stage_ro" ],
+            [ "cn", "sg_ts_t_dev_trf_${template.generatedName}_stage_ro" ]
+          ]
+        }
+      }
+    },
+    {
+      "name": "t_dev_trf_${template.generatedName}_delta",
+      "location": "hdfs://valhalla/data/governed/shelltrf/${template.generatedName}_delta",
+      "size_in_gb": ${appConfig.workspaces.dataset.defaultSize.toString},
+      "managing_group": {
+        "group": {
+          "common_name": "sg_ts_t_dev_trf_${template.generatedName}_delta_rwg",
+          "distinguished_name": "cn=sg_ts_t_dev_trf_${template.generatedName}_delta_rwg,${appConfig.ldap.groupPath}",
+          "sentry_role": "sg_ts_t_dev_trf_${template.generatedName}_delta_role_rwg",
+          "attributes": [
+            [ "dn", "cn=sg_ts_t_dev_trf_${template.generatedName}_delta_rwg,${appConfig.ldap.groupPath}" ],
+            [ "objectClass", "group" ],
+            [ "objectClass", "top" ],
+            [ "groupType", "-2147483640" ],
+            [ "sAMAccountName", "sg_ts_t_dev_trf_${template.generatedName}_delta_rwg" ],
+            [ "cn", "sg_ts_t_dev_trf_${template.generatedName}_delta_rwg" ]
+          ]
+        }
+      },
+      "readwrite_group": {
+        "group": {
+          "common_name": "sg_ts_t_dev_trf_${template.generatedName}_delta_rw",
+          "distinguished_name": "cn=sg_ts_t_dev_trf_${template.generatedName}_delta_rw,${appConfig.ldap.groupPath}",
+          "sentry_role": "sg_ts_t_dev_trf_${template.generatedName}_delta_role_rw",
+          "attributes": [
+            [ "dn", "cn=sg_ts_t_dev_trf_${template.generatedName}_delta_rw,${appConfig.ldap.groupPath}" ],
+            [ "objectClass", "group" ],
+            [ "objectClass", "top" ],
+            [ "groupType", "-2147483640" ],
+            [ "sAMAccountName", "sg_ts_t_dev_trf_${template.generatedName}_delta_rw" ],
+            [ "cn", "sg_ts_t_dev_trf_${template.generatedName}_delta_rw" ]
+          ]
+        }
+      },
+      "readonly_group": {
+        "group": {
+          "common_name": "sg_ts_t_dev_trf_${template.generatedName}_delta_ro",
+          "distinguished_name": "cn=sg_ts_t_dev_trf_${template.generatedName}_delta_ro,${appConfig.ldap.groupPath}",
+          "sentry_role": "sg_ts_t_dev_trf_${template.generatedName}_delta_role_ro",
+          "attributes": [
+            [ "dn", "cn=sg_ts_t_dev_trf_${template.generatedName}_delta_ro,${appConfig.ldap.groupPath}" ],
+            [ "objectClass", "group" ],
+            [ "objectClass", "top" ],
+            [ "groupType", "-2147483640" ],
+            [ "sAMAccountName", "sg_ts_t_dev_trf_${template.generatedName}_delta_ro" ],
+            [ "cn", "sg_ts_t_dev_trf_${template.generatedName}_delta_ro" ]
+          ]
+        }
+      }
+    },
+    {
+      "name": "t_dev_trf_${template.generatedName}_custom",
+      "location": "hdfs://valhalla/data/governed/shelltrf/${template.generatedName}_custom",
+      "size_in_gb": ${appConfig.workspaces.dataset.defaultSize.toString},
+      "managing_group": {
+        "group": {
+          "common_name": "sg_ts_t_dev_trf_${template.generatedName}_custom_rwg",
+          "distinguished_name": "cn=sg_ts_t_dev_trf_${template.generatedName}_custom_rwg,${appConfig.ldap.groupPath}",
+          "sentry_role": "sg_ts_t_dev_trf_${template.generatedName}_custom_role_rwg",
+          "attributes": [
+            [ "dn", "cn=sg_ts_t_dev_trf_${template.generatedName}_custom_rwg,${appConfig.ldap.groupPath}" ],
+            [ "objectClass", "group" ],
+            [ "objectClass", "top" ],
+            [ "groupType", "-2147483640" ],
+            [ "sAMAccountName", "sg_ts_t_dev_trf_${template.generatedName}_custom_rwg" ],
+            [ "cn", "sg_ts_t_dev_trf_${template.generatedName}_custom_rwg" ]
+          ]
+        }
+      },
+      "readwrite_group": {
+        "group": {
+          "common_name": "sg_ts_t_dev_trf_${template.generatedName}_custom_rw",
+          "distinguished_name": "cn=sg_ts_t_dev_trf_${template.generatedName}_custom_rw,${appConfig.ldap.groupPath}",
+          "sentry_role": "sg_ts_t_dev_trf_${template.generatedName}_custom_role_rw",
+          "attributes": [
+            [ "dn", "cn=sg_ts_t_dev_trf_${template.generatedName}_custom_rw,${appConfig.ldap.groupPath}" ],
+            [ "objectClass", "group" ],
+            [ "objectClass", "top" ],
+            [ "groupType", "-2147483640" ],
+            [ "sAMAccountName", "sg_ts_t_dev_trf_${template.generatedName}_custom_rw" ],
+            [ "cn", "sg_ts_t_dev_trf_${template.generatedName}_custom_rw" ]
+          ]
+        }
+      },
+      "readonly_group": {
+        "group": {
+          "common_name": "sg_ts_t_dev_trf_${template.generatedName}_custom_ro",
+          "distinguished_name": "cn=sg_ts_t_dev_trf_${template.generatedName}_custom_ro,${appConfig.ldap.groupPath}",
+          "sentry_role": "sg_ts_t_dev_trf_${template.generatedName}_custom_role_ro",
+          "attributes": [
+            [ "dn", "cn=sg_ts_t_dev_trf_${template.generatedName}_custom_ro,${appConfig.ldap.groupPath}" ],
+            [ "objectClass", "group" ],
+            [ "objectClass", "top" ],
+            [ "groupType", "-2147483640" ],
+            [ "sAMAccountName", "sg_ts_t_dev_trf_${template.generatedName}_custom_ro" ],
+            [ "cn", "sg_ts_t_dev_trf_${template.generatedName}_custom_ro" ]
+          ]
+        }
+      }
+    },
+    {
+      "name": "t_dev_cns_${template.generatedName}",
+      "location": "hdfs://valhalla/data/governed/shellcns/${template.generatedName}",
+      "size_in_gb": ${appConfig.workspaces.dataset.defaultSize.toString},
+      "managing_group": {
+        "group": {
+          "common_name": "sg_ts_t_dev_cns_${template.generatedName}_rwg",
+          "distinguished_name": "cn=sg_ts_t_dev_cns_${template.generatedName}_rwg,${appConfig.ldap.groupPath}",
+          "sentry_role": "sg_ts_t_dev_cns_${template.generatedName}_role_rwg",
+          "attributes": [
+            [ "dn", "cn=sg_ts_t_dev_cns_${template.generatedName}_rwg,${appConfig.ldap.groupPath}" ],
+            [ "objectClass", "group" ],
+            [ "objectClass", "top" ],
+            [ "groupType", "-2147483640" ],
+            [ "sAMAccountName", "sg_ts_t_dev_cns_${template.generatedName}_rwg" ],
+            [ "cn", "sg_ts_t_dev_cns_${template.generatedName}_rwg" ]
+          ]
+        }
+      },
+      "readwrite_group": {
+        "group": {
+          "common_name": "sg_ts_t_dev_cns_${template.generatedName}_rw",
+          "distinguished_name": "cn=sg_ts_t_dev_cns_${template.generatedName}_rw,${appConfig.ldap.groupPath}",
+          "sentry_role": "sg_ts_t_dev_cns_${template.generatedName}_role_rw",
+          "attributes": [
+            [ "dn", "cn=sg_ts_t_dev_cns_${template.generatedName}_rw,${appConfig.ldap.groupPath}" ],
+            [ "objectClass", "group" ],
+            [ "objectClass", "top" ],
+            [ "groupType", "-2147483640" ],
+            [ "sAMAccountName", "sg_ts_t_dev_cns_${template.generatedName}_rw" ],
+            [ "cn", "sg_ts_t_dev_cns_${template.generatedName}_rw" ]
+          ]
+        }
+      },
+      "readonly_group": {
+        "group": {
+          "common_name": "sg_ts_t_dev_cns_${template.generatedName}_ro",
+          "distinguished_name": "cn=sg_ts_t_dev_cns_${template.generatedName}_ro,${appConfig.ldap.groupPath}",
+          "sentry_role": "sg_ts_t_dev_cns_${template.generatedName}_role_ro",
+          "attributes": [
+            [ "dn", "cn=sg_ts_t_dev_cns_${template.generatedName}_ro,${appConfig.ldap.groupPath}" ],
+            [ "objectClass", "group" ],
+            [ "objectClass", "top" ],
+            [ "groupType", "-2147483640" ],
+            [ "sAMAccountName", "sg_ts_t_dev_cns_${template.generatedName}_ro" ],
+            [ "cn", "sg_ts_t_dev_cns_${template.generatedName}_ro" ]
+          ]
+        }
+      }
+    }
+  ],
+  "processing": [
+    {
+      "pool_name": "root.t_${template.generatedName}",
+      "max_cores": ${appConfig.workspaces.dataset.defaultCores},
+      "max_memory_in_gb": ${appConfig.workspaces.dataset.defaultMemory}
+    }
+  ],
+  "applications": [],
+  "topics": [],
+  "single_user": false,
+  "requester": "${template.requester}"
+}

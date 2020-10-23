@@ -70,13 +70,6 @@
       }
     }
   ],
-  "processing": [
-    {
-      "pool_name": "root.sw_${template.generatedName}",
-      "max_cores": ${appConfig.workspaces.sharedWorkspace.defaultCores},
-      "max_memory_in_gb": ${appConfig.workspaces.sharedWorkspace.defaultMemory.toString}
-    }
-  ],
   "applications": [
     {
       "name": "default",

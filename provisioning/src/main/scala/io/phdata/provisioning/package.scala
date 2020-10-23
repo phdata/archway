@@ -9,7 +9,7 @@ import org.apache.sentry.core.model.kafka.ConsumerGroup
 
 package object provisioning
     extends LDAPRegistrationProvisioning with HiveProvisioning with ApplicationProvisioning with KafkaProvisioning
-    with YarnProvisioning with WorkspaceRequestProvisioning {
+    with WorkspaceRequestProvisioning {
 
   case class WorkspaceContext[F[_]](workspaceId: Long, context: AppContext[F])
 
@@ -53,8 +53,6 @@ package object provisioning
   case class KafkaTopicRegistration(id: Long, name: String, partitions: Int, replicationFactor: Int)
 
   case class LocationGrant(id: Long, roleName: String, location: String)
-
-  case class ResourcePoolRegistration(id: Long, name: String, cores: Int, memory: Int)
 
   case class SentryRole(id: Long, name: String)
 

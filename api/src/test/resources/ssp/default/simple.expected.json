@@ -66,13 +66,6 @@
       }
     }
   ],
-  "processing": [
-    {
-      "pool_name": "root.sw_sesame_test_1",
-      "max_cores": 4,
-      "max_memory_in_gb": 16
-    }
-  ],
   "applications": [
     {
       "name": "default",

@@ -21,5 +21,11 @@
     "description": "Custom template 3",
     "ordering": 3,
     "tags": {}
+  },
+  {
+    "name": "Structured (Test env)",
+    "description": "",
+    "ordering": 1,
+    "tags": {}
   }
 ]

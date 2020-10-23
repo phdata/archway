@@ -27,8 +27,6 @@ trait WorkspaceRequestRepository {
 
   def linkHive(workspaceId: Long, hiveDatabaseId: Long): ConnectionIO[Int]
 
-  def linkPool(workspaceId: Long, resourcePoolId: Long): ConnectionIO[Int]
-
   def linkTopic(workspaceId: Long, KafkaTopicId: Long): ConnectionIO[Int]
 
   def linkApplication(workspaceId: Long, applicationId: Long): ConnectionIO[Int]

@@ -34,7 +34,7 @@ class MemberServiceSpec
 
     val members = memberService.members(id).unsafeRunSync()
 
-    members shouldBe List(WorkspaceMemberEntry(standardUserDN.value, personName, None, List(MemberRights(systemName, id, Manager)), List.empty, List.empty, List.empty))
+    members shouldBe List(WorkspaceMemberEntry(standardUserDN.value, personName, None, List(MemberRights(systemName, id, Manager)), List.empty, List.empty))
   }
 
   it should "find members" in new Context {

@@ -114,11 +114,6 @@ class DefaultProvisioningServiceSpec
       }
 
       inSequence {
-        context.yarnClient.setupPool _ expects(poolName, maxCores, maxMemoryInGB) returning IO.unit
-        context.yarnRepository.complete _ expects(id, *) returning 0.pure[ConnectionIO]
-      }
-
-      inSequence {
         context.provisioningLDAPClient.createGroup _ expects(savedLDAP.commonName, *) returning IO.unit
         context.ldapRepository.groupCreated _ expects(id, *) returning 0.pure[ConnectionIO]
         context.sentryClient.createRole _ expects savedLDAP.sentryRole returning IO.unit
@@ -165,7 +160,6 @@ class DefaultProvisioningServiceSpec
         context.provisioningLDAPClient.deleteGroup _ expects savedLDAP.distinguishedName returning OptionT.some(standardUserDN.value)
       }
 
-      context.yarnClient.deletePool _ expects poolName returning IO.unit
       context.provisioningLDAPClient.removeUserFromGroup _ expects(savedLDAP.distinguishedName, standardUserDN) returning OptionT.some(standardUserDN.value)
 
       inSequence {

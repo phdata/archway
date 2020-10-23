@@ -72,13 +72,6 @@ class WorkspaceServiceImpl[F[_]: ConcurrentEffect: ContextShift](
         } yield beforeCreate.copy(id = Some(newHiveId))
       }
 
-      _ <- workspace.processing.traverse[ConnectionIO, Unit] { yarn =>
-        for {
-          newYarnId <- context.yarnRepository.create(yarn)
-          _ <- context.workspaceRequestRepository.linkPool(newWorkspaceId, newYarnId)
-        } yield ()
-      }
-
       _ <- workspace.applications.traverse[ConnectionIO, Unit] { app =>
         for {
           appLdap <- context.ldapRepository.create(app.group)
@@ -131,12 +124,6 @@ class WorkspaceServiceImpl[F[_]: ConcurrentEffect: ContextShift](
       }
     }
   }
-
-  override def yarnInfo(id: Long): F[List[YarnInfo]] =
-    context.yarnRepository.findByWorkspaceId(id).transact(context.transactor).flatMap { workspace =>
-      workspace
-        .traverse(yarn => context.yarnClient.applications(yarn.poolName).map(apps => YarnInfo(yarn.poolName, apps)))
-    }
 
   override def hiveDetails(id: Long): F[List[HiveDatabase]] =
     for {
@@ -200,11 +187,10 @@ class WorkspaceServiceImpl[F[_]: ConcurrentEffect: ContextShift](
   private def fill(workspace: WorkspaceRequest): ConnectionIO[WorkspaceRequest] =
     for {
       datas <- context.databaseRepository.findByWorkspace(workspace.id.get)
-      yarns <- context.yarnRepository.findByWorkspaceId(workspace.id.get)
       appr <- context.approvalRepository.findByWorkspaceId(workspace.id.get)
       tops <- context.kafkaRepository.findByWorkspaceId(workspace.id.get)
       apps <- context.applicationRepository.findByWorkspaceId(workspace.id.get)
-    } yield workspace.copy(data = datas, processing = yarns, approvals = appr, kafkaTopics = tops, applications = apps)
+    } yield workspace.copy(data = datas, approvals = appr, kafkaTopics = tops, applications = apps)
 
   private def fillHive(dbs: List[HiveAllocation]): F[List[HiveAllocation]] =
     dbs.map {

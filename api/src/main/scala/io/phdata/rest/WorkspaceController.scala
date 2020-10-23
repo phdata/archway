@@ -29,7 +29,6 @@ class WorkspaceController[F[_]: Sync: Timer: ContextShift: ConcurrentEffect](
     applicationService: ApplicationService[F],
     emailService: EmailService[F],
     provisioningService: ProvisioningService[F],
-    yarnService: YarnService[F],
     hdfsService: HDFSService[F],
     complianceGroupService: ComplianceGroupService[F],
     emailEC: ExecutionContext,
@@ -296,16 +295,6 @@ class WorkspaceController[F[_]: Sync: Timer: ContextShift: ConcurrentEffect](
             response <- Ok(result.asJson)
           } yield response
 
-        case GET -> Root / LongVar(id) / "yarn" as _ =>
-          implicit val yarnInfoDecoder: EntityDecoder[F, List[YarnInfo]] = jsonOf[F, List[YarnInfo]]
-          for {
-            result <- workspaceService.yarnInfo(id).onError {
-              case e: Throwable =>
-                logger.error(s"Failed to get yarn info for workspace $id: ${e.getLocalizedMessage}", e).pure[F]
-            }
-            response <- Ok(result.asJson)
-          } yield response
-
         case GET -> Root / LongVar(id) / "hive" as user =>
           implicit val hiveDecoder: EntityDecoder[F, HiveDatabase] = jsonOf[F, HiveDatabase]
           for {
@@ -385,26 +374,6 @@ class WorkspaceController[F[_]: Sync: Timer: ContextShift: ConcurrentEffect](
               _ <- complianceGroupService.deleteComplianceGroup(id).onError {
                 case e: Throwable =>
                   logger.error(s"Failed to remove compliance group: ${e.getLocalizedMessage}", e).pure[F]
-              }
-              response <- Ok()
-            } yield response
-          } else
-            Forbidden()
-
-        case req @ POST -> Root / LongVar(id) / "yarn" as user =>
-          if (user.isOpsUser) {
-            implicit val yarnDecoder: EntityDecoder[F, Yarn] = jsonOf[F, Yarn]
-            for {
-              request <- req.req.as[Yarn]
-              currentYarn <- yarnService.list(id)
-              _ <- yarnService.updateYarnResources(request, currentYarn.head.id.get, Instant.now()).onError {
-                case e: Throwable =>
-                  logger
-                    .error(
-                      s"Failed to update the number of cores and memories in ${request.poolName}: ${e.getLocalizedMessage()}",
-                      e
-                    )
-                    .pure[F]
               }
               response <- Ok()
             } yield response

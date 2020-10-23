@@ -60,7 +60,6 @@ trait WorkspaceRequestProvisioning {
                 )
                 .run
           )
-          c <- workspace.processing.traverse(x => YarnProvisionable.provision(x, workspaceContext).run)
           d <- workspace.applications.traverse(x => ApplicationProvisionable.provision(x, workspaceContext).run)
           e <- workspace.applications.traverse(
             d =>
@@ -94,7 +93,7 @@ trait WorkspaceRequestProvisioning {
             kafkaTopicsNotEnabledMessage
           )
           _ <- ImpalaServiceImpl.invalidateMetadata(workspace.id.get)(workspaceContext.context)
-        } yield a |+| b |+| c |+| d |+| e |+| f |+| g)
+        } yield a |+| b |+| d |+| e |+| f |+| g)
     }
 
   }
@@ -122,7 +121,6 @@ trait WorkspaceRequestProvisioning {
               .run
         )
         d <- workspace.applications.traverse(x => ApplicationProvisionable.deprovision(x, workspaceContext).run)
-        c <- workspace.processing.traverse(x => YarnProvisionable.deprovision(x, workspaceContext).run)
         b <- workspace.data.traverse(
           d =>
             GroupMemberProvisioning.provisionable
@@ -137,7 +135,7 @@ trait WorkspaceRequestProvisioning {
           .markUnprovisioned(workspaceContext.workspaceId)
           .transact(workspaceContext.context.transactor)
           .void
-      } yield a |+| b |+| c |+| d |+| e |+| f |+| g
+      } yield a |+| b |+| d |+| e |+| f |+| g
   }
 
   implicit val workspaceRequestProvisionable: Provisionable[WorkspaceRequest] =
