@@ -25,7 +25,6 @@ class MemberServiceImpl[F[_]](context: AppContext[F])(implicit val F: Effect[F])
             user.name,
             user.email,
             e._2.filter(_.resource == "data").map(toRight),
-            e._2.filter(_.resource == "topics").map(toRight),
             e._2.filter(_.resource == "applications").map(toRight)
           )
         }

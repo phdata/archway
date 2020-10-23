@@ -383,11 +383,8 @@ package object config extends StrictLogging {
     }
   }
 
-  case class KafkaConfig(zookeeperConnect: String, secureTopics: Boolean)
-
   case class TemplateConfig(
       templateRoot: String,
-      topicGenerator: String,
       applicationGenerator: String,
       ldapGroupGenerator: String
   )
@@ -402,7 +399,6 @@ package object config extends StrictLogging {
       ldap: LDAPConfig,
       db: DatabaseConfig,
       workspaces: WorkspaceConfig,
-      kafka: KafkaConfig,
       provisioning: ProvisioningConfig,
       featureFlags: String
   )
@@ -418,7 +414,6 @@ package object config extends StrictLogging {
     implicit val ldapBindingDecoder: Decoder[LDAPBinding] = deriveDecoder
     implicit val lDAPConfigDecoder: Decoder[LDAPConfig] = LDAPConfig.decoder
     implicit val databaseConfigItemDecoder: Decoder[DatabaseConfigItem] = deriveDecoder
-    implicit val kafkaConfigDecoder: Decoder[KafkaConfig] = deriveDecoder
     implicit val generatorConfigDecoder: Decoder[TemplateConfig] = deriveDecoder
     implicit val provisioningConfigDecoder: Decoder[ProvisioningConfig] = ProvisioningConfig.decoder
     implicit val appConfigDecoder: Decoder[AppConfig] = deriveDecoder
@@ -433,7 +428,6 @@ package object config extends StrictLogging {
     implicit val lDAPConfigEncoder: Encoder[LDAPConfig] = LDAPConfig.encoder
     implicit val databaseConfigItemEncoder: Encoder[DatabaseConfigItem] = deriveEncoder
     implicit val databaseConfigEncoder: Encoder[DatabaseConfig] = deriveEncoder
-    implicit val kafkaConfigEncoder: Encoder[KafkaConfig] = deriveEncoder
     implicit val generatorConfigEncoder: Encoder[TemplateConfig] = deriveEncoder
     implicit val provisioningConfigEncoder: Encoder[ProvisioningConfig] = ProvisioningConfig.encoder
     implicit val appConfigEncoder: Encoder[AppConfig] = deriveEncoder

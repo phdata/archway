@@ -25,7 +25,6 @@ class WorkspaceController[F[_]: Sync: Timer: ContextShift: ConcurrentEffect](
     authService: TokenAuthService[F],
     workspaceService: WorkspaceService[F],
     memberService: MemberService[F],
-    kafkaService: KafkaService[F],
     applicationService: ApplicationService[F],
     emailService: EmailService[F],
     provisioningService: ProvisioningService[F],
@@ -270,18 +269,6 @@ class WorkspaceController[F[_]: Sync: Timer: ContextShift: ConcurrentEffect](
                 logger.error(s"Failed to remove member from workspace $id: ${e.getLocalizedMessage}", e).pure[F]
             }
             response <- Ok()
-          } yield response
-
-        case req @ POST -> Root / LongVar(id) / "topics" as user =>
-          implicit val kafkaTopicDecoderBase: Decoder[TopicRequest] = TopicRequest.decoder(user.username)
-          implicit val kafkaTopicDecoder: EntityDecoder[F, TopicRequest] = jsonOf[F, TopicRequest]
-          for {
-            topic <- req.req.as[TopicRequest]
-            result <- kafkaService.create(user.distinguishedName, id, topic).onError {
-              case e: Throwable =>
-                logger.error(s"Failed to create topic for workspace $id: ${e.getLocalizedMessage}", e).pure[F]
-            }
-            response <- Ok(result.asJson)
           } yield response
 
         case req @ POST -> Root / LongVar(id) / "applications" as user =>

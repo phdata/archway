@@ -68,7 +68,6 @@ class WorkspaceServiceImplSpec
       (context.workspaceRequestRepository.find _).expects(123).returning(OptionT.some(savedWorkspaceRequest))
       (context.databaseRepository.findByWorkspace _).expects(id)returning List(savedHive).pure[ConnectionIO]
       (context.approvalRepository.findByWorkspaceId _).expects(id)returning List(approval()).pure[ConnectionIO]
-      (context.kafkaRepository.findByWorkspaceId _).expects(id)returning List(savedTopic).pure[ConnectionIO]
       (context.applicationRepository.findByWorkspaceId _).expects(id).returning(List(savedApplication).pure[ConnectionIO])
     }
 
@@ -81,7 +80,6 @@ class WorkspaceServiceImplSpec
     context.workspaceRequestRepository.find _ expects id returning OptionT.some(savedWorkspaceRequest)
     context.databaseRepository.findByWorkspace _ expects id returning List(savedHive).pure[ConnectionIO]
     context.approvalRepository.findByWorkspaceId _ expects id returning List(approval()).pure[ConnectionIO]
-    context.kafkaRepository.findByWorkspaceId _ expects id returning List(savedTopic).pure[ConnectionIO]
     context.applicationRepository.findByWorkspaceId _ expects id returning List(savedApplication).pure[ConnectionIO]
 
     val foundWorkspace = workspaceServiceImpl.findById(id).value.unsafeRunSync()
@@ -95,7 +93,6 @@ class WorkspaceServiceImplSpec
     context.workspaceRequestRepository.findByDistinguishedName _ expects standardUserDN returning OptionT.some(savedWorkspaceRequest)
     context.databaseRepository.findByWorkspace _ expects id returning List(savedHive).pure[ConnectionIO]
     context.approvalRepository.findByWorkspaceId _ expects id returning List.empty[Approval].pure[ConnectionIO]
-    context.kafkaRepository.findByWorkspaceId _ expects id returning List.empty[KafkaTopic].pure[ConnectionIO]
     context.applicationRepository.findByWorkspaceId _ expects id returning List.empty[Application].pure[ConnectionIO]
 
     val maybeWorkspace = workspaceServiceImpl.findByDistinguishedName(standardUserDN).value.unsafeRunSync()
@@ -107,7 +104,6 @@ class WorkspaceServiceImplSpec
     context.workspaceRequestRepository.findByName _ expects savedWorkspaceRequest.name returning OptionT.some(savedWorkspaceRequest)
     context.databaseRepository.findByWorkspace _ expects id returning List(savedHive).pure[ConnectionIO]
     context.approvalRepository.findByWorkspaceId _ expects id returning List.empty[Approval].pure[ConnectionIO]
-    context.kafkaRepository.findByWorkspaceId _ expects id returning List.empty[KafkaTopic].pure[ConnectionIO]
     context.applicationRepository.findByWorkspaceId _ expects id returning List.empty[Application].pure[ConnectionIO]
 
     val maybeWorkspace = workspaceServiceImpl.findByName(savedWorkspaceRequest.name).value.unsafeRunSync()
@@ -121,7 +117,6 @@ class WorkspaceServiceImplSpec
     context.workspaceRequestRepository.find _ expects id returning OptionT.some(savedWorkspaceRequest)
     context.databaseRepository.findByWorkspace _ expects id returning List(withCreated).pure[ConnectionIO]
     context.approvalRepository.findByWorkspaceId _ expects id returning List(approval()).pure[ConnectionIO]
-    context.kafkaRepository.findByWorkspaceId _ expects id returning List(savedTopic).pure[ConnectionIO]
     context.applicationRepository.findByWorkspaceId _ expects id returning List(savedApplication).pure[ConnectionIO]
     context.hdfsClient.getConsumption _ expects withCreated.location returning IO.pure(1.0)
 
@@ -138,7 +133,6 @@ class WorkspaceServiceImplSpec
     context.workspaceRequestRepository.find _ expects id returning OptionT.some(savedWorkspaceRequest)
     context.databaseRepository.findByWorkspace _ expects id returning List(withCreated).pure[ConnectionIO]
     context.approvalRepository.findByWorkspaceId _ expects id returning List(approval()).pure[ConnectionIO]
-    context.kafkaRepository.findByWorkspaceId _ expects id returning List(savedTopic).pure[ConnectionIO]
     context.applicationRepository.findByWorkspaceId _ expects id returning List(savedApplication).pure[ConnectionIO]
 
     val foundWorkspace = workspaceServiceImpl.findById(id).value.unsafeRunSync()
@@ -155,7 +149,6 @@ class WorkspaceServiceImplSpec
     context.workspaceRequestRepository.find _ expects id returning OptionT.some(savedWorkspaceRequest)
     context.databaseRepository.findByWorkspace _ expects id returning List(savedHive).pure[ConnectionIO]
     context.approvalRepository.findByWorkspaceId _ expects id returning List(approval()).pure[ConnectionIO]
-    context.kafkaRepository.findByWorkspaceId _ expects id returning List(savedTopic).pure[ConnectionIO]
     context.applicationRepository.findByWorkspaceId _ expects id returning List(savedApplication).pure[ConnectionIO]
 
     (provisioningService.attemptProvision(_: WorkspaceRequest, _: Int)) expects(*, 2) returning NonEmptyList.one(SimpleMessage(1l, "").asInstanceOf[Message]).pure[IO].start(contextShift)

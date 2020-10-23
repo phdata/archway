@@ -29,7 +29,6 @@ case class AppContext[F[_]](
     provisioningLDAPClient: ProvisioningLDAPClient[F],
     lookupLDAPClient: LookupLDAPClient[F],
     hdfsClient: HDFSClient[F],
-    kafkaClient: KafkaClient[F],
     emailClient: EmailClient[F],
     kerberosClient: KerberosClient[F],
     clusterService: ClusterService[F],
@@ -42,8 +41,6 @@ case class AppContext[F[_]](
     memberRepository: MemberRepository,
     complianceRepository: ComplianceRepository,
     workspaceRequestRepository: WorkspaceRequestRepository,
-    kafkaRepository: KafkaTopicRepository,
-    topicGrantRepository: TopicGrantRepository,
     applicationRepository: ApplicationRepository,
     approvalRepository: ApprovalRepository,
     configRepository: ConfigRepository,
@@ -123,7 +120,6 @@ object AppContext {
       )
       provisioningLDAPClient = new LDAPClientImpl[F](config.ldap, _.provisioningBinding)
       hdfsClient = new HDFSClientImpl[F](hadoopConfiguration, loginContextProvider)
-      kafkaClient = new KafkaClientImpl[F](config)
       emailClient = new EmailClientImpl[F](config, emailEC)
       kerberosClient = new KerberosClientImpl[F](config)
 
@@ -136,8 +132,6 @@ object AppContext {
       approvalRepository = new ApprovalRepositoryImpl
       memberRepository = new MemberRepositoryImpl(sqlSyntax)
       hiveGrantRepository = new HiveGrantRepositoryImpl
-      topicRepository = new KafkaTopicRepositoryImpl
-      topicGrantRepository = new TopicGrantRepositoryImpl
       applicationRepository = new ApplicationRepositoryImpl
       configRepository = new ConfigRepositoryImpl
       complianceGroupRepository = new ComplianceGroupRepositoryImpl
@@ -155,7 +149,6 @@ object AppContext {
       provisioningLDAPClient,
       lookupLDAPClient,
       hdfsClient,
-      kafkaClient,
       emailClient,
       kerberosClient,
       clusterService,
@@ -168,8 +161,6 @@ object AppContext {
       memberRepository,
       complianceRepository,
       workspaceRepository,
-      topicRepository,
-      topicGrantRepository,
       applicationRepository,
       approvalRepository,
       configRepository,

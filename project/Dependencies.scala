@@ -87,7 +87,6 @@ object Dependencies {
     ),
     "org.apache.hadoop" % "hadoop-client" % hadoopVersion % "provided",
     "org.apache.hive" % "hive-jdbc" % hiveVersion % "provided",
-    "org.apache.kafka" %% "kafka" % "0.10.1.1" excludeAll ExclusionRule(organization = "org.slf4j"),
     "org.apache.hadoop" % "hadoop-common" % hadoopVersion % "test" classifier "" classifier "tests",
     "org.apache.hadoop" % "hadoop-client" % hadoopVersion % "test" classifier "" classifier "tests",
     "org.apache.hadoop" % "hadoop-minicluster" % hadoopVersion % "test"

@@ -79,7 +79,6 @@
       }
     }
   ],
-  "topics": [],
   "single_user": false,
   "requester": "cn=john.doe,ou=hadoop,dc=example,dc=com",
   "requested_date": "2019-07-11T10:18:31.905Z",

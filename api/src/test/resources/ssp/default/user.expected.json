@@ -37,47 +37,6 @@
     }
   ],
   "applications": [],
-  "topics": [
-    {
-      "name": "john_doe.default",
-      "partitions": 1,
-      "replication_factor": 3,
-      "managing_role": {
-        "name": "john_doe.default",
-        "group": {
-          "common_name": "john_doe_default",
-          "distinguished_name": "cn=john_doe_default,ou=heimdali,dc=jotunn,dc=io",
-          "sentry_role": "role_john_doe_default",
-          "attributes": [
-            ["dn", "cn=john_doe_default,ou=heimdali,dc=jotunn,dc=io"],
-            ["objectClass", "group"],
-            ["objectClass", "top"],
-            ["sAMAccountName", "john_doe_default"],
-            ["cn", "john_doe_default"],
-            ["gidNumber", "123"]
-          ]
-        },
-        "actions": "read,describe"
-      },
-      "readonly_role": {
-        "name": "john_doe.default",
-        "group": {
-          "common_name": "john_doe_default_ro",
-          "distinguished_name": "cn=john_doe_default_ro,ou=heimdali,dc=jotunn,dc=io",
-          "sentry_role": "role_john_doe_default_ro",
-          "attributes": [
-            ["dn", "cn=john_doe_default_ro,ou=heimdali,dc=jotunn,dc=io"],
-            ["objectClass", "group"],
-            ["objectClass", "top"],
-            ["sAMAccountName", "john_doe_default_ro"],
-            ["cn", "john_doe_default_ro"],
-            ["gidNumber", "123"]
-          ]
-        },
-        "actions": "read"
-      }
-    }
-  ],
   "single_user": true,
   "requester": "cn=john.doe,ou=hadoop,dc=example,dc=com",
   "status": "Pending"

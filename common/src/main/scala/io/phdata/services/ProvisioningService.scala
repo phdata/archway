@@ -2,7 +2,7 @@ package io.phdata.services
 
 import cats.data.NonEmptyList
 import cats.effect.Fiber
-import io.phdata.models.{Application, KafkaTopic, WorkspaceRequest}
+import io.phdata.models.{Application, WorkspaceRequest}
 import io.phdata.provisioning.Message
 
 trait ProvisioningService[F[_]] {
@@ -16,7 +16,4 @@ trait ProvisioningService[F[_]] {
   def provisionAll(): F[Unit]
 
   def provisionApplication(workspaceId: Long, application: Application): F[Unit]
-
-  def provisionTopic(workspaceId: Long, topic: KafkaTopic): F[Unit]
-
 }

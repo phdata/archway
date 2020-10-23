@@ -8,7 +8,7 @@ import io.phdata.models.{DatabaseRole, DistinguishedName}
 import org.apache.sentry.core.model.kafka.ConsumerGroup
 
 package object provisioning
-    extends LDAPRegistrationProvisioning with HiveProvisioning with ApplicationProvisioning with KafkaProvisioning
+    extends LDAPRegistrationProvisioning with HiveProvisioning with ApplicationProvisioning
     with WorkspaceRequestProvisioning {
 
   case class WorkspaceContext[F[_]](workspaceId: Long, context: AppContext[F])
@@ -47,10 +47,6 @@ package object provisioning
   case class GroupGrant(ldapId: Long, roleName: String, groupName: String)
 
   case class HiveDatabaseRegistration(workspaceId: Long, name: String, location: String)
-
-  case class KafkaTopicGrant(id: Long, name: String, sentryRole: String, actions: NonEmptyList[String])
-
-  case class KafkaTopicRegistration(id: Long, name: String, partitions: Int, replicationFactor: Int)
 
   case class LocationGrant(id: Long, roleName: String, location: String)
 

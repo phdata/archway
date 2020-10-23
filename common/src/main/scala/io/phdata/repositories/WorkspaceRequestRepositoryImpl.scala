@@ -46,9 +46,6 @@ class WorkspaceRequestRepositoryImpl(sqlSyntax: SqlSyntax) extends WorkspaceRequ
   override def linkHive(workspaceId: Long, hiveDatabaseId: Long): doobie.ConnectionIO[Int] =
     statements.linkHive(workspaceId, hiveDatabaseId).run
 
-  override def linkTopic(workspaceId: Long, KafkaTopicId: Long): ConnectionIO[Int] =
-    statements.linkTopic(workspaceId, KafkaTopicId).run
-
   override def linkApplication(workspaceId: Long, applicationId: Long): doobie.ConnectionIO[Int] =
     statements.linkApplication(workspaceId, applicationId).run
 
@@ -75,12 +72,6 @@ class WorkspaceRequestRepositoryImpl(sqlSyntax: SqlSyntax) extends WorkspaceRequ
       sql"""
         insert into workspace_database (workspace_request_id, hive_database_id)
         values ($workspaceId, $hiveDatabaseId)
-        """.update
-
-    def linkTopic(workspaceId: Long, kafkaTopicId: Long): Update0 =
-      sql"""
-         insert into workspace_topic (workspace_request_id, kafka_topic_id)
-         values ($workspaceId, $kafkaTopicId)
         """.update
 
     def linkApplication(workspaceId: Long, applicationId: Long): Update0 =

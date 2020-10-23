@@ -9,7 +9,6 @@ import io.phdata.models._
 import io.phdata.repositories.CustomLogHandler
 import io.phdata.services.LoginContextProvider
 import org.apache.sentry.provider.db.generic.service.thrift.{SentryGenericServiceClient, TSentryPrivilege}
-import org.apache.sentry.provider.db.generic.tools.KafkaTSentryPrivilegeConverter
 
 sealed trait Component {
 
@@ -23,13 +22,6 @@ case object Hive extends Component {
   val name: String = "hive"
 
   def privilege(grantString: String): TSentryPrivilege = ???
-}
-
-case object Kafka extends Component {
-  val name: String = "kafka"
-
-  def privilege(grantString: String): TSentryPrivilege =
-    new KafkaTSentryPrivilegeConverter("kafka", "kafka").fromString(grantString)
 }
 
 trait SentryClient[F[_]] {

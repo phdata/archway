@@ -8,7 +8,6 @@ case class WorkspaceMemberEntry(
     name: String,
     email: Option[String],
     data: List[MemberRights],
-    topics: List[MemberRights],
     applications: List[MemberRights]
 )
 
@@ -21,7 +20,6 @@ object WorkspaceMemberEntry {
         "name" -> m.name.asJson,
         "email" -> m.email.asJson,
         "data" -> Json.obj(m.data.map(d => d.name -> d.asJson): _*),
-        "topics" -> Json.obj(m.topics.map(d => d.name -> d.asJson): _*),
         "applications" -> Json.obj(m.applications.map(d => d.name -> d.asJson): _*)
       )
     }

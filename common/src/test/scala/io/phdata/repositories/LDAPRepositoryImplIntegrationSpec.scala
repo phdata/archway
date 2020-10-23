@@ -16,10 +16,8 @@ class LDAPRepositoryImplIntegrationSpec
   test("roleCreated") { check(LDAPRepositoryImpl.Statements.roleCreated(123, Instant.now)) }
   test("groupCreated") { check(LDAPRepositoryImpl.Statements.groupCreated(123, Instant.now)) }
   test("findAllApplications") { check(LDAPRepositoryImpl.Statements.findAllApplications(123)) }
-  test("findAllTopics") { check(LDAPRepositoryImpl.Statements.findAllTopics(123)) }
   test("findAllData") { check(LDAPRepositoryImpl.Statements.findAllData(123)) }
   test("findApplications") { check(LDAPRepositoryImpl.Statements.findApplications(123, "manager")) }
-  test("findTopics") { check(LDAPRepositoryImpl.Statements.findTopics(123, "manager")) }
   test("findData") { check(LDAPRepositoryImpl.Statements.findData(123, "manager")) }
   test("insert") { check(LDAPRepositoryImpl.Statements.insert(savedLDAP)) }
 

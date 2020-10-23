@@ -6,7 +6,7 @@ import com.typesafe.scalalogging.LazyLogging
 import doobie.util.ExecutionContexts
 import io.circe.Printer
 import io.circe.syntax._
-import io.phdata.generators.{ApplicationGenerator, LDAPGroupGenerator, TopicGenerator}
+import io.phdata.generators.{ApplicationGenerator, LDAPGroupGenerator}
 import io.phdata.provisioning.DefaultProvisioningService
 import io.phdata.rest.authentication.{LdapAuthService, SpnegoAuthService, TokenAuthServiceImpl}
 import io.phdata.rest._
@@ -40,8 +40,6 @@ object Server extends IOApp with LazyLogging {
         .instance(context.appConfig, configService, context.appConfig.templates.ldapGroupGenerator)
       applicationGenerator = ApplicationGenerator
         .instance(context.appConfig, ldapGroupGenerator, context.appConfig.templates.applicationGenerator)
-      topicGenerator = TopicGenerator
-        .instance(context.appConfig, ldapGroupGenerator, context.appConfig.templates.topicGenerator)
       templateService = new JSONTemplateService[F](context, configService)
       _ <- Resource.liftF(templateService.verifyDefaultTemplates)
       _ <- Resource.liftF(templateService.verifyCustomTemplates)
@@ -50,7 +48,6 @@ object Server extends IOApp with LazyLogging {
       memberService = new MemberServiceImpl[F](context)
       workspaceService = new WorkspaceServiceImpl[F](provisionService, memberService, context)
       accountService = new AccountServiceImpl[F](context, workspaceService, templateService, provisionService)
-      kafkaService = new KafkaServiceImpl[F](context, provisionService, topicGenerator)
       applicationService = new ApplicationServiceImpl[F](context, provisionService, applicationGenerator)
       emailService = new EmailServiceImpl[F](context, workspaceService)
       complianceService = new ComplianceGroupServiceImpl[F](context)
@@ -78,7 +75,6 @@ object Server extends IOApp with LazyLogging {
         tokenAuthService,
         workspaceService,
         memberService,
-        kafkaService,
         applicationService,
         emailService,
         provisionService,

@@ -26,18 +26,6 @@ trait WorkspaceRequestProvisioning {
         .void
 
     override def run[F[_]: Sync: Clock](workspace: WorkspaceRequest, workspaceContext: WorkspaceContext[F]): F[Unit] = {
-      val kafkaTopicsNotEnabledMessage = List(
-        (
-          NonEmptyList.one(
-            SimpleMessage(
-              workspace.id.get,
-              s"Kafka topic creation not enabled. To enable topics set the '${AvailableFeatures.messaging}' feature flag"
-            ).asInstanceOf[Message]
-          ),
-          NoOp.asInstanceOf[ProvisionResult]
-        )
-      ).pure[F]
-
       val createUserWorkspace =
         (for {
           user <- workspaceContext.context.lookupLDAPClient.findUserByDN(workspace.requestedBy)
@@ -70,30 +58,9 @@ trait WorkspaceRequestProvisioning {
                 )
                 .run
           )
-          f <- workspaceContext.context.featureService.runIfEnabled(
-            AvailableFeatures.messaging,
-            workspace.kafkaTopics.traverse(x => KafkaTopicProvisionable.provision(x, workspaceContext).run),
-            kafkaTopicsNotEnabledMessage
-          )
-          g <- workspaceContext.context.featureService.runIfEnabled(
-            AvailableFeatures.messaging,
-            workspace.kafkaTopics.traverse(
-              d =>
-                GroupMemberProvisioning.provisionable
-                  .provision(
-                    GroupMember(
-                      d.id.get,
-                      d.managingRole.ldapRegistration.distinguishedName,
-                      workspace.requestedBy
-                    ),
-                    workspaceContext
-                  )
-                  .run
-            ),
-            kafkaTopicsNotEnabledMessage
-          )
+
           _ <- ImpalaServiceImpl.invalidateMetadata(workspace.id.get)(workspaceContext.context)
-        } yield a |+| b |+| d |+| e |+| f |+| g)
+        } yield a |+| b |+| d |+| e)
     }
 
   }
@@ -101,16 +68,6 @@ trait WorkspaceRequestProvisioning {
   implicit object WorkspaceRequestDeprovisioningTask extends DeprovisioningTask[WorkspaceRequest] {
     override def run[F[_]: Sync: Clock](workspace: WorkspaceRequest, workspaceContext: WorkspaceContext[F]): F[Unit] =
       for {
-        g <- workspace.kafkaTopics.traverse(
-          d =>
-            GroupMemberProvisioning.provisionable
-              .deprovision(
-                GroupMember(d.id.get, d.managingRole.ldapRegistration.distinguishedName, workspace.requestedBy),
-                workspaceContext
-              )
-              .run
-        )
-        f <- workspace.kafkaTopics.traverse(x => KafkaTopicProvisionable.deprovision(x, workspaceContext).run)
         e <- workspace.applications.traverse(
           d =>
             GroupMemberProvisioning.provisionable
@@ -135,7 +92,7 @@ trait WorkspaceRequestProvisioning {
           .markUnprovisioned(workspaceContext.workspaceId)
           .transact(workspaceContext.context.transactor)
           .void
-      } yield a |+| b |+| d |+| e |+| f |+| g
+      } yield a |+| b |+| d |+| e
   }
 
   implicit val workspaceRequestProvisionable: Provisionable[WorkspaceRequest] =

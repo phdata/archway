@@ -53,8 +53,6 @@ package object fixtures {
   val initialGrant = savedGrant.copy(id = None, ldapRegistration = initialLDAP)
   val savedHive = HiveAllocation("sw_sesame", "/shared_workspaces/sw_sesame", hdfsRequestedSize, None, savedGrant, readonlyGroup = Some(savedGrant.copy(databaseRole = ReadOnly)), id = Some(id))
   val initialHive = savedHive.copy(id = None, managingGroup = initialGrant, readonlyGroup = Some(initialGrant))
-  val savedTopic = KafkaTopic(s"$systemName.incoming", 1, 1, TopicGrant(s"$systemName.incoming", savedLDAP, "all", Some(id)), TopicGrant(s"$systemName.incoming", savedLDAP, "read", Some(id)), Some(id))
-  val initialTopic = savedTopic.copy(id = None, managingRole = savedTopic.managingRole.copy(id = None, ldapRegistration = initialLDAP), readonlyRole = savedTopic.readonlyRole.copy(id = None, ldapRegistration = initialLDAP))
   val savedApplication = Application("Tiller", s"${systemName}_cg", savedLDAP, None, None, None, None, Some(id))
   val initialApplication = savedApplication.copy(id = None, group = initialLDAP)
   val testTimer = new TestTimer
@@ -183,7 +181,6 @@ package object fixtures {
        |      }
        |    }
        |  ],
-       |  "topics": [],
        |  "single_user": false,
        |  "requester": "$standardUserDN",
        |  "requested_date": "${testTimer.instant}",

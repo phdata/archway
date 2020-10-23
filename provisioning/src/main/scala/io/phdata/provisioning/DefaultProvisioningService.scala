@@ -4,7 +4,7 @@ import cats.data._
 import cats.effect._
 import cats.implicits._
 import io.phdata.AppContext
-import io.phdata.models.{Application, KafkaTopic, WorkspaceRequest}
+import io.phdata.models.{Application, WorkspaceRequest}
 import doobie.implicits._
 import io.phdata.services.ProvisioningService
 
@@ -65,7 +65,4 @@ class DefaultProvisioningService[F[_]: ContextShift: ConcurrentEffect: Timer](
 
   override def provisionApplication(workspaceId: Long, application: Application): F[Unit] =
     ApplicationProvisionable.provision(application, WorkspaceContext(workspaceId, appContext)).run.void
-
-  override def provisionTopic(workspaceId: Long, topic: KafkaTopic): F[Unit] =
-    KafkaTopicProvisionable.provision(topic, WorkspaceContext(workspaceId, appContext)).run.void
 }

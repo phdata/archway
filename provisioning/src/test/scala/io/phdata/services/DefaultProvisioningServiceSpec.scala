@@ -120,8 +120,6 @@ class DefaultProvisioningServiceSpec
         context.ldapRepository.roleCreated _ expects(id, *) returning 0.pure[ConnectionIO]
         context.sentryClient.grantGroup _ expects(savedLDAP.commonName, savedLDAP.sentryRole) returning IO.unit
         context.ldapRepository.groupAssociated _ expects(id, *) returning 0.pure[ConnectionIO]
-        context.sentryClient.grantPrivilege _ expects(*, *, *) returning IO.unit
-        context.applicationRepository.consumerGroupAccess _ expects(id, *) returning 0.pure[ConnectionIO]
       }
 
       inSequence {
@@ -154,7 +152,6 @@ class DefaultProvisioningServiceSpec
       context.provisioningLDAPClient.removeUserFromGroup _ expects(savedLDAP.distinguishedName, standardUserDN) returning OptionT.some(standardUserDN.value)
 
       inSequence {
-        context.sentryClient.removePrivilege _ expects(*, *, *) returning IO.unit
         context.sentryClient.revokeGroup _ expects(savedLDAP.commonName, savedLDAP.sentryRole) returning IO.unit
         context.sentryClient.dropRole _ expects savedLDAP.sentryRole returning IO.unit
         context.provisioningLDAPClient.deleteGroup _ expects savedLDAP.distinguishedName returning OptionT.some(standardUserDN.value)

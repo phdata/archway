@@ -185,7 +185,6 @@
       }
     }
   ],
-  "topics": [],
   "single_user": false,
   "requester": "cn=john.doe,ou=hadoop,dc=example,dc=com",
   "status": "Pending"
