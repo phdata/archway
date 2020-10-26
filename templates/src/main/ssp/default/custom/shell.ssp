@@ -420,15 +420,6 @@
       }
     }
   ],
-  "processing": [
-    {
-      "pool_name": "root.t_${template.generatedName}",
-      "max_cores": ${appConfig.workspaces.dataset.defaultCores},
-      "max_memory_in_gb": ${appConfig.workspaces.dataset.defaultMemory}
-    }
-  ],
-  "applications": [],
-  "topics": [],
   "single_user": false,
   "requester": "${template.requester}"
 }

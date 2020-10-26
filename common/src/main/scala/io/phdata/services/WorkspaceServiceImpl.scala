@@ -72,14 +72,6 @@ class WorkspaceServiceImpl[F[_]: ConcurrentEffect: ContextShift](
         } yield beforeCreate.copy(id = Some(newHiveId))
       }
 
-      _ <- workspace.applications.traverse[ConnectionIO, Unit] { app =>
-        for {
-          appLdap <- context.ldapRepository.create(app.group)
-          newApplicationId <- context.applicationRepository.create(app.copy(group = appLdap))
-          _ <- context.workspaceRequestRepository.linkApplication(newWorkspaceId, newApplicationId)
-          _ <- context.memberRepository.create(workspace.requestedBy, appLdap.id.get)
-        } yield ()
-      }
     } yield newWorkspaceId
 
     createResult.transact(context.transactor).flatMap(workspaceId => findById(workspaceId).value.map(_.get))
@@ -170,8 +162,7 @@ class WorkspaceServiceImpl[F[_]: ConcurrentEffect: ContextShift](
     for {
       datas <- context.databaseRepository.findByWorkspace(workspace.id.get)
       appr <- context.approvalRepository.findByWorkspaceId(workspace.id.get)
-      apps <- context.applicationRepository.findByWorkspaceId(workspace.id.get)
-    } yield workspace.copy(data = datas, approvals = appr, applications = apps)
+    } yield workspace.copy(data = datas, approvals = appr)
 
   private def fillHive(dbs: List[HiveAllocation]): F[List[HiveAllocation]] =
     dbs.map {

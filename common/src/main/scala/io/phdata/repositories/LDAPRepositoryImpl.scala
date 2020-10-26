@@ -42,15 +42,13 @@ class LDAPRepositoryImpl extends LDAPRepository with LazyLogging {
   def find(resource: String, resourceId: Long, role: String): OptionT[ConnectionIO, LDAPRegistration] =
     OptionT {
       (resource match {
-        case "data"         => LDAPRepositoryImpl.Statements.findData(resourceId, role)
-        case "applications" => LDAPRepositoryImpl.Statements.findApplications(resourceId, role)
+        case "data" => LDAPRepositoryImpl.Statements.findData(resourceId, role)
       }).to[List].map(reduce(_).headOption)
     }
 
   def findAll(resource: String, resourceId: Long): ConnectionIO[List[LDAPRegistration]] =
     (resource match {
-      case "data"         => LDAPRepositoryImpl.Statements.findAllData(resourceId)
-      case "applications" => LDAPRepositoryImpl.Statements.findAllApplications(resourceId)
+      case "data" => LDAPRepositoryImpl.Statements.findAllData(resourceId)
     }).to[List].map(reduce)
 
   override def groupCreated(id: Long, time: Instant): ConnectionIO[Int] =
@@ -97,19 +95,9 @@ object LDAPRepositoryImpl {
     def groupCreated(id: Long, time: Instant): doobie.Update0 =
       sql"update ldap_registration set group_created = $time where id = $id".update
 
-    def findAllApplications(resourceId: Long): doobie.Query0[LDAPRow] =
-      (select ++ fr"inner join application a on a.ldap_registration_id = l.id inner join workspace_application wa on wa.application_id = a.id" ++ whereAnd(
-            fr"a.id = $resourceId"
-          )).query[LDAPRow]
-
     def findAllData(resourceId: Long): doobie.Query0[LDAPRow] =
       (select ++ fr"inner join hive_grant hg on hg.ldap_registration_id = l.id inner join hive_database h on hg.id IN (h.readonly_group_id, h.readwrite_group_id, h.manager_group_id)" ++ whereAnd(
             fr"h.id = $resourceId"
-          )).query[LDAPRow]
-
-    def findApplications(resourceId: Long, role: String): doobie.Query0[LDAPRow] =
-      (select ++ fr"inner join application a on a.ldap_registration_id = l.id inner join workspace_application wa on wa.application_id = a.id" ++ whereAnd(
-            fr"a.id = $resourceId"
           )).query[LDAPRow]
 
     def findData(resourceId: Long, role: String): doobie.Query0[LDAPRow] =

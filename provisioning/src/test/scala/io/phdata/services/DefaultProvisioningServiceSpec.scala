@@ -114,20 +114,6 @@ class DefaultProvisioningServiceSpec
       }
 
       inSequence {
-        context.provisioningLDAPClient.createGroup _ expects(savedLDAP.commonName, *) returning IO.unit
-        context.ldapRepository.groupCreated _ expects(id, *) returning 0.pure[ConnectionIO]
-        context.sentryClient.createRole _ expects savedLDAP.sentryRole returning IO.unit
-        context.ldapRepository.roleCreated _ expects(id, *) returning 0.pure[ConnectionIO]
-        context.sentryClient.grantGroup _ expects(savedLDAP.commonName, savedLDAP.sentryRole) returning IO.unit
-        context.ldapRepository.groupAssociated _ expects(id, *) returning 0.pure[ConnectionIO]
-      }
-
-      inSequence {
-        context.provisioningLDAPClient.addUserToGroup _ expects(savedLDAP.distinguishedName, standardUserDN) returning OptionT.some(standardUserDN.value)
-        context.memberRepository.complete _ expects(id, standardUserDN) returning 0.pure[ConnectionIO]
-      }
-
-      inSequence {
         context.databaseRepository.findByWorkspace _ expects id returning List(savedHive).pure[ConnectionIO]
         context.hiveClient.createTable _ expects (savedHive.name, ImpalaServiceImpl.TEMP_TABLE_NAME) returning 0.pure[IO]
         context.impalaClient.get.invalidateMetadata _ expects (savedHive.name, ImpalaServiceImpl.TEMP_TABLE_NAME) returning ().pure[IO]
@@ -149,14 +135,6 @@ class DefaultProvisioningServiceSpec
 
   it should "deprovision a workspace" in new Context {
     inSequence {
-      context.provisioningLDAPClient.removeUserFromGroup _ expects(savedLDAP.distinguishedName, standardUserDN) returning OptionT.some(standardUserDN.value)
-
-      inSequence {
-        context.sentryClient.revokeGroup _ expects(savedLDAP.commonName, savedLDAP.sentryRole) returning IO.unit
-        context.sentryClient.dropRole _ expects savedLDAP.sentryRole returning IO.unit
-        context.provisioningLDAPClient.deleteGroup _ expects savedLDAP.distinguishedName returning OptionT.some(standardUserDN.value)
-      }
-
       context.provisioningLDAPClient.removeUserFromGroup _ expects(savedLDAP.distinguishedName, standardUserDN) returning OptionT.some(standardUserDN.value)
 
       inSequence {

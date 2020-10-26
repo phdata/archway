@@ -51,7 +51,6 @@ case class WorkspaceRequest(
     id: Option[Long] = None,
     approvals: List[Approval] = List.empty,
     data: List[HiveAllocation] = List.empty,
-    applications: List[Application] = List.empty,
     metadata: Metadata
 ) {
 
@@ -76,7 +75,6 @@ object WorkspaceRequest {
         "name" -> request.name.asJson,
         "compliance" -> request.compliance.asJson,
         "data" -> request.data.asJson,
-        "applications" -> request.applications.asJson,
         "single_user" -> request.singleUser.asJson,
         "requester" -> request.requestedBy.asJson,
         "requested_date" -> request.requestDate.asJson,
@@ -96,7 +94,6 @@ object WorkspaceRequest {
         compliance <- json.downField("compliance").as[Compliance]
         singleUser <- json.downField("single_user").as[Boolean]
         data <- json.downField("data").as[List[HiveAllocation]]
-        applications <- json.downField("applications").as[List[Application]]
         metadata <- json.downField("metadata").as[Metadata]
       } yield WorkspaceRequest(
         name,
@@ -108,7 +105,6 @@ object WorkspaceRequest {
         compliance,
         singleUser,
         data = data,
-        applications = applications,
         metadata = metadata
       )
   }

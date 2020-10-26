@@ -4,7 +4,7 @@ import cats.data._
 import cats.effect._
 import cats.implicits._
 import io.phdata.AppContext
-import io.phdata.models.{Application, WorkspaceRequest}
+import io.phdata.models.{WorkspaceRequest}
 import doobie.implicits._
 import io.phdata.services.ProvisioningService
 
@@ -63,6 +63,4 @@ class DefaultProvisioningService[F[_]: ContextShift: ConcurrentEffect: Timer](
     appContext.workspaceRequestRepository.findUnprovisioned().transact(appContext.transactor)
   }
 
-  override def provisionApplication(workspaceId: Long, application: Application): F[Unit] =
-    ApplicationProvisionable.provision(application, WorkspaceContext(workspaceId, appContext)).run.void
 }

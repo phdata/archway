@@ -40,7 +40,6 @@
       }
     }
   ],
-  "applications": [],
   "topics": [
     {
       "name" : "${template.generatedName}.default",

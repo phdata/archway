@@ -2,14 +2,11 @@ package io.phdata
 
 import java.time.Instant
 
-import cats.data.NonEmptyList
 import cats.effect.{Clock, Sync}
 import io.phdata.models.{DatabaseRole, DistinguishedName}
-import org.apache.sentry.core.model.kafka.ConsumerGroup
 
 package object provisioning
-    extends LDAPRegistrationProvisioning with HiveProvisioning with ApplicationProvisioning
-    with WorkspaceRequestProvisioning {
+    extends LDAPRegistrationProvisioning with HiveProvisioning with WorkspaceRequestProvisioning {
 
   case class WorkspaceContext[F[_]](workspaceId: Long, context: AppContext[F])
 
@@ -23,10 +20,6 @@ package object provisioning
 
   trait CompletionTask[A] {
     def complete[F[_]: Sync](a: A, instant: Instant, workspaceContext: WorkspaceContext[F]): F[Unit]
-  }
-
-  case class ConsumerGroupGrant(applicationId: Long, consumerGroup: String, roleName: String) {
-    val consumerGroupInstance: ConsumerGroup = new ConsumerGroup(consumerGroup)
   }
 
   case class ActiveDirectoryGroup(

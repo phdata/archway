@@ -25,7 +25,6 @@ class WorkspaceController[F[_]: Sync: Timer: ContextShift: ConcurrentEffect](
     authService: TokenAuthService[F],
     workspaceService: WorkspaceService[F],
     memberService: MemberService[F],
-    applicationService: ApplicationService[F],
     emailService: EmailService[F],
     provisioningService: ProvisioningService[F],
     hdfsService: HDFSService[F],
@@ -269,17 +268,6 @@ class WorkspaceController[F[_]: Sync: Timer: ContextShift: ConcurrentEffect](
                 logger.error(s"Failed to remove member from workspace $id: ${e.getLocalizedMessage}", e).pure[F]
             }
             response <- Ok()
-          } yield response
-
-        case req @ POST -> Root / LongVar(id) / "applications" as user =>
-          implicit val applicationDecoder: EntityDecoder[F, ApplicationRequest] = jsonOf[F, ApplicationRequest]
-          for {
-            request <- req.req.as[ApplicationRequest]
-            result <- applicationService.create(user.distinguishedName, id, request).onError {
-              case e: Throwable =>
-                logger.error(s"Failed to get applications for workspace $id: ${e.getLocalizedMessage}", e).pure[F]
-            }
-            response <- Ok(result.asJson)
           } yield response
 
         case GET -> Root / LongVar(id) / "hive" as user =>

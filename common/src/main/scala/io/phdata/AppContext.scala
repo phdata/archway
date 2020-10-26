@@ -41,7 +41,6 @@ case class AppContext[F[_]](
     memberRepository: MemberRepository,
     complianceRepository: ComplianceRepository,
     workspaceRequestRepository: WorkspaceRequestRepository,
-    applicationRepository: ApplicationRepository,
     approvalRepository: ApprovalRepository,
     configRepository: ConfigRepository,
     complianceGroupRepository: ComplianceGroupRepository,
@@ -132,7 +131,6 @@ object AppContext {
       approvalRepository = new ApprovalRepositoryImpl
       memberRepository = new MemberRepositoryImpl(sqlSyntax)
       hiveGrantRepository = new HiveGrantRepositoryImpl
-      applicationRepository = new ApplicationRepositoryImpl
       configRepository = new ConfigRepositoryImpl
       complianceGroupRepository = new ComplianceGroupRepositoryImpl
       complianceQuestionRepository = new ComplianceQuestionRepositoryImpl
@@ -161,7 +159,6 @@ object AppContext {
       memberRepository,
       complianceRepository,
       workspaceRepository,
-      applicationRepository,
       approvalRepository,
       configRepository,
       complianceGroupRepository,

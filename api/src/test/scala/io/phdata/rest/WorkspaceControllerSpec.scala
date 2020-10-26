@@ -8,7 +8,7 @@ import io.circe.parser._
 import io.circe.syntax._
 import io.phdata.models._
 import io.phdata.provisioning.SimpleMessage
-import io.phdata.services.{ApplicationService, EmailService, MemberService, ProvisioningService, WorkspaceService, _}
+import io.phdata.services.{EmailService, MemberService, ProvisioningService, WorkspaceService, _}
 import io.phdata.test.TestAuthService
 import io.phdata.test.fixtures.{HttpTest, _}
 import io.phdata.{AppContext, provisioning}
@@ -48,7 +48,7 @@ class WorkspaceControllerSpec
   }
 
   it should "list all members" in new Http4sClientDsl[IO] with Context {
-    memberService.members _ expects id returning IO.pure(List(WorkspaceMemberEntry(standardUserDN.value, "John Doe", Some("johndoe@email.com"), List.empty, List.empty)))
+    memberService.members _ expects id returning IO.pure(List(WorkspaceMemberEntry(standardUserDN.value, "John Doe", Some("johndoe@email.com"), List.empty)))
 
     val response = restApi.route.orNotFound.run(GET(Uri.uri("/123/members")).unsafeRunSync())
     val Right(json) = parse(
@@ -58,8 +58,7 @@ class WorkspaceControllerSpec
          |     "distinguished_name": "$standardUserDN",
          |     "name": "John Doe",
          |     "email": "johndoe@email.com",
-         |     "data": {},
-         |     "applications": {}
+         |     "data": {}
          |   }
          | ]
       """.stripMargin)
@@ -89,7 +88,7 @@ class WorkspaceControllerSpec
     (memberService.addMember _)
       .expects(id, memberRequest)
       .returning(OptionT.some(
-        WorkspaceMemberEntry(standardUserDN.value, name, Some("johndoe@phdata.io"), List.empty, List.empty)
+        WorkspaceMemberEntry(standardUserDN.value, name, Some("johndoe@phdata.io"), List.empty)
       ))
     (impalaService.invalidateMetadata(_: Long)(_: AppContext[IO])(_: Sync[IO])).expects(123L, context, *).returning(IO.unit)
     (emailService.newMemberEmail _).expects(id, memberRequest).returning(OptionT.some(IO.unit))
@@ -128,7 +127,7 @@ class WorkspaceControllerSpec
     (memberService.addMember _)
       .expects(id, memberRequest)
       .returning(OptionT.some(
-        WorkspaceMemberEntry(standardUserDN.value, name, Some("johndoe@phdata.io"), List.empty, List.empty)
+        WorkspaceMemberEntry(standardUserDN.value, name, Some("johndoe@phdata.io"), List.empty)
       ))
     (impalaService.invalidateMetadata(_: Long)(_: AppContext[IO])(_: Sync[IO])).expects(123L, context, *).returning(IO.unit)
     (emailService.newMemberEmail _).expects(id, memberRequest).returning(OptionT.some(IO.unit))
@@ -317,7 +316,6 @@ class WorkspaceControllerSpec
     val memberService: MemberService[IO] = mock[MemberService[IO]]
     val workspaceService: WorkspaceService[IO] = mock[WorkspaceService[IO]]
     val hdfsService: HDFSService[IO] = mock[HDFSService[IO]]
-    val applicationService: ApplicationService[IO] = mock[ApplicationService[IO]]
     val emailService: EmailService[IO] = mock[EmailService[IO]]
     val provisioningService: ProvisioningService[IO] = mock[ProvisioningService[IO]]
     val complianceGroupService: ComplianceGroupService[IO] = mock[ComplianceGroupService[IO]]
@@ -329,7 +327,6 @@ class WorkspaceControllerSpec
         authService,
         workspaceService,
         memberService,
-        applicationService,
         emailService,
         provisioningService,
         hdfsService,

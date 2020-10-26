@@ -66,25 +66,6 @@
       }
     }
   ],
-  "applications": [
-    {
-      "name": "default",
-      "consumer_group": "sesame_test_1_default_cg",
-      "group": {
-        "common_name": "sesame_test_1_default_cg",
-        "distinguished_name": "cn=sesame_test_1_default_cg,ou=heimdali,dc=jotunn,dc=io",
-        "sentry_role": "role_sesame_test_1_default_cg",
-        "attributes": [
-          ["dn", "cn=sesame_test_1_default_cg,ou=heimdali,dc=jotunn,dc=io"],
-          ["objectClass", "group"],
-          ["objectClass", "top"],
-          ["sAMAccountName", "sesame_test_1_default_cg"],
-          ["cn", "sesame_test_1_default_cg"],
-          ["gidNumber", "123"]
-        ]
-      }
-    }
-  ],
   "single_user": false,
   "requester": "cn=john.doe,ou=hadoop,dc=example,dc=com",
   "status": "Pending"

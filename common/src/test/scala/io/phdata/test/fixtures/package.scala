@@ -53,8 +53,6 @@ package object fixtures {
   val initialGrant = savedGrant.copy(id = None, ldapRegistration = initialLDAP)
   val savedHive = HiveAllocation("sw_sesame", "/shared_workspaces/sw_sesame", hdfsRequestedSize, None, savedGrant, readonlyGroup = Some(savedGrant.copy(databaseRole = ReadOnly)), id = Some(id))
   val initialHive = savedHive.copy(id = None, managingGroup = initialGrant, readonlyGroup = Some(initialGrant))
-  val savedApplication = Application("Tiller", s"${systemName}_cg", savedLDAP, None, None, None, None, Some(id))
-  val initialApplication = savedApplication.copy(id = None, group = initialLDAP)
   val testTimer = new TestTimer
   val searchResult = WorkspaceSearchResult(id, name, name, "simple", "Approved", piiCompliance, pciCompliance, phiCompliance, testTimer.instant, Some(testTimer.instant), 0, 0L.some, BigDecimal(0).some)
 
@@ -84,7 +82,6 @@ package object fixtures {
     singleUser = false,
     id = Some(id),
     data = List(savedHive),
-    applications = List(savedApplication),
     metadata = Metadata(name, name, 0, Map.empty)
   )
 
@@ -93,7 +90,6 @@ package object fixtures {
       id = None,
       compliance = initialCompliance,
       data = List(initialHive),
-      applications = List(initialApplication)
     )
 
   val Right(defaultRequest) = parse(
@@ -165,19 +161,6 @@ package object fixtures {
        |          "sentry_role" : "${savedLDAP.sentryRole}",
        |          "attributes" : [ ]
        |        }
-       |      }
-       |    }
-       |  ],
-       |  "applications": [
-       |    {
-       |      "id": ${savedApplication.id.get},
-       |      "name": "${savedApplication.name}",
-       |      "consumer_group": "${savedApplication.consumerGroup}",
-       |      "group": {
-       |          "common_name" : "${savedLDAP.commonName}",
-       |          "distinguished_name" : "${savedLDAP.distinguishedName}",
-       |          "sentry_role" : "${savedLDAP.sentryRole}",
-       |          "attributes" : [ ]
        |      }
        |    }
        |  ],

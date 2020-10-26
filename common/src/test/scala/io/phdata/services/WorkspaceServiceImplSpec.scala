@@ -61,14 +61,9 @@ class WorkspaceServiceImplSpec
       (context.databaseRepository.create _).expects(initialHive.copy(managingGroup = initialGrant.copy(id = Some(id), ldapRegistration = savedLDAP), readonlyGroup = Some(initialGrant.copy(id = Some(id), ldapRegistration = savedLDAP)))).returning(id.pure[ConnectionIO])
       (context.workspaceRequestRepository.linkHive _).expects(id, id).returning(1.pure[ConnectionIO])
 
-      (context.ldapRepository.create _).expects(initialLDAP).returning(savedLDAP.pure[ConnectionIO])
-      (context.applicationRepository.create _).expects(initialApplication.copy(group = savedLDAP)).returning(id.pure[ConnectionIO])
-      (context.workspaceRequestRepository.linkApplication _).expects(id, id).returning(1.pure[ConnectionIO])
-      (context.memberRepository.create _).expects(standardUserDN, id).returning(1L.pure[ConnectionIO])
       (context.workspaceRequestRepository.find _).expects(123).returning(OptionT.some(savedWorkspaceRequest))
       (context.databaseRepository.findByWorkspace _).expects(id)returning List(savedHive).pure[ConnectionIO]
       (context.approvalRepository.findByWorkspaceId _).expects(id)returning List(approval()).pure[ConnectionIO]
-      (context.applicationRepository.findByWorkspaceId _).expects(id).returning(List(savedApplication).pure[ConnectionIO])
     }
 
     val newWorkspace = workspaceServiceImpl.create(initialWorkspaceRequest).unsafeRunSync()
@@ -80,7 +75,6 @@ class WorkspaceServiceImplSpec
     context.workspaceRequestRepository.find _ expects id returning OptionT.some(savedWorkspaceRequest)
     context.databaseRepository.findByWorkspace _ expects id returning List(savedHive).pure[ConnectionIO]
     context.approvalRepository.findByWorkspaceId _ expects id returning List(approval()).pure[ConnectionIO]
-    context.applicationRepository.findByWorkspaceId _ expects id returning List(savedApplication).pure[ConnectionIO]
 
     val foundWorkspace = workspaceServiceImpl.findById(id).value.unsafeRunSync()
 
@@ -93,22 +87,20 @@ class WorkspaceServiceImplSpec
     context.workspaceRequestRepository.findByDistinguishedName _ expects standardUserDN returning OptionT.some(savedWorkspaceRequest)
     context.databaseRepository.findByWorkspace _ expects id returning List(savedHive).pure[ConnectionIO]
     context.approvalRepository.findByWorkspaceId _ expects id returning List.empty[Approval].pure[ConnectionIO]
-    context.applicationRepository.findByWorkspaceId _ expects id returning List.empty[Application].pure[ConnectionIO]
 
     val maybeWorkspace = workspaceServiceImpl.findByDistinguishedName(standardUserDN).value.unsafeRunSync()
 
-    maybeWorkspace shouldBe Some(savedWorkspaceRequest.copy(applications = List.empty))
+    maybeWorkspace shouldBe Some(savedWorkspaceRequest)
   }
 
   it should "find a workspace by name" in new Context {
     context.workspaceRequestRepository.findByName _ expects savedWorkspaceRequest.name returning OptionT.some(savedWorkspaceRequest)
     context.databaseRepository.findByWorkspace _ expects id returning List(savedHive).pure[ConnectionIO]
     context.approvalRepository.findByWorkspaceId _ expects id returning List.empty[Approval].pure[ConnectionIO]
-    context.applicationRepository.findByWorkspaceId _ expects id returning List.empty[Application].pure[ConnectionIO]
 
     val maybeWorkspace = workspaceServiceImpl.findByName(savedWorkspaceRequest.name).value.unsafeRunSync()
 
-    maybeWorkspace shouldBe Some(savedWorkspaceRequest.copy(applications = List.empty))
+    maybeWorkspace shouldBe Some(savedWorkspaceRequest)
   }
 
   it should "get consumed space if directory has been created" in new Context {
@@ -117,7 +109,6 @@ class WorkspaceServiceImplSpec
     context.workspaceRequestRepository.find _ expects id returning OptionT.some(savedWorkspaceRequest)
     context.databaseRepository.findByWorkspace _ expects id returning List(withCreated).pure[ConnectionIO]
     context.approvalRepository.findByWorkspaceId _ expects id returning List(approval()).pure[ConnectionIO]
-    context.applicationRepository.findByWorkspaceId _ expects id returning List(savedApplication).pure[ConnectionIO]
     context.hdfsClient.getConsumption _ expects withCreated.location returning IO.pure(1.0)
 
     val foundWorkspace = workspaceServiceImpl.findById(id).value.unsafeRunSync()
@@ -133,7 +124,6 @@ class WorkspaceServiceImplSpec
     context.workspaceRequestRepository.find _ expects id returning OptionT.some(savedWorkspaceRequest)
     context.databaseRepository.findByWorkspace _ expects id returning List(withCreated).pure[ConnectionIO]
     context.approvalRepository.findByWorkspaceId _ expects id returning List(approval()).pure[ConnectionIO]
-    context.applicationRepository.findByWorkspaceId _ expects id returning List(savedApplication).pure[ConnectionIO]
 
     val foundWorkspace = workspaceServiceImpl.findById(id).value.unsafeRunSync()
 
@@ -149,7 +139,6 @@ class WorkspaceServiceImplSpec
     context.workspaceRequestRepository.find _ expects id returning OptionT.some(savedWorkspaceRequest)
     context.databaseRepository.findByWorkspace _ expects id returning List(savedHive).pure[ConnectionIO]
     context.approvalRepository.findByWorkspaceId _ expects id returning List(approval()).pure[ConnectionIO]
-    context.applicationRepository.findByWorkspaceId _ expects id returning List(savedApplication).pure[ConnectionIO]
 
     (provisioningService.attemptProvision(_: WorkspaceRequest, _: Int)) expects(*, 2) returning NonEmptyList.one(SimpleMessage(1l, "").asInstanceOf[Message]).pure[IO].start(contextShift)
 

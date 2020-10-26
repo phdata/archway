@@ -36,7 +36,6 @@
       }
     }
   ],
-  "applications": [],
   "single_user": true,
   "requester": "cn=john.doe,ou=hadoop,dc=example,dc=com",
   "status": "Pending"

@@ -48,19 +48,9 @@ trait WorkspaceRequestProvisioning {
                 )
                 .run
           )
-          d <- workspace.applications.traverse(x => ApplicationProvisionable.provision(x, workspaceContext).run)
-          e <- workspace.applications.traverse(
-            d =>
-              GroupMemberProvisioning.provisionable
-                .provision(
-                  GroupMember(d.id.get, d.group.distinguishedName, workspace.requestedBy),
-                  workspaceContext
-                )
-                .run
-          )
 
           _ <- ImpalaServiceImpl.invalidateMetadata(workspace.id.get)(workspaceContext.context)
-        } yield a |+| b |+| d |+| e)
+        } yield a |+| b)
     }
 
   }
@@ -68,16 +58,7 @@ trait WorkspaceRequestProvisioning {
   implicit object WorkspaceRequestDeprovisioningTask extends DeprovisioningTask[WorkspaceRequest] {
     override def run[F[_]: Sync: Clock](workspace: WorkspaceRequest, workspaceContext: WorkspaceContext[F]): F[Unit] =
       for {
-        e <- workspace.applications.traverse(
-          d =>
-            GroupMemberProvisioning.provisionable
-              .deprovision(
-                GroupMember(d.id.get, d.group.distinguishedName, workspace.requestedBy),
-                workspaceContext
-              )
-              .run
-        )
-        d <- workspace.applications.traverse(x => ApplicationProvisionable.deprovision(x, workspaceContext).run)
+
         b <- workspace.data.traverse(
           d =>
             GroupMemberProvisioning.provisionable
@@ -92,7 +73,7 @@ trait WorkspaceRequestProvisioning {
           .markUnprovisioned(workspaceContext.workspaceId)
           .transact(workspaceContext.context.transactor)
           .void
-      } yield a |+| b |+| d |+| e
+      } yield a |+| b
   }
 
   implicit val workspaceRequestProvisionable: Provisionable[WorkspaceRequest] =

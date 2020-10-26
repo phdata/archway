@@ -27,8 +27,6 @@ trait WorkspaceRequestRepository {
 
   def linkHive(workspaceId: Long, hiveDatabaseId: Long): ConnectionIO[Int]
 
-  def linkApplication(workspaceId: Long, applicationId: Long): ConnectionIO[Int]
-
   def pendingQueue(role: ApproverRole): ConnectionIO[List[WorkspaceSearchResult]]
 
   def deleteWorkspace(workspaceId: Long): ConnectionIO[Int]

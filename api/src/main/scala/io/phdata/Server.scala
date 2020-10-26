@@ -6,7 +6,7 @@ import com.typesafe.scalalogging.LazyLogging
 import doobie.util.ExecutionContexts
 import io.circe.Printer
 import io.circe.syntax._
-import io.phdata.generators.{ApplicationGenerator, LDAPGroupGenerator}
+import io.phdata.generators.{LDAPGroupGenerator}
 import io.phdata.provisioning.DefaultProvisioningService
 import io.phdata.rest.authentication.{LdapAuthService, SpnegoAuthService, TokenAuthServiceImpl}
 import io.phdata.rest._
@@ -36,10 +36,6 @@ object Server extends IOApp with LazyLogging {
       configService = new DBConfigService[F](context)
       _ <- Resource.liftF(configService.verifyDbConnection)
 
-      ldapGroupGenerator = LDAPGroupGenerator
-        .instance(context.appConfig, configService, context.appConfig.templates.ldapGroupGenerator)
-      applicationGenerator = ApplicationGenerator
-        .instance(context.appConfig, ldapGroupGenerator, context.appConfig.templates.applicationGenerator)
       templateService = new JSONTemplateService[F](context, configService)
       _ <- Resource.liftF(templateService.verifyDefaultTemplates)
       _ <- Resource.liftF(templateService.verifyCustomTemplates)
@@ -48,7 +44,6 @@ object Server extends IOApp with LazyLogging {
       memberService = new MemberServiceImpl[F](context)
       workspaceService = new WorkspaceServiceImpl[F](provisionService, memberService, context)
       accountService = new AccountServiceImpl[F](context, workspaceService, templateService, provisionService)
-      applicationService = new ApplicationServiceImpl[F](context, provisionService, applicationGenerator)
       emailService = new EmailServiceImpl[F](context, workspaceService)
       complianceService = new ComplianceGroupServiceImpl[F](context)
       _ <- Resource.liftF(complianceService.loadDefaultComplianceQuestions)
@@ -75,7 +70,6 @@ object Server extends IOApp with LazyLogging {
         tokenAuthService,
         workspaceService,
         memberService,
-        applicationService,
         emailService,
         provisionService,
         context.hdfsService,

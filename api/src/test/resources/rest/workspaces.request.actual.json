@@ -29,24 +29,6 @@
       }
     }
   ],
-  "applications": [
-    {
-      "name": "default",
-      "consumer_group": "sesame_default_cg",
-      "group": {
-        "distinguished_name": "cn=sesame_default_cg,ou=heimdali,dc=jotunn,dc=io",
-        "common_name": "sesame_default_cg",
-        "sentry_role": "role_sesame_default_cg",
-        "attributes": [
-          ["dn", "cn=edh_sw_sesame,ou=heimdali,dc=jotunn,dc=io"],
-          ["objectClass", "group"],
-          ["objectClass", "top"],
-          ["sAMAccountName", "edh_sw_sesame"],
-          ["cn", "edh_sw_sesame"]
-        ]
-      }
-    }
-  ],
   "single_user": false,
   "metadata": {
     "name": "Sesame",

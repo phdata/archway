@@ -59,7 +59,6 @@ class WorkspaceServiceIntegrationSpec extends FlatSpec with Matchers with Kerber
 
         assert(members.map(_.distinguishedName).contains(newDN.value))
         assert(members.filter(_.distinguishedName == newDN.value).map(_.data).size == 1)
-        assert(members.filter(_.distinguishedName == newDN.value).map(_.applications).size == 1)
         assert(workspaceRequest.get.requestedBy == newDN)
     }
   }

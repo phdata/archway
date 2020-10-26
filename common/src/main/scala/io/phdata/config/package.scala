@@ -18,10 +18,8 @@ import scala.concurrent.duration.{Duration, FiniteDuration}
 package object config extends StrictLogging {
 
   object AvailableFeatures {
-    val messaging = "messaging"
-    val applications = "applications"
 
-    val all = Seq(messaging, applications).mkString(",")
+    val all = Seq().mkString(",")
   }
 
   implicit final val finiteDurationDecoder: Decoder[Duration] =

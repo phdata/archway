@@ -2,7 +2,7 @@ package io.phdata.services
 
 import cats.data.NonEmptyList
 import cats.effect.Fiber
-import io.phdata.models.{Application, WorkspaceRequest}
+import io.phdata.models.{WorkspaceRequest}
 import io.phdata.provisioning.Message
 
 trait ProvisioningService[F[_]] {
@@ -14,6 +14,4 @@ trait ProvisioningService[F[_]] {
   def findUnprovisioned(): F[List[WorkspaceRequest]]
 
   def provisionAll(): F[Unit]
-
-  def provisionApplication(workspaceId: Long, application: Application): F[Unit]
 }

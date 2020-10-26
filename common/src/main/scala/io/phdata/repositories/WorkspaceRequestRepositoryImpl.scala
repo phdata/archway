@@ -46,9 +46,6 @@ class WorkspaceRequestRepositoryImpl(sqlSyntax: SqlSyntax) extends WorkspaceRequ
   override def linkHive(workspaceId: Long, hiveDatabaseId: Long): doobie.ConnectionIO[Int] =
     statements.linkHive(workspaceId, hiveDatabaseId).run
 
-  override def linkApplication(workspaceId: Long, applicationId: Long): doobie.ConnectionIO[Int] =
-    statements.linkApplication(workspaceId, applicationId).run
-
   override def findByDistinguishedName(
       distinguishedName: DistinguishedName
   ): OptionT[doobie.ConnectionIO, WorkspaceRequest] =
@@ -72,12 +69,6 @@ class WorkspaceRequestRepositoryImpl(sqlSyntax: SqlSyntax) extends WorkspaceRequ
       sql"""
         insert into workspace_database (workspace_request_id, hive_database_id)
         values ($workspaceId, $hiveDatabaseId)
-        """.update
-
-    def linkApplication(workspaceId: Long, applicationId: Long): Update0 =
-      sql"""
-         insert into workspace_application (workspace_request_id, application_id)
-         values ($workspaceId, $applicationId)
         """.update
 
     val selectFragment: Fragment =

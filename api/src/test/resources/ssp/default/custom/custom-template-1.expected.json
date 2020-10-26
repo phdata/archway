@@ -60,25 +60,6 @@
       }
     }
   ],
-  "applications": [
-    {
-      "name": "default",
-      "consumer_group": "custom_template_1_default_cg",
-      "group": {
-        "common_name": "custom_template_1_default_cg",
-        "distinguished_name": "cn=custom_template_1_default_cg,ou=heimdali,dc=jotunn,dc=io",
-        "sentry_role": "role_custom_template_1_default_cg",
-        "attributes": [
-          ["dn", "cn=custom_template_1_default_cg,ou=heimdali,dc=jotunn,dc=io"],
-          ["objectClass", "group"],
-          ["objectClass", "top"],
-          ["sAMAccountName", "custom_template_1_default_cg"],
-          ["cn", "custom_template_1_default_cg"],
-          ["gidNumber", "123"]
-        ]
-      }
-    }
-  ],
   "single_user": false,
   "requester": "cn=john.doe,ou=hadoop,dc=example,dc=com",
   "requested_date": "2019-07-11T10:18:31.905Z",

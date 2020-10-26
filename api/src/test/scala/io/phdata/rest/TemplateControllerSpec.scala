@@ -8,7 +8,7 @@ import io.circe.Json
 import io.circe.java8.time._
 import io.circe.syntax._
 import io.phdata.AppContext
-import io.phdata.generators.{ApplicationGenerator, DefaultApplicationGenerator, DefaultLDAPGroupGenerator}
+import io.phdata.generators.{DefaultLDAPGroupGenerator}
 import io.phdata.models.TemplateRequest
 import io.phdata.services.{ConfigService, JSONTemplateService, TemplateService}
 import io.phdata.test.TestAuthService
@@ -91,7 +91,6 @@ class TemplateControllerSpec
     val authService: TestAuthService = new TestAuthService
     val configService: ConfigService[IO] = new TestConfigService
     val ldapGroupGenerator = new DefaultLDAPGroupGenerator[IO](configService)
-    val applicationGenerator: ApplicationGenerator[IO] = new DefaultApplicationGenerator[IO](appConfig, ldapGroupGenerator)
     val templateService: TemplateService[IO] = new JSONTemplateService[IO](context, configService)
 
     val templateController: TemplateController[IO] = new TemplateController[IO](authService, templateService)

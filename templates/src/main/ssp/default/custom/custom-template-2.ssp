@@ -73,33 +73,6 @@
       }
     }
   ],
-  "processing": [
-    {
-      "pool_name": "root.sw_${template.generatedName}",
-      "max_cores": ${appConfig.workspaces.sharedWorkspace.defaultCores},
-      "max_memory_in_gb": ${appConfig.workspaces.sharedWorkspace.defaultMemory.toString}
-    }
-  ],
-  "applications": [
-    {
-      "name": "default",
-      "consumer_group": "${template.generatedName}_default_cg",
-      "group": {
-        "common_name": "${template.generatedName}_default_cg",
-        "distinguished_name": "cn=${template.generatedName}_default_cg,${appConfig.ldap.groupPath}",
-        "sentry_role": "role_${template.generatedName}_default_cg",
-        "attributes": [
-          [ "dn", "cn=${template.generatedName}_default_cg,${appConfig.ldap.groupPath}" ],
-          [ "objectClass", "group" ],
-          [ "objectClass", "top" ],
-          [ "sAMAccountName", "${template.generatedName}_default_cg" ],
-          [ "cn", "${template.generatedName}_default_cg" ],
-          [ "gidNumber", "${nextGid().toString}" ]
-        ]
-      }
-    }
-  ],
-  "topics": [],
   "single_user": false,
   "requester": "${template.requester}"
 }
