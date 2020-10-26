@@ -1,3 +1,0 @@
-#!/bin/bash
-set -eu
-docker run -ti --rm -v `pwd`:/app -w /app jotunn/cm-validator java -jar /usr/src/validator.jar $@
