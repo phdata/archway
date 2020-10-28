@@ -7,7 +7,7 @@ import doobie.util.transactor.Transactor
 
 import scala.concurrent.ExecutionContext
 
-trait HiveTest extends KerberosTest {
+trait HiveTest {
 
   implicit def contextShift: ContextShift[IO] = IO.contextShift(ExecutionContext.global)
 

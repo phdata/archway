@@ -43,14 +43,12 @@ class HiveClientImpl[F[_]](loginContextProvider: LoginContextProvider, transacto
       // S3 requires a trailing slash
       if (!location.startsWith("hdfs://") && !location.endsWith("/")) location ++ "/" else location
 
-    loginContextProvider.hadoopInteraction {
-      showDatabases().flatMap {
-        case databases if !databases.contains(name) =>
-          logger.info(s"Creating database $name on location $formattedLocation").pure[F]
-          createDatabaseStatement(name, formattedLocation, comment, dbProperties).update.run.transact(transactor).void
-        case _ =>
-          Sync[F].unit
-      }
+    showDatabases().flatMap {
+      case databases if !databases.contains(name) =>
+        logger.info(s"Creating database $name on location $formattedLocation").pure[F]
+        createDatabaseStatement(name, formattedLocation, comment, dbProperties).update.run.transact(transactor).void
+      case _ =>
+        Sync[F].unit
     }
   }
 
@@ -59,28 +57,21 @@ class HiveClientImpl[F[_]](loginContextProvider: LoginContextProvider, transacto
   }
 
   override def describeDatabase(name: String): F[HiveDatabase] =
-    loginContextProvider.hadoopInteraction[F, HiveDatabase] {
-      (sql"""SHOW TABLES in """ ++ Fragment.const(name)).query[String].to[List].transact(transactor).map { tables =>
-        HiveDatabase(name, tables.map(HiveTable.apply))
-      }
+    (sql"""SHOW TABLES in """ ++ Fragment.const(name)).query[String].to[List].transact(transactor).map { tables =>
+      HiveDatabase(name, tables.map(HiveTable.apply))
     }
 
   override def dropDatabase(name: String): F[Int] = {
-    loginContextProvider.hadoopInteraction[F, Int] {
-      (sql"""DROP DATABASE IF EXISTS """ ++ Fragment.const(name) ++ fr"CASCADE").update.run.transact(transactor)
-    }
+    (sql"""DROP DATABASE IF EXISTS """ ++ Fragment.const(name) ++ fr"CASCADE").update.run.transact(transactor)
   }
 
   override def createTable(database: String, name: String): F[Int] = {
-    loginContextProvider.hadoopInteraction[F, Int] {
-      (sql"""CREATE TABLE IF NOT EXISTS """ ++ Fragment.const(database) ++ fr"." ++ Fragment.const(name) ++
-          fr"(id SMALLINT)").update.run.transact(transactor)
-    }
+    (sql"""CREATE TABLE IF NOT EXISTS """ ++ Fragment.const(database) ++ fr"." ++ Fragment.const(name) ++
+        fr"(id SMALLINT)").update.run.transact(transactor)
   }
 
   override def showTables(databaseName: String): F[Seq[String]] = {
     (sql"""SHOW TABLES in """ ++ Fragment.const(databaseName)).query[String].to[Seq].transact(transactor)
-
   }
 
   override def dropTable(databaseName: String, name: String): F[Unit] = {
