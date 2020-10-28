@@ -51,12 +51,10 @@ case class AppContext[F[_]](
 
 object AppContext {
 
+  // TODO remove this
   private val hadoopConfiguration: Configuration = {
     val conf = new Configuration()
-    conf.addResource(new File("./hive-conf/core-site.xml").toURI.toURL)
-    conf.addResource(new File("./hive-conf/hdfs-site.xml").toURI.toURL)
-    conf.addResource(new File("./hive-conf/hive-site.xml").toURI.toURL)
-    conf.addResource(new File("./sentry-conf/sentry-site.xml").toURI.toURL)
+
     conf
   }
 

@@ -298,8 +298,12 @@ package object config extends StrictLogging {
     def hiveTx[F[_]: Async: ContextShift]: Transactor[F] = {
       Class.forName(driver)
 
+      val properties = new Properties()
+      properties.setProperty("user", "csso_tony")
+      properties.setProperty("password", "")
+
       // Turn the transactor into no
-      val initialHiveTransactor = Transactor.fromDriverManager[F](driver, url)
+      val initialHiveTransactor = Transactor.fromDriverManager[F](driver, url, properties)
       val strategy = Strategy.void.copy(always = FC.close)
 
       Transactor.strategy.set(initialHiveTransactor, strategy)
