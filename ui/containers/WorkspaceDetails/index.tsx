@@ -12,7 +12,6 @@ import {
   QuickLinks,
   OverviewTab,
   DataTab,
-  ApplicationsTab,
   MessagingTab,
   KafkaTopicRequest,
   SimpleMemberRequest,
@@ -157,7 +156,7 @@ class WorkspaceDetails extends React.PureComponent<Props> {
     const { type, message, duration } = notificationInfo;
 
     if (!!message && message !== this.props.notificationInfo.message) {
-      notification[type]({ message: type.toUpperCase(), description: message, duration: duration });
+      notification[type]({ message: type.toUpperCase(), description: message, duration });
     }
   }
 
@@ -203,7 +202,6 @@ class WorkspaceDetails extends React.PureComponent<Props> {
     const {
       workspace,
       cluster,
-      pools,
       infos,
       members,
       activeModal,
@@ -218,8 +216,6 @@ class WorkspaceDetails extends React.PureComponent<Props> {
       requestApplication,
       selectedAllocation,
       updateSelectedAllocation,
-      updateSelectedApplication,
-      requestRefreshYarnApps,
       requestRefreshHiveTables,
       userSuggestions,
       removeMember,
@@ -320,19 +316,6 @@ class WorkspaceDetails extends React.PureComponent<Props> {
               isPlatformOperations={profile && profile.permissions.platform_operations}
             />
           </Tabs.TabPane>
-          {featureFlags.includes(FeatureFlagType.Application) && (
-            <Tabs.TabPane tab="APPLICATIONS" key="applications">
-              <ApplicationsTab
-                workspace={workspace}
-                yarn={cluster.services && cluster.services.yarn}
-                pools={pools}
-                showModal={showModal}
-                onRefreshPools={requestRefreshYarnApps}
-                onSelectApplication={updateSelectedApplication}
-                resourcePoolLoading={resourcePoolLoading}
-              />
-            </Tabs.TabPane>
-          )}
           {featureFlags.includes(FeatureFlagType.Messaging) && (
             <Tabs.TabPane tab="MESSAGING" key="messsaging">
               <MessagingTab
