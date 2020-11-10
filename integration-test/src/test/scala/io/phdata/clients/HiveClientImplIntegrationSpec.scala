@@ -31,13 +31,6 @@ class HiveClientImplIntegrationSpec
     runUpdate(Fragment.const(s"drop database if exists $FOO_DB_NAME cascade"))
   }
 
-  it should "Create a database at HDFS" in {
-    hiveClient.createDatabase(FOO_DB_NAME, "/tmp", "a comment", Map("pii_data" -> "true", "pci_data" -> "false"))
-      .unsafeRunSync()
-
-    assert(hiveClient.showDatabases().unsafeRunSync().contains(FOO_DB_NAME))
-  }
-
   it should "Create a database at S3" in {
     hiveClient.createDatabase(FOO_DB_NAME, "s3a://phdata-bdr-bucket/archway-itest", "a comment", Map("pii_data" -> "true", "pci_data" -> "false"))
       .unsafeRunSync()
@@ -46,7 +39,7 @@ class HiveClientImplIntegrationSpec
   }
 
   it should "Delete a database" in {
-    hiveClient.createDatabase(FOO_DB_NAME, "/tmp", "a comment", Map("pii_data" -> "true", "pci_data" -> "false"))
+    hiveClient.createDatabase(FOO_DB_NAME, "s3a://phdata-bdr-bucket/archway-itest", "a comment", Map("pii_data" -> "true", "pci_data" -> "false"))
       .unsafeRunSync()
 
     assert(hiveClient.showDatabases().unsafeRunSync().contains(FOO_DB_NAME))
@@ -58,7 +51,7 @@ class HiveClientImplIntegrationSpec
   it should "Create a table" in {
     val tableName = s"test_table_${UUID.randomUUID().toString.take(8)}"
 
-    hiveClient.createDatabase(FOO_DB_NAME, "/tmp", "a comment", Map("pii_data" -> "true", "pci_data" -> "false"))
+    hiveClient.createDatabase(FOO_DB_NAME, "s3a://phdata-bdr-bucket/archway-itest", "a comment", Map("pii_data" -> "true", "pci_data" -> "false"))
       .unsafeRunSync()
 
     hiveClient.createTable(FOO_DB_NAME, tableName).unsafeRunSync()
@@ -68,7 +61,7 @@ class HiveClientImplIntegrationSpec
   it should "Delete a table" in {
     val tableName = s"test_table_${UUID.randomUUID().toString.take(8)}"
 
-    hiveClient.createDatabase(FOO_DB_NAME, "/tmp", "a comment", Map("pii_data" -> "true", "pci_data" -> "false"))
+    hiveClient.createDatabase(FOO_DB_NAME, "s3a://phdata-bdr-bucket/archway-itest", "a comment", Map("pii_data" -> "true", "pci_data" -> "false"))
       .unsafeRunSync()
 
     hiveClient.createTable(FOO_DB_NAME, tableName).unsafeRunSync()

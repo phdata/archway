@@ -110,7 +110,7 @@ object LDAPRepositoryImpl {
        values(
         ${ldapRegistration.distinguishedName.value},
         ${ldapRegistration.commonName},
-        ${ldapRegistration.sentryRole}
+        ${ldapRegistration.securityRole}
        )
       """.update
 

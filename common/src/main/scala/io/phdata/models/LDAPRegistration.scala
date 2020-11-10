@@ -10,7 +10,7 @@ import io.circe._
 case class LDAPRegistration(
     distinguishedName: DistinguishedName,
     commonName: String,
-    sentryRole: String,
+    securityRole: String,
     id: Option[Long] = None,
     groupCreated: Option[Instant] = None,
     roleCreated: Option[Instant] = None,
@@ -25,7 +25,7 @@ object LDAPRegistration {
 
   implicit val encoder: Encoder[LDAPRegistration] =
     Encoder.forProduct4("common_name", "distinguished_name", "sentry_role", "attributes")(
-      s => (s.commonName, s.distinguishedName.value, s.sentryRole, s.attributes)
+      s => (s.commonName, s.distinguishedName.value, s.securityRole, s.attributes)
     )
 
   implicit final val decoder: Decoder[LDAPRegistration] =

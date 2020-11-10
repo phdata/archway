@@ -3,7 +3,7 @@ package io.phdata.itest.fixtures
 import cats.effect.IO
 import com.unboundid.ldap.sdk.{FailoverServerSet, LDAPConnectionPool, SimpleBindRequest}
 import com.unboundid.util.ssl.{SSLUtil, TrustAllTrustManager, TrustStoreTrustManager}
-import io.phdata.clients.{LDAPClientImpl, LookupLDAPClient, ProvisioningLDAPClient, SentryClientImpl}
+import io.phdata.clients.{LDAPClientImpl, LookupLDAPClient, ProvisioningLDAPClient, RoleClientImpl}
 import io.phdata.models.LDAPRegistration
 import io.phdata.services.UGILoginContextProvider
 import org.scalatest.Matchers
@@ -13,7 +13,7 @@ trait LDAPTest extends Matchers with HiveTest {
   val provisioningClient: ProvisioningLDAPClient[IO] = new LDAPClientImpl[IO](itestConfig.ldap, _.provisioningBinding)
   val helperLDAPClient = new LDAPClientImpl[IO](itestConfig.ldap, _.provisioningBinding)
 
-  val sentryClient = new SentryClientImpl[IO](hiveTransactor, null, new UGILoginContextProvider(itestConfig))
+  val roleClient = new RoleClientImpl[IO](hiveTransactor, null, new UGILoginContextProvider(itestConfig))
 
   val ldapConnectionPool: LDAPConnectionPool = {
     val sslUtil = if(itestConfig.ldap.ignoreSslCert.getOrElse(false)) {
@@ -42,12 +42,12 @@ trait LDAPTest extends Matchers with HiveTest {
   def validateLdapRegistrationProvisioning(ldapRegistration: LDAPRegistration) = {
     //verification
     Option(ldapConnectionPool.getConnection.getEntry(ldapRegistration.distinguishedName.value)) shouldBe defined
-    sentryClient.roles.unsafeRunSync() should contain (ldapRegistration.sentryRole)
-    sentryClient.groupRoles(ldapRegistration.commonName).unsafeRunSync() should contain (ldapRegistration.sentryRole)
+    roleClient.roles.unsafeRunSync() should contain (ldapRegistration.securityRole)
+    roleClient.groupRoles(ldapRegistration.commonName).unsafeRunSync() should contain (ldapRegistration.securityRole)
 
     // clean up
-    sentryClient.revokeGroup(ldapRegistration.commonName, ldapRegistration.sentryRole).unsafeRunSync()
-    sentryClient.dropRole(ldapRegistration.sentryRole).unsafeRunSync()
+    roleClient.revokeGroup(ldapRegistration.commonName, ldapRegistration.securityRole).unsafeRunSync()
+    roleClient.dropRole(ldapRegistration.securityRole).unsafeRunSync()
     provisioningClient.deleteGroup(ldapRegistration.distinguishedName).value.unsafeRunSync()
   }
 }

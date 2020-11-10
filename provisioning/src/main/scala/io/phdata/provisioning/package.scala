@@ -43,6 +43,6 @@ package object provisioning
 
   case class LocationGrant(id: Long, roleName: String, location: String)
 
-  case class SentryRole(id: Long, name: String)
+  case class SecurityRole(id: Long, name: String)
 
 }

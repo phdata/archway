@@ -14,13 +14,13 @@ trait HiveProvisioning {
         TypeWith[Provisionable, DatabaseGrant](
           DatabaseGrant(
             hiveGrant.id.get,
-            hiveGrant.ldapRegistration.sentryRole,
+            hiveGrant.ldapRegistration.securityRole,
             hiveGrant.databaseName,
             hiveGrant.databaseRole
           )
         )(DatabaseGrantProvisioning.databaseGrantProvisionable, DatabaseGrantProvisioning.show),
         TypeWith[Provisionable, LocationGrant](
-          LocationGrant(hiveGrant.id.get, hiveGrant.ldapRegistration.sentryRole, hiveGrant.location)
+          LocationGrant(hiveGrant.id.get, hiveGrant.ldapRegistration.securityRole, hiveGrant.location)
         )(LocationGrantProvisioning.provisionable, LocationGrantProvisioning.show)
       )
     }

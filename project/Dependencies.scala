@@ -72,7 +72,7 @@ object Dependencies {
   )
 
   val cdhVersion = "cdh5.13.0"
-  val hiveVersion = s"1.1.0-$cdhVersion"
+  val hiveVersion = s"3.1.3000.7.1.4.0-203"
   val hadoopVersion = s"2.6.0-$cdhVersion"
   val sentryVersion = s"1.5.1-$cdhVersion"
 

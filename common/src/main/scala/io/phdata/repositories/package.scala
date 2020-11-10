@@ -12,7 +12,7 @@ package object repositories {
   case class LDAPRecord(
       distinguishedName: DistinguishedName,
       commonName: String,
-      sentryRole: String,
+      securityRole: String,
       id: Option[Long],
       groupCreated: Option[Instant],
       roleCreated: Option[Instant],
@@ -142,7 +142,7 @@ package object repositories {
     LDAPRegistration(
       ldap.distinguishedName,
       ldap.commonName,
-      ldap.sentryRole,
+      ldap.securityRole,
       ldap.id,
       ldap.groupCreated,
       ldap.roleCreated,

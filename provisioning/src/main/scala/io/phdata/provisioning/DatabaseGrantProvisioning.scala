@@ -25,7 +25,7 @@ object DatabaseGrantProvisioning {
         .void
 
     override def run[F[_]: Sync: Clock](databaseGrant: DatabaseGrant, workspaceContext: WorkspaceContext[F]): F[Unit] =
-      workspaceContext.context.sentryClient
+      workspaceContext.context.roleClient
         .enableAccessToDB(databaseGrant.databaseName, databaseGrant.roleName, databaseGrant.databaseRole)
 
   }
@@ -33,7 +33,7 @@ object DatabaseGrantProvisioning {
   implicit object DatabaseGrantDeprovisioningTask extends DeprovisioningTask[DatabaseGrant] {
 
     override def run[F[_]: Sync: Clock](databaseGrant: DatabaseGrant, workspaceContext: WorkspaceContext[F]): F[Unit] =
-      workspaceContext.context.sentryClient
+      workspaceContext.context.roleClient
         .removeAccessToDB(databaseGrant.databaseName, databaseGrant.roleName, databaseGrant.databaseRole)
 
   }

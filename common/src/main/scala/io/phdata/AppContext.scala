@@ -23,7 +23,7 @@ case class AppContext[F[_]](
     appConfig: AppConfig,
     clusterCache: Cached[F, Seq[Cluster]],
     loginContextProvider: LoginContextProvider,
-    sentryClient: SentryClient[F],
+    roleClient: RoleClient[F],
     hiveClient: HiveClient[F],
     impalaClient: Option[ImpalaClient[F]],
     provisioningLDAPClient: ProvisioningLDAPClient[F],
@@ -103,7 +103,7 @@ object AppContext {
 
       loginContextProvider = new UGILoginContextProvider(config)
       sentryServiceClient = SentryGenericServiceClientFactory.create(hadoopConfiguration)
-      sentryClient = new SentryClientImpl[F](hiveXA, sentryServiceClient, loginContextProvider)
+      sentryClient = new RoleClientImpl[F](hiveXA, sentryServiceClient, loginContextProvider)
       hiveClient = new HiveClientImpl[F](loginContextProvider, hiveXA)
       impalaClient = config.db.impala.map(impalaXA => new ImpalaClientImpl[F](loginContextProvider, impalaXA.impalaTx))
       lookupLDAPClient = new LDAPClientImpl[F](
