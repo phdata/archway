@@ -86,7 +86,9 @@ object Dependencies {
           ExclusionRule("org.apache.hadoop", "hadoop-yarn-common")
     ),
     "org.apache.hadoop" % "hadoop-client" % hadoopVersion % "provided",
-    "org.apache.hive" % "hive-jdbc" % hiveVersion % "provided",
+    "org.apache.hive" % "hive-jdbc" % hiveVersion % "provided" excludeAll (
+      ExclusionRule("org.apache.logging.log4j")
+    ),
     "org.apache.hadoop" % "hadoop-common" % hadoopVersion % "test" classifier "" classifier "tests",
     "org.apache.hadoop" % "hadoop-client" % hadoopVersion % "test" classifier "" classifier "tests",
     "org.apache.hadoop" % "hadoop-minicluster" % hadoopVersion % "test"
