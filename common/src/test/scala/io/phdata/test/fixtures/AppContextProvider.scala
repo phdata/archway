@@ -31,7 +31,7 @@ trait AppContextProvider {
                      provisioningLDAPClient: ProvisioningLDAPClient[IO] = mock[ProvisioningLDAPClient[IO]],
                      lookupLDAPClient: LookupLDAPClient[IO] = mock[LookupLDAPClient[IO]],
                      hdfsClient: HDFSClient[IO] = mock[HDFSClient[IO]],
-                     sentryClient: SentryClient[IO] = mock[SentryClient[IO]],
+                     sentryClient: RoleClient[IO] = mock[RoleClient[IO]],
                      hiveClient: HiveClient[IO] = mock[HiveClient[IO]],
                      impalaClient: ImpalaClient[IO] = mock[ImpalaClient[IO]],
                      emailClient: EmailClient[IO] = mock[EmailClient[IO]],

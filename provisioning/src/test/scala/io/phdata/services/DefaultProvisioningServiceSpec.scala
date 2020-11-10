@@ -87,24 +87,24 @@ class DefaultProvisioningServiceSpec
 
         context.provisioningLDAPClient.createGroup _ expects(savedLDAP.commonName, *) returning IO.unit
         context.ldapRepository.groupCreated _ expects(id, *) returning 0.pure[ConnectionIO]
-        context.sentryClient.createRole _ expects savedLDAP.sentryRole returning IO.unit
+        context.roleClient.createRole _ expects savedLDAP.securityRole returning IO.unit
         context.ldapRepository.roleCreated _ expects(id, *) returning 0.pure[ConnectionIO]
-        context.sentryClient.grantGroup _ expects(savedLDAP.commonName, savedLDAP.sentryRole) returning IO.unit
+        context.roleClient.grantGroup _ expects(savedLDAP.commonName, savedLDAP.securityRole) returning IO.unit
         context.ldapRepository.groupAssociated _ expects(id, *) returning 0.pure[ConnectionIO]
-        context.sentryClient.enableAccessToDB _ expects(savedHive.name, savedLDAP.sentryRole, Manager) returning IO.unit
+        context.roleClient.enableAccessToDB _ expects(savedHive.name, savedLDAP.securityRole, Manager) returning IO.unit
         context.databaseGrantRepository.databaseGranted _ expects(id, *) returning 0.pure[ConnectionIO]
-        context.sentryClient.enableAccessToLocation _ expects(savedHive.location, savedLDAP.sentryRole) returning IO.unit
+        context.roleClient.enableAccessToLocation _ expects(savedHive.location, savedLDAP.securityRole) returning IO.unit
         context.databaseGrantRepository.locationGranted _ expects(id, *) returning 0.pure[ConnectionIO]
 
         context.provisioningLDAPClient.createGroup _ expects(savedLDAP.commonName, *) returning IO.unit
         context.ldapRepository.groupCreated _ expects(id, *) returning 0.pure[ConnectionIO]
-        context.sentryClient.createRole _ expects savedLDAP.sentryRole returning IO.unit
+        context.roleClient.createRole _ expects savedLDAP.securityRole returning IO.unit
         context.ldapRepository.roleCreated _ expects(id, *) returning 0.pure[ConnectionIO]
-        context.sentryClient.grantGroup _ expects(savedLDAP.commonName, savedLDAP.sentryRole) returning IO.unit
+        context.roleClient.grantGroup _ expects(savedLDAP.commonName, savedLDAP.securityRole) returning IO.unit
         context.ldapRepository.groupAssociated _ expects(id, *) returning 0.pure[ConnectionIO]
-        context.sentryClient.enableAccessToDB _ expects(savedHive.name, savedLDAP.sentryRole, ReadOnly) returning IO.unit
+        context.roleClient.enableAccessToDB _ expects(savedHive.name, savedLDAP.securityRole, ReadOnly) returning IO.unit
         context.databaseGrantRepository.databaseGranted _ expects(id, *) returning 0.pure[ConnectionIO]
-        context.sentryClient.enableAccessToLocation _ expects(savedHive.location, savedLDAP.sentryRole) returning IO.unit
+        context.roleClient.enableAccessToLocation _ expects(savedHive.location, savedLDAP.securityRole) returning IO.unit
         context.databaseGrantRepository.locationGranted _ expects(id, *) returning 0.pure[ConnectionIO]
       }
 
@@ -138,17 +138,17 @@ class DefaultProvisioningServiceSpec
       context.provisioningLDAPClient.removeUserFromGroup _ expects(savedLDAP.distinguishedName, standardUserDN) returning OptionT.some(standardUserDN.value)
 
       inSequence {
-        context.sentryClient.removeAccessToLocation _ expects(savedHive.location, savedLDAP.sentryRole) returning IO.unit
-        context.sentryClient.removeAccessToDB _ expects(savedHive.name, savedLDAP.sentryRole, ReadOnly) returning IO.unit
-        context.sentryClient.revokeGroup _ expects(savedLDAP.commonName, savedLDAP.sentryRole) returning IO.unit
+        context.roleClient.removeAccessToLocation _ expects(savedHive.location, savedLDAP.securityRole) returning IO.unit
+        context.roleClient.removeAccessToDB _ expects(savedHive.name, savedLDAP.securityRole, ReadOnly) returning IO.unit
+        context.roleClient.revokeGroup _ expects(savedLDAP.commonName, savedLDAP.securityRole) returning IO.unit
 
-        context.sentryClient.dropRole _ expects savedLDAP.sentryRole returning IO.unit
+        context.roleClient.dropRole _ expects savedLDAP.securityRole returning IO.unit
         context.provisioningLDAPClient.deleteGroup _ expects savedLDAP.distinguishedName returning OptionT.some(standardUserDN.value)
-        context.sentryClient.removeAccessToLocation _ expects(savedHive.location, savedLDAP.sentryRole) returning IO.unit
-        context.sentryClient.removeAccessToDB _ expects(savedHive.name, savedLDAP.sentryRole, Manager) returning IO.unit
-        context.sentryClient.revokeGroup _ expects(savedLDAP.commonName, savedLDAP.sentryRole) returning IO.unit
+        context.roleClient.removeAccessToLocation _ expects(savedHive.location, savedLDAP.securityRole) returning IO.unit
+        context.roleClient.removeAccessToDB _ expects(savedHive.name, savedLDAP.securityRole, Manager) returning IO.unit
+        context.roleClient.revokeGroup _ expects(savedLDAP.commonName, savedLDAP.securityRole) returning IO.unit
 
-        context.sentryClient.dropRole _ expects savedLDAP.sentryRole returning IO.unit
+        context.roleClient.dropRole _ expects savedLDAP.securityRole returning IO.unit
         context.provisioningLDAPClient.deleteGroup _ expects savedLDAP.distinguishedName returning OptionT.some(standardUserDN.value)
         context.hiveClient.dropDatabase _ expects savedHive.name returning IO(1)
         context.hdfsService.removeQuota _ expects(savedHive.location) returning IO.unit

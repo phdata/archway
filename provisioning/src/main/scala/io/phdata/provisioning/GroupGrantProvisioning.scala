@@ -25,14 +25,14 @@ object GroupGrantProvisioning {
         .void
 
     override def run[F[_]: Sync: Clock](grantGroupAccess: GroupGrant, workspaceContext: WorkspaceContext[F]): F[Unit] =
-      workspaceContext.context.sentryClient.grantGroup(grantGroupAccess.groupName, grantGroupAccess.roleName)
+      workspaceContext.context.roleClient.grantGroup(grantGroupAccess.groupName, grantGroupAccess.roleName)
 
   }
 
   implicit object GrantGroupAccessDeprovisioningTask extends DeprovisioningTask[GroupGrant] {
 
     override def run[F[_]: Sync: Clock](grantGroupAccess: GroupGrant, workspaceContext: WorkspaceContext[F]): F[Unit] =
-      workspaceContext.context.sentryClient.revokeGroup(grantGroupAccess.groupName, grantGroupAccess.roleName)
+      workspaceContext.context.roleClient.revokeGroup(grantGroupAccess.groupName, grantGroupAccess.roleName)
 
   }
 

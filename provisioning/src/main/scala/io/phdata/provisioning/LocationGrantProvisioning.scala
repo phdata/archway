@@ -25,14 +25,14 @@ object LocationGrantProvisioning {
         .void
 
     override def run[F[_]: Sync: Clock](locationGrant: LocationGrant, workspaceContext: WorkspaceContext[F]): F[Unit] =
-      workspaceContext.context.sentryClient.enableAccessToLocation(locationGrant.location, locationGrant.roleName)
+      workspaceContext.context.roleClient.enableAccessToLocation(locationGrant.location, locationGrant.roleName)
 
   }
 
   implicit object LocationGrantDeprovisioningTask extends DeprovisioningTask[LocationGrant] {
 
     override def run[F[_]: Sync: Clock](locationGrant: LocationGrant, workspaceContext: WorkspaceContext[F]): F[Unit] =
-      workspaceContext.context.sentryClient.removeAccessToLocation(locationGrant.location, locationGrant.roleName)
+      workspaceContext.context.roleClient.removeAccessToLocation(locationGrant.location, locationGrant.roleName)
 
   }
 

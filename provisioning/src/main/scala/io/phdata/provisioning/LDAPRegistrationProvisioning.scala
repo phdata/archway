@@ -16,11 +16,11 @@ trait LDAPRegistrationProvisioning {
             registration.attributes
           )
         )(ActiveDirectoryGroupProvisioning.provisionable, ActiveDirectoryGroupProvisioning.show),
-        TypeWith[Provisionable, SentryRole](
-          SentryRole(registration.id.get, registration.sentryRole)
-        )(SentryRoleProvisioning.provisionable, SentryRoleProvisioning.show),
+        TypeWith[Provisionable, SecurityRole](
+          SecurityRole(registration.id.get, registration.securityRole)
+        )(RoleProvisioning.provisionable, RoleProvisioning.show),
         TypeWith[Provisionable, GroupGrant](
-          GroupGrant(registration.id.get, registration.sentryRole, registration.commonName)
+          GroupGrant(registration.id.get, registration.securityRole, registration.commonName)
         )(GroupGrantProvisioning.provisionable, GroupGrantProvisioning.show)
       )
     }

@@ -24,7 +24,7 @@ case object Hive extends Component {
   def privilege(grantString: String): TSentryPrivilege = ???
 }
 
-trait SentryClient[F[_]] {
+trait RoleClient[F[_]] {
   def createRole(name: String): F[Unit]
 
   def dropRole(role: String): F[Unit]
@@ -50,12 +50,12 @@ trait SentryClient[F[_]] {
   def removePrivilege(role: String, component: Component, grantString: String): F[Unit]
 }
 
-class SentryClientImpl[F[_]](
+class RoleClientImpl[F[_]](
     transactor: Transactor[F],
     client: SentryGenericServiceClient,
     loginContextProvider: LoginContextProvider
 )(implicit val F: Effect[F])
-    extends SentryClient[F] with LazyLogging {
+    extends RoleClient[F] with LazyLogging {
 
   implicit val han: LogHandler = CustomLogHandler.logHandler(this.getClass)
 
