@@ -43,6 +43,7 @@ object ActiveDirectoryGroupProvisioning {
 
   }
 
-  val provisionable: Provisionable[ActiveDirectoryGroup] = Provisionable.deriveFromTasks
+  val provisionable: Provisionable[ActiveDirectoryGroup] =
+    Provisionable.deriveFromTasks(ActiveDirectoryGroupProvisioningTask, ActiveDirectoryGroupDeprovisioningTask)
 
 }

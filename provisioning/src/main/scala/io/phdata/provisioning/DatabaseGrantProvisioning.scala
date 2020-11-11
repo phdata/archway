@@ -38,6 +38,7 @@ object DatabaseGrantProvisioning {
 
   }
 
-  implicit val databaseGrantProvisionable: Provisionable[DatabaseGrant] = Provisionable.deriveFromTasks
+  implicit val databaseGrantProvisionable: Provisionable[DatabaseGrant] =
+    Provisionable.deriveFromTasks(DatabaseGrantProvisioningTask, DatabaseGrantDeprovisioningTask)
 
 }

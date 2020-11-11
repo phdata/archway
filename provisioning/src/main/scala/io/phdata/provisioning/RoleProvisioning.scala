@@ -36,6 +36,7 @@ object RoleProvisioning {
 
   }
 
-  implicit val provisionable: Provisionable[SecurityRole] = Provisionable.deriveFromTasks
+  implicit val provisionable: Provisionable[SecurityRole] =
+    Provisionable.deriveFromTasks(RoleProvisioningTask, RoleDeprovisioningTask)
 
 }

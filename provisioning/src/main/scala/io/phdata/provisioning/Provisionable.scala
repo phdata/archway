@@ -56,7 +56,7 @@ object Provisionable {
     }
 
   def deriveFromTasks[A](
-      implicit provisioningTask: ProvisioningTask[A],
+      provisioningTask: ProvisioningTask[A],
       deprovisioningTask: DeprovisioningTask[A]
   ): Provisionable[A] =
     new Provisionable[A] with LazyLogging {

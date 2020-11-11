@@ -2,10 +2,8 @@ package io.phdata.provisioning
 
 import java.time.Instant
 
-import cats.data.{NonEmptyList, OptionT}
 import cats.effect.{Clock, Sync}
 import cats.implicits._
-import io.phdata.config.AvailableFeatures
 import io.phdata.models.WorkspaceRequest
 import doobie.implicits._
 import io.phdata.provisioning.GroupMemberProvisioning.show
