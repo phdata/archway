@@ -28,12 +28,6 @@ trait HiveProvisioning {
   val HiveAllocationProvisionable: Provisionable[HiveAllocation] =
     Provisionable.deriveFromSteps { (hiveAllocation, _) =>
       NonEmptyList.of(
-        TypeWith[Provisionable, DatabaseDirectory](
-          DatabaseDirectory(hiveAllocation.id.get, hiveAllocation.location, None)
-        )(DatabaseDirectoryProvisioning.provisionable, DatabaseDirectoryProvisioning.show),
-        TypeWith[Provisionable, DiskQuota](
-          DiskQuota(hiveAllocation.id.get, hiveAllocation.location, hiveAllocation.sizeInGB)
-        )(DiskQuotaProvisioning.provisionable, DiskQuotaProvisioning.show),
         TypeWith[Provisionable, HiveDatabaseRegistration](
           HiveDatabaseRegistration(hiveAllocation.id.get, hiveAllocation.name, hiveAllocation.location)
         )(HiveDatabaseRegistrationProvisioning.provisionable, HiveDatabaseRegistrationProvisioning.viewer),

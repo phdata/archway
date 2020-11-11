@@ -3,14 +3,13 @@
 package io.phdata.clients
 
 import cats.effect.IO
-import io.phdata.services.UGILoginContextProvider
 import org.scalatest.FlatSpec
 
 class HiveClientImplSpec extends FlatSpec {
 
   val FOO_DB_NAME = "a_database"
 
-  val hiveClient = new HiveClientImpl[IO](null, null)
+  val hiveClient = new HiveClientImpl[IO](null)
 
   it should "Generate valid create database DDL" in {
     assertResult(s"CREATE DATABASE $FOO_DB_NAME  COMMENT  ? LOCATION  ? with DBPROPERTIES( ? = ? , ? = ? ) ")

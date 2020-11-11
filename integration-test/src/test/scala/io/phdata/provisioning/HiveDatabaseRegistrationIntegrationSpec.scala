@@ -6,9 +6,8 @@ import java.util.UUID
 import cats.effect.{ContextShift, IO, Resource}
 import io.phdata.AppContext
 import io.phdata.clients.HiveClientImpl
-import io.phdata.itest.fixtures.{IntegrationTest, KerberosTest}
+import io.phdata.itest.fixtures.{IntegrationTest}
 import io.phdata.models.{Compliance, Metadata, DistinguishedName, WorkspaceRequest}
-import io.phdata.services.UGILoginContextProvider
 import io.phdata.test.fixtures.{TestTimer}
 import com.typesafe.config.ConfigFactory
 import org.scalamock.scalatest.MockFactory
@@ -21,7 +20,6 @@ class HiveDatabaseRegistrationIntegrationSpec
   with Matchers
   with MockFactory
   with BeforeAndAfterAll
-  with KerberosTest
   with IntegrationTest {
 
 
@@ -71,10 +69,9 @@ class HiveDatabaseRegistrationIntegrationSpec
       val config = ConfigFactory.parseFile(new File("itest-config/application.itest.conf")).resolve()
       for {
         context <- AppContext.default[IO](config)
-        loginCtxProvider = new UGILoginContextProvider(context.appConfig)
         hiveXA: doobie.Transactor[IO] = context.appConfig.db.hive.hiveTx
         workspaceContext = new WorkspaceContext[IO](workspaceId, context)
-        hiveClient = new HiveClientImpl[IO](loginCtxProvider, hiveXA)
+        hiveClient = new HiveClientImpl[IO](hiveXA)
       } yield (workspaceContext, hiveClient)
     }
   }

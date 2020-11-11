@@ -6,7 +6,6 @@ import cats.effect.{ContextShift, IO, Timer}
 import cats.effect.concurrent.MVar
 import io.phdata.caching.{CacheEntry, Cached}
 import io.phdata.clients.CMClient
-import org.apache.hadoop.conf.Configuration
 import org.scalatest.{FlatSpec, Matchers}
 import org.http4s.client.blaze.BlazeClientBuilder
 import io.phdata.itest.fixtures._
@@ -21,13 +20,10 @@ class CDHClusterServiceIntegrationSpec extends FlatSpec with Matchers with SSLTe
     val name = "cluster"
     val version = "6.1.1"
 
-    val configuration = new Configuration()
-    configuration.set("hive.server2.thrift.port", "888")
-
     val timedCacheService = new TimedCacheService()
     val clusterCache: Cached[IO, Seq[Cluster]] = MVar[IO].of(CacheEntry(1000, Seq.empty[Cluster])).unsafeRunSync
 
-    val service = new CDHClusterService(httpClient, itestConfig.cluster, configuration, timedCacheService, clusterCache)
+    val service = new CDHClusterService(httpClient, itestConfig.cluster, timedCacheService, clusterCache)
     val details = service.clusterDetails.unsafeRunSync.head
 
     val impala = details.services.find(_.name == "impala").get

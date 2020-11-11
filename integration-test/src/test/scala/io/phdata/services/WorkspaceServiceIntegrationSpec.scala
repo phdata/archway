@@ -6,7 +6,7 @@ import java.util.concurrent.Executors
 import cats.effect.{ContextShift, IO}
 import io.phdata.AppContext
 import io.phdata.config.TemplateNames
-import io.phdata.itest.fixtures.{KerberosTest, itestConfig, systemTestConfig}
+import io.phdata.itest.fixtures.{itestConfig, systemTestConfig}
 import io.phdata.models._
 import io.phdata.provisioning.DefaultProvisioningService
 import io.phdata.test.fixtures.TestTimer
@@ -14,7 +14,7 @@ import org.scalatest.{FlatSpec, Matchers}
 
 import scala.concurrent.ExecutionContext
 
-class WorkspaceServiceIntegrationSpec extends FlatSpec with Matchers with KerberosTest{
+class WorkspaceServiceIntegrationSpec extends FlatSpec with Matchers {
 
   behavior of "WorkspaceService"
 

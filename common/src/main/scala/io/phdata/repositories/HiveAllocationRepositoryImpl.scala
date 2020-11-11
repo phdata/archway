@@ -72,12 +72,6 @@ class HiveAllocationRepositoryImpl extends HiveAllocationRepository {
   override def findByWorkspace(id: Long): ConnectionIO[List[HiveAllocation]] =
     Statements.list(id).to[List].map(convertHiveResult)
 
-  override def directoryCreated(id: Long, time: Instant): ConnectionIO[Int] =
-    Statements.directoryCreated(id, time).run
-
-  override def setQuota(id: Long, sizeInGB: Int, time: Instant): ConnectionIO[Int] =
-    Statements.setQuota(id, sizeInGB, time).run
-
   override def databaseCreated(id: Long, time: Instant): ConnectionIO[Int] =
     Statements.databaseCreated(id, time).run
 

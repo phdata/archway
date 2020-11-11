@@ -7,7 +7,6 @@ import io.phdata.clients.HttpClient
 import io.phdata.config.{ClusterConfig, ServiceOverride}
 import com.typesafe.scalalogging.LazyLogging
 import io.phdata.services.CDHResponses._
-import org.apache.hadoop.conf.Configuration
 import org.http4s._
 import scala.concurrent.duration._
 import io.circe.generic.auto._
@@ -15,7 +14,6 @@ import io.circe.generic.auto._
 class CDHClusterService[F[_]: ConcurrentEffect: Clock](
     http: HttpClient[F],
     clusterConfig: ClusterConfig,
-    hadoopConfiguration: Configuration,
     cacheService: CacheService,
     clusterCache: Cached[F, Seq[Cluster]]
 ) extends ClusterService[F] with LazyLogging {
@@ -109,7 +107,7 @@ class CDHClusterService[F[_]: ConcurrentEffect: Clock](
           "hive",
           hive,
           hosts,
-          Map("thrift" -> (hadoopConfiguration.get("hive.server2.thrift.port", "10000").toInt, hiveServer2Roles))
+          Map()
         ),
         hueApp(hue, hosts, hueLBRole),
         ClusterApp(

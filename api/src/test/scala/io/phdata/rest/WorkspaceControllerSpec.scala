@@ -90,7 +90,6 @@ class WorkspaceControllerSpec
       .returning(OptionT.some(
         WorkspaceMemberEntry(standardUserDN.value, name, Some("johndoe@phdata.io"), List.empty)
       ))
-    (impalaService.invalidateMetadata(_: Long)(_: AppContext[IO])(_: Sync[IO])).expects(123L, context, *).returning(IO.unit)
     (emailService.newMemberEmail _).expects(id, memberRequest).returning(OptionT.some(IO.unit))
 
     val request = Json.obj(
@@ -108,7 +107,6 @@ class WorkspaceControllerSpec
     val memberRequest = MemberRoleRequest(standardUserDN, "data", id, Some(Manager))
 
     (memberService.addMember _).expects(id, memberRequest).returning(OptionT.none)
-    (impalaService.invalidateMetadata(_: Long)(_: AppContext[IO])(_: Sync[IO])).expects(123L, context, *).returning(IO.unit)
     (emailService.newMemberEmail _).expects(id, memberRequest).returning(OptionT.some(IO.unit))
 
     val request = Json.obj(
@@ -129,7 +127,6 @@ class WorkspaceControllerSpec
       .returning(OptionT.some(
         WorkspaceMemberEntry(standardUserDN.value, name, Some("johndoe@phdata.io"), List.empty)
       ))
-    (impalaService.invalidateMetadata(_: Long)(_: AppContext[IO])(_: Sync[IO])).expects(123L, context, *).returning(IO.unit)
     (emailService.newMemberEmail _).expects(id, memberRequest).returning(OptionT.some(IO.unit))
 
     val request = Json.arr(
@@ -292,21 +289,6 @@ class WorkspaceControllerSpec
     response.status.code shouldBe 200
   }
 
-  it should "set quota for the given size and resource id if HDFS is used" in new Http4sClientDsl[IO] with Context {
-    workspaceService.findById _ expects id returning OptionT.some(savedWorkspaceRequest)
-    hdfsService.setQuota _ expects (savedHive.location, hdfsRequestedSize, id, *) returning ().pure[IO]
-
-    val response = restApi.route.orNotFound.run(POST(Uri.uri("/123/disk-quota/123/250")).unsafeRunSync()).unsafeRunSync()
-    response.status.code shouldBe 200
-  }
-
-  it should "skip setting quota if HDFS is not used" in new Http4sClientDsl[IO] with Context {
-    workspaceService.findById _ expects id returning OptionT.some(savedWorkspaceRequest.copy(data = List(savedHive.copy(location = "s3a://phdata-bdr-bucket/archway-itest"))))
-
-    val response = restApi.route.orNotFound.run(POST(Uri.uri("/123/disk-quota/123/250")).unsafeRunSync()).unsafeRunSync()
-    response.status.code shouldBe 200
-  }
-
   trait Context {
     implicit val timer: Timer[IO] = testTimer
     implicit val contextShift = IO.contextShift(ExecutionContext.global)
@@ -315,11 +297,9 @@ class WorkspaceControllerSpec
     val authService: TestAuthService = new TestAuthService(riskApprover = true, platformApprover = true)
     val memberService: MemberService[IO] = mock[MemberService[IO]]
     val workspaceService: WorkspaceService[IO] = mock[WorkspaceService[IO]]
-    val hdfsService: HDFSService[IO] = mock[HDFSService[IO]]
     val emailService: EmailService[IO] = mock[EmailService[IO]]
     val provisioningService: ProvisioningService[IO] = mock[ProvisioningService[IO]]
     val complianceGroupService: ComplianceGroupService[IO] = mock[ComplianceGroupService[IO]]
-    val impalaService: ImpalaService = mock[ImpalaService]
 
     def restApi: WorkspaceController[IO] =
       new WorkspaceController[IO](
@@ -329,10 +309,8 @@ class WorkspaceControllerSpec
         memberService,
         emailService,
         provisioningService,
-        hdfsService,
         complianceGroupService,
         ExecutionContext.global,
-        impalaService
       )
   }
 }

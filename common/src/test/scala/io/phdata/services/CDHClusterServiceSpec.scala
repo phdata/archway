@@ -8,7 +8,6 @@ import io.phdata.caching.{CacheEntry, Cached}
 import io.phdata.clients.CMClient
 import io.phdata.config.ServiceOverride
 import io.phdata.test.fixtures._
-import org.apache.hadoop.conf.Configuration
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FlatSpec, Matchers}
 
@@ -22,12 +21,11 @@ class CDHClusterServiceSpec
   behavior of "CDH Cluster service"
 
   it should "use hue override" in new Context {
-    val configuration = new Configuration()
     val newConfig = appConfig.cluster.copy(hueOverride = ServiceOverride(Some("abc"), 8088))
     val timedCacheService = new TimedCacheService()
     val clusterCache: Cached[IO, Seq[Cluster]] = MVar[IO].of(CacheEntry(1000, Seq.empty[Cluster])).unsafeRunSync
 
-    val service = new CDHClusterService(httpClient, newConfig, configuration, timedCacheService, clusterCache)
+    val service = new CDHClusterService(httpClient, newConfig, timedCacheService, clusterCache)
 
     val ClusterApp(_, _, _, _, actual) = service.hueApp(null, null, null)
     actual.head._2.head shouldBe AppLocation("abc", 8088)

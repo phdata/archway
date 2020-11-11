@@ -51,8 +51,6 @@ class MemberServiceImpl[F[_]](context: AppContext[F])(implicit val F: Effect[F])
 
       user <- context.lookupLDAPClient.findUserByDN(memberRequest.distinguishedName)
 
-      _ <- OptionT.liftF(context.hdfsClient.createUserDirectory(user.username))
-
       _ <- context.provisioningLDAPClient
         .addUserToGroup(registration.distinguishedName, memberRequest.distinguishedName)
 

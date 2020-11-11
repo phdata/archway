@@ -6,7 +6,6 @@ import java.util.UUID
 
 import cats.effect.IO
 import io.phdata.itest.fixtures._
-import io.phdata.services.UGILoginContextProvider
 import doobie._
 import doobie.implicits._
 import org.scalatest.{BeforeAndAfterAll, FlatSpec, Matchers}
@@ -20,7 +19,7 @@ class HiveClientImplIntegrationSpec
 
   val FOO_DB_NAME = s"zz_heimdali_hive_client_integration_${UUID.randomUUID().toString.take(8)}"
 
-  val hiveClient = new HiveClientImpl[IO](new UGILoginContextProvider(itestConfig), hiveTransactor)
+  val hiveClient = new HiveClientImpl[IO](hiveTransactor)
 
   override def beforeAll(): Unit = {
     super.beforeAll()

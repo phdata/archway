@@ -8,7 +8,6 @@ import cats.implicits._
 import io.phdata.config.AvailableFeatures
 import io.phdata.models.WorkspaceRequest
 import doobie.implicits._
-import io.phdata.services.ImpalaServiceImpl
 import io.phdata.provisioning.GroupMemberProvisioning.show
 
 trait WorkspaceRequestProvisioning {
@@ -26,31 +25,22 @@ trait WorkspaceRequestProvisioning {
         .void
 
     override def run[F[_]: Sync: Clock](workspace: WorkspaceRequest, workspaceContext: WorkspaceContext[F]): F[Unit] = {
-      val createUserWorkspace =
-        (for {
-          user <- workspaceContext.context.lookupLDAPClient.findUserByDN(workspace.requestedBy)
-          _ <- OptionT.liftF(workspaceContext.context.hdfsClient.createUserDirectory(user.username))
-        } yield ()).value
-
-      createUserWorkspace *>
-        (for {
-          a <- workspace.data.traverse(a => HiveAllocationProvisionable.provision(a, workspaceContext).run)
-          b <- workspace.data.traverse(
-            d =>
-              GroupMemberProvisioning.provisionable
-                .provision(
-                  GroupMember(
-                    d.id.get,
-                    d.managingGroup.ldapRegistration.distinguishedName,
-                    workspace.requestedBy
-                  ),
-                  workspaceContext
-                )
-                .run
-          )
-
-          _ <- ImpalaServiceImpl.invalidateMetadata(workspace.id.get)(workspaceContext.context)
-        } yield a |+| b)
+      (for {
+        a <- workspace.data.traverse(a => HiveAllocationProvisionable.provision(a, workspaceContext).run)
+        b <- workspace.data.traverse(
+          d =>
+            GroupMemberProvisioning.provisionable
+              .provision(
+                GroupMember(
+                  d.id.get,
+                  d.managingGroup.ldapRegistration.distinguishedName,
+                  workspace.requestedBy
+                ),
+                workspaceContext
+              )
+              .run
+        )
+      } yield a |+| b)
     }
 
   }

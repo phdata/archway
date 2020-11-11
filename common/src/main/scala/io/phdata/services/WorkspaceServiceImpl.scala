@@ -133,12 +133,6 @@ class WorkspaceServiceImpl[F[_]: ConcurrentEffect: ContextShift](
           MemberRoleRequest(newOwnerDN, memberRecord.resource, memberRecord.id, memberRecord.role.some)
         memberService.addMember(workspaceId, addMemberRequest)
       }
-      _ <- OptionT.liftF(ImpalaServiceImpl.invalidateMetadata(workspaceId)(context).onError {
-        case e: Throwable =>
-          logger
-            .error(s"Failed to invalidate impala metadata for workspace $workspaceId: ${e.getLocalizedMessage}", e)
-            .pure[F]
-      })
     } yield ()
 
     changeGroupMembership.value.void
@@ -168,8 +162,6 @@ class WorkspaceServiceImpl[F[_]: ConcurrentEffect: ContextShift](
     dbs.map {
       case hive if hive.directoryCreated.isDefined && !(hive.getProtocol == "hdfs") =>
         hive.copy(consumedInGB = Some(-1)).pure[F]
-      case hive if hive.directoryCreated.isDefined =>
-        context.hdfsClient.getConsumption(hive.location).map(consumed => hive.copy(consumedInGB = Some(consumed)))
       case hive => Effect[F].pure(hive)
     }.sequence
 }

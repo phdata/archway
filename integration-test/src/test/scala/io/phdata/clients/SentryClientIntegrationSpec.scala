@@ -8,12 +8,12 @@ import io.phdata.models.{Manager, ReadOnly, ReadWrite}
 import org.scalatest.{BeforeAndAfterAll, FlatSpec, Matchers}
 import cats.implicits._
 
-class RoleClientIntegrationSpec extends FlatSpec with Matchers with HiveTest with IntegrationTest with BeforeAndAfterAll{
+class SentryClientIntegrationSpec extends FlatSpec with Matchers with HiveTest with IntegrationTest with BeforeAndAfterAll{
 
   val hiveClient = new HiveClientImpl[IO](hiveTransactor)
   val roleClient = new RoleClientImpl[IO](hiveTransactor)
 
-  val role = s"arch_test_role_${UUID.randomUUID().toString.take(8)}"
+  val role = s"test_role_${UUID.randomUUID().toString.take(8)}"
   val group = "integration_test_group"
   val testDatabase = "sentry_client_integration_test"
   val location = "integration_test"
@@ -34,7 +34,7 @@ class RoleClientIntegrationSpec extends FlatSpec with Matchers with HiveTest wit
   override def afterAll() {
     val cleanUp = for {
      roles <- roleClient.roles
-     _ <- roles.filter(_.startsWith("arch_test_role_")).map(testRole => roleClient.dropRole(testRole)).pure[IO]
+     _ <- roles.filter(_.startsWith("test_role_")).map(testRole => roleClient.dropRole(testRole)).pure[IO]
     } yield ()
 
     cleanUp.unsafeRunSync()
@@ -44,9 +44,9 @@ class RoleClientIntegrationSpec extends FlatSpec with Matchers with HiveTest wit
 
   it should "list roles" in {
     val testRoles = List(
-      s"arch_test_role_${UUID.randomUUID().toString.take(8)}",
-      s"arch_test_role_${UUID.randomUUID().toString.take(8)}",
-      s"arch_test_role_${UUID.randomUUID().toString.take(8)}"
+      s"test_role_${UUID.randomUUID().toString.take(8)}",
+      s"test_role_${UUID.randomUUID().toString.take(8)}",
+      s"test_role_${UUID.randomUUID().toString.take(8)}"
     )
 
     testRoles.foreach(role =>
@@ -58,6 +58,10 @@ class RoleClientIntegrationSpec extends FlatSpec with Matchers with HiveTest wit
     result should not be empty
     testRoles.foreach(role =>
       result should contain(role)
+    )
+
+    testRoles.foreach(role =>
+      roleClient.dropRole(role).unsafeRunSync()
     )
   }
 
@@ -79,7 +83,6 @@ class RoleClientIntegrationSpec extends FlatSpec with Matchers with HiveTest wit
     deletedResult shouldNot contain(role)
   }
 
-  // TODO Failed: AD group doesn't exist
   it should "grant group" in {
     roleClient.createRole(role).unsafeRunSync()
     roleClient.grantGroup(group, role).unsafeRunSync()
@@ -90,7 +93,6 @@ class RoleClientIntegrationSpec extends FlatSpec with Matchers with HiveTest wit
     result should contain(role)
   }
 
-  // TODO Failed: AD group doesn't exist
   it should "revoke group" in {
     roleClient.createRole(role).unsafeRunSync()
 
@@ -104,7 +106,6 @@ class RoleClientIntegrationSpec extends FlatSpec with Matchers with HiveTest wit
     resultRevoked shouldNot contain(role)
   }
 
-  // TODO Failed: Ranger only supports SHOW PRIVILEGES for Hive resources and not user level
   it should "enable manager access to database" in {
     roleClient.createRole(role).unsafeRunSync()
     roleClient.enableAccessToDB(testDatabase, role, Manager).unsafeRunSync()
@@ -116,7 +117,6 @@ class RoleClientIntegrationSpec extends FlatSpec with Matchers with HiveTest wit
     result.privilege shouldBe "*"
   }
 
-  // TODO Failed: Ranger only supports SHOW PRIVILEGES for Hive resources and not user level
   it should "remove manager access to database" in {
     roleClient.createRole(role).unsafeRunSync()
     roleClient.enableAccessToDB(testDatabase, role, Manager).unsafeRunSync()
@@ -131,7 +131,6 @@ class RoleClientIntegrationSpec extends FlatSpec with Matchers with HiveTest wit
     removedResult shouldBe empty
   }
 
-  // TODO Failed: Ranger only supports SHOW PRIVILEGES for Hive resources and not user level
   it should "enable readwrite access to database" in {
     roleClient.createRole(role).unsafeRunSync()
     roleClient.enableAccessToDB(testDatabase, role, ReadWrite).unsafeRunSync()
@@ -143,7 +142,6 @@ class RoleClientIntegrationSpec extends FlatSpec with Matchers with HiveTest wit
     result.privilege shouldBe "*"
   }
 
-  // TODO Failed: Ranger only supports SHOW PRIVILEGES for Hive resources and not user level
   it should "remove readwrite access to database" in {
     roleClient.createRole(role).unsafeRunSync()
     roleClient.enableAccessToDB(testDatabase, role, ReadWrite).unsafeRunSync()
@@ -158,7 +156,6 @@ class RoleClientIntegrationSpec extends FlatSpec with Matchers with HiveTest wit
     removedResult shouldBe empty
   }
 
-  // TODO Failed: Ranger only supports SHOW PRIVILEGES for Hive resources and not user level
   it should "enable readonly access to database" in {
     roleClient.createRole(role).unsafeRunSync()
     roleClient.enableAccessToDB(testDatabase, role, ReadOnly).unsafeRunSync()
@@ -170,7 +167,6 @@ class RoleClientIntegrationSpec extends FlatSpec with Matchers with HiveTest wit
     result.privilege shouldBe "SELECT"
   }
 
-  // TODO Failed: Ranger only supports SHOW PRIVILEGES for Hive resources and not user level
   it should "remove readonly access to database" in {
     roleClient.createRole(role).unsafeRunSync()
     roleClient.enableAccessToDB(testDatabase, role, ReadOnly).unsafeRunSync()
@@ -185,7 +181,6 @@ class RoleClientIntegrationSpec extends FlatSpec with Matchers with HiveTest wit
     removedResult shouldBe empty
   }
 
-  // TODO Failed: SemanticException Hive authorization does not support the URI or SERVER objects
   it should "enable access to location" in {
     roleClient.createRole(role).unsafeRunSync()
     roleClient.enableAccessToLocation(location, role).unsafeRunSync()
@@ -196,7 +191,6 @@ class RoleClientIntegrationSpec extends FlatSpec with Matchers with HiveTest wit
     result.privilege shouldBe "*"
   }
 
-  // TODO Failed: SemanticException Hive authorization does not support the URI or SERVER objects
   it should "remove access to location" in {
     roleClient.createRole(role).unsafeRunSync()
     roleClient.enableAccessToLocation(location, role).unsafeRunSync()

@@ -6,12 +6,11 @@ import com.typesafe.scalalogging.LazyLogging
 import doobie.util.ExecutionContexts
 import io.circe.Printer
 import io.circe.syntax._
-import io.phdata.generators.{LDAPGroupGenerator}
 import io.phdata.provisioning.DefaultProvisioningService
-import io.phdata.rest.authentication.{LdapAuthService, SpnegoAuthService, TokenAuthServiceImpl}
+import io.phdata.rest.authentication.{LdapAuthService, TokenAuthServiceImpl}
 import io.phdata.rest._
 import io.phdata.services._
-import io.phdata.startup.{ADGroupsSynchronizer, ArchwayStartup, Provisioning, SessionMaintainer}
+import io.phdata.startup.{ADGroupsSynchronizer, ArchwayStartup, Provisioning}
 import org.http4s.implicits._
 import org.http4s.server.SSLKeyStoreSupport.StoreInfo
 import org.http4s.server.blaze._
@@ -50,9 +49,6 @@ object Server extends IOApp with LazyLogging {
       customLinkService = new CustomLinkGroupServiceImpl[F](context)
 
       authService = context.appConfig.rest.authType match {
-        case "spnego" =>
-          logger.info("Choosing spnego auth service")
-          new SpnegoAuthService[F](accountService)
         case "ldap" =>
           logger.info("Choosing ldap auth service")
           new LdapAuthService[F](accountService)
@@ -72,10 +68,8 @@ object Server extends IOApp with LazyLogging {
         memberService,
         emailService,
         provisionService,
-        context.hdfsService,
         complianceService,
-        emailEC,
-        ImpalaServiceImpl
+        emailEC
       )
       _ <- Resource.liftF(logger.debug("Workspace Controller has been initialized").pure[F])
 
@@ -100,10 +94,9 @@ object Server extends IOApp with LazyLogging {
       ).orNotFound
 
       provisioningJob = new Provisioning[F](context, provisionService)
-      sessionMaintainer = new SessionMaintainer[F](context)
       adGroupsSynchronizer = new ADGroupsSynchronizer[F](context)
       _ <- Resource.liftF(logger.info("Initializing ArchwayStartup class").pure[F])
-      startup = new ArchwayStartup[F](sessionMaintainer, provisioningJob, adGroupsSynchronizer)(
+      startup = new ArchwayStartup[F](provisioningJob, adGroupsSynchronizer)(
         startupEC
       )
 
