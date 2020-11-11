@@ -96,9 +96,7 @@ object Dependencies {
     "com.typesafe.scala-logging" %% "scala-logging" % scalaLoggingVersion,
     "org.apache.logging.log4j" % "log4j-api" % log4j2Version
   )
-
-  Seq()
-
+  
   val unboundIdVersion = "4.0.11"
 
   val unbound = Seq(
