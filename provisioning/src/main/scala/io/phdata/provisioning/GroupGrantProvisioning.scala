@@ -36,6 +36,7 @@ object GroupGrantProvisioning {
 
   }
 
-  implicit val provisionable: Provisionable[GroupGrant] = Provisionable.deriveFromTasks
+  implicit val provisionable: Provisionable[GroupGrant] =
+    Provisionable.deriveFromTasks(GrantGroupAccessProvisioningTask, GrantGroupAccessDeprovisioningTask)
 
 }

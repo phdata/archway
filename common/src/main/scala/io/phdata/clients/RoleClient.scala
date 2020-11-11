@@ -30,8 +30,7 @@ trait RoleClient[F[_]] {
   def removeAccessToLocation(location: String, role: String): F[Unit]
 }
 
-class RoleClientImpl[F[_]](
-    transactor: Transactor[F])(implicit val F: Effect[F])
+class RoleClientImpl[F[_]](transactor: Transactor[F])(implicit val F: Effect[F])
     extends RoleClient[F] with LazyLogging {
 
   implicit val han: LogHandler = CustomLogHandler.logHandler(this.getClass)

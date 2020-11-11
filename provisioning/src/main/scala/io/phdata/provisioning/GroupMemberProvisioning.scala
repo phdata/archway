@@ -43,6 +43,7 @@ object GroupMemberProvisioning {
 
   }
 
-  implicit val provisionable: Provisionable[GroupMember] = Provisionable.deriveFromTasks
+  implicit val provisionable: Provisionable[GroupMember] =
+    Provisionable.deriveFromTasks(NewMemberProvisioningTask, NewMemberDeprovisioningTask)
 
 }

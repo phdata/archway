@@ -59,7 +59,8 @@ object HiveDatabaseRegistrationProvisioning extends LazyLogging {
 
   }
 
-  implicit val provisionable: Provisionable[HiveDatabaseRegistration] = Provisionable.deriveFromTasks
+  implicit val provisionable: Provisionable[HiveDatabaseRegistration] =
+    Provisionable.deriveFromTasks(HiveDatabaseRegistrationProvisioningTask, HiveDatabaseRegistrationDeprovisioningTask)
 
   def createDBProperties(workspaceRequest: WorkspaceRequest): Map[String, String] = {
     val compliance = workspaceRequest.compliance
