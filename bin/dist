@@ -1,0 +1,11 @@
+#!/bin/bash
+set -euo pipefail
+sbt "set every test in assembly := {}" api/assembly 
+npm run-script prepare
+npm install  typescript
+npm install
+mkdir dist/ui
+mv dist/* dist/ui
+cp -r public/* dist/ui
+cp api/target/scala-2.12/archway-server.jar dist
+
