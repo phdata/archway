@@ -56,22 +56,9 @@ validate: .make.validate
 
 .PHONY: dist
 
-parcel: validate-version .make.parcel
-.make.parcel:
-	echo "using ARCHWAY_VERSION: $${ARCHWAY_VERSION:?}"
-	./publish.sh parcel archway
-	./publish.sh manifest
-	touch $@
-
-csd: validate-version .make.csd
-.make.csd:
-	echo "using ARCHWAY_VERSION: $${ARCHWAY_VERSION:?}"
-	./publish.sh csd
-	touch $@
-
 app: api-jar test-jar ui
 
-dist: app parcel csd
+dist: app
 
 # TODO invalidate this of version changes, maybe like https://www.cmcrossroads.com/article/rebuilding-when-files-checksum-changes
 validate-version: .make.validate-version
