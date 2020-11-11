@@ -103,35 +103,6 @@ class WorkspaceServiceImplSpec
     maybeWorkspace shouldBe Some(savedWorkspaceRequest)
   }
 
-  it should "get consumed space if directory has been created" in new Context {
-    val withCreated: HiveAllocation = savedHive.copy(directoryCreated = Some(testTimer.instant))
-
-    context.workspaceRequestRepository.find _ expects id returning OptionT.some(savedWorkspaceRequest)
-    context.databaseRepository.findByWorkspace _ expects id returning List(withCreated).pure[ConnectionIO]
-    context.approvalRepository.findByWorkspaceId _ expects id returning List(approval()).pure[ConnectionIO]
-    context.hdfsClient.getConsumption _ expects withCreated.location returning IO.pure(1.0)
-
-    val foundWorkspace = workspaceServiceImpl.findById(id).value.unsafeRunSync()
-
-    foundWorkspace shouldBe defined
-    foundWorkspace.get.data should not be empty
-    foundWorkspace.get.data.head.consumedInGB shouldBe Some(1.0)
-  }
-
-  it should "get default value for consumed space if hdfs is not used" in new Context {
-    val withCreated: HiveAllocation = savedHive.copy(directoryCreated = Some(testTimer.instant), location = "s3a://bucket/temp")
-
-    context.workspaceRequestRepository.find _ expects id returning OptionT.some(savedWorkspaceRequest)
-    context.databaseRepository.findByWorkspace _ expects id returning List(withCreated).pure[ConnectionIO]
-    context.approvalRepository.findByWorkspaceId _ expects id returning List(approval()).pure[ConnectionIO]
-
-    val foundWorkspace = workspaceServiceImpl.findById(id).value.unsafeRunSync()
-
-    foundWorkspace shouldBe defined
-    foundWorkspace.get.data should not be empty
-    foundWorkspace.get.data.head.consumedInGB shouldBe Some(-1.0)
-  }
-
   it should "approve the workspace" in new Context {
     val instant = Instant.now()
     context.approvalRepository.create _ expects(id, approval(instant)) returning approval(instant).copy(id = Some(id)).pure[ConnectionIO]

@@ -93,15 +93,4 @@ class AccountServiceImpl[F[_]: Sync: Timer](
   override def getWorkspace(distinguishedName: DistinguishedName): OptionT[F, WorkspaceRequest] =
     workspaceService.findByDistinguishedName(distinguishedName)
 
-  override def spnegoAuth(header: String): F[Either[Throwable, Token]] = {
-    val token: EitherT[F, Throwable, Token] = for {
-      username <- context.kerberosClient.spnegoUsername(header)
-      maybeUser <- EitherT
-        .fromOptionF(context.lookupLDAPClient.findUserByUserName(username).value, new Exception("LDAP user not found"))
-      token <- EitherT.liftF(refresh(maybeUser))
-    } yield token
-
-    token.value
-  }
-
 }

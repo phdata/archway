@@ -7,7 +7,6 @@ import doobie._
 import doobie.implicits._
 import io.phdata.models.{HiveDatabase, HiveTable}
 import io.phdata.repositories.CustomLogHandler
-import io.phdata.services.LoginContextProvider
 
 trait HiveClient[F[_]] {
 
@@ -27,7 +26,7 @@ trait HiveClient[F[_]] {
 
 }
 
-class HiveClientImpl[F[_]](loginContextProvider: LoginContextProvider, transactor: Transactor[F])(
+class HiveClientImpl[F[_]](transactor: Transactor[F])(
     implicit val F: Effect[F]
 ) extends HiveClient[F] with LazyLogging {
 

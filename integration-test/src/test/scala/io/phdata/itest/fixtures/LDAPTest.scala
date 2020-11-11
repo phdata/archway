@@ -5,7 +5,6 @@ import com.unboundid.ldap.sdk.{FailoverServerSet, LDAPConnectionPool, SimpleBind
 import com.unboundid.util.ssl.{SSLUtil, TrustAllTrustManager, TrustStoreTrustManager}
 import io.phdata.clients.{LDAPClientImpl, LookupLDAPClient, ProvisioningLDAPClient, RoleClientImpl}
 import io.phdata.models.LDAPRegistration
-import io.phdata.services.UGILoginContextProvider
 import org.scalatest.Matchers
 
 trait LDAPTest extends Matchers with HiveTest {
@@ -13,7 +12,7 @@ trait LDAPTest extends Matchers with HiveTest {
   val provisioningClient: ProvisioningLDAPClient[IO] = new LDAPClientImpl[IO](itestConfig.ldap, _.provisioningBinding)
   val helperLDAPClient = new LDAPClientImpl[IO](itestConfig.ldap, _.provisioningBinding)
 
-  val roleClient = new RoleClientImpl[IO](hiveTransactor, null, new UGILoginContextProvider(itestConfig))
+  val roleClient = new RoleClientImpl[IO](hiveTransactor)
 
   val ldapConnectionPool: LDAPConnectionPool = {
     val sslUtil = if(itestConfig.ldap.ignoreSslCert.getOrElse(false)) {

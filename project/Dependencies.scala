@@ -71,27 +71,10 @@ object Dependencies {
     "com.pauldijou" %% "jwt-circe" % jwtVersion
   )
 
-  val cdhVersion = "cdh5.13.0"
   val hiveVersion = s"3.1.3000.7.1.4.0-203"
-  val hadoopVersion = s"2.6.0-$cdhVersion"
-  val sentryVersion = s"1.5.1-$cdhVersion"
 
-  val hadoop = Seq(
-    "org.apache.sentry" % "sentry-provider-db" % sentryVersion excludeAll (
-          ExclusionRule("org.apache.hive"),
-          ExclusionRule("org.eclipse.jetty.orbit"),
-          ExclusionRule("commons-beanutils", "commons-beanutils-core"),
-          ExclusionRule("org.datanucleus"),
-          ExclusionRule("commons-beanutils"),
-          ExclusionRule("org.apache.hadoop", "hadoop-yarn-common")
-    ),
-    "org.apache.hadoop" % "hadoop-client" % hadoopVersion % "provided",
-    "org.apache.hive" % "hive-jdbc" % hiveVersion % "provided" excludeAll (
-      ExclusionRule("org.apache.logging.log4j")
-    ),
-    "org.apache.hadoop" % "hadoop-common" % hadoopVersion % "test" classifier "" classifier "tests",
-    "org.apache.hadoop" % "hadoop-client" % hadoopVersion % "test" classifier "" classifier "tests",
-    "org.apache.hadoop" % "hadoop-minicluster" % hadoopVersion % "test"
+  val hive = Seq(
+    "org.apache.hive" % "hive-jdbc" % hiveVersion % "provided"
   )
 
   val coreTest = Seq(
@@ -106,17 +89,15 @@ object Dependencies {
     "org.scalatra.scalate" %% "scalate-core" % scalateVersion
   )
 
-  val bouncyVersion = "1.57"
-
-  val bouncy = Seq(
-    "org.bouncycastle" % "bcpkix-jdk15on" % bouncyVersion % "provided"
-  )
-
-  val loggingVersion = "3.8.0"
+  val scalaLoggingVersion = "3.8.0"
+  val log4j2Version = "2.14.0"
 
   val logging = Seq(
-    "com.typesafe.scala-logging" %% "scala-logging" % loggingVersion
+    "com.typesafe.scala-logging" %% "scala-logging" % scalaLoggingVersion,
+    "org.apache.logging.log4j" % "log4j-api" % log4j2Version
   )
+
+  Seq()
 
   val unboundIdVersion = "4.0.11"
 
@@ -135,9 +116,6 @@ object Dependencies {
     "org.ini4j" % "ini4j" % iniVersion
   )
 
-  val pac4jKerberosVersion = "3.7.0"
-  val pac4jKerberos = Seq("org.pac4j" % "pac4j-kerberos" % pac4jKerberosVersion)
-
   val simulacrumVersion = "0.17.0"
 
   val simulacrum = Seq(
@@ -155,16 +133,16 @@ object Dependencies {
     )
 
   val apiDependencies =
-    (coreTest ++ dbCore ++ logging ++ bouncy ++ circeConfig ++
-        http4s ++ doobie ++ cats ++ catsEffect ++ circe ++ hadoop).map(exclusions)
+    (coreTest ++ dbCore ++ logging ++ circeConfig ++
+        http4s ++ doobie ++ cats ++ catsEffect ++ circe ++ hive).map(exclusions)
 
   val commonDependencies =
     (scalate ++ unbound ++ mailer ++ logging ++ doobie ++ cats ++ catsEffect ++ circeConfig ++ circe ++
-        scalatags ++ hadoop ++ http4s ++ jwt ++ iniConfig ++ coreTest ++ bouncy ++ atto ++ pac4jKerberos
+        scalatags ++ hive ++ http4s ++ jwt ++ iniConfig ++ coreTest ++ atto
       ++ Seq("org.typelevel" %% "jawn-parser" % "0.14.0")).map(exclusions)
 
   val provisioningDependencies =
-    (coreTest ++ hadoop).map(exclusions)
+    (coreTest ++ hive).map(exclusions)
 
   val integrationTestDependencies =
     (dbCore ++

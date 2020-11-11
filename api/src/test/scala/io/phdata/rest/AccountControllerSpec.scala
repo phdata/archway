@@ -2,7 +2,6 @@ package io.phdata.rest
 
 import cats.data._
 import cats.effect.IO
-import io.phdata.rest.authentication.SpnegoAuthService
 import io.phdata.services.AccountService
 import io.phdata.test.fixtures.{AppContextProvider, HttpTest, _}
 import io.phdata.test.{TestAuthService, TestClusterService}
@@ -21,11 +20,6 @@ class AccountControllerSpec
     with AppContextProvider {
 
   behavior of "AccountController"
-
-  it should "return a negotiate header" in new SpnegoContext {
-    val response: IO[Response[IO]] = accountController.clientAuthRoutes.orNotFound.run(Request(uri = Uri.uri("/")))
-    check(response, Status.Unauthorized, None)
-  }
 
   it should "get a token" in new Context {
     val response: IO[Response[IO]] = accountController.clientAuthRoutes.orNotFound.run(Request(uri = Uri.uri("/")))
@@ -79,12 +73,6 @@ class AccountControllerSpec
 
   trait Context extends SharedContext {
     val authService = new TestAuthService()
-    val accountController = new AccountController[IO](authService, tokenAuthService, accountService, context)
-  }
-
-  trait SpnegoContext extends SharedContext {
-
-    val authService = new SpnegoAuthService[IO](accountService)
     val accountController = new AccountController[IO](authService, tokenAuthService, accountService, context)
   }
 

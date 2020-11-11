@@ -9,8 +9,6 @@ trait AccountService[F[_]] {
 
   def ldapAuth(username: String, password: Password): OptionT[F, Token]
 
-  def spnegoAuth(token: String): F[Either[Throwable, Token]]
-
   def refresh(user: User): F[Token]
 
   def createWorkspace(user: User): OptionT[F, WorkspaceRequest]

@@ -6,7 +6,7 @@ import java.util.concurrent.Executors
 import cats.effect.{ContextShift, IO}
 import doobie.implicits._
 import io.phdata.AppContext
-import io.phdata.itest.fixtures.{KerberosTest, config, itestConfig, systemTestConfig}
+import io.phdata.itest.fixtures.{config, itestConfig, systemTestConfig}
 import io.phdata.models.{DistinguishedName, LDAPRegistration}
 import io.phdata.repositories.Group
 import io.phdata.startup.ADGroupsSynchronizer
@@ -15,7 +15,7 @@ import org.scalatest.{BeforeAndAfterAll, FlatSpec}
 
 import scala.concurrent.ExecutionContext
 
-class ADGroupsSynchronizerIntegrationSpec extends FlatSpec with KerberosTest with BeforeAndAfterAll{
+class ADGroupsSynchronizerIntegrationSpec extends FlatSpec with BeforeAndAfterAll{
 
   val groupName = s"test_group_name_${UUID.randomUUID().toString.take(6)}"
   val groupDN = DistinguishedName(s"cn=$groupName,${itestConfig.ldap.groupPath}")

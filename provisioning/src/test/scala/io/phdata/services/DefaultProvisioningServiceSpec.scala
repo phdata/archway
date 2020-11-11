@@ -12,7 +12,6 @@ import io.phdata.provisioning.DefaultProvisioningService
 import io.phdata.test.fixtures._
 import doobie._
 import doobie.implicits._
-import org.apache.hadoop.fs.Path
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FlatSpec, Matchers}
 
@@ -30,13 +29,12 @@ class DefaultProvisioningServiceSpec
   it should "fire and forget" in new Context {
     // make sure we actually call provisioning code, but take "too long"
     context.lookupLDAPClient.findUserByDN _ expects (standardUserDN) returning OptionT.some(ldapUser)
-    (context.hdfsClient.createUserDirectory _)
-      .expects(standardUsername)
-      .returning(
+    (context.hiveClient.createDatabase _ expects(savedHive.name, savedHive.location, "Sesame", Map("phi_data" -> "false", "pci_data" -> "false", "pii_data" -> "false")))
+    .returning(
         for {
           _ <- IO(println("I still run though"))
           _ <- timer.sleep(2 second)
-          path <- IO(new Path(savedHive.location))
+          path <- IO.unit
         } yield path
       )
 
@@ -53,12 +51,12 @@ class DefaultProvisioningServiceSpec
   it should "allow more than required approvals" in new Context {
     // make sure we actually call provisioning code, but take "too long"
     context.lookupLDAPClient.findUserByDN _ expects (standardUserDN) returning OptionT.some(ldapUser)
-    (context.hdfsClient.createUserDirectory _)
-      .expects(standardUsername)
+    (context.hiveClient.createDatabase _ expects(savedHive.name, savedHive.location, "Sesame", Map("phi_data" -> "false", "pci_data" -> "false", "pii_data" -> "false")))
       .returning(
         for {
-          _ <- timer.sleep(1 second)
-          path <- IO(new Path(savedHive.location))
+          _ <- IO(println("I still run though"))
+          _ <- timer.sleep(2 second)
+          path <- IO.unit
         } yield path
       )
     val singleApprovalWorkspace = savedWorkspaceRequest.copy(approvals = List(approval(testTimer.instant)))
@@ -75,12 +73,6 @@ class DefaultProvisioningServiceSpec
     inSequence {
       inSequence {
         context.lookupLDAPClient.findUserByDN _ expects (standardUserDN) returning OptionT.some(ldapUser)
-        (context.hdfsClient.createUserDirectory _)
-          .expects(standardUsername) returning new Path(standardUsername).pure[IO]
-        context.hdfsClient.createHiveDirectory _ expects(savedHive.location) returning IO
-          .pure(new Path(savedHive.location))
-        context.databaseRepository.directoryCreated _ expects(id, *) returning 0.pure[ConnectionIO]
-        context.hdfsService.setQuota _ expects(savedHive.location, savedHive.sizeInGB, id, *) returning IO.unit
         context.workspaceRequestRepository.find _ expects id returning OptionT.some(savedWorkspaceRequest)
         context.hiveClient.createDatabase _ expects(savedHive.name, savedHive.location, "Sesame", Map("phi_data" -> "false", "pci_data" -> "false", "pii_data" -> "false")) returning IO.unit
         context.databaseRepository.databaseCreated _ expects(id, *) returning 0.pure[ConnectionIO]
@@ -115,10 +107,9 @@ class DefaultProvisioningServiceSpec
 
       inSequence {
         context.databaseRepository.findByWorkspace _ expects id returning List(savedHive).pure[ConnectionIO]
-        context.hiveClient.createTable _ expects (savedHive.name, ImpalaServiceImpl.TEMP_TABLE_NAME) returning 0.pure[IO]
-        context.impalaClient.get.invalidateMetadata _ expects (savedHive.name, ImpalaServiceImpl.TEMP_TABLE_NAME) returning ().pure[IO]
-        context.hiveClient.dropTable _ expects (savedHive.name, ImpalaServiceImpl.TEMP_TABLE_NAME) returning ().pure[IO]
-        context.hiveClient.dropTable _ expects (savedHive.name, ImpalaServiceImpl.HEIMDALI_TEMP_TABLE_NAME) returning ().pure[IO]
+        context.hiveClient.createTable _ expects (savedHive.name, "foo") returning 0.pure[IO]
+        context.hiveClient.dropTable _ expects (savedHive.name, "foo") returning ().pure[IO]
+        context.hiveClient.dropTable _ expects (savedHive.name, "foo") returning ().pure[IO]
       }
 
       context.workspaceRequestRepository.markProvisioned _ expects(id, *) returning 0.pure[ConnectionIO]
@@ -151,7 +142,6 @@ class DefaultProvisioningServiceSpec
         context.roleClient.dropRole _ expects savedLDAP.securityRole returning IO.unit
         context.provisioningLDAPClient.deleteGroup _ expects savedLDAP.distinguishedName returning OptionT.some(standardUserDN.value)
         context.hiveClient.dropDatabase _ expects savedHive.name returning IO(1)
-        context.hdfsService.removeQuota _ expects(savedHive.location) returning IO.unit
       }
 
     }

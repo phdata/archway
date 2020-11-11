@@ -10,7 +10,6 @@ import io.phdata.repositories._
 import io.phdata.test.fixtures._
 import doobie._
 import doobie.implicits._
-import org.apache.hadoop.fs.Path
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FlatSpec, Matchers}
 
@@ -51,7 +50,6 @@ class MemberServiceSpec
     context.memberRepository.complete _ expects(id, newMember) returning id.toInt.pure[ConnectionIO]
     context.memberRepository.get _ expects id returning List(MemberRightsRecord("data", newMember.value, savedHive.name, id, Manager)).pure[ConnectionIO]
     (context.lookupLDAPClient.findUserByDN _).expects(newMember).returning(OptionT.some(LDAPUser(personName, "username", newMember, Seq.empty, Some("username@phdata.io")))).repeated(2)
-    context.hdfsClient.createUserDirectory _ expects "username" returning new Path(s"/user/username").pure[IO]
     memberService.addMember(123, MemberRoleRequest(newMember, "data", 123, Some(Manager))).value.unsafeRunSync()
   }
 

@@ -27,10 +27,8 @@ class WorkspaceController[F[_]: Sync: Timer: ContextShift: ConcurrentEffect](
     memberService: MemberService[F],
     emailService: EmailService[F],
     provisioningService: ProvisioningService[F],
-    hdfsService: HDFSService[F],
     complianceGroupService: ComplianceGroupService[F],
-    emailEC: ExecutionContext,
-    impalaService: ImpalaService
+    emailEC: ExecutionContext
 ) extends Http4sDsl[F] with LazyLogging {
 
   implicit val memberRequestEntityDecoder: EntityDecoder[F, MemberRequest] = jsonOf[F, MemberRequest]
@@ -199,15 +197,6 @@ class WorkspaceController[F[_]: Sync: Timer: ContextShift: ConcurrentEffect](
               case e: Throwable =>
                 logger.error(s"Failed to add member to workspace $workspaceId: ${e.getLocalizedMessage}", e).pure[F]
             }
-            _ <- impalaService.invalidateMetadata(workspaceId)(appContext).onError {
-              case e: Throwable =>
-                logger
-                  .error(
-                    s"Failed to invalidate impala metadata for workspace $workspaceId: ${e.getLocalizedMessage}",
-                    e
-                  )
-                  .pure[F]
-            }
             _ <- ConcurrentEffect[F].start(
               ContextShift[F].evalOn(emailEC)(emailService.newMemberEmail(workspaceId, memberRequest).value)
             )
@@ -240,15 +229,6 @@ class WorkspaceController[F[_]: Sync: Timer: ContextShift: ConcurrentEffect](
                   ContextShift[F].evalOn(emailEC)(emailService.newMemberEmail(workspaceId, request).value)
                 )
               } yield (newMember)
-            }
-            _ <- impalaService.invalidateMetadata(workspaceId)(appContext).onError {
-              case e: Throwable =>
-                logger
-                  .error(
-                    s"Failed to invalidate impala metadata for workspace $workspaceId: ${e.getLocalizedMessage}",
-                    e
-                  )
-                  .pure[F]
             }
             response <- if (errors.isEmpty) Created() else InternalServerError()
           } yield response
@@ -355,30 +335,6 @@ class WorkspaceController[F[_]: Sync: Timer: ContextShift: ConcurrentEffect](
           } else
             Forbidden()
 
-        case POST -> Root / LongVar(id) / "disk-quota" / LongVar(resourceId) / IntVar(size) as user =>
-          if (user.isOpsUser) {
-            for {
-              workspace <- workspaceService.findById(id).value
-              hiveAllocation <- workspace.get.data.find(_.id.get == resourceId).get.pure[F]
-              _ <- if (hiveAllocation.getProtocol == "hdfs") {
-                hdfsService
-                  .setQuota(
-                    hiveAllocation.location,
-                    size,
-                    resourceId,
-                    Instant.now()
-                  )
-                  .onError {
-                    case e: Throwable =>
-                      logger.error(s"Failed to modify disk-quota of workspace $id: ${e.getLocalizedMessage}", e).pure[F]
-                  }
-              } else {
-                ().pure[F]
-              }
-              response <- Ok()
-            } yield response
-          } else
-            Forbidden()
       }
     }
 

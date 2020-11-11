@@ -13,8 +13,6 @@ import io.phdata.config.AppConfig
 import io.phdata.repositories._
 import io.phdata.repositories.syntax.SqlSyntax
 import io.phdata.services._
-import org.apache.hadoop.conf.Configuration
-import org.apache.sentry.provider.db.generic.service.thrift.SentryGenericServiceClientFactory
 import org.http4s.client.blaze.BlazeClientBuilder
 
 import scala.concurrent.duration._
@@ -22,18 +20,13 @@ import scala.concurrent.duration._
 case class AppContext[F[_]](
     appConfig: AppConfig,
     clusterCache: Cached[F, Seq[Cluster]],
-    loginContextProvider: LoginContextProvider,
     roleClient: RoleClient[F],
     hiveClient: HiveClient[F],
-    impalaClient: Option[ImpalaClient[F]],
     provisioningLDAPClient: ProvisioningLDAPClient[F],
     lookupLDAPClient: LookupLDAPClient[F],
-    hdfsClient: HDFSClient[F],
     emailClient: EmailClient[F],
-    kerberosClient: KerberosClient[F],
     clusterService: ClusterService[F],
     featureService: FeatureService[F],
-    hdfsService: HDFSService[F],
     transactor: Transactor[F],
     databaseRepository: HiveAllocationRepository,
     databaseGrantRepository: HiveGrantRepository,
@@ -51,26 +44,12 @@ case class AppContext[F[_]](
 
 object AppContext {
 
-  // TODO remove this
-  private val hadoopConfiguration: Configuration = {
-    val conf = new Configuration()
-
-    conf
-  }
-
-  private def updateClusterNameservice(currentConfig: AppConfig): AppConfig = {
-    if (currentConfig.cluster.nameservice.isEmpty) {
-      val newClusterConf = currentConfig.cluster.copy(nameservice = hadoopConfiguration.get("dfs.nameservices"))
-      currentConfig.copy(cluster = newClusterConf)
-    } else currentConfig
-  }
-
   def default[F[_]: ConcurrentEffect: ContextShift: Timer](
       config: Config = ConfigFactory.defaultApplication().resolve()
   ): Resource[F, AppContext[F]] =
     for {
       loadedConfig <- Resource.liftF(io.circe.config.parser.decodePathF[F, AppConfig](config, "archway"))
-      config = updateClusterNameservice(loadedConfig)
+      config = loadedConfig
 
       httpEC <- ExecutionContexts.fixedThreadPool(10)
       dbConnectionEC <- ExecutionContexts.fixedThreadPool(10)
@@ -95,17 +74,13 @@ object AppContext {
       clusterService = new CDHClusterService[F](
         httpClient,
         config.cluster,
-        hadoopConfiguration,
         cacheService,
         clusterCache
       )
       featureService = new FeatureServiceImpl[F](config.featureFlags)
 
-      loginContextProvider = new UGILoginContextProvider(config)
-      sentryServiceClient = SentryGenericServiceClientFactory.create(hadoopConfiguration)
-      sentryClient = new RoleClientImpl[F](hiveXA, sentryServiceClient, loginContextProvider)
-      hiveClient = new HiveClientImpl[F](loginContextProvider, hiveXA)
-      impalaClient = config.db.impala.map(impalaXA => new ImpalaClientImpl[F](loginContextProvider, impalaXA.impalaTx))
+      roleClient = new RoleClientImpl[F](hiveXA)
+      hiveClient = new HiveClientImpl[F](hiveXA)
       lookupLDAPClient = new LDAPClientImpl[F](
         config.ldap,
         config =>
@@ -116,9 +91,7 @@ object AppContext {
           }
       )
       provisioningLDAPClient = new LDAPClientImpl[F](config.ldap, _.provisioningBinding)
-      hdfsClient = new HDFSClientImpl[F](hadoopConfiguration, loginContextProvider)
       emailClient = new EmailClientImpl[F](config, emailEC)
-      kerberosClient = new KerberosClientImpl[F](config)
 
       sqlSyntax = SqlSyntax(config.db.meta.driver)
 
@@ -132,24 +105,18 @@ object AppContext {
       configRepository = new ConfigRepositoryImpl
       complianceGroupRepository = new ComplianceGroupRepositoryImpl
       complianceQuestionRepository = new ComplianceQuestionRepositoryImpl
-      hdfsService = new HDFSServiceImpl[F](hdfsClient, hiveDatabaseRepository, metaXA)
       customLinkGroupRepository = new CustomLinkGroupRepositoryImpl
       customLinkRepository = new CustomLinkRepositoryImpl
     } yield phdata.AppContext[F](
       config,
       clusterCache,
-      loginContextProvider,
-      sentryClient,
+      roleClient,
       hiveClient,
-      impalaClient,
       provisioningLDAPClient,
       lookupLDAPClient,
-      hdfsClient,
       emailClient,
-      kerberosClient,
       clusterService,
       featureService,
-      hdfsService,
       metaXA,
       hiveDatabaseRepository,
       hiveGrantRepository,

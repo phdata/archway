@@ -13,10 +13,6 @@ trait HiveAllocationRepository {
 
   def findByWorkspace(id: Long): ConnectionIO[List[HiveAllocation]]
 
-  def directoryCreated(id: Long, time: Instant): ConnectionIO[Int]
-
-  def setQuota(id: Long, sizeInGB: Int, time: Instant): ConnectionIO[Int]
-
   def databaseCreated(id: Long, time: Instant): ConnectionIO[Int]
 
 }

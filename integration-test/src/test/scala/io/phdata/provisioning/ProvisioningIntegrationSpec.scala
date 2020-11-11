@@ -5,9 +5,10 @@ import java.util.concurrent.Executors
 import cats.data.NonEmptyList
 import cats.effect.{ContextShift, IO, Timer}
 import cats.implicits._
+import com.typesafe.scalalogging.LazyLogging
 import io.phdata.AppContext
 import io.phdata.config.TemplateNames
-import io.phdata.itest.fixtures.{KerberosTest, SSLTest}
+import io.phdata.itest.fixtures.SSLTest
 import io.phdata.models.{Compliance, DistinguishedName, TemplateRequest}
 import io.phdata.services.{DBConfigService, JSONTemplateService, MemberServiceImpl, WorkspaceServiceImpl}
 import io.phdata.test.fixtures.TestTimer
@@ -15,7 +16,7 @@ import org.scalatest.{BeforeAndAfterEach, FlatSpec}
 
 import scala.concurrent.ExecutionContext
 
-class ProvisioningIntegrationSpec extends FlatSpec with KerberosTest with BeforeAndAfterEach with SSLTest {
+class ProvisioningIntegrationSpec extends FlatSpec with BeforeAndAfterEach with SSLTest with LazyLogging {
 
   implicit val timer: Timer[IO] = new TestTimer
   val requesterDN = DistinguishedName("CN=svc_heim_test1,OU=users,OU=Heimdali,DC=phdata,DC=io")
