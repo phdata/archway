@@ -55,7 +55,7 @@ exports[`HiveDatabase renders correctly 1`] = `
                 1000,
                 0,
               ],
-              "label": false,
+              "label": "",
             },
           ],
           "labels": Array [
@@ -67,9 +67,9 @@ exports[`HiveDatabase renders correctly 1`] = `
       height={52}
       options={
         Object {
-          "legend": false,
+          "legend": undefined,
           "maintainAspectRatio": false,
-          "title": false,
+          "title": undefined,
         }
       }
       redraw={false}

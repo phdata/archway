@@ -63,7 +63,7 @@ const WorkspaceListItem = ({ workspace, onSelected }: Props) => {
     labels: ['Available (GB)', 'Consumed (GB)'],
     datasets: [
       {
-        label: undefined,
+        label: '',
         data: [allocated - consumed, consumed],
         backgroundColor: [
           total_disk_consumed_in_gb ? Colors.PrimaryColor.string() : Colors.LightGray.string(),
