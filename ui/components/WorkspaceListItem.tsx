@@ -1,6 +1,7 @@
 import * as React from 'react';
+import chartjs from 'chart.js';
 import { Card, Icon, List } from 'antd';
-import { Doughnut } from 'react-chartjs-2';
+import { ChartData, Doughnut } from 'react-chartjs-2';
 import Colors from './Colors';
 import { Workspace, WorkspaceSearchResult } from '../models/Workspace';
 import TruncateText from './TruncateText';
@@ -58,11 +59,11 @@ const WorkspaceListItem = ({ workspace, onSelected }: Props) => {
 
   const allocated = total_disk_allocated_in_gb || 1;
   const consumed = total_disk_consumed_in_gb || 0;
-  const sizeData = {
+  const sizeData: ChartData<chartjs.ChartData> = {
     labels: ['Available (GB)', 'Consumed (GB)'],
     datasets: [
       {
-        label: false,
+        label: undefined,
         data: [allocated - consumed, consumed],
         backgroundColor: [
           total_disk_consumed_in_gb ? Colors.PrimaryColor.string() : Colors.LightGray.string(),
@@ -98,7 +99,7 @@ const WorkspaceListItem = ({ workspace, onSelected }: Props) => {
               &nbsp;
               <TruncateText text={`${behavior} dataset`} lineHeight={12} maxLine={1} />
             </div>
-            <div style={{ color: Colors.PrimaryColor.string(), lineHeight: '24px' }}>DETAILS ></div>
+            <div style={{ color: Colors.PrimaryColor.string(), lineHeight: '24px' }}>DETAILS &gt;</div>
           </div>
           <div style={{ flex: 3 }}>
             <div
@@ -114,11 +115,9 @@ const WorkspaceListItem = ({ workspace, onSelected }: Props) => {
               <Doughnut
                 height={52}
                 width={52}
-                // @ts-ignore
                 data={sizeData}
                 redraw={false}
-                // @ts-ignore
-                options={{ legend: false, title: false, maintainAspectRatio: false }}
+                options={{ legend: undefined, title: undefined, maintainAspectRatio: false }}
               />
             </div>
             <div style={{ letterSpacing: 1, textAlign: 'center' }}>
