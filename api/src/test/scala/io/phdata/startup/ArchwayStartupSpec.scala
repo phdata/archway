@@ -41,8 +41,7 @@ class ArchwayStartupSpec extends FlatSpec with Matchers with MockFactory with Ap
 
     val context: AppContext[IO] = genMockContext(
       appConfig = appConfig.copy(
-        provisioning = appConfig.provisioning.copy(provisionInterval = 100 millis),
-        cluster = appConfig.cluster.copy(sessionRefresh = 100 millis)))
+        provisioning = appConfig.provisioning.copy(provisionInterval = 100 millis)))
 
     val provisioningJob: Provisioning[IO] =
       new Provisioning[IO](context, provisioningService)

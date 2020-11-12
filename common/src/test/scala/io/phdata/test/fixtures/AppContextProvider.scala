@@ -55,7 +55,6 @@ trait AppContextProvider {
       provisioningLDAPClient,
       lookupLDAPClient,
       emailClient,
-      clusterService,
       featureService,
       transactor,
       hiveDatabaseRepository,

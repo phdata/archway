@@ -1,7 +1,5 @@
 package io.phdata
 
-import java.io.File
-
 import cats.effect._
 import com.typesafe.config.{Config, ConfigFactory}
 import doobie.util.ExecutionContexts
@@ -25,7 +23,6 @@ case class AppContext[F[_]](
     provisioningLDAPClient: ProvisioningLDAPClient[F],
     lookupLDAPClient: LookupLDAPClient[F],
     emailClient: EmailClient[F],
-    clusterService: ClusterService[F],
     featureService: FeatureService[F],
     transactor: Transactor[F],
     databaseRepository: HiveAllocationRepository,
@@ -63,20 +60,11 @@ object AppContext {
 
       metaXA <- config.db.meta.tx(dbConnectionEC, dbTransactionEC)
       hiveXA = config.db.hive.hiveTx
-      impalaXA = config.db.impala.map(_.impalaTx)
-
-      httpClient = new CMClient[F](h4Client, config.cluster)
 
       cacheService = new TimedCacheService()
       clusterCache <- Resource.liftF(cacheService.initial[F, Seq[Cluster]])
       _ <- Resource.liftF(clusterCache.put(CacheEntry(0L, Seq.empty)))
 
-      clusterService = new CDHClusterService[F](
-        httpClient,
-        config.cluster,
-        cacheService,
-        clusterCache
-      )
       featureService = new FeatureServiceImpl[F](config.featureFlags)
 
       roleClient = new RoleClientImpl[F](hiveXA)
@@ -115,7 +103,6 @@ object AppContext {
       provisioningLDAPClient,
       lookupLDAPClient,
       emailClient,
-      clusterService,
       featureService,
       metaXA,
       hiveDatabaseRepository,
