@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Doughnut } from 'react-chartjs-2';
+import chartjs from 'chart.js';
+import { ChartData, Doughnut } from 'react-chartjs-2';
 import urlParse from 'url-parse';
 
 import { Colors, Feature } from '../../../components';
@@ -23,11 +24,11 @@ const HiveDatabase = ({ data, showModal, isPlatformOperations, isDefault }: Prop
   const total_disk_consumed_in_gb = data.consumed_in_gb;
   const allocated = total_disk_allocated_in_gb || 1;
   const consumed = total_disk_consumed_in_gb || 0;
-  const sizeData = {
+  const sizeData: ChartData<chartjs.ChartData> = {
     labels: ['Available (GB)', 'Consumed (GB)'],
     datasets: [
       {
-        label: false,
+        label: '',
         data: [allocated - consumed, consumed],
         backgroundColor: [Colors.PrimaryColor.string(), Colors.PrimaryColor.lighten(0.5).string()],
       },
@@ -46,11 +47,9 @@ const HiveDatabase = ({ data, showModal, isPlatformOperations, isDefault }: Prop
             <Doughnut
               height={52}
               width={52}
-              // @ts-ignore
               data={sizeData}
               redraw={false}
-              // @ts-ignore
-              options={{ legend: false, title: false, maintainAspectRatio: false }}
+              options={{ legend: undefined, title: undefined, maintainAspectRatio: false }}
             />
           </div>
           <div style={{ letterSpacing: 1, textAlign: 'center', fontSize: 12, padding: '4px 0 8px 0' }}>
