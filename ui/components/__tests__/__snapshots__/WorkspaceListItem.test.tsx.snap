@@ -115,7 +115,7 @@ exports[`WorkspaceListItem renders correctly 1`] = `
                       1,
                       0,
                     ],
-                    "label": false,
+                    "label": undefined,
                   },
                 ],
                 "labels": Array [
@@ -127,9 +127,9 @@ exports[`WorkspaceListItem renders correctly 1`] = `
             height={52}
             options={
               Object {
-                "legend": false,
+                "legend": undefined,
                 "maintainAspectRatio": false,
-                "title": false,
+                "title": undefined,
               }
             }
             redraw={false}
