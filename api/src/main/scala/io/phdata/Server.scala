@@ -60,7 +60,6 @@ object Server extends IOApp with LazyLogging {
       tokenAuthService = new TokenAuthServiceImpl[F](accountService)
       accountController = new AccountController[F](authService, tokenAuthService, accountService, context)
       templateController = new TemplateController[F](tokenAuthService, templateService)
-      clusterController = new ClusterController[F](tokenAuthService, context.clusterService)
       workspaceController = new WorkspaceController[F](
         context,
         tokenAuthService,
@@ -85,7 +84,6 @@ object Server extends IOApp with LazyLogging {
         "/account" -> defaultResponseMiddleware.apply(accountController.tokenizedRoutes),
         "/auth-type" -> defaultResponseMiddleware.apply(accountController.noAuthRoutes),
         "/templates" -> defaultResponseMiddleware.apply(templateController.route),
-        "/clusters" -> defaultResponseMiddleware.apply(clusterController.route),
         "/workspaces" -> defaultResponseMiddleware.apply(workspaceController.route),
         "/members" -> defaultResponseMiddleware.apply(memberController.route),
         "/risk" -> defaultResponseMiddleware.apply(riskController.route),
