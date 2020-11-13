@@ -10,7 +10,7 @@ import io.phdata.provisioning.DefaultProvisioningService
 import io.phdata.rest.authentication.{LdapAuthService, TokenAuthServiceImpl}
 import io.phdata.rest._
 import io.phdata.services._
-import io.phdata.startup.{ADGroupsSynchronizer, ArchwayStartup, Provisioning}
+import io.phdata.startup.{ADGroupsSynchronizer, ArchwayStartup, Provisioning, SchemaMigration}
 import org.http4s.implicits._
 import org.http4s.server.SSLKeyStoreSupport.StoreInfo
 import org.http4s.server.blaze._
@@ -26,11 +26,13 @@ object Server extends IOApp with LazyLogging {
       _ <- Resource.liftF(
         logger.debug("Config as been read as:\n{}", context.appConfig.asJson.pretty(Printer.spaces2)).pure[F]
       )
+
       provisionEC <- ExecutionContexts.fixedThreadPool(context.appConfig.provisioning.threadPoolSize)
       startupEC <- ExecutionContexts.fixedThreadPool(1)
       staticContentEC <- ExecutionContexts.fixedThreadPool(1)
       emailEC <- ExecutionContexts.fixedThreadPool(1)
       _ <- Resource.liftF(logger.info("AppContext has been generated").pure[F])
+      _ <- Resource.liftF(Sync[F].pure(new SchemaMigration(context.appConfig.db.meta).migrate()))
 
       configService = new DBConfigService[F](context)
       _ <- Resource.liftF(configService.verifyDbConnection)

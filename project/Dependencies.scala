@@ -120,6 +120,12 @@ object Dependencies {
     "com.github.mpilquist" %% "simulacrum" % simulacrumVersion
   )
 
+  val flywayVersion = "5.0.3"
+
+  val flyway = Seq(
+    "org.flywaydb" % "flyway-core" % flywayVersion
+  )
+
   def exclusions(module: ModuleID): ModuleID =
     module.excludeAll(
       ExclusionRule(organization = "com.sun.jdmk"),
@@ -132,7 +138,7 @@ object Dependencies {
 
   val apiDependencies =
     (coreTest ++ dbCore ++ logging ++ circeConfig ++
-        http4s ++ doobie ++ cats ++ catsEffect ++ circe ++ hive).map(exclusions)
+        http4s ++ doobie ++ cats ++ catsEffect ++ circe ++ hive ++ flyway).map(exclusions)
 
   val commonDependencies =
     (scalate ++ unbound ++ mailer ++ logging ++ doobie ++ cats ++ catsEffect ++ circeConfig ++ circe ++
