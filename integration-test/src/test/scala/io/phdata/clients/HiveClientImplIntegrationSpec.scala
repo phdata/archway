@@ -57,6 +57,11 @@ class HiveClientImplIntegrationSpec
     assert(hiveClient.showTables(FOO_DB_NAME).unsafeRunSync().contains(tableName))
   }
 
+  it should "Show databases" in {
+    val databases = hiveClient.showDatabases().unsafeRunSync()
+    assert(databases.nonEmpty)
+  }
+
   it should "Delete a table" in {
     val tableName = s"test_table_${UUID.randomUUID().toString.take(8)}"
 

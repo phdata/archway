@@ -299,8 +299,13 @@ package object config extends StrictLogging {
       Class.forName(driver)
 
       val properties = new Properties()
-      properties.setProperty("user", "csso_tony")
-      properties.setProperty("password", "")
+
+      properties
+        .setProperty("user", username.getOrElse(throw new Exception("Username not defined for Hive connection")))
+      properties.setProperty(
+        "password",
+        password.getOrElse(throw new Exception("Password not defined for Hive connection")).value
+      )
 
       // Turn the transactor into no
       val initialHiveTransactor = Transactor.fromDriverManager[F](driver, url, properties)

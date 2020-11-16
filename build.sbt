@@ -1,6 +1,6 @@
 val customResolvers = Seq(
   "Cloudera" at "https://repository.cloudera.com/artifactory/cloudera-repos",
-  "Apache" at "http://repo.spring.io/plugins-release/",
+  "Apache" at "https://repo.spring.io/plugins-release/",
   Resolver.sonatypeRepo("releases"),
   Resolver.sonatypeRepo("snapshots")
 )

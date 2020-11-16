@@ -126,7 +126,6 @@ object Dependencies {
       ExclusionRule(organization = "com.sun.jmx"),
       ExclusionRule(organization = "javax.jms"),
       ExclusionRule(organization = "commons-beanutils"),
-      ExclusionRule(organization = "commons-logging"),
       ExclusionRule(organization = "org.apache.derby")
     )
 
