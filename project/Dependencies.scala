@@ -74,7 +74,12 @@ object Dependencies {
   val hiveVersion = s"3.1.3000.7.1.4.0-203"
 
   val hive = Seq(
-    "org.apache.hive" % "hive-jdbc" % hiveVersion % "provided"
+    "org.apache.hive" % "hive-jdbc" % hiveVersion excludeAll (
+      ExclusionRule(organization = "org.apache.logging.log4j"),
+      ExclusionRule(organization = "log4j"),
+      ExclusionRule(organization = "org.slf4j"),
+      ExclusionRule(organization = "io.netty")
+    )
   )
 
   val coreTest = Seq(
@@ -89,12 +94,20 @@ object Dependencies {
     "org.scalatra.scalate" %% "scalate-core" % scalateVersion
   )
 
+  val bouncyVersion = "1.57"
+
+  val bouncy = Seq(
+    "org.bouncycastle" % "bcprov-jdk15on" % bouncyVersion,
+    "org.bouncycastle" % "bcpkix-jdk15on" % bouncyVersion
+  )
+
   val scalaLoggingVersion = "3.8.0"
   val log4j2Version = "2.14.0"
 
   val logging = Seq(
     "com.typesafe.scala-logging" %% "scala-logging" % scalaLoggingVersion,
-    "org.apache.logging.log4j" % "log4j-api" % log4j2Version
+    "org.apache.logging.log4j" % "log4j-api" % log4j2Version,
+    "org.apache.logging.log4j" % "log4j-slf4j-impl" % log4j2Version
   )
 
   val unboundIdVersion = "4.0.11"
@@ -126,17 +139,16 @@ object Dependencies {
       ExclusionRule(organization = "com.sun.jmx"),
       ExclusionRule(organization = "javax.jms"),
       ExclusionRule(organization = "commons-beanutils"),
-      ExclusionRule(organization = "commons-logging"),
       ExclusionRule(organization = "org.apache.derby")
     )
 
   val apiDependencies =
-    (coreTest ++ dbCore ++ logging ++ circeConfig ++
+    (coreTest ++ dbCore ++ logging ++ bouncy ++ circeConfig ++
         http4s ++ doobie ++ cats ++ catsEffect ++ circe ++ hive).map(exclusions)
 
   val commonDependencies =
     (scalate ++ unbound ++ mailer ++ logging ++ doobie ++ cats ++ catsEffect ++ circeConfig ++ circe ++
-        scalatags ++ hive ++ http4s ++ jwt ++ iniConfig ++ coreTest ++ atto
+        scalatags ++ hive ++ http4s ++ jwt ++ iniConfig ++ coreTest ++ bouncy ++ atto
       ++ Seq("org.typelevel" %% "jawn-parser" % "0.14.0")).map(exclusions)
 
   val provisioningDependencies =
