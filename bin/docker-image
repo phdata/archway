@@ -1,0 +1,6 @@
+#!/bin/bash
+set -euo pipefail
+
+./bin/dist
+docker build -t archway -m 4g .
+docker save --output artifact-image.docker archway

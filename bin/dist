@@ -1,11 +1,15 @@
 #!/bin/bash
 set -euo pipefail
-sbt "set every test in assembly := {}" api/assembly 
-npm install  typescript
+sbt "set every test in assembly := {}" api/assembly
+npm install typescript
 npm install
 npm run-script prepare
-mkdir dist/ui
-mv dist/* dist/ui
-cp -r public/* dist/ui
-cp api/target/scala-2.12/archway-server.jar dist
-
+rm -rf distribution/
+mkdir distribution/
+rsync -a --exclude 'index.html' public/ dist/
+cp bin/run-java.sh distribution/
+cp -r templates distribution/
+cp api/target/scala-2.12/archway-server.jar distribution/
+cp api/src/main/resources/application.conf distribution/
+cp -r dist distribution/
+cp -r flyway distribution/

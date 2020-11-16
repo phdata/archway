@@ -21,7 +21,8 @@ test:
 	sbt test
 
 test-postgres:
-	docker run -d --name archway_postgres -p 5432:5432 -e POSTGRES_DB=archway postgres:9.3
+	docker network create archway
+	docker run -d --name archway_postgres --net archway -p 5432:5432 -e POSTGRES_DB=archway postgres:9.3
 	sleep 10
 	./flyway/flyway migrate -url="jdbc:postgresql://localhost:5432/archway" -user=postgres -password=postgres
 

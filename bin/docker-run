@@ -1,0 +1,4 @@
+#!/bin/bash
+set -xeuo pipefail
+
+docker run --net archway -p 80:80 -e LOCAL_ONLY=true -i archway:latest
