@@ -16,12 +16,23 @@ object API {
 
   val assemblySettings = Seq(
     assemblyJarName in assembly := "archway-server.jar",
-    assemblyExcludedJars in assembly := {
-      val cp = (fullClasspath in assembly).value
-      cp filter {_.data.getPath.contains("bouncycastle")}
-    },
     assemblyMergeStrategy in assembly := {
+      case PathList("javax", "servlet", xs @ _*) => MergeStrategy.first
+      case PathList("javax", "xml", xs @ _*) => MergeStrategy.first
+      case PathList("javax", "activation", xs @ _*) => MergeStrategy.first
+      case PathList("javax", "el", xs @ _*) => MergeStrategy.first
+      case PathList("javax", "jdo", xs @ _*) => MergeStrategy.first
+      case PathList("org", "datanucleus", xs @ _*) => MergeStrategy.first
+      case PathList("com", "zaxxer", xs @ _*) => MergeStrategy.first
+      case PathList("org", "apache", "jasper", xs @ _*) => MergeStrategy.first
+      case PathList("org", "hamcrest", xs @ _*) => MergeStrategy.first
+      case PathList("META-INF", "maven", xs @ _*) => MergeStrategy.discard
+      case PathList("META-INF", "native", xs @ _*) => MergeStrategy.discard
+      case PathList(ps@_*) if ps.last.endsWith("module-info.class") => MergeStrategy.discard
+      case PathList(ps@_*) if ps.last.endsWith("git.properties") => MergeStrategy.discard
       case PathList(ps@_*) if ps.last.endsWith("-site.xml") => MergeStrategy.discard
+      case PathList(ps@_*) if ps.last.endsWith("plugin.xml") => MergeStrategy.discard
+      case PathList(ps@_*) if ps.last.endsWith(".dat") => MergeStrategy.discard
       case PathList(ps@_*) if ps.last.endsWith("public-suffix-list.txt") => MergeStrategy.first
       case x =>
         val oldStrategy = (assemblyMergeStrategy in assembly).value
