@@ -3,6 +3,7 @@ set -euo pipefail
 sbt "set every test in assembly := {}" api/assembly
 npm install typescript
 npm install
+npm test
 npm run-script prepare
 rm -rf distribution/
 mkdir distribution/
@@ -10,6 +11,6 @@ rsync -a --exclude 'index.html' public/ dist/
 cp bin/run-java.sh distribution/
 cp -r templates distribution/
 cp api/target/scala-2.12/archway-server.jar distribution/
-cp api/src/main/resources/application.conf distribution/
+cp api/src/main/resources/application-template.conf distribution/application.conf
 cp -r dist distribution/
 cp -r flyway distribution/
