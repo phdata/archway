@@ -2,7 +2,7 @@ name: 'Archway Tag Build and Deploy'
 on:
   push:
     tags:
-      - v*.*.*
+      - '*.*.*'
 env:
   POSTGRES_HOST: localhost
   SBT_OPTS: '-Xss64m'
