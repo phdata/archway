@@ -122,7 +122,7 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: resolve(__dirname, 'public/index.html'),
       inject: 'body',
-      baseUrl: process.env.BASE_URL || 'https://localhost:8080',
+      baseUrl: process.env.BASE_URL || 'http://localhost:8080',
       isDevMode: process.argv[1].endsWith('webpack-dev-server'),
     }),
     // inject <script> in html file.
