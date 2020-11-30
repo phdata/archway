@@ -36,7 +36,6 @@ itest-init:
 	ln -sf $(shell pwd)/itest-config/hive-conf ./hive-conf
 
 serve-api:
-	echo "using TRUST_STORE: $${TRUST_STORE:?}"
 	sbt -Djavax.net.ssl.trustStore=$$TRUST_STORE "api/runMain io.phdata.Server"
 
 serve-ui:
