@@ -2,13 +2,13 @@ name: 'Archway Tag Build and Deploy'
 on:
   push:
     tags:
-      - v*.*.*
+      - '*.*.*'
 env:
   POSTGRES_HOST: localhost
   SBT_OPTS: '-Xss64m'
 jobs:
   build-docker:
-    name: 'Build, Test and create Docker image'
+    name: 'Build, Test and deploy Docker image'
     runs-on: ubuntu-latest
     services:
       postgres:
@@ -27,6 +27,8 @@ jobs:
       - uses: actions/setup-java@v1
         with:
           java-version: 1.8
+      - name: Set env
+        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
       - run: ./flyway/flyway migrate -url="jdbc:postgresql://localhost:5432/archway" -user=postgres -password=postgres
       - run: sbt common/test
       - run: sbt api/test
@@ -35,14 +37,6 @@ jobs:
       - run: sbt integration-test/test:package
       - run: sbt common/test:package
       - run: bin/docker-image
-  deploy-docker:
-    name: 'Deploy Docker image to ECR'
-    runs-on: ubuntu-latest
-    needs: build-docker
-    steps:
-      - name: Set tag
-        id: vars
-        run: echo ::set-output name=tag::${GITHUB_REF#refs/*/}
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -52,8 +46,10 @@ jobs:
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
-      - name: Upload to ECR
+      - name: Tag image and upload to ECR
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: archway
-        run: docker push $ECR_REGISTRY/$ECR_REPOSITORY:${{ steps.vars.outputs.tag }}
+        run: |
+          docker tag archway $ECR_REGISTRY/$ECR_REPOSITORY:${{ env.RELEASE_VERSION }}
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:${{ env.RELEASE_VERSION }}
