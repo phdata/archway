@@ -1,19 +1,6 @@
 import { createSelector } from 'reselect';
-import { authSelector, clusterSelector, homeSelector } from '../../redux/selectors';
-import { Cluster } from '../../models/Cluster';
+import { authSelector, homeSelector } from '../../redux/selectors';
 import { Workspace } from '../../models/Workspace';
-
-export const getClusterInfo = () =>
-  createSelector(
-    clusterSelector,
-    clusterState => clusterState.get('details').toJS() as Cluster
-  );
-
-export const isClusterLoading = () =>
-  createSelector(
-    clusterSelector,
-    clusterState => clusterState.get('loading')
-  );
 
 export const getPersonalWorkspace = () =>
   createSelector(

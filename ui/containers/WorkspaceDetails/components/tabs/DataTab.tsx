@@ -4,7 +4,6 @@ import HiveDatabase from '../HiveDatabase';
 import { PermissionsCard, TablesCard } from '../cards';
 import { Member, HiveAllocation, Workspace, NamespaceInfoList } from '../../../../models/Workspace';
 import { Profile } from '../../../../models/Profile';
-import { Cluster } from '../../../../models/Cluster';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { tomorrowNightEighties } from 'react-syntax-highlighter/dist/styles/hljs';
 import CardHeader from '../cards/CardHeader';
@@ -13,7 +12,6 @@ import { ModalType, ProvisioningType } from '../../../../constants';
 interface Props {
   workspace?: Workspace;
   profile: Profile;
-  cluster: Cluster;
   infos?: NamespaceInfoList;
   members?: Member[];
   memberLoading: boolean;

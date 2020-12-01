@@ -76,8 +76,6 @@ const withBody = (path: string, token: string, data?: any, method = 'POST', allo
     }
   });
 
-export const cluster = (token: string) => get('/clusters', token);
-
 export const profile = (token: string) => get('/account/profile', token);
 
 export const getPersonalWorkspace = (token: string) => get(`/account/workspace`, token, 'PersonalWorkspace');

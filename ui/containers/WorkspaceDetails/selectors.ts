@@ -1,6 +1,6 @@
 import { fromJS } from 'immutable';
 import { createSelector } from 'reselect';
-import { authSelector, clusterSelector, workspaceSelector, formSelector } from '../../redux/selectors';
+import { authSelector, workspaceSelector, formSelector } from '../../redux/selectors';
 import {
   Member,
   NamespaceInfoList,
@@ -10,7 +10,6 @@ import {
   HiveAllocation,
   Application,
 } from '../../models/Workspace';
-import { Cluster } from '../../models/Cluster';
 import { Profile } from '../../models/Profile';
 
 export const getWorkspace = () =>
@@ -24,12 +23,6 @@ export const getUserSuggestions = () =>
     workspaceSelector,
     workspaceState =>
       workspaceState.get('userSuggestions') && (workspaceState.get('userSuggestions').toJS() as UserSuggestions)
-  );
-
-export const getClusterDetails = () =>
-  createSelector(
-    clusterSelector,
-    clusterState => clusterState.get('details').toJS() as Cluster
   );
 
 export const getSelectedAllocation = () =>

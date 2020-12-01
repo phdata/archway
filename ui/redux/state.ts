@@ -1,5 +1,4 @@
 import { Workspace } from '../models/Workspace';
-import { Cluster } from '../models/Cluster';
 
 export interface LoginState {
   token: boolean;
@@ -41,10 +40,6 @@ export interface RequestState {
   page: number;
 }
 
-export interface ClusterState {
-  details: Cluster;
-}
-
 export interface DetailsState {
   fetching: boolean;
   details: boolean;
@@ -56,6 +51,5 @@ export interface IState {
   risk: RiskState;
   operations: OpsState;
   request: RequestState;
-  cluster: ClusterState;
   details: DetailsState;
 }

@@ -7,7 +7,6 @@ import moment from 'moment';
 import { Colors, ListingSearchBar, WorkspaceList } from '../../components';
 import { WorkspaceSearchResult } from '../../models/Workspace';
 import { Profile } from '../../models/Profile';
-import { Cluster } from '../../models/Cluster';
 import * as actions from './actions';
 import * as selectors from './selectors';
 
@@ -22,7 +21,6 @@ interface Props {
   workspaceList: WorkspaceSearchResult[];
   filters: { filter: string; behaviors: string[]; statuses: string[] };
   profile: Profile;
-  cluster: Cluster;
   updateFilter: (filter: string, behavior: string[], statuses: string[]) => void;
   openWorkspace: (id: number) => void;
   listWorkspaces: () => void;
@@ -55,7 +53,6 @@ class WorkspaceListing extends React.PureComponent<Props> {
       openWorkspace,
       setListingMode,
       profile,
-      cluster,
       updateFilter,
     } = this.props;
     const { filter, behaviors, statuses } = filters;
@@ -75,7 +72,7 @@ class WorkspaceListing extends React.PureComponent<Props> {
         {workspaceList && workspaceList.length > 0 && profile.permissions && profile.permissions.platform_operations && (
           <Row type="flex" style={{ marginTop: 12, fontSize: 12 }} justify="center">
             <Col>
-              <CSVLink data={this.generateCSV(workspaceList)} filename={`${cluster.name} - Workspaces.csv`}>
+              <CSVLink data={this.generateCSV(workspaceList)} filename={`workspace.csv`}>
                 <Icon style={{ fontSize: 16 }} type="file-excel" theme="twoTone" twoToneColor={Colors.Green.string()} />{' '}
                 DOWNLOAD AS REPORT
               </CSVLink>
@@ -102,7 +99,6 @@ const mapStateToProps = () =>
     workspaceList: selectors.SearchBar.workspaceList(),
     filters: selectors.SearchBar.getListFilters(),
     profile: selectors.getProfile(),
-    cluster: selectors.getCluster(),
   });
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({

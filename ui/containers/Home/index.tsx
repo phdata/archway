@@ -1,22 +1,19 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import { Spin, Icon, List } from 'antd';
+import { List } from 'antd';
 
 import * as actions from '../Login/actions';
 import { refreshRecentWorkspaces } from './actions';
 import { getLinksGroups } from '../Manage/actions';
 
 import { Workspace } from '../../models/Workspace';
-import { Cluster } from '../../models/Cluster';
 
 import { PersonalWorkspace, RecentWorkspaces } from './components';
 import {
-  getClusterInfo,
   getPersonalWorkspace,
   getRecentWorkspaces,
   getProvisioning,
-  isClusterLoading,
   isProfileLoading,
   isWorkspaceFetched,
 } from './selectors';
@@ -28,13 +25,7 @@ import { LinksGroupCard } from '../Manage/components';
 /* tslint:disable:no-var-requires */
 const router = require('connected-react-router/immutable');
 
-interface States {
-  clusterTimeout: boolean;
-}
-
 interface Props {
-  cluster: Cluster;
-  clusterLoading: boolean;
   personalWorkspace: Workspace;
   recentWorkspaces: Workspace[];
   profileLoading: boolean;
@@ -49,41 +40,14 @@ interface Props {
   fetchLinksGroups: () => void;
 }
 
-class Home extends React.Component<Props, States> {
-  public state = {
-    clusterTimeout: false,
-  };
-
+class Home extends React.Component<Props> {
   public componentDidMount() {
     this.props.refreshRecentWorkspaces();
     this.props.fetchLinksGroups();
   }
 
-  public renderClusterStatus = () => {
-    const { cluster } = this.props;
-
-    return cluster.name === 'Unknown' ? (
-      <Spin
-        style={{ color: 'black', fontSize: '30px', fontWeight: 200 }}
-        tip="Connecting to Cluster"
-        indicator={<Icon type="loading" spin={true} style={{ color: 'black', fontSize: '30px' }} />}
-      />
-    ) : (
-      <React.Fragment>
-        <h1 style={{ fontWeight: 100 }}>You are currently connected to {cluster.name}!</h1>
-        <h2>
-          <a target="_blank" rel="noreferrer noopener" href={cluster.cm_url}>
-            {cluster.name}&apos;s Cloudera Manager UI
-          </a>
-        </h2>
-      </React.Fragment>
-    );
-  };
-
   public render() {
     const {
-      cluster,
-      clusterLoading,
       provisioning,
       personalWorkspace,
       recentWorkspaces,
@@ -94,23 +58,9 @@ class Home extends React.Component<Props, States> {
       linksGroups,
       isLinksGroupsLoading,
     } = this.props;
-    const { clusterTimeout } = this.state;
-
-    if (!cluster) {
-      return <div />;
-    } else if (cluster.name === 'Unknown' && !clusterLoading) {
-      setTimeout(() => {
-        this.setState({ clusterTimeout: true });
-      }, 30000);
-    }
 
     return (
       <div>
-        <div
-          style={{ padding: 24, background: '#fff', textAlign: 'center', height: clusterTimeout ? '138px' : '100%' }}
-        >
-          {clusterTimeout || this.renderClusterStatus()}
-        </div>
         <div style={{ padding: '25px 12px', textAlign: 'center' }}>
           <h2>Links</h2>
           <List
@@ -128,7 +78,6 @@ class Home extends React.Component<Props, States> {
           loading={profileLoading}
           requestWorkspace={requestWorkspace}
           workspace={personalWorkspace}
-          services={cluster.services}
           provisioning={provisioning}
           workspaceFetched={workspaceFetched}
         />
@@ -140,8 +89,6 @@ class Home extends React.Component<Props, States> {
 
 const mapStateToProps = () =>
   createStructuredSelector({
-    cluster: getClusterInfo(),
-    clusterLoading: isClusterLoading(),
     personalWorkspace: getPersonalWorkspace(),
     profileLoading: isProfileLoading(),
     recentWorkspaces: getRecentWorkspaces(),
