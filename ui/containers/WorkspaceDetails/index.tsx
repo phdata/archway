@@ -9,7 +9,6 @@ import {
   Liaison,
   Info,
   Compliance,
-  QuickLinks,
   OverviewTab,
   DataTab,
   MessagingTab,
@@ -23,7 +22,6 @@ import {
   ModifyDiskQuota,
   ModifyCoreMemory,
 } from './components';
-import { Cluster } from '../../models/Cluster';
 import { Profile } from '../../models/Profile';
 import {
   NamespaceInfoList,
@@ -54,7 +52,6 @@ interface ManageLoading {
 
 interface Props extends RouteComponentProps<DetailsRouteProps> {
   workspace?: Workspace;
-  cluster: Cluster;
   profile: Profile;
   pools?: ResourcePoolsInfo;
   infos?: NamespaceInfoList;
@@ -201,7 +198,6 @@ class WorkspaceDetails extends React.PureComponent<Props> {
   public render() {
     const {
       workspace,
-      cluster,
       infos,
       members,
       activeModal,
@@ -282,13 +278,6 @@ class WorkspaceDetails extends React.PureComponent<Props> {
             backgroundColor: 'white',
           }}
           defaultActiveKey="overview"
-          tabBarExtraContent={
-            <QuickLinks
-              hue={cluster.services && cluster.services.hue}
-              yarn={cluster.services && cluster.services.yarn}
-              selectedAllocation={selectedAllocation}
-            />
-          }
           style={{ marginTop: '-42px' }}
         >
           <Tabs.TabPane tab="OVERVIEW" key="overview">
@@ -303,7 +292,6 @@ class WorkspaceDetails extends React.PureComponent<Props> {
             <DataTab
               workspace={workspace}
               profile={profile}
-              cluster={cluster}
               infos={infos}
               members={members}
               showModal={showModal}
@@ -448,7 +436,6 @@ class WorkspaceDetails extends React.PureComponent<Props> {
 const mapStateToProps = () =>
   createStructuredSelector({
     workspace: selectors.getWorkspace(),
-    cluster: selectors.getClusterDetails(),
     selectedAllocation: selectors.getSelectedAllocation(),
     selectedApplication: selectors.getSelectedApplication(),
     profile: selectors.getProfile(),

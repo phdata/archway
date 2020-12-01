@@ -1,6 +1,5 @@
 import { fromJS } from 'immutable';
 import { combineReducers } from 'redux-immutable';
-import cluster from '../containers/Navigation/reducers';
 import login from '../containers/Login/reducers';
 import details from '../containers/WorkspaceDetails/reducers';
 import listing from '../containers/WorkspaceListing/reducers';
@@ -33,7 +32,6 @@ const reducers = combineReducers<any>({
   operations,
   request,
   manage,
-  cluster,
   details,
   form,
   home,

@@ -1,30 +1,20 @@
 import * as React from 'react';
 import { Button, Card, Spin, Row, Col } from 'antd';
-import { PrepareHelp, RunHelp, CreateHelp, Label } from './';
+import { PrepareHelp, RunHelp, Label } from './';
 import { Provisioning } from '../../../components';
 import { Workspace } from '../../../models/Workspace';
-import { Cluster } from '../../../models/Cluster';
 import { ProvisioningType, FeatureFlagType } from '../../../constants';
 import { Feature } from '../../../components';
 
 interface Props {
   workspace: Workspace;
-  services: any;
   loading: boolean;
-  cluster?: Cluster;
   provisioning: ProvisioningType;
   workspaceFetched: boolean;
   requestWorkspace: () => void;
 }
 
-const PersonalWorkspace = ({
-  workspace,
-  services,
-  requestWorkspace,
-  loading,
-  provisioning,
-  workspaceFetched,
-}: Props) => {
+const PersonalWorkspace = ({ workspace, requestWorkspace, loading, provisioning, workspaceFetched }: Props) => {
   if (loading) {
     return (
       <div
@@ -82,13 +72,6 @@ const PersonalWorkspace = ({
             <Row gutter={12}>
               <Col span={24} xl={8} style={{ marginTop: 10 }}>
                 <PrepareHelp location={workspace.data[0].location} namespace={workspace.data[0].name} />
-              </Col>
-              <Col span={24} xl={8} style={{ marginTop: 10 }}>
-                <CreateHelp
-                  host={services.hive.thrift && services.hive.thrift[0].host}
-                  port={services.hive.thrift && services.hive.thrift[0].port}
-                  namespace={workspace.data[0].name}
-                />
               </Col>
               <Col span={24} xl={8} style={{ marginTop: 10 }}>
                 <RunHelp queue={queue} />

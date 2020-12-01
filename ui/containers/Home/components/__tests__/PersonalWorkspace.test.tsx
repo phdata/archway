@@ -58,24 +58,10 @@ describe('PersonalWorkspace', () => {
       ],
       applications: [],
     };
-    const services = {
-      yarn: {
-        //
-      },
-      hue: {
-        //
-      },
-      hive: {
-        thrift: [{ host: '', port: '' }],
-      },
-      impala: {
-        //
-      },
-    };
+
     const wrapper = shallow(
       <PersonalWorkspace
         workspace={workspace}
-        services={services}
         loading={false}
         requestWorkspace={() => null}
         provisioning={ProvisioningType.Complete}

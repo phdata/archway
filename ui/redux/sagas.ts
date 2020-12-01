@@ -1,5 +1,4 @@
 import { cancel, fork, take, call, put } from 'redux-saga/effects';
-import cluster from '../containers/Navigation/sagas';
 import login from '../containers/Login/sagas';
 import workspace from '../containers/WorkspaceDetails/sagas';
 import listing from '../containers/WorkspaceListing/sagas';
@@ -15,7 +14,7 @@ import * as actions from './actions';
 const { config = {} } = window as any;
 const isDevMode = config.isDevMode === 'true';
 
-const sagas = [login, cluster, request, workspace, listing, risk, operations, manage, home, templates];
+const sagas = [login, request, workspace, listing, risk, operations, manage, home, templates];
 
 export const CANCEL_SAGAS_HMR = 'CANCEL_SAGAS_HMR';
 

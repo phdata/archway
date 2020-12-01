@@ -119,21 +119,6 @@ exports[`PersonalWorkspace renders correctly 1`] = `
           }
           xl={8}
         >
-          <SetupHelp
-            host=""
-            namespace=""
-            port=""
-          />
-        </Col>
-        <Col
-          span={24}
-          style={
-            Object {
-              "marginTop": 10,
-            }
-          }
-          xl={8}
-        >
           <RunHelp
             queue=""
           />
